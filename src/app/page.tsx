@@ -109,6 +109,15 @@ export default function Home() {
         </ol>
       </section>
 
+      <div className="mt-16">
+        <a
+          href="/entrar"
+          className="inline-block rounded-lg border border-ambar/40 bg-ambar/10 px-5 py-3 font-titulo text-base text-ambar-forte transition hover:bg-ambar/20"
+        >
+          Entrar com Google
+        </a>
+      </div>
+
       <footer className="mt-16 border-t border-borda pt-6 text-sm text-texto-suave">
         Nada aqui ainda é usável — esta página é só o esqueleto no ar. As
         decisões do projeto estão em{" "}
