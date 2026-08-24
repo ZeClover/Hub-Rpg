@@ -14,10 +14,11 @@ fosse os jogadores conseguindo entrar (decisão da rodada 6).
 **Não é código. É o que só você pode fazer.**
 
 - [x] Criar conta na Vercel e ligar no repositório — projeto `zezin2/hub-rpg`
-- [ ] Criar conta no Supabase e um projeto novo
-- [ ] Criar as credenciais de login Google no Google Cloud Console
-- [ ] Me passar as chaves (elas vão para o cofre de variáveis da Vercel,
-      nunca para dentro do código)
+- [x] Criar o banco no Supabase — `hub-rpg-banco`, São Paulo, plano Free,
+      com as dez tabelas da estrutura inicial já criadas
+- [ ] Criar as credenciais de login Google no Google Cloud Console e colá-las
+      no painel do Supabase (as chaves nunca passam por conversa nem pelo
+      repositório)
 
 Eu te guio passo a passo em cada um, com print do que clicar.
 

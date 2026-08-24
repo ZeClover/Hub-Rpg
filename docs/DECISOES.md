@@ -54,6 +54,7 @@ Este arquivo é a fonte da verdade. Toda decisão nova entra aqui.
 | 25 | Ordem de construção | Cadastro base → Fichas → Wiki de lore → Painel de mesa |
 | 26 | Ritmo | Fatias usáveis, uma por vez. Cada etapa vai pro ar funcionando antes da próxima começar |
 | 27 | Nível técnico do Zé | Não programa, mas **quer aprender no caminho.** Código comentado em português, explicações sem jargão |
+| 28 | Sistema de login | **Supabase Auth**, em vez de um login montado à mão. Ele cuida de sessão, expiração e segurança de token — as partes que dão errado feio quando são feitas do zero. A credencial no Google Cloud Console continua sendo necessária |
 
 ## 6. Restrições registradas
 
