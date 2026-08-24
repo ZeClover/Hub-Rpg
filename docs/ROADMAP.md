@@ -13,7 +13,7 @@ fosse os jogadores conseguindo entrar (decisão da rodada 6).
 
 **Não é código. É o que só você pode fazer.**
 
-- [ ] Criar conta na Vercel (se ainda não tiver) e ligar no repositório
+- [x] Criar conta na Vercel e ligar no repositório — projeto `zezin2/hub-rpg`
 - [ ] Criar conta no Supabase e um projeto novo
 - [ ] Criar as credenciais de login Google no Google Cloud Console
 - [ ] Me passar as chaves (elas vão para o cofre de variáveis da Vercel,

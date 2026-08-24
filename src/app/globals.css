@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/*
+  Paleta do Hub RPG — tema escuro "dark fantasy" (decisão #7).
+  Os tons de fundo puxam para o quente (marrom muito escuro) em vez do
+  cinza neutro: numa mesa de jogo com pouca luz isso cansa menos a vista
+  do que o preto puro.
+*/
+:root {
+  --cor-fundo: #0b0a08;
+  --cor-superficie: #15120d;
+  --cor-superficie-alta: #1e1a13;
+  --cor-borda: #2c2519;
+  --cor-texto: #f3ede2;
+  --cor-texto-suave: #a1937d;
+  --cor-ambar: #e0a234;
+  --cor-ambar-forte: #f5bf5c;
+  /* Vermelho-sangue: reservado para marcar segredo de mestre (decisão #13) */
+  --cor-segredo: #9c3746;
+}
+
+@theme inline {
+  --color-fundo: var(--cor-fundo);
+  --color-superficie: var(--cor-superficie);
+  --color-superficie-alta: var(--cor-superficie-alta);
+  --color-borda: var(--cor-borda);
+  --color-texto: var(--cor-texto);
+  --color-texto-suave: var(--cor-texto-suave);
+  --color-ambar: var(--cor-ambar);
+  --color-ambar-forte: var(--cor-ambar-forte);
+  --color-segredo: var(--cor-segredo);
+  --font-titulo: var(--fonte-titulo);
+  --font-corpo: var(--fonte-corpo);
+}
+
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-corpo), system-ui, sans-serif;
+}
+
+/* O Hub é escuro sempre, mesmo se o celular estiver no modo claro. */
+html {
+  color-scheme: dark;
+}
