@@ -149,3 +149,14 @@ atributos, fórmulas, lógica de dados, efeitos de condições. Ele **não** car
 texto do livro — descrições de classe, texto de habilidades, arte. O que
 aparecer como texto descritivo no Hub é o que Zé escrever. O acesso é aberto a
 qualquer conta Google, então essa linha importa na prática.
+
+## Nota sobre o Prisma 7
+
+A partir da versão 7, o Prisma não aceita mais o endereço de conexão dentro
+do `schema.prisma`. Ele vive em `prisma.config.ts`, lendo as variáveis que a
+integração do Supabase criou na Vercel. Nenhuma senha fica no repositório.
+
+As migrações (os comandos que criam e alteram tabelas) ficam em
+`prisma/migrations/` como arquivos `.sql` legíveis. Como esta sessão não tem
+acesso ao banco — e não deve ter, porque isso exigiria as senhas —, o arquivo
+é gerado aqui e executado por Zé no painel, em **Storage → Query**.

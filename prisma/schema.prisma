@@ -1,0 +1,261 @@
+// Modelo de dados do Hub RPG.
+// A lógica por trás de cada escolha está em docs/ARQUITETURA.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // A partir do Prisma 7 os endereços de conexão não moram mais aqui:
+  // ficam em prisma.config.ts, fora do alcance deste arquivo.
+}
+
+// ---------------------------------------------------------------------------
+// Listas fixas
+// ---------------------------------------------------------------------------
+
+/// Quem uma pessoa é dentro de uma campanha específica.
+/// A mesma pessoa pode ser mestre numa mesa e jogadora em outra.
+enum Papel {
+  MESTRE
+  JOGADOR
+}
+
+/// A trava do projeto (decisão #13): tudo marcado como MESTRE nunca sai do
+/// servidor para quem não é mestre daquela campanha.
+enum Visibilidade {
+  PUBLICO
+  MESTRE
+}
+
+enum SituacaoCampanha {
+  PLANEJADA
+  ATIVA
+  PAUSADA
+  ENCERRADA
+}
+
+/// Os tipos do cadastro base (decisão #11). Uma lista fixa em vez de texto
+/// livre para que a busca e os filtros não dependam de o Zé escrever sempre
+/// "facção" do mesmo jeito.
+enum TipoEntidade {
+  PERSONAGEM
+  NPC
+  LUGAR
+  FACCAO
+  ITEM
+  MAGIA
+  CRIATURA
+  DIVINDADE
+  EVENTO
+  FAMILIA
+  OUTRO
+}
+
+// ---------------------------------------------------------------------------
+// Identidade e organização
+// ---------------------------------------------------------------------------
+
+/// Espelho do usuário autenticado. O id é o mesmo que o serviço de login
+/// atribui, para as duas pontas nunca saírem de sincronia.
+model Usuario {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  nome      String?
+  avatarUrl String?
+  criadoEm  DateTime @default(now())
+
+  universos       Universo[]
+  participacoes   Participacao[]
+  personagens     Personagem[]
+  entidadesCriadas Entidade[]
+
+  @@map("usuarios")
+}
+
+/// Um mundo: Darkrem, Ometion. Guarda lore, não guarda regras (decisão #9).
+model Universo {
+  id        String   @id @default(uuid()) @db.Uuid
+  nome      String
+  slug      String   @unique
+  descricao String?
+  imagemUrl String?
+  donoId    String   @db.Uuid
+  criadoEm  DateTime @default(now())
+
+  dono      Usuario    @relation(fields: [donoId], references: [id], onDelete: Cascade)
+  entidades Entidade[]
+  campanhas Campanha[]
+
+  @@index([donoId])
+  @@map("universos")
+}
+
+/// Um conjunto de regras: Fabula Ultima, sistema SAO, Thrylikí Chelóna.
+/// Este registro é só o cadastro; as regras vivem num módulo de código
+/// identificado pela `chave` (decisão #17).
+model Sistema {
+  id        String  @id @default(uuid()) @db.Uuid
+  chave     String  @unique
+  nome      String
+  descricao String?
+  ativo     Boolean @default(true)
+
+  campanhas Campanha[]
+
+  @@map("sistemas")
+}
+
+/// Uma mesa. É aqui que universo e sistema se encontram.
+model Campanha {
+  id         String           @id @default(uuid()) @db.Uuid
+  nome       String
+  slug       String           @unique
+  universoId String           @db.Uuid
+  sistemaId  String           @db.Uuid
+  situacao   SituacaoCampanha @default(PLANEJADA)
+  criadoEm   DateTime         @default(now())
+
+  universo      Universo       @relation(fields: [universoId], references: [id], onDelete: Restrict)
+  sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
+  participacoes Participacao[]
+  personagens   Personagem[]
+  sessoes       Sessao[]
+
+  @@index([universoId])
+  @@index([sistemaId])
+  @@map("campanhas")
+}
+
+/// Liga uma pessoa a uma mesa, dizendo o que ela é ali.
+/// É esta tabela que a checagem de permissão consulta o tempo todo.
+model Participacao {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  usuarioId  String   @db.Uuid
+  papel      Papel    @default(JOGADOR)
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([campanhaId, usuarioId])
+  @@index([usuarioId])
+  @@map("participacoes")
+}
+
+// ---------------------------------------------------------------------------
+// Conteúdo do mundo
+// ---------------------------------------------------------------------------
+
+/// A peça genérica do cadastro base: qualquer coisa que exista num universo.
+/// Um tipo só em vez de dez tabelas parecidas — assim busca, vínculos e
+/// permissão são escritos uma vez e valem para tudo.
+model Entidade {
+  id           String       @id @default(uuid()) @db.Uuid
+  universoId   String       @db.Uuid
+  tipo         TipoEntidade
+  nome         String
+  slug         String
+  resumo       String?
+  corpo        String?
+  imagemUrl    String?
+  /// Esconde a entidade inteira. Os segredos parciais ficam nos campos.
+  visibilidade Visibilidade @default(PUBLICO)
+  criadoPorId  String?      @db.Uuid
+  criadoEm     DateTime     @default(now())
+  atualizadoEm DateTime     @updatedAt
+
+  universo        Universo        @relation(fields: [universoId], references: [id], onDelete: Cascade)
+  criadoPor       Usuario?        @relation(fields: [criadoPorId], references: [id], onDelete: SetNull)
+  campos          CampoEntidade[]
+  vinculosOrigem  Vinculo[]       @relation("VinculoOrigem")
+  vinculosDestino Vinculo[]       @relation("VinculoDestino")
+  personagens     Personagem[]
+
+  @@unique([universoId, slug])
+  @@index([universoId, tipo])
+  @@index([nome])
+  @@map("entidades")
+}
+
+/// Cada informação extra de uma entidade, com sua própria visibilidade.
+/// É o que permite uma cidade ter descrição pública e um campo secreto
+/// dizendo quem realmente manda lá (decisão #13).
+model CampoEntidade {
+  id           String       @id @default(uuid()) @db.Uuid
+  entidadeId   String       @db.Uuid
+  chave        String
+  valor        String
+  visibilidade Visibilidade @default(PUBLICO)
+  ordem        Int          @default(0)
+
+  entidade Entidade @relation(fields: [entidadeId], references: [id], onDelete: Cascade)
+
+  @@unique([entidadeId, chave])
+  @@index([entidadeId, visibilidade])
+  @@map("campos_entidade")
+}
+
+/// Liga duas entidades com um rótulo livre ("mora em", "inimigo de").
+/// É isto que transforma o cadastro numa wiki navegável sem precisar de uma
+/// tabela nova para cada tipo de relação. O vínculo também pode ser segredo.
+model Vinculo {
+  id           String       @id @default(uuid()) @db.Uuid
+  origemId     String       @db.Uuid
+  destinoId    String       @db.Uuid
+  rotulo       String
+  visibilidade Visibilidade @default(PUBLICO)
+
+  origem  Entidade @relation("VinculoOrigem", fields: [origemId], references: [id], onDelete: Cascade)
+  destino Entidade @relation("VinculoDestino", fields: [destinoId], references: [id], onDelete: Cascade)
+
+  @@unique([origemId, destinoId, rotulo])
+  @@index([destinoId])
+  @@map("vinculos")
+}
+
+// ---------------------------------------------------------------------------
+// Ficha e jogo
+// ---------------------------------------------------------------------------
+
+/// A ficha mecânica. Os números ficam em `dados`, um campo flexível, porque
+/// cada sistema tem uma forma diferente — e é o módulo do sistema daquela
+/// campanha que valida o conteúdo antes de gravar.
+model Personagem {
+  id           String   @id @default(uuid()) @db.Uuid
+  campanhaId   String   @db.Uuid
+  donoId       String   @db.Uuid
+  /// Opcional: liga a ficha a uma entidade, para o personagem também
+  /// existir no lore do universo.
+  entidadeId   String?  @db.Uuid
+  nome         String
+  dados        Json     @default("{}")
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  campanha Campanha  @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  dono     Usuario   @relation(fields: [donoId], references: [id], onDelete: Cascade)
+  entidade Entidade? @relation(fields: [entidadeId], references: [id], onDelete: SetNull)
+
+  @@index([campanhaId])
+  @@index([donoId])
+  @@map("personagens")
+}
+
+/// Um encontro jogado. O resumo é para a mesa; as notas são só do mestre.
+model Sessao {
+  id            String   @id @default(uuid()) @db.Uuid
+  campanhaId    String   @db.Uuid
+  numero        Int
+  data          DateTime
+  resumoPublico String?
+  notasMestre   String?
+  criadoEm      DateTime @default(now())
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@unique([campanhaId, numero])
+  @@map("sessoes")
+}
