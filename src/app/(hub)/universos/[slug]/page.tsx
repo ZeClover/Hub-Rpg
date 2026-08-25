@@ -66,10 +66,12 @@ export default async function Universo({
         </div>
       </dl>
 
-      <p className="mt-10 text-sm leading-relaxed text-texto-suave">
-        O cadastro de lugares, NPCs, facções e itens deste universo é o próximo
-        passo da Fatia 1.
-      </p>
+      <Link
+        href={`/universos/${slug}/cadastro`}
+        className="mt-10 inline-block rounded-lg border border-ambar/40 bg-ambar/10 px-5 py-2.5 font-titulo text-sm text-ambar-forte transition hover:bg-ambar/20"
+      >
+        Abrir o cadastro
+      </Link>
     </main>
   );
 }

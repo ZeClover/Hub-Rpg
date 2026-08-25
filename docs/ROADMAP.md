@@ -28,15 +28,16 @@ Eu te guio passo a passo em cada um, com print do que clicar.
 
 **Objetivo: seus jogadores logam e encontram conteúdo.**
 
-- Login com Google funcionando
-- Criar e editar universos (Darkrem primeiro)
-- Criar campanhas ligando um universo a um sistema
-- Convidar jogadores para uma campanha
-- Cadastro base: criar, editar, listar e buscar entidades de qualquer tipo
-  (NPC, lugar, facção, item, magia, criatura, divindade, evento, família)
-- Campos secretos campo a campo, com a trava no servidor
-- Upload de imagem com compressão automática
-- Tema escuro, funcionando bem no celular
+- [x] Login com Google funcionando
+- [x] Criar e listar universos
+- [x] Cadastro base: criar, listar e buscar fichas de qualquer tipo
+      (NPC, lugar, facção, item, magia, criatura, divindade, evento, família)
+- [x] Campos secretos campo a campo, com a trava no servidor e teste automático
+- [x] Tema escuro, funcionando bem no celular
+- [ ] Editar e excluir fichas
+- [ ] Criar campanhas ligando um universo a um sistema
+- [ ] Convidar jogadores para uma campanha
+- [ ] Upload de imagem com compressão automática
 
 **No fim desta fatia você consegue:** entrar no Hub, cadastrar Darkrem, criar
 uma mesa, chamar seus jogadores, cadastrar cidades e NPCs com segredos de
