@@ -56,7 +56,21 @@ Este arquivo é a fonte da verdade. Toda decisão nova entra aqui.
 | 27 | Nível técnico do Zé | Não programa, mas **quer aprender no caminho.** Código comentado em português, explicações sem jargão |
 | 28 | Sistema de login | **Supabase Auth**, em vez de um login montado à mão. Ele cuida de sessão, expiração e segurança de token — as partes que dão errado feio quando são feitas do zero. A credencial no Google Cloud Console continua sendo necessária |
 
-## 6. Restrições registradas
+## 6. Como o cadastro se organiza
+
+Decidido em 27/08/2026, depois da primeira versão do cadastro se mostrar rasa
+demais na prática.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 29 | Organização | **Pastas criadas pelo Zé**, e **pasta dentro de pasta**, sem limite de profundidade. Não é lista plana |
+| 30 | Pasta x modelo | **Convivem.** O *modelo* diz quais campos a ficha tem (Cidade tem população e governo); a *pasta* diz onde ela está guardada. Um NPC pode morar na pasta "Porto Cinza" e outro na "Corte do Norte" |
+| 31 | Onde a ficha mora | **Uma pasta só**, como arquivo no computador, mais **etiquetas livres** que cruzam pastas. Um NPC na pasta "Porto Cinza" com etiqueta "culto do Véu" aparece nas duas buscas, sem cópia |
+| 32 | Origem dos modelos | Desenhados em conversa com a Claude usando a skill `criador-de-fichas`, e depois cadastrados no Hub. Editáveis pelo Zé |
+| 33 | Tipos de campo | Texto curto, texto longo, número, lista de opções, **ligação com outra ficha** e imagem |
+| 34 | Ligação entre fichas | Campo que aponta para outra ficha ("Fica em", "Lidera"). É o que transforma o cadastro em wiki navegável, e não uma lista de textos soltos |
+
+## 7. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
