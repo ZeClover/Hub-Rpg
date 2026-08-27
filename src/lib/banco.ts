@@ -2,6 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
 import { CERTIFICADO_SUPABASE } from "@/lib/certificado-supabase";
+import { removerSslDoEndereco } from "@/lib/endereco-banco";
 
 /*
   Conexão com o banco de dados.
@@ -38,7 +39,13 @@ function criarConexao(): PrismaClient {
 
   return new PrismaClient({
     adapter: new PrismaPg({
-      connectionString: endereco,
+      /*
+        O `sslmode` sai do endereço porque a biblioteca do Postgres, ao
+        encontrá-lo, monta a configuração de segurança sozinha e descarta a
+        nossa — incluindo o certificado logo abaixo. Detalhes em
+        src/lib/endereco-banco.ts.
+      */
+      connectionString: removerSslDoEndereco(endereco),
       /*
         O Supabase assina o certificado do banco com uma autoridade própria,
         que o Node não conhece. Informamos essa autoridade aqui, em vez de
