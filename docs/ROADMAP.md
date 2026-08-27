@@ -64,7 +64,19 @@ num PDF recortado e foram lidos inteiros.
       Espiritualismo, Quimerismo, Ritualismo — essa última vem de poderes
       pontuais dos Atlas: Miragem, Canto da Sereia, Navegador, Influência
       Verdejante, cada um com sua restrição de escopo)
-- [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
+- [x] **Equipamento: armas, armaduras, escudos, e o efeito nos números** —
+      card "Equipamento" novo na aba Atributos e Classes: escolhe armadura,
+      mão principal e mão secundária (escudo ou segunda arma de uma mão),
+      com as tabelas básicas do livro (9 armaduras, 2 escudos, 20 armas).
+      Defesa/Defesa Mágica/Iniciativa passam a vir do equipamento de verdade
+      em vez de números digitados à mão; item marcial (🔒) fica bloqueado
+      até o personagem ter uma classe que libere aquele tipo (usa o mesmo
+      `marcial` das classes que já gerava o texto "Pode equipar..."); arma de
+      duas mãos anula o que estiver na secundária. "Outros bônus" continua
+      existindo, mas só para o que a ficha ainda não modela (acessórios,
+      poderes que somam Defesa/Iniciativa direto). **Acessórios não
+      entraram** — o livro só dá um exemplo (Elmo de Crista) e remete a uma
+      lista nas págs. 285-287 que não foi lida ainda
 - [ ] Combate: dano, tipos de dano, afinidades elementais
 - [ ] Poderes Heroicos
 

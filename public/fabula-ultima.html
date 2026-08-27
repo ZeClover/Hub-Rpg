@@ -253,6 +253,122 @@ function textosDeEquipamento(p){
     .map(b => b.texto);
 }
 
+/* ===========================================================================
+   EQUIPAMENTO (Livro Básico, pág. 126-137)
+
+   Armadura e escudo entram nas fórmulas de Defesa/Defesa Mágica/Iniciativa;
+   arma entra em Precisão/Dano. "Marcial" (E) é o item que só faz efeito pra
+   quem tem a classe certa — CLASSES já registra isso em `marcial` (a mesma
+   lista usada pra montar o texto "Pode equipar: ..." na aba de Atributos).
+   =========================================================================== */
+
+// Todo tipo marcial ('armadura', 'escudo', 'arma corpo a corpo', 'arma à
+// distância') que pelo menos uma classe do personagem libera.
+function tiposMarciaisLiberados(p){
+  const liberados = new Set();
+  p.classes.filter(c => c.classeId && c.nivel > 0).forEach(c => {
+    const def = CLASSES.find(x => x.id === c.classeId);
+    (def?.marcial || []).forEach(t => liberados.add(t));
+  });
+  return liberados;
+}
+
+// Armadura "leve" dá Defesa/Defesa Mágica com base no dado atual de
+// Destreza/Astúcia (tipo:'dado'); armadura "pesada" (marcial) dá um valor
+// fixo de Defesa, mas Defesa Mágica continua vindo do dado de Astúcia.
+const ARMADURAS_BASICAS = [
+  {id:'sem-armadura',    nome:'Sem armadura',    custo:0,
+    defesa:{tipo:'dado', atributo:'destreza'}, defesaMagica:{tipo:'dado', atributo:'astucia'}, iniciativa:0},
+  {id:'camisa-de-seda',  nome:'Camisa de Seda',  custo:100,
+    defesa:{tipo:'dado', atributo:'destreza'}, defesaMagica:{tipo:'dado', atributo:'astucia', bonus:2}, iniciativa:-1},
+  {id:'traje-de-viagem', nome:'Traje de Viagem', custo:100,
+    defesa:{tipo:'dado', atributo:'destreza', bonus:1}, defesaMagica:{tipo:'dado', atributo:'astucia', bonus:1}, iniciativa:-1},
+  {id:'tunica-de-combate', nome:'Túnica de Combate', custo:150,
+    defesa:{tipo:'dado', atributo:'destreza', bonus:1}, defesaMagica:{tipo:'dado', atributo:'astucia', bonus:1}, iniciativa:0},
+  {id:'vestes-de-sabio', nome:'Vestes de Sábio', custo:200,
+    defesa:{tipo:'dado', atributo:'destreza', bonus:1}, defesaMagica:{tipo:'dado', atributo:'astucia', bonus:2}, iniciativa:-2},
+  {id:'brigantina',      nome:'Brigantina',      custo:150, marcial:true,
+    defesa:{tipo:'fixo', valor:10}, defesaMagica:{tipo:'dado', atributo:'astucia'}, iniciativa:-2},
+  {id:'placa-de-bronze', nome:'Placa de Bronze', custo:200, marcial:true,
+    defesa:{tipo:'fixo', valor:11}, defesaMagica:{tipo:'dado', atributo:'astucia'}, iniciativa:-3},
+  {id:'placa-runica',    nome:'Placa Rúnica',    custo:250, marcial:true,
+    defesa:{tipo:'fixo', valor:11}, defesaMagica:{tipo:'dado', atributo:'astucia', bonus:1}, iniciativa:-3},
+  {id:'placa-de-aco',    nome:'Placa de Aço',    custo:300, marcial:true,
+    defesa:{tipo:'fixo', valor:12}, defesaMagica:{tipo:'dado', atributo:'astucia'}, iniciativa:-4},
+];
+
+// Escudo ocupa a mão secundária e soma às defesas por cima da armadura.
+const ESCUDOS_BASICOS = [
+  {id:'escudo-de-bronze', nome:'Escudo de Bronze', custo:100,
+    defesa:2, defesaMagica:0, iniciativa:0},
+  {id:'escudo-runico',    nome:'Escudo Rúnico',    custo:150, marcial:true,
+    defesa:2, defesaMagica:2, iniciativa:0},
+];
+
+// As armas básicas do livro (pág. 134-135). `maos` é quantos espaços de mão
+// a arma ocupa; uma arma de duas mãos deixa a mão secundária sem espaço
+// pra escudo ou segunda arma. `precisao.bonus` é o "+1" que algumas armas
+// marciais somam direto no teste, além da rolagem alta dos dois dados de
+// Atributo.
+const ARMAS_BASICAS = [
+  {id:'ataque-desarmado', nome:'Ataque Desarmado', custo:0, categoria:'luta',
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor']}, dano:6, tipoDano:'físico'},
+  {id:'improvisada-corpo', nome:'Improvisada (corpo a corpo)', custo:0, categoria:'luta',
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor']}, dano:2, tipoDano:'físico',
+    obs:'quebra depois do ataque'},
+  {id:'soqueira-de-ferro', nome:'Soqueira de Ferro', custo:150, categoria:'luta',
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor']}, dano:6, tipoDano:'físico'},
+  {id:'adaga-de-aco', nome:'Adaga de Aço', custo:150, categoria:'adaga', marcial:true,
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:4, tipoDano:'físico'},
+  {id:'espada-de-bronze', nome:'Espada de Bronze', custo:200, categoria:'espada', marcial:true,
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor'], bonus:1}, dano:6, tipoDano:'físico'},
+  {id:'montante', nome:'Montante', custo:200, categoria:'espada', marcial:true,
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor'], bonus:1}, dano:10, tipoDano:'físico'},
+  {id:'katana', nome:'Katana', custo:200, categoria:'espada', marcial:true,
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:10, tipoDano:'físico'},
+  {id:'rapieira', nome:'Rapieira', custo:200, categoria:'espada', marcial:true,
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:6, tipoDano:'físico'},
+  {id:'lanca-leve', nome:'Lança Leve', custo:200, categoria:'lança', marcial:true,
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor']}, dano:8, tipoDano:'físico'},
+  {id:'lanca-pesada', nome:'Lança Pesada', custo:200, categoria:'lança', marcial:true,
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['destreza','vigor']}, dano:12, tipoDano:'físico'},
+  {id:'martelo-de-ferro', nome:'Martelo de Ferro', custo:200, categoria:'pesada',
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['vigor','vigor']}, dano:6, tipoDano:'físico'},
+  {id:'machado-largo', nome:'Machado Largo', custo:250, categoria:'pesada', marcial:true,
+    maos:1, alcance:'corpo a corpo', precisao:{atributos:['vigor','vigor']}, dano:10, tipoDano:'físico'},
+  {id:'machado-de-guerra', nome:'Machado de Guerra', custo:250, categoria:'pesada', marcial:true,
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['vigor','vigor']}, dano:14, tipoDano:'físico'},
+  {id:'chicote-de-correntes', nome:'Chicote de Correntes', custo:150, categoria:'malho',
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['destreza','destreza']}, dano:8, tipoDano:'físico'},
+  {id:'cajado', nome:'Cajado', custo:100, categoria:'arcana',
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['vontade','vontade']}, dano:6, tipoDano:'físico'},
+  {id:'tomo', nome:'Tomo', custo:100, categoria:'arcana',
+    maos:2, alcance:'corpo a corpo', precisao:{atributos:['astucia','astucia']}, dano:6, tipoDano:'físico'},
+  {id:'besta', nome:'Besta', custo:150, categoria:'arco',
+    maos:2, alcance:'à distância', precisao:{atributos:['destreza','astucia']}, dano:8, tipoDano:'físico'},
+  {id:'arco-curto', nome:'Arco Curto', custo:200, categoria:'arco',
+    maos:2, alcance:'à distância', precisao:{atributos:['destreza','destreza']}, dano:8, tipoDano:'físico'},
+  {id:'pistola', nome:'Pistola', custo:250, categoria:'arma de fogo', marcial:true,
+    maos:1, alcance:'à distância', precisao:{atributos:['destreza','astucia']}, dano:8, tipoDano:'físico'},
+  {id:'improvisada-distancia', nome:'Improvisada (à distância)', custo:0, categoria:'arremessável',
+    maos:1, alcance:'à distância', precisao:{atributos:['destreza','vigor']}, dano:2, tipoDano:'físico',
+    obs:'quebra depois do ataque'},
+  {id:'shuriken', nome:'Shuriken', custo:150, categoria:'arremessável',
+    maos:1, alcance:'à distância', precisao:{atributos:['destreza','astucia']}, dano:4, tipoDano:'físico'},
+];
+
+const NOMES_ATRIBUTOS_CURTO = {destreza:'DES', vigor:'VIG', astucia:'AST', vontade:'VON'};
+
+function textoPrecisao(arma){
+  const [a,b] = arma.precisao.atributos;
+  const bonus = arma.precisao.bonus ? ` +${arma.precisao.bonus}` : '';
+  return `【${NOMES_ATRIBUTOS_CURTO[a]} + ${NOMES_ATRIBUTOS_CURTO[b]}】${bonus}`;
+}
+
+function textoDano(arma){
+  return `【RA + ${arma.dano}】 ${arma.tipoDano}`;
+}
+
 const PODERES_CLASSE = {
   andarilho: [
     {id:'cacador-tesouros', nome:'Caçador de Tesouros', max:2,
@@ -1038,11 +1154,36 @@ const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeC
 const crise    = p => Math.floor(pvMaximo(p) / 2);
 const piMaximo = p => PI_BASE + beneficiosDeClasse(p,'pi');
 
+// Equipamento: armadura e a mão secundária (escudo ou arma extra) são
+// escolhas do jogador; sem nenhuma escolhida ainda, os padrões abaixo
+// reproduzem exatamente o personagem "sem equipamento".
+const armaduraEquipada = p =>
+  ARMADURAS_BASICAS.find(a => a.id === p.equipamento?.armaduraId) || ARMADURAS_BASICAS[0];
+const armaPrincipalEquipada = p =>
+  ARMAS_BASICAS.find(a => a.id === p.equipamento?.maoPrincipalId) || ARMAS_BASICAS[0];
+// Arma de duas mãos ocupa a secundária também — o que estiver guardado ali
+// (escudo ou outra arma) não faz efeito enquanto isso durar.
+const escudoEquipado = p => armaPrincipalEquipada(p).maos === 2 ? null :
+  ESCUDOS_BASICOS.find(e => e.id === p.equipamento?.maoSecundariaId) || null;
+const armaSecundariaEquipada = p => armaPrincipalEquipada(p).maos === 2 ? null :
+  ARMAS_BASICAS.find(a => a.id === p.equipamento?.maoSecundariaId) || null;
+
 // Defesa vem do dado ATUAL, não do básico — por isso uma condição derruba a
-// defesa junto (pág. 168).
-const defesa       = p => dadoAtual(p,'destreza') + (p.bonus.defesa || 0);
-const defesaMagica = p => dadoAtual(p,'astucia')  + (p.bonus.defesaMagica || 0);
-const iniciativa   = p => 0 + (p.bonus.iniciativa || 0);
+// defesa junto (pág. 168). "Outros bônus" (p.bonus) cobre o que a ficha
+// ainda não modela sozinha: acessórios e poderes que somam Defesa/Iniciativa
+// direto (ex: Arcano da Roda).
+const defesa = p => {
+  const arm = armaduraEquipada(p).defesa;
+  const base = arm.tipo === 'fixo' ? arm.valor : dadoAtual(p, arm.atributo) + (arm.bonus || 0);
+  return base + (escudoEquipado(p)?.defesa || 0) + (p.bonus.defesa || 0);
+};
+const defesaMagica = p => {
+  const arm = armaduraEquipada(p).defesaMagica;
+  const base = dadoAtual(p, arm.atributo) + (arm.bonus || 0);
+  return base + (escudoEquipado(p)?.defesaMagica || 0) + (p.bonus.defesaMagica || 0);
+};
+const iniciativa = p =>
+  armaduraEquipada(p).iniciativa + (escudoEquipado(p)?.iniciativa || 0) + (p.bonus.iniciativa || 0);
 
 /* --- Personagem --------------------------------------------------------- */
 
@@ -1068,6 +1209,9 @@ function novoPersonagem(nome){
     escolhasBeneficio: {},
     // rituais: { 'elementalismo': {potencia:'menor', area:'individual'}, ... }
     rituais: {},
+    // Sem nada escolhido, os getters (armaduraEquipada etc.) caem no padrão
+    // ARMADURAS_BASICAS[0]/ARMAS_BASICAS[0] ("sem armadura"/"desarmado").
+    equipamento: {armaduraId:'', maoPrincipalId:'', maoSecundariaId:''},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     pontosFabula: 3,
@@ -1326,17 +1470,86 @@ function abaAtributos(p){
       </div>`;
     }).join('')}
 
-    <h2 style="font-size:18px;margin-top:22px">Equipamento (provisório)</h2>
+    <h2 style="font-size:18px;margin-top:22px">Equipamento</h2>
     <p class="mini" style="margin:6px 0 16px">
-      Até a aba de Inventário existir, anote aqui o que sua armadura e escudo
-      somam em Defesa, Defesa Mágica e Iniciativa.
+      Armadura e mão secundária (escudo ou segunda arma) — itens marciais
+      🔒 pedem uma classe que ainda não está na ficha, e não podem ser
+      equipados enquanto isso.
     </p>
     <div class="grade g3">
-      ${[['defesa','Defesa (armadura/escudo)'],['defesaMagica','Defesa mágica'],['iniciativa','Iniciativa']].map(([k,r]) =>
+      <div><label for="c-eq-armadura">Armadura</label>
+        <select id="c-eq-armadura" data-equip="armadura">${opcoesArmadura(p)}</select></div>
+      <div><label for="c-eq-maopri">Mão principal</label>
+        <select id="c-eq-maopri" data-equip="maoPrincipal">${opcoesMaoPrincipal(p)}</select></div>
+      <div><label for="c-eq-maosec">Mão secundária</label>
+        <select id="c-eq-maosec" data-equip="maoSecundaria" ${armaPrincipalEquipada(p).maos===2?'disabled':''}>${opcoesMaoSecundaria(p)}</select></div>
+    </div>
+    <p class="mini" style="margin-top:10px">
+      Defesa <strong>${defesa(p)}</strong> · Defesa Mágica <strong>${defesaMagica(p)}</strong>
+      · Iniciativa <strong>${iniciativa(p)>=0?'+':''}${iniciativa(p)}</strong>
+      (com condições e outros bônus já somados)
+    </p>
+    <p class="mini" style="margin-top:4px">
+      ${textoArma('Mão principal', armaPrincipalEquipada(p))}
+      ${armaSecundariaEquipada(p) ? '<br>' + textoArma('Mão secundária', armaSecundariaEquipada(p)) : ''}
+    </p>
+
+    <h2 style="font-size:18px;margin-top:22px">Outros bônus</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      O que a ficha ainda não calcula sozinha: acessórios (pág. 126) e
+      poderes que somam direto em Defesa, Defesa Mágica ou Iniciativa.
+    </p>
+    <div class="grade g3">
+      ${[['defesa','Defesa'],['defesaMagica','Defesa mágica'],['iniciativa','Iniciativa']].map(([k,r]) =>
         `<div><label for="c-b-${k}">${r}</label>
          <input id="c-b-${k}" data-bonus="${k}" type="number" value="${p.bonus[k]||0}"></div>`).join('')}
     </div>
   </div>`;
+}
+
+function opcoesArmadura(p){
+  const liberados = tiposMarciaisLiberados(p);
+  const atualId = p.equipamento?.armaduraId || 'sem-armadura';
+  return ARMADURAS_BASICAS.map(a => {
+    const bloqueada = a.marcial && !liberados.has('armadura');
+    return `<option value="${a.id}" ${a.id===atualId?'selected':''} ${bloqueada?'disabled':''}>${a.nome}${a.marcial?' (marcial)':''}${bloqueada?' 🔒':''}</option>`;
+  }).join('');
+}
+
+function opcoesMaoPrincipal(p){
+  const liberados = tiposMarciaisLiberados(p);
+  const atualId = p.equipamento?.maoPrincipalId || 'ataque-desarmado';
+  return ARMAS_BASICAS.map(a => {
+    const tipoNecessario = a.alcance === 'corpo a corpo' ? 'arma corpo a corpo' : 'arma à distância';
+    const bloqueada = a.marcial && !liberados.has(tipoNecessario);
+    return `<option value="${a.id}" ${a.id===atualId?'selected':''} ${bloqueada?'disabled':''}>${a.nome}${a.maos===2?' (duas mãos)':''}${a.marcial?' (marcial)':''}${bloqueada?' 🔒':''}</option>`;
+  }).join('');
+}
+
+function opcoesMaoSecundaria(p){
+  if(armaPrincipalEquipada(p).maos === 2){
+    return `<option value="">— ocupada pela arma de duas mãos —</option>`;
+  }
+  const liberados = tiposMarciaisLiberados(p);
+  const atualId = p.equipamento?.maoSecundariaId || '';
+  return `<option value="" ${atualId===''?'selected':''}>— nenhuma —</option>
+    <optgroup label="Armas (uma mão)">
+      ${ARMAS_BASICAS.filter(a => a.maos === 1).map(a => {
+        const tipoNecessario = a.alcance === 'corpo a corpo' ? 'arma corpo a corpo' : 'arma à distância';
+        const bloqueada = a.marcial && !liberados.has(tipoNecessario);
+        return `<option value="${a.id}" ${a.id===atualId?'selected':''} ${bloqueada?'disabled':''}>${a.nome}${a.marcial?' (marcial)':''}${bloqueada?' 🔒':''}</option>`;
+      }).join('')}
+    </optgroup>
+    <optgroup label="Escudos">
+      ${ESCUDOS_BASICOS.map(e => {
+        const bloqueada = e.marcial && !liberados.has('escudo');
+        return `<option value="${e.id}" ${e.id===atualId?'selected':''} ${bloqueada?'disabled':''}>${e.nome}${e.marcial?' (marcial)':''}${bloqueada?' 🔒':''}</option>`;
+      }).join('')}
+    </optgroup>`;
+}
+
+function textoArma(rotulo, arma){
+  return `<strong>${rotulo}:</strong> ${arma.nome} — Precisão ${textoPrecisao(arma)} · Dano ${textoDano(arma)}${arma.obs ? ` (${arma.obs})` : ''}`;
 }
 
 function abaRecursos(p){
@@ -1657,6 +1870,12 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-bonus]').forEach(el =>
     el.onchange = () => mudar(p => p.bonus[el.dataset.bonus] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-equip]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const chave = el.dataset.equip + 'Id'; // armaduraId, maoPrincipalId, maoSecundariaId
+      (p.equipamento || (p.equipamento = {}))[chave] = el.value;
+    }));
 
   app.querySelectorAll('[data-escolha-beneficio]').forEach(el =>
     el.onchange = () => mudar(p => p.escolhasBeneficio[el.dataset.escolhaBeneficio] = el.value));
