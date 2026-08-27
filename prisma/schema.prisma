@@ -1,5 +1,9 @@
 // Modelo de dados do Hub RPG.
 // A lógica por trás de cada escolha está em docs/ARQUITETURA.md.
+//
+// Reescrito em 27/08/2026 pela virada de escopo (decisões #35 e #36): o Hub
+// é sobre FICHAS DE PERSONAGEM nos sistemas do Zé. O cadastro de lore —
+// universos, entidades, campos e vínculos — saiu do projeto.
 
 generator client {
   provider = "prisma-client-js"
@@ -23,7 +27,8 @@ enum Papel {
 }
 
 /// A trava do projeto (decisão #13): tudo marcado como MESTRE nunca sai do
-/// servidor para quem não é mestre daquela campanha.
+/// servidor para quem não é mestre daquela campanha. Hoje vale para as notas
+/// de sessão; volta a valer para campos de ficha quando eles existirem.
 enum Visibilidade {
   PUBLICO
   MESTRE
@@ -36,29 +41,12 @@ enum SituacaoCampanha {
   ENCERRADA
 }
 
-/// Os tipos do cadastro base (decisão #11). Uma lista fixa em vez de texto
-/// livre para que a busca e os filtros não dependam de o Zé escrever sempre
-/// "facção" do mesmo jeito.
-enum TipoEntidade {
-  PERSONAGEM
-  NPC
-  LUGAR
-  FACCAO
-  ITEM
-  MAGIA
-  CRIATURA
-  DIVINDADE
-  EVENTO
-  FAMILIA
-  OUTRO
-}
-
 // ---------------------------------------------------------------------------
-// Identidade e organização
+// Identidade
 // ---------------------------------------------------------------------------
 
 /// Espelho do usuário autenticado. O id é o mesmo que o serviço de login
-/// atribui, para as duas pontas nunca saírem de sincronia.
+/// atribui, para não existirem duas identidades da mesma pessoa.
 model Usuario {
   id        String   @id @db.Uuid
   email     String   @unique
@@ -66,35 +54,19 @@ model Usuario {
   avatarUrl String?
   criadoEm  DateTime @default(now())
 
-  universos       Universo[]
-  participacoes   Participacao[]
-  personagens     Personagem[]
-  entidadesCriadas Entidade[]
+  participacoes Participacao[]
+  personagens   Personagem[]
 
   @@map("usuarios")
 }
 
-/// Um mundo: Darkrem, Ometion. Guarda lore, não guarda regras (decisão #9).
-model Universo {
-  id        String   @id @default(uuid()) @db.Uuid
-  nome      String
-  slug      String   @unique
-  descricao String?
-  imagemUrl String?
-  donoId    String   @db.Uuid
-  criadoEm  DateTime @default(now())
+// ---------------------------------------------------------------------------
+// Sistemas e mesas
+// ---------------------------------------------------------------------------
 
-  dono      Usuario    @relation(fields: [donoId], references: [id], onDelete: Cascade)
-  entidades Entidade[]
-  campanhas Campanha[]
-
-  @@index([donoId])
-  @@map("universos")
-}
-
-/// Um conjunto de regras: Fabula Ultima, sistema SAO, Thrylikí Chelóna.
-/// Este registro é só o cadastro; as regras vivem num módulo de código
-/// identificado pela `chave` (decisão #17).
+/// Um conjunto de regras: Fabula Ultima, Kaizoku no Sho, o homebrew de SAO,
+/// Thrylikí Chelóna. O registro aqui é só o cadastro; as regras de verdade
+/// vivem num módulo de código próprio (decisão #17).
 model Sistema {
   id        String  @id @default(uuid()) @db.Uuid
   chave     String  @unique
@@ -102,34 +74,31 @@ model Sistema {
   descricao String?
   ativo     Boolean @default(true)
 
-  campanhas Campanha[]
+  campanhas   Campanha[]
+  personagens Personagem[]
 
   @@map("sistemas")
 }
 
-/// Uma mesa. É aqui que universo e sistema se encontram.
+/// Uma mesa. Aponta para um sistema e tem um mestre e vários jogadores.
 model Campanha {
-  id         String           @id @default(uuid()) @db.Uuid
-  nome       String
-  slug       String           @unique
-  universoId String           @db.Uuid
-  sistemaId  String           @db.Uuid
-  situacao   SituacaoCampanha @default(PLANEJADA)
-  criadoEm   DateTime         @default(now())
+  id        String           @id @default(uuid()) @db.Uuid
+  nome      String
+  slug      String           @unique
+  sistemaId String           @db.Uuid
+  situacao  SituacaoCampanha @default(PLANEJADA)
+  criadoEm  DateTime         @default(now())
 
-  universo      Universo       @relation(fields: [universoId], references: [id], onDelete: Restrict)
   sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   participacoes Participacao[]
   personagens   Personagem[]
   sessoes       Sessao[]
 
-  @@index([universoId])
   @@index([sistemaId])
   @@map("campanhas")
 }
 
-/// Liga uma pessoa a uma mesa, dizendo o que ela é ali.
-/// É esta tabela que a checagem de permissão consulta o tempo todo.
+/// Liga uma pessoa a uma campanha, dizendo se ela é mestre ou jogadora.
 model Participacao {
   id         String   @id @default(uuid()) @db.Uuid
   campanhaId String   @db.Uuid
@@ -146,111 +115,50 @@ model Participacao {
 }
 
 // ---------------------------------------------------------------------------
-// Conteúdo do mundo
+// Fichas
 // ---------------------------------------------------------------------------
 
-/// A peça genérica do cadastro base: qualquer coisa que exista num universo.
-/// Um tipo só em vez de dez tabelas parecidas — assim busca, vínculos e
-/// permissão são escritos uma vez e valem para tudo.
-model Entidade {
-  id           String       @id @default(uuid()) @db.Uuid
-  universoId   String       @db.Uuid
-  tipo         TipoEntidade
-  nome         String
-  slug         String
-  resumo       String?
-  corpo        String?
-  imagemUrl    String?
-  /// Esconde a entidade inteira. Os segredos parciais ficam nos campos.
-  visibilidade Visibilidade @default(PUBLICO)
-  criadoPorId  String?      @db.Uuid
-  criadoEm     DateTime     @default(now())
-  atualizadoEm DateTime     @updatedAt
-
-  universo        Universo        @relation(fields: [universoId], references: [id], onDelete: Cascade)
-  criadoPor       Usuario?        @relation(fields: [criadoPorId], references: [id], onDelete: SetNull)
-  campos          CampoEntidade[]
-  vinculosOrigem  Vinculo[]       @relation("VinculoOrigem")
-  vinculosDestino Vinculo[]       @relation("VinculoDestino")
-  personagens     Personagem[]
-
-  @@unique([universoId, slug])
-  @@index([universoId, tipo])
-  @@index([nome])
-  @@map("entidades")
-}
-
-/// Cada informação extra de uma entidade, com sua própria visibilidade.
-/// É o que permite uma cidade ter descrição pública e um campo secreto
-/// dizendo quem realmente manda lá (decisão #13).
-model CampoEntidade {
-  id           String       @id @default(uuid()) @db.Uuid
-  entidadeId   String       @db.Uuid
-  chave        String
-  valor        String
-  visibilidade Visibilidade @default(PUBLICO)
-  ordem        Int          @default(0)
-
-  entidade Entidade @relation(fields: [entidadeId], references: [id], onDelete: Cascade)
-
-  @@unique([entidadeId, chave])
-  @@index([entidadeId, visibilidade])
-  @@map("campos_entidade")
-}
-
-/// Liga duas entidades com um rótulo livre ("mora em", "inimigo de").
-/// É isto que transforma o cadastro numa wiki navegável sem precisar de uma
-/// tabela nova para cada tipo de relação. O vínculo também pode ser segredo.
-model Vinculo {
-  id           String       @id @default(uuid()) @db.Uuid
-  origemId     String       @db.Uuid
-  destinoId    String       @db.Uuid
-  rotulo       String
-  visibilidade Visibilidade @default(PUBLICO)
-
-  origem  Entidade @relation("VinculoOrigem", fields: [origemId], references: [id], onDelete: Cascade)
-  destino Entidade @relation("VinculoDestino", fields: [destinoId], references: [id], onDelete: Cascade)
-
-  @@unique([origemId, destinoId, rotulo])
-  @@index([destinoId])
-  @@map("vinculos")
-}
-
-// ---------------------------------------------------------------------------
-// Ficha e jogo
-// ---------------------------------------------------------------------------
-
-/// A ficha mecânica. Os números ficam em `dados`, um campo flexível, porque
-/// cada sistema tem uma forma diferente — e é o módulo do sistema daquela
-/// campanha que valida o conteúdo antes de gravar.
+/// A ficha de personagem.
+///
+/// `dados` guarda a ficha inteira em JSON, no formato que o módulo daquele
+/// sistema entende. É de propósito: cada sistema tem campos completamente
+/// diferentes, e uma tabela com colunas fixas ou obrigaria a coluna nova a
+/// cada sistema, ou viraria uma sopa de campos vazios. Quem valida o
+/// conteúdo é o módulo do sistema, não o banco.
+///
+/// `campanhaId` é opcional: dá para ter uma ficha avulsa, fora de mesa
+/// nenhuma — que é como quase toda ficha nasce.
 model Personagem {
   id           String   @id @default(uuid()) @db.Uuid
-  campanhaId   String   @db.Uuid
+  sistemaId    String   @db.Uuid
   donoId       String   @db.Uuid
-  /// Opcional: liga a ficha a uma entidade, para o personagem também
-  /// existir no lore do universo.
-  entidadeId   String?  @db.Uuid
+  campanhaId   String?  @db.Uuid
   nome         String
   dados        Json     @default("{}")
+  /// Versão do formato de `dados`, para migrar fichas antigas quando o
+  /// módulo do sistema mudar de estrutura.
+  versaoFicha  Int      @default(1)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  campanha Campanha  @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  sistema  Sistema   @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   dono     Usuario   @relation(fields: [donoId], references: [id], onDelete: Cascade)
-  entidade Entidade? @relation(fields: [entidadeId], references: [id], onDelete: SetNull)
+  campanha Campanha? @relation(fields: [campanhaId], references: [id], onDelete: SetNull)
 
-  @@index([campanhaId])
   @@index([donoId])
+  @@index([sistemaId])
+  @@index([campanhaId])
   @@map("personagens")
 }
 
-/// Um encontro jogado. O resumo é para a mesa; as notas são só do mestre.
+/// Um encontro jogado.
 model Sessao {
   id            String   @id @default(uuid()) @db.Uuid
   campanhaId    String   @db.Uuid
   numero        Int
   data          DateTime
   resumoPublico String?
+  /// Só o mestre da campanha lê este campo (decisão #13).
   notasMestre   String?
   criadoEm      DateTime @default(now())
 

@@ -1,116 +1,72 @@
 # Roadmap do Hub RPG
 
-> **Atenção:** este roadmap foi escrito antes da virada de escopo de 27/08/2026
-> (decisões #35 a #41). As fatias 1 a 4 descrevem o Hub como cadastro de lore,
-> que saiu do projeto. Serão reescritas. O que está marcado como concluído foi
-> de fato construído e continua no ar.
+Reescrito em 27/08/2026 pela virada de escopo (decisões #35 a #41). O Hub é
+sobre **fichas de personagem** nos sistemas do Zé.
 
-Ritmo acordado (decisão #26): **fatias usáveis, uma por vez.** Cada fatia vai
-pro ar funcionando e você usa de verdade antes da próxima começar.
-
-Ordem de construção (decisão #25): cadastro base → fichas → wiki → painel de
-mesa. A fatia 1 abre com o login porque você pediu que a primeira coisa no ar
-fosse os jogadores conseguindo entrar (decisão da rodada 6).
+Ritmo (decisão #26): uma etapa usável por vez.
 
 ---
 
-## Fatia 0 — Preparação de contas
+## Pronto
 
-**Não é código. É o que só você pode fazer.**
-
-- [x] Criar conta na Vercel e ligar no repositório — projeto `zezin2/hub-rpg`
-- [x] Criar o banco no Supabase — `hub-rpg-banco`, São Paulo, plano Free,
-      com as dez tabelas da estrutura inicial já criadas
-- [ ] Criar as credenciais de login Google no Google Cloud Console e colá-las
-      no painel do Supabase (as chaves nunca passam por conversa nem pelo
-      repositório)
-
-Eu te guio passo a passo em cada um, com print do que clicar.
+- [x] Contas: Vercel, banco Supabase em São Paulo, login com Google
+- [x] Tabelas trancadas contra acesso vindo de fora do servidor
+- [x] Entrar no Hub com a conta Google
+- [x] Catálogo de fichas em /fichas
+- [x] Cadastro de lore removido do código e do banco (decisão #36)
+- [x] **Kaizoku no Sho** — ficha completa, acessível pelo Hub
+- [x] **Fabula Ultima** — chassi: atributos, classes, condições e derivados
 
 ---
 
-## Fatia 1 — Fundação e porta de entrada
+## Etapa atual — Fabula Ultima completa
 
-**Objetivo: seus jogadores logam e encontram conteúdo.**
+Fonte: os PDFs da biblioteca do Zé (Livro Básico + todos os Atlas).
 
-- [x] Login com Google funcionando
-- [x] Criar e listar universos
-- [x] Cadastro base: criar, listar e buscar fichas de qualquer tipo
-      (NPC, lugar, facção, item, magia, criatura, divindade, evento, família)
-- [x] Campos secretos campo a campo, com a trava no servidor e teste automático
-- [x] Tema escuro, funcionando bem no celular
-- [x] Tabelas trancadas para acesso vindo de fora do servidor (migração 0002)
-- [x] Editar e excluir fichas
-- [ ] Criar campanhas ligando um universo a um sistema
-- [ ] Convidar jogadores para uma campanha
-- [ ] Upload de imagem com compressão automática
+- [ ] Poderes das 15 classes do Livro Básico
+- [ ] Feitiços e rituais, com as seis disciplinas
+- [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
+- [ ] Combate: dano, tipos de dano, afinidades elementais
+- [ ] Poderes Heroicos
+- [ ] **Atlas High Fantasy** — classes, poderes e opções
+- [ ] **Atlas Techno Fantasy** — classes, armas personalizadas, tecnosferas
+- [ ] **Atlas Natural Fantasy**
+- [ ] **Herdeiros da Supernova**
 
-**No fim desta fatia você consegue:** entrar no Hub, cadastrar Darkrem, criar
-uma mesa, chamar seus jogadores, cadastrar cidades e NPCs com segredos de
-mestre, e achar tudo pela busca.
+Zé usa todos os Atlas, então nenhum deles é opcional.
 
 ---
 
-## Fatia 2 — Fichas e o motor de Fabula Ultima
+## Depois
 
-**Objetivo: ficha de verdade, com as regras funcionando.**
+### Fichas ligadas ao Hub
+Tirar os personagens do navegador e colocar na conta: acessíveis de qualquer
+aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
 
-- A "interface de sistema" (as sete perguntas do documento de arquitetura)
-- Módulo completo de Fabula Ultima
-- Assistente de criação de personagem passo a passo, com validação
-- Ficha renderizada, editável pelo jogador, com derivados calculados na hora
-- Condições e status alterando os números automaticamente
-- Progressão: XP, nível, o que muda ao subir
+- [ ] Salvar e carregar personagem pela conta
+- [ ] Importar os personagens que já estão no navegador
+- [ ] Campanhas: juntar mestre e jogadores numa mesa
+- [ ] Mestre enxerga as fichas da mesa
 
-**No fim desta fatia você consegue:** rodar uma mesa de Fabula Ultima inteira
-com as fichas no Hub.
-
----
-
-## Fatia 3 — Wiki de lore
-
-**Objetivo: parar de perder informação do mundo.**
-
-- Vínculos entre entidades ("mora em", "membro de", "inimigo de")
-- Navegação de wiki: clicar num nome e cair na ficha dele
-- Linha do tempo de eventos históricos
-- Mapas com pontos clicáveis levando para a ficha do lugar
-- Importador: colar texto ou subir arquivo e virar ficha
-- Diários de personagem e notas de sessão escritos pelos jogadores
-
-**No fim desta fatia você consegue:** trazer todo o conteúdo espalhado para
-dentro do Hub e navegar pelo mundo.
+### Outros sistemas
+- [ ] Sistema SAO
+- [ ] Thrylikí Chelóna
+- [ ] Ometion
 
 ---
 
-## Fatia 4 — Painel de mesa ao vivo
+## Fora de escopo
 
-**Objetivo: rodar a sessão online pelo Hub.**
-
-- Estado compartilhado em tempo real (você muda, todos veem na hora)
-- Ordem de iniciativa
-- HP e status dos inimigos, controlados pelo mestre
-- Rolagem de dados dentro do Hub, aplicando modificadores e status
-- Log de rolagens visível para a mesa
-- Registro da sessão no fim
-
-**No fim desta fatia:** o Hub é a mesa. O Discord vira só a voz.
+- **Cadastro de lore** (#36) — cidades, NPCs, facções. Saiu do projeto
+- **IA dentro do app** (#23) — a Claude constrói e ajuda por fora
+- **Dungeon do Dia** (#12)
+- **Qualquer coisa paga** (#5)
 
 ---
 
-## Depois (sem data)
+## Pendência de configuração
 
-- Módulos dos outros sistemas: SAO homebrew, Thrylikí Chelóna, Ometion
-- Tradução de ficha entre sistemas dentro do Hub
-- Tabelas aleatórias e geradores rolando no próprio Hub
-- Vitrine pública dos universos
-
----
-
-## O que NÃO entra
-
-Registrado para não voltar à discussão sem decisão nova:
-
-- **IA dentro do app** (decisão #23) — a Claude constrói e ajuda por fora
-- **Dungeon do Dia** (decisão #12) — continua nas skills e documentos
-- **Qualquer coisa paga** (decisão #5) — plano gratuito é restrição de projeto
+O app do Google está em modo "Testando": só entram contas cadastradas na lista
+de até 100, em *Google Cloud → Público-alvo → Usuários de teste*. Contraria a
+decisão #4 (aberto a qualquer conta Google) e trava quando os jogadores
+entrarem.

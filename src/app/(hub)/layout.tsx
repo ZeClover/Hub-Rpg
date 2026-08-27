@@ -35,8 +35,8 @@ export default async function LayoutDoHub({
           </Link>
 
           <nav className="flex gap-4 text-sm text-texto-suave">
-            <Link href="/universos" className="transition hover:text-texto">
-              Universos
+            <Link href="/fichas" className="transition hover:text-texto">
+              Fichas
             </Link>
           </nav>
 

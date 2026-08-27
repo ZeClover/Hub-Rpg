@@ -1,21 +1,13 @@
 import Link from "next/link";
 
-import { banco } from "@/lib/banco";
+import { SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
-/*
-  Primeira tela de quem entra. Hoje mostra um resumo curto; conforme as fatias
-  avançarem, é aqui que entram as campanhas em andamento e a próxima sessão.
-*/
 export default async function Painel() {
   // O layout já garantiu que existe alguém logado.
   const usuario = (await usuarioAtual())!;
-
-  const quantosUniversos = await banco.universo.count({
-    where: { donoId: usuario.id },
-  });
-
   const primeiroNome = usuario.nome?.split(" ")[0] ?? "mestre";
+  const prontas = SISTEMAS.filter((s) => s.ficha).length;
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-14">
@@ -23,24 +15,20 @@ export default async function Painel() {
 
       <section className="mt-10 rounded-lg border border-borda bg-superficie p-6">
         <p className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
-          Seus universos
+          Fichas disponíveis
         </p>
-        <p className="mt-3 font-titulo text-4xl text-ambar-forte">
-          {quantosUniversos}
-        </p>
+        <p className="mt-3 font-titulo text-4xl text-ambar-forte">{prontas}</p>
         <Link
-          href="/universos"
+          href="/fichas"
           className="mt-4 inline-block text-sm text-texto-suave underline decoration-borda underline-offset-4 transition hover:text-texto"
         >
-          {quantosUniversos === 0
-            ? "Criar o primeiro"
-            : "Ver todos os universos"}
+          Abrir uma ficha
         </Link>
       </section>
 
       <p className="mt-8 text-sm leading-relaxed text-texto-suave">
-        Campanhas, fichas e o cadastro do mundo chegam nos próximos passos da
-        Fatia 1.
+        Seus personagens ainda vivem no navegador de cada aparelho. Trazê-los
+        para o Hub, com login e banco, é o próximo passo.
       </p>
     </main>
   );
