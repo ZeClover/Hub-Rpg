@@ -1127,6 +1127,33 @@ const CONDICOES = [
   {id:'lento',      nome:'Lento',      reduz:['destreza']},
 ];
 
+// Os nove tipos de dano do jogo (pág. 96) e os quatro graus de Afinidade que
+// um personagem pode ter com cada um (pág. 97). Imunidade sempre prevalece
+// sobre Resistência/Vulnerabilidade, e Absorção prevalece sobre todas.
+const TIPOS_DANO = [
+  {id:'fisico', nome:'Físico'}, {id:'ar', nome:'Ar'}, {id:'fogo', nome:'Fogo'},
+  {id:'gelo', nome:'Gelo'}, {id:'luz', nome:'Luz'}, {id:'raio', nome:'Raio'},
+  {id:'terra', nome:'Terra'}, {id:'trevas', nome:'Trevas'}, {id:'veneno', nome:'Veneno'},
+];
+const AFINIDADES_NIVEIS = [
+  {id:'normal',     nome:'Normal'},
+  {id:'vulneravel', nome:'Vulnerável', multiplicador:2},
+  {id:'resistente', nome:'Resistente', multiplicador:0.5},
+  {id:'imune',      nome:'Imune',      multiplicador:0},
+  {id:'absorve',    nome:'Absorve',    multiplicador:-1},
+];
+
+// Quanto de PV um personagem realmente perde (ou recupera, se Absorve) ao
+// sofrer `quantidade` de dano do tipo `tipoId` — já aplicando a Afinidade.
+function resultadoDeDano(p, quantidade, tipoId){
+  const nivel = (p.afinidades || {})[tipoId] || 'normal';
+  const mult = AFINIDADES_NIVEIS.find(a => a.id === nivel)?.multiplicador ?? 1;
+  if(mult === -1) return {pv: -quantidade, texto: `Absorve: recupera ${quantidade} PV.`};
+  if(mult === 0 && nivel === 'imune') return {pv: 0, texto: 'Imune: não perde PV.'};
+  const final = Math.floor(quantidade * mult);
+  return {pv: final, texto: `${nivel==='normal'?'Perde':nivel==='vulneravel'?'Vulnerável — perde':'Resistente — perde'} ${final} PV.`};
+}
+
 const NIVEL_INICIAL = 5;   // pág. 161
 const PI_BASE = 6;         // pág. 163
 const ZENITES_INICIAIS = 500;
@@ -1214,6 +1241,8 @@ function novoPersonagem(nome){
     equipamento: {armaduraId:'', maoPrincipalId:'', maoSecundariaId:''},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
+    // afinidades[tipoId] = 'normal' | 'vulneravel' | 'resistente' | 'imune' | 'absorve'
+    afinidades: {},
     pontosFabula: 3,
     zenites: ZENITES_INICIAIS,
     lacos: [],
@@ -1574,6 +1603,34 @@ function abaRecursos(p){
       <button id="btDescanso" class="destaque">Descanso completo</button>
       <span class="mini">Enche PV, PM e PI, e limpa as condições.</span>
     </div>
+
+    <h2 style="font-size:18px;margin-top:22px">Sofrer dano</h2>
+    <p class="mini" style="margin:6px 0 12px">
+      Digite o dano bruto e o tipo — a Afinidade abaixo já entra na conta.
+    </p>
+    <div class="linha" style="flex-wrap:wrap;gap:10px">
+      <input id="c-dano-valor" type="number" min="0" value="0" style="max-width:90px">
+      <select id="c-dano-tipo">
+        ${TIPOS_DANO.map(t => `<option value="${t.id}">${t.nome}</option>`).join('')}
+      </select>
+      <button id="btAplicarDano">Aplicar em PV</button>
+      <span class="mini" id="dano-previa">${resultadoDeDano(p, 0, TIPOS_DANO[0].id).texto}</span>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Afinidades</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O quanto cada tipo de dano machuca você. Imune vale mais que Vulnerável
+      ou Resistente juntos; Absorve vale mais que tudo — em vez de perder PV,
+      recupera.
+    </p>
+    <div class="grade g3">
+      ${TIPOS_DANO.map(t => `<div><label for="c-af-${t.id}">${t.nome}</label>
+        <select id="c-af-${t.id}" data-afinidade="${t.id}">
+          ${AFINIDADES_NIVEIS.map(n => `<option value="${n.id}" ${((p.afinidades||{})[t.id]||'normal')===n.id?'selected':''}>${n.nome}</option>`).join('')}
+        </select></div>`).join('')}
+    </div>
   </div>
 
   <div class="cartao">
@@ -1931,6 +1988,28 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
     el.onchange = () => mudar(p => p.atual[el.dataset.atualrec] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-afinidade]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      (p.afinidades || (p.afinidades = {}))[el.dataset.afinidade] = el.value;
+    }));
+
+  const danoValor = document.getElementById('c-dano-valor');
+  const danoTipo = document.getElementById('c-dano-tipo');
+  const atualizarPreviaDano = () => {
+    const p = atual(); const previa = document.getElementById('dano-previa');
+    if(!p || !previa || !danoValor || !danoTipo) return;
+    previa.textContent = resultadoDeDano(p, Number(danoValor.value) || 0, danoTipo.value).texto;
+  };
+  if(danoValor) danoValor.oninput = atualizarPreviaDano;
+  if(danoTipo) danoTipo.onchange = atualizarPreviaDano;
+
+  const btAplicarDano = document.getElementById('btAplicarDano');
+  if(btAplicarDano) btAplicarDano.onclick = () => mudar(p => {
+    const r = resultadoDeDano(p, Number(danoValor.value) || 0, danoTipo.value);
+    const atual0 = p.atual.pv ?? pvMaximo(p);
+    p.atual.pv = Math.max(0, Math.min(pvMaximo(p), atual0 - r.pv));
+  });
 
   app.querySelectorAll('[data-condicao]').forEach(el =>
     el.onchange = () => mudar(p => {

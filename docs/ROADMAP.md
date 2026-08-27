@@ -77,7 +77,15 @@ num PDF recortado e foram lidos inteiros.
       poderes que somam Defesa/Iniciativa direto). **Acessórios não
       entraram** — o livro só dá um exemplo (Elmo de Crista) e remete a uma
       lista nas págs. 285-287 que não foi lida ainda
-- [ ] Combate: dano, tipos de dano, afinidades elementais
+- [x] **Combate: dano, tipos de dano, afinidades elementais** — os nove
+      tipos de dano do livro (Físico, Ar, Fogo, Gelo, Luz, Raio, Terra,
+      Trevas, Veneno) e os quatro graus de Afinidade (Vulnerável, Resistente,
+      Imune, Absorve) viraram um card "Afinidades" na aba Recursos, com um
+      seletor por tipo. Junto veio um "Sofrer dano": digita a quantidade
+      bruta e o tipo, e o cálculo já aplica a Afinidade certa antes de
+      descontar de PV (Vulnerável dobra, Resistente divide e arredonda pra
+      baixo, Imune zera, Absorve vira cura) — sem passar de PV máximo nem
+      de zero
 - [ ] Poderes Heroicos
 
 Todas as classes de Fabula Ultima estão prontas: as 15 do Livro Básico e as
