@@ -28,24 +28,48 @@ leitura do Google Drive só extrai o começo de um PDF grande — parou na
 página 193 de 360 do Livro Básico, e baixar o arquivo puro não dava (limite
 de 10 MB, livro com 37 MB). O Zé recortou o PDF nas páginas com as 11
 classes restantes e mandou como anexo, o que permitiu ler o livro inteiro
-por página. Esse é o caminho para os 4 Atlas que faltam: recorte por
-capítulo, mandado como anexo.
+por página com `pdftotext` local (sem limite de tamanho). Esse caminho —
+recorte por capítulo, mandado como anexo no chat — se confirmou também para
+os três Atlas: High Fantasy, Techno Fantasy e Natural Fantasy vieram cada um
+num PDF recortado e foram lidos inteiros.
 
 - [x] Poderes das 15 classes do Livro Básico — **completo.** Todas com os
       cinco poderes conferidos linha a linha no livro, contador de NP e
       benefícios iniciais automáticos. Entropista, Espiritualista e
       Elementalista com catálogo de feitiços; Quimerista com aviso de que os
       dele vêm de observar criaturas em jogo, sem catálogo fixo
+- [x] **Atlas High Fantasy** — Comandante, Dançarino, Simbolista e Virtuoso
+      completos (poderes, benefícios iniciais, catálogos de Dança e Símbolos)
+- [x] **Atlas Techno Fantasy** — Esper, Mutante e Piloto completos (poderes,
+      benefícios, catálogos de Dons Psíquicos e Teriomorfose). Veículo
+      Pessoal do Piloto descrito no texto do poder, sem painel próprio
+      (ver "Fora de escopo por agora" abaixo)
+- [x] **Atlas Natural Fantasy** — Floralista, Gourmet e Invocador completos
+      (poderes, benefícios, catálogo de Magissementes, bloco de referência
+      de Mananciais e Invocações). **Falta o Mercador**: o recorte do Zé
+      parou antes do capítulo dele (por volta da página 158-159) — preciso
+      dessas páginas para fechar o Atlas
 - [ ] Feitiços e rituais, com as seis disciplinas
 - [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
 - [ ] Combate: dano, tipos de dano, afinidades elementais
 - [ ] Poderes Heroicos
-- [ ] **Atlas High Fantasy** — classes, poderes e opções
-- [ ] **Atlas Techno Fantasy** — classes, armas personalizadas, tecnosferas
-- [ ] **Atlas Natural Fantasy**
 - [ ] **Herdeiros da Supernova**
 
-Zé usa todos os Atlas, então nenhum deles é opcional.
+Zé usa todos os Atlas, então nenhum deles é opcional. Faltando: Mercador
+(Natural Fantasy) e o Atlas Herdeiros da Supernova inteiro.
+
+### Fora de escopo por agora (mecânicas grandes demais para entrar de raspão)
+
+Três poderes descrevem sistemas do tamanho de uma aba inteira — foram
+codificados como texto fiel ao livro, mas sem painel interativo próprio,
+para não misturar um "Inventário"/"Equipamento" inteiro dentro da aba
+Poderes:
+
+- **Engenhocas do Inventor** (Alquimia, Infusões, Tecnomagia)
+- **Veículo Pessoal do Piloto** (estrutura e módulos)
+- **Culinária do Gourmet** (tabela de combinação de sabores)
+
+Ficam para quando a ficha ganhar uma aba de equipamento/inventário.
 
 ---
 

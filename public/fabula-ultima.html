@@ -144,6 +144,19 @@ const CLASSES = [
   {id:'mestre-de-armas',  nome:'Mestre de Armas', marcial:['arma corpo a corpo','escudo']},
   {id:'orador',           nome:'Orador'},
   {id:'quimerista',       nome:'Quimerista'},
+  // Atlas: High Fantasy
+  {id:'comandante',  nome:'Comandante', marcial:['arma corpo a corpo','arma à distância']},
+  {id:'dancarino',   nome:'Dançarino'},
+  {id:'simbolista',  nome:'Simbolista'},
+  {id:'virtuoso',    nome:'Virtuoso'},
+  // Atlas: Techno Fantasy
+  {id:'esper',       nome:'Esper'},
+  {id:'mutante',     nome:'Mutante'},
+  {id:'piloto',      nome:'Piloto', marcial:['arma corpo a corpo','arma à distância']},
+  // Atlas: Natural Fantasy
+  {id:'floralista',  nome:'Floralista'},
+  {id:'gourmet',     nome:'Gourmet'},
+  {id:'invocador',   nome:'Invocador'},
 ];
 /* ===========================================================================
    PODERES DE CLASSE (Livro Básico, cap. 3)
@@ -185,17 +198,49 @@ const BENEFICIOS_CLASSE = {
   'mestre-de-armas': [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e escudos marciais'}],
   orador:            [{tipo:'pm', valor:5}],
   quimerista:        [{tipo:'pm', valor:5}],
+  // Atlas: High Fantasy
+  comandante: [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e à distância marciais'}],
+  dancarino:  [{tipo:'escolha', opcoes:['pv','pm'], valor:5}],
+  simbolista: [{tipo:'pi', valor:2}],
+  virtuoso:   [{tipo:'pm', valor:5}],
+  // Atlas: Techno Fantasy
+  esper:      [{tipo:'pm', valor:5}],
+  mutante:    [{tipo:'pv', valor:5}],
+  piloto:     [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e à distância marciais'}],
+  // Atlas: Natural Fantasy
+  floralista: [{tipo:'escolha', opcoes:['pv','pm'], valor:5}],
+  gourmet:    [{tipo:'pi', valor:2}, {tipo:'equipar', texto:'iniciar Projetos de comidas e bebidas únicas'}],
+  invocador:  [{tipo:'escolha', opcoes:['pv','pm'], valor:5}],
 };
 
 // Soma os benefícios fixos de toda classe em que o personagem tem ao menos
 // 1 nível. É por isso que pvMaximo/pmMaximo/piMaximo não pedem mais para o
 // jogador digitar esse bônus à mão.
+//
+// Algumas classes (Dançarino, Floralista, Invocador) dão "PV ou PM, à sua
+// escolha" em vez de um valor fixo — tipo 'escolha'. Guardamos a escolha em
+// p.escolhasBeneficio[classeId] e ela conta como se fosse o tipo escolhido.
+// Sem escolha feita ainda, o padrão é 'pv' — não porque seja a certa, mas
+// para o total nunca ficar contando um benefício que a classe garante.
 function beneficiosDeClasse(p, tipo){
   return p.classes
     .filter(c => c.classeId && c.nivel > 0)
-    .flatMap(c => BENEFICIOS_CLASSE[c.classeId] || [])
-    .filter(b => b.tipo === tipo)
+    .flatMap(c => (BENEFICIOS_CLASSE[c.classeId] || []).map(b => ({...b, classeId: c.classeId})))
+    .filter(b => {
+      if(b.tipo === 'escolha') return (p.escolhasBeneficio[b.classeId] || b.opcoes[0]) === tipo;
+      return b.tipo === tipo;
+    })
     .reduce((soma, b) => soma + b.valor, 0);
+}
+
+// Toda classe do personagem que tem um benefício tipo 'escolha' ainda por
+// decidir ou já decidido — usado para desenhar o seletor na tela.
+function escolhasDeBeneficioPendentes(p){
+  return p.classes
+    .filter(c => c.classeId && c.nivel > 0)
+    .flatMap(c => (BENEFICIOS_CLASSE[c.classeId] || [])
+      .filter(b => b.tipo === 'escolha')
+      .map(b => ({classeId: c.classeId, ...b})));
 }
 
 function textosDeEquipamento(p){
@@ -398,6 +443,142 @@ const PODERES_CLASSE = {
     {id:'quimerismo-ritualista', nome:'Quimerismo Ritualista', max:1,
       descricao:'Você pode fazer rituais da disciplina quimerismo, usando o mesmo par de Atributos escolhido em Imitação Mágica.'},
   ],
+
+  // ---- Atlas: High Fantasy --------------------------------------------
+
+  comandante: [
+    {id:'carga-de-cavalaria', nome:'Carga de Cavalaria', max:5,
+      descricao:'Ação e 10 PM: um aliado que ouça você faz um ataque livre (ou básico, se NPC), com bônus 【NP】 na Precisão, mas sua RA conta como 0 no dano.'},
+    {id:'carruagem-devastadora', nome:'Carruagem Devastadora', max:1,
+      descricao:'Após usar Decreto do Bispo, Carga de Cavalaria ou Roque do Rei, outro PJ que ouça você e ainda não tenha agido nesta rodada age logo em seguida.'},
+    {id:'decreto-do-bispo', nome:'Decreto do Bispo', max:5,
+      descricao:'Ação e 10 PM: todos os custos em PM dobram; ou todo dano ganha +【NP × 3】 adicional. Até o início do seu próximo turno.'},
+    {id:'gambito-da-dama', nome:'Gambito da Dama', max:6,
+      descricao:'Ação: ataque livre com RA 0. Depois, escolha: use Decreto do Bispo/Carga de Cavalaria/Roque do Rei sem ação (paga o PM normal); ou um aliado que ouça você recupera 【5 + (NP × 5)】 PV.'},
+    {id:'roque-do-rei', nome:'Roque do Rei', max:4,
+      descricao:'Ação e 10 PM: ninguém recupera PV/PM; ou toda cura de PM soma 【NP × 5】 adicionais. Até o início do seu próximo turno.'},
+  ],
+
+  dancarino: [
+    {id:'danca', nome:'Dança', max:10,
+      descricao:'Sempre que adquirir este poder, aprenda uma dança. Sem armadura marcial, gaste 10 PM (5 se já dançou algo diferente neste turno) pra apresentar uma dança aprendida — antes ou depois da ação, uma vez por turno.'},
+    {id:'dancarino-de-guerra', nome:'Dançarino de Guerra', max:5,
+      descricao:'Após dançar, ataques com adaga/arremesso/luta/malho causam 【NP】 de dano adicional até o início do seu próximo turno; feitiços ofensivos com arma arcana equipada, idem.'},
+    {id:'me-acompanhe', nome:'Me Acompanhe', max:1,
+      descricao:'Ao dançar uma dança de duração "até o próximo turno", gaste 10 PM a mais: um aliado com Laço de afeto recebe os mesmos benefícios da dança.'},
+    {id:'sapateado-frenetico', nome:'Sapateado Frenético', max:2,
+      descricao:'Ao dançar uma dança de duração "até o próximo turno", testes opostos de acrobacia/coordenação/velocidade ganham 【NP × 2】 até o início do seu próximo turno.'},
+    {id:'troca-de-figurino', nome:'Troca de Figurino', max:1,
+      descricao:'Após dançar, faça a ação Equipamento sem gastar ação.'},
+  ],
+
+  simbolista: [
+    {id:'conexao-simbolica', nome:'Conexão Simbólica', max:1,
+      descricao:'Sabe a direção exata de qualquer criatura com um de seus símbolos, até 2 dias de viagem.'},
+    {id:'miragem', nome:'Miragem', max:1,
+      descricao:'Pode fazer rituais da disciplina ritualismo, inclusive para criar ilusões visuais.'},
+    {id:'simbolismo', nome:'Simbolismo', max:5,
+      descricao:'Sempre que adquirir este poder, aprenda dois símbolos. Pode ter até 【NP + 1】 símbolos ativos. Ação e 2 PI: cria um símbolo aprendido, aplicando em si, num aliado visível, ou num ataque livre (sem dano) que aplica uma cópia em cada inimigo atingido.'},
+    {id:'simbolos-magicos', nome:'Símbolos Mágicos', max:3,
+      descricao:'Um aliado com um de seus símbolos pode destruí-lo na ação Feitiço para lançar um feitiço seu de até 【NP × 10】 PM (ainda paga o custo).'},
+    {id:'toque-pessoal', nome:'Toque Pessoal', max:5,
+      descricao:'Quando uma criatura visível com um de seus símbolos sofre dano ou recupera PV/PM, pode fazer sofrer 【NP】 de dano adicional (ou recuperar 【NP】 PV/PM) a mais.'},
+  ],
+
+  virtuoso: [
+    {id:'barreira-sonora', nome:'Barreira Sonora', max:5,
+      descricao:'Após cantar um verso em volume médio ou forte, dano físico sofrido até o início do próximo turno é reduzido em 【NP】 (antes de Afinidades).'},
+    {id:'canto-da-sereia', nome:'Canto da Sereia', max:1,
+      descricao:'Pode fazer rituais da disciplina ritualismo, inclusive para criar ilusões sonoras.'},
+    {id:'harmonia', nome:'Harmonia', max:3,
+      descricao:'Após afetar inimigos com um verso, com arma arcana equipada: aliados causam 【NP】 de dano adicional a eles até seu próximo turno; ou você recupera 【NP】 PM a cada vez que sofrerem dano.'},
+    {id:'magicanto', nome:'Magicanto', max:10,
+      descricao:'Ação numa cena de conflito: gaste PM variável para cantar um "verso" (regras detalhadas nas págs. 150-151 do Atlas, não incluídas aqui). Ao adquirir, aprende os três volumes mais uma escala e um tom; a cada nova aquisição, aprende mais uma escala ou tom.'},
+    {id:'vibrato', nome:'Vibrato', max:1,
+      descricao:'Após cantar um verso em volume fraco ou médio, faça um ataque livre com RA 0 no dano.'},
+  ],
+
+  // ---- Atlas: Techno Fantasy -------------------------------------------
+
+  esper: [
+    {id:'dons-psiquicos', nome:'Dons Psíquicos', max:5,
+      descricao:'Sempre que adquirir este poder, receba um dom psíquico e, na primeira vez, o Relógio Mental (4 seções, some no fim de cada cena). Usar um dom custa 5 × seções preenchidas em PM (mínimo 5) e preenche mais uma seção.'},
+    {id:'foco-cognitivo', nome:'Foco Cognitivo', max:5,
+      descricao:'No início do turno em conflito, escolha um aliado que ouça ou um inimigo abalado/atordoado/enfurecido visível como foco até seu próximo turno: bônus 【NP】 pra examiná-lo e em Precisão/Magia contra ele; cura nele soma 【NP × 2】.'},
+    {id:'hipercognicao', nome:'Hipercognição', max:1,
+      descricao:'Feitiços e versos que têm seu foco como alvo custam 【NP】 PM a menos (【NP × 2】 se for o único alvo, mínimo 0).'},
+    {id:'navegador', nome:'Navegador', max:1,
+      descricao:'Comunicação telepática com aliados conscientes a 1 dia de viagem (poderes e condições incluídos). Rituais de ritualismo, inclusive para transportar/rastrear na rede de almas.'},
+    {id:'psicocinese', nome:'Psicocinese', max:1,
+      descricao:'Em teste de Precisão, pode substituir um Atributo por Vontade. Ataques corpo a corpo com espada ou arma arcana podem atingir voadores.'},
+  ],
+
+  mutante: [
+    {id:'acromorfose', nome:'Acromorfose', max:3,
+      descricao:'Ataques desarmados: bônus 【NP】 na Precisão e 【6 + (NP × 2)】 de dano adicional. No início do turno, pode trocar a categoria dos ataques desarmados (menos luta) até seu próximo turno.'},
+    {id:'biofagia', nome:'Biofagia', max:4,
+      descricao:'Em crise, recupera 【NP × 5】 PV depois que um ataque ou feitiço ofensivo seu faz um inimigo perder PV.'},
+    {id:'ecdise', nome:'Ecdise', max:1,
+      descricao:'Após sofrer dano não-físico, gaste 10 PV para ganhar Resistência àquele tipo até usar este poder de novo.'},
+    {id:'genoclepse', nome:'Genoclepse', max:2,
+      descricao:'Ao causar dano a um NPC, descubra a espécie dele; o mestre escolhe 【NP】 terioformas que reflitam esse NPC — se você já tiver Teriomorfose, pode usá-las mesmo sem tê-las aprendido, pagando o custo em PV.'},
+    {id:'teriomorfose', nome:'Teriomorfose', max:6,
+      descricao:'Sempre que adquirir este poder, aprenda uma terioforma. Ação e um terço dos PV atuais: manifesta até duas terioformas aprendidas.'},
+  ],
+
+  piloto: [
+    {id:'compressao-tecnologica', nome:'Compressão Tecnológica', max:1,
+      descricao:'Com o veículo vazio, pode fazê-lo sumir a qualquer momento. Se não estiver presente e houver espaço, ação Inventário e 2 PI o trazem de volta perto de você, embarcando sem custo.'},
+    {id:'configuracao-flexivel', nome:'Configuração Flexível', max:4,
+      descricao:'Nas ações Equipamento ou Guarda pilotando: desative até 【NP】 módulos ativos e ative até 【NP】 módulos inativos.'},
+    {id:'coracao-no-motor', nome:'Coração no Motor', max:3,
+      descricao:'No início do turno em conflito, pilotando, gaste 10 PM: seu próximo dano causado ganha 【NP × 2】 adicional; ou o próximo dano sofrido reduz 【NP × 2】; ou recupera-se de lento ou fraco.'},
+    {id:'pulso-firme', nome:'Pulso Firme', max:1,
+      descricao:'Em teste de Precisão com módulo de arma, pode substituir um Atributo por Vigor.'},
+    {id:'veiculo-pessoal', nome:'Veículo Pessoal', max:5,
+      descricao:'Ao adquirir, recebe um veículo pessoal com uma estrutura (Montaria, Exoesqueleto ou Mecha) e três módulos à escolha. A cada nova aquisição, ganha mais dois módulos. Catálogo completo de estruturas e módulos (armas, armadura, suporte) nas págs. 160-167 do Atlas — não incluído nesta ficha ainda.'},
+  ],
+
+  // ---- Atlas: Natural Fantasy --------------------------------------------
+
+  floralista: [
+    {id:'arvore-da-vida', nome:'Árvore da Vida', max:5,
+      descricao:'Ao remover uma magissemente do jardim, uma criatura visível em crise recupera 【5 + (NP × 5)】 PV.'},
+    {id:'cloromancia', nome:'Cloromancia', max:10,
+      descricao:'Sempre que adquirir este poder, conheça um tipo de magissemente. Em conflito, sem magissemente no jardim, ação e 20 PM plantam uma que você conheça.'},
+    {id:'enxerto', nome:'Enxerto', max:1,
+      descricao:'Com uma magissemente no jardim e ao menos 1 seção do relógio de germinação preenchida, use uma ação pra trocá-la por outra que conheça (o relógio não muda).'},
+    {id:'influencia-verdejante', nome:'Influência Verdejante', max:1,
+      descricao:'Rituais de ritualismo, inclusive para criar, animar e controlar vegetação, pólen, esporos e toxinas (não NPCs planta).'},
+    {id:'jardinagem-marcial', nome:'Jardinagem Marcial', max:3,
+      descricao:'Após plantar via Cloromancia (não Enxerto): ataque livre com RA 0; ou ação Feitiço sem ação, com custo até 【5 + (NP × 5)】 PM (ainda paga o custo).'},
+  ],
+
+  gourmet: [
+    {id:'cozinheiro-viajante', nome:'Cozinheiro Viajante', max:3,
+      descricao:'Após cada rolagem de viagem, se tiver Culinária, recebe 【NP × 2】 ingredientes.'},
+    {id:'culinaria', nome:'Culinária', max:5,
+      descricao:'Ao descansar num assentamento, recebe 【NP】 ingredientes. Ação: combine 2-3 ingredientes numa iguaria (efeito por combinação de sabor, tabela de 12 resultados) e aplique em si e um aliado, ou num ataque livre sem dano que aplica a cada inimigo atingido. Carrega até 【10 + (NP × 5)】 ingredientes, que não estragam.'},
+    {id:'feito-com-amor', nome:'Feito com Amor', max:3,
+      descricao:'Ao aplicar uma iguaria em si ou aliado, gaste até 【NP × 10】 PM: a cada 10 PM, aplica em mais um aliado visível.'},
+    {id:'garfo-e-faca', nome:'Garfo e Faca', max:1,
+      descricao:'No ataque livre de Culinária com só 2 ingredientes, pode causar dano normal também, com RA 0.'},
+    {id:'sal-e-pimenta', nome:'Sal e Pimenta', max:1,
+      descricao:'Ao preparar uma iguaria, gaste 2 PI para trocar o sabor de um ingrediente por outro à escolha.'},
+  ],
+
+  invocador: [
+    {id:'cascata', nome:'Cascata', max:5,
+      descricao:'Quando um inimigo visível perde PV por dano de um aliado com bônus de uma invocação "Praga" sua, faça um ataque livre nele com bônus 【NP】 na Precisão; se acertar, o dano vira do mesmo tipo do aliado e as invocações "Praga" no alvo se dissipam.'},
+    {id:'expandir-manancial', nome:'Expandir Manancial', max:5,
+      descricao:'Com arco, arma arcana, arma arremessável, arma de luta, espada ou mangual equipados: invocações "Explosão" causam 【NP】 de dano adicional, e o adicional de "Praga" aumenta em 【NP】.'},
+    {id:'harmonia-elemental', nome:'Harmonia Elemental', max:2,
+      descricao:'Comunica-se com elementais. Ao curar PV com invocação ou feitiço, com elemental presente na cena, cura 【NP × 5】 PV a mais.'},
+    {id:'invocacao', nome:'Invocação', max:3,
+      descricao:'Ação e 5 PM: invoque a energia de um manancial presente na cena. 【NP】 determina o acesso — NP 1 dá "explosão", NP 2 dá "explosão" e "praga", NP 3 dá tudo.'},
+    {id:'invocacoes-conectadas', nome:'Invocações Conectadas', max:3,
+      descricao:'Ao invocar, gaste até 【NP × 10】 PM a mais: a cada 10 PM, mais uma criatura visível vira alvo.'},
+  ],
 };
 
 // Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
@@ -517,14 +698,240 @@ const FEITICOS_ESPIRITUALISTA = [
     descricao:'Escolha fraco ou lento: cada alvo atingido é afligido pela condição.'},
 ];
 
+/* ---------------------------------------------------------------------
+   Catálogos dos Atlas: cada um é a lista que um poder de "aprenda um(a)
+   X a cada compra" concede. Mesmo molde dos feitiços do Livro Básico.
+   --------------------------------------------------------------------- */
+
+// Danças do Virtuoso... não, do Dançarino (pág. 140-141 do Atlas High Fantasy).
+const DANCAS_DEF = [
+  {id:'anjo',      nome:'Dança do Anjo', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de luz; ou todo dano que causar vira luz.'},
+  {id:'banshee',   nome:'Dança da Banshee', duracao:'Instantânea',
+    descricao:'Uma criatura visível: se já estiver lenta, fica abalada.'},
+  {id:'fenix',     nome:'Dança da Fênix', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de fogo; ou todo dano que causar vira fogo.'},
+  {id:'golem',     nome:'Dança do Golem', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de raio; ou todo dano que causar vira raio.'},
+  {id:'grifo',     nome:'Dança do Grifo', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de ar; ou todo dano que causar vira ar.'},
+  {id:'hidra',     nome:'Dança da Hidra', duracao:'Até o início do próximo turno',
+    descricao:'Após sofrer dano, escolha: recupera 5 PV; ou recupera 5 PM.'},
+  {id:'ieti',      nome:'Dança do Ieti', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de gelo; ou todo dano que causar vira gelo.'},
+  {id:'kraken',    nome:'Dança do Kraken', duracao:'Instantânea',
+    descricao:'Uma criatura visível: se já estiver atordoada, fica lenta.'},
+  {id:'leao',      nome:'Dança do Leão', duracao:'Instantânea',
+    descricao:'Recupera-se imediatamente de uma condição à escolha.'},
+  {id:'menade',    nome:'Dança da Mênade', duracao:'Instantânea',
+    descricao:'Uma criatura visível perde PM igual ao seu dado atual de Destreza.'},
+  {id:'mirmidao',  nome:'Dança do Mirmidão', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de terra; ou todo dano que causar vira terra.'},
+  {id:'morcego',   nome:'Dança do Morcego', duracao:'Até o início do próximo turno',
+    descricao:'Escolha um: fica Resistente a dano de trevas; ou todo dano que causar vira trevas.'},
+  {id:'ouroboros', nome:'Dança do Ouroboros', duracao:'Instantânea',
+    descricao:'Um aliado visível que não agiu nesta rodada age logo após você.'},
+  {id:'pavao',     nome:'Dança do Pavão', duracao:'Instantânea',
+    descricao:'Uma criatura visível: no próximo ataque/feitiço ofensivo dela na cena, deve incluir você entre os alvos, se possível.'},
+  {id:'pesadelo',  nome:'Dança do Pesadelo', duracao:'Instantânea',
+    descricao:'Uma criatura visível: se já estiver abalada, fica fraca.'},
+  {id:'satiro',    nome:'Dança do Sátiro', duracao:'Instantânea',
+    descricao:'Uma criatura visível: se já estiver fraca, fica atordoada.'},
+  {id:'unicornio', nome:'Dança do Unicórnio', duracao:'Instantânea',
+    descricao:'Um aliado com Laço com você: os dois recuperam PV igual ao seu dado atual de Destreza (+5 no nível 20+, +10 no nível 40+).'},
+];
+
+// Símbolos do Simbolista (pág. 144-147 do Atlas High Fantasy). Simbolismo
+// concede DOIS símbolos a cada compra — por isso porCompra:2 na tabela
+// LISTAS_DE_FEITICO mais abaixo.
+const SIMBOLOS_DEF = [
+  {id:'amarras',      nome:'Símbolo das Amarras',
+    descricao:'O dado atual dos Atributos da criatura nunca passa do dado básico.'},
+  {id:'crescimento',  nome:'Símbolo do Crescimento',
+    descricao:'Feitiços "até três criaturas" lançados por ela passam a "até quatro criaturas" (ainda paga o PM do quarto alvo).'},
+  {id:'criacao',      nome:'Símbolo da Criação',
+    descricao:'Ao precisar gastar PI em conflito, pode destruir este símbolo pra não gastar.'},
+  {id:'desespero',    nome:'Símbolo do Desespero',
+    descricao:'Cura de PV/PM em conflito vale só metade.'},
+  {id:'destino',      nome:'Símbolo do Destino',
+    descricao:'Após ela testar algo (sem crítico nem falha crítica), gaste 1 Ponto de Fabula pra forçar nova rolagem dos dois dados. Uma vez por teste.'},
+  {id:'elementos',    nome:'Símbolo dos Elementos',
+    descricao:'Escolha um tipo de dano ao criar. Vendo a criatura causar dano, gaste PM igual a um terço do dano causado pra transformar todo esse dano no tipo escolhido.'},
+  {id:'feiticaria',   nome:'Símbolo da Feitiçaria',
+    descricao:'Feitiços que a têm como alvo custam 5 PM a menos (mínimo 5), cumulativo se vários alvos tiverem o símbolo.'},
+  {id:'fluxo',        nome:'Símbolo do Fluxo',
+    descricao:'Escolha uma condição ao criar. Depois escolha: ela fica Imune à condição; ou perde a Imunidade e não pode recuperá-la.'},
+  {id:'fraqueza',     nome:'Símbolo da Fraqueza',
+    descricao:'Escolha um tipo de dano ao criar. Ela sofre 5 de dano adicional desse tipo.'},
+  {id:'inimizade',    nome:'Símbolo da Inimizade',
+    descricao:'Enquanto ela estiver em crise, inimigos visíveis dela devem incluí-la nos alvos de ataques/feitiços ofensivos, se possível.'},
+  {id:'metamorfose',  nome:'Símbolo da Metamorfose',
+    descricao:'Escolha uma espécie ao criar. Ela conta como dessa espécie para efeitos e poderes (não muda Afinidades). Não se aplica a PJs.'},
+  {id:'proibicao',    nome:'Símbolo da Proibição',
+    descricao:'Escolha uma ação ao criar. Ao fazê-la, perde 5 PV e 5 PM antes (10/20 nos níveis 20+/40+).'},
+  {id:'prosperidade', nome:'Símbolo da Prosperidade',
+    descricao:'Ao gastar Ponto de Fabula pra invocar Traço ou Laço, também recebe 100 zênites.'},
+  {id:'protecao',     nome:'Símbolo da Proteção',
+    descricao:'Escolha um tipo de dano ao criar. Ela se torna Resistente a ele.'},
+  {id:'rebeliao',     nome:'Símbolo da Rebelião',
+    descricao:'Com um vilão na cena, testes opostos dela têm sucesso crítico com dados iguais (sem falha crítica).'},
+  {id:'renascimento', nome:'Símbolo do Renascimento',
+    descricao:'Ao ir a 0 PV, pode destruir este símbolo: fica com exatamente 1 PV em vez disso.'},
+  {id:'sacrificio',   nome:'Símbolo do Sacrifício',
+    descricao:'Vendo-a sofrer dano, pode destruir este símbolo: você sofre o mesmo dano no lugar dela.'},
+  {id:'verdade',      nome:'Símbolo da Verdade',
+    descricao:'Testes pra examinar/localizar ela, e testes de ataque/feitiço ofensivo contra ela, ganham +2 (cumulativo com vários alvos marcados).'},
+  {id:'vinganca',     nome:'Símbolo da Vingança',
+    descricao:'Quando uma criatura em crise a atinge com ataque ou feitiço ofensivo, essa criatura recupera 5 PV e 5 PM.'},
+];
+
+// Dons Psíquicos do Esper (pág. 152-153 do Atlas Techno Fantasy). O custo em
+// PM de cada dom depende do Relógio Mental (5 × seções preenchidas, mínimo 5).
+const DONS_PSIQUICOS_DEF = [
+  {id:'atmocinese', nome:'Atmocinese', evento:'Quando causar dano',
+    descricao:'O dano vira ar ou raio e a fonte causa 【2 + seções do Relógio Mental】 de dano adicional.'},
+  {id:'clarividencia', nome:'Clarividência', evento:'Quando um NPC virar seu foco ou ganhar um Laço com você',
+    descricao:'Uma pergunta ao mestre sobre esse NPC, respondida com a verdade. Uma vez por NPC.'},
+  {id:'escudo-psiquico', nome:'Escudo Psíquico', evento:'Após um inimigo visível testar Precisão ou Magia',
+    descricao:'Pode considerar sua Defesa e Def. Mágica como 【dado atual de Vontade + (2 × seções do Relógio Mental)】, se for melhor que o valor atual.'},
+  {id:'fotocinese', nome:'Fotocinese', evento:'Quando causar dano',
+    descricao:'O dano vira trevas ou luz e a fonte causa 【2 + seções do Relógio Mental】 de dano adicional.'},
+  {id:'gravitocinese', nome:'Gravitocinese', evento:'Quando causar dano',
+    descricao:'O dano vira terra ou físico e causa 【2 + seções do Relógio Mental】 adicional; voadores atingidos pousam.'},
+  {id:'presenca-reconfortante', nome:'Presença Reconfortante', evento:'Após dar cobertura na ação Guarda',
+    descricao:'O aliado recupera 【10 + (5 × seções do Relógio Mental)】 PM; se for seu foco, recupera-se de abalado, atordoado ou enfurecido.'},
+  {id:'retaliacao-psiquica', nome:'Retaliação Psíquica', evento:'Após um inimigo vencer teste oposto contra você ou tirar seu PV',
+    descricao:'O inimigo perde 【5 + (5 × seções do Relógio Mental)】 PM e fica abalado ou atordoado.'},
+  {id:'termocinese', nome:'Termocinese', evento:'Quando causar dano',
+    descricao:'O dano vira fogo ou gelo e a fonte causa 【2 + seções do Relógio Mental】 de dano adicional.'},
+  {id:'transferencia-de-vida', nome:'Transferência de Vida', evento:'Quando fizer inimigos perderem PV',
+    descricao:'Você ou seu foco, se em crise, recupera 【5 + (5 × seções do Relógio Mental)】 PV.'},
+];
+
+// Terioformas do Mutante (pág. 156-157 do Atlas Techno Fantasy).
+const TERIOFORMAS_DEF = [
+  {id:'anfibia',      nome:'Anfíbia',
+    descricao:'Respira sob a água, vê bem em luz fraca. Ao curar PV, +5 PV e recupera-se de uma condição à escolha.'},
+  {id:'arpatida',     nome:'Arpátida',
+    descricao:'Astúcia sobe um passo (máx. d12). Primeiro dano do turno a uma criatura em crise causa +5 de dano.'},
+  {id:'dinamoteria',  nome:'Dinamotéria',
+    descricao:'Vigor atual sobe um passo (máx. d12). Sucesso em teste de relógio com Vigor preenche/apaga 1 seção a mais.'},
+  {id:'eletrofora',   nome:'Eletrófora',
+    descricao:'Todo dano causado vira raio. Enquanto isso, inimigo que perder 20+ PV desses ataques desarmados fica lento.'},
+  {id:'neurofagoida', nome:'Neurofagoida',
+    descricao:'Ao usar Biofagia, recupera também PM igual a 【4 + seu NP em Teriomorfose】.'},
+  {id:'pirofora',     nome:'Pirófora',
+    descricao:'Todo dano causado vira fogo. Inimigo que perder 20+ PV de ataques desarmados fica atordoado.'},
+  {id:'placofora',    nome:'Placófora',
+    descricao:'Defesa considerada 【13 + metade do NP em Teriomorfose】, se for melhor que a atual.'},
+  {id:'pneumofora',   nome:'Pneumófora',
+    descricao:'Todo dano causado vira ar. Inimigo que perder 20+ PV de ataques desarmados fica fraco.'},
+  {id:'polipoda',     nome:'Polípoda',
+    descricao:'Ataques desarmados ganham a propriedade multi (3).'},
+  {id:'pterotéria',   nome:'Pterotéria',
+    descricao:'Você voa; ataques corpo a corpo atingem voadores e só é atingido corpo a corpo por quem também alcança voadores. Perde o benefício ao sofrer dano de ar/raio/gelo em conflito, até seu próximo turno.'},
+  {id:'taquiteria',   nome:'Taquitéria',
+    descricao:'Destreza atual sobe um passo (máx. d12). Sucesso em teste de relógio com Destreza preenche/apaga 1 seção a mais.'},
+  {id:'toxicofora',   nome:'Toxicófora',
+    descricao:'Todo dano causado vira veneno. Inimigo que perder 20+ PV de ataques desarmados fica envenenado.'},
+];
+
+// Magissementes do Floralista (pág. 141-147 do Atlas Natural Fantasy). O
+// efeito muda conforme as seções preenchidas no relógio de germinação (T).
+const MAGISSEMENTES_DEF = [
+  {id:'asfodelo', nome:'Asfódelo-do-Cemitério',
+    descricao:'T1: um inimigo visível fica abalado. T2: todos os inimigos visíveis ficam abalados. T3: cada inimigo abalado visível sofre 【15 + seu NP em Cloromancia】 de dano de trevas.'},
+  {id:'beladona', nome:'Beladona-de-Folha-Curva',
+    descricao:'T0-1: todo seu dano vira veneno (ignora Imunidade/Resistência). T2-3: idem, e o primeiro dano de veneno do turno soma 【seu NP em Cloromancia】 adicional, envenenando quem perder PV.'},
+  {id:'cravo', nome:'Cravo-Furioso',
+    descricao:'T0-1: ao sair do jardim, um inimigo escolhido deve incluir você nos alvos do próximo ataque/feitiço ofensivo dele até seu próximo turno; até o fim do turno pode removê-la e zerar o relógio.'},
+  {id:'crisantemo', nome:'Crisântemo-Ardente',
+    descricao:'T1-3: escolha terra ou fogo — todo dano seu e de aliados na cena vira esse tipo (ignora Resistências) até trocar ou ela sair do jardim.'},
+  {id:'dalia', nome:'Dália-do-Deserto',
+    descricao:'T0-1: Resistência a ar e fogo. T2-3: você e aliados na cena têm essa Resistência.'},
+  {id:'dente-de-leao', nome:'Dente-de-Leão-Saltitante',
+    descricao:'T1-3: escolha ar ou raio — todo dano seu e de aliados na cena vira esse tipo (ignora Resistências) até trocar ou ela sair do jardim.'},
+  {id:'espinheiro', nome:'Espinheiro-Chifrudo',
+    descricao:'T0-1: Resistência a trevas e veneno. T2-3: você e aliados na cena têm essa Resistência.'},
+  {id:'estrelicia', nome:'Estrelícia-Prateada',
+    descricao:'T0-1: Resistência a raio e luz. T2-3: você e aliados na cena têm essa Resistência.'},
+  {id:'gazania', nome:'Gazânia Peregrina',
+    descricao:'T1-2: no fim do turno, você ou alguém visível recupera 2 PI. T3: você e todos que vê recuperam 1 PI.'},
+  {id:'ginkgo', nome:'Ginkgo-Dourado',
+    descricao:'T1: você e aliados visíveis recuperam-se de abalado/atordoado/enfurecido. T2-3: recuperam 【5 + seu NP em Cloromancia】 PM.'},
+  {id:'iris', nome:'Íris-Eremita',
+    descricao:'T1: revela nível, patente, espécie, PV/PM máx, Traços, Atributos, Defesa e Def.M de um inimigo visível. T2-3: idem, mais Afinidades.'},
+  {id:'lirio', nome:'Lírio-Medicinal',
+    descricao:'T0-1: você e aliados visíveis recuperam-se de envenenado/fraco/lento. T2-3: recuperam 【15 + seu NP em Cloromancia】 PV.'},
+  {id:'lotus', nome:'Lótus-Oceânica',
+    descricao:'T0-1: imune a atordoado e lento. T2: Destreza e Astúcia sobem um passo (máx d12). T3: você e aliados visíveis também.'},
+  {id:'magnolia', nome:'Magnólia-Lunar',
+    descricao:'T1-3: escolha gelo ou luz — todo dano seu e de aliados na cena vira esse tipo (ignora Resistências) até trocar ou ela sair do jardim.'},
+  {id:'muralha', nome:'Muralha-de-Espinhos',
+    descricao:'T0-1: Resistência a dano físico. T2: idem, e devolve 【5 + seu NP em Cloromancia】 de dano físico a quem acertar corpo a corpo. T3: devolve esse dano duas vezes.'},
+  {id:'narciso', nome:'Narciso-do-Ártico',
+    descricao:'T0-1: Resistência a terra e gelo. T2-3: você e aliados na cena têm essa Resistência.'},
+  {id:'orquidea', nome:'Orquídea-Listrada',
+    descricao:'T1: um inimigo visível fica fraco. T2: todos os inimigos visíveis ficam fracos. T3: cada inimigo fraco visível sofre 【15 + seu NP em Cloromancia】 de dano de veneno.'},
+  {id:'peonia', nome:'Peônia-Estrelada',
+    descricao:'T1: um inimigo visível fica atordoado. T2: todos ficam atordoados. T3: cada inimigo atordoado visível sofre 【15 + seu NP em Cloromancia】 de dano de luz.'},
+  {id:'protea', nome:'Protea-Real',
+    descricao:'T0-1: imune a abalado e fraco. T2: Vigor e Vontade sobem um passo (máx d12). T3: você e aliados visíveis também.'},
+  {id:'rosa', nome:'Rosa-Serrilhada',
+    descricao:'T1: um inimigo visível fica lento. T2: todos ficam lentos. T3: cada inimigo lento visível sofre 【15 + seu NP em Cloromancia】 de dano de luz.'},
+];
+
+// Mananciais e invocações do Invocador (pág. 155-157 do Atlas Natural
+// Fantasy). Não é um catálogo de "escolha e memorize": em cada cena o
+// mestre decide quais dois mananciais estão presentes, então isto fica
+// como referência, não como seletor.
+const MANANCIAIS_DEF = [
+  {nome:'Manancial de Ar', tipo:'ar', invocacoes:[
+    {nome:'Aero Explosão', tipo:'explosão', descricao:'20 de dano de ar ao alvo.'},
+    {nome:'Aero Praga', tipo:'praga', descricao:'Até o início do seu próximo turno, +5 de dano de todas as fontes de raio e fogo contra o alvo.'},
+    {nome:'Brisa', tipo:'cura', descricao:'O alvo recupera 30 PV.'},
+    {nome:'Tornado', tipo:'controle', descricao:'10 de dano de ar e o alvo fica atordoado.'},
+  ]},
+  {nome:'Manancial de Terra', tipo:'terra', invocacoes:[
+    {nome:'Geo Explosão', tipo:'explosão', descricao:'20 de dano de terra ao alvo.'},
+    {nome:'Geo Praga', tipo:'praga', descricao:'Até o início do seu próximo turno, +5 de dano de todas as fontes de ar e gelo contra o alvo.'},
+    {nome:'Germinar', tipo:'cura', descricao:'O alvo recupera 30 PV.'},
+    {nome:'Areia Movediça', tipo:'controle', descricao:'10 de dano de terra e o alvo fica lento.'},
+  ]},
+  {nome:'Manancial de Fogo', tipo:'fogo', invocacoes:[
+    {nome:'Pyro Explosão', tipo:'explosão', descricao:'20 de dano de fogo ao alvo.'},
+    {nome:'Pyro Praga', tipo:'praga', descricao:'Até o início do seu próximo turno, +5 de dano de todas as fontes de terra e gelo contra o alvo.'},
+    {nome:'Centelha', tipo:'controle', descricao:'10 de dano de fogo e o alvo fica abalado.'},
+    {nome:'Fumaça', tipo:'controle', descricao:'O alvo perde 20 PM e fica fraco.'},
+  ]},
+  {nome:'Manancial de Raio', tipo:'raio', invocacoes:[
+    {nome:'Electro Explosão', tipo:'explosão', descricao:'20 de dano de raio ao alvo.'},
+    {nome:'Electro Praga', tipo:'praga', descricao:'Até o início do seu próximo turno, +5 de dano de todas as fontes de terra e fogo contra o alvo.'},
+    {nome:'Estática', tipo:'controle', descricao:'10 de dano de raio e o alvo fica lento.'},
+    {nome:'Trovão', tipo:'controle', descricao:'O alvo perde 20 PM e fica atordoado.'},
+  ]},
+  {nome:'Manancial de Água', tipo:'gelo', invocacoes:[
+    {nome:'Hidro Explosão', tipo:'explosão', descricao:'20 de dano de gelo ao alvo.'},
+    {nome:'Hidro Praga', tipo:'praga', descricao:'Até o início do seu próximo turno, +5 de dano de todas as fontes de ar e raio contra o alvo.'},
+    {nome:'Calafrio', tipo:'controle', descricao:'O alvo perde 20 PM e fica atordoado.'},
+    {nome:'Congelamento', tipo:'controle', descricao:'10 de dano de gelo e o alvo fica fraco.'},
+  ]},
+];
+
 // As classes cujo poder de "aprender feitiço a cada compra" segue exatamente
 // o mesmo molde (Magia X / lista fixa de feitiços). Quimerista fica de fora
 // de propósito: os feitiços dele vêm de observar criaturas em jogo, não de
 // um catálogo — não existe lista pra escolher aqui.
 const LISTAS_DE_FEITICO = {
-  elementalista: {poderId:'magia-elemental', lista: FEITICOS_ELEMENTALISTA},
-  entropista:    {poderId:'magia-entropica', lista: FEITICOS_ENTROPISTA},
-  espiritualista:{poderId:'magia-espiritual',lista: FEITICOS_ESPIRITUALISTA},
+  elementalista: {poderId:'magia-elemental',  lista: FEITICOS_ELEMENTALISTA, rotulo:'Feitiços conhecidos'},
+  entropista:    {poderId:'magia-entropica',  lista: FEITICOS_ENTROPISTA,    rotulo:'Feitiços conhecidos'},
+  espiritualista:{poderId:'magia-espiritual', lista: FEITICOS_ESPIRITUALISTA,rotulo:'Feitiços conhecidos'},
+  dancarino:     {poderId:'danca',            lista: DANCAS_DEF,            rotulo:'Danças conhecidas'},
+  esper:         {poderId:'dons-psiquicos',   lista: DONS_PSIQUICOS_DEF,    rotulo:'Dons conhecidos'},
+  mutante:       {poderId:'teriomorfose',     lista: TERIOFORMAS_DEF,       rotulo:'Terioformas aprendidas'},
+  floralista:    {poderId:'cloromancia',      lista: MAGISSEMENTES_DEF,     rotulo:'Magissementes conhecidas'},
+  // Simbolismo aprende DOIS símbolos a cada compra — só ele usa porCompra.
+  simbolista:    {poderId:'simbolismo',       lista: SIMBOLOS_DEF,          rotulo:'Símbolos conhecidos', porCompra:2},
 };
 
 /* Condições (pág. 94). Cada uma reduz um ou dois Atributos em UM passo de
@@ -591,6 +998,9 @@ function novoPersonagem(nome){
     // escolhas: { 'elementalista': { 'magia-elemental': 2, ... }, ... } —
     // quantas vezes cada poder daquela classe foi escolhido (o NP dele).
     poder: {escolhas: {}, arcanoVinculado: null, feiticos: {}},
+    // Classe cujo benefício inicial é "PV ou PM à sua escolha" — a decisão
+    // do jogador, lida por beneficiosDeClasse().
+    escolhasBeneficio: {},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     pontosFabula: 3,
@@ -837,6 +1247,18 @@ function abaAtributos(p){
     </div>
     ${textosDeEquipamento(p).length ? `<p class="ok">Pode equipar: ${textosDeEquipamento(p).join('; ')}.</p>` : ''}
 
+    ${escolhasDeBeneficioPendentes(p).map(b => {
+      const nomeClasse = CLASSES.find(x => x.id === b.classeId)?.nome || b.classeId;
+      const atual = p.escolhasBeneficio[b.classeId] || b.opcoes[0];
+      return `<div style="margin-top:14px">
+        <label for="c-escolha-${b.classeId}">${nomeClasse}: PV ou PM (+${b.valor}, à sua escolha)</label>
+        <select id="c-escolha-${b.classeId}" data-escolha-beneficio="${b.classeId}" style="max-width:200px">
+          <option value="pv" ${atual==='pv'?'selected':''}>PV máximos</option>
+          <option value="pm" ${atual==='pm'?'selected':''}>PM máximos</option>
+        </select>
+      </div>`;
+    }).join('')}
+
     <h2 style="font-size:18px;margin-top:22px">Equipamento (provisório)</h2>
     <p class="mini" style="margin:6px 0 16px">
       Até a aba de Inventário existir, anote aqui o que sua armadura e escudo
@@ -969,6 +1391,7 @@ function abaPoderes(p){
           ${poder.id === 'imitacao-magica' && np > 0 ? `<p class="mini" style="margin-top:8px;padding:8px;border:1px solid var(--borda);border-radius:8px">
             Sem lista fixa: os feitiços de Quimerista vêm de observar criaturas fera, monstro ou planta em jogo. Anote nas <strong>Anotações</strong> quais você já aprendeu (limite de ${np + 2}).
           </p>` : ''}
+          ${poder.id === 'invocacao' && np > 0 ? blocoManaciais() : ''}
         </div>`;
       }).join('')}
     </div>`;
@@ -991,13 +1414,28 @@ function blocoArcano(p){
   </div>`;
 }
 
+// Monta a linha de "ficha técnica" de um item de catálogo só com os campos
+// que ele realmente tem — feitiço tem PM/alvo/duração, dança só duração,
+// dom tem "evento", terioforma e magissemente não têm nenhum desses.
+function fichaTecnica(item){
+  const partes = [];
+  if(item.pm) partes.push(`${item.pm} PM`);
+  if(item.alvo) partes.push(item.alvo);
+  if(item.duracao) partes.push(item.duracao);
+  if(item.evento) partes.push(item.evento);
+  return partes.length ? `${partes.join(' · ')}<br>` : '';
+}
+
 function blocoFeiticos(p, classeId, np){
-  const lista = LISTAS_DE_FEITICO[classeId].lista;
+  const entrada = LISTAS_DE_FEITICO[classeId];
+  const lista = entrada.lista;
+  // Simbolismo dá dois símbolos por compra; os outros dão um.
+  const vagas = np * (entrada.porCompra || 1);
   const escolhidos = p.poder.feiticos[classeId] || [];
   return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
-    <p class="mini">Feitiços conhecidos (${escolhidos.filter(Boolean).length} de ${np}):</p>
+    <p class="mini">${entrada.rotulo} (${escolhidos.filter(Boolean).length} de ${vagas}):</p>
     <div class="grade g2" style="margin-top:8px">
-      ${Array.from({length: np}).map((_, i) => `
+      ${Array.from({length: vagas}).map((_, i) => `
         <select data-feitico="${classeId}|${i}">
           <option value="">— escolher —</option>
           ${lista.map(f => `<option value="${f.id}" ${escolhidos[i]===f.id?'selected':''}>${f.nome}${f.ofensivo?' (ofensivo)':''}</option>`).join('')}
@@ -1006,8 +1444,22 @@ function blocoFeiticos(p, classeId, np){
     ${escolhidos.filter(Boolean).map(id => {
       const f = lista.find(x => x.id === id);
       return f ? `<p class="mini" style="margin-top:8px">
-        <strong>${f.nome}</strong> — ${f.pm} PM · ${f.alvo} · ${f.duracao}<br>${f.descricao}</p>` : '';
+        <strong>${f.nome}</strong> — ${fichaTecnica(f)}${f.descricao}</p>` : '';
     }).join('')}
+  </div>`;
+}
+
+// Mananciais do Invocador: referência estática, não é uma escolha do
+// jogador — em cada cena é o mestre que decide quais dois mananciais estão
+// presentes (pág. 155 do Atlas Natural Fantasy).
+function blocoManaciais(){
+  return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
+    <p class="mini">Mananciais e invocações — o mestre escolhe dois por cena:</p>
+    ${MANANCIAIS_DEF.map(m => `
+      <p class="mini" style="margin-top:10px"><strong>${m.nome}</strong></p>
+      <ul style="margin:4px 0 0 18px;padding:0">
+        ${m.invocacoes.map(i => `<li class="mini">${i.nome} <span style="color:var(--suave)">(${i.tipo})</span> — ${i.descricao}</li>`).join('')}
+      </ul>`).join('')}
   </div>`;
 }
 
@@ -1079,6 +1531,9 @@ function ligarEventos(){
   app.querySelectorAll('[data-bonus]').forEach(el =>
     el.onchange = () => mudar(p => p.bonus[el.dataset.bonus] = Number(el.value) || 0));
 
+  app.querySelectorAll('[data-escolha-beneficio]').forEach(el =>
+    el.onchange = () => mudar(p => p.escolhasBeneficio[el.dataset.escolhaBeneficio] = el.value));
+
   // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
   // "|", porque um botão só aceita um valor.
   app.querySelectorAll('[data-poder-mais]').forEach(b =>
@@ -1094,10 +1549,13 @@ function ligarEventos(){
       const [classeId, poderId] = b.dataset.poderMenos.split('|');
       const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
       mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
-      // Some com "Magia Elemental" derruba a NP: os feitiços que sobrarem
-      // do índice sem cobertura são cortados, para não guardar lixo.
-      if(LISTAS_DE_FEITICO[classeId]?.poderId === poderId){
-        p.poder.feiticos[classeId] = (p.poder.feiticos[classeId] || []).slice(0, mapa[poderId]);
+      // Some com um poder de catálogo (Magia Elemental, Dança...) derruba a
+      // NP: o que sobrar do índice sem cobertura é cortado, pra não guardar
+      // lixo. Simbolismo dá duas vagas por compra — por isso o porCompra.
+      const entradaCatalogo = LISTAS_DE_FEITICO[classeId];
+      if(entradaCatalogo?.poderId === poderId){
+        const vagas = mapa[poderId] * (entradaCatalogo.porCompra || 1);
+        p.poder.feiticos[classeId] = (p.poder.feiticos[classeId] || []).slice(0, vagas);
       }
     }));
 
