@@ -86,12 +86,24 @@ num PDF recortado e foram lidos inteiros.
       descontar de PV (Vulnerável dobra, Resistente divide e arredonda pra
       baixo, Imune zera, Absorve vira cura) — sem passar de PV máximo nem
       de zero
-- [ ] Poderes Heroicos
+- [x] **Poderes Heroicos** — última peça da fatia, página 232-243 do Livro
+      Básico (recorte novo, mandado depois de eu confirmar o intervalo pelo
+      sumário). Ao levar uma classe ao nível 10 ("dominar"), o personagem
+      ganha o direito de escolher uma Habilidade Heroica — por isso o total
+      de escolhas é o número de classes dominadas, não um valor fixo. Aba
+      "Heroico" nova, com as 31 habilidades do livro (5 abertas a todo
+      mundo, 26 que pedem uma classe específica dominada — três delas
+      também pedem um poder daquela classe já comprado: Companheiro
+      Heroico/Companheiro Fiel, Mira Perfeita/Tiro de Aviso, Pilhagem/Roubo
+      de Alma). PV Extra, PM Extra e PI Extra já somam sozinhos nos totais
+      da ficha, com o mesmo automatismo dos benefícios de classe; o resto
+      fica como texto de referência fiel ao livro
 
 Todas as classes de Fabula Ultima estão prontas: as 15 do Livro Básico e as
 10 dos três Atlas (High Fantasy, Techno Fantasy, Natural Fantasy) — 25 no
 total. Não existe uma 26ª classe faltando: Herdeiros da Supernova não traz
-nenhuma.
+nenhuma. Com os Poderes Heroicos, a fatia "Fabula Ultima completa" está
+fechada — falta só ligar a ficha à conta do Hub (ver "Depois" abaixo).
 
 ### Fora de escopo por agora (mecânicas grandes demais para entrar de raspão)
 

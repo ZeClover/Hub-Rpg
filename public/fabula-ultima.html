@@ -762,6 +762,109 @@ const RITUAL_ACESSOS = [
     restricao:'só vegetação, pólen, esporos e toxinas (não NPCs planta)'},
 ];
 
+/* ===========================================================================
+   HABILIDADES HEROICAS (Livro Básico, pág. 232-241)
+
+   Ao levar uma classe ao nível 10 (dominá-la), o personagem ganha o direito
+   de escolher uma Habilidade Heroica — por isso o total de escolhas
+   permitidas é o número de classes dominadas, não um valor fixo. Cinco são
+   abertas a todo mundo; as outras 26 pedem ter dominado uma classe
+   específica (algumas também pedem um poder daquela classe já comprado).
+   Cada uma só pode ser escolhida uma vez, com uma única exceção anotada no
+   próprio texto (Maestria Quimérica).
+   =========================================================================== */
+const HABILIDADES_HEROICAS = [
+  {id:'ambidestro', nome:'Ambidestro', classes:null,
+    texto:'Aplica os benefícios de lutar com duas armas (pág. 69 do livro, mecânica ainda não modelada nesta ficha) mesmo com uma arma corpo a corpo e outra à distância, de categorias diferentes.'},
+  {id:'pv-extra', nome:'PV Extra', classes:null,
+    texto:'Aumenta permanentemente seus PV máximos em 10 (20 a partir do nível 40). Já soma sozinho no total de PV desta ficha.'},
+  {id:'pi-extra', nome:'PI Extra', classes:null,
+    texto:'Aumenta permanentemente seus PI máximos em 4. Já soma sozinho no total de PI desta ficha.'},
+  {id:'pm-extra', nome:'PM Extra', classes:null,
+    texto:'Aumenta permanentemente seus PM máximos em 10 (20 a partir do nível 40). Já soma sozinho no total de PM desta ficha.'},
+  {id:'feiticos-extras', nome:'Feitiços Extras', classes:null,
+    texto:'Ao adquirir, aprenda dois feitiços de uma mesma lista à sua escolha entre Elementalista, Entropista ou Espiritualista — seguem as regras normais de conjuração daquela classe.'},
+
+  {id:'adversidade', nome:'Adversidade', classes:['guerreiro-sombrio'],
+    texto:'Enquanto estiver sob uma ou mais condições, ganha +1 em todos os testes para cada condição, e causa +2 de dano adicional (ataques, feitiços, Arcanos, itens ou qualquer outro método) para cada condição.'},
+  {id:'ecos-arcanos', nome:'Ecos Arcanos', classes:['arcanista'],
+    texto:'Ao ter sucesso num teste para preencher ou apagar seções de um relógio, se o domínio de um Arcano vinculado seu se aplicar (a critério do mestre), preenche ou apaga uma seção adicional.'},
+  {id:'maestria-quimerica', nome:'Maestria Quimérica', classes:['quimerista'],
+    texto:'Escolha duas espécies entre construto, demônio, elemental e morto-vivo: Imitação Mágica passa a aprender feitiços delas também, e o limite de feitiços memorizados de Quimerista aumenta em 2. Pode ser escolhida de novo (a única desta lista que pode), escolhendo mais duas espécies de cada vez.'},
+  {id:'cometa', nome:'Cometa', classes:['entropista'],
+    texto:'Aprende o feitiço definitivo do Entropista: Cometa — 50 PM, alvo especial, instantâneo. Escolha: uma criatura visível sofre 60 de dano; ou qualquer número de criaturas visíveis sofrem 40 cada. +5 no nível 20+, +10 no nível 40+. Esse dano não tem tipo (ignora Afinidades).'},
+  {id:'bolsos-fundos', nome:'Bolsos Fundos', classes:['inventor'],
+    texto:'Ao gastar Pontos de Inventário, gasta 1 a menos (mínimo 1).'},
+  {id:'retorica-desarmante', nome:'Retórica Desarmante', classes:['orador'],
+    texto:'Em conflito, ação: escolha um soldado que possa ouvir e entender você (o mestre diz quem é um alvo válido). Se estiver abalado ou em crise, gaste 【20 + metade do nível dele】 PM para ele deixar o conflito pacificamente.'},
+  {id:'coracao-partido', nome:'Coração Partido', classes:['guerreiro-sombrio'],
+    texto:'Ao acertar um ataque mirando só uma criatura com quem tenha Laço, pode gastar metade dos PV atuais (arredondado para baixo): o ataque causa dano adicional igual a 【10 × a força do Laço com o alvo】. Só no seu turno em conflito, uma vez por turno.'},
+  {id:'companheiro-heroico', nome:'Companheiro Heroico', classes:['andarilho'],
+    poderRequisito:{classeId:'andarilho', poderId:'companheiro-fiel'},
+    texto:'O Companheiro ganha +10 PV máximos; escolha um Atributo dele (Destreza, Astúcia, Vigor ou Vontade) e aumente-o permanentemente em um passo de dado (até d12); ganha mais uma habilidade — e mais uma ao chegar ao nível 40.'},
+  {id:'esperanca', nome:'Esperança', classes:['espiritualista'],
+    texto:'Aprende o feitiço definitivo do Espiritualista: Esperança — 40 PM, alvo especial, instantâneo. Escolha um PJ que se rendeu mas ainda está na cena: ele recupera a consciência e PV igual à sua Crise. Só uma vez por cena por PJ, e não desfaz as consequências da rendição.'},
+  {id:'matemagia', nome:'Matemagia', classes:['erudito'],
+    texto:'Ao lançar um feitiço com alvo "uma criatura", pode dobrar o custo total em PM: escolha um Atributo e um tamanho de dado — o feitiço afeta todas as criaturas na cena (aliadas ou inimigas, até você mesmo) com esse dado atual naquele Atributo. Se for ofensivo, um só teste de Magia, comparado com a Defesa Mágica de cada alvo.'},
+  {id:'pegada-de-macaco', nome:'Pegada de Macaco', classes:['furioso'],
+    texto:'Pode equipar uma arma de duas mãos das categorias malho, pesada, lança ou espada num único espaço de mão — dá pra lutar com duas armas de duas mãos ao mesmo tempo, ou usar uma de duas mãos na mão principal e um escudo na secundária.'},
+  {id:'mira-perfeita', nome:'Mira Perfeita', classes:['atirador'],
+    poderRequisito:{classeId:'atirador', poderId:'tiro-de-aviso'},
+    texto:'Ao acertar Tiro de Aviso e escolher não causar dano, escolha dois efeitos da lista dele em vez de um.'},
+  {id:'pilhagem', nome:'Pilhagem', classes:['ladino'],
+    poderRequisito:{classeId:'ladino', poderId:'roubo-de-alma'},
+    texto:'Ao usar Roubo de Alma, pode mirar qualquer número de criaturas ao mesmo tempo — um só teste, comparado com a Defesa Mágica de cada uma.'},
+  {id:'tiro-poderoso', nome:'Tiro Poderoso', classes:['atirador'],
+    texto:'Ao acertar um ataque à distância, causa +5 de dano adicional a cada criatura atingida (+10 a partir do nível 40).'},
+  {id:'feitico-poderoso', nome:'Feitiço Poderoso', classes:['quimerista','elementalista','entropista','espiritualista'],
+    texto:'Ao lançar um feitiço que causa dano, causa +5 de dano adicional a cada criatura atingida (+10 a partir do nível 40).'},
+  {id:'golpe-poderoso', nome:'Golpe Poderoso', classes:['furioso','mestre-de-armas'],
+    texto:'Ao acertar um ataque corpo a corpo, causa +5 de dano adicional a cada criatura atingida (+10 a partir do nível 40).'},
+  {id:'previsivel', nome:'Previsível!', classes:['erudito'],
+    texto:'Em conflito, ação e 20 PM: contra uma criatura visível da qual conheça dois ou mais Traços, escolha um tipo de ação (Ataque, Guarda, Objetivo, Feitiço ou Perícia). Até seu próximo turno, ela precisa gastar 20 PM para fazer esse tipo de ação — sem PM suficiente, faz outra ação.'},
+  {id:'muralha', nome:'Muralha', classes:['guardiao'],
+    texto:'Na primeira rodada de cada cena de conflito, tem Resistência a todos os tipos de dano e não sofre condições novas (condições que já tinha continuam). Só dura até o fim da primeira rodada.'},
+  {id:'repeticao', nome:'Repetição', classes:['orador'],
+    texto:'Uma vez por turno em conflito, logo após usar Condenar ou Encorajar, pode usá-lo de novo na hora (no mesmo alvo ou outro) — paga o custo em PM de novo.'},
+  {id:'revelacao', nome:'Revelação', classes:['arcanista'],
+    texto:'Contata um Arcano desconhecido e o vincula à alma — criado em grupo com o mestre, e enquanto você viver, mais ninguém no mundo pode vinculá-lo. Uma vez por cena fundido a ele, ação e 2 Pontos de Fabula: aciona o efeito de dispensar dele sem dispensá-lo de fato (não aciona Círculo Arcano).'},
+  {id:'imunidade-a-condicao', nome:'Imunidade a Condição', classes:['andarilho'],
+    texto:'Fica completamente imune a uma condição à sua escolha.'},
+  {id:'inquebravel', nome:'Inquebrável', classes:['guardiao'],
+    texto:'Uma vez por cena, ao ir para 0 PV, pode resistir à dor e ficar com exatamente 1 PV em vez disso.'},
+  {id:'aprimoramento', nome:'Aprimoramento', classes:['inventor'],
+    texto:'Uma vez por descanso: adicione uma Qualidade a uma arma/armadura/escudo sem nenhuma, ou troque a Qualidade atual de uma por outra — entre as padrão daquele tipo de item, com modificador de custo até +1000z. Gasta zênites iguais ao dobro do modificador da qualidade escolhida (listas de qualidades ainda não estão nesta ficha). Fica pronto no fim do descanso; só um item por descanso.'},
+  {id:'golpe-tempestuoso', nome:'Golpe Tempestuoso', classes:['mestre-de-armas'],
+    texto:'Ao fazer um ataque corpo a corpo com a propriedade multi, mirando só uma criatura: causa +5 de dano adicional se o multi era (2), ou +10 se era (3 ou mais).'},
+  {id:'desaparecer', nome:'Desaparecer', classes:['ladino'],
+    texto:'Ao acertar um ataque, pode gastar 1 Ponto de Fabula: cada criatura atingida não consegue fazer nenhuma ação que exija te ver até o início do seu próximo turno.'},
+  {id:'vulcao', nome:'Vulcão', classes:['elementalista'],
+    texto:'Aprende o feitiço definitivo do Elementalista: Vulcão — 40 PM, alvo especial, instantâneo. Escolha: uma criatura visível sofre 50 de dano de fogo; ou qualquer número de criaturas visíveis sofrem 30 cada. +5 no nível 20+, +10 no nível 40+. Esse dano ignora Resistências e Imunidades.'},
+];
+
+// Toda classe do personagem levada ao nível 10 — cada uma dá direito a
+// escolher uma Habilidade Heroica.
+const classesDominadas = p =>
+  p.classes.filter(c => c.classeId && c.nivel >= 10).map(c => c.classeId);
+
+function heroicaDisponivel(p, h){
+  if(h.classes && !h.classes.some(c => classesDominadas(p).includes(c))) return false;
+  if(h.poderRequisito && npDoPoder(p, h.poderRequisito.classeId, h.poderRequisito.poderId) <= 0) return false;
+  return true;
+}
+
+// PV Extra/PM Extra/PI Extra são as únicas Habilidades Heroicas que a ficha
+// aplica sozinha nos totais — o resto é só texto de referência, igual às
+// mecânicas de conflito que o resto da ficha também não simula.
+function beneficioHeroico(p, tipo){
+  const heroicas = p.heroicas || [];
+  const nivel = nivelTotal(p);
+  if(tipo === 'pv' && heroicas.includes('pv-extra')) return nivel >= 40 ? 20 : 10;
+  if(tipo === 'pm' && heroicas.includes('pm-extra')) return nivel >= 40 ? 20 : 10;
+  if(tipo === 'pi' && heroicas.includes('pi-extra')) return 4;
+  return 0;
+}
+
 // Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
 // tem um efeito de FUNDIR (enquanto estiver invocado) e, na maioria, um
 // efeito de DISPENSAR (ao encerrar voluntariamente).
@@ -1176,10 +1279,10 @@ const nivelTotal = p => p.classes.reduce((soma, c) => soma + (c.nivel || 0), 0);
 // PV/PM: nível total + cinco vezes o dado do Atributo, mais os benefícios
 // iniciais das classes (pág. 163) — que são fixos por classe e cumulativos
 // entre classes diferentes (pág. 176), não escolhidos nível a nível.
-const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + beneficiosDeClasse(p,'pv');
-const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeClasse(p,'pm');
+const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + beneficiosDeClasse(p,'pv') + beneficioHeroico(p,'pv');
+const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeClasse(p,'pm') + beneficioHeroico(p,'pm');
 const crise    = p => Math.floor(pvMaximo(p) / 2);
-const piMaximo = p => PI_BASE + beneficiosDeClasse(p,'pi');
+const piMaximo = p => PI_BASE + beneficiosDeClasse(p,'pi') + beneficioHeroico(p,'pi');
 
 // Equipamento: armadura e a mão secundária (escudo ou arma extra) são
 // escolhas do jogador; sem nenhuma escolhida ainda, os padrões abaixo
@@ -1239,6 +1342,8 @@ function novoPersonagem(nome){
     // Sem nada escolhido, os getters (armaduraEquipada etc.) caem no padrão
     // ARMADURAS_BASICAS[0]/ARMAS_BASICAS[0] ("sem armadura"/"desarmado").
     equipamento: {armaduraId:'', maoPrincipalId:'', maoSecundariaId:''},
+    // Habilidades Heroicas escolhidas (uma por classe dominada — nível 10+).
+    heroicas: [],
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     // afinidades[tipoId] = 'normal' | 'vulneravel' | 'resistente' | 'imune' | 'absorve'
@@ -1295,6 +1400,7 @@ const ABAS = [
   {id:'perfil',    nome:'Perfil'},
   {id:'atributos', nome:'Atributos e Classes'},
   {id:'poderes',   nome:'Poderes'},
+  {id:'heroico',   nome:'Heroico'},
   {id:'recursos',  nome:'Recursos'},
   {id:'lacos',     nome:'Laços'},
 ];
@@ -1322,7 +1428,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
+    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
   ligarEventos();
 }
@@ -1860,6 +1966,43 @@ function blocoRitualDisciplina(p, acesso){
   </div>`;
 }
 
+function abaHeroico(p){
+  const dominadas = classesDominadas(p);
+  const escolhidas = p.heroicas || [];
+  const maximo = dominadas.length;
+
+  if(!maximo){
+    return `<div class="cartao"><p class="mini">
+      Habilidades Heroicas exigem ter dominado uma classe — levado ela ao
+      <strong>nível 10</strong> — na aba <strong>Atributos e Classes</strong>.
+      Cada classe dominada dá direito a escolher uma.</p></div>`;
+  }
+
+  return `<div class="cartao">
+    <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="font-size:18px">Habilidades Heroicas</h2>
+      <span class="mini">${escolhidas.length} de ${maximo} escolhidas</span>
+    </div>
+    <p class="mini" style="margin:6px 0 16px">
+      Uma por classe dominada (nível 10+): ${dominadas.map(id => CLASSES.find(x=>x.id===id)?.nome || id).join(', ')}.
+      As com 🔒 pedem dominar outra classe (e às vezes um poder específico dela).
+    </p>
+    ${HABILIDADES_HEROICAS.map(h => {
+      const disponivel = heroicaDisponivel(p, h);
+      const marcada = escolhidas.includes(h.id);
+      const travada = !disponivel && !marcada;
+      const cheio = escolhidas.length >= maximo && !marcada;
+      return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+        <label style="display:flex;align-items:baseline;gap:8px;text-transform:none;letter-spacing:normal;font-size:14px;color:var(--texto)">
+          <input type="checkbox" style="width:auto" data-heroica="${h.id}" ${marcada?'checked':''} ${(travada||cheio)?'disabled':''}>
+          <span><strong>${h.nome}</strong>${h.classes ? ` <span class="mini">(${h.classes.map(c=>CLASSES.find(x=>x.id===c)?.nome||c).join(' ou ')})</span>` : ''}${travada?' 🔒':''}</span>
+        </label>
+        <p class="mini" style="margin:4px 0 0 26px">${h.texto}</p>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function abaLacos(p){
   return `<div class="cartao">
     <h2 style="font-size:18px">Laços</h2>
@@ -1988,6 +2131,13 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
     el.onchange = () => mudar(p => p.atual[el.dataset.atualrec] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-heroica]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.heroica;
+      const lista = p.heroicas || (p.heroicas = []);
+      p.heroicas = el.checked ? [...new Set([...lista, id])] : lista.filter(x => x !== id);
+    }));
 
   app.querySelectorAll('[data-afinidade]').forEach(el =>
     el.onchange = () => mudar(p => {
