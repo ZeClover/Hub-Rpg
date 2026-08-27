@@ -70,7 +70,28 @@ demais na prática.
 | 33 | Tipos de campo | Texto curto, texto longo, número, lista de opções, **ligação com outra ficha** e imagem |
 | 34 | Ligação entre fichas | Campo que aponta para outra ficha ("Fica em", "Lidera"). É o que transforma o cadastro em wiki navegável, e não uma lista de textos soltos |
 
-## 7. Restrições registradas
+## 7. Virada de escopo (27/08/2026)
+
+Depois da primeira versão do cadastro se mostrar rasa demais, o Zé mudou o
+rumo do projeto. As decisões abaixo **substituem** o que conflitar com as
+seções anteriores.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 35 | O que o Hub é | **Fichas de personagem** nos sistemas do Zé. Deixa de ser um cadastro de lore |
+| 36 | Cadastro de lore | **Sai do projeto.** As telas de universo e cadastro e as tabelas de lore serão removidas. Isso anula, na prática, as decisões #9, #11, #29 a #34 |
+| 37 | Kaizoku no Sho | Sistema homebrew de One Piece (adaptação do *Shinobi no Sho*). Ficha completa já existe em `ZeClover/Ficha-Op`, como arquivo único com armazenamento no navegador |
+| 38 | Destino do Kaizoku | **Migra para o Hub**, com login e banco, aproveitando o motor de regras que já funciona. Resolve a limitação que o próprio README dele admite: ficha presa a um aparelho |
+| 39 | Próximo sistema | **Fabula Ultima** |
+| 40 | Método de construção | **Arquivo único primeiro**, para acertar as regras rápido; migração para o Hub depois. Foi o caminho que o Kaizoku seguiu sem querer, e funcionou |
+| 41 | Fonte das regras | Os PDFs da biblioteca do Zé no Google Drive (edições brasileiras da Jambô) |
+
+O que **continua valendo** das decisões anteriores: custo zero (#5), login com
+Google (#4, #28), tema escuro (#7), permissão de campo no servidor (#13),
+cada sistema como módulo de código (#17), uma fatia por vez (#26) e código
+explicado em português (#27).
+
+## 8. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

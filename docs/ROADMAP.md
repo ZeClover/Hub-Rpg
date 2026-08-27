@@ -1,5 +1,10 @@
 # Roadmap do Hub RPG
 
+> **Atenção:** este roadmap foi escrito antes da virada de escopo de 27/08/2026
+> (decisões #35 a #41). As fatias 1 a 4 descrevem o Hub como cadastro de lore,
+> que saiu do projeto. Serão reescritas. O que está marcado como concluído foi
+> de fato construído e continua no ar.
+
 Ritmo acordado (decisão #26): **fatias usáveis, uma por vez.** Cada fatia vai
 pro ar funcionando e você usa de verdade antes da próxima começar.
 
