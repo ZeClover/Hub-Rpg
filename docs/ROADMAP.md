@@ -34,7 +34,8 @@ Eu te guio passo a passo em cada um, com print do que clicar.
       (NPC, lugar, facção, item, magia, criatura, divindade, evento, família)
 - [x] Campos secretos campo a campo, com a trava no servidor e teste automático
 - [x] Tema escuro, funcionando bem no celular
-- [ ] Editar e excluir fichas
+- [x] Tabelas trancadas para acesso vindo de fora do servidor (migração 0002)
+- [x] Editar e excluir fichas
 - [ ] Criar campanhas ligando um universo a um sistema
 - [ ] Convidar jogadores para uma campanha
 - [ ] Upload de imagem com compressão automática

@@ -60,6 +60,14 @@ Este arquivo é a fonte da verdade. Toda decisão nova entra aqui.
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
+**As tabelas estão trancadas para acesso externo.** O Supabase publica uma API
+sobre as tabelas do banco, e a chave pública do projeto fica visível no
+navegador de qualquer visitante. A migração `0002_fechar_tabelas.sql` ligou a
+trava de linha (RLS) sem cadastrar nenhuma permissão e revogou o acesso dos
+perfis públicos — o banco recusa todo acesso por esse caminho. O Hub continua
+funcionando porque o servidor conecta direto no Postgres, como dono. Executada
+em 27/08/2026.
+
 **Permissão de campo é do servidor, não da tela.** Um campo marcado como "só mestre" nunca pode ser enviado ao navegador de quem não é mestre daquela campanha. Esconder na interface não é suficiente.
 
 **Plano gratuito é uma restrição de projeto, não um detalhe.** Imagens comprimidas na subida, banco enxuto, nada que exija processo rodando 24h.

@@ -63,7 +63,15 @@ export default async function Ficha({
       <p className="mt-5 font-titulo text-xs uppercase tracking-[0.25em] text-ambar">
         {rotuloDoTipo(ficha.tipo)}
       </p>
-      <h1 className="mt-2 font-titulo text-3xl">{ficha.nome}</h1>
+      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h1 className="font-titulo text-3xl">{ficha.nome}</h1>
+        <Link
+          href={`${base}/${slugEntidade}/editar`}
+          className="text-sm text-texto-suave transition hover:text-texto"
+        >
+          Editar
+        </Link>
+      </div>
 
       {ficha.resumo && (
         <p className="mt-3 text-base text-texto-suave">{ficha.resumo}</p>

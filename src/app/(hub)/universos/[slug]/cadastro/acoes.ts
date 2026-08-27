@@ -146,3 +146,61 @@ export async function removerCampo(dados: FormData): Promise<void> {
 
   revalidatePath(`/universos/${slugUniverso}/cadastro/${slugEntidade}`);
 }
+
+export async function editarEntidade(
+  _anterior: Resultado,
+  dados: FormData,
+): Promise<Resultado> {
+  const slugUniverso = String(dados.get("universo") ?? "");
+  const slugEntidade = String(dados.get("entidade") ?? "");
+  const contexto = await universoDoUsuario(slugUniverso);
+  if (!contexto) return { erro: "Universo não encontrado ou sem permissão." };
+
+  const nome = String(dados.get("nome") ?? "").trim();
+  const tipo = String(dados.get("tipo") ?? "");
+  const resumo = String(dados.get("resumo") ?? "").trim();
+  const corpo = String(dados.get("corpo") ?? "").trim();
+
+  if (!nome) return { erro: "Dê um nome." };
+  if (nome.length > LIMITE_NOME) return { erro: "O nome está longo demais." };
+  if (!ehTipoValido(tipo)) return { erro: "Escolha um tipo." };
+  if (resumo.length > LIMITE_RESUMO) return { erro: "O resumo está longo demais." };
+  if (corpo.length > LIMITE_CORPO) return { erro: "O texto está longo demais." };
+
+  /*
+    O `updateMany` com o universo no filtro é o que amarra a edição ao dono:
+    se a ficha for de outra pessoa, nenhuma linha é alterada em vez de a ação
+    confiar no slug que veio do formulário.
+
+    O endereço da ficha não muda junto com o nome, de propósito: link que os
+    jogadores já salvaram continua funcionando depois de uma correção de
+    digitação.
+  */
+  const alteradas = await banco.entidade.updateMany({
+    where: { slug: slugEntidade, universoId: contexto.universo.id },
+    data: { tipo, nome, resumo: resumo || null, corpo: corpo || null },
+  });
+
+  if (alteradas.count === 0) return { erro: "Ficha não encontrada." };
+
+  revalidatePath(`/universos/${slugUniverso}/cadastro`);
+  revalidatePath(`/universos/${slugUniverso}/cadastro/${slugEntidade}`);
+  redirect(`/universos/${slugUniverso}/cadastro/${slugEntidade}`);
+}
+
+export async function excluirEntidade(dados: FormData): Promise<void> {
+  const slugUniverso = String(dados.get("universo") ?? "");
+  const slugEntidade = String(dados.get("entidade") ?? "");
+
+  const contexto = await universoDoUsuario(slugUniverso);
+  if (!contexto) return;
+
+  // Os campos da ficha somem junto, por conta da regra de cascata do banco.
+  await banco.entidade.deleteMany({
+    where: { slug: slugEntidade, universoId: contexto.universo.id },
+  });
+
+  revalidatePath(`/universos/${slugUniverso}/cadastro`);
+  revalidatePath(`/universos/${slugUniverso}`);
+  redirect(`/universos/${slugUniverso}/cadastro`);
+}
