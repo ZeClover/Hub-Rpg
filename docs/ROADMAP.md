@@ -54,7 +54,16 @@ num PDF recortado e foram lidos inteiros.
       de personagem nova. Livro inteiro lido (16 partes, via anexo + pdftotext)
       e conferido: zero conteúdo de ficha. Fica de fora por ser conteúdo de
       mestre/aventura, igual à decisão #36 de não guardar lore no Hub
-- [ ] Feitiços e rituais, com as seis disciplinas
+- [x] **Feitiços e rituais, com as seis disciplinas** — feitiços já vinham dos
+      catálogos de cada classe (Elementalista, Entropista, Espiritualista,
+      Simbolista, Dançarino etc.). Faltava só o ritual — que não é uma lista
+      fixa, é uma calculadora (potência × área → custo em PM, ND do teste,
+      seções do relógio em conflito). Card "Rituais" novo na aba Poderes,
+      aparece sozinho por personagem, com uma calculadora por disciplina que
+      o personagem já destravou (Arcanismo, Elementalismo, Entropismo,
+      Espiritualismo, Quimerismo, Ritualismo — essa última vem de poderes
+      pontuais dos Atlas: Miragem, Canto da Sereia, Navegador, Influência
+      Verdejante, cada um com sua restrição de escopo)
 - [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
 - [ ] Combate: dano, tipos de dano, afinidades elementais
 - [ ] Poderes Heroicos

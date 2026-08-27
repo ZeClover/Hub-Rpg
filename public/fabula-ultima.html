@@ -296,7 +296,7 @@ const PODERES_CLASSE = {
     {id:'cataclismo', nome:'Cataclismo', max:3,
       descricao:'Ao lançar um feitiço de duração instantânea com arma arcana equipada, pode aumentar o custo total em até 【NP × 10】 PM: a cada 10 PM aumentados, cada criatura atingida sofre +5 de dano.'},
     {id:'elementalismo-ritualista', nome:'Elementalismo Ritualista', max:1,
-      descricao:'Você pode fazer rituais da disciplina elementalismo. Rituais de arcanismo usam 【AST + VON】 no teste de Magia.'},
+      descricao:'Você pode fazer rituais da disciplina elementalismo. Rituais de elementalismo usam 【AST + VON】 no teste de Magia.'},
     {id:'guerreiro-magico', nome:'Guerreiro Mágico', max:4,
       descricao:'Feitiço ofensivo de até 【NP × 10】 PM com alvo único, usando adaga, arco, espada, lança, luta ou malho: pode usar o teste de Precisão da arma em vez do teste de Magia.'},
     {id:'magia-elemental', nome:'Magia Elemental', max:10,
@@ -595,6 +595,56 @@ const PODERES_CLASSE = {
       descricao:'Uma vez por sessão, ao ajudar um NPC ou comunidade a superar ganância/corrupção, melhorar a qualidade de vida ou coexistir com outras criaturas: se tiver Ventos do Comércio, ganha 【NP + 1】 Pontos de Comércio.'},
   ],
 };
+
+/* ===========================================================================
+   RITUAIS (Livro Básico, pág. 117-125)
+
+   Diferente dos feitiços (fórmulas fixas, já cobertas pelos catálogos de
+   cada classe), o ritual é uma calculadora: mestre e jogador escolhem uma
+   potência e uma área, e as tabelas do livro dão o custo em PM e o ND do
+   teste de Magia. Nunca causa dano direto, condições, ganho/perda de
+   PV/PM/PI/Pontos de Fabula/Ultima, nem replica um poder ou feitiço já
+   existente — falhar distorce o efeito de forma catastrófica.
+   =========================================================================== */
+const RITUAL_POTENCIAS = [
+  {id:'menor',   nome:'Menor',   pm:20, nd:7,  secoes:4},
+  {id:'media',   nome:'Média',   pm:30, nd:10, secoes:6},
+  {id:'maior',   nome:'Maior',   pm:40, nd:13, secoes:6},
+  {id:'extrema', nome:'Extrema', pm:50, nd:16, secoes:8},
+];
+const RITUAL_AREAS = [
+  {id:'individual', nome:'Individual', mult:1},
+  {id:'pequena',    nome:'Pequena',    mult:2},
+  {id:'grande',     nome:'Grande',     mult:3},
+  {id:'enorme',     nome:'Enorme',     mult:4},
+];
+const RITUAL_DISCIPLINAS = {
+  arcanismo:      {nome:'Arcanismo',      teste:'VON + VON'},
+  elementalismo:  {nome:'Elementalismo',  teste:'AST + VON'},
+  entropismo:     {nome:'Entropismo',     teste:'AST + VON'},
+  espiritualismo: {nome:'Espiritualismo', teste:'AST + VON'},
+  quimerismo:     {nome:'Quimerismo',     teste:'o par escolhido em Imitação Mágica'},
+  ritualismo:     {nome:'Ritualismo',     teste:'AST + VON'},
+};
+// Cada acesso a rituais vem de um poder específico — o mapa liga
+// classe+poder à disciplina que ele libera, com a eventual restrição de
+// escopo que o próprio poder impõe (ex: Miragem só cria ilusões visuais).
+const RITUAL_ACESSOS = [
+  {classeId:'arcanista',       poderId:'arcanismo-ritualista',       disciplina:'arcanismo',
+    restricao:'só dentro dos domínios do(s) Arcano(s) vinculado(s)'},
+  {classeId:'elementalista',   poderId:'elementalismo-ritualista',   disciplina:'elementalismo'},
+  {classeId:'entropista',      poderId:'entropismo-ritualista',      disciplina:'entropismo'},
+  {classeId:'espiritualista',  poderId:'espiritualismo-ritualista',  disciplina:'espiritualismo'},
+  {classeId:'quimerista',      poderId:'quimerismo-ritualista',      disciplina:'quimerismo'},
+  {classeId:'simbolista',      poderId:'miragem',                    disciplina:'ritualismo',
+    restricao:'só para criar ilusões visuais'},
+  {classeId:'virtuoso',        poderId:'canto-da-sereia',            disciplina:'ritualismo',
+    restricao:'só para criar ilusões sonoras'},
+  {classeId:'esper',           poderId:'navegador',                  disciplina:'ritualismo',
+    restricao:'só telepatia e viagem/rastreio pela rede de almas'},
+  {classeId:'floralista',      poderId:'influencia-verdejante',      disciplina:'ritualismo',
+    restricao:'só vegetação, pólen, esporos e toxinas (não NPCs planta)'},
+];
 
 // Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
 // tem um efeito de FUNDIR (enquanto estiver invocado) e, na maioria, um
@@ -1016,6 +1066,8 @@ function novoPersonagem(nome){
     // Classe cujo benefício inicial é "PV ou PM à sua escolha" — a decisão
     // do jogador, lida por beneficiosDeClasse().
     escolhasBeneficio: {},
+    // rituais: { 'elementalismo': {potencia:'menor', area:'individual'}, ... }
+    rituais: {},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     pontosFabula: 3,
@@ -1410,7 +1462,7 @@ function abaPoderes(p){
         </div>`;
       }).join('')}
     </div>`;
-  }).join('');
+  }).join('') + blocoRituais(p);
 }
 
 function blocoArcano(p){
@@ -1475,6 +1527,66 @@ function blocoManaciais(){
       <ul style="margin:4px 0 0 18px;padding:0">
         ${m.invocacoes.map(i => `<li class="mini">${i.nome} <span style="color:var(--suave)">(${i.tipo})</span> — ${i.descricao}</li>`).join('')}
       </ul>`).join('')}
+  </div>`;
+}
+
+// Quais disciplinas de ritual o personagem já destravou, olhando o NP de
+// cada poder que dá acesso (RITUAL_ACESSOS). Pode haver mais de um acesso
+// pra mesma disciplina (ex: dois personagens diferentes chegando em
+// ritualismo por caminhos diferentes não acontece na mesma ficha, mas duas
+// classes na mesma ficha podem — aí juntamos as restrições).
+function acessosRituais(p){
+  const porDisciplina = {};
+  RITUAL_ACESSOS.forEach(a => {
+    if(npDoPoder(p, a.classeId, a.poderId) > 0){
+      const atual = porDisciplina[a.disciplina] || (porDisciplina[a.disciplina] = {disciplina:a.disciplina, restricoes:[]});
+      if(a.restricao) atual.restricoes.push(a.restricao);
+    }
+  });
+  return Object.values(porDisciplina);
+}
+
+function blocoRituais(p){
+  const acessos = acessosRituais(p);
+  if(!acessos.length) return '';
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Rituais</h2>
+    <p class="mini" style="margin-top:6px">
+      Nunca causam dano direto, condições, ganho/perda de PV, PM, PI, Pontos
+      de Fabula ou Pontos de Ultima, nem repetem o efeito de um poder ou
+      feitiço existente. Falhar no teste de Magia distorce o efeito de forma
+      catastrófica, a critério do mestre. Um ingrediente raro sacrificado
+      reduz o custo em PM à metade (uma vez por ritual).
+    </p>
+    ${acessos.map(a => blocoRitualDisciplina(p, a)).join('')}
+  </div>`;
+}
+
+function blocoRitualDisciplina(p, acesso){
+  const {disciplina, restricoes} = acesso;
+  const info = RITUAL_DISCIPLINAS[disciplina];
+  const estado = p.rituais[disciplina] || {potencia:'menor', area:'individual'};
+  const pot = RITUAL_POTENCIAS.find(x => x.id === estado.potencia) || RITUAL_POTENCIAS[0];
+  const are = RITUAL_AREAS.find(x => x.id === estado.area) || RITUAL_AREAS[0];
+  return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+    <p class="mini" style="color:var(--texto);font-size:14px">
+      <strong>${info.nome}</strong> — teste de Magia com ${info.teste}
+    </p>
+    ${restricoes.length ? `<p class="mini" style="margin-top:2px">${restricoes.join('; ')}</p>` : ''}
+    <div class="grade g2" style="margin-top:8px">
+      <div><label for="c-ritpot-${disciplina}">Potência</label>
+        <select id="c-ritpot-${disciplina}" data-ritual-potencia="${disciplina}">
+          ${RITUAL_POTENCIAS.map(x => `<option value="${x.id}" ${x.id===estado.potencia?'selected':''}>${x.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-ritarea-${disciplina}">Área</label>
+        <select id="c-ritarea-${disciplina}" data-ritual-area="${disciplina}">
+          ${RITUAL_AREAS.map(x => `<option value="${x.id}" ${x.id===estado.area?'selected':''}>${x.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <p class="mini" style="margin-top:8px">
+      Custo: <strong>${pot.pm * are.mult} PM</strong> · ND <strong>${pot.nd}</strong>
+      · em conflito, relógio de <strong>${pot.secoes}</strong> seções.
+    </p>
   </div>`;
 }
 
@@ -1582,6 +1694,20 @@ function ligarEventos(){
       const [classeId, indice] = el.dataset.feitico.split('|');
       const conhecidos = p.poder.feiticos[classeId] || (p.poder.feiticos[classeId] = []);
       conhecidos[Number(indice)] = el.value || null;
+    }));
+
+  app.querySelectorAll('[data-ritual-potencia]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const d = el.dataset.ritualPotencia;
+      const estado = p.rituais[d] || (p.rituais[d] = {potencia:'menor', area:'individual'});
+      estado.potencia = el.value;
+    }));
+
+  app.querySelectorAll('[data-ritual-area]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const d = el.dataset.ritualArea;
+      const estado = p.rituais[d] || (p.rituais[d] = {potencia:'menor', area:'individual'});
+      estado.area = el.value;
     }));
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
