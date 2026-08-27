@@ -91,7 +91,16 @@ Google (#4, #28), tema escuro (#7), permissão de campo no servidor (#13),
 cada sistema como módulo de código (#17), uma fatia por vez (#26) e código
 explicado em português (#27).
 
-## 8. Restrições registradas
+## 8. Como as fichas vivem dentro do Hub (28/08/2026)
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 42 | Onde ver os personagens | **Só em `/fichas`.** Vira a lista de todos os seus personagens, de todos os sistemas. Abrir um leva direto pra ficha dele, sem seletor por dentro |
+| 43 | Criar personagem | Botão **"+ Criar ficha"** em `/fichas` → escolhe o sistema → abre a ficha em branco daquele sistema, pronta pra editar |
+| 44 | Salvamento | Cada campo salva no banco sozinho, sem botão de salvar. Substitui o exportar/importar JSON de hoje, que era o jeito de contornar não ter conta |
+| 45 | Navegação | Ficha aberta ganha um "← Fichas" no topo, voltando pra lista |
+
+## 9. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

@@ -145,6 +145,168 @@ const CLASSES = [
   {id:'orador',           nome:'Orador'},
   {id:'quimerista',       nome:'Quimerista'},
 ];
+/* ===========================================================================
+   PODERES DE CLASSE (Livro Básico, cap. 3)
+
+   O sistema, direto do livro (pág. 40 e 176):
+   - Cada classe tem exatamente CINCO poderes.
+   - A cada nível investido numa classe, você ganha UM poder dela — não é
+     automático, é escolha do jogador entre os cinco.
+   - Poder com "(+N)" pode ser escolhido de novo, até N vezes, ficando mais
+     forte a cada vez. Quantas vezes foi escolhido é o "NP" (nível de poder)
+     que o texto do próprio poder referencia.
+   - Poder sem "+" só pode ser escolhido uma vez (NP máximo 1).
+
+   Os "benefícios iniciais" de uma classe (aumento de PV/PM/PI, permissão de
+   equipamento) são FIXOS e valem uma vez só, ao ter pelo menos 1 nível
+   naquela classe — não são escolhidos nível a nível. O livro é explícito:
+   "Benefícios iniciais são cumulativos" — duas classes que dão PM+5 somam
+   PM+10.
+
+   IMPORTANTE PARA QUEM FOR ADICIONAR OUTRA CLASSE: por enquanto só estas
+   quatro têm o texto conferido linha a linha com o Livro Básico. As outras
+   onze ficam para quando o restante do livro puder ser extraído — ver
+   docs/ROADMAP.md.
+   =========================================================================== */
+
+const BENEFICIOS_CLASSE = {
+  andarilho:     [{tipo:'pi', valor:2}],
+  arcanista:     [{tipo:'pm', valor:5}],
+  atirador:      [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas à distância e escudos marciais'}],
+  elementalista: [{tipo:'pm', valor:5}],
+};
+
+// Soma os benefícios fixos de toda classe em que o personagem tem ao menos
+// 1 nível. É por isso que pvMaximo/pmMaximo/piMaximo não pedem mais para o
+// jogador digitar esse bônus à mão.
+function beneficiosDeClasse(p, tipo){
+  return p.classes
+    .filter(c => c.classeId && c.nivel > 0)
+    .flatMap(c => BENEFICIOS_CLASSE[c.classeId] || [])
+    .filter(b => b.tipo === tipo)
+    .reduce((soma, b) => soma + b.valor, 0);
+}
+
+function textosDeEquipamento(p){
+  return p.classes
+    .filter(c => c.classeId && c.nivel > 0)
+    .flatMap(c => BENEFICIOS_CLASSE[c.classeId] || [])
+    .filter(b => b.tipo === 'equipar')
+    .map(b => b.texto);
+}
+
+const PODERES_CLASSE = {
+  andarilho: [
+    {id:'cacador-tesouros', nome:'Caçador de Tesouros', max:2,
+      descricao:'Quando seu grupo se aventura pelo mapa do mundo, você faz uma descoberta se tirar 【NP + 1】 ou menos na rolagem de viagem (em vez de apenas 1).'},
+    {id:'companheiro-fiel', nome:'Companheiro Fiel', max:5,
+      descricao:'Com a ajuda do grupo, crie um NPC construto, elemental, fera ou planta de nível 5 para ser seu companheiro: não tem iniciativa, não sobe de nível, no máximo dois ataques básicos, bônus em Precisão e Magia igual a 【NP】, e PV máximos iguais a 【(NP × dado básico de Vigor do companheiro) + metade do seu nível】.'},
+    {id:'papo-de-taverna', nome:'Papo de Taverna', max:3,
+      descricao:'Ao descansar em uma estalagem ou taverna, você pode fazer 【NP】 perguntas ao mestre sobre os arredores e habitantes, que devem ser respondidas com informações verdadeiras.'},
+    {id:'pratico', nome:'Prático', max:4,
+      descricao:'Você recupera 【NP】 PI após cada rolagem de viagem.'},
+    {id:'viajante', nome:'Viajante', max:1,
+      descricao:'Você reduz o dado rolado em suas rolagens de viagem em um (mínimo d6). Não cumulativo entre personagens.'},
+  ],
+  arcanista: [
+    {id:'arcanismo-ritualista', nome:'Arcanismo Ritualista', max:1,
+      descricao:'Você pode fazer rituais da disciplina arcanismo, desde que pertençam aos domínios de um Arcano que você vinculou. Rituais de arcanismo usam 【VON + VON】 no teste de Magia.'},
+    {id:'arcano-emergencial', nome:'Arcano Emergencial', max:6,
+      descricao:'Enquanto estiver em crise, o custo de invocar seu Arcano é reduzido em 【NP × 5】.'},
+    {id:'circulo-arcano', nome:'Círculo Arcano', max:4,
+      descricao:'Após dispensar voluntariamente um Arcano não invocado neste turno, com arma arcana equipada, faça a ação Feitiço sem custo (feitiço de até 【NP × 5】 PM, pagando o custo em PM normalmente).'},
+    {id:'regeneracao-arcana', nome:'Regeneração Arcana', max:2,
+      descricao:'Ao invocar um Arcano, você imediatamente recupera 【NP × 5】 PV.'},
+    {id:'vincular-invocar', nome:'Vincular e Invocar', max:1,
+      descricao:'Você pode vincular Arcanos à sua alma para invocá-los depois (ação + 40 PM). Ao escolher este poder na criação, começa o jogo vinculado a um Arcano à sua escolha.'},
+  ],
+  atirador: [
+    {id:'barragem', nome:'Barragem', max:1,
+      descricao:'Ao fazer um ataque à distância, gaste 10 PM: o ataque ganha multi (2); ou aumenta em +1 sua propriedade multi, até multi (3).'},
+    {id:'fogo-cruzado', nome:'Fogo Cruzado', max:1,
+      descricao:'Quando uma criatura visível faz um ataque à distância, gaste PM igual ao teste de Precisão dela para fazer o ataque falhar automaticamente. Exige arma à distância equipada. Não funciona contra sucesso crítico.'},
+    {id:'maestria-a-distancia', nome:'Maestria com Armas à Distância', max:4,
+      descricao:'Você ganha um bônus igual a 【NP】 em testes de Precisão à distância.'},
+    {id:'olhos-de-aguia', nome:'Olhos de Águia', max:5,
+      descricao:'Na ação Guarda sem dar cobertura: seu próximo ataque à distância na cena causa 【NP × 2】 de dano adicional; ou faça um ataque livre com arco/arma de fogo equipada, considerando RA como 0 no dano.'},
+    {id:'tiro-de-aviso', nome:'Tiro de Aviso', max:4,
+      descricao:'Após acertar um ataque à distância, escolha não causar dano: cada alvo fica abalado; ou fica lento; ou perde 【NP × 10】 PM.'},
+  ],
+  elementalista: [
+    {id:'artilharia-magica', nome:'Artilharia Mágica', max:3,
+      descricao:'Ao lançar um feitiço ofensivo com arma arcana equipada, você recebe um bônus igual a 【NP × 2】 no teste de Magia.'},
+    {id:'cataclismo', nome:'Cataclismo', max:3,
+      descricao:'Ao lançar um feitiço de duração instantânea com arma arcana equipada, pode aumentar o custo total em até 【NP × 10】 PM: a cada 10 PM aumentados, cada criatura atingida sofre +5 de dano.'},
+    {id:'elementalismo-ritualista', nome:'Elementalismo Ritualista', max:1,
+      descricao:'Você pode fazer rituais da disciplina elementalismo. Rituais de arcanismo usam 【AST + VON】 no teste de Magia.'},
+    {id:'guerreiro-magico', nome:'Guerreiro Mágico', max:4,
+      descricao:'Feitiço ofensivo de até 【NP × 10】 PM com alvo único, usando adaga, arco, espada, lança, luta ou malho: pode usar o teste de Precisão da arma em vez do teste de Magia.'},
+    {id:'magia-elemental', nome:'Magia Elemental', max:10,
+      descricao:'Sempre que adquirir este poder, aprenda um feitiço de Elementalista. Feitiços ofensivos de Elementalista usam 【AST + VON】 no teste de Magia.'},
+  ],
+};
+
+// Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
+// tem um efeito de FUNDIR (enquanto estiver invocado) e, na maioria, um
+// efeito de DISPENSAR (ao encerrar voluntariamente).
+const ARCANOS_DEF = [
+  {id:'espada',   nome:'Arcano da Espada',
+    fundir:'Ataques não têm tipo de dano e causam +5 de dano adicional. Pode conceder multi (qualquer quantidade) a um ataque — o Arcano é dispensado automaticamente depois.'},
+  {id:'forja',    nome:'Arcano da Forja',
+    fundir:'Resistência a dano de fogo; seu dano de fogo ignora Resistências.',
+    dispensar:'Forja: cria arma/armadura/escudo básicos (a de fogo se for arma). Inferno: cada criatura visível sofre 30 de dano de fogo (ignora Resistências).'},
+  {id:'geada',    nome:'Arcano da Geada',
+    fundir:'Resistência a dano de gelo; imune a enfurecido; seu dano de gelo ignora Resistências.',
+    dispensar:'Era do Gelo: cada criatura visível sofre 30 de dano de gelo (ignora Resistências).'},
+  {id:'roda',     nome:'Arcano da Roda',
+    fundir:'Imune a lento; +1 em Defesa.',
+    dispensar:'Congelar o Tempo: cada criatura visível fica lenta (ou faz uma ação a menos, se já estiver lenta).'},
+  {id:'torre',    nome:'Arcano da Torre',
+    fundir:'Escolha um tipo de dano ao invocar: cada aliado em cena (menos você) ganha Resistência a ele.',
+    dispensar:'Julgamento: cada criatura visível sofre 30 de dano de luz (ignora Resistências).'},
+  {id:'carvalho', nome:'Arcano do Carvalho',
+    fundir:'Resistência a dano de terra e veneno; imune a envenenado; +5 PV toda vez que recuperar PV.',
+    dispensar:'Florescer: cada criatura visível (inclusive você) fica envenenada e recupera 40 PV (50 no nível 20+, 60 no nível 40+).'},
+  {id:'ceu',      nome:'Arcano do Céu',
+    fundir:'Resistência a dano de ar e raio; pode descobrir o clima do dia seguinte num raio de dois dias de viagem.',
+    dispensar:'Tempestade: cada criatura visível sofre 30 de dano de raio (ignora Resistências).'},
+  {id:'grimorio', nome:'Arcano do Grimório',
+    fundir:'Lê, escreve, fala e entende todos os idiomas; seu dado de Astúcia sobe um passo (máximo d12).',
+    dispensar:'Oráculo: uma pergunta ao mestre, respondida com sinceridade. Disponível de novo só na manhã seguinte; a mesma pergunta não se repete.'},
+  {id:'portao',   nome:'Arcano do Portão',
+    fundir:'Resistência a dano de trevas; +1 em Defesa Mágica.',
+    dispensar:'Oblívio: cada criatura visível sofre 30 de dano de trevas (ignora Resistências). Translocar: você e até cinco voluntários se teletransportam para um local visitado a até 1 dia de viagem.'},
+];
+
+// Os feitiços de Elementalista (pág. 188-189). "Magia Elemental" concede um
+// destes a cada vez que é escolhido.
+const FEITICOS_ELEMENTALISTA = [
+  {id:'arma-elemental',   nome:'Arma Elemental',    pm:'10',    alvo:'Uma arma',           duracao:'Cena',
+    descricao:'Imbui a arma com um tipo de dano à escolha (ar, fogo, gelo, raio ou terra) enquanto durar. Só em armas equipadas de criaturas voluntárias.'},
+  {id:'clarao',           nome:'Clarão', ofensivo:true, pm:'20', alvo:'Uma criatura',        duracao:'Instantânea',
+    descricao:'O alvo sofre 【RA + 25】 de dano de fogo (ignora Resistências).'},
+  {id:'fulgur',           nome:'Fulgur', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de raio. Oportunidade: alvos atingidos ficam atordoados.'},
+  {id:'glacies',          nome:'Glacies', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de gelo. Oportunidade: alvos atingidos ficam lentos.'},
+  {id:'golpe-de-sobrevoo',nome:'Golpe de Sobrevoo', pm:'10', alvo:'Pessoal',              duracao:'Instantânea',
+    descricao:'Ataque livre imediato com arma corpo a corpo equipada, podendo atingir alvos só acertáveis à distância. +5 de dano com lança ou luta. Alvo voador atingido é forçado a pousar.'},
+  {id:'iceberg',          nome:'Iceberg', ofensivo:true, pm:'20', alvo:'Uma criatura',        duracao:'Instantânea',
+    descricao:'O alvo sofre 【RA + 25】 de dano de gelo (ignora Resistências).'},
+  {id:'ignis',            nome:'Ignis', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de fogo. Oportunidade: cada alvo atingido fica abalado.'},
+  {id:'mortalha-elemental',nome:'Mortalha Elemental', pm:'5 × A', alvo:'Até três criaturas', duracao:'Cena',
+    descricao:'Escolha um tipo de dano: cada alvo se torna Resistente a ele enquanto durar.'},
+  {id:'raio',             nome:'Raio', ofensivo:true, pm:'20', alvo:'Uma criatura',        duracao:'Instantânea',
+    descricao:'O alvo sofre 【RA + 25】 de dano de raio (ignora Resistências).'},
+  {id:'terra',            nome:'Terra', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de terra (não afeta quem está voando/flutuando/caindo). Oportunidade: alvos atingidos fazem uma ação a menos no próximo turno.'},
+  {id:'ventus',           nome:'Ventus', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de ar. Oportunidade: alvos voadores são forçados a pousar.'},
+  {id:'vortice',          nome:'Vórtice', pm:'10', alvo:'Pessoal',                        duracao:'Cena',
+    descricao:'Enquanto durar, +2 em Defesa contra ataques à distância.'},
+];
+
 
 /* Condições (pág. 94). Cada uma reduz um ou dois Atributos em UM passo de
    dado. São cumulativas, e nenhum Atributo desce abaixo de d6 — as duas
@@ -177,13 +339,13 @@ function dadoAtual(p, idAtributo){
 
 const nivelTotal = p => p.classes.reduce((soma, c) => soma + (c.nivel || 0), 0);
 
-// PV/PM: nível total + cinco vezes o dado do Atributo, mais os bônus que as
-// classes concederam (pág. 163). O bônus entra à mão porque depende de qual
-// benefício grátis o jogador escolheu a cada nível.
-const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + (p.bonus.pv || 0);
-const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + (p.bonus.pm || 0);
+// PV/PM: nível total + cinco vezes o dado do Atributo, mais os benefícios
+// iniciais das classes (pág. 163) — que são fixos por classe e cumulativos
+// entre classes diferentes (pág. 176), não escolhidos nível a nível.
+const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + beneficiosDeClasse(p,'pv');
+const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeClasse(p,'pm');
 const crise    = p => Math.floor(pvMaximo(p) / 2);
-const piMaximo = p => PI_BASE + (p.bonus.pi || 0);
+const piMaximo = p => PI_BASE + beneficiosDeClasse(p,'pi');
 
 // Defesa vem do dado ATUAL, não do básico — por isso uma condição derruba a
 // defesa junto (pág. 168).
@@ -203,7 +365,13 @@ function novoPersonagem(nome){
     perfilAtributos: 'mediano',
     atributos: {destreza:8, vigor:8, astucia:8, vontade:6},
     classes: [{classeId:'', nivel:0},{classeId:'', nivel:0},{classeId:'', nivel:0}],
-    bonus: {pv:0, pm:0, pi:0, defesa:0, defesaMagica:0, iniciativa:0},
+    // PV/PM/PI de classe são automáticos (vêm de BENEFICIOS_CLASSE). O que
+    // sobra aqui é só o que ainda não tem aba própria: o bônus que armadura
+    // e escudo dão em Defesa, Defesa Mágica e Iniciativa.
+    bonus: {defesa:0, defesaMagica:0, iniciativa:0},
+    // escolhas: { 'elementalista': { 'magia-elemental': 2, ... }, ... } —
+    // quantas vezes cada poder daquela classe foi escolhido (o NP dele).
+    poder: {escolhas: {}, arcanoVinculado: null, feiticos: {}},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     pontosFabula: 3,
@@ -257,6 +425,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
 const ABAS = [
   {id:'perfil',    nome:'Perfil'},
   {id:'atributos', nome:'Atributos e Classes'},
+  {id:'poderes',   nome:'Poderes'},
   {id:'recursos',  nome:'Recursos'},
   {id:'lacos',     nome:'Laços'},
 ];
@@ -284,7 +453,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({perfil:abaPerfil, atributos:abaAtributos, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
+    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
   ligarEventos();
 }
@@ -433,17 +602,28 @@ function abaAtributos(p){
   </div>
 
   <div class="cartao">
-    <h2 style="font-size:18px">Bônus das classes</h2>
+    <h2 style="font-size:18px">Benefícios das classes</h2>
     <p class="mini" style="margin:6px 0 16px">
-      A cada nível de classe você escolhe um benefício grátis: PV+5, PM+5 ou PI+2.
-      Some aqui o total escolhido — a ficha não adivinha por você.
+      PV, PM, PI e o que suas classes deixam equipar somam automaticamente,
+      um por classe em que você tem ao menos 1 nível — e se duas classes
+      derem o mesmo benefício, ele acumula (pág. 176).
     </p>
     <div class="grade g3">
-      ${[['pv','PV adicionais'],['pm','PM adicionais'],['pi','PI adicionais']].map(([k,r]) =>
-        `<div><label for="c-b-${k}">${r}</label>
-         <input id="c-b-${k}" data-bonus="${k}" type="number" value="${p.bonus[k]||0}"></div>`).join('')}
+      <div class="derivado"><div class="rot">PV de classe</div>
+        <div class="val" style="font-size:22px">+${beneficiosDeClasse(p,'pv')}</div></div>
+      <div class="derivado"><div class="rot">PM de classe</div>
+        <div class="val" style="font-size:22px">+${beneficiosDeClasse(p,'pm')}</div></div>
+      <div class="derivado"><div class="rot">PI de classe</div>
+        <div class="val" style="font-size:22px">+${beneficiosDeClasse(p,'pi')}</div></div>
     </div>
-    <div class="grade g3" style="margin-top:14px">
+    ${textosDeEquipamento(p).length ? `<p class="ok">Pode equipar: ${textosDeEquipamento(p).join('; ')}.</p>` : ''}
+
+    <h2 style="font-size:18px;margin-top:22px">Equipamento (provisório)</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Até a aba de Inventário existir, anote aqui o que sua armadura e escudo
+      somam em Defesa, Defesa Mágica e Iniciativa.
+    </p>
+    <div class="grade g3">
       ${[['defesa','Defesa (armadura/escudo)'],['defesaMagica','Defesa mágica'],['iniciativa','Iniciativa']].map(([k,r]) =>
         `<div><label for="c-b-${k}">${r}</label>
          <input id="c-b-${k}" data-bonus="${k}" type="number" value="${p.bonus[k]||0}"></div>`).join('')}
@@ -495,6 +675,116 @@ function abaRecursos(p){
     <div style="max-width:220px;margin-top:12px">
       <input data-num="zenites" type="number" min="0" value="${p.zenites}">
     </div>
+  </div>`;
+}
+
+/*
+  Quantas vezes o poder `poderId` daquela classe já foi escolhido — o NP dele.
+*/
+function npDoPoder(p, classeId, poderId){
+  return (p.poder.escolhas[classeId] || {})[poderId] || 0;
+}
+
+// Total de poderes já escolhidos numa classe, somando o NP de todos eles.
+function poderesUsadosNaClasse(p, classeId){
+  const mapa = p.poder.escolhas[classeId] || {};
+  return Object.values(mapa).reduce((soma, n) => soma + n, 0);
+}
+
+function abaPoderes(p){
+  const classesComNivel = p.classes.filter(c => c.classeId && c.nivel > 0);
+
+  if(!classesComNivel.length){
+    return `<div class="cartao"><p class="mini">
+      Escolha uma classe com pelo menos 1 nível na aba <strong>Atributos e
+      Classes</strong> para ver os poderes dela aqui.</p></div>`;
+  }
+
+  return classesComNivel.map(c => {
+    const def = PODERES_CLASSE[c.classeId];
+    const nomeClasse = CLASSES.find(x => x.id === c.classeId)?.nome || c.classeId;
+
+    if(!def){
+      return `<div class="cartao">
+        <h2 style="font-size:18px">${nomeClasse}</h2>
+        <div class="aviso">Os poderes desta classe ainda não estão
+        codificados na ficha — só Andarilho, Arcanista, Atirador e
+        Elementalista têm o texto conferido com o livro por enquanto.
+        Anote os poderes escolhidos nas <strong>Anotações</strong>, na aba
+        Perfil, até a classe entrar aqui.</div>
+      </div>`;
+    }
+
+    const usados = poderesUsadosNaClasse(p, c.classeId);
+    const restam = c.nivel - usados;
+
+    return `<div class="cartao" data-classe-poderes="${c.classeId}">
+      <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 style="font-size:18px">${nomeClasse}</h2>
+        <span class="mini">${usados} de ${c.nivel} ${c.nivel===1?'poder escolhido':'poderes escolhidos'}</span>
+      </div>
+
+      ${restam !== 0 ? `<div class="aviso">
+          ${restam > 0
+            ? `Faltam ${restam} ${restam===1?'poder':'poderes'} para escolher — cada nível dá um.`
+            : `${Math.abs(restam)} ${Math.abs(restam)===1?'poder a mais do que':'poderes a mais do que'} o nível permite.`}
+        </div>` : `<p class="ok">Todos os poderes desta classe já foram escolhidos.</p>`}
+
+      ${def.map(poder => {
+        const np = npDoPoder(p, c.classeId, poder.id);
+        return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <p class="mini" style="color:var(--texto);font-size:14px">
+              <strong>${poder.nome}</strong>${poder.max > 1 ? ` <span style="color:var(--suave)">(até ${poder.max}×)</span>` : ''}
+            </p>
+            <div class="linha" style="width:auto">
+              <button data-poder-menos="${c.classeId}|${poder.id}" ${np<=0?'disabled':''} aria-label="Diminuir">−</button>
+              <span style="min-width:2ch;text-align:center">${np}</span>
+              <button data-poder-mais="${c.classeId}|${poder.id}" ${np>=poder.max?'disabled':''} aria-label="Aumentar">+</button>
+            </div>
+          </div>
+          <p class="mini" style="margin-top:4px">${poder.descricao}</p>
+
+          ${poder.id === 'vincular-invocar' && np > 0 ? blocoArcano(p) : ''}
+          ${poder.id === 'magia-elemental' && np > 0 ? blocoFeiticos(p, np) : ''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function blocoArcano(p){
+  const vinculado = p.poder.arcanoVinculado;
+  return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
+    <label for="c-arcano">Arcano vinculado</label>
+    <select id="c-arcano" data-arcano-vinculado>
+      <option value="">— escolher —</option>
+      ${ARCANOS_DEF.map(a => `<option value="${a.id}" ${a.id===vinculado?'selected':''}>${a.nome}</option>`).join('')}
+    </select>
+    ${vinculado ? (() => {
+      const a = ARCANOS_DEF.find(x => x.id === vinculado);
+      return `<p class="mini" style="margin-top:8px"><strong>Fundir:</strong> ${a.fundir}</p>
+        ${a.dispensar ? `<p class="mini" style="margin-top:4px"><strong>Dispensar:</strong> ${a.dispensar}</p>` : ''}`;
+    })() : ''}
+  </div>`;
+}
+
+function blocoFeiticos(p, np){
+  const escolhidos = p.poder.feiticos.elementalista || [];
+  return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
+    <p class="mini">Feitiços conhecidos (${escolhidos.filter(Boolean).length} de ${np}):</p>
+    <div class="grade g2" style="margin-top:8px">
+      ${Array.from({length: np}).map((_, i) => `
+        <select data-feitico-elementalista="${i}">
+          <option value="">— escolher —</option>
+          ${FEITICOS_ELEMENTALISTA.map(f => `<option value="${f.id}" ${escolhidos[i]===f.id?'selected':''}>${f.nome}${f.ofensivo?' (ofensivo)':''}</option>`).join('')}
+        </select>`).join('')}
+    </div>
+    ${escolhidos.filter(Boolean).map(id => {
+      const f = FEITICOS_ELEMENTALISTA.find(x => x.id === id);
+      return f ? `<p class="mini" style="margin-top:8px">
+        <strong>${f.nome}</strong> — ${f.pm} PM · ${f.alvo} · ${f.duracao}<br>${f.descricao}</p>` : '';
+    }).join('')}
   </div>`;
 }
 
@@ -565,6 +855,38 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-bonus]').forEach(el =>
     el.onchange = () => mudar(p => p.bonus[el.dataset.bonus] = Number(el.value) || 0));
+
+  // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
+  // "|", porque um botão só aceita um valor.
+  app.querySelectorAll('[data-poder-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMais.split('|');
+      const def = PODERES_CLASSE[classeId].find(x => x.id === poderId);
+      const mapa = p.poder.escolhas[classeId] || (p.poder.escolhas[classeId] = {});
+      mapa[poderId] = Math.min(def.max, (mapa[poderId] || 0) + 1);
+    }));
+
+  app.querySelectorAll('[data-poder-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMenos.split('|');
+      const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
+      mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
+      // Some com "Magia Elemental" derruba a NP: os feitiços que sobrarem
+      // do índice sem cobertura são cortados, para não guardar lixo.
+      if(poderId === 'magia-elemental' && classeId === 'elementalista'){
+        p.poder.feiticos.elementalista = (p.poder.feiticos.elementalista || []).slice(0, mapa[poderId]);
+      }
+    }));
+
+  const arcano = document.getElementById('c-arcano');
+  if(arcano) arcano.onchange = () => mudar(p => p.poder.arcanoVinculado = arcano.value || null);
+
+  app.querySelectorAll('[data-feitico-elementalista]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const i = Number(el.dataset.feiticoElementalista);
+      const lista = p.poder.feiticos.elementalista || (p.poder.feiticos.elementalista = []);
+      lista[i] = el.value || null;
+    }));
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
     el.onchange = () => mudar(p => p.atual[el.dataset.atualrec] = Number(el.value) || 0));
