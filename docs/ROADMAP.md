@@ -44,19 +44,19 @@ num PDF recortado e foram lidos inteiros.
       benefícios, catálogos de Dons Psíquicos e Teriomorfose). Veículo
       Pessoal do Piloto descrito no texto do poder, sem painel próprio
       (ver "Fora de escopo por agora" abaixo)
-- [x] **Atlas Natural Fantasy** — Floralista, Gourmet e Invocador completos
-      (poderes, benefícios, catálogo de Magissementes, bloco de referência
-      de Mananciais e Invocações). **Falta o Mercador**: o recorte do Zé
-      parou antes do capítulo dele (por volta da página 158-159) — preciso
-      dessas páginas para fechar o Atlas
+- [x] **Atlas Natural Fantasy** — **completo.** Floralista, Gourmet, Invocador
+      e Mercador (poderes, benefícios, catálogo de Magissementes, bloco de
+      referência de Mananciais e Invocações). Mercador entrou depois, com um
+      segundo recorte de página 158-159
 - [ ] Feitiços e rituais, com as seis disciplinas
 - [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
 - [ ] Combate: dano, tipos de dano, afinidades elementais
 - [ ] Poderes Heroicos
 - [ ] **Herdeiros da Supernova**
 
-Zé usa todos os Atlas, então nenhum deles é opcional. Faltando: Mercador
-(Natural Fantasy) e o Atlas Herdeiros da Supernova inteiro.
+Zé usa todos os Atlas, então nenhum deles é opcional. Faltando só o Atlas
+Herdeiros da Supernova inteiro — os outros três (High Fantasy, Techno
+Fantasy, Natural Fantasy) e o Livro Básico estão com todas as classes.
 
 ### Fora de escopo por agora (mecânicas grandes demais para entrar de raspão)
 

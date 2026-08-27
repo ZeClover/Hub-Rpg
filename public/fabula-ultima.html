@@ -157,6 +157,7 @@ const CLASSES = [
   {id:'floralista',  nome:'Floralista'},
   {id:'gourmet',     nome:'Gourmet'},
   {id:'invocador',   nome:'Invocador'},
+  {id:'mercador',    nome:'Mercador'},
 ];
 /* ===========================================================================
    PODERES DE CLASSE (Livro Básico, cap. 3)
@@ -211,6 +212,7 @@ const BENEFICIOS_CLASSE = {
   floralista: [{tipo:'escolha', opcoes:['pv','pm'], valor:5}],
   gourmet:    [{tipo:'pi', valor:2}, {tipo:'equipar', texto:'iniciar Projetos de comidas e bebidas únicas'}],
   invocador:  [{tipo:'escolha', opcoes:['pv','pm'], valor:5}],
+  mercador:   [{tipo:'pi', valor:2}],
 };
 
 // Soma os benefícios fixos de toda classe em que o personagem tem ao menos
@@ -578,6 +580,19 @@ const PODERES_CLASSE = {
       descricao:'Ação e 5 PM: invoque a energia de um manancial presente na cena. 【NP】 determina o acesso — NP 1 dá "explosão", NP 2 dá "explosão" e "praga", NP 3 dá tudo.'},
     {id:'invocacoes-conectadas', nome:'Invocações Conectadas', max:3,
       descricao:'Ao invocar, gaste até 【NP × 10】 PM a mais: a cada 10 PM, mais uma criatura visível vira alvo.'},
+  ],
+
+  mercador: [
+    {id:'data-de-validade', nome:'Data de Validade', max:3,
+      descricao:'Quando uma poção ou iguaria sua que cura PV não causa dano, pode fazê-la causar dano de veneno igual a 【metade do nível + (NP × 10)】 a cada criatura (esse tipo não muda mais); dividido à metade se atingir 2+ criaturas.'},
+    {id:'estoque-pessoal', nome:'Estoque Pessoal', max:3,
+      descricao:'Quando você ou outro PJ for gastar 【NP + 2】 ou menos Pontos de Inventário, pode gastar 1 Ponto de Comércio para o alvo ignorar esse custo.'},
+    {id:'ja-ouvi-falar', nome:'Já Ouvi Falar', max:3,
+      descricao:'Quando você ou um aliado que puder ouvir e entender você examinar uma criatura, item ou local, pode gastar 1 Ponto de Comércio para dar um bônus de 【NP + 2】 ao teste.'},
+    {id:'ventos-do-comercio', nome:'Ventos do Comércio', max:3,
+      descricao:'Ao descansar num lugar com comércio, ganha 【NP + 1】 Pontos de Comércio (máximo de 【NP + 3】; começa o jogo com 2 se pego na criação). Numa cena sem conflito, gaste 2 Pontos de Comércio para criar um item/material raro (até 【nível × 30】 zênites, com aprovação do mestre) ou um NPC contato local.'},
+    {id:'verdadeiro-tesouro', nome:'Verdadeiro Tesouro', max:3,
+      descricao:'Uma vez por sessão, ao ajudar um NPC ou comunidade a superar ganância/corrupção, melhorar a qualidade de vida ou coexistir com outras criaturas: se tiver Ventos do Comércio, ganha 【NP + 1】 Pontos de Comércio.'},
   ],
 };
 
