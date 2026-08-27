@@ -23,20 +23,19 @@ Ritmo (decisão #26): uma etapa usável por vez.
 
 Fonte: os PDFs da biblioteca do Zé (Livro Básico + todos os Atlas).
 
-**Limite técnico encontrado (28/08/2026):** a ferramenta de leitura do Google
-Drive só extrai o começo de um PDF grande — parou na página 193 de 360 do
-Livro Básico. Baixar o arquivo puro também não dá: o limite é 10 MB e o livro
-tem 37 MB. Por isso só 4 classes saíram completas nesta rodada. Para as
-próximas 11 classes e os 4 Atlas inteiros, o caminho mais confiável é o Zé
-mandar os capítulos em pedaços — print das páginas ou um recorte do PDF —
-para eu extrair sem depender do limite da ferramenta.
+**Limite técnico encontrado e contornado (27-28/08/2026):** a ferramenta de
+leitura do Google Drive só extrai o começo de um PDF grande — parou na
+página 193 de 360 do Livro Básico, e baixar o arquivo puro não dava (limite
+de 10 MB, livro com 37 MB). O Zé recortou o PDF nas páginas com as 11
+classes restantes e mandou como anexo, o que permitiu ler o livro inteiro
+por página. Esse é o caminho para os 4 Atlas que faltam: recorte por
+capítulo, mandado como anexo.
 
-- [x] Poderes das 15 classes do Livro Básico — **4 de 15 prontas**: Andarilho,
-      Arcanista (com os 9 Arcanos), Atirador, Elementalista (com os 12
-      feitiços). Benefícios iniciais (PV/PM/PI) somam automático por classe
-  - [ ] As 11 classes restantes: Elementalista fica sozinho por ora — faltam
-        Entropista, Erudito, Espiritualista, Furioso, Guardião, Guerreiro
-        Sombrio, Inventor, Ladino, Mestre de Armas, Orador, Quimerista
+- [x] Poderes das 15 classes do Livro Básico — **completo.** Todas com os
+      cinco poderes conferidos linha a linha no livro, contador de NP e
+      benefícios iniciais automáticos. Entropista, Espiritualista e
+      Elementalista com catálogo de feitiços; Quimerista com aviso de que os
+      dele vêm de observar criaturas em jogo, sem catálogo fixo
 - [ ] Feitiços e rituais, com as seis disciplinas
 - [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
 - [ ] Combate: dano, tipos de dano, afinidades elementais

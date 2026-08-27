@@ -170,10 +170,21 @@ const CLASSES = [
    =========================================================================== */
 
 const BENEFICIOS_CLASSE = {
-  andarilho:     [{tipo:'pi', valor:2}],
-  arcanista:     [{tipo:'pm', valor:5}],
-  atirador:      [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas à distância e escudos marciais'}],
-  elementalista: [{tipo:'pm', valor:5}],
+  andarilho:         [{tipo:'pi', valor:2}],
+  arcanista:         [{tipo:'pm', valor:5}],
+  atirador:          [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas à distância e escudos marciais'}],
+  elementalista:     [{tipo:'pm', valor:5}],
+  entropista:        [{tipo:'pm', valor:5}],
+  erudito:           [{tipo:'pm', valor:5}],
+  espiritualista:    [{tipo:'pm', valor:5}],
+  furioso:           [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e armaduras marciais'}],
+  guardiao:          [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armaduras e escudos marciais'}],
+  'guerreiro-sombrio':[{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e armaduras marciais'}],
+  inventor:          [{tipo:'pi', valor:2}, {tipo:'equipar', texto:'iniciar Projetos'}],
+  ladino:            [{tipo:'pi', valor:2}],
+  'mestre-de-armas': [{tipo:'pv', valor:5}, {tipo:'equipar', texto:'armas corpo a corpo e escudos marciais'}],
+  orador:            [{tipo:'pm', valor:5}],
+  quimerista:        [{tipo:'pm', valor:5}],
 };
 
 // Soma os benefícios fixos de toda classe em que o personagem tem ao menos
@@ -244,6 +255,149 @@ const PODERES_CLASSE = {
     {id:'magia-elemental', nome:'Magia Elemental', max:10,
       descricao:'Sempre que adquirir este poder, aprenda um feitiço de Elementalista. Feitiços ofensivos de Elementalista usam 【AST + VON】 no teste de Magia.'},
   ],
+
+  entropista: [
+    {id:'absorver-pm', nome:'Absorver PM', max:5,
+      descricao:'Depois de sofrer dano, você pode imediatamente recuperar 【NP × 2】 PM.'},
+    {id:'entropismo-ritualista', nome:'Entropismo Ritualista', max:1,
+      descricao:'Você pode fazer rituais da disciplina entropismo. Rituais de entropismo usam 【AST + VON】 no teste de Magia.'},
+    {id:'magia-entropica', nome:'Magia Entrópica', max:10,
+      descricao:'Sempre que adquirir este poder, aprenda um feitiço de Entropista. Feitiços ofensivos de Entropista usam 【AST + VON】 no teste de Magia.'},
+    {id:'sete-da-sorte', nome:'Sete da Sorte', max:1,
+      descricao:'Você tem um número da sorte (7 no início de cada sessão). Uma vez por cena, após um teste, pode substituir o valor de um dado rolado por esse número — mesmo que dê resultado impossível. O valor substituído vira seu novo número da sorte.'},
+    {id:'tempo-roubado', nome:'Tempo Roubado', max:4,
+      descricao:'Em um conflito, gaste uma ação e até 【NP × 5】 PM: para cada 5 PM, uma criatura visível fica lenta, deixa de ficar lenta, faz a ação Equipamento sem custo, ou um aliado ainda não agido nesta rodada age logo após você.'},
+  ],
+
+  erudito: [
+    {id:'analise-rapida', nome:'Análise Rápida', max:6,
+      descricao:'No início de um conflito, gaste até 【NP × 5】 PM: para cada 5 PM, revele um Traço ou uma Afinidade de uma criatura visível.'},
+    {id:'concentrado', nome:'Concentrado', max:5,
+      descricao:'Aumente permanentemente seus PM máximos em 【NP × 3】. Em teste aberto usando 【AST + AST】, ganha um bônus igual a 【NP】.'},
+    {id:'conhecimento-e-poder', nome:'Conhecimento é Poder', max:1,
+      descricao:'Em um teste de Precisão, pode substituir um dado de Atributo por Astúcia.'},
+    {id:'lampejo-de-saber', nome:'Lampejo de Saber', max:3,
+      descricao:'Ao tirar 13+ investigando algo (inclusive na ação Estudo), faça até 【NP】 perguntas ao mestre sobre o assunto, respondidas com a verdade. Uma vez por alvo.'},
+    {id:'memoria-treinada', nome:'Memória Treinada', max:1,
+      descricao:'Lembra com perfeição de qualquer cena vivida na última semana, podendo "voltar" a ela na mente — Lampejo de Saber também funciona nessas memórias.'},
+  ],
+
+  espiritualista: [
+    {id:'espiritualismo-ritualista', nome:'Espiritualismo Ritualista', max:1,
+      descricao:'Você pode fazer rituais da disciplina espiritualismo. Rituais de espiritualismo usam 【AST + VON】 no teste de Magia.'},
+    {id:'magia-de-suporte', nome:'Magia de Suporte', max:1,
+      descricao:'Ao lançar um feitiço com alvo aliado, com arma arcana equipada, escolha um desses aliados com quem tenha Laço: ele ganha um bônus igual à força do Laço no próximo teste até o fim da cena.'},
+    {id:'magia-espiritual', nome:'Magia Espiritual', max:10,
+      descricao:'Sempre que adquirir este poder, aprenda um feitiço de Espiritualista. Feitiços ofensivos de Espiritualista usam 【AST + VON】 no teste de Magia.'},
+    {id:'poder-curativo', nome:'Poder Curativo', max:2,
+      descricao:'Ao lançar feitiço com alvo aliado, com arma arcana equipada, cada aliado alvo recupera PV igual a 【NP × número de Laços que você tem】, além da cura do próprio feitiço.'},
+    {id:'vismagus', nome:'Vismagus', max:1,
+      descricao:'Sem PM para pagar um feitiço, pode gastar o dobro em PV (nunca a ponto de zerar seus PV). Feitiço pago assim não recupera PV pra você.'},
+  ],
+
+  furioso: [
+    {id:'adrenalina', nome:'Adrenalina', max:5,
+      descricao:'Enquanto em crise, você causa 【NP × 2】 de dano adicional em qualquer meio (ataque, feitiço, Arcano, item...).'},
+    {id:'frenesi', nome:'Frenesi', max:1,
+      descricao:'Testes de Precisão com adaga, luta, malho e armas de arremesso contam como sucesso crítico se os dois dados mostrarem o mesmo número (desde que não seja falha crítica).'},
+    {id:'espirito-indomavel', nome:'Espírito Indomável', max:4,
+      descricao:'Ao gastar Pontos de Fabula, ganhe um benefício extra: recupere 【NP × 5】 PV; ou 【NP × 5】 PM; ou recupere-se de uma condição.'},
+    {id:'provocar', nome:'Provocar', max:5,
+      descricao:'Gaste uma ação e 5 PM: teste oposto de 【VIG + VON】 contra uma criatura visível. Sucesso: ela fica enfurecida e é compelida a atacar você. Bônus 【NP】 neste teste.'},
+    {id:'resistir', nome:'Resistir', max:5,
+      descricao:'Na ação Guarda sem dar cobertura: recupere PV igual a 【NP × maior força de Laço】 e escolha Vigor ou Vontade — até o fim do seu próximo turno, o dado atual dele sobe um passo (máximo d12).'},
+  ],
+
+  guardiao: [
+    {id:'guarda-costas', nome:'Guarda-costas', max:1,
+      descricao:'Ao fazer Guarda dando cobertura a outra criatura, ela ganha Resistência a todos os tipos de dano até o início do seu próximo turno.'},
+    {id:'maestria-defensiva', nome:'Maestria Defensiva', max:5,
+      descricao:'Com escudo ou armadura marcial equipada, todo dano sofrido é reduzido em 【NP】 (antes de Afinidades).'},
+    {id:'duplo-escudeiro', nome:'Duplo Escudeiro', max:1,
+      descricao:'Pode equipar um segundo escudo na mão dominante. Com dois escudos, trata-os como arma de luta de duas mãos (Escudos Gêmeos: Precisão 【VIG+VIG】, dano 【RA+5】 físico, +NP de Maestria Defensiva no dano).'},
+    {id:'fortaleza', nome:'Fortaleza', max:5,
+      descricao:'Aumente permanentemente seus PV máximos em 【NP × 3】.'},
+    {id:'proteger', nome:'Proteger', max:5,
+      descricao:'Quando outra criatura é ameaçada por um perigo, tome o lugar dela nos testes envolvidos. Se o perigo já o afetou, é afetado duas vezes. Não pode proteger várias criaturas do mesmo perigo; num conflito, só reusa no próximo turno.'},
+  ],
+
+  'guerreiro-sombrio': [
+    {id:'agonia', nome:'Agonia', max:5,
+      descricao:'Ao causar dano a uma criatura com quem tenha Laço, recupere 【NP × 2】 PV e 【NP × 2】 PM.'},
+    {id:'coracao-da-escuridao', nome:'Coração da Escuridão', max:1,
+      descricao:'Uma vez por cena, ao entrar em crise, crie um Laço de ódio com uma criatura visível com quem ainda não tenha Laço.'},
+    {id:'golpe-das-sombras', nome:'Golpe das Sombras', max:5,
+      descricao:'Gaste uma ação: role seu dado de Vigor e perca PV igual ao resultado. Se não zerar seus PV, faça um ataque livre com dano adicional igual a 【NP + o número rolado】, sempre do tipo trevas.'},
+    {id:'licao-dolorosa', nome:'Lição Dolorosa', max:3,
+      descricao:'Ao perder PV de qualquer forma, pode fazer a ação Estudo imediatamente contra quem causou, com bônus 【NP】. Não repete o mesmo aspecto na mesma criatura.'},
+    {id:'sangue-das-trevas', nome:'Sangue das Trevas', max:1,
+      descricao:'Enquanto em crise, você tem Resistência a dano de trevas e de veneno.'},
+  ],
+
+  inventor: [
+    {id:'chuva-de-pocoes', nome:'Chuva de Poções', max:2,
+      descricao:'Uma poção de PV/PM de alvo único pode afetar 【NP】 criaturas adicionais, cada uma recebendo metade do valor normal.'},
+    {id:'engenhocas', nome:'Engenhocas', max:5,
+      descricao:'Escolha um tipo — alquimia, infusões ou tecnomagia — e ganhe os benefícios básicos dele. A cada nova aquisição, ganhe os básicos de outro tipo, ou os avançados/superiores de um tipo cujo nível anterior já tenha.'},
+    {id:'formula-secreta', nome:'Fórmula Secreta', max:5,
+      descricao:'Poção/magisfera que restaura PV/PM: cada recurso restaurado aumenta em 【NP × 5】. Fragmento elemental/magisfera/poção que causa dano: 【NP】 de dano adicional.'},
+    {id:'item-emergencial', nome:'Item Emergencial', max:1,
+      descricao:'Uma vez por cena de conflito, em crise, faça mais uma ação no turno — desde que seja a ação Inventário.'},
+    {id:'visionario', nome:'Visionário', max:5,
+      descricao:'Em um projeto, até 【NP × 100】 zênites do custo de material são pagos automaticamente, e gera 【NP】 de progresso a mais por dia. Cumulativo entre personagens com este poder no mesmo projeto.'},
+  ],
+
+  ladino: [
+    {id:'alta-velocidade', nome:'Alta Velocidade', max:3,
+      descricao:'No início de um conflito, gaste 10 PM: ataque livre com arma equipada, ou ação Impedimento/Objetivo, antes da primeira rodada. Bônus 【NP】 nos testes da opção escolhida.'},
+    {id:'esquiva', nome:'Esquiva', max:3,
+      descricao:'Sem escudo ou armadura marcial equipados, sua Defesa aumenta em 【NP】.'},
+    {id:'golpe-baixo', nome:'Golpe Baixo', max:5,
+      descricao:'Ao atingir um alvo único já sob uma ou mais condições, cause dano adicional igual a 【NP + número de condições que o afligem】.'},
+    {id:'roubo-de-alma', nome:'Roubo de Alma', max:5,
+      descricao:'Ação: teste de 【DES + VON】 contra a Def.M de uma criatura visível. Soldado: recupera 【NP】 PI. Elite/campeão: recebe um item de até 【nível do alvo × 30 (ou × 50 se vilão)】 zênites. Uma vez por criatura. Bônus 【NP】 no teste.'},
+    {id:'vejo-voce-mais-tarde', nome:'Vejo Você Mais Tarde', max:1,
+      descricao:'Gaste uma ação e 1 Ponto de Fabula para sumir da cena, reaparecendo depois em outra cena com um PJ.'},
+  ],
+
+  'mestre-de-armas': [
+    {id:'chuva-de-laminas', nome:'Chuva de Lâminas', max:1,
+      descricao:'Em ataque corpo a corpo, gaste 10 PM: o ataque ganha multi (2), ou aumenta em +1 sua propriedade multi, até multi (3).'},
+    {id:'esmagador-de-ossos', nome:'Esmagador de Ossos', max:4,
+      descricao:'Ao acertar com ataque corpo a corpo, pode não causar dano: cada alvo fica atordoado; ou fica fraco; ou perde 【NP × 10】 PM.'},
+    {id:'trespassar', nome:'Trespassar', max:3,
+      descricao:'Gaste ação e 5 PM: ataque livre corpo a corpo, alvo único, sem dano. Sucesso: destrua escudo ou armadura do alvo; ou ele sofre 【NP × 2】 de dano adicional no próximo dano recebido antes do seu próximo turno.'},
+    {id:'contra-ataque', nome:'Contra-ataque', max:1,
+      descricao:'Se um inimigo acerta ou erra um ataque corpo a corpo em você com teste de Precisão par, faça um ataque livre corpo a corpo nele depois, com RA considerada 0 no dano.'},
+    {id:'maestria-corpo-a-corpo', nome:'Maestria com Armas Corpo a Corpo', max:4,
+      descricao:'Bônus igual a 【NP】 em testes de Precisão corpo a corpo.'},
+  ],
+
+  orador: [
+    {id:'condenar', nome:'Condenar', max:4,
+      descricao:'Gaste ação e 5 PM: teste oposto de 【AST + VON】 contra uma criatura que ouça e entenda. Sucesso: ela perde 【NP × 10】 PM e fica abalada ou atordoada. Bônus 【NP】 no teste.'},
+    {id:'encorajar', nome:'Encorajar', max:6,
+      descricao:'Em conflito, gaste ação e 5 PM: outra criatura recupera 【NP × 5】 PV e um Atributo à escolha dela sobe um passo (máximo d12) até seu próximo turno.'},
+    {id:'confio-em-voce', nome:'Confio em Você', max:2,
+      descricao:'Quando outro PJ testa algo, gaste 1 Ponto de Fabula para convocar um Traço/Laço dele. Se você tem Laço com ele, ele também recupera 【NP × 10】 PM.'},
+    {id:'persuasivo', nome:'Persuasivo', max:2,
+      descricao:'Ao passar num teste de relógio com charme/diplomacia/engano/intimidação, gaste até 【NP × 20】 PM: preenche/apaga uma seção a mais a cada 20 PM.'},
+    {id:'aliado-inesperado', nome:'Aliado Inesperado', max:1,
+      descricao:'Gaste ação e 1 Ponto de Fabula: uma criatura não hostil que ouça e entenda se torna solícita, se tratada com respeito e com pedidos razoáveis.'},
+  ],
+
+  quimerista: [
+    {id:'consumir', nome:'Consumir', max:5,
+      descricao:'Ao causar dano com feitiço, com adaga, arma arcana ou malho equipado, recupere 【NP × 2】 PM.'},
+    {id:'imitacao-magica', nome:'Imitação Mágica', max:10,
+      descricao:'Ao ver um feitiço lançado por fera, monstro ou planta, aprenda-o como feitiço de Quimerista (anote a espécie). Na primeira vez, escolha 【AST+VON】 ou 【VIG+VON】 para seus feitiços ofensivos. Memoriza até 【NP + 2】 feitiços; passar do limite exige esquecer um.'},
+    {id:'lingua-das-feras', nome:'Língua das Feras', max:1,
+      descricao:'Você se comunica com criaturas das espécies fera, monstro e planta.'},
+    {id:'patogenese', nome:'Patogênese', max:1,
+      descricao:'Ao causar dano com feitiço de Quimerista, alvos da mesma espécie de quem você aprendeu o feitiço ficam envenenados.'},
+    {id:'quimerismo-ritualista', nome:'Quimerismo Ritualista', max:1,
+      descricao:'Você pode fazer rituais da disciplina quimerismo, usando o mesmo par de Atributos escolhido em Imitação Mágica.'},
+  ],
 };
 
 // Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
@@ -307,6 +461,71 @@ const FEITICOS_ELEMENTALISTA = [
     descricao:'Enquanto durar, +2 em Defesa contra ataques à distância.'},
 ];
 
+// Feitiços de Entropista (pág. 192-193). "Magia Entrópica" concede um a cada compra.
+const FEITICOS_ENTROPISTA = [
+  {id:'aceleracao',    nome:'Aceleração',   pm:'20', alvo:'Uma criatura', duracao:'Cena',
+    descricao:'Enquanto durar, o alvo faz uma ação adicional por turno. Termina após duas ações adicionais na mesma cena.'},
+  {id:'adivinhacao',   nome:'Adivinhação',  pm:'10', alvo:'Pessoal',      duracao:'Cena',
+    descricao:'Quando uma criatura visível faz um teste sem crítico nem falha crítica, force-a a rolar os dois dados de novo. Termina após forçar duas vezes.'},
+  {id:'anomalia',      nome:'Anomalia', ofensivo:true, pm:'20', alvo:'Uma criatura', duracao:'Cena',
+    descricao:'Enquanto durar, dano ao qual o alvo seria Absorvedor ou Imune passa a Vulnerável. Ao acontecer, o feitiço termina.'},
+  {id:'apostar',       nome:'Apostar', pm:'até 20', alvo:'Especial', duracao:'Instantânea',
+    descricao:'Role Vontade uma vez por 10 PM gastos e escolha um resultado: 1 perde metade de PV e PM; 2-3 cada um fica envenenado; 4-6 cada um fica lento; 7-8 até três criaturas recuperam 50 PV e todas as condições; 9+ criaturas visíveis sofrem 30 de dano de tipo aleatório (d6: ar/raio/trevas/terra/fogo/veneno).'},
+  {id:'arma-das-trevas',nome:'Arma das Trevas', pm:'10', alvo:'Uma arma equipada', duracao:'Cena',
+    descricao:'O dano da arma vira trevas enquanto durar. Se equipada ao lançar, permite ataque livre com ela.'},
+  {id:'dissipar',      nome:'Dissipar', pm:'10', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'Remove toda magia de duração "Cena" que afete o alvo.'},
+  {id:'drenar-espirito',nome:'Drenar Espírito', ofensivo:true, pm:'5', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'O alvo perde 【RA + 15】 PM; você recupera metade dessa quantidade.'},
+  {id:'drenar-vigor',  nome:'Drenar Vigor', ofensivo:true, pm:'10', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'O alvo sofre 【RA + 15】 de dano de trevas; você recupera PV igual à metade do dano causado.'},
+  {id:'espelhar',      nome:'Espelhar', pm:'10', alvo:'Uma criatura', duracao:'Cena',
+    descricao:'Enquanto durar, um feitiço ofensivo lançado contra o alvo atinge quem o lançou em vez dele. O feitiço termina ao acontecer.'},
+  {id:'parar',         nome:'Parar', ofensivo:true, pm:'10', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'O alvo faz uma ação a menos no próximo turno (mínimo 0).'},
+  {id:'umbra',         nome:'Umbra', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de trevas. Oportunidade: alvos atingidos ficam fracos.'},
+  {id:'omega',         nome:'Ômega', ofensivo:true, pm:'20', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'O alvo perde uma quantidade de PV igual a 【20 + metade do nível do alvo】.'},
+];
+
+// Feitiços de Espiritualista (pág. 198-199). "Magia Espiritual" concede um a cada compra.
+const FEITICOS_ESPIRITUALISTA = [
+  {id:'alucinacao',    nome:'Alucinação', ofensivo:true, pm:'5 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Escolha abalado ou atordoado: cada alvo atingido é afligido pela condição escolhida.'},
+  {id:'arma-espiritual',nome:'Arma Espiritual', pm:'10', alvo:'Uma arma equipada', duracao:'Cena',
+    descricao:'O dano da arma vira luz enquanto durar. Se equipada ao lançar, permite ataque livre com ela.'},
+  {id:'aura',          nome:'Aura', pm:'5 × A', alvo:'Até três criaturas', duracao:'Cena',
+    descricao:'Enquanto durar, a Defesa Mágica dos alvos se torna 12 (ou a própria, se maior).'},
+  {id:'barreira',      nome:'Barreira', pm:'5 × A', alvo:'Até três criaturas', duracao:'Cena',
+    descricao:'Enquanto durar, a Defesa dos alvos se torna 12 (ou a própria, se maior).'},
+  {id:'curar',         nome:'Curar', pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo recupera 40 PV (50 no nível 20+, 60 no nível 40+).'},
+  {id:'despertar',     nome:'Despertar', pm:'20', alvo:'Uma criatura', duracao:'Cena',
+    descricao:'Escolha um Atributo do alvo: enquanto durar, o dado dele sobe um passo (máximo d12).'},
+  {id:'enfurecer',     nome:'Enfurecer', ofensivo:true, pm:'10', alvo:'Uma criatura', duracao:'Instantânea',
+    descricao:'O alvo fica enfurecido e não pode fazer Guarda ou Feitiço no próximo turno.'},
+  {id:'lux',           nome:'Lux', ofensivo:true, pm:'10 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Cada alvo sofre 【RA + 15】 de dano de luz. Oportunidade: alvos atingidos ficam atordoados.'},
+  {id:'piedade',       nome:'Piedade', pm:'20', alvo:'Uma criatura', duracao:'Cena',
+    descricao:'Enquanto durar, se o alvo fosse a 0 PV, fica com exatamente 1 PV — e o feitiço termina.'},
+  {id:'purificar',     nome:'Purificar', pm:'5 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Todos os alvos se recuperam de todas as condições.'},
+  {id:'reforcar',      nome:'Reforçar', pm:'5 × A', alvo:'Até três criaturas', duracao:'Cena',
+    descricao:'Escolha uma condição (abalado, atordoado, enfurecido, envenenado, fraco ou lento): cada alvo fica imune a ela enquanto durar.'},
+  {id:'torpor',        nome:'Torpor', ofensivo:true, pm:'5 × A', alvo:'Até três criaturas', duracao:'Instantânea',
+    descricao:'Escolha fraco ou lento: cada alvo atingido é afligido pela condição.'},
+];
+
+// As classes cujo poder de "aprender feitiço a cada compra" segue exatamente
+// o mesmo molde (Magia X / lista fixa de feitiços). Quimerista fica de fora
+// de propósito: os feitiços dele vêm de observar criaturas em jogo, não de
+// um catálogo — não existe lista pra escolher aqui.
+const LISTAS_DE_FEITICO = {
+  elementalista: {poderId:'magia-elemental', lista: FEITICOS_ELEMENTALISTA},
+  entropista:    {poderId:'magia-entropica', lista: FEITICOS_ENTROPISTA},
+  espiritualista:{poderId:'magia-espiritual',lista: FEITICOS_ESPIRITUALISTA},
+};
 
 /* Condições (pág. 94). Cada uma reduz um ou dois Atributos em UM passo de
    dado. São cumulativas, e nenhum Atributo desce abaixo de d6 — as duas
@@ -705,13 +924,13 @@ function abaPoderes(p){
     const nomeClasse = CLASSES.find(x => x.id === c.classeId)?.nome || c.classeId;
 
     if(!def){
+      // Não deveria acontecer — as 15 classes do Livro Básico têm poderes
+      // cadastrados. Se aparecer, é uma classe nova sem entrada em
+      // PODERES_CLASSE.
       return `<div class="cartao">
         <h2 style="font-size:18px">${nomeClasse}</h2>
-        <div class="aviso">Os poderes desta classe ainda não estão
-        codificados na ficha — só Andarilho, Arcanista, Atirador e
-        Elementalista têm o texto conferido com o livro por enquanto.
-        Anote os poderes escolhidos nas <strong>Anotações</strong>, na aba
-        Perfil, até a classe entrar aqui.</div>
+        <div class="aviso">Esta classe ainda não tem os poderes cadastrados
+        na ficha. Anote-os nas <strong>Anotações</strong>, na aba Perfil.</div>
       </div>`;
     }
 
@@ -746,7 +965,10 @@ function abaPoderes(p){
           <p class="mini" style="margin-top:4px">${poder.descricao}</p>
 
           ${poder.id === 'vincular-invocar' && np > 0 ? blocoArcano(p) : ''}
-          ${poder.id === 'magia-elemental' && np > 0 ? blocoFeiticos(p, np) : ''}
+          ${LISTAS_DE_FEITICO[c.classeId]?.poderId === poder.id && np > 0 ? blocoFeiticos(p, c.classeId, np) : ''}
+          ${poder.id === 'imitacao-magica' && np > 0 ? `<p class="mini" style="margin-top:8px;padding:8px;border:1px solid var(--borda);border-radius:8px">
+            Sem lista fixa: os feitiços de Quimerista vêm de observar criaturas fera, monstro ou planta em jogo. Anote nas <strong>Anotações</strong> quais você já aprendeu (limite de ${np + 2}).
+          </p>` : ''}
         </div>`;
       }).join('')}
     </div>`;
@@ -769,19 +991,20 @@ function blocoArcano(p){
   </div>`;
 }
 
-function blocoFeiticos(p, np){
-  const escolhidos = p.poder.feiticos.elementalista || [];
+function blocoFeiticos(p, classeId, np){
+  const lista = LISTAS_DE_FEITICO[classeId].lista;
+  const escolhidos = p.poder.feiticos[classeId] || [];
   return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
     <p class="mini">Feitiços conhecidos (${escolhidos.filter(Boolean).length} de ${np}):</p>
     <div class="grade g2" style="margin-top:8px">
       ${Array.from({length: np}).map((_, i) => `
-        <select data-feitico-elementalista="${i}">
+        <select data-feitico="${classeId}|${i}">
           <option value="">— escolher —</option>
-          ${FEITICOS_ELEMENTALISTA.map(f => `<option value="${f.id}" ${escolhidos[i]===f.id?'selected':''}>${f.nome}${f.ofensivo?' (ofensivo)':''}</option>`).join('')}
+          ${lista.map(f => `<option value="${f.id}" ${escolhidos[i]===f.id?'selected':''}>${f.nome}${f.ofensivo?' (ofensivo)':''}</option>`).join('')}
         </select>`).join('')}
     </div>
     ${escolhidos.filter(Boolean).map(id => {
-      const f = FEITICOS_ELEMENTALISTA.find(x => x.id === id);
+      const f = lista.find(x => x.id === id);
       return f ? `<p class="mini" style="margin-top:8px">
         <strong>${f.nome}</strong> — ${f.pm} PM · ${f.alvo} · ${f.duracao}<br>${f.descricao}</p>` : '';
     }).join('')}
@@ -873,19 +1096,19 @@ function ligarEventos(){
       mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
       // Some com "Magia Elemental" derruba a NP: os feitiços que sobrarem
       // do índice sem cobertura são cortados, para não guardar lixo.
-      if(poderId === 'magia-elemental' && classeId === 'elementalista'){
-        p.poder.feiticos.elementalista = (p.poder.feiticos.elementalista || []).slice(0, mapa[poderId]);
+      if(LISTAS_DE_FEITICO[classeId]?.poderId === poderId){
+        p.poder.feiticos[classeId] = (p.poder.feiticos[classeId] || []).slice(0, mapa[poderId]);
       }
     }));
 
   const arcano = document.getElementById('c-arcano');
   if(arcano) arcano.onchange = () => mudar(p => p.poder.arcanoVinculado = arcano.value || null);
 
-  app.querySelectorAll('[data-feitico-elementalista]').forEach(el =>
+  app.querySelectorAll('[data-feitico]').forEach(el =>
     el.onchange = () => mudar(p => {
-      const i = Number(el.dataset.feiticoElementalista);
-      const lista = p.poder.feiticos.elementalista || (p.poder.feiticos.elementalista = []);
-      lista[i] = el.value || null;
+      const [classeId, indice] = el.dataset.feitico.split('|');
+      const conhecidos = p.poder.feiticos[classeId] || (p.poder.feiticos[classeId] = []);
+      conhecidos[Number(indice)] = el.value || null;
     }));
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
