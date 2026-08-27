@@ -48,15 +48,21 @@ num PDF recortado e foram lidos inteiros.
       e Mercador (poderes, benefícios, catálogo de Magissementes, bloco de
       referência de Mananciais e Invocações). Mercador entrou depois, com um
       segundo recorte de página 158-159
+- [x] ~~Herdeiros da Supernova~~ — **não é um Atlas de classes.** É uma
+      campanha pronta (10 aventuras, 30 monstros novos, vilã, mascote, fichas
+      de local) para o mestre narrar — sem nenhuma classe, poder ou mecânica
+      de personagem nova. Livro inteiro lido (16 partes, via anexo + pdftotext)
+      e conferido: zero conteúdo de ficha. Fica de fora por ser conteúdo de
+      mestre/aventura, igual à decisão #36 de não guardar lore no Hub
 - [ ] Feitiços e rituais, com as seis disciplinas
 - [ ] Equipamento: armas, armaduras, escudos, acessórios, e o efeito nos números
 - [ ] Combate: dano, tipos de dano, afinidades elementais
 - [ ] Poderes Heroicos
-- [ ] **Herdeiros da Supernova**
 
-Zé usa todos os Atlas, então nenhum deles é opcional. Faltando só o Atlas
-Herdeiros da Supernova inteiro — os outros três (High Fantasy, Techno
-Fantasy, Natural Fantasy) e o Livro Básico estão com todas as classes.
+Todas as classes de Fabula Ultima estão prontas: as 15 do Livro Básico e as
+10 dos três Atlas (High Fantasy, Techno Fantasy, Natural Fantasy) — 25 no
+total. Não existe uma 26ª classe faltando: Herdeiros da Supernova não traz
+nenhuma.
 
 ### Fora de escopo por agora (mecânicas grandes demais para entrar de raspão)
 
