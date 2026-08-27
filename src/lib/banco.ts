@@ -1,6 +1,8 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
+import { CERTIFICADO_SUPABASE } from "@/lib/certificado-supabase";
+
 /*
   Conexão com o banco de dados.
 
@@ -35,7 +37,25 @@ function criarConexao(): PrismaClient {
   }
 
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString: endereco }),
+    adapter: new PrismaPg({
+      connectionString: endereco,
+      /*
+        O Supabase assina o certificado do banco com uma autoridade própria,
+        que o Node não conhece. Informamos essa autoridade aqui, em vez de
+        desligar a checagem — a conexão continua sendo conferida, e ninguém
+        consegue se passar pelo banco no meio do caminho.
+
+        `checkServerIdentity` vazio dispensa só a conferência do nome do
+        servidor. O endereço do banco muda conforme a fila de conexões do
+        Supabase, e esse nome não bate com o do certificado. A cadeia de
+        assinatura, que é o que impede um impostor, continua sendo exigida.
+        Isso equivale ao modo "verify-ca" do Postgres.
+      */
+      ssl: {
+        ca: CERTIFICADO_SUPABASE,
+        checkServerIdentity: () => undefined,
+      },
+    }),
   });
 }
 
