@@ -82,6 +82,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 <body>
 <div class="barra">
   <span class="marca">Fabula Ultima</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
@@ -1357,6 +1358,12 @@ function novoPersonagem(nome){
 
 /* --- Armazenamento ------------------------------------------------------ */
 
+// Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+// navegador: /fichas cria a linha no banco e manda pra cá com o id dela.
+// Sem o parâmetro, tudo continua exatamente como sempre — arquivo único,
+// localStorage, sem conta nenhuma (decisão #40).
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+
 const CHAVE = 'fabula_ultima_fichas';
 let falhouAoSalvar = false;
 
@@ -1367,7 +1374,31 @@ function carregar(){
   }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
 }
 
+let debounceHub = null;
+
+// No Hub, cada campo salva sozinho na conta (decisão #44) — sem lista local,
+// sem botão de salvar. O debounce evita uma requisição por tecla digitada.
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
 function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
   try{
     localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
     if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
@@ -1379,10 +1410,38 @@ function salvar(){
   }
 }
 
-const estado = {fichas: carregar(), atualId: null, aba: 'perfil'};
-if(estado.fichas.length) estado.atualId = estado.fichas[0].id;
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null, // 'sessao' | 'nao-encontrado' | null
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+// Busca a ficha no Hub uma vez, no início. Preenche estado.fichas com um só
+// personagem — sem lista, sem seletor, exatamente o que /fichas já filtrou.
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(resposta.status === 401){ estado.erroHub = 'sessao'; return; }
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
 
 function mudar(mudanca){
   const p = atual(); if(!p) return;
@@ -1408,6 +1467,26 @@ const ABAS = [
 function render(){
   desenharBarra();
   const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'sessao'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Sessão expirada</h2>
+      <p class="mini">Entre de novo no Hub para continuar editando esta
+      ficha. <a href="/entrar" style="color:var(--ambar)">Entrar</a></p></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
   const p = atual();
 
   if(!p){
@@ -1419,9 +1498,13 @@ function render(){
   }
 
   const alerta = falhouAoSalvar
-    ? `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
-       Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
-       perder o que você preencheu.</div>` : '';
+    ? (MODO_HUB
+      ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+         Confira sua internet — se cair, exporte para não perder o que você
+         preencheu.</div>`
+      : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+         Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+         perder o que você preencheu.</div>`) : '';
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a =>
@@ -1434,6 +1517,16 @@ function render(){
 }
 
 function desenharBarra(){
+  // No Hub, /fichas já é a lista de personagens (decisão #42) — o seletor,
+  // o "+ Novo" e o "Excluir" desta barra são só do modo local (arquivo
+  // avulso, sem conta). "← Fichas" some no modo local pelo mesmo motivo.
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+    return;
+  }
   const sel = document.getElementById('seletor');
   sel.innerHTML = estado.fichas.length
     ? estado.fichas.map(f =>
@@ -2242,10 +2335,18 @@ document.getElementById('arquivo').onchange = e => {
     try{
       const lido = JSON.parse(leitor.result);
       if(!lido || !lido.perfil) throw new Error('formato desconhecido');
-      // Id novo: importar nunca sobrescreve um personagem que já existe.
-      lido.id = uid();
-      estado.fichas.push(lido);
-      estado.atualId = lido.id;
+      if(MODO_HUB){
+        // No Hub só existe esta ficha — importar restaura o conteúdo dela
+        // a partir de um backup, em vez de criar outra.
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        // Id novo: importar nunca sobrescreve um personagem que já existe.
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
@@ -2256,6 +2357,7 @@ document.getElementById('arquivo').onchange = e => {
 };
 
 render();
+if(MODO_HUB) iniciarModoHub();
 </script>
 </body>
 </html>

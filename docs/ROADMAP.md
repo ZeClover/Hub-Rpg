@@ -126,10 +126,33 @@ Ficam para quando a ficha ganhar uma aba de equipamento/inventário.
 Tirar os personagens do navegador e colocar na conta: acessíveis de qualquer
 aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
 
-- [ ] Salvar e carregar personagem pela conta
-- [ ] Importar os personagens que já estão no navegador
+- [x] **Salvar e carregar personagem pela conta** — `/api/personagens` (listar,
+      criar) e `/api/personagens/[id]` (ler, salvar, apagar), sempre filtrando
+      por dono (decisão #13, função `podeAcessarPersonagem` testada). `/fichas`
+      virou a lista de verdade (decisão #42) com o botão "+ Criar ficha"
+      (decisão #43: escolhe o sistema, cria a linha, abre a ficha em branco).
+      A ficha entende `?id=` na URL: com ele, troca o seletor/+Novo/Excluir
+      por um "← Fichas" (decisão #45) e cada campo salva sozinho na conta,
+      sem botão (decisão #44). Sem o parâmetro, continua 100% igual —
+      localStorage, sem conta, arquivo único de sempre
+- [x] **Importar os personagens que já estão no navegador** — não precisou de
+      ferramenta própria: como a ficha em modo Hub reaproveita o mesmo
+      Exportar/Importar de sempre, migrar é abrir a ficha local, Exportar,
+      criar uma ficha nova em `/fichas`, e Importar o arquivo nela
 - [ ] Campanhas: juntar mestre e jogadores numa mesa
 - [ ] Mestre enxerga as fichas da mesa
+
+Testado com Playwright mockando as respostas de `/api/personagens/*` (não dá
+pra testar contra o banco de verdade neste ambiente, sem as credenciais do
+Supabase): ficha nova carrega com o perfil padrão, ficha existente carrega os
+dados salvos, editar um campo dispara o PATCH certo depois do debounce,
+sessão expirada (401) e ficha alheia/apagada (404) mostram mensagem e link de
+volta, e o modo local sem `?id=` continua idêntico ao de antes. `npm run
+build`, lint e os 12 testes automatizados (dois novos, de
+`podeAcessarPersonagem`) passando.
+
+**Ainda não verificado contra o Supabase de produção** — a próxima vez que o
+Zé abrir `/fichas` e criar uma ficha de verdade é o teste que falta.
 
 ### Outros sistemas
 - [ ] Sistema SAO
