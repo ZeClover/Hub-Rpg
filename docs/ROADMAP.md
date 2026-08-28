@@ -306,6 +306,23 @@ passando.
       `escudoMestre` em `src/lib/sistemas.ts`, só preenchido pro Fabula
       Ultima por enquanto)
 
+- [x] **Excluir campanha, remover jogador e sair** (28/08/2026) — três
+      ações novas na página da campanha:
+  - "Excluir campanha", só pro mestre: apaga a `Campanha`, mas as fichas
+    ligadas (de jogador ou de inimigo) só soltam — `campanhaId` volta a
+    `null`, ficam avulsas de novo, nunca são apagadas junto
+  - "Remover" ao lado de cada jogador, só pro mestre, e "Sair da
+    campanha" pro próprio jogador — mesma rota
+    (`DELETE /api/campanhas/[id]/jogadores/[usuarioId]`) pros dois casos,
+    a permissão dentro dela é "sou eu mesmo, ou sou o mestre". O mestre
+    nunca pode ser removido por aqui
+  - **Bug de banco corrigido antes de ligar isso** (decisão #61): a
+    migração 0001 tinha criado o vínculo ficha→campanha como
+    `ON DELETE CASCADE` por engano — excluir uma campanha ia apagar as
+    fichas de verdade, em vez de só soltar. Corrigido pela migração
+    `0006_corrigir_delecao_personagem_campanha.sql`
+  - `npm run build`, lint e os 16 testes automatizados passando
+
 ### Outros sistemas
 - [ ] Sistema SAO
 - [ ] Thrylikí Chelóna

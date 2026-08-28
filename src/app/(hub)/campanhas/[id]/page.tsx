@@ -8,7 +8,10 @@ import { usuarioAtual } from "@/lib/usuario";
 
 import { AdicionarInimigo } from "./adicionar-inimigo";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
+import { ExcluirCampanha } from "./excluir-campanha";
 import { ManualDoMestre } from "./manual-mestre";
+import { RemoverJogador } from "./remover-jogador";
+import { SairDaCampanha } from "./sair-da-campanha";
 
 /*
   A campanha em si. O que aparece muda conforme quem está olhando:
@@ -95,6 +98,7 @@ export default async function PaginaCampanha({
       {souMestre ? (
         <VisaoDoMestre
           campanhaId={campanha.id}
+          nome={campanha.nome}
           ficha={ficha}
           fichaInimigo={fichaInimigo}
           origem={origem}
@@ -109,6 +113,7 @@ export default async function PaginaCampanha({
           campanhaId={campanha.id}
           ficha={ficha}
           convidado={!minhaParticipacao}
+          meuUsuarioId={usuario.id}
           meuPersonagem={personagensDaCampanha.find((p) => p.donoId === usuario.id) ?? null}
           minhasFichasDoSistema={await banco.personagem.findMany({
             where: { donoId: usuario.id, sistemaId: campanha.sistemaId },
@@ -123,6 +128,7 @@ export default async function PaginaCampanha({
 
 function VisaoDoMestre({
   campanhaId,
+  nome,
   ficha,
   fichaInimigo,
   origem,
@@ -133,6 +139,7 @@ function VisaoDoMestre({
   escudoMestre,
 }: {
   campanhaId: string;
+  nome: string;
   ficha: string | null;
   fichaInimigo: string | null;
   origem: string;
@@ -167,6 +174,7 @@ function VisaoDoMestre({
             Abrir Escudo do Mestre (referência rápida de regras)
           </a>
         )}
+        <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
       </section>
 
       <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
@@ -184,27 +192,34 @@ function VisaoDoMestre({
               return (
                 <li
                   key={jogador.usuarioId}
-                  className="rounded-lg border border-borda bg-superficie p-5"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-5"
                 >
-                  <p className="font-titulo text-base">
-                    {jogador.usuario.nome ?? jogador.usuario.email}
-                  </p>
-                  {personagem ? (
-                    ficha ? (
-                      <a
-                        href={`${ficha}?id=${personagem.id}`}
-                        className="mt-1 inline-block text-sm text-ambar-forte underline underline-offset-2"
-                      >
-                        {personagem.nome}
-                      </a>
-                    ) : (
-                      <p className="mt-1 text-sm text-texto-suave">{personagem.nome}</p>
-                    )
-                  ) : (
-                    <p className="mt-1 text-sm text-texto-suave">
-                      Ainda não escolheu uma ficha.
+                  <div>
+                    <p className="font-titulo text-base">
+                      {jogador.usuario.nome ?? jogador.usuario.email}
                     </p>
-                  )}
+                    {personagem ? (
+                      ficha ? (
+                        <a
+                          href={`${ficha}?id=${personagem.id}`}
+                          className="mt-1 inline-block text-sm text-ambar-forte underline underline-offset-2"
+                        >
+                          {personagem.nome}
+                        </a>
+                      ) : (
+                        <p className="mt-1 text-sm text-texto-suave">{personagem.nome}</p>
+                      )
+                    ) : (
+                      <p className="mt-1 text-sm text-texto-suave">
+                        Ainda não escolheu uma ficha.
+                      </p>
+                    )}
+                  </div>
+                  <RemoverJogador
+                    campanhaId={campanhaId}
+                    usuarioId={jogador.usuarioId}
+                    nome={jogador.usuario.nome ?? jogador.usuario.email}
+                  />
                 </li>
               );
             })}
@@ -252,12 +267,14 @@ function VisaoDoJogador({
   campanhaId,
   ficha,
   convidado,
+  meuUsuarioId,
   meuPersonagem,
   minhasFichasDoSistema,
 }: {
   campanhaId: string;
   ficha: string | null;
   convidado: boolean;
+  meuUsuarioId: string;
   meuPersonagem: { id: string; nome: string } | null;
   minhasFichasDoSistema: { id: string; nome: string }[];
 }) {
@@ -278,6 +295,7 @@ function VisaoDoJogador({
           O sistema desta campanha ainda não tem ficha própria no Hub.
         </p>
       )}
+      {!convidado && <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />}
     </section>
   );
 }

@@ -159,7 +159,18 @@ capítulos de Antagonistas dos três Atlas) e pediu o catálogo pronto.
 | 59 | Permissão por ausência de consulta | Igual o resto do Hub filtra por dono, aqui a proteção é não buscar o campo: a página só consulta `manualMestre` depois de confirmar (com outra consulta já feita) que quem está olhando é mestre da campanha. Pra jogador, essa segunda consulta nunca roda |
 | 60 | Escudo do Mestre é estático e por sistema, não por campanha | O conteúdo (como fazer um teste, tabela de Dificuldade, ações de conflito) é igual pra qualquer mesa do mesmo sistema — não precisa de banco, é uma página HTML de referência só. Cada sistema aponta pra sua própria página em `src/lib/sistemas.ts` (`escudoMestre`), do mesmo jeito que já aponta pra ficha de jogador e de inimigo |
 
-## 13. Restrições registradas
+## 13. Excluir campanha, remover e sair (28/08/2026)
+
+O Zé pediu para poder excluir uma campanha, tirar um jogador dela, e o
+próprio jogador poder sair.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 61 | Bug de banco encontrado antes de mexer | A migração 0001 tinha criado o vínculo `personagens.campanhaId → campanhas.id` como `ON DELETE CASCADE`, contradizendo o `schema.prisma`, que sempre disse `SetNull`. Do jeito que estava no banco, excluir uma campanha **apagaria de verdade** as fichas de personagem ligadas a ela — inclusive fichas de jogador. Corrigido pela migração `0006_corrigir_delecao_personagem_campanha.sql`, que recria a constraint como `ON DELETE SET NULL`. Precisou ser corrigido antes de ligar o botão de excluir |
+| 62 | Excluir campanha apaga a campanha, não as fichas | As fichas ligadas (de jogador ou de inimigo) só soltam — `campanhaId` volta a `null`, viram fichas avulsas de novo. Só quem é mestre pode excluir |
+| 63 | Remover jogador e sair usam a mesma rota | `DELETE /api/campanhas/[id]/jogadores/[usuarioId]` serve tanto para o mestre remover alguém quanto para o próprio jogador sair — a permissão dentro da rota é "sou eu mesmo, ou sou o mestre desta campanha". A ficha do jogador removido também só solta, nunca é apagada. O mestre nunca pode ser removido por essa rota — pra encerrar a mesa de vez, é "Excluir campanha" |
+
+## 14. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
