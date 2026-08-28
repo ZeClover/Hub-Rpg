@@ -139,20 +139,37 @@ aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
       ferramenta própria: como a ficha em modo Hub reaproveita o mesmo
       Exportar/Importar de sempre, migrar é abrir a ficha local, Exportar,
       criar uma ficha nova em `/fichas`, e Importar o arquivo nela
+- [x] **Excluir ficha** — botão em `/fichas`, chama o `DELETE` que já
+      existia na API desde o começo desta fatia
+- [x] **Mestre vê a ficha de um jogador — por link, sem campanha** (decisão
+      #46): interruptor "Compartilhar (link de leitura)" na própria ficha,
+      só visível pro dono. Ligado, qualquer um com a URL (`?id=`, um UUID —
+      o próprio segredo do link) abre em **modo leitura**: todo campo e
+      botão desabilitado (menos as abas, pra dar pra navegar e ver tudo),
+      um aviso "Modo leitura — você está vendo a ficha de X" no topo, sem
+      precisar login nenhum. Editar continua exigindo ser o dono logado,
+      sempre — o link nunca dá escrita. Migração `0004_compartilhar_personagem.sql`
+      (uma coluna booleana só)
 - [ ] Campanhas: juntar mestre e jogadores numa mesa
-- [ ] Mestre enxerga as fichas da mesa
+
+**Confirmado em produção (28/08/2026):** o Zé testou ao vivo em
+`hub-rpg-eight.vercel.app` — criou a ficha "Zé" pelo Fabula Ultima, editou,
+recarregou, viu ela listada em `/fichas` com o nome certo. A migração 0003 já
+estava aplicada; a 0004 (compartilhar) ainda depende de o Zé rodar.
 
 Testado com Playwright mockando as respostas de `/api/personagens/*` (não dá
 pra testar contra o banco de verdade neste ambiente, sem as credenciais do
 Supabase): ficha nova carrega com o perfil padrão, ficha existente carrega os
-dados salvos, editar um campo dispara o PATCH certo depois do debounce,
-sessão expirada (401) e ficha alheia/apagada (404) mostram mensagem e link de
-volta, e o modo local sem `?id=` continua idêntico ao de antes. `npm run
-build`, lint e os 12 testes automatizados (dois novos, de
-`podeAcessarPersonagem`) passando.
-
-**Ainda não verificado contra o Supabase de produção** — a próxima vez que o
-Zé abrir `/fichas` e criar uma ficha de verdade é o teste que falta.
+dados salvos, editar um campo dispara o PATCH certo depois do debounce, ficha
+alheia/apagada (404) mostra mensagem e link de volta, o modo local sem `?id=`
+continua idêntico ao de antes, o dono vê e liga o interruptor de
+compartilhar, e quem abre um link compartilhado vê tudo travado com o aviso
+de modo leitura e nenhuma chamada de escrita disparada. Um bug de CSS achado
+no caminho: a regra própria `label{display:block}` do arquivo vencia o
+`[hidden]` do navegador por ser do autor da página — corrigido escondendo
+por `style.display` direto, que sempre tem prioridade. `npm run build`, lint
+e os 12 testes automatizados (dois novos, de `podeAcessarPersonagem`)
+passando.
 
 ### Outros sistemas
 - [ ] Sistema SAO

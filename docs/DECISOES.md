@@ -100,7 +100,18 @@ explicado em português (#27).
 | 44 | Salvamento | Cada campo salva no banco sozinho, sem botão de salvar. Substitui o exportar/importar JSON de hoje, que era o jeito de contornar não ter conta |
 | 45 | Navegação | Ficha aberta ganha um "← Fichas" no topo, voltando pra lista |
 
-## 9. Restrições registradas
+## 9. Mestre vendo a ficha do jogador (28/08/2026)
+
+O Zé perguntou como veria a ficha de um jogador sem montar um sistema de
+campanha inteiro (mesa, convite, papel de mestre/jogador) — só isso ainda
+não existe no Hub.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 46 | Como compartilhar | **Link de leitura**, não campanha. O dono liga um interruptor "Compartilhar" na própria ficha; a partir daí, qualquer um com a URL dela (o id, um UUID, é o segredo do link — como "qualquer um com o link" do Google Docs) abre em modo leitura, **sem precisar de conta**. Nunca dá direito de editar: isso continua exigindo estar logado como dono |
+| 47 | Por que não campanha ainda | Campanha (mesa, convite, mestre/jogador) é depois — o link resolve o caso de uso de hoje ("me manda a ficha") com uma coluna no banco, em vez de três tabelas novas |
+
+## 10. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

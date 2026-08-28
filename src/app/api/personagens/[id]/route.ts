@@ -20,19 +20,37 @@ async function buscarSeFoiDono(id: string, idDoUsuario: string) {
   return personagem;
 }
 
+/*
+  Ler não exige ser o dono: se a ficha estiver com "compartilhado" ligado,
+  quem tem o link entra em modo leitura, com ou sem conta — o id, um UUID,
+  é o segredo do link (igual "qualquer um com o link" do Google Docs).
+  Sem estar marcada como compartilhada, vale a mesma regra de sempre: só o
+  dono, e 404 pros dois casos ("não existe" e "não é seu nem compartilhada")
+  pra não vazar que a ficha de outra pessoa existe.
+*/
 export async function GET(_requisicao: NextRequest, { params }: Contexto) {
-  const usuario = await usuarioAtual();
-  if (!usuario) {
-    return NextResponse.json({ erro: "não autenticado" }, { status: 401 });
-  }
-
   const { id } = await params;
-  const personagem = await buscarSeFoiDono(id, usuario.id);
+  const personagem = await banco.personagem.findUnique({ where: { id } });
   if (!personagem) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
-  return NextResponse.json({ personagem });
+  const usuario = await usuarioAtual();
+  const ehDono = usuario ? podeAcessarPersonagem(usuario.id, personagem) : false;
+
+  if (!ehDono && !personagem.compartilhado) {
+    return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    personagem: {
+      id: personagem.id,
+      nome: personagem.nome,
+      dados: personagem.dados,
+      compartilhado: personagem.compartilhado,
+      ehDono,
+    },
+  });
 }
 
 export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
@@ -48,13 +66,15 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const corpo = await requisicao.json().catch(() => null);
-  if (!corpo || typeof corpo.dados !== "object" || corpo.dados === null) {
-    return NextResponse.json({ erro: "dados é obrigatório" }, { status: 400 });
+  const temDados = corpo && typeof corpo.dados === "object" && corpo.dados !== null;
+  const temCompartilhado = corpo && typeof corpo.compartilhado === "boolean";
+  if (!temDados && !temCompartilhado) {
+    return NextResponse.json({ erro: "dados ou compartilhado é obrigatório" }, { status: 400 });
   }
 
   // O nome da ficha segue o que a pessoa digitou dentro dela — não precisa
   // de um campo de nome separado em nenhuma tela do Hub.
-  const nomeDentroDaFicha = corpo.dados?.perfil?.nome;
+  const nomeDentroDaFicha = temDados ? corpo.dados?.perfil?.nome : null;
   const nome =
     typeof nomeDentroDaFicha === "string" && nomeDentroDaFicha.trim()
       ? nomeDentroDaFicha.trim()
@@ -62,8 +82,11 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
 
   const personagem = await banco.personagem.update({
     where: { id },
-    data: { dados: corpo.dados, nome },
-    select: { id: true, nome: true, atualizadoEm: true },
+    data: {
+      ...(temDados ? { dados: corpo.dados, nome } : {}),
+      ...(temCompartilhado ? { compartilhado: corpo.compartilhado } : {}),
+    },
+    select: { id: true, nome: true, compartilhado: true, atualizadoEm: true },
   });
 
   return NextResponse.json({ personagem });

@@ -3,6 +3,7 @@ import { ROTULO_SITUACAO, SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
 import { CriarFicha } from "./criar-ficha";
+import { BotaoExcluir } from "./excluir-ficha";
 
 export default async function Fichas() {
   // O layout do Hub já garantiu que existe alguém logado.
@@ -40,19 +41,18 @@ export default async function Fichas() {
               </div>
             );
             return (
-              <li key={personagem.id}>
+              <li
+                key={personagem.id}
+                className="flex items-start gap-3 rounded-lg border border-borda bg-superficie p-5 transition hover:border-ambar/40"
+              >
                 {url ? (
-                  <a
-                    href={url}
-                    className="block rounded-lg border border-borda bg-superficie p-5 transition hover:border-ambar/40"
-                  >
+                  <a href={url} className="min-w-0 flex-1">
                     {conteudo}
                   </a>
                 ) : (
-                  <div className="rounded-lg border border-borda bg-superficie p-5 opacity-60">
-                    {conteudo}
-                  </div>
+                  <div className="min-w-0 flex-1 opacity-60">{conteudo}</div>
                 )}
+                <BotaoExcluir id={personagem.id} nome={personagem.nome} />
               </li>
             );
           })}

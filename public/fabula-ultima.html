@@ -83,6 +83,10 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 <div class="barra">
   <span class="marca">Fabula Ultima</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
@@ -1415,7 +1419,9 @@ const estado = {
   atualId: null,
   aba: 'perfil',
   carregandoHub: !!MODO_HUB,
-  erroHub: null, // 'sessao' | 'nao-encontrado' | null
+  erroHub: null,       // 'nao-encontrado' | null
+  ehDono: true,        // false = ficha compartilhada de outra pessoa, só leitura
+  compartilhado: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1423,10 +1429,11 @@ const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
 
 // Busca a ficha no Hub uma vez, no início. Preenche estado.fichas com um só
 // personagem — sem lista, sem seletor, exatamente o que /fichas já filtrou.
+// Ler não exige ser o dono: se vier ehDono:false, é o link de leitura de
+// outra pessoa (o mestre vendo a ficha de um jogador) — ver blocoSomenteLeitura().
 async function iniciarModoHub(){
   try{
     const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
-    if(resposta.status === 401){ estado.erroHub = 'sessao'; return; }
     if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
     const {personagem} = await resposta.json();
     const dados = personagem.dados;
@@ -1434,6 +1441,8 @@ async function iniciarModoHub(){
     p.id = MODO_HUB;
     estado.fichas = [p];
     estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
@@ -1443,7 +1452,19 @@ async function iniciarModoHub(){
   }
 }
 
+// Dono liga/desliga o link de leitura. Quem não é dono nem vê este controle.
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
 function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -1472,13 +1493,6 @@ function render(){
     app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
     return;
   }
-  if(MODO_HUB && estado.erroHub === 'sessao'){
-    app.innerHTML = `<div class="vazio">
-      <h2>Sessão expirada</h2>
-      <p class="mini">Entre de novo no Hub para continuar editando esta
-      ficha. <a href="/entrar" style="color:var(--ambar)">Entrar</a></p></div>`;
-    return;
-  }
   if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
     app.innerHTML = `<div class="vazio">
       <h2>Ficha não encontrada</h2>
@@ -1497,14 +1511,20 @@ function render(){
     return;
   }
 
-  const alerta = falhouAoSalvar
-    ? (MODO_HUB
-      ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
-         Confira sua internet — se cair, exporte para não perder o que você
-         preencheu.</div>`
-      : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
-         Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
-         perder o que você preencheu.</div>`) : '';
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong> por um link compartilhado.
+       Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a =>
@@ -1514,6 +1534,13 @@ function render(){
     + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
   ligarEventos();
+
+  // Modo leitura: desliga todo campo/botão de edição, menos as próprias
+  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha).
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
 }
 
 function desenharBarra(){
@@ -1525,6 +1552,18 @@ function desenharBarra(){
     document.getElementById('btNovo').hidden = true;
     document.getElementById('btExcluir').hidden = true;
     document.getElementById('linkFichas').hidden = false;
+
+    // Só o dono decide compartilhar. Quem está vendo por um link
+    // compartilhado nem editar consegue, então Importar também some.
+    //
+    // Escondido via style.display, não via atributo `hidden`: esta página
+    // tem uma regra própria `label{display:block}` que, por ser do autor,
+    // vence a regra `[hidden]{display:none}` do navegador — o atributo
+    // ficaria ligado sem esconder nada. Estilo em linha sempre vence.
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
     return;
   }
   const sel = document.getElementById('seletor');
@@ -2283,6 +2322,7 @@ function ligarEventos(){
    quando o campo afeta algum número. */
 let debounce;
 function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -2294,6 +2334,10 @@ function mudarSemRedesenhar(mudanca, elemento){
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
+
+document.getElementById('chkCompartilhar').onchange = e => {
+  alternarCompartilhado(e.target.checked);
+};
 
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value; render();

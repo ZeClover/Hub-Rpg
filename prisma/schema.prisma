@@ -138,6 +138,11 @@ model Personagem {
   /// Versão do formato de `dados`, para migrar fichas antigas quando o
   /// módulo do sistema mudar de estrutura.
   versaoFicha  Int      @default(1)
+  /// Link de leitura: com isto ligado, qualquer pessoa com a URL da ficha
+  /// (dono ou não, logada ou não) consegue ABRIR em modo leitura — o id da
+  /// ficha, um UUID, é o segredo do link, como em "qualquer um com o link"
+  /// do Google Docs. Nunca dá direito de editar: só o dono salva.
+  compartilhado Boolean @default(false)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
