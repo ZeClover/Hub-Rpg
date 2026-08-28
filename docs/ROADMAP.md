@@ -229,7 +229,13 @@ passando.
 
 ## Pendência de configuração
 
-O app do Google está em modo "Testando": só entram contas cadastradas na lista
-de até 100, em *Google Cloud → Público-alvo → Usuários de teste*. Contraria a
-decisão #4 (aberto a qualquer conta Google) e trava quando os jogadores
-entrarem.
+- [x] **Login aberto a qualquer conta Google** (28/08/2026) — o app do
+      Google estava em modo "Testando": só entravam contas cadastradas na
+      lista de até 100, em *Google Cloud → Público-alvo*, contrariando a
+      decisão #4. Precisava de duas URLs que faltavam no Branding (página
+      inicial e Política de Privacidade) pra liberar o botão de publicar —
+      criada a página `/privacidade` (pública, sem exigir login) só pra
+      isso. Como o Hub só pede escopos não-sensíveis (nome, email, foto) e
+      não tem logotipo nem mais de 10 domínios, o Google não pediu
+      verificação: status virou **"Em produção"** direto. Confirmado pelo
+      Zé com print do painel do Google Cloud
