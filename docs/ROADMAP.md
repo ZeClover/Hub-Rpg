@@ -154,8 +154,10 @@ aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
 
 **Confirmado em produção (28/08/2026):** o Zé testou ao vivo em
 `hub-rpg-eight.vercel.app` — criou a ficha "Zé" pelo Fabula Ultima, editou,
-recarregou, viu ela listada em `/fichas` com o nome certo. A migração 0003 já
-estava aplicada; a 0004 (compartilhar) ainda depende de o Zé rodar.
+recarregou, viu ela listada em `/fichas` com o nome certo, rodou a migração
+0004 e testou o link de leitura ponta a ponta: marcou "Compartilhar", abriu
+o mesmo link num navegador sem login (Brave) e viu a ficha em modo leitura;
+desmarcado, o mesmo link volta a dar "Ficha não encontrada".
 
 Testado com Playwright mockando as respostas de `/api/personagens/*` (não dá
 pra testar contra o banco de verdade neste ambiente, sem as credenciais do
