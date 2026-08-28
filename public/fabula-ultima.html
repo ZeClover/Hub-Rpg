@@ -1420,7 +1420,11 @@ const estado = {
   aba: 'perfil',
   carregandoHub: !!MODO_HUB,
   erroHub: null,       // 'nao-encontrado' | null
-  ehDono: true,        // false = ficha compartilhada de outra pessoa, só leitura
+  // Começa falso de propósito: só vira true depois que o Hub CONFIRMAR que
+  // é dono. Enquanto carrega, ou se a busca falhar, o padrão seguro é "não
+  // é dono" — senão o interruptor de compartilhar apareceria numa ficha
+  // que nem carregou direito.
+  ehDono: false,
   compartilhado: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
