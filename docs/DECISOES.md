@@ -151,7 +151,15 @@ capítulos de Antagonistas dos três Atlas) e pediu o catálogo pronto.
 | 56 | Extração do catálogo por agentes em paralelo | Os 4 PDFs foram processados por 4 agentes ao mesmo tempo (um por livro), cada um com a mesma instrução: extrair só MECÂNICA (números, fórmulas, custos, alvo/duração, afinidades, nomes de ataque/feitiço/regra) e nunca prosa (história, táticas, falas entre aspas, traços de personalidade) — a mesma linha já seguida no resto da ficha desde o início do projeto, agora testada em escala (108 fichas) |
 | 57 | Números calculados, mas editáveis | Um botão "Recalcular pela fórmula do livro" (pág. 303) preenche PV/PM/Iniciativa/Defesa/Defesa Mágica a partir do nível, espécie/papel e atributos — mas os campos continuam número solto, editável à mão, porque o próprio livro trata a criação de NPC como processo com julgamento do mestre, não uma fórmula pura (vilões “na mão” fogem do padrão de propósito) |
 
-## 12. Restrições registradas
+## 12. Manual do Mestre e Escudo do Mestre (28/08/2026)
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 58 | Manual do Mestre é um campo, não uma tabela | Uma coluna de texto livre na própria `Campanha`, não uma lista de "entradas" estruturadas — o pedido era "criar quando precisar", e um bloco de anotações já resolve isso. Fica pra depois virar algo mais estruturado, se precisar |
+| 59 | Permissão por ausência de consulta | Igual o resto do Hub filtra por dono, aqui a proteção é não buscar o campo: a página só consulta `manualMestre` depois de confirmar (com outra consulta já feita) que quem está olhando é mestre da campanha. Pra jogador, essa segunda consulta nunca roda |
+| 60 | Escudo do Mestre é estático e por sistema, não por campanha | O conteúdo (como fazer um teste, tabela de Dificuldade, ações de conflito) é igual pra qualquer mesa do mesmo sistema — não precisa de banco, é uma página HTML de referência só. Cada sistema aponta pra sua própria página em `src/lib/sistemas.ts` (`escudoMestre`), do mesmo jeito que já aponta pra ficha de jogador e de inimigo |
+
+## 13. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

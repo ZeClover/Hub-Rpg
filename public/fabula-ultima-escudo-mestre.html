@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escudo do Mestre — Fabula Ultima</title>
+<style>
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+main{max-width:900px; margin:0 auto; padding:24px 16px 80px}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+h1{margin-top:10px; font-size:28px}
+.sub{color:var(--suave); font-size:13px; margin-top:6px}
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-top:16px}
+.cartao h2{font-size:17px; color:var(--ambar-forte)}
+.cartao h3{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--suave); margin-top:16px}
+.cartao p{margin:8px 0 0}
+table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+th,td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--suave); font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.05em}
+tr:last-child td{border-bottom:none}
+.mini{font-size:12px; color:var(--suave)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} }
+.tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--borda); border-radius:999px; color:var(--suave)}
+</style>
+</head>
+<body>
+<main>
+  <span class="marca">Fabula Ultima</span>
+  <h1>Escudo do Mestre</h1>
+  <p class="sub">
+    Referência rápida de regras pra ter aberta durante a sessão — sem
+    precisar abrir o livro. Ferramenta não-oficial feita por fã: codifica
+    mecânica, não reproduz texto do livro. Fabula Ultima © Need Games e
+    Rooster Games. Edição brasileira: Jambô.
+  </p>
+
+  <div class="cartao">
+    <h2>Fazendo um teste</h2>
+    <p>Rola 2 dados (um por Atributo indicado, ex: <strong>【DES + AST】</strong>), soma os dois, aplica modificadores. Bate ou passa o Nível de Dificuldade (ND)? Sucesso.</p>
+    <h3>Termos</h3>
+    <table>
+      <tr><td><strong>Resultado</strong></td><td>Soma dos dois dados + modificadores.</td></tr>
+      <tr><td><strong>ND</strong></td><td>Nível de Dificuldade — o que o Resultado precisa igualar ou passar.</td></tr>
+      <tr><td><strong>Rolagem Alta (RA)</strong></td><td>O maior dos dois dados rolados — usada pra calcular dano de arma/feitiço.</td></tr>
+    </table>
+    <h3>Sucesso e falha crítica</h3>
+    <p>Os <strong>dois dados mostram o mesmo número, 6 ou mais</strong>: sucesso automático + gera uma Oportunidade pra quem rolou.<br>
+    Os <strong>dois dados mostram 1</strong>: falha automática (não importa o modificador) + gera Oportunidade pra quem se opõe + quem rolou (se for PJ) ganha 1 Ponto Fabula.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Níveis de Dificuldade</h2>
+    <table>
+      <tr><th>ND</th><th>Dificuldade</th><th>Quem consegue</th></tr>
+      <tr><td>7</td><td>Fácil</td><td>Qualquer um com um pouco de treino ou talento natural.</td></tr>
+      <tr><td>10</td><td>Normal</td><td>Uma pessoa competente, ou bem talentosa. <span class="tag">na dúvida, use 10</span></td></tr>
+      <tr><td>13</td><td>Difícil</td><td>Um especialista ou prodígio.</td></tr>
+      <tr><td>16</td><td>Muito Difícil</td><td>Alguém entre os melhores da área.</td></tr>
+    </table>
+    <p class="mini">Modificador situacional: +2 ou -2 no Resultado, pra circunstância muito favorável ou desfavorável (use com moderação — geralmente ajustar o ND já resolve).</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Teste Aberto</h2>
+    <p class="mini">Sem ND — o Resultado por si só diz o quanto foi bem-sucedido. Comum em pesquisar, examinar, recordar.</p>
+    <table>
+      <tr><th>Resultado</th><th>Equivale a...</th></tr>
+      <tr><td>7+</td><td>O que uma pessoa com um pouco de treino ou talento conseguiria.</td></tr>
+      <tr><td>10+</td><td>O que alguém competente ou bem talentoso alcançaria.</td></tr>
+      <tr><td>13+</td><td>Trabalho de especialista ou prodígio de verdade.</td></tr>
+      <tr><td>16+</td><td>Um resultado digno de entrar pra história.</td></tr>
+    </table>
+  </div>
+
+  <div class="grade g2">
+    <div class="cartao">
+      <h2>Teste Oposto</h2>
+      <p>Todo mundo envolvido rola o mesmo teste, sem ND — quem tirar o maior Resultado vence. Empate: repete só entre quem empatou. Crítico/falha crítica contam como o maior/menor Resultado possível (e ainda geram Oportunidade); dois críticos ou duas falhas críticas juntos = empate, repete.</p>
+    </div>
+    <div class="cartao">
+      <h2>Teste em Grupo</h2>
+      <p>1. Escolhe um líder.<br>
+      2. Cada apoiador faz o mesmo teste do líder, ND 10 fixo (crítico/falha não geram Oportunidade, só contam como sucesso/falha automáticos).<br>
+      3. Cada apoiador que passou dá +1 ao teste do líder.<br>
+      4. Se algum apoiador que passou tiver Laço com o líder, soma a força do maior Laço (só um).<br>
+      5. Líder faz o teste final — vale pra todo mundo do grupo.</p>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2>Oportunidades</h2>
+    <p class="mini">Geradas por sucesso crítico (pra quem rolou) ou falha crítica (pra quem se opõe). Escolha uma, ou invente outra que combine com a cena.</p>
+    <table>
+      <tr><td><strong>Vantagem</strong></td><td>+4 no próximo teste seu ou de um aliado.</td></tr>
+      <tr><td><strong>Aflição</strong></td><td>Uma criatura sofre atordoado, abalado, lento ou fraco.</td></tr>
+      <tr><td><strong>Laço</strong></td><td>Cria um Laço com alguém/algo, ou soma uma emoção a um Laço já existente.</td></tr>
+      <tr><td><strong>Gafe</strong></td><td>Uma criatura presente faz uma declaração comprometedora, escolhida por quem a controla.</td></tr>
+      <tr><td><strong>Favor</strong></td><td>Suas ações rendem apoio ou admiração de alguém.</td></tr>
+      <tr><td><strong>Informação</strong></td><td>Você percebe uma pista ou detalhe útil.</td></tr>
+      <tr><td><strong>Item Perdido</strong></td><td>Um item é destruído, perdido, roubado ou esquecido.</td></tr>
+      <tr><td><strong>Progresso</strong></td><td>Preenche ou apaga até 2 seções de um Relógio.</td></tr>
+      <tr><td><strong>Reviravolta</strong></td><td>Alguém ou algo aparece na cena, à sua escolha.</td></tr>
+      <tr><td><strong>Estudo</strong></td><td>Descobre uma Vulnerabilidade ou um Traço de uma criatura visível.</td></tr>
+      <tr><td><strong>Desmascarar</strong></td><td>Você aprende os objetivos e motivações de uma criatura à sua escolha.</td></tr>
+    </table>
+  </div>
+
+  <div class="cartao">
+    <h2>Ações em conflito</h2>
+    <table>
+      <tr><th>Ação</th><th>O que faz</th></tr>
+      <tr><td><strong>Ataque</strong></td><td>Ataque corpo a corpo ou à distância com uma arma equipada.</td></tr>
+      <tr><td><strong>Equipamento</strong></td><td>Troca qualquer quantidade de itens equipados por itens da mochila (não vale pra armadura).</td></tr>
+      <tr><td><strong>Guarda</strong></td><td>Uma vez por turno. Até o início do seu próximo turno: Resistência a todo tipo de dano, +2 em Testes Opostos, e pode cobrir outra criatura contra ataques corpo a corpo.</td></tr>
+      <tr><td><strong>Impedir</strong></td><td>Teste (ND 10) contra um oponente. Se acertar, aplica atordoado, abalado, lento ou fraco nele.</td></tr>
+      <tr><td><strong>Inventário</strong></td><td>Gasta Pontos de Inventário pra produzir e usar na hora um item consumível.</td></tr>
+      <tr><td><strong>Objetivo</strong></td><td>Trabalha por um objetivo do conflito — exige Teste de Atributo ou Oposto; metas complexas geralmente pedem um Relógio.</td></tr>
+      <tr><td><strong>Feitiço</strong></td><td>Lança um feitiço já aprendido.</td></tr>
+      <tr><td><strong>Estudo</strong></td><td>Tenta descobrir informação sobre alguém/algo — geralmente Teste Aberto【AST + AST】.</td></tr>
+      <tr><td><strong>Poder</strong></td><td>Alguns poderes de classe exigem gastar uma ação pra usar.</td></tr>
+      <tr><td><strong>Outra</strong></td><td>Uma ação fora da lista acima — negocia a resolução com o mestre.</td></tr>
+    </table>
+    <p class="mini">Minutos do turno: pegar/soltar item, arremessar item pra alguém, interagir rápido com o cenário (abrir porta destrancada, puxar alavanca) — não usam ação, o mestre decide o que cabe.</p>
+  </div>
+
+  <div class="grade g2">
+    <div class="cartao">
+      <h2>Condições</h2>
+      <p class="mini">Cada uma reduz um passo de dado num Atributo (nunca abaixo de d6). Acumulam.</p>
+      <table>
+        <tr><td>Abalado</td><td>Vontade</td></tr>
+        <tr><td>Atordoado</td><td>Astúcia</td></tr>
+        <tr><td>Enfurecido</td><td>Destreza e Astúcia</td></tr>
+        <tr><td>Envenenado</td><td>Vigor e Vontade</td></tr>
+        <tr><td>Fraco</td><td>Vigor</td></tr>
+        <tr><td>Lento</td><td>Destreza</td></tr>
+      </table>
+    </div>
+    <div class="cartao">
+      <h2>Afinidades de dano</h2>
+      <p class="mini">9 tipos: Físico, Ar, Fogo, Gelo, Luz, Raio, Terra, Trevas, Veneno.</p>
+      <table>
+        <tr><td>Vulnerável</td><td>Dobra o dano recebido.</td></tr>
+        <tr><td>Resistente</td><td>Metade do dano, arredondado pra baixo.</td></tr>
+        <tr><td>Imune</td><td>Zero dano.</td></tr>
+        <tr><td>Absorve</td><td>Vira cura, em vez de dano.</td></tr>
+      </table>
+      <p class="mini">Imune vale mais que Vulnerável/Resistente juntos; Absorve vale mais que tudo.</p>
+    </div>
+  </div>
+
+  <p class="mini" style="margin-top:20px">
+    <a href="/campanhas">← Voltar pra Campanhas</a>
+  </p>
+</main>
+</body>
+</html>

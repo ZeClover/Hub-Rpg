@@ -88,6 +88,11 @@ model Campanha {
   sistemaId String           @db.Uuid
   situacao  SituacaoCampanha @default(PLANEJADA)
   criadoEm  DateTime         @default(now())
+  /// Anotações livres do mestre — plano de sessão, NPCs, segredos do enredo.
+  /// Nunca sai do servidor para quem não é mestre desta campanha (decisão
+  /// #13): a rota que a lê nem chega a fazer a consulta se quem pergunta
+  /// não for mestre.
+  manualMestre String?
 
   sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   participacoes Participacao[]

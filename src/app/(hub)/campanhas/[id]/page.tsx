@@ -8,6 +8,7 @@ import { usuarioAtual } from "@/lib/usuario";
 
 import { AdicionarInimigo } from "./adicionar-inimigo";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
+import { ManualDoMestre } from "./manual-mestre";
 
 /*
   A campanha em si. O que aparece muda conforme quem está olhando:
@@ -45,6 +46,7 @@ export default async function PaginaCampanha({
   const sistemaDef = SISTEMAS.find((s) => s.chave === campanha.sistema.chave);
   const ficha = sistemaDef?.ficha ?? null;
   const fichaInimigo = sistemaDef?.fichaInimigo ?? null;
+  const escudoMestre = sistemaDef?.escudoMestre ?? null;
 
   const [participacoes, personagensDaCampanha] = await Promise.all([
     banco.participacao.findMany({
@@ -63,6 +65,18 @@ export default async function PaginaCampanha({
 
   const minhaParticipacao = participacoes.find((p) => p.usuarioId === usuario.id);
   const souMestre = minhaParticipacao?.papel === "MESTRE";
+
+  // O Manual do Mestre só é buscado quando quem pergunta é mestre — a
+  // consulta nem acontece pra jogador, então o campo nunca sai do servidor
+  // pra quem não devia ver (decisão #13).
+  const manualMestre = souMestre
+    ? (
+        await banco.campanha.findUnique({
+          where: { id },
+          select: { manualMestre: true },
+        })
+      )?.manualMestre ?? ""
+    : "";
 
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
@@ -87,6 +101,8 @@ export default async function PaginaCampanha({
           jogadores={participacoes.filter((p) => p.papel === "JOGADOR")}
           personagensDaCampanha={personagensDaCampanha}
           idDoMestre={usuario.id}
+          manualMestre={manualMestre}
+          escudoMestre={escudoMestre}
         />
       ) : (
         <VisaoDoJogador
@@ -113,6 +129,8 @@ function VisaoDoMestre({
   jogadores,
   personagensDaCampanha,
   idDoMestre,
+  manualMestre,
+  escudoMestre,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -121,6 +139,8 @@ function VisaoDoMestre({
   jogadores: { usuarioId: string; usuario: { nome: string | null; email: string } }[];
   personagensDaCampanha: { id: string; nome: string; donoId: string }[];
   idDoMestre: string;
+  manualMestre: string;
+  escudoMestre: string | null;
 }) {
   const inimigos = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
 
@@ -137,7 +157,19 @@ function VisaoDoMestre({
           Manda esse endereço pros seus jogadores. Cada um escolhe a ficha dele
           ao abrir — só aparecem fichas do sistema desta campanha.
         </p>
+        {escudoMestre && (
+          <a
+            href={escudoMestre}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-block text-sm text-ambar-forte underline underline-offset-2"
+          >
+            Abrir Escudo do Mestre (referência rápida de regras)
+          </a>
+        )}
       </section>
+
+      <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
 
       <section className="mt-8">
         <h2 className="font-titulo text-xl">Jogadores</h2>

@@ -27,6 +27,13 @@ export type Sistema = {
     Adicionar ficha de inimigo" da campanha só aparece quando isto existe.
   */
   fichaInimigo: string | null;
+  /*
+    Página de referência rápida de regras (o Escudo do Mestre) — ações do
+    conflito, níveis de dificuldade, testes em grupo/opostos, oportunidades.
+    Mesmo conteúdo pra qualquer campanha do sistema, por isso é estático e
+    não muda por campanha. null pra sistema sem essa referência ainda.
+  */
+  escudoMestre: string | null;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -39,6 +46,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: null,
+    escudoMestre: null,
   },
   {
     chave: "fabula-ultima",
@@ -49,6 +57,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "em-construcao",
     salvaNoHub: true,
     fichaInimigo: "/fabula-ultima-inimigo.html",
+    escudoMestre: "/fabula-ultima-escudo-mestre.html",
   },
   {
     chave: "sao",
@@ -58,6 +67,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "planejada",
     salvaNoHub: false,
     fichaInimigo: null,
+    escudoMestre: null,
   },
   {
     chave: "thryliki-chelona",
@@ -67,6 +77,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "planejada",
     salvaNoHub: false,
     fichaInimigo: null,
+    escudoMestre: null,
   },
 ];
 

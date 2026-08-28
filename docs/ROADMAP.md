@@ -287,13 +287,24 @@ passando.
       modo leitura) mais uma varredura carregando as 108 fichas do
       catálogo uma a uma, conferindo zero erro de JavaScript e nenhum
       campo virando `undefined`/`NaN`
-- [ ] **Manual do Mestre dentro da campanha** — uma aba/seção pra anotações
-      de mestre: criar as próprias na hora, ou usar prontas quando
-      existirem (o Zé tem os PDFs do Guia do Mestre e do Escudo do Mestre
-      pra mandar depois)
-- [ ] **Página de Escudo do Mestre** — referência rápida de regras (o que
-      cada ação faz, tabelas de dificuldade, etc.) pra consultar durante a
-      sessão sem precisar abrir o livro
+- [x] **Manual do Mestre dentro da campanha** (28/08/2026) — seção nova na
+      página da campanha, visível só pro mestre: um bloco de texto livre
+      que salva sozinho (debounce, sem botão), pra anotar plano de sessão,
+      NPCs, segredos do enredo. Migração `0005_manual_mestre.sql` (uma
+      coluna de texto na campanha). A leitura respeita a decisão #13 de
+      um jeito direto: a consulta que busca esse campo só roda quando
+      quem pede já é confirmadamente mestre — pra jogador, a coluna nem
+      chega a ser buscada, não é só escondida na tela. "Usar prontas" (o
+      Guia do Mestre em PDF) continua pendente — fica pra quando o Zé
+      mandar esse material
+- [x] **Página de Escudo do Mestre** (28/08/2026) — referência estática
+      (`fabula-ultima-escudo-mestre.html`, sem JS, só consulta) com o que
+      mais se usa numa mesa: como fazer um teste, sucesso/falha crítica,
+      Níveis de Dificuldade, Teste Aberto, Teste Oposto, Teste em Grupo,
+      as 11 Oportunidades, as 10 ações de conflito, Condições e Afinidades
+      de dano. Linkada a partir da campanha (sistema ganhou um
+      `escudoMestre` em `src/lib/sistemas.ts`, só preenchido pro Fabula
+      Ultima por enquanto)
 
 ### Outros sistemas
 - [ ] Sistema SAO
