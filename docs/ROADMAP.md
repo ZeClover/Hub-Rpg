@@ -132,19 +132,27 @@ fechada — falta só ligar a ficha à conta do Hub (ver "Depois" abaixo).
   - **Luta com duas armas** (pág. 69): nota que aparece sozinha embaixo do
     equipamento quando as duas mãos têm arma da mesma Categoria (ou
     categorias diferentes, se a heroica Ambidestro estiver marcada)
+  - **Culinária do Gourmet** (Atlas Natural Fantasy, pág. 149-152): cinco
+    sabores de ingrediente (Amargo, Salgado, Azedo, Doce, Umami) com
+    estoque próprio; as 15 combinações possíveis de sabor viram uma "ficha
+    de receitas" — rola 1d12 a primeira vez que combinar dois sabores e o
+    efeito fica travado pra sempre depois disso, exatamente como no livro.
+    Preparar uma iguaria gasta 2-3 ingredientes do estoque e aplica o
+    efeito de cada combinação formada, rolando na hora qualquer combinação
+    ainda não descoberta
 
-### Fora de escopo por agora (conteúdo de Atlas que não veio no livro básico)
+### Fora de escopo por agora (conteúdo de Atlas que não veio completo)
 
-Dois poderes ainda ficam só como texto de referência, sem painel próprio —
-não por serem grandes demais, mas porque o conteúdo deles está em Atlas que
-o Zé ainda não mandou (o livro básico enviado não cobre):
+Um poder ainda fica só como texto de referência, sem painel próprio — o
+conteúdo dele está num Atlas que só chegou pela metade:
 
-- **Veículo Pessoal do Piloto** (estrutura e módulos — Atlas Techno Fantasy,
-  pág. 160-167)
-- **Culinária do Gourmet** (tabela de combinação de sabores — Atlas Natural
-  Fantasy)
-
-Bastam essas páginas em PDF pra fechar os dois.
+- **Veículo Pessoal do Piloto** (Atlas Techno Fantasy): a regra geral, a
+  lista de Estruturas (Exoesqueleto/Mecha/Montaria) e os Módulos de
+  Armadura e de Arma (pág. 158-166) já foram lidos e dá pra automatizar,
+  mas os PDFs enviados terminam bem antes da tabela de **Módulos de
+  Suporte** (Aéreo, Sensor, Turbo, etc. — citados pelo nome nos exemplos de
+  veículo, mas sem efeito descrito nas páginas que chegaram). Falta pedir
+  ao Zé as páginas 167 em diante desse Atlas pra fechar.
 
 ---
 

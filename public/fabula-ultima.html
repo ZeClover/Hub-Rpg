@@ -1012,6 +1012,60 @@ function bonusDoAnelDasCebolas(p){
 }
 
 /* ===========================================================================
+   CULINÁRIA DO GOURMET (Atlas Natural Fantasy, pág. 149-152)
+
+   Cinco sabores de ingrediente; cada combinação de dois sabores (mesmo
+   repetido) é uma entrada fixa na "ficha de receitas" — rola 1x um d12 pra
+   descobrir o efeito e ele vale pra sempre depois disso. Preparar uma
+   iguaria combina 2-3 ingredientes e aplica o efeito de cada combinação
+   formada entre os sabores escolhidos.
+   =========================================================================== */
+const SABORES = [
+  {id:'amargo', nome:'Amargo'}, {id:'salgado', nome:'Salgado'}, {id:'azedo', nome:'Azedo'},
+  {id:'doce', nome:'Doce'}, {id:'umami', nome:'Umami'},
+];
+// As 15 combinações possíveis (ordem não importa; repetir o mesmo sabor conta).
+function paresDeSabor(){
+  const pares = [];
+  for(let i=0;i<SABORES.length;i++) for(let j=i;j<SABORES.length;j++) pares.push([SABORES[i].id, SABORES[j].id]);
+  return pares;
+}
+const chaveSabor = (a, b) => [a,b].sort().join('|');
+
+const CULINARIA_TIPOS_DANO = ['fogo','gelo','raio','terra','veneno'];
+const CULINARIA_CONDICOES = ['atordoado','enfurecido','envenenado','abalado','lento','fraco'];
+
+// Os 12 efeitos possíveis (pág. 151-152). `escolha` diz que tipo de opção
+// extra o efeito pede (tipo de dano, condição ou atributo) — null quando não
+// pede nenhuma.
+const CULINARIA_EFEITOS = [
+  {id:'1', escolha:'condicao', texto: v => `Cada alvo se recupera da condição ${CONDICOES.find(c=>c.id===v)?.nome.toLowerCase() || '—'}.`},
+  {id:'2', escolha:'condicao', texto: v => `Cada alvo fica ${CONDICOES.find(c=>c.id===v)?.nome.toLowerCase() || '—'}.`},
+  {id:'3', escolha:null, texto: (v, nivel) => `Cada alvo recupera ${nivel>=30?50:40} PV.`},
+  {id:'4', escolha:null, texto: (v, nivel) => `Cada alvo recupera ${nivel>=30?50:40} PM.`},
+  {id:'5', escolha:'tipoDano', texto: (v, nivel) => `Cada alvo sofre ${nivel>=30?30:20} de dano de ${TIPOS_DANO.find(t=>t.id===v)?.nome.toLowerCase() || '—'}.`},
+  {id:'6', escolha:'tipoDano', texto: v => `Até o fim do próximo turno de cada alvo, dano de ${TIPOS_DANO.find(t=>t.id===v)?.nome.toLowerCase() || '—'} contra eles causa +5 de dano adicional.`},
+  {id:'7', escolha:null, texto: () => `Cada alvo é impedido de fazer a ação Guarda no próximo turno dele.`},
+  {id:'8', escolha:null, texto: () => `Cada alvo é impedido de fazer a ação Feitiço no próximo turno dele.`},
+  {id:'9', escolha:null, texto: () => `Cada alvo é impedido de fazer a ação Poder no próximo turno dele.`},
+  {id:'10', escolha:'tipoDano', texto: v => `Até o fim do próximo turno de cada alvo, eles são Resistentes a dano de ${TIPOS_DANO.find(t=>t.id===v)?.nome.toLowerCase() || '—'}.`},
+  {id:'11', escolha:'atributo', texto: v => `Até o fim do próximo turno de cada alvo, o dado de ${ATRIBUTOS.find(a=>a.id===v)?.nome || '—'} deles sobe um passo (máximo d12).`},
+  {id:'12', escolha:'tipoDano', texto: v => `No próximo turno de cada alvo, todo dano que eles causarem vira ${TIPOS_DANO.find(t=>t.id===v)?.nome.toLowerCase() || '—'} (não muda mais).`},
+];
+function opcoesDeEscolha(tipoEscolha){
+  if(tipoEscolha === 'condicao') return CULINARIA_CONDICOES.map(id => ({id, nome: CONDICOES.find(c=>c.id===id)?.nome || id}));
+  if(tipoEscolha === 'tipoDano') return CULINARIA_TIPOS_DANO.map(id => ({id, nome: TIPOS_DANO.find(t=>t.id===id)?.nome || id}));
+  if(tipoEscolha === 'atributo') return ATRIBUTOS.map(a => ({id:a.id, nome:a.nome}));
+  return [];
+}
+function textoEfeitoCulinaria(efeitoId, escolha, nivel){
+  const ef = CULINARIA_EFEITOS.find(e => e.id === efeitoId);
+  if(!ef) return '';
+  if(ef.escolha && !escolha) return '(falta escolher a opção do efeito)';
+  return ef.texto(escolha, nivel);
+}
+
+/* ===========================================================================
    ENGENHOCAS DO INVENTOR — Alquimia, Infusões e Tecnomagia (pág. 211-215)
 
    O poder "Engenhocas" (max 5) dá um NÍVEL (0 a 3: nenhum/básico/avançado/
@@ -1583,6 +1637,9 @@ function novoPersonagem(nome){
     magisferas: [],
     // Habilidades Heroicas escolhidas (uma por classe dominada — nível 10+).
     heroicas: [],
+    // Culinária do Gourmet: estoque de ingrediente por sabor e a "ficha de
+    // receitas" (efeito de cada combinação de sabor já descoberta).
+    culinaria: {ingredientes: {amargo:0, salgado:0, azedo:0, doce:0, umami:0}, receitas: {}},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     // afinidades[tipoId] = 'normal' | 'vulneravel' | 'resistente' | 'imune' | 'absorve'
@@ -2552,6 +2609,82 @@ function blocoEngenhocas(p){
   </div>`;
 }
 
+function blocoCulinaria(p){
+  const np = npDoPoder(p, 'gourmet', 'culinaria');
+  if(np <= 0) return '';
+  const nivel = nivelTotal(p);
+  const cul = p.culinaria || {ingredientes:{amargo:0,salgado:0,azedo:0,doce:0,umami:0}, receitas:{}};
+  const ingredientes = cul.ingredientes || {amargo:0,salgado:0,azedo:0,doce:0,umami:0};
+  const capacidade = 10 + np*5;
+  const totalIngredientes = Object.values(ingredientes).reduce((s,n) => s+n, 0);
+  const receitas = cul.receitas || {};
+  const nomeSabor = id => SABORES.find(s => s.id === id)?.nome || id;
+
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Culinária</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Ingredientes têm um sabor cada (pág. 149); combine 2 ou 3 numa iguaria.
+      Cada combinação de dois sabores (mesmo repetido) tem um efeito fixo, que
+      você descobre rolando 1d12 na primeira vez — a ficha de receitas abaixo
+      guarda o resultado pra sempre.
+    </p>
+
+    <p class="mini" style="color:var(--texto);font-size:14px">
+      <strong>Ingredientes</strong> (${totalIngredientes} de ${capacidade})
+    </p>
+    <div class="grade g3" style="margin-top:8px">
+      ${SABORES.map(s => `<div>
+        <label>${s.nome}</label>
+        <div class="linha">
+          <button data-ingrediente-menos="${s.id}" ${(ingredientes[s.id]||0)<=0?'disabled':''} aria-label="Diminuir">−</button>
+          <span style="min-width:2ch;text-align:center">${ingredientes[s.id]||0}</span>
+          <button data-ingrediente-mais="${s.id}" ${totalIngredientes>=capacidade?'disabled':''} aria-label="Aumentar">+</button>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <p class="mini" style="color:var(--texto);font-size:14px;margin-top:16px"><strong>Ficha de receitas</strong></p>
+    ${paresDeSabor().map(([a,b]) => {
+      const chave = chaveSabor(a,b);
+      const receita = receitas[chave];
+      const efeitoDef = receita ? CULINARIA_EFEITOS.find(e => e.id === receita.efeito) : null;
+      return `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--borda)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="mini"><strong>${nomeSabor(a)} + ${nomeSabor(b)}</strong></span>
+          ${!receita ? `<button data-receita-rolar="${chave}">Rolar (d12)</button>` : `
+            <span class="linha" style="width:auto;gap:8px;flex-wrap:wrap">
+              <span class="mini">d12 → ${receita.efeito}</span>
+              ${efeitoDef?.escolha ? `<select data-receita-escolha="${chave}">
+                <option value="">— escolher —</option>
+                ${opcoesDeEscolha(efeitoDef.escolha).map(o => `<option value="${o.id}" ${receita.escolha===o.id?'selected':''}>${o.nome}</option>`).join('')}
+              </select>` : ''}
+            </span>`}
+        </div>
+        ${receita ? `<p class="mini" style="margin:4px 0 0">${textoEfeitoCulinaria(receita.efeito, receita.escolha, nivel)}</p>` : ''}
+      </div>`;
+    }).join('')}
+
+    <p class="mini" style="color:var(--texto);font-size:14px;margin-top:16px"><strong>Preparar iguaria</strong></p>
+    <p class="mini" style="margin-top:4px">Escolha 2 ou 3 sabores (gasta 1 ingrediente de cada da lista acima); combinações novas são reveladas na hora.</p>
+    <div class="grade g3" style="margin-top:8px">
+      ${[0,1,2].map(i => `<select data-iguaria-sabor="${i}">
+        <option value="">${i<2?'— sabor —':'— sabor (opcional) —'}</option>
+        ${SABORES.map(s => `<option value="${s.id}">${s.nome}</option>`).join('')}
+      </select>`).join('')}
+    </div>
+    <button id="btPrepararIguaria" style="margin-top:8px">Preparar</button>
+
+    ${cul.ultimaIguaria ? `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
+      <p class="mini"><strong>Última iguaria</strong> (${cul.ultimaIguaria.sabores.map(nomeSabor).join(' + ')}):</p>
+      ${cul.ultimaIguaria.pares.map(chave => {
+        const r = receitas[chave]; if(!r) return '';
+        const [a,b] = chave.split('|');
+        return `<p class="mini" style="margin-top:6px"><strong>${nomeSabor(a)} + ${nomeSabor(b)}:</strong> ${textoEfeitoCulinaria(r.efeito, r.escolha, nivel)}</p>`;
+      }).join('')}
+    </div>` : ''}
+  </div>`;
+}
+
 function abaInventario(p){
   const acessorios = p.acessorios || [];
   return `<div class="cartao">
@@ -2599,7 +2732,8 @@ function abaInventario(p){
     }).join('')}
   </div>
 
-  ${blocoEngenhocas(p)}`;
+  ${blocoEngenhocas(p)}
+  ${blocoCulinaria(p)}`;
 }
 
 function abaLacos(p){
@@ -2804,6 +2938,51 @@ function ligarEventos(){
       const conhecidas = p.magisferas || (p.magisferas = []);
       conhecidas[Number(el.dataset.magisfera)] = el.value || null;
     }));
+
+  const culinariaBase = () => ({ingredientes:{amargo:0,salgado:0,azedo:0,doce:0,umami:0}, receitas:{}});
+  app.querySelectorAll('[data-ingrediente-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const cul = p.culinaria || (p.culinaria = culinariaBase());
+      const sabor = b.dataset.ingredienteMais;
+      const total = Object.values(cul.ingredientes).reduce((s,n) => s+n, 0);
+      const capacidade = 10 + npDoPoder(p, 'gourmet', 'culinaria')*5;
+      if(total < capacidade) cul.ingredientes[sabor] = (cul.ingredientes[sabor] || 0) + 1;
+    }));
+  app.querySelectorAll('[data-ingrediente-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const cul = p.culinaria; if(!cul) return;
+      const sabor = b.dataset.ingredienteMenos;
+      cul.ingredientes[sabor] = Math.max(0, (cul.ingredientes[sabor] || 0) - 1);
+    }));
+  app.querySelectorAll('[data-receita-rolar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const cul = p.culinaria || (p.culinaria = culinariaBase());
+      cul.receitas[b.dataset.receitaRolar] = {efeito: String(Math.floor(Math.random()*12) + 1), escolha: null};
+    }));
+  app.querySelectorAll('[data-receita-escolha]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const receita = p.culinaria?.receitas?.[el.dataset.receitaEscolha];
+      if(receita) receita.escolha = el.value || null;
+    }));
+  const btPrepararIguaria = document.getElementById('btPrepararIguaria');
+  if(btPrepararIguaria) btPrepararIguaria.onclick = () => {
+    const sabores = [0,1,2].map(i => document.querySelector(`[data-iguaria-sabor="${i}"]`)?.value).filter(Boolean);
+    if(sabores.length < 2){ alert('Escolha pelo menos 2 sabores.'); return; }
+    mudar(p => {
+      const cul = p.culinaria || (p.culinaria = culinariaBase());
+      const contagem = {};
+      sabores.forEach(s => contagem[s] = (contagem[s] || 0) + 1);
+      const faltando = Object.entries(contagem).some(([s,qtd]) => (cul.ingredientes[s] || 0) < qtd);
+      if(faltando){ alert('Ingredientes insuficientes desses sabores.'); return; }
+      Object.entries(contagem).forEach(([s,qtd]) => cul.ingredientes[s] -= qtd);
+      const pares = new Set();
+      for(let i=0;i<sabores.length;i++) for(let j=i+1;j<sabores.length;j++) pares.add(chaveSabor(sabores[i], sabores[j]));
+      pares.forEach(chave => {
+        if(!cul.receitas[chave]) cul.receitas[chave] = {efeito: String(Math.floor(Math.random()*12) + 1), escolha: null};
+      });
+      cul.ultimaIguaria = {sabores, pares: [...pares]};
+    });
+  };
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
     el.onchange = () => mudar(p => p.atual[el.dataset.atualrec] = Number(el.value) || 0));
