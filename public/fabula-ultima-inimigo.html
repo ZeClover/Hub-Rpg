@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Inimigo — Fabula Ultima</title>
+<style>
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button:disabled{opacity:.4; cursor:not-allowed}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:24px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{border:1px solid rgba(76,122,115,.5); background:rgba(76,122,115,.12);
+  color:var(--texto); border-radius:8px; padding:10px 12px; font-size:13px; margin-bottom:14px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.item{margin-top:14px; padding-top:14px; border-top:1px solid var(--borda)}
+.previa{margin-top:8px; font-size:13px; color:var(--ambar-forte)}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Inimigo — Fabula Ultima</span>
+  <a href="/campanhas" style="color:var(--ambar);text-decoration:none;font-size:13px">← Campanhas</a>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE INIMIGO/NPC — FABULA ULTIMA (Livro Básico, pág. 302-318)
+
+   Ferramenta não-oficial feita por fã. Codifica MECÂNICA (fórmulas, números,
+   efeitos de regra) — não reproduz texto, arte ou descrições do livro.
+   Fabula Ultima © Need Games e Rooster Games. Edição brasileira: Jambô.
+
+   Diferente da ficha de jogador (fabula-ultima.html), esta é bem mais
+   simples: um inimigo não tem classes nem poderes escolhidos de catálogo —
+   ele é numa boa parte texto livre (ataques, feitiços, regras especiais),
+   igual o livro apresenta no Bestiário. Por isso esta ficha só existe em
+   "Modo Hub", ligada a uma campanha — sempre criada pelo botão "+
+   Adicionar ficha de inimigo" na página da campanha (decisão: sem modo
+   local avulso, porque não faz sentido um inimigo existir fora de mesa
+   nenhuma).
+   =========================================================================== */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+
+const ATRIBUTOS = [
+  {id:'destreza', nome:'Destreza', abrev:'DES'},
+  {id:'astucia',  nome:'Astúcia',  abrev:'AST'},
+  {id:'vigor',    nome:'Vigor',    abrev:'VIG'},
+  {id:'vontade',  nome:'Vontade',  abrev:'VON'},
+];
+const ESCALA = [6, 8, 10, 12];
+
+const ESPECIES_NPC_PADRAO = [
+  {id:'fera', nome:'Fera'}, {id:'construto', nome:'Construto'}, {id:'demonio', nome:'Demônio'},
+  {id:'elemental', nome:'Elemental'}, {id:'humanoide', nome:'Humanoide'}, {id:'monstro', nome:'Monstro'},
+  {id:'planta', nome:'Planta'}, {id:'morto-vivo', nome:'Morto-vivo'},
+];
+// Preenchido por NPC_ESPECIES (catálogo) quando ele existir; usado só como
+// texto de referência ao lado do seletor de espécie.
+let NPC_ESPECIES = [];
+let NPC_HABILIDADES = [];
+let NPC_FEITICOS = [];
+
+const TIPOS_DANO = [
+  {id:'fisico', nome:'Físico'}, {id:'ar', nome:'Ar'}, {id:'fogo', nome:'Fogo'},
+  {id:'gelo', nome:'Gelo'}, {id:'luz', nome:'Luz'}, {id:'raio', nome:'Raio'},
+  {id:'terra', nome:'Terra'}, {id:'trevas', nome:'Trevas'}, {id:'veneno', nome:'Veneno'},
+];
+const AFINIDADES_NIVEIS = [
+  {id:'normal', nome:'Normal'}, {id:'vulneravel', nome:'Vulnerável'},
+  {id:'resistente', nome:'Resistente'}, {id:'imune', nome:'Imune'}, {id:'absorve', nome:'Absorve'},
+];
+const CONDICOES = [
+  {id:'abalado', nome:'Abalado'}, {id:'atordoado', nome:'Atordoado'}, {id:'enfurecido', nome:'Enfurecido'},
+  {id:'envenenado', nome:'Envenenado'}, {id:'fraco', nome:'Fraco'}, {id:'lento', nome:'Lento'},
+];
+
+// Catálogo de inimigos prontos (Bestiário do Livro Básico + Atlas). Cada
+// fonte preenche este array na carga da página — ver INIMIGOS_CATALOGO_*
+// mais abaixo.
+const INIMIGOS_CATALOGO = [];
+
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function novoInimigo(){
+  return {
+    nome: 'Novo Inimigo', nivel: 5, especie: 'fera', papel: 'soldado', papelDetalhe: null,
+    atributos: {destreza:8, astucia:8, vigor:8, vontade:8},
+    pv: 30, pvAtual: 30, pm: 30, pmAtual: 30, iniciativa: 8, defesa: 0, defesaMagica: 0,
+    afinidades: {}, condicoes: [], equipamento: '',
+    ataques: [], feiticos: [], outrasAcoes: [], regrasEspeciais: [],
+    catalogoOrigemId: null, anotacoes: '',
+  };
+}
+
+// Fórmula de criação de NPC do livro (pág. 303): PV = 2×nível + 5×dado de
+// Vigor; PM = nível + 5×dado de Vontade; Iniciativa = (dado de Destreza +
+// dado de Astúcia)/2, arredondado pra baixo; Defesa = dado de Destreza;
+// Defesa Mágica = dado de Astúcia. Elite dobra PV e soma +2 na Iniciativa;
+// Campeão multiplica PV pelo número de soldados substituídos, dobra PM e
+// soma +1 na Iniciativa por soldado substituído.
+function recalcularPelaFormula(p){
+  const a = p.atributos;
+  const base = {
+    pv: 2*p.nivel + 5*a.vigor,
+    pm: p.nivel + 5*a.vontade,
+    iniciativa: Math.floor((a.destreza + a.astucia) / 2),
+    defesa: a.destreza,
+    defesaMagica: a.astucia,
+  };
+  if(p.papel === 'elite'){
+    base.pv *= 2;
+    base.iniciativa += 2;
+  } else if(p.papel === 'campeao'){
+    const n = Math.max(1, p.papelDetalhe || 1);
+    base.pv *= n;
+    base.pm *= 2;
+    base.iniciativa += n;
+  }
+  p.pv = base.pv; p.pvAtual = base.pv;
+  p.pm = base.pm; p.pmAtual = base.pm;
+  p.iniciativa = base.iniciativa; p.defesa = base.defesa; p.defesaMagica = base.defesaMagica;
+}
+
+/* ---------------------------------------------------------------------
+   MODO HUB — mesmo mecanismo do fabula-ultima.html e do kaizoku-no-sho.html
+   --------------------------------------------------------------------- */
+let debounceHub = null;
+let falhouAoSalvarHub = false;
+
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    if(!estado.inimigo) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: estado.inimigo}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvarHub){ falhouAoSalvarHub = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvarHub){ falhouAoSalvarHub = true; render(); }
+    }
+  }, 500);
+}
+
+const estado = {
+  inimigo: null,
+  carregando: !!MODO_HUB,
+  erro: null, // 'nao-encontrado' | null
+  ehDono: false,
+};
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erro = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    estado.inimigo = (dados && dados.nome) ? dados : novoInimigo();
+    estado.ehDono = !!personagem.ehDono;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erro = 'nao-encontrado';
+  }finally{
+    estado.carregando = false;
+    render();
+  }
+}
+
+function mudar(mudanca){
+  if(!estado.ehDono) return;
+  mudanca(estado.inimigo);
+  salvarNoHub();
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   CATÁLOGO
+   --------------------------------------------------------------------- */
+function blocoCatalogo(){
+  const fontes = [...new Set(INIMIGOS_CATALOGO.map(i => i.fonte))];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Catálogo de inimigos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Escolha um inimigo pronto do Bestiário ou dos Atlas — os números,
+      ataques, feitiços e regras dele preenchem a ficha inteira de uma vez.
+      Dá pra editar tudo depois de carregar.
+    </p>
+    ${INIMIGOS_CATALOGO.length === 0 ? `<p class="mini">Catálogo ainda vazio.</p>` : `
+    <div class="linha" style="flex-wrap:wrap;gap:10px">
+      <select id="c-cat-fonte" style="max-width:220px">
+        ${fontes.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}
+      </select>
+      <select id="c-cat-inimigo" style="flex:1;min-width:220px"></select>
+      <button id="btUsarCatalogo" class="destaque">Usar este</button>
+    </div>`}
+  </div>`;
+}
+
+function opcoesDoCatalogo(fonte){
+  return INIMIGOS_CATALOGO
+    .filter(i => i.fonte === fonte)
+    .sort((a,b) => a.nivel - b.nivel)
+    .map(i => `<option value="${i.id}">${esc(i.nome)} (Nv ${i.nivel}, ${esc(i.especie)})</option>`).join('');
+}
+
+function usarDoCatalogo(id){
+  const item = INIMIGOS_CATALOGO.find(i => i.id === id);
+  if(!item) return;
+  mudar(p => {
+    Object.assign(p, {
+      nome: item.nome, nivel: item.nivel, especie: item.especie,
+      papel: item.papel || 'soldado', papelDetalhe: item.papelDetalhe || null,
+      atributos: {
+        destreza: Number(String(item.atributos.destreza).replace('d','')),
+        astucia: Number(String(item.atributos.astucia).replace('d','')),
+        vigor: Number(String(item.atributos.vigor).replace('d','')),
+        vontade: Number(String(item.atributos.vontade).replace('d','')),
+      },
+      pv: item.pv, pvAtual: item.pv, pm: item.pm, pmAtual: item.pm,
+      iniciativa: item.iniciativa, defesa: item.defesa || 0, defesaMagica: item.defesaMagica || 0,
+      afinidades: {...(item.afinidades||{})}, condicoes: [],
+      equipamento: item.equipamento || '',
+      ataques: (item.ataques||[]).map(a => ({...a})),
+      feiticos: (item.feiticos||[]).map(f => ({...f})),
+      outrasAcoes: (item.outrasAcoes||[]).map(o => ({...o})),
+      regrasEspeciais: (item.regrasEspeciais||[]).map(r => ({...r})),
+      catalogoOrigemId: item.id, anotacoes: '',
+    });
+  });
+}
+
+/* ---------------------------------------------------------------------
+   BLOCOS DA FICHA
+   --------------------------------------------------------------------- */
+function blocoPerfil(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Perfil</h2>
+    <div class="grade g3" style="margin-top:14px">
+      <div><label for="c-nome">Nome</label><input id="c-nome" data-campo="nome" value="${esc(p.nome)}"></div>
+      <div><label for="c-nivel">Nível</label><input id="c-nivel" type="number" min="1" max="60" data-num="nivel" value="${p.nivel}"></div>
+      <div><label for="c-especie">Espécie</label>
+        <select id="c-especie" data-campo="especie">
+          ${(NPC_ESPECIES.length ? NPC_ESPECIES : ESPECIES_NPC_PADRAO).map(e => `<option value="${e.id}" ${p.especie===e.id?'selected':''}>${e.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    ${(() => { const def = NPC_ESPECIES.find(e => e.id === p.especie); return def?.regraMecanica
+      ? `<p class="mini" style="margin-top:10px">${esc(def.regraMecanica)}</p>` : ''; })()}
+    <div class="grade g3" style="margin-top:14px">
+      <div><label for="c-papel">Papel</label>
+        <select id="c-papel" data-campo="papel">
+          <option value="soldado" ${p.papel==='soldado'?'selected':''}>Soldado</option>
+          <option value="elite" ${p.papel==='elite'?'selected':''}>Elite</option>
+          <option value="campeao" ${p.papel==='campeao'?'selected':''}>Campeão</option>
+        </select></div>
+      ${p.papel==='campeao' ? `<div><label for="c-papeldetalhe">Substitui quantos soldados</label>
+        <input id="c-papeldetalhe" type="number" min="1" data-num="papelDetalhe" value="${p.papelDetalhe||1}"></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function blocoAtributos(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Atributos e números</h2>
+    <div class="grade g4" style="margin-top:14px">
+      ${ATRIBUTOS.map(a => `<div><label for="c-atr-${a.id}">${a.nome}</label>
+        <select id="c-atr-${a.id}" data-atributo="${a.id}">
+          ${ESCALA.map(d => `<option value="${d}" ${p.atributos[a.id]===d?'selected':''}>d${d}</option>`).join('')}
+        </select></div>`).join('')}
+    </div>
+    <div class="grade g4" style="margin-top:14px">
+      <div><label for="c-pv">PV máximo</label><input id="c-pv" type="number" min="0" data-num="pv" value="${p.pv}"></div>
+      <div><label for="c-pvatual">PV atual</label><input id="c-pvatual" type="number" min="0" data-num="pvAtual" value="${p.pvAtual}"></div>
+      <div><label for="c-pm">PM máximo</label><input id="c-pm" type="number" min="0" data-num="pm" value="${p.pm}"></div>
+      <div><label for="c-pmatual">PM atual</label><input id="c-pmatual" type="number" min="0" data-num="pmAtual" value="${p.pmAtual}"></div>
+    </div>
+    <div class="grade g3" style="margin-top:14px">
+      <div><label for="c-init">Iniciativa</label><input id="c-init" type="number" data-num="iniciativa" value="${p.iniciativa}"></div>
+      <div><label for="c-def">Defesa</label><input id="c-def" type="number" data-num="defesa" value="${p.defesa}"></div>
+      <div><label for="c-defm">Defesa Mágica</label><input id="c-defm" type="number" data-num="defesaMagica" value="${p.defesaMagica}"></div>
+    </div>
+    <div class="linha" style="margin-top:14px">
+      <button id="btRecalcular">Recalcular pela fórmula do livro</button>
+      <span class="mini">PV/PM/Iniciativa/Defesa a partir do nível, espécie/papel e atributos — sobrescreve os números acima.</span>
+    </div>
+  </div>`;
+}
+
+function blocoAfinidades(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Afinidades</h2>
+    <div class="grade g3">
+      ${TIPOS_DANO.map(t => `<div><label for="c-af-${t.id}">${t.nome}</label>
+        <select id="c-af-${t.id}" data-afinidade="${t.id}">
+          ${AFINIDADES_NIVEIS.map(n => `<option value="${n.id}" ${((p.afinidades||{})[t.id]||'normal')===n.id?'selected':''}>${n.nome}</option>`).join('')}
+        </select></div>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES.map(c => `<label>
+        <input type="checkbox" data-condicao="${c.id}" ${(p.condicoes||[]).includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function blocoEquipamento(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Equipamento</h2>
+    <input data-campo="equipamento" value="${esc(p.equipamento)}" placeholder="Ex: espada de bronze, armadura de couro">
+  </div>`;
+}
+
+// Configuração de campos de cada lista livre — usada tanto pra desenhar
+// quanto pra ligar os eventos (um único código pras quatro listas).
+const CAMPOS_LISTA = {
+  ataques: {
+    titulo: 'Ataques Básicos',
+    ajuda: 'Precisão é o texto livre igual o livro mostra (ex: "DES + AST"); o bônus e o dano somam sozinhos na prévia.',
+    campos: [
+      {chave:'nome', rotulo:'Nome', tipo:'texto', cols:2},
+      {chave:'alcance', rotulo:'Alcance', tipo:'select', opcoes:[{id:'corpo a corpo',nome:'Corpo a corpo'},{id:'distancia',nome:'À distância'}]},
+      {chave:'precisao', rotulo:'Precisão', tipo:'texto', placeholder:'DES + AST'},
+      {chave:'bonus', rotulo:'Bônus', tipo:'numero'},
+      {chave:'dano', rotulo:'Dano (o N de RA+N)', tipo:'numero'},
+      {chave:'tipoDano', rotulo:'Tipo de dano', tipo:'select', opcoes: TIPOS_DANO},
+      {chave:'efeito', rotulo:'Efeito extra', tipo:'area', cols:3},
+    ],
+    previa: it => `【${esc(it.precisao||'—')}】${it.bonus?` +${it.bonus}`:''} · 【RA + ${it.dano||0}】 ${esc((TIPOS_DANO.find(t=>t.id===it.tipoDano)||{}).nome||'')}`,
+  },
+  feiticos: {
+    titulo: 'Feitiços',
+    ajuda: 'Deixe Precisão em branco se o feitiço não pedir teste de Magia.',
+    campos: [
+      {chave:'nome', rotulo:'Nome', tipo:'texto', cols:2},
+      {chave:'precisao', rotulo:'Precisão (opcional)', tipo:'texto', placeholder:'AST + VON'},
+      {chave:'bonus', rotulo:'Bônus', tipo:'numero'},
+      {chave:'custo', rotulo:'Custo em PM', tipo:'texto', placeholder:'10 PM'},
+      {chave:'alvo', rotulo:'Alvo', tipo:'texto'},
+      {chave:'duracao', rotulo:'Duração', tipo:'texto'},
+      {chave:'efeito', rotulo:'Efeito', tipo:'area', cols:3},
+    ],
+    previa: it => `${it.precisao ? `【${esc(it.precisao)}】${it.bonus?` +${it.bonus}`:''} · ` : ''}${esc(it.custo||'')} · ${esc(it.alvo||'')} · ${esc(it.duracao||'')}`,
+  },
+  outrasAcoes: {
+    titulo: 'Outras Ações',
+    campos: [
+      {chave:'nome', rotulo:'Nome', tipo:'texto'},
+      {chave:'efeito', rotulo:'Efeito', tipo:'area', cols:3},
+    ],
+  },
+  regrasEspeciais: {
+    titulo: 'Regras Especiais',
+    ajuda: 'Traços fixos do inimigo — imunidades de espécie, comportamento em crise, etc.',
+    campos: [
+      {chave:'nome', rotulo:'Nome', tipo:'texto'},
+      {chave:'efeito', rotulo:'Efeito', tipo:'area', cols:3},
+    ],
+  },
+};
+
+function campoInput(campo, i, item, c){
+  const valor = item[c.chave] ?? '';
+  const attr = `data-lista="${campo}|${i}|${c.chave}"`;
+  const largura = c.cols ? `grid-column:span ${c.cols}` : '';
+  let controle;
+  if(c.tipo === 'select'){
+    controle = `<select ${attr}>${c.opcoes.map(o => `<option value="${o.id}" ${valor===o.id?'selected':''}>${o.nome}</option>`).join('')}</select>`;
+  } else if(c.tipo === 'numero'){
+    controle = `<input type="number" ${attr} value="${valor||0}">`;
+  } else if(c.tipo === 'area'){
+    controle = `<textarea ${attr} rows="2" placeholder="${esc(c.placeholder||'')}">${esc(valor)}</textarea>`;
+  } else {
+    controle = `<input ${attr} value="${esc(valor)}" placeholder="${esc(c.placeholder||'')}">`;
+  }
+  return `<div style="${largura}"><label>${c.rotulo}</label>${controle}</div>`;
+}
+
+function blocoListaLivre(p, campo){
+  const config = CAMPOS_LISTA[campo];
+  const itens = p[campo] || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">${config.titulo}</h2>
+    ${config.ajuda ? `<p class="mini" style="margin:6px 0 14px">${config.ajuda}</p>` : ''}
+    ${itens.length === 0 ? `<p class="mini">Nenhum ainda.</p>` : ''}
+    ${itens.map((item, i) => `
+      <div class="item">
+        <div class="grade g3">${config.campos.map(c => campoInput(campo, i, item, c)).join('')}</div>
+        ${config.previa ? `<p class="previa">${config.previa(item)}</p>` : ''}
+        <div style="margin-top:8px;text-align:right">
+          <button data-lista-remover="${campo}|${i}">Tirar</button>
+        </div>
+      </div>`).join('')}
+    <button data-lista-add="${campo}" style="margin-top:14px">+ Adicionar</button>
+  </div>`;
+}
+
+function blocoAnotacoes(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Anotações</h2>
+    <textarea data-campo="anotacoes" rows="4" placeholder="Táticas, história, o que quiser lembrar na mesa.">${esc(p.anotacoes||'')}</textarea>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   RENDER
+   --------------------------------------------------------------------- */
+function render(){
+  const app = document.getElementById('app');
+  document.getElementById('btExportar').disabled = !estado.inimigo;
+
+  if(!MODO_HUB){
+    app.innerHTML = `<div class="vazio"><h2>Sem campanha</h2>
+      <p class="mini">Uma ficha de inimigo só existe dentro de uma campanha.
+      Abra a campanha e use "+ Adicionar ficha de inimigo".
+      <a href="/campanhas">Ir para Campanhas</a></p></div>`;
+    return;
+  }
+  if(estado.carregando){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(estado.erro === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio"><h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/campanhas">Voltar para Campanhas</a></p></div>`;
+    return;
+  }
+
+  const p = estado.inimigo;
+  const somenteLeitura = !estado.ehDono;
+
+  app.innerHTML = `
+    ${falhouAoSalvarHub ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong> Confira sua internet.</div>` : ''}
+    ${somenteLeitura ? `<div class="ok">Modo leitura — só quem é dono edita.</div>` : ''}
+    ${!somenteLeitura ? blocoCatalogo() : ''}
+    ${blocoPerfil(p)}
+    ${blocoAtributos(p)}
+    ${blocoAfinidades(p)}
+    ${blocoEquipamento(p)}
+    ${blocoListaLivre(p, 'ataques')}
+    ${blocoListaLivre(p, 'feiticos')}
+    ${blocoListaLivre(p, 'outrasAcoes')}
+    ${blocoListaLivre(p, 'regrasEspeciais')}
+    ${blocoAnotacoes(p)}
+  `;
+
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
+  } else {
+    atualizarSelectDoCatalogo();
+  }
+}
+
+function atualizarSelectDoCatalogo(){
+  const selFonte = document.getElementById('c-cat-fonte');
+  const selInimigo = document.getElementById('c-cat-inimigo');
+  if(!selFonte || !selInimigo) return;
+  selInimigo.innerHTML = opcoesDoCatalogo(selFonte.value);
+}
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  const selFonte = document.getElementById('c-cat-fonte');
+  if(selFonte) selFonte.onchange = atualizarSelectDoCatalogo;
+  const btUsarCatalogo = document.getElementById('btUsarCatalogo');
+  if(btUsarCatalogo) btUsarCatalogo.onclick = () => {
+    const id = document.getElementById('c-cat-inimigo')?.value;
+    if(id) usarDoCatalogo(id);
+  };
+
+  app.querySelectorAll('[data-campo]').forEach(el =>
+    el.oninput = () => mudar(p => p[el.dataset.campo] = el.value));
+
+  app.querySelectorAll('[data-num]').forEach(el =>
+    el.oninput = () => mudar(p => p[el.dataset.num] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Number(el.value)));
+
+  app.querySelectorAll('[data-afinidade]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      (p.afinidades || (p.afinidades = {}))[el.dataset.afinidade] = el.value;
+    }));
+
+  app.querySelectorAll('[data-condicao]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const lista = p.condicoes || (p.condicoes = []);
+      p.condicoes = el.checked ? [...new Set([...lista, el.dataset.condicao])] : lista.filter(x => x !== el.dataset.condicao);
+    }));
+
+  const btRecalcular = document.getElementById('btRecalcular');
+  if(btRecalcular) btRecalcular.onclick = () => mudar(p => recalcularPelaFormula(p));
+
+  app.querySelectorAll('[data-lista]').forEach(el => {
+    const [campo, indice, chave] = el.dataset.lista.split('|');
+    const evento = (el.tagName === 'SELECT') ? 'onchange' : 'oninput';
+    el[evento] = () => mudar(p => {
+      const item = p[campo][Number(indice)];
+      const cfg = CAMPOS_LISTA[campo].campos.find(c => c.chave === chave);
+      item[chave] = cfg.tipo === 'numero' ? (Number(el.value) || 0) : el.value;
+    });
+  });
+
+  app.querySelectorAll('[data-lista-add]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const campo = b.dataset.listaAdd;
+      const vazio = {};
+      CAMPOS_LISTA[campo].campos.forEach(c => vazio[c.chave] = c.tipo === 'numero' ? 0 : '');
+      (p[campo] || (p[campo] = [])).push(vazio);
+    }));
+
+  app.querySelectorAll('[data-lista-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [campo, indice] = b.dataset.listaRemover.split('|');
+      p[campo].splice(Number(indice), 1);
+    }));
+}
+
+document.getElementById('btExportar').onclick = () => {
+  if(!estado.inimigo) return;
+  const blob = new Blob([JSON.stringify(estado.inimigo, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${(estado.inimigo.nome||'inimigo').replace(/[^\w\-]+/g,'_')}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

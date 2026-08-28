@@ -19,6 +19,14 @@ export type Sistema = {
     nem em "+ Criar ficha" nem como opção de campanha.
   */
   salvaNoHub: boolean;
+  /*
+    Arquivo da ficha de INIMIGO/NPC desse sistema, bem diferente da ficha de
+    jogador (sem classes nem poderes de catálogo — nível/espécie, atributos,
+    e ataques/feitiços/regras como texto livre, igual o Bestiário do livro).
+    null pra sistema que ainda não tem essa ficha própria; o botão "+
+    Adicionar ficha de inimigo" da campanha só aparece quando isto existe.
+  */
+  fichaInimigo: string | null;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -30,6 +38,7 @@ export const SISTEMAS: Sistema[] = [
     ficha: "/kaizoku-no-sho.html",
     situacao: "pronta",
     salvaNoHub: true,
+    fichaInimigo: null,
   },
   {
     chave: "fabula-ultima",
@@ -39,6 +48,7 @@ export const SISTEMAS: Sistema[] = [
     ficha: "/fabula-ultima.html",
     situacao: "em-construcao",
     salvaNoHub: true,
+    fichaInimigo: "/fabula-ultima-inimigo.html",
   },
   {
     chave: "sao",
@@ -47,6 +57,7 @@ export const SISTEMAS: Sistema[] = [
     ficha: null,
     situacao: "planejada",
     salvaNoHub: false,
+    fichaInimigo: null,
   },
   {
     chave: "thryliki-chelona",
@@ -55,6 +66,7 @@ export const SISTEMAS: Sistema[] = [
     ficha: null,
     situacao: "planejada",
     salvaNoHub: false,
+    fichaInimigo: null,
   },
 ];
 

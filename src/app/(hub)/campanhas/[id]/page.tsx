@@ -42,7 +42,9 @@ export default async function PaginaCampanha({
   });
   if (!campanha) notFound();
 
-  const ficha = SISTEMAS.find((s) => s.chave === campanha.sistema.chave)?.ficha ?? null;
+  const sistemaDef = SISTEMAS.find((s) => s.chave === campanha.sistema.chave);
+  const ficha = sistemaDef?.ficha ?? null;
+  const fichaInimigo = sistemaDef?.fichaInimigo ?? null;
 
   const [participacoes, personagensDaCampanha] = await Promise.all([
     banco.participacao.findMany({
@@ -80,6 +82,7 @@ export default async function PaginaCampanha({
         <VisaoDoMestre
           campanhaId={campanha.id}
           ficha={ficha}
+          fichaInimigo={fichaInimigo}
           origem={origem}
           jogadores={participacoes.filter((p) => p.papel === "JOGADOR")}
           personagensDaCampanha={personagensDaCampanha}
@@ -105,6 +108,7 @@ export default async function PaginaCampanha({
 function VisaoDoMestre({
   campanhaId,
   ficha,
+  fichaInimigo,
   origem,
   jogadores,
   personagensDaCampanha,
@@ -112,6 +116,7 @@ function VisaoDoMestre({
 }: {
   campanhaId: string;
   ficha: string | null;
+  fichaInimigo: string | null;
   origem: string;
   jogadores: { usuarioId: string; usuario: { nome: string | null; email: string } }[];
   personagensDaCampanha: { id: string; nome: string; donoId: string }[];
@@ -185,9 +190,9 @@ function VisaoDoMestre({
           <ul className="mt-4 space-y-2">
             {inimigos.map((inimigo) => (
               <li key={inimigo.id}>
-                {ficha ? (
+                {fichaInimigo ? (
                   <a
-                    href={`${ficha}?id=${inimigo.id}`}
+                    href={`${fichaInimigo}?id=${inimigo.id}`}
                     className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
                   >
                     {inimigo.nome}
@@ -199,7 +204,13 @@ function VisaoDoMestre({
             ))}
           </ul>
         )}
-        {ficha && <AdicionarInimigo campanhaId={campanhaId} ficha={ficha} />}
+        {fichaInimigo ? (
+          <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
+        ) : (
+          <p className="mt-3 text-sm text-texto-suave">
+            O sistema desta campanha ainda não tem ficha de inimigo própria no Hub.
+          </p>
+        )}
       </section>
     </>
   );
