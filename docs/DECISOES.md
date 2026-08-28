@@ -131,6 +131,13 @@ consertar isso agora.
 | 52 | Kaizoku fica de fora por agora | Sem "Modo Hub" (não entende `?id=`, só salva no navegador), criar ficha dele pela conta hoje resultaria numa ficha morta. Novo campo `salvaNoHub` em `src/lib/sistemas.ts` esconde Kaizoku de "+ Criar ficha" e de "Criar campanha" até ele ganhar essa base — fatia própria, futura |
 | 53 | Catálogo de monstros | Fora de escopo por agora. O Bestiário de Fabula Ultima é livro à parte, com ficha de criatura diferente da de personagem — bem maior que esta fatia. Enquanto isso, inimigo é ficha comum, preenchida à mão |
 
+**Decisão #52 revertida no mesmo dia:** o Zé tinha uma campanha de Kaizoku
+pra narrar, então a base ("Modo Hub") que a decisão #52 tinha adiado virou
+prioridade imediata em vez de fatia futura. Kaizoku no Sho ganhou o mesmo
+mecanismo do Fabula Ultima (`?id=` na URL, salvar/ler via
+`/api/personagens/[id]`, modo leitura, Compartilhar) e `salvaNoHub` virou
+`true` pra ele. Já entra em "+ Criar ficha" e em "Criar campanha" de novo.
+
 ## 11. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

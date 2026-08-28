@@ -178,6 +178,8 @@
   .escolha-rotulo{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:var(--brass-bright); text-transform:uppercase;}
   .escolha-ok{font-family:var(--mono); font-size:10px; color:var(--verdigris-bright);}
   .aviso-armazenamento.erro{color:#ffd9d1; border-color:#c2503a; background:rgba(194,80,58,.18); font-weight:600;}
+  .info-box.leitura{border-color:var(--verdigris); color:var(--verdigris-bright); background:rgba(76,122,115,0.12); margin:0 0 16px;}
+  .info-box.erro{border-color:#c2503a; color:#ffd9d1; background:rgba(194,80,58,.18); margin:0 0 16px;}
 
   /* ---------- Peculiaridades picker ---------- */
   .pecu-search{margin-bottom:10px;}
@@ -3760,17 +3762,95 @@ function diasDesdeBackup(){
 }
 
 /* =========================================================================
+   MODO HUB — ficha ligada à conta em vez do navegador
+
+   Presente na URL (?id=...), a ficha vive na conta do Hub: /fichas cria a
+   linha no banco e manda pra cá com o id dela. Sem o parâmetro, tudo
+   continua exatamente como sempre — roster no localStorage deste aparelho,
+   sem conta nenhuma. Mesmo mecanismo que o Fabula Ultima já usa.
+   ========================================================================= */
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+
+let debounceHub = null;
+let falhouAoSalvarHub = false;
+
+// No Hub, cada campo salva sozinho na conta — sem lista local, sem botão de
+// salvar. O debounce evita uma requisição por tecla digitada.
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = personagemAtual(); if(!p) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvarHub){ falhouAoSalvarHub = false; renderAll(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvarHub){ falhouAoSalvarHub = true; renderAll(); }
+    }
+  }, 500);
+}
+
+/* =========================================================================
    ESTADO DO APP
    ========================================================================= */
 
 const state = {
-  roster: carregarRoster(),
+  roster: MODO_HUB ? [] : carregarRoster(),
   personagemId: null,
   tab: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,       // 'nao-encontrado' | null
+  // Começa falso de propósito: só vira true depois que o Hub CONFIRMAR que
+  // é dono. Enquanto carrega, ou se a busca falhar, o padrão seguro é "não
+  // é dono" — senão o interruptor de compartilhar apareceria numa ficha que
+  // nem carregou direito.
+  ehDono: false,
+  compartilhado: false,
 };
 
-if(state.roster.length && !state.personagemId){
+if(!MODO_HUB && state.roster.length && !state.personagemId){
   state.personagemId = state.roster[0].id;
+}
+
+// Busca a ficha no Hub uma vez, no início. Preenche state.roster com um só
+// personagem — sem lista, sem seletor, exatamente o que /fichas já filtrou.
+// Ler não exige ser o dono: se vier ehDono:false, é o mestre de uma campanha
+// vendo a ficha de um jogador, ou o link de leitura de outra pessoa.
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ state.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? migrarPersonagem(dados) : novoPersonagem('Novo Personagem');
+    p.id = MODO_HUB;
+    state.roster = [p];
+    state.personagemId = p.id;
+    state.ehDono = !!personagem.ehDono;
+    state.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    state.erroHub = 'nao-encontrado';
+  }finally{
+    state.carregandoHub = false;
+    renderAll();
+  }
+}
+
+// Dono liga/desliga o link de leitura. Quem não é dono nem vê este controle.
+function alternarCompartilhado(valor){
+  state.compartilhado = valor;
+  renderRosterBar();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
 }
 
 function personagemAtual(){
@@ -3780,6 +3860,7 @@ function personagemAtual(){
 function persistir(){
   const p = personagemAtual();
   if(p) p.atualizadoEm = Date.now();
+  if(MODO_HUB){ salvarNoHub(); return; }
   salvarRoster(state.roster);
 }
 
@@ -4552,7 +4633,74 @@ function avisoArmazenamento(){
   }
   return '';
 }
+// No Hub, /fichas já é a lista de personagens — o seletor, "+ Novo",
+// Duplicar e Apagar (que só fazem sentido com um roster local) somem, e vira
+// um "← Fichas" no lugar. Exportar continua pra qualquer um (é só ler);
+// Importar e o interruptor de Compartilhar só aparecem pro dono.
+function renderRosterBarHub(){
+  const el = document.getElementById('rosterBar');
+  const p = personagemAtual();
+  el.innerHTML = `
+    <a href="/fichas" class="btn">← Fichas</a>
+    <button class="btn" id="btnExportar" ${!p?'disabled':''}>Exportar JSON</button>
+    ${state.ehDono ? `
+      <button class="btn" id="btnImportar">Importar JSON</button>
+      <input type="file" id="fileImportar" accept="application/json" style="display:none;">
+      <label style="display:flex; align-items:center; gap:6px; margin:0; text-transform:none; letter-spacing:normal;">
+        <input type="checkbox" id="chkCompartilhar" ${state.compartilhado?'checked':''} style="width:auto;">
+        <span style="font-family:var(--mono); font-size:11px; color:var(--parchment-dim);">Compartilhar (link de leitura)</span>
+      </label>
+    ` : ''}
+    <span id="rosterMsg" style="font-family:var(--mono); font-size:11px; color:var(--verdigris-bright); align-self:center;"></span>
+  `;
+
+  if(p) document.getElementById('btnExportar').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(p.perfil.nome||'personagem').replace(/[^\w\-]+/g,'_')}.kns.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  if(!state.ehDono) return;
+
+  document.getElementById('btnImportar').addEventListener('click', ()=>{
+    document.getElementById('fileImportar').click();
+  });
+  document.getElementById('fileImportar').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try{
+        const obj = JSON.parse(evt.target.result);
+        if(!obj || typeof obj !== 'object' || !obj.perfil) throw new Error('JSON não parece ser uma ficha válida.');
+        migrarPersonagem(obj);
+        // No Hub só existe esta ficha — importar restaura o conteúdo dela a
+        // partir de um backup, em vez de criar outra.
+        obj.id = MODO_HUB;
+        state.roster = [obj];
+        state.personagemId = MODO_HUB;
+        persistir();
+        renderAll();
+      }catch(err){
+        const msg = document.getElementById('rosterMsg');
+        if(msg) msg.textContent = 'Falha ao importar: ' + err.message;
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('chkCompartilhar').addEventListener('change', e=>{
+    alternarCompartilhado(e.target.checked);
+  });
+}
+
 function renderRosterBar(){
+  if(MODO_HUB){ renderRosterBarHub(); return; }
+
   const el = document.getElementById('rosterBar');
   const p = personagemAtual();
   el.innerHTML = `
@@ -4680,12 +4828,28 @@ const TABS = [
 function renderAll(){
   renderRosterBar();
   const root = document.getElementById('appRoot');
+
+  if(MODO_HUB && state.carregandoHub){
+    root.innerHTML = `<div class="empty-state"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && state.erroHub === 'nao-encontrado'){
+    root.innerHTML = `<div class="empty-state"><h2>Ficha não encontrada</h2>
+      <p>Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--verdigris-bright)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
   const p = personagemAtual();
   if(!p){
     root.innerHTML = `<div class="empty-state"><h2>Nenhum personagem ainda</h2><p>Clique em "+ Novo" para criar sua primeira ficha, ou importe um arquivo JSON exportado anteriormente.</p></div>`;
     return;
   }
+
+  const somenteLeitura = MODO_HUB && !state.ehDono;
   root.innerHTML = `
+    ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
+    ${somenteLeitura ? `<div class="info-box leitura">Modo leitura — você está vendo a ficha de <strong>${escapeHtml(p.perfil.nome)}</strong>. Só quem é dono edita.</div>` : ''}
     <div class="tab-row" id="tabRow"></div>
     <div class="grid">
       <div id="panelHost"></div>
@@ -4695,6 +4859,12 @@ function renderAll(){
   renderTabs();
   renderPanel();
   renderFichaCard();
+
+  // Modo leitura: desliga todo campo/botão de edição, menos as abas.
+  if(somenteLeitura){
+    root.querySelectorAll('input, select, textarea, button:not([data-tab])')
+      .forEach(el => el.disabled = true);
+  }
 }
 
 function renderTabs(){
@@ -4724,6 +4894,7 @@ function renderPanel(){
 }
 
 function onFieldChange(){
+  if(MODO_HUB && !state.ehDono) return; // defesa extra: modo leitura não edita
   persistir();
   renderFichaCard();
   renderRosterBar();
@@ -6267,9 +6438,14 @@ function renderFichaCard(){
 /* =========================================================================
    INIT
    ========================================================================= */
-carregarUltimoBackup();
-renderAll();
-protegerArmazenamento();
+if(MODO_HUB){
+  renderAll();
+  iniciarModoHub();
+}else{
+  carregarUltimoBackup();
+  renderAll();
+  protegerArmazenamento();
+}
 </script>
 </body>
 </html>

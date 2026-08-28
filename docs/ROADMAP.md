@@ -216,17 +216,26 @@ aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
     só que dono = o próprio mestre) — os jogadores não veem essa lista.
     Isso cobre a parte de "organizar inimigos" sem precisar de nenhum
     catálogo de monstros
-  - **Kaizoku no Sho não entra ainda**: a ficha dele nunca ganhou o "Modo
-    Hub" que o Fabula Ultima tem (não entende `?id=`, só salva no
-    navegador) — criar uma ficha dele pela conta hoje resultaria numa
-    ficha que nunca salva nada. Novo campo `salvaNoHub` em cada sistema
-    (`src/lib/sistemas.ts`) filtra tanto "+ Criar ficha" quanto a criação
-    de campanha pra só oferecer sistemas prontos pra isso — hoje, só
-    Fabula Ultima. Dar essa base ao Kaizoku é fatia própria, futura
   - **Catálogo de monstros dos livros**: fora de escopo por agora — o
     Bestiário de Fabula Ultima é um livro à parte, com ficha de criatura
     bem diferente da de personagem. Enquanto não existir, o mestre digita
     o inimigo à mão, na mesma ficha de sempre
+
+- [x] **Kaizoku no Sho ganhou o Modo Hub** (28/08/2026) — o Zé estava com
+      uma campanha de Kaizoku pra narrar, e a ficha dele tinha ficado de
+      fora da fatia de Campanhas por não entender `?id=` nem salvar na
+      conta. Mesmo mecanismo que o Fabula Ultima já usa, portado pros nomes
+      e formato de estado próprios do Kaizoku (`state`/`renderAll`/
+      `persistir`/`onFieldChange`, em vez de `estado`/`render`/`salvar`/
+      `mudar`): detecta `?id=`, busca/salva via `/api/personagens/[id]`,
+      modo leitura pra quem não é dono (usado tanto pelo link de leitura
+      quanto pelo mestre de campanha), interruptor de Compartilhar, "←
+      Fichas" no lugar do seletor/Novo/Duplicar/Apagar. Campo `salvaNoHub`
+      de `src/lib/sistemas.ts` virou `true` pra ele — reaparece em "+ Criar
+      ficha" e na criação de campanha. Testado com Playwright mockando
+      `/api/personagens/*` (ficha nova, ficha existente, 404, link de
+      leitura, modo local intacto) e um passeio por todas as abas em modo
+      local pra garantir que nada quebrou
 
 **Confirmado em produção (28/08/2026):** o Zé testou ao vivo em
 `hub-rpg-eight.vercel.app` — criou a ficha "Zé" pelo Fabula Ultima, editou,

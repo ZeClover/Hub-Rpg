@@ -13,10 +13,10 @@ export type Sistema = {
   situacao: "pronta" | "em-construcao" | "planejada";
   /*
     Se o arquivo da ficha entende o `?id=` da URL e salva sozinho na conta
-    (o "Modo Hub" que o Fabula Ultima ganhou). Kaizoku no Sho tem ficha, mas
-    ainda só sabe salvar no navegador — por isso não entra nem em "+ Criar
-    ficha" nem como opção de campanha: criar uma linha no banco pra ele hoje
-    resultaria numa ficha que nunca salva nada ali.
+    (o "Modo Hub" que o Fabula Ultima ganhou primeiro, e o Kaizoku no Sho
+    ganhou em seguida). Sem isso, criar uma linha no banco pra esse sistema
+    resultaria numa ficha que nunca salva nada ali — por isso ele não entra
+    nem em "+ Criar ficha" nem como opção de campanha.
   */
   salvaNoHub: boolean;
 };
@@ -29,7 +29,7 @@ export const SISTEMAS: Sistema[] = [
       "Homebrew de One Piece, adaptação do Shinobi no Sho. Livro Base e Expansão.",
     ficha: "/kaizoku-no-sho.html",
     situacao: "pronta",
-    salvaNoHub: false,
+    salvaNoHub: true,
   },
   {
     chave: "fabula-ultima",
