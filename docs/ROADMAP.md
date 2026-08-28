@@ -324,7 +324,34 @@ passando.
   - `npm run build`, lint e os 16 testes automatizados passando
 
 ### Outros sistemas
-- [ ] Sistema SAO
+- [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
+      #64), inspirado em Sword Art Online, Overgeared e Shangri-La
+      Frontier: o personagem enxerga a própria ficha como uma Janela de
+      Status de jogo (PV, PM, nível, nome de golpe), não uma abstração
+      escondida da mesa. `public/sao.html`, arquivo único com localStorage
+      (decisão #40, Modo Hub fica pra depois). O que o chassi cobre:
+  - 4 atributos em dado (d6-d12), mesmo estilo de teste do Fabula Ultima
+    (dois dados somados vs Dificuldade, duplo 6+ crítico, duplo 1 falha)
+  - Multiclasse sem limite (estilo Overgeared): 3 categorias (Combate,
+    Produção, Outras), catálogo-semente de 7 classes, nível por classe
+    somado vira o Nível geral
+  - PV/PM/Defesa/Iniciativa calculados por fórmula própria (números de
+    partida, editáveis à mão — mesma filosofia da decisão #57)
+  - Golpes assistidos pelo sistema (Sword Skills) convivendo com ataque
+    livre: golpe registrado dá a condição "Vulnerável (pós-motion)"
+    depois de usado; golpe "Original" marca quando o jogador aprendeu a
+    fazer sem ajuda do sistema
+  - Skills que sobem de ESTÁGIO com o uso em jogo (iniciante → mestre,
+    10 níveis internos cada), não por escolha em lista — estilo Overgeared
+  - Morte não é permanente (estilo Overgeared): card de Penalidade de
+    Morte com perda de XP (botão calcula 10% do XP atual) e chance de
+    item cair no chão, em vez de matar o personagem de vez
+  - Cursor colorido (verde/laranja/vermelho) como flag de PK visível pra
+    todo mundo, igual o SAO original
+  - Habilidade Única: campo raro, começa vazio, só o mestre libera
+  - Ainda falta pra fatia ficar completa: catálogo real de classes com
+    poderes próprios (hoje é só a categoria), catálogo de golpes/magias
+    de referência, inventário/equipamento, e o Modo Hub
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 

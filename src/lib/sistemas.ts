@@ -62,9 +62,10 @@ export const SISTEMAS: Sistema[] = [
   {
     chave: "sao",
     nome: "Sistema SAO",
-    descricao: "Homebrew inspirado em Sword Art Online.",
-    ficha: null,
-    situacao: "planejada",
+    descricao:
+      "Homebrew original inspirado em Sword Art Online, Overgeared e Shangri-La Frontier — o personagem sabe que está num jogo.",
+    ficha: "/sao.html",
+    situacao: "em-construcao",
     salvaNoHub: false,
     fichaInimigo: null,
     escudoMestre: null,

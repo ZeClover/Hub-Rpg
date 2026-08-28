@@ -170,7 +170,33 @@ próprio jogador poder sair.
 | 62 | Excluir campanha apaga a campanha, não as fichas | As fichas ligadas (de jogador ou de inimigo) só soltam — `campanhaId` volta a `null`, viram fichas avulsas de novo. Só quem é mestre pode excluir |
 | 63 | Remover jogador e sair usam a mesma rota | `DELETE /api/campanhas/[id]/jogadores/[usuarioId]` serve tanto para o mestre remover alguém quanto para o próprio jogador sair — a permissão dentro da rota é "sou eu mesmo, ou sou o mestre desta campanha". A ficha do jogador removido também só solta, nunca é apagada. O mestre nunca pode ser removido por essa rota — pra encerrar a mesa de vez, é "Excluir campanha" |
 
-## 14. Restrições registradas
+## 14. Sistema SAO — chassi (28/08/2026)
+
+O Zé pediu pra estudar Sword Art Online, Overgeared e Shangri-La Frontier
+antes de desenhar o sistema, porque o traço que ele quer no homebrew é o
+personagem **saber que está dentro de um jogo** — enxergar PV, nível e nome
+de golpe na própria tela, do mesmo jeito que o jogo mostra. Depois da
+pesquisa, as decisões abaixo fecharam o chassi (as sete perguntas de
+`ARQUITETURA.md`), decisão #17.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 64 | Morte | **Penalidade forte, sem permadeath** (estilo Overgeared/Satisfy). Chegar a 0 PV não mata de vez: o personagem "renasce" num ponto de respawn, perde XP na proporção do nível, e há chance de derrubar um item equipado no lugar onde caiu |
+| 65 | Combate | **Híbrido.** Golpes assistidos pelo sistema (Sword Skills, estilo SAO) conseguem mais dano mas deixam a condição "Vulnerável (pós-motion)" depois de usados; ataque livre usa só o atributo, sem bônus e sem essa vulnerabilidade — igual o SAO original permite os dois |
+| 66 | Resolução de teste | **Reaproveita o estilo do Fabula Ultima**: dois dados (d6 a d12, um por atributo) somados contra uma Dificuldade. Duplo 6+ é sucesso crítico, duplo 1 é falha crítica — familiar pra quem já tem ficha nesse sistema |
+| 67 | Magia | **Existe**, ao contrário do SAO original (que não tem magia) — atributo Mente cobre magia e PM, junto de Força/Agilidade/Vontade |
+| 68 | Classes | **Multiclasse sem limite** (estilo Overgeared): o personagem acumula quantas classes quiser, cada uma numa de três categorias (Combate, Produção, Outras). O Nível geral do personagem é a soma dos níveis de todas as classes |
+| 69 | Progressão de skill | **Sobe com o uso**, não por escolha em lista (estilo Overgeared): cada skill tem um estágio (Iniciante → Intermediário → Avançado → Mestre) com 10 níveis internos, avançados um a um conforme aparece em jogo |
+| 70 | Habilidades Únicas | **Entram, como recurso raro.** Campo separado na ficha, começa vazio — não é escolha normal de criação, só o mestre libera quando fizer sentido na história, igual as 10 do SAO original |
+
+O chassi (`public/sao.html`) ficou pronto com essas sete respostas, um
+catálogo-semente de 7 classes (sem poderes próprios ainda) e o painel de
+status (PV/PM/Defesa/Nível) sempre visível. Fica de fora desta fatia, pra
+fatias futuras: catálogo real de poderes por classe, golpes/magias de
+referência prontos pra escolher (hoje é tudo texto livre), inventário e o
+Modo Hub (arquivo único primeiro, decisão #40).
+
+## 15. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
