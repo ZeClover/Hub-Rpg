@@ -780,7 +780,7 @@ const RITUAL_ACESSOS = [
    =========================================================================== */
 const HABILIDADES_HEROICAS = [
   {id:'ambidestro', nome:'Ambidestro', classes:null,
-    texto:'Aplica os benefícios de lutar com duas armas (pág. 69 do livro, mecânica ainda não modelada nesta ficha) mesmo com uma arma corpo a corpo e outra à distância, de categorias diferentes.'},
+    texto:'Aplica os benefícios de lutar com duas armas (pág. 69, nota que já aparece sozinha na aba Atributos quando dá) mesmo com armas de categorias diferentes numa mão e na outra.'},
   {id:'pv-extra', nome:'PV Extra', classes:null,
     texto:'Aumenta permanentemente seus PV máximos em 10 (20 a partir do nível 40). Já soma sozinho no total de PV desta ficha.'},
   {id:'pi-extra', nome:'PI Extra', classes:null,
@@ -869,6 +869,215 @@ function beneficioHeroico(p, tipo){
   if(tipo === 'pi' && heroicas.includes('pi-extra')) return 4;
   return 0;
 }
+
+/* ===========================================================================
+   PROJETOS (Livro Básico, pág. 133-137)
+
+   Igual Rituais, é calculadora e não lista: potência × área × uso define o
+   custo em zênites e o progresso necessário. Diferente de Rituais, não
+   precisa de um poder específico — qualquer personagem com nível em
+   Inventor pode começar um Projeto.
+   =========================================================================== */
+const PROJETO_POTENCIAS = [
+  {id:'menor',   nome:'Menor',   custo:100, dano:'Não disponível',      protecao:'Uma Resistência'},
+  {id:'media',   nome:'Média',   custo:200, dano:'Menor',               protecao:'Duas Resistências'},
+  {id:'maior',   nome:'Maior',   custo:400, dano:'Maior',               protecao:'Uma Imunidade ou duas Resistências'},
+  {id:'extrema', nome:'Extrema', custo:800, dano:'Massivo',             protecao:'Duas Imunidades ou três Resistências'},
+];
+const PROJETO_AREAS = [
+  {id:'individual', nome:'Individual', mult:1},
+  {id:'pequena',    nome:'Pequena',    mult:2},
+  {id:'grande',     nome:'Grande',     mult:3},
+  {id:'enorme',     nome:'Enorme',     mult:4},
+];
+const PROJETO_USOS = [
+  {id:'consumivel',  nome:'Consumível',  mult:1},
+  {id:'permanente',  nome:'Permanente',  mult:5},
+];
+// Quanto de dano/cura os valores Menor/Maior/Massivo da tabela acima valem,
+// de acordo com o nível do inventor (pág. 136).
+const PROJETO_VALORES_POR_NIVEL = [
+  {nivelMin:40, menor:30, maior:50, massivo:80},
+  {nivelMin:20, menor:20, maior:40, massivo:60},
+  {nivelMin:0,  menor:10, maior:30, massivo:40},
+];
+function valoresDeProjetoPorNivel(p){
+  return PROJETO_VALORES_POR_NIVEL.find(v => nivelTotal(p) >= v.nivelMin);
+}
+
+/* ===========================================================================
+   ACESSÓRIOS (Livro Básico, pág. 126 e 283-287)
+
+   Sempre raros, sempre um efeito só. A maioria fica como texto de
+   referência — igual poder de classe — porque o efeito varia demais pra
+   automatizar tudo (imunidade a uma condição, vantagem em teste oposto,
+   etc). Só os que dão bônus fixo a um número que a ficha já mostra no
+   topo da tela (Defesa, Defesa Mágica, Iniciativa, PV/PM máximos) somam
+   sozinhos — marcados com `auto` abaixo.
+   =========================================================================== */
+const ACESSORIOS_DEF = [
+  // --- Amostras (pág. 285-287) ---
+  {id:'cinto-do-explorador', nome:'Cinto do Explorador', custo:500,
+    efeito:'+4 no modificador de Iniciativa.', auto:[{campo:'iniciativa', valor:4}]},
+  {id:'luvas-elegantes', nome:'Luvas Elegantes', custo:500, efeito:'Imune a atordoado.'},
+  {id:'luvas-asperas', nome:'Luvas Ásperas', custo:500, efeito:'Imune a fraco.'},
+  {id:'luvas-de-seda', nome:'Luvas de Seda', custo:500, efeito:'Imune a lento.'},
+  {id:'luvas-quentes', nome:'Luvas Quentes', custo:500, efeito:'Imune a abalado.'},
+  {id:'botas-de-novato', nome:'Botas de Novato', custo:600,
+    efeito:'Ao tirar um fumble com menos de 10 Pontos de Experiência, ganha 1 Ponto de Experiência.'},
+  {id:'mascara-hannya', nome:'Máscara Hannya', custo:700,
+    efeito:'Todo dano que você causa a criaturas abaladas ignora Resistências.'},
+  {id:'pingente-ambar', nome:'Pingente Âmbar', custo:700, efeito:'Resistência a dano de terra.'},
+  {id:'pingente-ametista', nome:'Pingente Ametista', custo:700, efeito:'Resistência a dano de trevas.'},
+  {id:'pingente-diamante', nome:'Pingente Diamante', custo:700, efeito:'Resistência a dano de luz.'},
+  {id:'pingente-esmeralda', nome:'Pingente Esmeralda', custo:700, efeito:'Resistência a dano de veneno.'},
+  {id:'pingente-opala', nome:'Pingente Opala', custo:700, efeito:'Resistência a dano de ar.'},
+  {id:'pingente-rubi', nome:'Pingente Rubi', custo:700, efeito:'Resistência a dano de fogo.'},
+  {id:'pingente-safira', nome:'Pingente Safira', custo:700, efeito:'Resistência a dano de gelo.'},
+  {id:'pingente-topazio', nome:'Pingente Topázio', custo:700, efeito:'Resistência a dano de raio.'},
+  {id:'anel-de-feiticaria', nome:'Anel de Feitiçaria', custo:800,
+    efeito:'+1 em Defesa Mágica.', auto:[{campo:'defesaMagica', valor:1}]},
+  {id:'botas-do-andarilho', nome:'Botas do Andarilho', custo:900,
+    efeito:'Ao seu grupo fazer uma descoberta viajando, ganha 1 Ponto de Fabula.'},
+  {id:'elmo-com-crista', nome:'Elmo com Crista', custo:1000, efeito:'+1 em testes de Precisão.'},
+  {id:'luvas-carmesim', nome:'Luvas Carmesim', custo:1000,
+    efeito:'Ataque com a propriedade multi: +2 no teste de Precisão.'},
+  {id:'chapeu-pontudo-amarelo', nome:'Chapéu Pontudo Amarelo', custo:1000, efeito:'+1 em testes de Magia.'},
+  {id:'anel-do-leao', nome:'Anel do Leão', custo:1500, efeito:'+2 em testes opostos que usam Vontade.'},
+  {id:'anel-da-coruja', nome:'Anel da Coruja', custo:1500, efeito:'+2 em testes opostos que usam Astúcia.'},
+  {id:'anel-do-pupilo', nome:'Anel do Pupilo', custo:1500,
+    efeito:'Enquanto tiver ao menos dois Laços de admiração, +1 em Defesa e Defesa Mágica.'},
+  {id:'anel-dos-contos', nome:'Anel dos Contos', custo:1500,
+    efeito:'Ao tirar um sucesso crítico, pode gastar essa chance pra ganhar 1 Ponto de Fabula.'},
+  {id:'luvas-de-multigroa', nome:'Luvas de Pele de Multigroa', custo:2000, efeito:'Imune a todas as condições.'},
+  {id:'anel-das-cebolas', nome:'Anel das Cebolas', custo:2000,
+    efeito:'Aumenta seus PV e PM máximos em 2 para cada classe diferente que você tiver.',
+    autoDinamico:'pvPmPorClasse'},
+  {id:'anel-do-gelo', nome:'Anel do Gelo', custo:2500, efeito:'Absorve dano de gelo, mas Vulnerável a dano de fogo.'},
+  {id:'anel-do-magma', nome:'Anel do Magma', custo:2500, efeito:'Absorve dano de fogo, mas Vulnerável a dano de gelo.'},
+  {id:'anel-do-ovo', nome:'Anel do Ovo', custo:3000,
+    efeito:'Ao ir para 0 PV, pode resistir com exatamente 1 PV — o anel quebra ao fazer isso (custa 2000z pra consertar).'},
+
+  // --- Qualidades genéricas (pág. 283-284), pra montar um acessório customizado ---
+  {id:'antiestado', nome:'Antiestado (genérica)', custo:500, efeito:'Imune a uma condição à sua escolha.'},
+  {id:'resistencia-generica', nome:'Resistência (genérica)', custo:700,
+    efeito:'Resistência a um tipo de dano à sua escolha (não físico).'},
+  {id:'amuleto', nome:'Amuleto (genérica)', custo:800,
+    efeito:'+1 em Defesa Mágica.', auto:[{campo:'defesaMagica', valor:1}]},
+  {id:'baluarte', nome:'Baluarte (genérica)', custo:800,
+    efeito:'+1 em Defesa.', auto:[{campo:'defesa', valor:1}]},
+  {id:'dupla-resistencia', nome:'Dupla Resistência (genérica)', custo:1000,
+    efeito:'Resistência a dois tipos de dano à sua escolha (não físico).'},
+  {id:'quebra-espadas', nome:'Quebra-Espadas (genérica)', custo:1000, efeito:'Resistência a dano físico.'},
+  {id:'imunidade-generica', nome:'Imunidade (genérica)', custo:1500,
+    efeito:'Imunidade a um tipo de dano à sua escolha (não físico).'},
+  {id:'onichudo', nome:'Onichudo (genérica)', custo:2000,
+    efeito:'+1 em Defesa e Defesa Mágica.', auto:[{campo:'defesa', valor:1}, {campo:'defesaMagica', valor:1}]},
+  {id:'saude-perfeita', nome:'Saúde Perfeita (genérica)', custo:2000, efeito:'Imune a todas as condições.'},
+  {id:'mudanca-de-dano', nome:'Mudança de Dano (genérica)', custo:300,
+    efeito:'Todo dano de suas armas, feitiços e poderes vira um tipo específico à sua escolha.'},
+  {id:'iniciativa-extra', nome:'Iniciativa Extra (genérica)', custo:500,
+    efeito:'+4 no modificador de Iniciativa.', auto:[{campo:'iniciativa', valor:4}]},
+  {id:'precisao-extra', nome:'Precisão Extra (genérica)', custo:1000, efeito:'+1 em testes de Precisão.'},
+  {id:'magia-extra', nome:'Magia Extra (genérica)', custo:1000, efeito:'+1 em testes de Magia.'},
+  {id:'vitalidade-extra', nome:'Vitalidade Extra (genérica)', custo:1000,
+    efeito:'Sempre que recuperar PV, recupera 5 a mais.'},
+  {id:'cura-extra', nome:'Cura Extra (genérica)', custo:1500,
+    efeito:'Feitiços que restauram PV que você lançar restauram 5 PV a mais.'},
+  {id:'feitico-extra', nome:'Feitiço Extra (genérica)', custo:2000,
+    efeito:'Feitiços que você lançar causam 5 de dano adicional.'},
+  {id:'arma-extra', nome:'Arma Extra (genérica)', custo:2000,
+    efeito:'Ataques corpo a corpo OU à distância (escolha um) que você fizer causam 5 de dano adicional.'},
+];
+
+// Soma o bônus fixo (auto) de todo acessório equipado. Acessórios com efeito
+// condicional ou situacional (a maioria) ficam só como texto de referência —
+// mesmo critério usado pra poderes de classe e Habilidades Heroicas.
+function bonusDeAcessorios(p, campo){
+  return (p.acessorios || [])
+    .filter(a => a.equipado && a.id)
+    .flatMap(a => (ACESSORIOS_DEF.find(x => x.id === a.id)?.auto) || [])
+    .filter(b => b.campo === campo)
+    .reduce((soma, b) => soma + b.valor, 0);
+}
+
+// O Anel das Cebolas é o único com bônus proporcional (2 por classe
+// diferente), então não cabe no formato fixo de `bonusDeAcessorios`.
+function temAnelDasCebolasEquipado(p){
+  return (p.acessorios || []).some(a => a.equipado && a.id === 'anel-das-cebolas');
+}
+function bonusDoAnelDasCebolas(p){
+  if(!temAnelDasCebolasEquipado(p)) return 0;
+  return p.classes.filter(c => c.classeId && c.nivel > 0).length * 2;
+}
+
+/* ===========================================================================
+   ENGENHOCAS DO INVENTOR — Alquimia, Infusões e Tecnomagia (pág. 211-215)
+
+   O poder "Engenhocas" (max 5) dá um NÍVEL (0 a 3: nenhum/básico/avançado/
+   superior) espalhado entre os três tipos — a soma dos três nunca passa do
+   NP do poder. Cada tipo tem uma mecânica bem diferente dos outros dois.
+   =========================================================================== */
+const ALQUIMIA_MISTURAS = [
+  {id:'basica',   nome:'Básica',   nivelMinimo:1, dados:2, pi:3},
+  {id:'avancada', nome:'Avançada', nivelMinimo:2, dados:3, pi:4},
+  {id:'superior', nome:'Superior', nivelMinimo:3, dados:4, pi:5},
+];
+const ALQUIMIA_ALVO_TABELA = [
+  {min:1,  max:6,  texto:'Você ou um aliado visível na cena.'},
+  {min:7,  max:11, texto:'Um inimigo visível na cena.'},
+  {min:12, max:16, texto:'Você e todos os aliados presentes na cena.'},
+  {min:17, max:20, texto:'Todos os inimigos presentes na cena.'},
+];
+const ALQUIMIA_EFEITO_TABELA = [
+  {valor:1,  texto:'Os dados de Destreza e Vigor sobem um passo (até d12) até o fim do seu próximo turno.'},
+  {valor:2,  texto:'Os dados de Astúcia e Vontade sobem um passo (até d12) até o fim do seu próximo turno.'},
+  {valor:3,  texto:'20 de dano de ar (30 no nível 20+, 40 no nível 40+).'},
+  {valor:4,  texto:'20 de dano de raio (30 no nível 20+, 40 no nível 40+).'},
+  {valor:5,  texto:'20 de dano de trevas (30 no nível 20+, 40 no nível 40+).'},
+  {valor:6,  texto:'20 de dano de terra (30 no nível 20+, 40 no nível 40+).'},
+  {valor:7,  texto:'20 de dano de fogo (30 no nível 20+, 40 no nível 40+).'},
+  {valor:8,  texto:'20 de dano de gelo (30 no nível 20+, 40 no nível 40+).'},
+  {valor:9,  texto:'Resistência a dano de ar e fogo até o fim da cena.'},
+  {valor:10, texto:'Resistência a dano de raio e gelo até o fim da cena.'},
+  {valor:11, texto:'Resistência a dano de trevas e terra até o fim da cena.'},
+  {valor:12, texto:'Fica enfurecido.'},
+  {valor:13, texto:'Fica envenenado.'},
+  {valor:14, texto:'Fica atordoado, abalado, lento e fraco.'},
+  {valor:15, texto:'Recupera de todas as condições.'},
+  {valor:16, texto:'Recupera 50 PV e 50 PM.'},
+  {valor:17, texto:'Recupera 50 PV e 50 PM.'},
+  {valor:18, texto:'Recupera 100 PV.'},
+  {valor:19, texto:'Recupera 100 PM.'},
+  {valor:20, texto:'Recupera 100 PV e 100 PM.'},
+];
+// Estas duas valem pra qualquer resultado — sempre disponíveis mesmo se
+// nenhum dado rolado combinar com um efeito que você queira.
+const ALQUIMIA_EFEITO_SEMPRE = [
+  {id:'veneno-sempre', texto:'20 de dano de veneno.'},
+  {id:'cura-sempre',   texto:'Recupera 30 PV.'},
+];
+const textoAlvoPorValor   = v => ALQUIMIA_ALVO_TABELA.find(t => v>=t.min && v<=t.max)?.texto || '';
+const textoEfeitoPorValor = v => ALQUIMIA_EFEITO_TABELA.find(t => t.valor===v)?.texto || '';
+
+const INFUSOES_DEF = [
+  {id:'cryo',      nome:'Cryo',      tier:1, texto:'O ataque causa 5 de dano adicional, e o dano vira gelo.'},
+  {id:'pyro',      nome:'Pyro',      tier:1, texto:'O ataque causa 5 de dano adicional, e o dano vira fogo.'},
+  {id:'volt',      nome:'Volt',      tier:1, texto:'O ataque causa 5 de dano adicional, e o dano vira raio.'},
+  {id:'ciclone',   nome:'Ciclone',   tier:2, texto:'O ataque causa 5 de dano adicional, e o dano vira ar.'},
+  {id:'exorcismo', nome:'Exorcismo', tier:2, texto:'O ataque causa 5 de dano adicional, e o dano vira luz.'},
+  {id:'sismico',   nome:'Sísmico',   tier:2, texto:'O ataque causa 5 de dano adicional, e o dano vira terra.'},
+  {id:'sombra',    nome:'Sombra',    tier:2, texto:'O ataque causa 5 de dano adicional, e o dano vira trevas.'},
+  {id:'vampiro',   nome:'Vampiro',   tier:3, texto:'Escolha: recupera PV igual à metade do PV perdido pelo alvo; ou recupera a mesma quantia em PM. Só em ataque com um único alvo.'},
+  {id:'veneno-infusao', nome:'Veneno', tier:3, texto:'O ataque causa 5 de dano adicional, o dano vira veneno, e cada criatura atingida fica envenenada.'},
+];
+
+// Tecnomagia: cada nível libera um poder próprio, sem catálogo — menos o
+// superior (Magisferas), que reaproveita as listas de feitiço que já
+// existem na ficha (Elementalista/Entropista/Espiritualista) — ver mais
+// abaixo, depois que essas listas forem declaradas.
+const MAGICANHAO = {nome:'Magicanhão', maos:2, alcance:'à distância',
+  precisao:{atributos:['destreza','astucia'], bonus:1}, dano:10, tipoDano:'à sua escolha (ar, raio, terra, fogo, gelo ou físico)'};
 
 // Os nove Arcanos que "Vincular e Invocar" dá acesso (pág. 180-183). Cada um
 // tem um efeito de FUNDIR (enquanto estiver invocado) e, na maioria, um
@@ -986,6 +1195,19 @@ const FEITICOS_ESPIRITUALISTA = [
   {id:'torpor',        nome:'Torpor', ofensivo:true, pm:'5 × A', alvo:'Até três criaturas', duracao:'Instantânea',
     descricao:'Escolha fraco ou lento: cada alvo atingido é afligido pela condição.'},
 ];
+
+// Magisferas (Tecnomagia superior): reaproveita as três listas de feitiço
+// acima em vez de duplicar dados — cada Magisfera "guarda" um feitiço já
+// existente na ficha.
+const MAGISFERAS_CATALOGO = [
+  ...FEITICOS_ELEMENTALISTA.map(f => ({...f, origem:'Elementalista'})),
+  ...FEITICOS_ENTROPISTA.map(f => ({...f, origem:'Entropista'})),
+  ...FEITICOS_ESPIRITUALISTA.map(f => ({...f, origem:'Espiritualista'})),
+];
+function vagasDeMagisfera(p){
+  const nivel = nivelTotal(p);
+  return 3 + (nivel>=20?2:0) + (nivel>=40?2:0);
+}
 
 /* ---------------------------------------------------------------------
    Catálogos dos Atlas: cada um é a lista que um poder de "aprenda um(a)
@@ -1284,8 +1506,8 @@ const nivelTotal = p => p.classes.reduce((soma, c) => soma + (c.nivel || 0), 0);
 // PV/PM: nível total + cinco vezes o dado do Atributo, mais os benefícios
 // iniciais das classes (pág. 163) — que são fixos por classe e cumulativos
 // entre classes diferentes (pág. 176), não escolhidos nível a nível.
-const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + beneficiosDeClasse(p,'pv') + beneficioHeroico(p,'pv');
-const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeClasse(p,'pm') + beneficioHeroico(p,'pm');
+const pvMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vigor')   + beneficiosDeClasse(p,'pv') + beneficioHeroico(p,'pv') + bonusDoAnelDasCebolas(p);
+const pmMaximo = p => nivelTotal(p) + 5 * dadoAtual(p,'vontade') + beneficiosDeClasse(p,'pm') + beneficioHeroico(p,'pm') + bonusDoAnelDasCebolas(p);
 const crise    = p => Math.floor(pvMaximo(p) / 2);
 const piMaximo = p => PI_BASE + beneficiosDeClasse(p,'pi') + beneficioHeroico(p,'pi');
 
@@ -1305,20 +1527,20 @@ const armaSecundariaEquipada = p => armaPrincipalEquipada(p).maos === 2 ? null :
 
 // Defesa vem do dado ATUAL, não do básico — por isso uma condição derruba a
 // defesa junto (pág. 168). "Outros bônus" (p.bonus) cobre o que a ficha
-// ainda não modela sozinha: acessórios e poderes que somam Defesa/Iniciativa
-// direto (ex: Arcano da Roda).
+// ainda não modela sozinha: poderes que somam Defesa/Iniciativa direto (ex:
+// Arcano da Roda) — acessórios com bônus fixo já entram via bonusDeAcessorios.
 const defesa = p => {
   const arm = armaduraEquipada(p).defesa;
   const base = arm.tipo === 'fixo' ? arm.valor : dadoAtual(p, arm.atributo) + (arm.bonus || 0);
-  return base + (escudoEquipado(p)?.defesa || 0) + (p.bonus.defesa || 0);
+  return base + (escudoEquipado(p)?.defesa || 0) + (p.bonus.defesa || 0) + bonusDeAcessorios(p,'defesa');
 };
 const defesaMagica = p => {
   const arm = armaduraEquipada(p).defesaMagica;
   const base = dadoAtual(p, arm.atributo) + (arm.bonus || 0);
-  return base + (escudoEquipado(p)?.defesaMagica || 0) + (p.bonus.defesaMagica || 0);
+  return base + (escudoEquipado(p)?.defesaMagica || 0) + (p.bonus.defesaMagica || 0) + bonusDeAcessorios(p,'defesaMagica');
 };
 const iniciativa = p =>
-  armaduraEquipada(p).iniciativa + (escudoEquipado(p)?.iniciativa || 0) + (p.bonus.iniciativa || 0);
+  armaduraEquipada(p).iniciativa + (escudoEquipado(p)?.iniciativa || 0) + (p.bonus.iniciativa || 0) + bonusDeAcessorios(p,'iniciativa');
 
 /* --- Personagem --------------------------------------------------------- */
 
@@ -1344,9 +1566,21 @@ function novoPersonagem(nome){
     escolhasBeneficio: {},
     // rituais: { 'elementalismo': {potencia:'menor', area:'individual'}, ... }
     rituais: {},
+    // Calculadora de Projeto do Inventor — sempre existe uma escolha ativa,
+    // mesmo sem nenhum Projeto em andamento de verdade.
+    projeto: {potencia:'menor', area:'individual', uso:'consumivel', defeito:false},
     // Sem nada escolhido, os getters (armaduraEquipada etc.) caem no padrão
     // ARMADURAS_BASICAS[0]/ARMAS_BASICAS[0] ("sem armadura"/"desarmado").
     equipamento: {armaduraId:'', maoPrincipalId:'', maoSecundariaId:''},
+    // Acessórios possuídos: [{id: 'catálogo-x' | null, nome: '...', equipado: true}, ...]
+    // id nulo = acessório digitado à mão, fora do catálogo.
+    acessorios: [],
+    // Engenhocas do Inventor: quantos níveis de cada tipo (0-3, básico/
+    // avançado/superior) — a soma dos três nunca passa do NP do poder.
+    engenhocas: {alquimia: 0, infusoes: 0, tecnomagia: 0},
+    // Magisferas (Tecnomagia superior): feitiços escolhidos de Elementalista/
+    // Entropista/Espiritualista, igual um catálogo de feitiço comum.
+    magisferas: [],
     // Habilidades Heroicas escolhidas (uma por classe dominada — nível 10+).
     heroicas: [],
     atual: {pv:null, pm:null, pi:null},   // null = cheio
@@ -1481,12 +1715,13 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const ABAS = [
-  {id:'perfil',    nome:'Perfil'},
-  {id:'atributos', nome:'Atributos e Classes'},
-  {id:'poderes',   nome:'Poderes'},
-  {id:'heroico',   nome:'Heroico'},
-  {id:'recursos',  nome:'Recursos'},
-  {id:'lacos',     nome:'Laços'},
+  {id:'perfil',      nome:'Perfil'},
+  {id:'atributos',   nome:'Atributos e Classes'},
+  {id:'poderes',     nome:'Poderes'},
+  {id:'heroico',     nome:'Heroico'},
+  {id:'inventario',  nome:'Inventário'},
+  {id:'recursos',    nome:'Recursos'},
+  {id:'lacos',       nome:'Laços'},
 ];
 
 function render(){
@@ -1535,7 +1770,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
+    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, inventario:abaInventario, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
   ligarEventos();
 
@@ -1764,6 +1999,7 @@ function abaAtributos(p){
       ${textoArma('Mão principal', armaPrincipalEquipada(p))}
       ${armaSecundariaEquipada(p) ? '<br>' + textoArma('Mão secundária', armaSecundariaEquipada(p)) : ''}
     </p>
+    ${notaLutaComDuasArmas(p)}
 
     <h2 style="font-size:18px;margin-top:22px">Outros bônus</h2>
     <p class="mini" style="margin:6px 0 16px">
@@ -1821,6 +2057,21 @@ function opcoesMaoSecundaria(p){
 
 function textoArma(rotulo, arma){
   return `<strong>${rotulo}:</strong> ${arma.nome} — Precisão ${textoPrecisao(arma)} · Dano ${textoDano(arma)}${arma.obs ? ` (${arma.obs})` : ''}`;
+}
+
+// Luta com duas armas (pág. 69): exige uma arma em cada mão, da mesma
+// Categoria (ex: duas espadas) — a heroica Ambidestro derruba essa exigência
+// de categoria igual.
+function notaLutaComDuasArmas(p){
+  const principal = armaPrincipalEquipada(p);
+  const secundaria = armaSecundariaEquipada(p);
+  if(principal.id === 'ataque-desarmado' || !secundaria) return '';
+  const mesmaCategoria = principal.categoria === secundaria.categoria;
+  const ambidestro = (p.heroicas || []).includes('ambidestro');
+  if(!mesmaCategoria && !ambidestro) return '';
+  return `<p class="mini" style="margin-top:6px">
+    <strong>Luta com duas armas</strong> disponível na ação Ataque${ambidestro && !mesmaCategoria ? ' (por causa de Ambidestro, mesmo com categorias diferentes)' : ''}: ataque com as duas armas, em qualquer ordem, no mesmo alvo ou em alvos diferentes — mas os dois ataques perdem a propriedade multi (e não podem ganhar) e, no cálculo do dano de cada um, a Rolagem Alta (RA) sempre conta como 0.
+  </p>`;
 }
 
 function abaRecursos(p){
@@ -1974,7 +2225,7 @@ function abaPoderes(p){
         </div>`;
       }).join('')}
     </div>`;
-  }).join('') + blocoRituais(p);
+  }).join('') + blocoRituais(p) + blocoProjeto(p);
 }
 
 function blocoArcano(p){
@@ -2102,6 +2353,63 @@ function blocoRitualDisciplina(p, acesso){
   </div>`;
 }
 
+// Projeto do Inventor: qualquer personagem com nível em Inventor pode
+// começar um (não exige comprar um poder específico, ao contrário de
+// Rituais). Calculadora igual: potência × área × uso vira custo em zênites
+// e progresso necessário (um por 100z, mínimo 1).
+function temNivelEm(p, classeId){
+  return p.classes.some(c => c.classeId === classeId && c.nivel > 0);
+}
+
+function blocoProjeto(p){
+  if(!temNivelEm(p, 'inventor')) return '';
+  const estado = p.projeto || {potencia:'menor', area:'individual', uso:'consumivel', defeito:false};
+  const pot = PROJETO_POTENCIAS.find(x => x.id === estado.potencia) || PROJETO_POTENCIAS[0];
+  const are = PROJETO_AREAS.find(x => x.id === estado.area) || PROJETO_AREAS[0];
+  const uso = PROJETO_USOS.find(x => x.id === estado.uso) || PROJETO_USOS[0];
+  const bruto = pot.custo * are.mult * uso.mult;
+  const custoFinal = estado.defeito ? Math.round(bruto * 0.75) : bruto;
+  const progresso = Math.max(1, Math.ceil(custoFinal / 100));
+  const valores = valoresDeProjetoPorNivel(p);
+
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Projeto</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Uma invenção sob medida — não serve pra fabricar equipamento comum,
+      é pra soluções que não existiam antes (uma aeronave, um golem, uma
+      poção do amor). Escolha potência, área e se é de um uso só ou
+      permanente; o mestre pode pedir um ingrediente raro em potências
+      média ou mais alta, além do custo.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-projpot">Potência</label>
+        <select id="c-projpot" data-projeto="potencia">
+          ${PROJETO_POTENCIAS.map(x => `<option value="${x.id}" ${x.id===estado.potencia?'selected':''}>${x.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-projarea">Área</label>
+        <select id="c-projarea" data-projeto="area">
+          ${PROJETO_AREAS.map(x => `<option value="${x.id}" ${x.id===estado.area?'selected':''}>${x.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-projuso">Uso</label>
+        <select id="c-projuso" data-projeto="uso">
+          ${PROJETO_USOS.map(x => `<option value="${x.id}" ${x.id===estado.uso?'selected':''}>${x.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:12px;text-transform:none;letter-spacing:normal;font-size:13px;color:var(--texto)">
+      <input type="checkbox" style="width:auto" data-projeto-defeito ${estado.defeito?'checked':''}>
+      Negociar um defeito terrível com o mestre (reduz o custo em 25%)
+    </label>
+    <p class="mini" style="margin-top:10px">
+      Custo: <strong>${custoFinal} zênites</strong> · Progresso necessário: <strong>${progresso}</strong>
+      (+1 por PJ que trabalhar no dia, +1 a mais se tiver nível em Inventor)
+    </p>
+    <p class="mini" style="margin-top:10px">
+      <strong>Dano/cura desta potência:</strong> ${pot.dano}${pot.dano!=='Não disponível' ? ` (${{'Menor':valores.menor,'Maior':valores.maior,'Massivo':valores.massivo}[pot.dano]} no seu nível)` : ''}
+      · <strong>Proteção:</strong> ${pot.protecao}
+    </p>
+  </div>`;
+}
+
 function abaHeroico(p){
   const dominadas = classesDominadas(p);
   const escolhidas = p.heroicas || [];
@@ -2137,6 +2445,161 @@ function abaHeroico(p){
       </div>`;
     }).join('')}
   </div>`;
+}
+
+function blocoAlquimia(p, tier){
+  const misturasDisponiveis = ALQUIMIA_MISTURAS.filter(m => m.nivelMinimo <= tier);
+  const estado = p.alquimia || {mistura:'basica', rolagem:[], alvoIndice:null, efeitoEscolha:null};
+  return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+    <p class="mini" style="color:var(--texto);font-size:14px"><strong>Alquimia</strong></p>
+    <p class="mini" style="margin-top:4px">Ação Inventário: gaste os PI da mistura, role os d20 dela, e escolha um resultado pra alvo e um pra efeito — pode repetir o mesmo resultado nos dois, ou usar uma das opções sempre disponíveis no efeito.</p>
+    <div class="linha" style="margin-top:8px;flex-wrap:wrap;gap:10px">
+      <select id="c-alq-mistura" data-alquimia-mistura>
+        ${misturasDisponiveis.map(m => `<option value="${m.id}" ${m.id===estado.mistura?'selected':''}>${m.nome} (${m.dados}d20, ${m.pi} PI)</option>`).join('')}
+      </select>
+      <button id="btMisturar">Misturar</button>
+    </div>
+    ${estado.rolagem?.length ? `
+      <p class="mini" style="margin-top:8px">Resultados: ${estado.rolagem.join(', ')}</p>
+      <div class="grade g2" style="margin-top:8px">
+        <div><label for="c-alq-alvo">Alvo</label>
+          <select id="c-alq-alvo" data-alquimia-alvo>
+            <option value="">— escolher —</option>
+            ${estado.rolagem.map((v,i) => `<option value="${i}" ${String(estado.alvoIndice)===String(i)?'selected':''}>${v} — ${textoAlvoPorValor(v)}</option>`).join('')}
+          </select></div>
+        <div><label for="c-alq-efeito">Efeito</label>
+          <select id="c-alq-efeito" data-alquimia-efeito>
+            <option value="">— escolher —</option>
+            ${estado.rolagem.map((v,i) => `<option value="roll:${i}" ${estado.efeitoEscolha===`roll:${i}`?'selected':''}>${v} — ${textoEfeitoPorValor(v)}</option>`).join('')}
+            ${ALQUIMIA_EFEITO_SEMPRE.map(e => `<option value="sempre:${e.id}" ${estado.efeitoEscolha===`sempre:${e.id}`?'selected':''}>Sempre disponível — ${e.texto}</option>`).join('')}
+          </select></div>
+      </div>
+    ` : ''}
+  </div>`;
+}
+
+function blocoInfusoes(tier){
+  const disponiveis = INFUSOES_DEF.filter(i => i.tier <= tier);
+  return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+    <p class="mini" style="color:var(--texto);font-size:14px"><strong>Infusões</strong></p>
+    <p class="mini" style="margin-top:4px">Ao acertar um ataque, gaste 2 PI pra aplicar uma das infusões abaixo — uma só por ataque (se o ataque tiver multi, aplica em cada alvo atingido).</p>
+    ${disponiveis.map(i => `<p class="mini" style="margin-top:8px"><strong>${i.nome}</strong> — ${i.texto}</p>`).join('')}
+  </div>`;
+}
+
+function blocoMagisferas(p){
+  const vagas = vagasDeMagisfera(p);
+  const escolhidas = p.magisferas || [];
+  return `<div style="margin-top:10px;padding:10px;border:1px solid var(--borda);border-radius:8px">
+    <p class="mini"><strong>Magisferas</strong> (${escolhidas.filter(Boolean).length} de ${vagas}) — protótipo que replica um feitiço à escolha. Ação Inventário e 2 PI: cria uma magisfera e lança de graça um feitiço com protótipo (ainda paga o custo em PM e faz o teste de Magia normal); ela se destrói ao usar.</p>
+    <div class="grade g2" style="margin-top:8px">
+      ${Array.from({length: vagas}).map((_, i) => `
+        <select data-magisfera="${i}">
+          <option value="">— escolher —</option>
+          ${MAGISFERAS_CATALOGO.map(f => `<option value="${f.origem}|${f.id}" ${escolhidas[i]===`${f.origem}|${f.id}`?'selected':''}>${f.nome} (${f.origem})${f.ofensivo?' (ofensivo)':''}</option>`).join('')}
+        </select>`).join('')}
+    </div>
+    ${escolhidas.filter(Boolean).map(ref => {
+      const [origem, id] = ref.split('|');
+      const f = MAGISFERAS_CATALOGO.find(x => x.origem===origem && x.id===id);
+      return f ? `<p class="mini" style="margin-top:8px"><strong>${f.nome}</strong> (${f.origem}) — ${fichaTecnica(f)}${f.descricao}</p>` : '';
+    }).join('')}
+  </div>`;
+}
+
+function blocoTecnomagia(p, tier){
+  return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+    <p class="mini" style="color:var(--texto);font-size:14px"><strong>Tecnomagia</strong></p>
+    <p class="mini" style="margin-top:8px"><strong>Sobrecarga Tecnomágica</strong> — Ação e 10 PM: teste oposto 【AST + AST】 contra um construto soldado visível (o mestre diz quem é um alvo válido). Sucesso: controla a criatura até o fim da cena (o mestre dá o perfil dela). Só controla um construto por vez, mas pode libertar quando quiser — ela também se liberta sozinha se você ou um aliado causar dano nela.</p>
+    ${tier>=2 ? `<p class="mini" style="margin-top:8px"><strong>Magicanhão</strong> — Ação Inventário e 3 PI: cria uma arma de fogo que desmancha ao criar outra. Escolha o tipo de dano ao criar (ar, raio, terra, fogo, gelo ou físico). Precisão ${textoPrecisao(MAGICANHAO)} · Dano ${textoDano(MAGICANHAO)}.</p>` : ''}
+    ${tier>=3 ? blocoMagisferas(p) : ''}
+  </div>`;
+}
+
+function blocoEngenhocas(p){
+  const np = npDoPoder(p, 'inventor', 'engenhocas');
+  if(np <= 0) return '';
+  const eng = p.engenhocas || {alquimia:0, infusoes:0, tecnomagia:0};
+  const total = eng.alquimia + eng.infusoes + eng.tecnomagia;
+  const TIPOS = [
+    {id:'alquimia',   nome:'Alquimia'},
+    {id:'infusoes',   nome:'Infusões'},
+    {id:'tecnomagia', nome:'Tecnomagia'},
+  ];
+  return `<div class="cartao">
+    <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="font-size:18px">Engenhocas</h2>
+      <span class="mini">${total} de ${np} níveis usados</span>
+    </div>
+    <p class="mini" style="margin:6px 0 14px">
+      Cada vez que você comprar o poder Engenhocas, um nível novo — básico,
+      avançado ou superior — fica disponível pra investir em um dos três
+      tipos abaixo. Escolha onde.
+    </p>
+    <div class="grade g3">
+      ${TIPOS.map(t => `<div>
+        <label>${t.nome} ${eng[t.id]>0 ? `<span class="mini">(${['','básico','avançado','superior'][eng[t.id]]})</span>` : ''}</label>
+        <div class="linha">
+          <button data-engenhoca-menos="${t.id}" ${eng[t.id]<=0?'disabled':''} aria-label="Diminuir">−</button>
+          <span style="min-width:2ch;text-align:center">${eng[t.id]}</span>
+          <button data-engenhoca-mais="${t.id}" ${(eng[t.id]>=3 || total>=np)?'disabled':''} aria-label="Aumentar">+</button>
+        </div>
+      </div>`).join('')}
+    </div>
+    ${eng.alquimia > 0 ? blocoAlquimia(p, eng.alquimia) : ''}
+    ${eng.infusoes > 0 ? blocoInfusoes(eng.infusoes) : ''}
+    ${eng.tecnomagia > 0 ? blocoTecnomagia(p, eng.tecnomagia) : ''}
+  </div>`;
+}
+
+function abaInventario(p){
+  const acessorios = p.acessorios || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Acessórios</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Item mágico raro, um efeito só, sempre em par com o custo em zênites
+      (pág. 126 e 283-287). Os marcados "genérica" são qualidades pra montar
+      um acessório do zero com o mestre, sem nome próprio ainda — dá pra
+      renomear na hora de anotar. Os que dão um bônus fixo em Defesa, Defesa
+      Mágica, Iniciativa ou PV/PM máximos já somam sozinhos nos números do
+      topo, contanto que estejam marcados como equipados.
+    </p>
+    <div class="linha" style="flex-wrap:wrap;gap:10px">
+      <select id="c-acess-novo" style="flex:1;min-width:220px">
+        <option value="">— escolher do catálogo —</option>
+        <optgroup label="Amostras">
+          ${ACESSORIOS_DEF.filter(a => !a.nome.includes('genérica')).map(a => `<option value="${a.id}">${a.nome} (${a.custo}z)</option>`).join('')}
+        </optgroup>
+        <optgroup label="Qualidades genéricas">
+          ${ACESSORIOS_DEF.filter(a => a.nome.includes('genérica')).map(a => `<option value="${a.id}">${a.nome} (${a.custo}z)</option>`).join('')}
+        </optgroup>
+      </select>
+      <button id="btAddAcessorioCatalogo">Adicionar</button>
+    </div>
+    <div class="linha" style="margin-top:8px;gap:10px">
+      <input id="c-acess-avulso" placeholder="ou digite um acessório fora da lista" style="flex:1">
+      <button id="btAddAcessorioAvulso">Adicionar</button>
+    </div>
+
+    ${acessorios.length === 0 ? `<p class="mini" style="margin-top:14px">Nenhum acessório ainda.</p>` : acessorios.map((a, i) => {
+      const def = a.id ? ACESSORIOS_DEF.find(x => x.id === a.id) : null;
+      const nome = def ? def.nome : (a.nome || '—');
+      const custo = def ? `${def.custo}z` : '';
+      const efeito = def ? def.efeito : '';
+      return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda);display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div style="flex:1">
+          <label style="display:flex;align-items:baseline;gap:8px;text-transform:none;letter-spacing:normal;font-size:14px;color:var(--texto)">
+            <input type="checkbox" style="width:auto" data-acessorio-equipado="${i}" ${a.equipado?'checked':''}>
+            <span><strong>${esc(nome)}</strong>${custo ? ` <span class="mini">(${custo})</span>` : ''}</span>
+          </label>
+          ${efeito ? `<p class="mini" style="margin:4px 0 0 26px">${efeito}</p>` : ''}
+        </div>
+        <button data-acessorio-remover="${i}">Tirar</button>
+      </div>`;
+    }).join('')}
+  </div>
+
+  ${blocoEngenhocas(p)}`;
 }
 
 function abaLacos(p){
@@ -2263,6 +2726,83 @@ function ligarEventos(){
       const d = el.dataset.ritualArea;
       const estado = p.rituais[d] || (p.rituais[d] = {potencia:'menor', area:'individual'});
       estado.area = el.value;
+    }));
+
+  app.querySelectorAll('[data-projeto]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      (p.projeto || (p.projeto = {potencia:'menor', area:'individual', uso:'consumivel', defeito:false}))[el.dataset.projeto] = el.value;
+    }));
+
+  const projetoDefeito = document.querySelector('[data-projeto-defeito]');
+  if(projetoDefeito) projetoDefeito.onchange = () => mudar(p => {
+    (p.projeto || (p.projeto = {potencia:'menor', area:'individual', uso:'consumivel', defeito:false})).defeito = projetoDefeito.checked;
+  });
+
+  const btAddAcessorioCatalogo = document.getElementById('btAddAcessorioCatalogo');
+  if(btAddAcessorioCatalogo) btAddAcessorioCatalogo.onclick = () => {
+    const sel = document.getElementById('c-acess-novo');
+    if(!sel.value) return;
+    mudar(p => {
+      (p.acessorios || (p.acessorios = [])).push({id: sel.value, equipado: true});
+    });
+  };
+
+  const btAddAcessorioAvulso = document.getElementById('btAddAcessorioAvulso');
+  if(btAddAcessorioAvulso) btAddAcessorioAvulso.onclick = () => {
+    const campo = document.getElementById('c-acess-avulso');
+    const nome = campo.value.trim();
+    if(!nome) return;
+    mudar(p => {
+      (p.acessorios || (p.acessorios = [])).push({id: null, nome, equipado: true});
+    });
+  };
+
+  app.querySelectorAll('[data-acessorio-equipado]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.acessorios[Number(el.dataset.acessorioEquipado)].equipado = el.checked;
+    }));
+
+  app.querySelectorAll('[data-acessorio-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.acessorios.splice(Number(b.dataset.acessorioRemover), 1)));
+
+  app.querySelectorAll('[data-engenhoca-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const eng = p.engenhocas || (p.engenhocas = {alquimia:0, infusoes:0, tecnomagia:0});
+      const tipo = b.dataset.engenhocaMais;
+      eng[tipo] = Math.min(3, (eng[tipo] || 0) + 1);
+    }));
+  app.querySelectorAll('[data-engenhoca-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const eng = p.engenhocas; if(!eng) return;
+      const tipo = b.dataset.engenhocaMenos;
+      eng[tipo] = Math.max(0, (eng[tipo] || 0) - 1);
+    }));
+
+  const alqMistura = document.getElementById('c-alq-mistura');
+  if(alqMistura) alqMistura.onchange = () => mudar(p => {
+    (p.alquimia || (p.alquimia = {mistura:'basica', rolagem:[], alvoIndice:null, efeitoEscolha:null})).mistura = alqMistura.value;
+  });
+  const btMisturar = document.getElementById('btMisturar');
+  if(btMisturar) btMisturar.onclick = () => mudar(p => {
+    const estado = p.alquimia || (p.alquimia = {mistura:'basica', rolagem:[], alvoIndice:null, efeitoEscolha:null});
+    const mistura = ALQUIMIA_MISTURAS.find(m => m.id === estado.mistura) || ALQUIMIA_MISTURAS[0];
+    estado.rolagem = Array.from({length: mistura.dados}, () => Math.floor(Math.random()*20) + 1);
+    estado.alvoIndice = null;
+    estado.efeitoEscolha = null;
+  });
+  const alqAlvo = document.getElementById('c-alq-alvo');
+  if(alqAlvo) alqAlvo.onchange = () => mudar(p => {
+    p.alquimia.alvoIndice = alqAlvo.value === '' ? null : Number(alqAlvo.value);
+  });
+  const alqEfeito = document.getElementById('c-alq-efeito');
+  if(alqEfeito) alqEfeito.onchange = () => mudar(p => {
+    p.alquimia.efeitoEscolha = alqEfeito.value || null;
+  });
+
+  app.querySelectorAll('[data-magisfera]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const conhecidas = p.magisferas || (p.magisferas = []);
+      conhecidas[Number(el.dataset.magisfera)] = el.value || null;
     }));
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>

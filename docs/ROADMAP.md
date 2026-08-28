@@ -105,18 +105,46 @@ total. Não existe uma 26ª classe faltando: Herdeiros da Supernova não traz
 nenhuma. Com os Poderes Heroicos, a fatia "Fabula Ultima completa" está
 fechada — falta só ligar a ficha à conta do Hub (ver "Depois" abaixo).
 
-### Fora de escopo por agora (mecânicas grandes demais para entrar de raspão)
+- [x] **Aba Inventário, Projetos, Acessórios e Engenhocas completos** — depois
+      do Zé mandar o livro básico inteiro (19 partes em PDF) e apontar que eu
+      tinha pulado itens que estavam lá, uma varredura completa fechou tudo
+      que ainda faltava:
+  - **Projetos** (pág. 133-137): calculadora do Inventor — Potência × Área ×
+    Uso (consumível ou permanente) dá o custo em zênites e o progresso
+    necessário, com desconto de 25% se negociar um defeito. Só aparece com
+    nível no Inventor (não precisa de poder específico)
+  - **Acessórios** (pág. 126 e 283-287): catálogo com as 29 amostras
+    nomeadas e as 17 qualidades genéricas do livro, mais campo pra digitar
+    um acessório fora da lista. Os que dão bônus fixo em Defesa, Defesa
+    Mágica, Iniciativa ou PV/PM máximos somam sozinhos nos números do topo
+    enquanto estiverem marcados como equipados; o resto fica como texto de
+    referência (mesma regra já usada nos Poderes Heroicos: só automatiza o
+    que é um número sempre visível na ficha)
+  - **Engenhocas do Inventor** (pág. 210-215), a peça que antes só tinha
+    texto de referência: cada compra do poder Engenhocas libera um nível pra
+    investir em Alquimia, Infusões ou Tecnomagia. Alquimia ganhou o primeiro
+    minigame de dados da ficha (rola 2 a 4d20 conforme o nível da mistura e
+    deixa escolher um resultado pra alvo e um pra efeito, com as opções
+    "sempre disponíveis" do livro incluídas); Infusões é catálogo por nível;
+    Tecnomagia soma Sobrecarga Tecnomágica, Magicanhão e Magisferas — estas
+    últimas reaproveitam os catálogos de feitiço que já existiam na ficha
+    (Elementalista/Entropista/Espiritualista) em vez de duplicar dados
+  - **Luta com duas armas** (pág. 69): nota que aparece sozinha embaixo do
+    equipamento quando as duas mãos têm arma da mesma Categoria (ou
+    categorias diferentes, se a heroica Ambidestro estiver marcada)
 
-Três poderes descrevem sistemas do tamanho de uma aba inteira — foram
-codificados como texto fiel ao livro, mas sem painel interativo próprio,
-para não misturar um "Inventário"/"Equipamento" inteiro dentro da aba
-Poderes:
+### Fora de escopo por agora (conteúdo de Atlas que não veio no livro básico)
 
-- **Engenhocas do Inventor** (Alquimia, Infusões, Tecnomagia)
-- **Veículo Pessoal do Piloto** (estrutura e módulos)
-- **Culinária do Gourmet** (tabela de combinação de sabores)
+Dois poderes ainda ficam só como texto de referência, sem painel próprio —
+não por serem grandes demais, mas porque o conteúdo deles está em Atlas que
+o Zé ainda não mandou (o livro básico enviado não cobre):
 
-Ficam para quando a ficha ganhar uma aba de equipamento/inventário.
+- **Veículo Pessoal do Piloto** (estrutura e módulos — Atlas Techno Fantasy,
+  pág. 160-167)
+- **Culinária do Gourmet** (tabela de combinação de sabores — Atlas Natural
+  Fantasy)
+
+Bastam essas páginas em PDF pra fechar os dois.
 
 ---
 
