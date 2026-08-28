@@ -169,11 +169,168 @@ const CLASSES = [
   {id:'espadachim', nome:'Espadachim', categoria:'combate'},
   {id:'arcanista',  nome:'Arcanista',  categoria:'combate'},
   {id:'batedor',    nome:'Batedor',    categoria:'combate'},
+  {id:'lanceiro',   nome:'Lanceiro',   categoria:'combate'},
+  {id:'arqueiro',   nome:'Arqueiro',   categoria:'combate'},
   {id:'ferreiro',   nome:'Ferreiro',   categoria:'producao'},
   {id:'alquimista', nome:'Alquimista', categoria:'producao'},
+  {id:'encantador', nome:'Encantador', categoria:'producao'},
+  {id:'cozinheiro', nome:'Cozinheiro', categoria:'producao'},
   {id:'mercador',   nome:'Mercador',   categoria:'outras'},
   {id:'domador',    nome:'Domador',    categoria:'outras'},
+  {id:'curandeiro', nome:'Curandeiro', categoria:'outras'},
 ];
+
+// Cinco poderes por classe, igual o Fabula Ultima — mas cada personagem tem
+// PONTOS DE PODER de uma classe igual ao nível investido nela (sem teto de
+// "3 classes, 5 níveis" porque aqui multiclasse é ilimitada). `max` maior
+// que 1 é um poder repetível (o "(+N)" do Fabula): cada compra empilha o
+// efeito descrito no texto.
+const PODERES_CLASSE = {
+  espadachim: [
+    {id:'postura-combate', nome:'Postura de Combate', max:1,
+      texto:'Ao entrar em combate, escolhe uma postura até o fim da cena: Ofensiva (+2 no dano de golpes, -2 de Defesa) ou Defensiva (+2 de Defesa, -2 no dano de golpes).'},
+    {id:'dominio-arma', nome:'Domínio de Arma', max:3,
+      texto:'Cada compra: +1 no dano de qualquer golpe que usar com a arma marcial que escolheu ao comprar este poder pela primeira vez.'},
+    {id:'combo-assistido', nome:'Combo Assistido', max:1,
+      texto:'Depois de acertar um Golpe (Sword Skill), o próximo ataque livre no mesmo turno não sofre a penalidade da condição Vulnerável (pós-motion).'},
+    {id:'folego-batalha', nome:'Fôlego de Batalha', max:2,
+      texto:'Cada compra: +1 uso por sessão de ignorar a condição Vulnerável (pós-motion) assim que ela aparecer.'},
+    {id:'golpe-original', nome:'Golpe Original', max:1,
+      texto:'Exige ter registrado ao menos um golpe do sistema. Pode marcar um golpe como "Original": mesmo efeito de um golpe do sistema, mas sem a condição de pós-motion — uma vez por sessão.'},
+  ],
+  arcanista: [
+    {id:'afinidade-elemental', nome:'Afinidade Elemental', max:1,
+      texto:'Escolhe um elemento (Fogo, Gelo, Raio, Luz ou Trevas). Magias desse elemento custam -1 PM (mínimo 1).'},
+    {id:'canalizacao-rapida', nome:'Canalização Rápida', max:3,
+      texto:'Cada compra: -1 PM no custo da próxima magia que lançar na cena (não acumula com a Afinidade Elemental no mesmo lance).'},
+    {id:'escudo-de-mana', nome:'Escudo de Mana', max:1,
+      texto:'Uma vez por cena, pode gastar PM no lugar de PV ao sofrer dano — cada 2 PM gastos evita 1 de dano.'},
+    {id:'segunda-magia', nome:'Segunda Magia', max:2,
+      texto:'Cada compra: +1 magia conhecida além do normal para o nível desta classe.'},
+    {id:'explosao-arcana', nome:'Explosão Arcana', max:1,
+      texto:'Uma vez por sessão, gasta todo o PM restante num único golpe mágico que ignora metade da Defesa Mágica do alvo.'},
+  ],
+  batedor: [
+    {id:'passo-silencioso', nome:'Passo Silencioso', max:1,
+      texto:'Testes de furtividade usam Agilidade + Agilidade em vez do par de atributos normal da ação.'},
+    {id:'alvo-fraco', nome:'Alvo Fraco', max:3,
+      texto:'Cada compra: +1 de dano contra um alvo que ainda não agiu nesta cena.'},
+    {id:'detectar-falha', nome:'Detectar Falha', max:1,
+      texto:'Gasta uma ação estudando uma sala ou um chefe pra revelar uma fraqueza mecânica dele — o mestre entrega uma pista concreta de exploração, não só "ele é forte".'},
+    {id:'reflexo-fuga', nome:'Reflexo de Fuga', max:2,
+      texto:'Cada compra: +1 uso por sessão de sair de um combate sem que a Penalidade de Morte se ative, mesmo com PV em risco.'},
+    {id:'sexto-sentido', nome:'Sexto Sentido', max:1,
+      texto:'Nunca é surpreendido, e sempre age na primeira posição da iniciativa no primeiro turno de um combate.'},
+  ],
+  lanceiro: [
+    {id:'alcance-superior', nome:'Alcance Superior', max:1,
+      texto:'Golpes feitos com lança atingem um segundo alvo adjacente ao primeiro, sem gastar outro golpe.'},
+    {id:'ponta-firme', nome:'Ponta Firme', max:3,
+      texto:'Cada compra: +1 de Defesa enquanto estiver com uma lança em mãos e não tiver se movido no próprio turno.'},
+    {id:'investida', nome:'Investida', max:1,
+      texto:'Uma vez por cena, avança até a linha de frente e ataca no mesmo impulso, ignorando a primeira reação que o alvo tentaria fazer.'},
+    {id:'guarda-de-grupo', nome:'Guarda de Grupo', max:2,
+      texto:'Cada compra: +1 uso por sessão de proteger um aliado adjacente, sofrendo o ataque destinado a ele.'},
+    {id:'lanca-que-perfura', nome:'Lança que Perfura o Andar', max:1,
+      texto:'Uma vez por sessão, um golpe que ignora metade da Defesa do alvo e o empurra pra longe.'},
+  ],
+  arqueiro: [
+    {id:'mira-firme', nome:'Mira Firme', max:1,
+      texto:'Ataques à distância contra um alvo que não se moveu desde o último turno ganham +2 no teste.'},
+    {id:'carcaz-ampliado', nome:'Carcaz Ampliado', max:3,
+      texto:'Cada compra: +1 flecha especial (fogo, gelo ou veneno, escolhida na hora) disponível por sessão.'},
+    {id:'tiro-duplo', nome:'Tiro Duplo', max:1,
+      texto:'Uma vez por cena, dispara em dois alvos diferentes no mesmo golpe, dividindo o dano normal entre eles.'},
+    {id:'passo-atras', nome:'Passo Atrás', max:2,
+      texto:'Cada compra: +1 uso por sessão de se afastar do alcance de um inimigo corpo a corpo sem sofrer ataque de oportunidade.'},
+    {id:'flecha-que-cala', nome:'Flecha que Cala o Andar', max:1,
+      texto:'Uma vez por sessão, um tiro à distância máxima que aplica a condição Silenciado além do dano normal.'},
+  ],
+  ferreiro: [
+    {id:'olho-pro-metal', nome:'Olho pro Metal', max:1,
+      texto:'Sabe avaliar a raridade real de um item (Teste de Mente + Vontade) sem precisar de loja ou NPC.'},
+    {id:'forja-reforcada', nome:'Forja Reforçada', max:3,
+      texto:'Cada compra: +1 na durabilidade máxima de qualquer item que este personagem fabricar.'},
+    {id:'reparo-de-campo', nome:'Reparo de Campo', max:1,
+      texto:'Pode restaurar a durabilidade de uma arma ou armadura fora de uma forja, gastando material equivalente.'},
+    {id:'encantamento-simples', nome:'Encantamento Simples', max:2,
+      texto:'Cada compra: libera um encaixe de bônus fixo (Defesa, Dano ou outro combinado com o mestre) pra colocar num item que fabricar.'},
+    {id:'obra-prima', nome:'Obra-Prima', max:1,
+      texto:'Uma vez por item, pode fabricar algo de raridade um degrau acima do normal, gastando o dobro de material.'},
+  ],
+  alquimista: [
+    {id:'estoque-de-pocoes', nome:'Estoque de Poções', max:1,
+      texto:'Começa cada sessão com um número de poções de cura menor prontas igual ao nível desta classe.'},
+    {id:'mistura-potente', nome:'Mistura Potente', max:3,
+      texto:'Cada compra: aumenta em 1 o efeito de qualquer poção que este personagem fabricar.'},
+    {id:'antidoto-universal', nome:'Antídoto Universal', max:1,
+      texto:'Pode fabricar um item que remove uma condição à escolha de quem o usar.'},
+    {id:'explosivos', nome:'Explosivos', max:2,
+      texto:'Cada compra: libera uma bomba ou veneno como item de combate, com dano em área combinado com o mestre.'},
+    {id:'elixir-lendario', nome:'Elixir Lendário', max:1,
+      texto:'Uma vez por sessão, fabrica um item de uso único com efeito acordado com o mestre na hora, sem precisar de loja.'},
+  ],
+  encantador: [
+    {id:'toque-encantado', nome:'Toque Encantado', max:1,
+      texto:'Sabe aplicar um encaixe de encantamento num item já existente, sem precisar tê-lo fabricado.'},
+    {id:'runas-estaveis', nome:'Runas Estáveis', max:3,
+      texto:'Cada compra: +1 na durabilidade máxima de qualquer item que este personagem encantar.'},
+    {id:'desencantar', nome:'Desencantar', max:1,
+      texto:'Pode remover um encantamento de um item sem destruí-lo, guardando a runa pra usar em outro item depois.'},
+    {id:'encantamento-duplo', nome:'Encantamento Duplo', max:2,
+      texto:'Cada compra: +1 encaixe de encantamento liberado num mesmo item (normalmente só cabe um).'},
+    {id:'runa-ancestral', nome:'Runa Ancestral', max:1,
+      texto:'Uma vez por sessão, aplica um encantamento de raridade um degrau acima do que normalmente conseguiria.'},
+  ],
+  cozinheiro: [
+    {id:'tempero-da-casa', nome:'Tempero da Casa', max:1,
+      texto:'Pratos que prepara dão um bônus temporário simples (combinado com o mestre) até o fim da próxima cena.'},
+    {id:'fartura', nome:'Fartura', max:3,
+      texto:'Cada compra: +1 porção de comida preparada por sessão, sem gastar ingrediente extra.'},
+    {id:'banquete-de-grupo', nome:'Banquete de Grupo', max:1,
+      texto:'Uma vez por sessão, prepara um prato que beneficia todos os aliados presentes, não só quem come na hora.'},
+    {id:'receita-secreta', nome:'Receita Secreta', max:2,
+      texto:'Cada compra libera uma combinação de ingredientes própria, registrada como receita permanente deste personagem.'},
+    {id:'prato-lendario', nome:'Prato Lendário', max:1,
+      texto:'Uma vez por sessão, cozinha algo com efeito equivalente a uma poção rara, sem precisar de loja.'},
+  ],
+  mercador: [
+    {id:'faro-pra-barganha', nome:'Faro pra Barganha', max:1,
+      texto:'Sempre consegue um preço melhor numa negociação (vantagem no teste envolvido).'},
+    {id:'rede-de-contatos', nome:'Rede de Contatos', max:3,
+      texto:'Cada compra: acesso a um NPC informante numa cidade diferente, definido em conversa com o mestre.'},
+    {id:'avaliacao-instantanea', nome:'Avaliação Instantânea', max:1,
+      texto:'Identifica preço e raridade de qualquer item à vista, sem precisar de teste.'},
+    {id:'estoque-pessoal', nome:'Estoque Pessoal', max:2,
+      texto:'Cada compra: carrega itens comerciais extras sem que eles contem no peso normal da ficha.'},
+    {id:'investimento', nome:'Investimento', max:1,
+      texto:'Pode gastar moeda entre sessões pra render um bônus fixo (combinado com o mestre) na sessão seguinte.'},
+  ],
+  domador: [
+    {id:'vinculo-com-criatura', nome:'Vínculo com Criatura', max:1,
+      texto:'Tem um companheiro — animal ou monstro domesticado — com uma ficha simplificada à parte.'},
+    {id:'comando', nome:'Comando', max:3,
+      texto:'Cada compra: +1 numa característica do companheiro (PV, dano ou uma perícia, à escolha ao comprar).'},
+    {id:'fala-com-bestas', nome:'Fala com Bestas', max:1,
+      texto:'Consegue se comunicar com criaturas não civilizadas, mesmo sem uma língua em comum.'},
+    {id:'domar-em-campo', nome:'Domar em Campo', max:2,
+      texto:'Cada compra: +1 chance por sessão de tentar domesticar um monstro derrotado ou rendido em campo, além do companheiro inicial.'},
+    {id:'fusao-de-vinculo', nome:'Fusão de Vínculo', max:1,
+      texto:'Uma vez por sessão, o companheiro pode emprestar uma ação extra ao domador — um ataque ou uma defesa conjunta.'},
+  ],
+  curandeiro: [
+    {id:'maos-que-curam', nome:'Mãos que Curam', max:1,
+      texto:'Pode gastar PM pra restaurar PV de um aliado fora de combate, numa proporção combinada com o mestre.'},
+    {id:'fluxo-constante', nome:'Fluxo Constante', max:3,
+      texto:'Cada compra: -1 no custo de PM de uma cura que lançar na cena (mínimo 1 PM).'},
+    {id:'diagnostico', nome:'Diagnóstico', max:1,
+      texto:'Identifica de longe (Teste de Mente + Vontade) qual condição um aliado ou inimigo está sofrendo.'},
+    {id:'cura-em-area', nome:'Cura em Área', max:2,
+      texto:'Cada compra: +1 uso por sessão de curar todo um grupo de aliados de uma vez, com efeito reduzido.'},
+    {id:'milagre', nome:'Milagre', max:1,
+      texto:'Uma vez por sessão, remove a Penalidade de Morte de um aliado antes dela se aplicar, se agir a tempo.'},
+  ],
+};
 
 const CONDICOES = [
   {id:'atordoado',   nome:'Atordoado'},
@@ -197,6 +354,92 @@ const ESTAGIOS_SKILL = [
   {id:'mestre',        nome:'Mestre'},
 ];
 
+// Catálogo de Golpes (Sword Skills) prontos pra escolher, em vez de digitar
+// tudo do zero — mas o campo de texto livre continua existindo pra golpe
+// homebrew ou "Original" (poder do Espadachim). Um por linha de arma.
+const TIPOS_ARMA = [
+  {id:'espada-uma-mao',    nome:'Espada (uma mão)'},
+  {id:'espada-duas-maos',  nome:'Espada (duas mãos)'},
+  {id:'lanca',             nome:'Lança'},
+  {id:'arco',              nome:'Arco'},
+  {id:'adaga',             nome:'Adaga'},
+  {id:'cajado',            nome:'Cajado (arma mágica)'},
+];
+
+const GOLPES_CATALOGO = [
+  {id:'corte-vertical',     nome:'Corte Vertical',      arma:'espada-uma-mao',   dano:'1d8+FOR',                              posMotion:'rígido por 1 turno, Defesa -2'},
+  {id:'investida-linear',   nome:'Investida Linear',    arma:'espada-uma-mao',   dano:'1d10+FOR',                             posMotion:'avança 3m à frente, de costas pro grupo até o próximo turno'},
+  {id:'giro-cortante',      nome:'Giro Cortante',       arma:'espada-uma-mao',   dano:'1d6+FOR (todos ao redor)',             posMotion:'perde a próxima reação'},
+  {id:'talho-pesado',       nome:'Talho Pesado',        arma:'espada-duas-maos', dano:'2d8+FOR',                              posMotion:'rígido por 2 turnos, Defesa -4'},
+  {id:'quebra-guarda',      nome:'Quebra-Guarda',       arma:'espada-duas-maos', dano:'1d10+FOR, ignora Defesa de escudo',    posMotion:'arma presa por 1 turno (precisa de uma ação só pra soltar)'},
+  {id:'estocada-longa',     nome:'Estocada Longa',      arma:'lanca',            dano:'1d8+FOR (alcance dobrado)',            posMotion:'não pode recuar no próximo turno'},
+  {id:'varredura-lanca',    nome:'Varredura de Lança',  arma:'lanca',            dano:'1d6+FOR (linha de alvos)',             posMotion:'Defesa -2 até agir de novo'},
+  {id:'tiro-carregado',     nome:'Tiro Carregado',      arma:'arco',             dano:'2d6+AGI',                              posMotion:'gasta o movimento do próximo turno recarregando'},
+  {id:'chuva-de-flechas',   nome:'Chuva de Flechas',    arma:'arco',             dano:'1d6+AGI (até 3 alvos na área)',        posMotion:'sem flecha pronta — próximo tiro com -2'},
+  {id:'golpe-nas-sombras',  nome:'Golpe nas Sombras',   arma:'adaga',            dano:'1d6+AGI (dobra se não notado)',        posMotion:'fica visível — perde furtividade ativa'},
+  {id:'lamina-dupla',       nome:'Lâmina Dupla',        arma:'adaga',            dano:'1d4+AGI, dois golpes no turno',        posMotion:'Defesa -3 até o fim do turno seguinte'},
+  {id:'impacto-arcano',     nome:'Impacto Arcano',      arma:'cajado',           dano:'1d8+MEN, custa 2 PM',                  posMotion:'não pode concentrar em outro feitiço no próximo turno'},
+  {id:'onda-de-choque',     nome:'Onda de Choque',      arma:'cajado',           dano:'1d6+MEN em área, custa 3 PM',          posMotion:'-2 em testes de Mente até agir de novo'},
+];
+
+// Catálogo de Magias (Grimório), a mesma lógica dos golpes: pronto pra
+// escolher, sem travar quem preferir digitar a própria magia homebrew.
+const ESCOLAS_MAGIA = [
+  {id:'fogo',     nome:'Fogo'},
+  {id:'gelo',     nome:'Gelo'},
+  {id:'raio',     nome:'Raio'},
+  {id:'luz',      nome:'Luz'},
+  {id:'trevas',   nome:'Trevas'},
+  {id:'suporte',  nome:'Suporte'},
+];
+
+const MAGIAS_CATALOGO = [
+  {id:'bola-de-fogo',       nome:'Bola de Fogo',        escola:'fogo',    custoPm:3, efeito:'2d6 de dano de fogo numa área pequena'},
+  {id:'lamina-flamejante',  nome:'Lâmina Flamejante',   escola:'fogo',    custoPm:2, efeito:'+1d4 de dano de fogo no próximo golpe'},
+  {id:'prisao-de-gelo',     nome:'Prisão de Gelo',      escola:'gelo',    custoPm:3, efeito:'imobiliza um alvo por 1 turno'},
+  {id:'sopro-congelante',   nome:'Sopro Congelante',    escola:'gelo',    custoPm:2, efeito:'1d6 de dano e reduz a Agilidade do alvo em 1 degrau até o fim da cena'},
+  {id:'corrente-eletrica',  nome:'Corrente Elétrica',   escola:'raio',    custoPm:3, efeito:'atinge o alvo principal e um adjacente'},
+  {id:'reflexo-veloz',      nome:'Reflexo Veloz',       escola:'raio',    custoPm:2, efeito:'+1 na Iniciativa até o fim da cena'},
+  {id:'cura-menor',         nome:'Cura Menor',          escola:'luz',     custoPm:2, efeito:'restaura PV igual ao dado de Mente'},
+  {id:'luz-reveladora',     nome:'Luz Reveladora',      escola:'luz',     custoPm:1, efeito:'ilumina e revela alvo invisível numa área'},
+  {id:'toque-drenante',     nome:'Toque Drenante',      escola:'trevas',  custoPm:3, efeito:'rouba PV do alvo e transfere pro conjurador'},
+  {id:'manto-de-sombras',   nome:'Manto de Sombras',    escola:'trevas',  custoPm:2, efeito:'vantagem no próximo teste de furtividade'},
+  {id:'bencao',             nome:'Bênção',              escola:'suporte', custoPm:2, efeito:'+2 no próximo teste de um aliado'},
+  {id:'barreira',           nome:'Barreira',            escola:'suporte', custoPm:3, efeito:'+4 de Defesa num aliado até o fim da cena'},
+];
+
+// Seis níveis de raridade, estilo Overgeared — o número é só sugestão de
+// balanceamento pro mestre, o bônus de verdade do item continua sendo o
+// que a pessoa digitar no campo "Efeito".
+const RARIDADES = [
+  {id:'comum',    nome:'Comum',    cor:'#a1937d', sugestao:'+0 a +1'},
+  {id:'incomum',  nome:'Incomum',  cor:'#4c8c5b', sugestao:'+1 a +2'},
+  {id:'raro',     nome:'Raro',     cor:'#3b82c4', sugestao:'+2 a +3'},
+  {id:'epico',    nome:'Épico',    cor:'#9c5fc9', sugestao:'+3 a +5'},
+  {id:'lendario', nome:'Lendário', cor:'#e0a234', sugestao:'+5 a +7'},
+  {id:'unico',    nome:'Único',    cor:'#9c3746', sugestao:'sem tabela — negocia com o mestre'},
+];
+
+const TIPOS_ITEM = [
+  {id:'arma',       nome:'Arma'},
+  {id:'armadura',   nome:'Armadura'},
+  {id:'acessorio',  nome:'Acessório'},
+  {id:'consumivel', nome:'Consumível'},
+  {id:'outro',      nome:'Outro'},
+];
+
+// Que derivado um item equipado alimenta sozinho — o resto (dano de arma,
+// efeito de consumível) fica descrito no campo "Notas" e se aplica à mão,
+// igual o Fabula Ultima faz com acessório fora do catálogo automatizado.
+const EFEITOS_ITEM = [
+  {id:'nenhum',       nome:'Nenhum (só descritivo)'},
+  {id:'defesa',       nome:'Defesa'},
+  {id:'defesaMagica', nome:'Defesa Mágica'},
+  {id:'iniciativa',   nome:'Iniciativa'},
+  {id:'pvMaximo',     nome:'PV máximo'},
+  {id:'pmMaximo',     nome:'PM máximo'},
+];
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -216,13 +459,22 @@ function novoPersonagem(nome){
     atributos: {forca:8, agilidade:8, mente:8, vontade:6},
     xp: 0,
     classes: [{classeId:'', nivel:0}],
+    // poder.escolhas: { 'espadachim': { 'postura-combate': 1, ... }, ... } —
+    // quantas vezes cada poder daquela classe foi comprado (o "NP" dele).
+    poder: {escolhas: {}},
     atual: {pv:null, pm:null},   // null = cheio
-    bonus: {defesa:0, defesaMagica:0, iniciativa:0}, // pra equipamento, fatia futura
+    bonus: {defesa:0, defesaMagica:0, iniciativa:0}, // "outros bônus", o que o inventário não cobrir
     condicoes: [],
     penalidadeMorte: {ativa:false, xpPerdido:0, itemPerdido:'', notas:''},
+    // Switch: a dupla troca de posição em combate (ataque ↔ suporte) —
+    // registro simples, o efeito de verdade se combina com o mestre na mesa.
+    switchAtivo: {parceiro:'', papel:'ataque', ativo:false},
     golpes: [],           // sword skills: {id, nome, arma, dano, posMotion, origem}
     magias: [],           // {id, nome, custoPm, efeito}
     skills: [],           // {id, nome, categoria, estagio, nivelInterno}
+    // inventario: {id, nome, tipo, raridade, efeitoTipo, efeitoValor, peso,
+    // durabilidadeMaxima, durabilidadeAtual, equipado, notas}
+    inventario: [],
     habilidadeUnica: {tem:false, nome:'', descricao:'', comoConseguiu:''},
     anotacoes: '',
   };
@@ -238,15 +490,53 @@ function nivelGeral(p){
   return Math.max(1, soma);
 }
 
+// Nível investido numa classe específica — soma se ela aparecer em mais de
+// uma linha (a UI não incentiva isso, mas o cálculo fica robusto de qualquer
+// jeito). É o teto de pontos de poder daquela classe.
+function nivelDeClasse(p, classeId){
+  return p.classes.reduce((total,c) => total + (c.classeId===classeId ? (c.nivel||0) : 0), 0);
+}
+
+// Lista de classes em que o personagem já investiu ao menos 1 nível, sem
+// repetir — é o que decide quais cartões aparecem na aba Poderes.
+function classesInvestidas(p){
+  const vistos = new Set();
+  return p.classes
+    .filter(c => c.classeId && nivelDeClasse(p, c.classeId) > 0 && !vistos.has(c.classeId) && vistos.add(c.classeId))
+    .map(c => c.classeId);
+}
+
+// Quantos pontos de poder já foram gastos numa classe — soma de todas as
+// compras (incluindo as repetidas dos poderes com max > 1).
+function pontosUsadosClasse(p, classeId){
+  const mapa = p.poder.escolhas[classeId] || {};
+  return Object.values(mapa).reduce((total,n) => total + (n||0), 0);
+}
+
+// Bônus automático que itens EQUIPADOS (e não quebrados) somam num derivado
+// específico — mesma ideia dos acessórios do Fabula Ultima: só automatiza o
+// que é um número sempre visível na ficha (decisão #57 do Hub).
+function bonusInventario(p, tipo){
+  return (p.inventario||[]).reduce((total, it) => {
+    const quebrado = (it.durabilidadeMaxima||0) > 0 && (it.durabilidadeAtual||0) <= 0;
+    return total + (it.equipado && !quebrado && it.efeitoTipo === tipo ? (it.efeitoValor||0) : 0);
+  }, 0);
+}
+
 // Fórmulas de partida — dá pra ajustar na mesa se o número não bater com o
 // ritmo da campanha, igual o Fabula Ultima deixa vários derivados editáveis
 // à mão (decisão #57 do Hub).
-function pvMaximo(p){ return 10 + nivelGeral(p)*3 + p.atributos.forca; }
-function pmMaximo(p){ return 5 + nivelGeral(p)*2 + p.atributos.mente; }
-function defesa(p){ return 8 + Math.floor(p.atributos.agilidade/2) + (p.bonus.defesa||0); }
-function defesaMagica(p){ return 8 + Math.floor(p.atributos.vontade/2) + (p.bonus.defesaMagica||0); }
-function iniciativa(p){ return Math.floor(p.atributos.agilidade/2) + (p.bonus.iniciativa||0); }
+function pvMaximo(p){ return 10 + nivelGeral(p)*3 + p.atributos.forca + bonusInventario(p,'pvMaximo'); }
+function pmMaximo(p){ return 5 + nivelGeral(p)*2 + p.atributos.mente + bonusInventario(p,'pmMaximo'); }
+function defesa(p){ return 8 + Math.floor(p.atributos.agilidade/2) + (p.bonus.defesa||0) + bonusInventario(p,'defesa'); }
+function defesaMagica(p){ return 8 + Math.floor(p.atributos.vontade/2) + (p.bonus.defesaMagica||0) + bonusInventario(p,'defesaMagica'); }
+function iniciativa(p){ return Math.floor(p.atributos.agilidade/2) + (p.bonus.iniciativa||0) + bonusInventario(p,'iniciativa'); }
 function pvRisco(p){ return Math.floor(pvMaximo(p)/2); }
+
+// Capacidade de carga: ligada à Força, igual Overgeared usa STR pro peso
+// que dá pra carregar. Some o peso de TODO item na mochila, equipado ou não.
+function pesoMaximo(p){ return 10 + p.atributos.forca*2; }
+function pesoAtual(p){ return (p.inventario||[]).reduce((total,it) => total + (it.peso||0), 0); }
 
 /* --- Armazenamento ---------------------------------------------------------
 
@@ -308,12 +598,14 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const ABAS = [
-  {id:'status',  nome:'Status'},
-  {id:'classes', nome:'Classes'},
-  {id:'combate', nome:'Combate'},
-  {id:'golpes',  nome:'Golpes e Magias'},
-  {id:'skills',  nome:'Skills'},
-  {id:'notas',   nome:'Notas'},
+  {id:'status',      nome:'Status'},
+  {id:'classes',     nome:'Classes'},
+  {id:'poderes',     nome:'Poderes'},
+  {id:'combate',     nome:'Combate'},
+  {id:'equipamento', nome:'Equipamento'},
+  {id:'golpes',      nome:'Golpes e Magias'},
+  {id:'skills',      nome:'Skills'},
+  {id:'notas',       nome:'Notas'},
 ];
 
 function render(){
@@ -340,7 +632,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, classes:abaClasses, combate:abaCombate, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 }
@@ -478,6 +770,47 @@ function abaClasses(p){
   </div>`;
 }
 
+function abaPoderes(p){
+  const investidas = classesInvestidas(p);
+  if(!investidas.length){
+    return `<div class="cartao vazio">
+      <h2>Nenhuma classe com nível ainda</h2>
+      <p class="mini">Escolha uma classe e dê ao menos 1 nível a ela na aba
+      Classes — os poderes dela aparecem aqui.</p></div>`;
+  }
+  return investidas.map(classeId => {
+    const classe = CLASSES.find(x => x.id === classeId);
+    const poderes = PODERES_CLASSE[classeId] || [];
+    const nivel = nivelDeClasse(p, classeId);
+    const usados = pontosUsadosClasse(p, classeId);
+    const escolhas = p.poder.escolhas[classeId] || {};
+    return `<div class="cartao">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h2 style="font-size:18px">${classe.nome}</h2>
+        <span class="mini">${usados}/${nivel} pontos de poder usados</span>
+      </div>
+      ${usados > nivel
+        ? `<div class="aviso">Comprou mais poderes do que o nível desta classe permite — devolva algum ou suba o nível dela.</div>`
+        : ''}
+      ${poderes.map(poder => {
+        const n = escolhas[poder.id] || 0;
+        const podeComprar = usados < nivel && n < poder.max;
+        return `<div class="linha-lista">
+          <div class="topo">
+            <strong>${poder.nome}${poder.max>1 ? ` (+${poder.max})` : ''}</strong>
+            <span class="mini">${n}/${poder.max}</span>
+          </div>
+          <p class="mini" style="margin-bottom:10px">${poder.texto}</p>
+          <div class="linha">
+            <button data-poder-menos="${classeId}|${poder.id}" ${n<=0?'disabled':''}>-</button>
+            <button data-poder-mais="${classeId}|${poder.id}" ${podeComprar?'':'disabled'}>+ Comprar</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
 function abaCombate(p){
   return `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
@@ -518,10 +851,39 @@ function abaCombate(p){
   </div>
 
   <div class="cartao">
+    <h2 style="font-size:18px">Switch</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      A dupla troca de posição em combate: quem está no Ataque avança pra
+      dar o golpe, quem está no Suporte cobre a retaguarda — e trocam
+      quando um dos dois sinaliza. Fica registrado aqui pra lembrar quem é
+      o par e o papel atual; o bônus de verdade (geralmente vantagem no
+      próximo teste de quem entra no Ataque) combina com o mestre na mesa.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-switch-parceiro">Parceiro de Switch</label>
+        <input id="c-switch-parceiro" data-switch="parceiro" value="${esc(p.switchAtivo.parceiro)}"></div>
+      <div><label for="c-switch-papel">Papel agora</label>
+        <select id="c-switch-papel" data-switch="papel">
+          <option value="ataque" ${p.switchAtivo.papel!=='suporte'?'selected':''}>Ataque</option>
+          <option value="suporte" ${p.switchAtivo.papel==='suporte'?'selected':''}>Suporte</option>
+        </select>
+      </div>
+      <div>
+        <label for="c-switch-ativo">Combo ativo</label>
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;padding-top:9px">
+          <input type="checkbox" id="c-switch-ativo" style="width:auto" ${p.switchAtivo.ativo?'checked':''}>
+          Sim, estamos no meio de um Switch
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao">
     <h2 style="font-size:18px">Bônus de equipamento</h2>
     <p class="mini" style="margin:6px 0 14px">
-      Sem inventário automatizado ainda (fatia futura) — some aqui o que
-      armadura/acessório der de bônus fixo.
+      "Outros bônus" — o que a aba Equipamento ainda não cobre (algo que o
+      mestre concedeu à mão, por exemplo). O que vem de item equipado já
+      soma sozinho nos números lá em cima.
     </p>
     <div class="grade g3">
       <div><label for="c-bonus-def">Defesa</label>
@@ -531,6 +893,83 @@ function abaCombate(p){
       <div><label for="c-bonus-ini">Iniciativa</label>
         <input id="c-bonus-ini" data-bonus="iniciativa" type="number" value="${p.bonus.iniciativa||0}"></div>
     </div>
+  </div>`;
+}
+
+function abaEquipamento(p){
+  const peso = pesoAtual(p), pesoMax = pesoMaximo(p);
+  const sobrecarregado = peso > pesoMax;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Peso</h2>
+    <p class="mini" style="margin:6px 0 10px">Capacidade de carga ligada à Força — o que a mochila inteira pesa, equipado ou não.</p>
+    <div class="derivado ${sobrecarregado?'risco':''}" style="max-width:200px">
+      <div class="rot">Peso carregado</div>
+      <div class="val">${peso}<span style="font-size:16px;color:var(--suave)">/${pesoMax}</span></div>
+      <div class="obs">${sobrecarregado ? 'sobrecarregado' : '10 + Força×2'}</div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Inventário</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Item <strong>equipado</strong> e não <strong>quebrado</strong> some
+      sozinho no derivado que o "Efeito" apontar. Durabilidade em 0 quebra o
+      item — "Usar" some 1, "Reparar" volta ao máximo (o poder Reparo de
+      Campo do Ferreiro existe pra isso). Durabilidade máxima 0 = item que
+      não desgasta.
+    </p>
+    ${p.inventario.map((it,i) => {
+      const raridade = RARIDADES.find(r => r.id === it.raridade) || RARIDADES[0];
+      const temDurabilidade = (it.durabilidadeMaxima||0) > 0;
+      const quebrado = temDurabilidade && (it.durabilidadeAtual||0) <= 0;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-item-campo="${i}|nome" value="${esc(it.nome)}" placeholder="Nome do item" style="font-family:Georgia,serif;font-size:16px">
+          <button data-remover-item="${i}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g4">
+          <div><label>Tipo</label>
+            <select data-item-tipo="${i}">
+              ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===it.tipo?'selected':''}>${t.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Raridade</label>
+            <select data-item-raridade="${i}">
+              ${RARIDADES.map(r => `<option value="${r.id}" ${r.id===it.raridade?'selected':''}>${r.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Efeito</label>
+            <select data-item-efeito="${i}">
+              ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===(it.efeitoTipo||'nenhum')?'selected':''}>${e.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Valor do efeito</label>
+            <input data-item-num="${i}|efeitoValor" type="number" value="${it.efeitoValor||0}"></div>
+        </div>
+        <p class="mini" style="margin:8px 0"><span style="color:${raridade.cor}">●</span> ${raridade.nome} — bônus sugerido ${raridade.sugestao}</p>
+        <div class="grade g3">
+          <div><label>Peso</label><input data-item-num="${i}|peso" type="number" min="0" value="${it.peso||0}"></div>
+          <div><label>Durabilidade máxima</label><input data-item-durmax="${i}" type="number" min="0" value="${it.durabilidadeMaxima||0}"></div>
+          <div>
+            <label>Equipado</label>
+            <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;padding-top:9px">
+              <input type="checkbox" data-item-equipado="${i}" style="width:auto" ${it.equipado?'checked':''}>
+              Em uso agora
+            </label>
+          </div>
+        </div>
+        ${temDurabilidade ? `<div class="linha" style="margin-top:10px">
+          <span class="mini">Durabilidade: ${it.durabilidadeAtual||0}/${it.durabilidadeMaxima}${quebrado?' — quebrado':''}</span>
+          <button data-usar-item="${i}" ${(it.durabilidadeAtual||0)<=0?'disabled':''}>Usar (-1)</button>
+          <button data-reparar-item="${i}" ${(it.durabilidadeAtual||0)>=it.durabilidadeMaxima?'disabled':''}>Reparar</button>
+        </div>` : ''}
+        <div style="margin-top:10px">
+          <label>Notas (dano da arma, o que mais o item faz)</label>
+          <input data-item-campo="${i}|notas" value="${esc(it.notas||'')}">
+        </div>
+      </div>`;
+    }).join('')}
+    <button id="btAddItem">+ Item</button>
   </div>`;
 }
 
@@ -566,7 +1005,16 @@ function abaGolpesMagias(p){
         <input data-golpe-campo="${i}|posMotion" value="${esc(g.posMotion)}" placeholder="ex: rígido por 1 turno, Defesa -4">
       </div>
     </div>`).join('')}
-    <button id="btAddGolpe">+ Golpe</button>
+    <div class="linha" style="margin-bottom:10px">
+      <select id="c-catalogo-golpe" style="max-width:320px">
+        ${TIPOS_ARMA.map(arma => `<optgroup label="${arma.nome}">
+          ${GOLPES_CATALOGO.filter(g => g.arma===arma.id).map(g =>
+            `<option value="${g.id}">${g.nome}</option>`).join('')}
+        </optgroup>`).join('')}
+      </select>
+      <button id="btAddGolpeCatalogo">+ Do catálogo</button>
+    </div>
+    <button id="btAddGolpe">+ Golpe em branco</button>
   </div>
 
   <div class="cartao">
@@ -582,7 +1030,16 @@ function abaGolpesMagias(p){
         <div><label>Efeito</label><input data-magia-campo="${i}|efeito" value="${esc(m.efeito)}"></div>
       </div>
     </div>`).join('')}
-    <button id="btAddMagia">+ Magia</button>
+    <div class="linha" style="margin-bottom:10px">
+      <select id="c-catalogo-magia" style="max-width:320px">
+        ${ESCOLAS_MAGIA.map(escola => `<optgroup label="${escola.nome}">
+          ${MAGIAS_CATALOGO.filter(m => m.escola===escola.id).map(m =>
+            `<option value="${m.id}">${m.nome}</option>`).join('')}
+        </optgroup>`).join('')}
+      </select>
+      <button id="btAddMagiaCatalogo">+ Do catálogo</button>
+    </div>
+    <button id="btAddMagia">+ Magia em branco</button>
   </div>
 
   <div class="cartao">
@@ -699,6 +1156,29 @@ function ligarEventos(){
   const addClasse = document.getElementById('btAddClasse');
   if(addClasse) addClasse.onclick = () => mudar(p => p.classes.push({classeId:'', nivel:0}));
 
+  // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
+  // "|", porque um botão só aceita um valor — mesmo truque do Fabula Ultima.
+  app.querySelectorAll('[data-poder-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMais.split('|');
+      const def = PODERES_CLASSE[classeId].find(x => x.id === poderId);
+      const mapa = p.poder.escolhas[classeId] || (p.poder.escolhas[classeId] = {});
+      if(pontosUsadosClasse(p, classeId) >= nivelDeClasse(p, classeId)) return;
+      mapa[poderId] = Math.min(def.max, (mapa[poderId] || 0) + 1);
+    }));
+  app.querySelectorAll('[data-poder-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMenos.split('|');
+      const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
+      mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
+    }));
+
+  const switchAtivo = document.getElementById('c-switch-ativo');
+  if(switchAtivo) switchAtivo.onchange = () => mudar(p => p.switchAtivo.ativo = switchAtivo.checked);
+  app.querySelectorAll('[data-switch]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () =>
+      (el.tagName==='SELECT' ? mudar : mudarSemRedesenhar)(p => p.switchAtivo[el.dataset.switch] = el.value, el));
+
   app.querySelectorAll('[data-condicao]').forEach(el =>
     el.onchange = () => mudar(p => {
       const id = el.dataset.condicao;
@@ -733,6 +1213,14 @@ function ligarEventos(){
   if(addGolpe) addGolpe.onclick = () => mudar(p =>
     p.golpes.push({id:uid(), nome:'', arma:'', dano:'', posMotion:'', origem:'sistema'}));
 
+  const addGolpeCatalogo = document.getElementById('btAddGolpeCatalogo');
+  if(addGolpeCatalogo) addGolpeCatalogo.onclick = () => mudar(p => {
+    const sel = document.getElementById('c-catalogo-golpe');
+    const item = GOLPES_CATALOGO.find(g => g.id === sel.value); if(!item) return;
+    const arma = TIPOS_ARMA.find(a => a.id === item.arma);
+    p.golpes.push({id:uid(), nome:item.nome, arma:arma?arma.nome:item.arma, dano:item.dano, posMotion:item.posMotion, origem:'sistema'});
+  });
+
   app.querySelectorAll('[data-magia-campo]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => {
       const [i, chave] = el.dataset.magiaCampo.split('|');
@@ -742,6 +1230,13 @@ function ligarEventos(){
     b.onclick = () => mudar(p => p.magias.splice(Number(b.dataset.removerMagia), 1)));
   const addMagia = document.getElementById('btAddMagia');
   if(addMagia) addMagia.onclick = () => mudar(p => p.magias.push({id:uid(), nome:'', custoPm:0, efeito:''}));
+
+  const addMagiaCatalogo = document.getElementById('btAddMagiaCatalogo');
+  if(addMagiaCatalogo) addMagiaCatalogo.onclick = () => mudar(p => {
+    const sel = document.getElementById('c-catalogo-magia');
+    const item = MAGIAS_CATALOGO.find(m => m.id === sel.value); if(!item) return;
+    p.magias.push({id:uid(), nome:item.nome, custoPm:item.custoPm, efeito:item.efeito});
+  });
 
   const unicaTem = document.getElementById('c-unica-tem');
   if(unicaTem) unicaTem.onchange = () => mudar(p => p.habilidadeUnica.tem = unicaTem.checked);
@@ -769,6 +1264,58 @@ function ligarEventos(){
   const addSkill = document.getElementById('btAddSkill');
   if(addSkill) addSkill.onclick = () => mudar(p =>
     p.skills.push({id:uid(), nome:'', categoria:'', estagio:'iniciante', nivelInterno:1}));
+
+  app.querySelectorAll('[data-item-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.itemCampo.split('|');
+      p.inventario[Number(i)][chave] = el.type === 'number' ? (Number(el.value) || 0) : el.value;
+    }, el));
+  // Peso e valor de efeito alimentam os números sempre visíveis (peso
+  // carregado, e os derivados que o item alimentar) — por isso usam
+  // 'change' com redesenho completo, e não o 'input' com debounce dos
+  // campos só descritivos: sem isso, o painel ficaria com o número velho
+  // até alguém trocar de aba.
+  app.querySelectorAll('[data-item-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.itemNum.split('|');
+      p.inventario[Number(i)][chave] = Number(el.value) || 0;
+    }));
+  app.querySelectorAll('[data-item-tipo]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemTipo)].tipo = el.value));
+  app.querySelectorAll('[data-item-raridade]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemRaridade)].raridade = el.value));
+  app.querySelectorAll('[data-item-efeito]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemEfeito)].efeitoTipo = el.value));
+  app.querySelectorAll('[data-item-equipado]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemEquipado)].equipado = el.checked));
+  // Durabilidade máxima tem regra própria: se o item estava cheio (ou era
+  // novo, sem durabilidade nenhuma), sobe a atual junto — senão, quem já
+  // estava com o item quebrado/gasto perderia esse estado só por editar o
+  // teto.
+  app.querySelectorAll('[data-item-durmax]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const it = p.inventario[Number(el.dataset.itemDurmax)];
+      const novoMax = Number(el.value) || 0;
+      if(!it.durabilidadeMaxima || it.durabilidadeAtual >= it.durabilidadeMaxima) it.durabilidadeAtual = novoMax;
+      it.durabilidadeMaxima = novoMax;
+    }));
+  app.querySelectorAll('[data-remover-item]').forEach(b =>
+    b.onclick = () => mudar(p => p.inventario.splice(Number(b.dataset.removerItem), 1)));
+  app.querySelectorAll('[data-usar-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.usarItem)];
+      it.durabilidadeAtual = Math.max(0, (it.durabilidadeAtual||0) - 1);
+    }));
+  app.querySelectorAll('[data-reparar-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.repararItem)];
+      it.durabilidadeAtual = it.durabilidadeMaxima || 0;
+    }));
+  const addItem = document.getElementById('btAddItem');
+  if(addItem) addItem.onclick = () => mudar(p => p.inventario.push({
+    id:uid(), nome:'', tipo:'arma', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0,
+    peso:0, durabilidadeMaxima:0, durabilidadeAtual:0, equipado:false, notas:'',
+  }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

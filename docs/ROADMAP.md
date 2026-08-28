@@ -352,6 +352,42 @@ passando.
   - Ainda falta pra fatia ficar completa: catálogo real de classes com
     poderes próprios (hoje é só a categoria), catálogo de golpes/magias
     de referência, inventário/equipamento, e o Modo Hub
+- [x] **Sistema SAO — ficha jogável** (28/08/2026) — decisões #71-#74,
+      completando o que o chassi tinha deixado como esqueleto:
+  - **Catálogo de 12 classes** com **5 poderes próprios cada** (60 no
+    total), comprados com os níveis investidos naquela classe — igual o
+    Fabula Ultima, mas sem teto de "3 classes": os pontos de poder de uma
+    classe são o nível dela, e cada poder tem um "-"/"+ Comprar" próprio,
+    travado quando os pontos acabam. Aba "Poderes" nova. Classes:
+    Espadachim, Arcanista, Batedor, Lanceiro e Arqueiro (Combate);
+    Ferreiro, Alquimista, Encantador e Cozinheiro (Produção); Mercador,
+    Domador e Curandeiro (Outras)
+  - **Catálogo de Golpes (Sword Skills)** — 13 golpes prontos, por tipo de
+    arma (espada de uma/duas mãos, lança, arco, adaga, cajado), com um
+    seletor "+ Do catálogo" que preenche nome/dano/pós-motion sozinho; o
+    "+ Golpe em branco" de sempre continua existindo pra golpe homebrew
+  - **Catálogo de Magias (Grimório)** — 12 feitiços, 2 por escola (Fogo,
+    Gelo, Raio, Luz, Trevas, Suporte), mesmo esquema de catálogo+em branco
+  - **Switch** — card novo na aba Combate: parceiro, papel atual
+    (Ataque/Suporte) e se o combo está ativo. Registro pra lembrar da
+    mecânica na mesa; o bônus de verdade combina com o mestre
+  - **Equipamento e inventário** — aba nova: item com tipo, uma das
+    **6 raridades estilo Overgeared** (Comum a Único, com sugestão de
+    bônus por degrau), peso, e **durabilidade por usos** ("Usar" gasta 1,
+    "Reparar" volta ao máximo — combina com o poder Reparo de Campo do
+    Ferreiro). Item equipado e não quebrado soma sozinho no derivado que
+    o campo "Efeito" apontar (Defesa, Defesa Mágica, Iniciativa, PV ou PM
+    máximos) — mesma lógica dos acessórios automáticos do Fabula Ultima
+  - **Capacidade de carga** — novo derivado ligado à Força (10 + Força×2),
+    soma o peso de tudo na mochila, equipado ou não
+  - XP e nível **continuam manuais** (decisão da conversa: o mestre decide
+    o ritmo, sem tabela fixa por enquanto)
+  - Testado de ponta a ponta com Playwright num navegador real: comprar e
+    devolver poder respeitando o teto de pontos, golpe e magia vindo do
+    catálogo, item equipado somando e um item quebrado deixando de somar
+    no derivado, reparo devolvendo o bônus, peso somando certo, e tudo
+    isso sobrevivendo a um recarregamento de página. Zero erro de
+    JavaScript
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 

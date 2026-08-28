@@ -196,7 +196,30 @@ fatias futuras: catálogo real de poderes por classe, golpes/magias de
 referência prontos pra escolher (hoje é tudo texto livre), inventário e o
 Modo Hub (arquivo único primeiro, decisão #40).
 
-## 15. Restrições registradas
+## 15. Sistema SAO — ficha jogável (28/08/2026)
+
+Zé pediu pra completar de uma vez o que o chassi tinha deixado de esqueleto:
+poderes de classe de verdade, mais classes, catálogo de golpes e magias, o
+Switch, e equipamento com raridade e durabilidade.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 71 | Tamanho do catálogo de classes | **Catálogo grande agora (12+).** Cresceu das 7 iniciais pra 12: Espadachim, Arcanista, Batedor, Lanceiro, Arqueiro (Combate); Ferreiro, Alquimista, Encantador, Cozinheiro (Produção); Mercador, Domador, Curandeiro (Outras) |
+| 72 | Durabilidade de equipamento | **N usos até quebrar.** Cada item tem uma durabilidade máxima; "Usar" desconta 1, "Reparar" volta ao máximo. Durabilidade máxima 0 = item que não desgasta |
+| 73 | Raridade de item | **6 níveis, estilo Overgeared:** Comum, Incomum, Raro, Épico, Lendário, Único — cada um com uma sugestão de bônus, mas o bônus de verdade continua sendo o que a pessoa digitar no item |
+| 74 | XP e nível | **Continua manual**, como no chassi — o mestre decide o ritmo, sem tabela de XP fixa por enquanto |
+
+Com essas respostas, `public/sao.html` ganhou: 60 poderes de classe (5 por
+classe, comprados com pontos de poder = nível investido nela, mesma lógica
+do Fabula Ultima); um catálogo de 13 Golpes por tipo de arma e 12 Magias
+por escola, ambos com botão "+ Do catálogo" que preenche a linha sozinha
+sem travar quem preferir digitar a própria; um card de Switch (parceiro,
+papel, combo ativo); e uma aba de Equipamento com peso ligado à Força,
+raridade e durabilidade — item equipado e não quebrado soma sozinho no
+derivado certo (Defesa, Defesa Mágica, Iniciativa, PV ou PM máximos), igual
+os acessórios automáticos do Fabula Ultima.
+
+## 16. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
