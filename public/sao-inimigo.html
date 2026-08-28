@@ -156,6 +156,10 @@ function novoInimigo(nome){
     fases: [],
     ataquesArea: [],
     relogio: {nome: 'Relógio da Batalha', total: 6, preenchidos: 0},
+    // Falha: o golpe do Shangri-La Frontier — um chefe "quebrado" por uma
+    // fraqueza específica, achável por quem estuda o encontro em vez de
+    // só bater mais forte. Combina com o poder Detectar Falha do Batedor.
+    falha: {descricao: '', comoDescobrir: '', comoExplorar: '', descoberta: false},
     anotacoesMestre: '',
   };
 }
@@ -372,6 +376,29 @@ function abaChefe(inimigo){
         ${Array.from({length: relogio.total}, (_,i) => `<div class="segmento ${i<relogio.preenchidos?'cheio':''}" data-segmento="${i+1}"></div>`).join('')}
       </div>
       <p class="mini">${relogio.preenchidos}/${relogio.total} preenchidos</p>
+    </div>
+    <div class="cartao">
+      <h2 style="font-size:18px">Falha</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        O golpe do Shangri-La Frontier: um chefe "quebrado" por uma
+        fraqueza específica, achável por quem estuda o encontro em vez de
+        só bater mais forte. Combina com o poder Detectar Falha do
+        Batedor — só o mestre vê esta seção.
+      </p>
+      <div class="grade g2">
+        <div><label for="c-falha-descoberta">Como descobrir</label>
+          <input id="c-falha-descoberta" data-falha="comoDescobrir" value="${esc(inimigo.falha.comoDescobrir)}" placeholder="ex: examinar o padrão do brilho antes de atacar"></div>
+        <div><label for="c-falha-explorar">Como explorar</label>
+          <input id="c-falha-explorar" data-falha="comoExplorar" value="${esc(inimigo.falha.comoExplorar)}" placeholder="ex: atacar o núcleo cancela a fase atual"></div>
+      </div>
+      <div style="margin-top:12px">
+        <label for="c-falha-descricao">A fraqueza em si</label>
+        <textarea id="c-falha-descricao" data-falha="descricao" rows="2">${esc(inimigo.falha.descricao)}</textarea>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:12px">
+        <input type="checkbox" id="c-falha-descoberta-flag" style="width:auto" ${inimigo.falha.descoberta?'checked':''}>
+        O grupo já descobriu esta falha
+      </label>
     </div>`;
 }
 
@@ -460,6 +487,11 @@ function ligarEventos(){
       // além do preenchido enche até ali — igual um clock de PbtA/FitD.
       inimigo.relogio.preenchidos = (n === inimigo.relogio.preenchidos) ? n - 1 : n;
     }));
+
+  app.querySelectorAll('[data-falha]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => inimigo.falha[el.dataset.falha] = el.value, el));
+  const falhaDescoberta = document.getElementById('c-falha-descoberta-flag');
+  if(falhaDescoberta) falhaDescoberta.onchange = () => mudar(inimigo => inimigo.falha.descoberta = falhaDescoberta.checked);
 }
 
 /* --- Barra do topo -------------------------------------------------------- */

@@ -464,6 +464,27 @@ passando.
     tamanho e preenchendo/esvaziando por clique, tudo sobrevivendo a um
     recarregamento de página, e o Escudo do Mestre carregando sem erro.
     Zero erro de JavaScript
+- [x] **Sistema SAO — corpo real, permadeath e falha de chefe** (28/08/2026)
+      — docs/DECISOES.md seção 18, a "Parte D": a camada que mais separa
+      este sistema de um RPG comum. Sem pergunta nova em aberto desta vez
+      — o desenho já tinha saído definido quando o Zé aprovou a lista de
+      fatias.
+  - **Corpo Real** — card na aba Mundo: onde o corpo está, quem cuidaria
+    dele, e um interruptor "em risco agora" pro mestre criar tensão fora
+    do jogo sem arriscar o personagem dentro dele
+  - **Permadeath opcional por mesa** — interruptor no card de Penalidade
+    de Morte que troca o card inteiro quando ligado: aviso forte, "este
+    personagem morreu" e como aconteceu, no lugar de XP/item de
+    penalidade. Por personagem (campanha ainda não existe pro SAO)
+  - **Falha do Chefe** — na ficha de inimigo: uma fraqueza específica
+    (como descobrir, como explorar, se já foi descoberta), pensada pra
+    combinar com o poder Detectar Falha do Batedor da Parte A — o golpe
+    do Shangri-La Frontier de recompensar quem estuda o encontro
+  - Escudo do Mestre atualizado com as três peças
+  - Testado de ponta a ponta com Playwright: Corpo Real e Falha
+    persistindo, card de Penalidade trocando de conteúdo certo ao
+    ligar/desligar permadeath, morte permanente registrando a causa.
+    Zero erro de JavaScript
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 

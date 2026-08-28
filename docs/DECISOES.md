@@ -263,7 +263,40 @@ estática, sem JS, cobrindo tudo do sistema numa página só). `src/lib/
 sistemas.ts` já aponta pros dois — ficam inertes até o SAO ganhar Modo Hub
 e campanha própria (decisão #52), mas prontos pra esse dia.
 
-## 18. Restrições registradas
+## 18. Sistema SAO — corpo real, permadeath e falha de chefe (28/08/2026)
+
+Parte D: a camada que mais separa este sistema de um RPG comum — "o
+personagem sabe que está num jogo" (o pedido original do Zé pra este
+sistema inteiro) implica que existe alguém de carne e osso plugado nele.
+
+Sem pergunta nova em aberto desta vez — o desenho já tinha saído definido
+quando o Zé aprovou a lista de fatias, então fui direto pra implementação.
+
+O que entrou:
+
+- **Corpo Real** — card na aba Mundo: onde o corpo está, quem cuidaria
+  dele, e um interruptor "em risco agora" que dá ao mestre uma alavanca de
+  tensão fora do jogo (alguém mexendo no equipamento, um apagão) sem
+  precisar arriscar o personagem dentro dele
+- **Permadeath opcional por mesa** — a decisão #64 já tinha fixado "sem
+  permadeath" como padrão do sistema, registrando que cada mesa podia
+  decidir diferente. Virou um interruptor de verdade no card de
+  Penalidade de Morte: ligado, troca completamente o card (aviso forte +
+  "personagem morreu" + como aconteceu) em vez de mostrar XP/item de
+  penalidade — é por personagem, não por campanha, porque campanha ainda
+  não existe pro SAO (decisão #40)
+- **Falha do Chefe** — o golpe do Shangri-La Frontier, na ficha de
+  inimigo: uma fraqueza específica (como descobrir, como explorar,
+  descrição, se já foi descoberta), pensada pra combinar com o poder
+  Detectar Falha do Batedor (Parte A) — recompensa estudar o encontro em
+  vez de só bater mais forte
+
+Testado de ponta a ponta com Playwright: Corpo Real persistindo, o card de
+Penalidade trocando de conteúdo ao ligar/desligar permadeath (e o campo
+padrão sumindo/voltando da tela), morte permanente registrando a causa,
+Falha do Chefe salvando e sobrevivendo a um recarregamento de página.
+
+## 19. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

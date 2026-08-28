@@ -571,6 +571,15 @@ function novoPersonagem(nome){
     // titulos: {id, nome, comoConseguiu, visao} — reputação, nem sempre boa.
     titulos: [],
     duelo: {oponente: '', motivo: '', resultado: 'pendente', consequencia: ''},
+    // corpoReal: o que separa este sistema de um RPG comum — tem alguém de
+    // carne e osso plugado, em algum lugar, o tempo todo.
+    corpoReal: {ondeEsta: '', quemCuida: '', emRisco: false, notasRisco: ''},
+    // permadeath: decisão #64 fixou "sem permadeath" como padrão do
+    // sistema, mas cada mesa pode decidir diferente (registrado na mesma
+    // decisão). Esse interruptor é por personagem porque ainda não existe
+    // campanha de verdade pro SAO (decisão #40) — quando o Modo Hub
+    // chegar, isso vira campo de campanha.
+    permadeath: {ativo: false, morreu: false, comoMorreu: ''},
     habilidadeUnica: {tem:false, nome:'', descricao:'', comoConseguiu:''},
     anotacoes: '',
   };
@@ -908,6 +917,30 @@ function abaMundo(p){
   </div>
 
   <div class="cartao">
+    <h2 style="font-size:18px">Corpo Real</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O que separa este sistema de um RPG comum: em algum lugar do mundo
+      real, tem alguém de carne e osso plugado no jogo, o tempo todo. Nem
+      todo perigo do personagem acontece na tela.
+    </p>
+    <div class="grade g2">
+      <div><label for="c-corpo-onde">Onde o corpo está</label>
+        <input id="c-corpo-onde" data-corporeal="ondeEsta" value="${esc(p.corpoReal.ondeEsta)}" placeholder="ex: no próprio quarto, sozinho"></div>
+      <div><label for="c-corpo-cuida">Quem cuidaria dele</label>
+        <input id="c-corpo-cuida" data-corporeal="quemCuida" value="${esc(p.corpoReal.quemCuida)}" placeholder="ex: a irmã mais nova, se notar"></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:14px">
+      <input type="checkbox" id="c-corpo-risco" style="width:auto" ${p.corpoReal.emRisco?'checked':''}>
+      O corpo real está em risco agora (fora do jogo)
+    </label>
+    ${p.corpoReal.emRisco ? `
+      <div style="margin-top:10px">
+        <label for="c-corpo-notas">O que está acontecendo</label>
+        <textarea id="c-corpo-notas" data-corporeal="notasRisco" rows="2">${esc(p.corpoReal.notasRisco)}</textarea>
+      </div>` : ''}
+  </div>
+
+  <div class="cartao">
     <h2 style="font-size:18px">Guilda</h2>
     <p class="mini" style="margin:6px 0 14px">
       O nome da guilda já fica no Status. Aqui é o cartão de sócio: seu
@@ -1058,30 +1091,50 @@ function abaCombate(p){
   <div class="cartao">
     <h2 style="font-size:18px">Penalidade de Morte</h2>
     <p class="mini" style="margin:6px 0 14px">
-      Chegar a 0 PV não mata de vez. O personagem "renasce" num ponto de
-      respawn do jogo, mas paga caro: perde XP na proporção do nível, e há
-      chance de derrubar um item equipado no lugar onde caiu — o item
-      continua ali, achável por qualquer um.
+      Padrão do sistema: chegar a 0 PV não mata de vez (decisão #64). Mas
+      cada mesa pode combinar diferente — inclusive morte de verdade,
+      estilo SAO original. Isso é um interruptor da mesa, não da cena:
+      combine com o mestre antes de ligar.
     </p>
-    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:12px">
-      <input type="checkbox" id="c-morte-ativa" style="width:auto" ${p.penalidadeMorte.ativa?'checked':''}>
-      Penalidade ativa agora
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:14px">
+      <input type="checkbox" id="c-permadeath-ativo" style="width:auto" ${p.permadeath.ativo?'checked':''}>
+      Esta mesa joga com permadeath (morte é definitiva)
     </label>
-    ${p.penalidadeMorte.ativa ? `
-      <div class="grade g2">
-        <div><label for="c-morte-xp">XP perdido</label>
-          <div class="linha">
-            <input id="c-morte-xp" data-morte="xpPerdido" type="number" min="0" value="${p.penalidadeMorte.xpPerdido}">
-            <button id="btCalcularPerda">10% do XP atual</button>
-          </div>
-        </div>
-        <div><label for="c-morte-item">Item derrubado</label>
-          <input id="c-morte-item" data-morte="itemPerdido" value="${esc(p.penalidadeMorte.itemPerdido)}"></div>
+    ${p.permadeath.ativo ? `
+      <div class="aviso">
+        <strong>Permadeath ativo.</strong> Chegar a 0 PV mata o personagem
+        de verdade — sem respawn, sem Penalidade de XP/item.
       </div>
-      <div style="margin-top:12px">
-        <label for="c-morte-notas">Notas (onde caiu, quando foi)</label>
-        <textarea id="c-morte-notas" data-morte="notas" rows="2">${esc(p.penalidadeMorte.notas)}</textarea>
-      </div>` : ''}
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:12px">
+        <input type="checkbox" id="c-permadeath-morreu" style="width:auto" ${p.permadeath.morreu?'checked':''}>
+        Este personagem morreu
+      </label>
+      ${p.permadeath.morreu ? `
+        <div style="margin-top:10px">
+          <label for="c-permadeath-como">Como aconteceu</label>
+          <textarea id="c-permadeath-como" data-permadeath="comoMorreu" rows="2">${esc(p.permadeath.comoMorreu)}</textarea>
+        </div>` : ''}
+    ` : `
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:12px">
+        <input type="checkbox" id="c-morte-ativa" style="width:auto" ${p.penalidadeMorte.ativa?'checked':''}>
+        Penalidade ativa agora
+      </label>
+      ${p.penalidadeMorte.ativa ? `
+        <div class="grade g2">
+          <div><label for="c-morte-xp">XP perdido</label>
+            <div class="linha">
+              <input id="c-morte-xp" data-morte="xpPerdido" type="number" min="0" value="${p.penalidadeMorte.xpPerdido}">
+              <button id="btCalcularPerda">10% do XP atual</button>
+            </div>
+          </div>
+          <div><label for="c-morte-item">Item derrubado</label>
+            <input id="c-morte-item" data-morte="itemPerdido" value="${esc(p.penalidadeMorte.itemPerdido)}"></div>
+        </div>
+        <div style="margin-top:12px">
+          <label for="c-morte-notas">Notas (onde caiu, quando foi)</label>
+          <textarea id="c-morte-notas" data-morte="notas" rows="2">${esc(p.penalidadeMorte.notas)}</textarea>
+        </div>` : ''}
+    `}
   </div>
 
   <div class="cartao">
@@ -1588,6 +1641,18 @@ function ligarEventos(){
   if(btCalcularPerda) btCalcularPerda.onclick = () => mudar(p => {
     p.penalidadeMorte.xpPerdido = Math.floor((p.xp||0) * 0.1);
   });
+
+  const permadeathAtivo = document.getElementById('c-permadeath-ativo');
+  if(permadeathAtivo) permadeathAtivo.onchange = () => mudar(p => p.permadeath.ativo = permadeathAtivo.checked);
+  const permadeathMorreu = document.getElementById('c-permadeath-morreu');
+  if(permadeathMorreu) permadeathMorreu.onchange = () => mudar(p => p.permadeath.morreu = permadeathMorreu.checked);
+  app.querySelectorAll('[data-permadeath]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.permadeath[el.dataset.permadeath] = el.value, el));
+
+  app.querySelectorAll('[data-corporeal]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.corpoReal[el.dataset.corporeal] = el.value, el));
+  const corpoRisco = document.getElementById('c-corpo-risco');
+  if(corpoRisco) corpoRisco.onchange = () => mudar(p => p.corpoReal.emRisco = corpoRisco.checked);
 
   app.querySelectorAll('[data-bonus]').forEach(el =>
     el.onchange = () => mudar(p => p.bonus[el.dataset.bonus] = Number(el.value) || 0));
