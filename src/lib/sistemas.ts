@@ -66,7 +66,7 @@ export const SISTEMAS: Sistema[] = [
       "Homebrew original inspirado em Sword Art Online, Overgeared e Shangri-La Frontier — o personagem sabe que está num jogo.",
     ficha: "/sao.html",
     situacao: "em-construcao",
-    salvaNoHub: false,
+    salvaNoHub: true,
     fichaInimigo: "/sao-inimigo.html",
     escudoMestre: "/sao-escudo-mestre.html",
   },

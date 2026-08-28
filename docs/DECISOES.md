@@ -296,7 +296,45 @@ Penalidade trocando de conteúdo ao ligar/desligar permadeath (e o campo
 padrão sumindo/voltando da tela), morte permanente registrando a causa,
 Falha do Chefe salvando e sobrevivendo a um recarregamento de página.
 
-## 19. Restrições registradas
+## 19. Sistema SAO — Modo Hub (28/08/2026)
+
+Última fatia do Sistema SAO: salvar na conta, aparecer em `/fichas`, e
+campanha de verdade — o mesmo caminho que o Fabula Ultima e o Kaizoku no
+Sho já tinham percorrido (decisão #40). Sem pergunta nova em aberto: o
+mecanismo já estava definido por precedente, então fui direto pra
+implementação, só adaptando pros nomes de `public/sao.html` e
+`public/sao-inimigo.html`.
+
+`public/sao.html` ganhou exatamente o que o Fabula Ultima tem: detecta
+`?id=` na URL, busca/salva via `/api/personagens/[id]`, modo leitura pra
+quem não é dono, interruptor de Compartilhar (decisão #46). `public/
+sao-inimigo.html` ganhou o mesmo mecanismo, sem o interruptor de
+Compartilhar — inimigo não tem link de leitura, só o mestre da campanha
+mexe nele. Os dois continuam funcionando 100% em modo local sem o
+parâmetro, exatamente como as fatias anteriores deixaram. `src/lib/
+sistemas.ts`: `salvaNoHub` virou `true`, e o SAO já aparece em "+ Criar
+ficha" e na criação de campanha.
+
+**Bug encontrado e corrigido no caminho:** a rota `/api/personagens/[id]`
+só lia `dados.perfil.nome` pra atualizar o nome da ficha mostrado nas
+listas do Hub. Ficha de inimigo/NPC não tem `perfil` — guarda o nome
+solto em `dados.nome` (Fabula Ultima já fazia isso, e o Sistema SAO
+seguiu o mesmo formato). Sem o ajuste, todo inimigo criado por qualquer
+mestre ficaria pra sempre listado como "Novo Inimigo" na campanha, não
+importa o que fosse escrito na ficha depois — um bug que já existia
+silenciosamente no Fabula Ultima também. Um `??` a mais
+(`corpo.dados?.perfil?.nome ?? corpo.dados?.nome`) resolve pros dois
+sistemas de uma vez, sem mudar nada pra quem já tinha `perfil.nome`
+(Fabula Ultima de jogador e Kaizoku no Sho).
+
+Testado com Playwright mockando as respostas de `/api/personagens/*`
+(sem credenciais do Supabase neste ambiente pra testar contra o banco de
+verdade): ficha de jogador e de inimigo carregando do Hub, edição
+disparando o PATCH certo depois do debounce duplo, Compartilhar, ficha
+alheia/apagada (404), modo leitura travando todo campo enquanto Exportar
+segue disponível, e o modo local intacto.
+
+## 20. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

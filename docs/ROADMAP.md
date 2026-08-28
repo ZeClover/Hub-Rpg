@@ -485,6 +485,36 @@ passando.
     persistindo, card de Penalidade trocando de conteúdo certo ao
     ligar/desligar permadeath, morte permanente registrando a causa.
     Zero erro de JavaScript
+- [x] **Sistema SAO — Modo Hub** (28/08/2026) — a última fatia: salvar na
+      conta, aparecer em `/fichas`, e campanha de verdade. Fecha o
+      Sistema SAO como sistema completo do Hub, no mesmo pé que o Fabula
+      Ultima e o Kaizoku no Sho.
+  - **`public/sao.html` e `public/sao-inimigo.html`** ganharam o mesmo
+    mecanismo de Modo Hub dos outros dois sistemas: com `?id=` na URL a
+    ficha vive na conta (busca/salva via `/api/personagens/[id]`, modo
+    leitura pra quem não é dono, interruptor de Compartilhar só na de
+    jogador — inimigo não tem link de leitura, só o mestre mexe). Sem o
+    parâmetro, os dois continuam 100% iguais — localStorage, sem conta,
+    exatamente como as fatias anteriores deixaram
+  - **`src/lib/sistemas.ts`**: `salvaNoHub` virou `true` pro SAO — já
+    aparece em "+ Criar ficha" (`/fichas`) e na criação de campanha,
+    igual os outros dois sistemas
+  - **Bug de nome corrigido no caminho**: a rota `/api/personagens/[id]`
+    só lia `dados.perfil.nome` pra atualizar o nome mostrado na lista —
+    mas ficha de inimigo/NPC (Fabula Ultima e agora SAO) guarda o nome
+    solto em `dados.nome`, sem `perfil`. Sem o ajuste, todo inimigo
+    ficaria pra sempre listado como "Novo Inimigo" na campanha, não
+    importa o que o mestre escrevesse na ficha. Um `??` a mais na rota
+    resolve pros dois sistemas, sem mudar nada pra quem já funcionava
+    (Fabula Ultima e Kaizoku no Sho sempre tiveram `perfil.nome`)
+  - Testado com Playwright mockando `/api/personagens/*` (não dá pra
+    testar contra o banco de verdade neste ambiente, sem as credenciais
+    do Supabase): ficha de jogador e de inimigo carregando do Hub,
+    editar campo disparando o PATCH certo depois do debounce duplo
+    (mudarSemRedesenhar + salvarNoHub), interruptor de Compartilhar,
+    ficha alheia/apagada (404), modo leitura travando todo campo da
+    ficha enquanto Exportar continua disponível (mesmo padrão do Fabula
+    Ultima), e o modo local sem `?id=` continuando idêntico ao de antes
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 

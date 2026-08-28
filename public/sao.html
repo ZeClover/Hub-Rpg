@@ -91,6 +91,11 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 <body>
 <div class="barra">
   <span class="marca">Sistema SAO</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
@@ -704,12 +709,14 @@ function fabricar(p, receita){
 
 /* --- Armazenamento ---------------------------------------------------------
 
-   Arquivo único, salvando no navegador (localStorage) — o mesmo caminho que
-   o Fabula Ultima e o Kaizoku no Sho seguiram antes de ganhar Modo Hub
-   (decisão #40). Sem `?id=`, sem conta: dá pra acertar as regras rápido
-   com o Zé testando, e migrar pro Hub depois de fatia própria.
+   Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+   navegador: /fichas cria a linha no banco e manda pra cá com o id dela.
+   Sem o parâmetro, tudo continua exatamente como sempre — arquivo único,
+   localStorage, sem conta nenhuma (decisão #40). Mesmo mecanismo do
+   Fabula Ultima e do Kaizoku no Sho.
 ------------------------------------------------------------------------- */
 
+const MODO_HUB = new URLSearchParams(location.search).get('id');
 const CHAVE = 'sao_fichas';
 let falhouAoSalvar = false;
 
@@ -720,7 +727,30 @@ function carregar(){
   }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
 }
 
+let debounceHub = null;
+// No Hub, cada campo salva sozinho na conta (decisão #44) — sem lista
+// local, sem botão de salvar. O debounce evita uma requisição por tecla.
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
 function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
   try{
     localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
     if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
@@ -732,12 +762,61 @@ function salvar(){
   }
 }
 
-const estado = { fichas: carregar(), atualId: null, aba: 'status' };
-if(estado.fichas.length) estado.atualId = estado.fichas[0].id;
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'status',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,      // 'nao-encontrado' | null
+  // Começa falso de propósito: só vira true depois que o Hub CONFIRMAR que
+  // é dono. Enquanto carrega, ou se a busca falhar, o padrão seguro é "não
+  // é dono" — senão o interruptor de compartilhar apareceria numa ficha
+  // que nem carregou direito.
+  ehDono: false,
+  compartilhado: false,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
 
+// Busca a ficha no Hub uma vez, no início. Preenche estado.fichas com um só
+// personagem — sem lista, sem seletor, exatamente o que /fichas já filtrou.
+// Ler não exige ser o dono: se vier ehDono:false, é o link de leitura de
+// outra pessoa (o mestre vendo a ficha de um jogador).
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+// Dono liga/desliga o link de leitura. Quem não é dono nem vê este controle.
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
 function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -746,6 +825,7 @@ function mudar(mudanca){
 
 let debounce = null;
 function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -778,6 +858,19 @@ const ABAS = [
 function render(){
   desenharBarra();
   const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
   const p = atual();
 
   if(!p){
@@ -788,11 +881,19 @@ function render(){
     return;
   }
 
-  const alerta = falhouAoSalvar
-    ? `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
-       Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
-       perder o que você preencheu.</div>`
-    : '';
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a =>
@@ -802,9 +903,38 @@ function render(){
     + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
+
+  // Modo leitura: desliga todo campo/botão de edição, menos as próprias
+  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha).
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
 }
 
 function desenharBarra(){
+  // No Hub, /fichas já é a lista de personagens (decisão #42) — o seletor,
+  // o "+ Novo" e o "Excluir" desta barra são só do modo local (arquivo
+  // avulso, sem conta). "← Fichas" some no modo local pelo mesmo motivo.
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+
+    // Só o dono decide compartilhar. Quem está vendo por um link
+    // compartilhado nem editar consegue, então Importar também some.
+    //
+    // Escondido via style.display, não via atributo `hidden`: esta página
+    // tem uma regra própria `label{display:block}` que, por ser do autor,
+    // vence a regra `[hidden]{display:none}` do navegador — o atributo
+    // ficaria ligado sem esconder nada. Estilo em linha sempre vence.
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
   const sel = document.getElementById('seletor');
   sel.innerHTML = estado.fichas.length
     ? estado.fichas.map(f =>
@@ -1867,6 +1997,10 @@ function ligarEventos(){
 
 /* --- Barra do topo ------------------------------------------------------ */
 
+document.getElementById('chkCompartilhar').onchange = e => {
+  alternarCompartilhado(e.target.checked);
+};
+
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value; render();
 };
@@ -1907,9 +2041,18 @@ document.getElementById('arquivo').onchange = e => {
     try{
       const lido = JSON.parse(leitor.result);
       if(!lido || !lido.perfil) throw new Error('formato desconhecido');
-      lido.id = uid();
-      estado.fichas.push(lido);
-      estado.atualId = lido.id;
+      if(MODO_HUB){
+        // No Hub só existe esta ficha — importar restaura o conteúdo dela
+        // a partir de um backup, em vez de criar outra.
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        // Id novo: importar nunca sobrescreve um personagem que já existe.
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
@@ -1920,6 +2063,7 @@ document.getElementById('arquivo').onchange = e => {
 };
 
 render();
+if(MODO_HUB) iniciarModoHub();
 </script>
 </body>
 </html>

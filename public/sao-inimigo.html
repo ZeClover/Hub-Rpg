@@ -85,6 +85,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 <body>
 <div class="barra">
   <span class="marca">Sistema SAO — Inimigo</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
@@ -179,8 +180,15 @@ function defesaAtual(inimigo){ return inimigo.derivados.defesa ?? defesaCalc(ini
 function defesaMagicaAtual(inimigo){ return inimigo.derivados.defesaMagica ?? defesaMagicaCalc(inimigo); }
 function iniciativaAtual(inimigo){ return inimigo.derivados.iniciativa ?? iniciativaCalc(inimigo); }
 
-/* --- Armazenamento ------------------------------------------------------ */
+/* --- Armazenamento ------------------------------------------------------
 
+   Mesmo mecanismo de Modo Hub do sao.html e do resto do Hub: presente na
+   URL (?id=...), a ficha vive na conta em vez do navegador. O mestre chega
+   aqui pelo botão "+ Adicionar ficha de inimigo" da campanha, que já cria
+   a linha e manda pra cá com o id dela.
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
 const CHAVE = 'sao_inimigos';
 let falhouAoSalvar = false;
 
@@ -188,7 +196,29 @@ function carregar(){
   try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru) : []; }
   catch(e){ console.error('Não consegui ler os inimigos salvos', e); return []; }
 }
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const inimigo = atual(); if(!inimigo) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: inimigo}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
 function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
   try{
     localStorage.setItem(CHAVE, JSON.stringify(estado.inimigos));
     if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
@@ -198,11 +228,41 @@ function salvar(){
   }
 }
 
-const estado = { inimigos: carregar(), atualId: null, aba: 'perfil' };
-if(estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
+const estado = {
+  inimigos: MODO_HUB ? [] : carregar(),
+  atualId: null, aba: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null, // 'nao-encontrado' | null
+  ehDono: false,
+};
+if(!MODO_HUB && estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
 const atual = () => estado.inimigos.find(i => i.id === estado.atualId) || null;
 
+// Diferente da ficha de jogador, o inimigo não tem link de leitura pra
+// compartilhar — só o mestre (dono) mexe nele, então "não é dono" aqui só
+// acontece se o link foi aberto por engano ou por outra pessoa.
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const inimigo = (dados && dados.nome) ? dados : novoInimigo();
+    inimigo.id = MODO_HUB;
+    estado.inimigos = [inimigo];
+    estado.atualId = inimigo.id;
+    estado.ehDono = !!personagem.ehDono;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
 function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
   const inimigo = atual(); if(!inimigo) return;
   mudanca(inimigo);
   inimigo.atualizadoEm = Date.now();
@@ -210,6 +270,7 @@ function mudar(mudanca){
 }
 let debounce = null;
 function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
   const inimigo = atual(); if(!inimigo) return;
   mudanca(inimigo);
   inimigo.atualizadoEm = Date.now();
@@ -236,23 +297,55 @@ const ABAS = [
 function render(){
   desenharBarra();
   const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
   const inimigo = atual();
   if(!inimigo){
     app.innerHTML = `<div class="vazio"><h2>Nenhum inimigo ainda</h2>
       <p class="mini">Clique em "+ Novo" pra criar a primeira ficha, ou importe um arquivo exportado antes.</p></div>`;
     return;
   }
-  const alerta = falhouAoSalvar
-    ? `<div class="aviso"><strong>Não consegui salvar no navegador.</strong> Exporte agora para não perder o que você preencheu.</div>`
-    : '';
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(inimigo.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong> Exporte agora para não perder o que você preencheu.</div>`) : '';
+
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
     + painelDerivados(inimigo)
     + ({perfil:abaPerfil, combate:abaCombate, acoes:abaAcoes, chefe:abaChefe, notas:abaNotas}[estado.aba])(inimigo);
   ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
 }
 
 function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
   const sel = document.getElementById('seletor');
   sel.innerHTML = estado.inimigos.length
     ? estado.inimigos.map(i => `<option value="${i.id}" ${i.id===estado.atualId?'selected':''}>${esc(i.nome)}</option>`).join('')
@@ -528,9 +621,15 @@ document.getElementById('arquivo').onchange = e => {
     try{
       const lido = JSON.parse(leitor.result);
       if(!lido || !lido.nome) throw new Error('formato desconhecido');
-      lido.id = uid();
-      estado.inimigos.push(lido);
-      estado.atualId = lido.id;
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.inimigos = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.inimigos.push(lido);
+        estado.atualId = lido.id;
+      }
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
@@ -541,6 +640,7 @@ document.getElementById('arquivo').onchange = e => {
 };
 
 render();
+if(MODO_HUB) iniciarModoHub();
 </script>
 </body>
 </html>
