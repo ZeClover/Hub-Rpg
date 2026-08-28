@@ -659,7 +659,7 @@ const PODERES_CLASSE = {
     {id:'pulso-firme', nome:'Pulso Firme', max:1,
       descricao:'Em teste de Precisão com módulo de arma, pode substituir um Atributo por Vigor.'},
     {id:'veiculo-pessoal', nome:'Veículo Pessoal', max:5,
-      descricao:'Ao adquirir, recebe um veículo pessoal com uma estrutura (Montaria, Exoesqueleto ou Mecha) e três módulos à escolha. A cada nova aquisição, ganha mais dois módulos. Catálogo completo de estruturas e módulos (armas, armadura, suporte) nas págs. 160-167 do Atlas — não incluído nesta ficha ainda.'},
+      descricao:'Ao adquirir, recebe um veículo pessoal com uma estrutura (Montaria, Exoesqueleto ou Mecha) e três módulos à escolha. A cada nova aquisição, ganha mais dois módulos — monte tudo isso na aba Inventário.'},
   ],
 
   // ---- Atlas: Natural Fantasy --------------------------------------------
@@ -1063,6 +1063,98 @@ function textoEfeitoCulinaria(efeitoId, escolha, nivel){
   if(!ef) return '';
   if(ef.escolha && !escolha) return '(falta escolher a opção do efeito)';
   return ef.texto(escolha, nivel);
+}
+
+/* ===========================================================================
+   VEÍCULO PESSOAL DO PILOTO (Atlas Techno Fantasy, pág. 158-169)
+
+   Uma estrutura fixa (escolhida uma vez, pra sempre) mais um conjunto de
+   módulos possuídos — o poder "Veículo Pessoal" dá 3 módulos na primeira
+   compra e mais 2 a cada nova compra. Só uma parte deles fica "ativa" ao
+   mesmo tempo: limite geral de (3 + NP), e cada estrutura ainda limita
+   quantos módulos de arma/armadura cabem ativos ao mesmo tempo (suporte não
+   tem limite próprio, só entra na conta geral). Os números de Defesa,
+   Precisão e Dano só valem enquanto o personagem estiver pilotando — por
+   isso ficam de referência aqui, sem entrar nos números normais da ficha
+   (que valem o tempo todo). Simplificação: a ficha não separa "mão
+   dominante/secundária" dos módulos de arma como faz com o equipamento
+   normal — só limita quantos ficam ativos e aplica a regra de "exclusivo".
+   =========================================================================== */
+const ESTRUTURAS_VEICULO = [
+  {id:'exoesqueleto', nome:'Exoesqueleto', passageiros:0, distancia:'sem modificador', maxArma:2, maxArmadura:1},
+  {id:'mecha',        nome:'Mecha',        passageiros:0, distancia:'×2',              maxArma:2, maxArmadura:1},
+  {id:'montaria',     nome:'Montaria',     passageiros:1, distancia:'×2',              maxArma:1, maxArmadura:1},
+];
+
+const MODULOS_ARMADURA_VEICULO = [
+  {id:'cobertura-flexivel', nome:'Cobertura Flexível', textoDefesa:'Dado de DES +2', textoDefesaMagica:'Dado de AST +1', marcial:false},
+  {id:'cobertura-pesada',   nome:'Cobertura Pesada',   textoDefesa:'12 (fixa)',      textoDefesaMagica:'8 (fixa)',       marcial:true},
+  {id:'cobertura-runica',   nome:'Cobertura Rúnica',   textoDefesa:'10 (fixa)',      textoDefesaMagica:'11 (fixa)',      marcial:true},
+  {id:'cobertura-padrao',   nome:'Cobertura Padrão',   textoDefesa:'11 (fixa)',      textoDefesaMagica:'10 (fixa)',      marcial:true},
+];
+
+const MODULOS_ARMA_VEICULO = [
+  {id:'arcano',       nome:'Arcano',       categoria:'arcana',       alcance:'corpo a corpo', precisao:{atributos:['destreza','vontade']},          dano:8,  tipoDano:'físico'},
+  {id:'machado',      nome:'Machado',      categoria:'pesada',       alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:12, tipoDano:'físico'},
+  {id:'lamina',       nome:'Lâmina',       categoria:'adaga',        alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:6,  tipoDano:'físico'},
+  {id:'arco',         nome:'Arco',         categoria:'arco',         alcance:'à distância',   precisao:{atributos:['destreza','astucia'], bonus:1}, dano:12, tipoDano:'físico', exclusivo:true},
+  {id:'canhao',       nome:'Canhão',       categoria:'arma de fogo', alcance:'à distância',   precisao:{atributos:['destreza','astucia']},          dano:14, tipoDano:'físico', exclusivo:true},
+  {id:'garra',        nome:'Garra',        categoria:'luta',         alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:8,  tipoDano:'físico', obs:'pode interagir na cena como se fosse uma mão livre'},
+  {id:'claymore',     nome:'Claymore',     categoria:'luta',         alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:14, tipoDano:'físico', exclusivo:true},
+  {id:'esoterico',    nome:'Esotérico',    categoria:'arcana',       alcance:'corpo a corpo', precisao:{atributos:['destreza','vontade']},          dano:12, tipoDano:'físico', exclusivo:true},
+  {id:'malho',        nome:'Malho',        categoria:'luta',         alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:10, tipoDano:'físico'},
+  {id:'lanca-chamas', nome:'Lança-chamas', categoria:'arma de fogo', alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:8,  tipoDano:'fogo'},
+  {id:'metralhadora', nome:'Metralhadora', categoria:'arma de fogo', alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:10, tipoDano:'físico', exclusivo:true,
+    obs:'ao atacar, pode virar dois ataques separados seguindo as regras de luta com duas armas (RA 0, sem multi)'},
+  {id:'rifle',        nome:'Rifle',        categoria:'arma de fogo', alcance:'à distância',   precisao:{atributos:['destreza','astucia']},          dano:10, tipoDano:'físico'},
+  {id:'foice',        nome:'Foice',        categoria:'pesada',       alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:16, tipoDano:'físico', exclusivo:true},
+  {id:'lanca',        nome:'Lança',        categoria:'lança',        alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia']},          dano:10, tipoDano:'físico'},
+  {id:'espada',       nome:'Espada',       categoria:'espada',       alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:8,  tipoDano:'físico'},
+  {id:'tridente',     nome:'Tridente',     categoria:'lança',        alcance:'corpo a corpo', precisao:{atributos:['destreza','astucia'], bonus:1}, dano:14, tipoDano:'físico', exclusivo:true},
+];
+// O Escudo é module de arma no livro, mas funciona como escudo: sem
+// Precisão/Dano próprios, só bônus de Defesa enquanto pilota.
+const ESCUDO_VEICULO = {id:'escudo-veiculo', nome:'Escudo', ehEscudo:true, estruturas:['exoesqueleto','mecha'],
+  texto:'+2 em Defesa e Defesa Mágica enquanto pilota. Conta como escudo equipado, não como arma — só vai na mão dominante com Duplo Escudeiro (aí os Escudos Gêmeos causam +2 de dano, cumulativo com um segundo módulo Escudo).'};
+
+const MODULOS_SUPORTE_VEICULO = [
+  {id:'aereo', nome:'Aéreo', custaDois:true,
+    texto:'Voa e a distância de viagem vira ×3. Ataques corpo a corpo seus podem atingir voadores, e ninguém a bordo pode ser atingido corpo a corpo a menos que o atacante também voe ou atinja voadores — para em terra, em crise, na ação Guarda, ou até o fim do turno seguinte se alguém a bordo sofrer dano de ar, raio ou gelo em conflito.'},
+  {id:'antielemento', nome:'Antielemento',
+    texto:'Ao ativar, escolha um tipo (ar, fogo, gelo, raio ou terra): quem estiver a bordo fica Resistente a ele enquanto o módulo continuar ativo.'},
+  {id:'assento', nome:'Assento', estruturas:['mecha','montaria'],
+    texto:'Transporta um passageiro extra de tamanho humano.'},
+  {id:'cobertura-expandida', nome:'Cobertura Expandida', estruturas:['mecha','montaria'],
+    texto:'Com um módulo Cobertura Pesada/Rúnica/Padrão ativo, os passageiros também podem usar a Defesa e a Defesa Mágica dele (ou as próprias, se forem maiores).'},
+  {id:'contragolpe', nome:'Contragolpe',
+    texto:'Depois de alguém a bordo ser atingido à distância, gaste 1 PI: causa 10 de dano físico no atacante (+5 no nível 20+, +10 no nível 40+).'},
+  {id:'escavacao', nome:'Escavação',
+    texto:'Tem luzes potentes e pode escavar o solo.'},
+  {id:'interface-rapida', nome:'Interface Rápida',
+    texto:'Ao entrar nele no seu turno em conflito, ganha uma ação adicional.'},
+  {id:'magistatico', nome:'Magistático',
+    texto:'Ao pagar o custo em PM de um arcano, feitiço ou verso com uma arma arcana equipada enquanto pilota: recupera 5 PM (10 PM se o custo for 30 PM ou mais).'},
+  {id:'mira-avancada', nome:'Mira Avançada',
+    texto:'+2 em testes de Precisão e em testes de Magia de feitiços ofensivos.'},
+  {id:'navegante', nome:'Navegante',
+    texto:'Viaja na água e debaixo dela.'},
+  {id:'ofensiva-secundaria', nome:'Ofensiva Secundária', estruturas:['exoesqueleto','mecha'],
+    texto:'Ao ativar, escolha um módulo de arma inativo: enquanto ele ficar inativo e este módulo ativo, uma ação faz um ataque livre com o módulo escolhido.'},
+  {id:'poder', nome:'Poder', estruturas:['exoesqueleto','mecha'],
+    texto:'+2 em testes opostos baseados em força bruta ou resistência física.'},
+  {id:'sensor', nome:'Sensor',
+    texto:'+2 em testes abertos pra examinar criaturas, itens e locais próximos.'},
+  {id:'turbo', nome:'Turbo',
+    texto:'+2 em testes opostos baseados em velocidade e manobras rápidas.'},
+];
+
+const estruturaDoVeiculo = p => ESTRUTURAS_VEICULO.find(e => e.id === p.veiculo?.estrutura) || null;
+const limiteModulosPossuidos = np => 1 + np*2; // 3 na 1ª compra, +2 a cada nova
+const limiteModulosAtivos = np => 3 + np;
+function moduloVeiculoDef(id, tipo){
+  if(tipo === 'armadura') return MODULOS_ARMADURA_VEICULO.find(m => m.id === id);
+  if(tipo === 'arma') return id === 'escudo-veiculo' ? ESCUDO_VEICULO : MODULOS_ARMA_VEICULO.find(m => m.id === id);
+  return MODULOS_SUPORTE_VEICULO.find(m => m.id === id);
 }
 
 /* ===========================================================================
@@ -1640,6 +1732,9 @@ function novoPersonagem(nome){
     // Culinária do Gourmet: estoque de ingrediente por sabor e a "ficha de
     // receitas" (efeito de cada combinação de sabor já descoberta).
     culinaria: {ingredientes: {amargo:0, salgado:0, azedo:0, doce:0, umami:0}, receitas: {}},
+    // Veículo Pessoal do Piloto: estrutura fixa + módulos possuídos (cada um
+    // com um `ativo` — só os ativos valem enquanto o personagem pilota).
+    veiculo: {estrutura: null, modulos: []},
     atual: {pv:null, pm:null, pi:null},   // null = cheio
     condicoes: [],
     // afinidades[tipoId] = 'normal' | 'vulneravel' | 'resistente' | 'imune' | 'absorve'
@@ -2685,6 +2780,95 @@ function blocoCulinaria(p){
   </div>`;
 }
 
+function blocoVeiculo(p){
+  const np = npDoPoder(p, 'piloto', 'veiculo-pessoal');
+  if(np <= 0) return '';
+  const veic = p.veiculo || {estrutura:null, modulos:[]};
+  const estrutura = estruturaDoVeiculo(p);
+  const modulos = veic.modulos || [];
+  const limitePossuidos = limiteModulosPossuidos(np);
+  const limiteAtivos = limiteModulosAtivos(np);
+
+  if(!estrutura){
+    return `<div class="cartao">
+      <h2 style="font-size:18px">Veículo Pessoal</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        Escolha a estrutura do seu veículo (pág. 158-159) — ela é permanente,
+        escolha com cuidado.
+      </p>
+      <select id="c-veiculo-estrutura">
+        <option value="">— escolher —</option>
+        ${ESTRUTURAS_VEICULO.map(e => `<option value="${e.id}">${e.nome} (${e.passageiros} passageiro${e.passageiros===1?'':'s'} além de você, distância ${e.distancia})</option>`).join('')}
+      </select>
+    </div>`;
+  }
+
+  const pesoAtivoTotal = modulos.filter(m => m.ativo).reduce((soma,m) => {
+    const def = moduloVeiculoDef(m.id, m.tipo);
+    return soma + (def?.custaDois ? 2 : 1);
+  }, 0);
+  const armaduraAtivaCount = modulos.filter(m => m.tipo==='armadura' && m.ativo).length;
+  const armaAtivaCount = modulos.filter(m => m.tipo==='arma' && m.ativo).length;
+  const temArmaExclusivaAtiva = modulos.some(m => m.tipo==='arma' && m.ativo && moduloVeiculoDef(m.id,'arma')?.exclusivo);
+
+  return `<div class="cartao">
+    <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px">
+      <h2 style="font-size:18px">Veículo Pessoal</h2>
+      <span class="mini">${estrutura.nome} · ${modulos.length} de ${limitePossuidos} módulos possuídos · ${pesoAtivoTotal} de ${limiteAtivos} ativos</span>
+    </div>
+    <p class="mini" style="margin:6px 0 14px">
+      ${estrutura.nome}: ${estrutura.passageiros} passageiro${estrutura.passageiros===1?'':'s'} além de você, distância de viagem ${estrutura.distancia}. Cabem até ${estrutura.maxArma} módulo${estrutura.maxArma===1?'':'s'} de arma e ${estrutura.maxArmadura} de armadura ativos ao mesmo tempo (suporte não tem limite próprio, só entra na conta geral). Os números abaixo só valem enquanto estiver pilotando.
+    </p>
+
+    <div class="linha" style="flex-wrap:wrap;gap:10px">
+      <select id="c-veiculo-novo" style="flex:1;min-width:220px">
+        <option value="">— escolher módulo —</option>
+        <optgroup label="Armadura">
+          ${MODULOS_ARMADURA_VEICULO.map(m => `<option value="armadura:${m.id}">${m.nome}</option>`).join('')}
+        </optgroup>
+        <optgroup label="Arma">
+          ${[...MODULOS_ARMA_VEICULO, ESCUDO_VEICULO].map(m => `<option value="arma:${m.id}">${m.nome}</option>`).join('')}
+        </optgroup>
+        <optgroup label="Suporte">
+          ${MODULOS_SUPORTE_VEICULO.map(m => `<option value="suporte:${m.id}">${m.nome}${m.custaDois?' (conta como 2)':''}</option>`).join('')}
+        </optgroup>
+      </select>
+      <button id="btAddModuloVeiculo" ${modulos.length>=limitePossuidos?'disabled':''}>Adicionar</button>
+    </div>
+
+    ${modulos.length===0 ? `<p class="mini" style="margin-top:14px">Nenhum módulo ainda.</p>` : modulos.map((m,i) => {
+      const def = moduloVeiculoDef(m.id, m.tipo);
+      if(!def) return '';
+      const restritoEstrutura = def.estruturas && !def.estruturas.includes(estrutura.id);
+      let bloqueado = false, motivo = '';
+      if(!m.ativo){
+        if(restritoEstrutura){ bloqueado = true; motivo = 'não serve nesta estrutura'; }
+        else if(m.tipo==='armadura' && armaduraAtivaCount >= estrutura.maxArmadura){ bloqueado = true; motivo = 'limite de armadura ativa'; }
+        else if(m.tipo==='arma' && temArmaExclusivaAtiva){ bloqueado = true; motivo = 'outro módulo de arma exclusivo já está ativo'; }
+        else if(m.tipo==='arma' && def.exclusivo && armaAtivaCount > 0){ bloqueado = true; motivo = 'exclusivo — nenhum outro módulo de arma pode estar ativo'; }
+        else if(m.tipo==='arma' && armaAtivaCount >= estrutura.maxArma){ bloqueado = true; motivo = 'limite de arma ativa'; }
+        else if(pesoAtivoTotal + (def.custaDois?2:1) > limiteAtivos){ bloqueado = true; motivo = 'limite geral de módulos ativos'; }
+      }
+      const textoDetalhe = m.tipo==='armadura'
+        ? `Defesa ${def.textoDefesa} · Defesa Mágica ${def.textoDefesaMagica}${def.marcial?' (marcial)':''}`
+        : m.tipo==='arma'
+        ? (def.ehEscudo ? def.texto : `Precisão ${textoPrecisao(def)} · Dano ${textoDano(def)}${def.exclusivo?' (exclusivo)':''}${def.obs?` — ${def.obs}`:''}`)
+        : def.texto;
+      return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda);display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div style="flex:1">
+          <label style="display:flex;align-items:baseline;gap:8px;text-transform:none;letter-spacing:normal;font-size:14px;color:var(--texto)">
+            <input type="checkbox" style="width:auto" data-veiculo-modulo-ativo="${i}" ${m.ativo?'checked':''} ${(!m.ativo && bloqueado)?'disabled':''}>
+            <span><strong>${def.nome}</strong> <span class="mini">(${m.tipo})</span></span>
+          </label>
+          <p class="mini" style="margin:4px 0 0 26px">${textoDetalhe}</p>
+          ${!m.ativo && bloqueado ? `<p class="mini" style="margin:2px 0 0 26px;color:var(--suave)">Travado: ${motivo}.</p>` : ''}
+        </div>
+        <button data-veiculo-modulo-remover="${i}">Tirar</button>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function abaInventario(p){
   const acessorios = p.acessorios || [];
   return `<div class="cartao">
@@ -2733,7 +2917,8 @@ function abaInventario(p){
   </div>
 
   ${blocoEngenhocas(p)}
-  ${blocoCulinaria(p)}`;
+  ${blocoCulinaria(p)}
+  ${blocoVeiculo(p)}`;
 }
 
 function abaLacos(p){
@@ -2983,6 +3168,30 @@ function ligarEventos(){
       cul.ultimaIguaria = {sabores, pares: [...pares]};
     });
   };
+
+  const veiculoBase = () => ({estrutura:null, modulos:[]});
+  const btVeiculoEstrutura = document.getElementById('c-veiculo-estrutura');
+  if(btVeiculoEstrutura) btVeiculoEstrutura.onchange = () => mudar(p => {
+    (p.veiculo || (p.veiculo = veiculoBase())).estrutura = btVeiculoEstrutura.value || null;
+  });
+  const btAddModuloVeiculo = document.getElementById('btAddModuloVeiculo');
+  if(btAddModuloVeiculo) btAddModuloVeiculo.onclick = () => {
+    const sel = document.getElementById('c-veiculo-novo');
+    if(!sel || !sel.value) return;
+    const [tipo, id] = sel.value.split(':');
+    mudar(p => {
+      const veic = p.veiculo || (p.veiculo = veiculoBase());
+      const modulos = veic.modulos || (veic.modulos = []);
+      if(modulos.length >= limiteModulosPossuidos(npDoPoder(p, 'piloto', 'veiculo-pessoal'))) return;
+      modulos.push({tipo, id, ativo:false});
+    });
+  };
+  app.querySelectorAll('[data-veiculo-modulo-ativo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.veiculo.modulos[Number(el.dataset.veiculoModuloAtivo)].ativo = el.checked;
+    }));
+  app.querySelectorAll('[data-veiculo-modulo-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.veiculo.modulos.splice(Number(b.dataset.veiculoModuloRemover), 1)));
 
   app.querySelectorAll('[data-atualrec]').forEach(el =>
     el.onchange = () => mudar(p => p.atual[el.dataset.atualrec] = Number(el.value) || 0));

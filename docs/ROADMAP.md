@@ -140,19 +140,21 @@ fechada — falta só ligar a ficha à conta do Hub (ver "Depois" abaixo).
     Preparar uma iguaria gasta 2-3 ingredientes do estoque e aplica o
     efeito de cada combinação formada, rolando na hora qualquer combinação
     ainda não descoberta
+  - **Veículo Pessoal do Piloto** (Atlas Techno Fantasy, pág. 158-169): o
+    último item que faltava, fechado depois do Zé mandar as páginas que
+    tinham ficado de fora (167-169, a tabela de Módulos de Suporte). Escolhe
+    uma Estrutura fixa (Exoesqueleto/Mecha/Montaria), adiciona módulos de
+    Armadura/Arma/Suporte até o limite que o poder Veículo Pessoal permite,
+    e ativa até o limite de módulos simultâneos da estrutura — com Precisão
+    e Dano calculados pros módulos de arma (reaproveitando as mesmas
+    fórmulas do equipamento normal) e a regra de "exclusivo" (alguns módulos
+    de arma travam qualquer outro) aplicada automaticamente. Os números só
+    valem enquanto pilota, por isso ficam de referência, sem entrar na
+    Defesa/Precisão normais da ficha (que valem o tempo todo)
 
-### Fora de escopo por agora (conteúdo de Atlas que não veio completo)
-
-Um poder ainda fica só como texto de referência, sem painel próprio — o
-conteúdo dele está num Atlas que só chegou pela metade:
-
-- **Veículo Pessoal do Piloto** (Atlas Techno Fantasy): a regra geral, a
-  lista de Estruturas (Exoesqueleto/Mecha/Montaria) e os Módulos de
-  Armadura e de Arma (pág. 158-166) já foram lidos e dá pra automatizar,
-  mas os PDFs enviados terminam bem antes da tabela de **Módulos de
-  Suporte** (Aéreo, Sensor, Turbo, etc. — citados pelo nome nos exemplos de
-  veículo, mas sem efeito descrito nas páginas que chegaram). Falta pedir
-  ao Zé as páginas 167 em diante desse Atlas pra fechar.
+Com isso, as 25 classes de Fabula Ultima (Livro Básico + três Atlas) estão
+com todos os poderes automatizados ou documentados fielmente — não sobrou
+nenhum "mecânica não modelada" pendente.
 
 ---
 
