@@ -258,6 +258,27 @@ por `style.display` direto, que sempre tem prioridade. `npm run build`, lint
 e os 12 testes automatizados (dois novos, de `podeAcessarPersonagem`)
 passando.
 
+### Campanhas — próximas peças (anotado em 28/08/2026, ainda não construído)
+
+- [ ] **Ficha de Inimigo/Vilão** — molde próprio (bem diferente da ficha de
+      jogador: nível + espécie no cabeçalho, 4 atributos em dado, PV/PM/
+      Iniciativa/Defesa calculados por fórmula, Afinidades, e blocos de
+      texto livre pra Ataques Básicos/Feitiços/Outras Ações/Regras
+      Especiais) mais um catálogo de inimigos prontos pra usar como ponto
+      de partida. O Zé já mandou 4 PDFs com esse material (96 inimigos/
+      vilões ao todo: Bestiário do Livro Básico + os vilões dos três
+      Atlas), mas pediu pra não construir ainda — pode ter mais PDF vindo.
+      Decisão de escopo já combinada: primeiro o catálogo, e o molde da
+      ficha em branco sai do formato que os inimigos do catálogo usam (não
+      o contrário)
+- [ ] **Manual do Mestre dentro da campanha** — uma aba/seção pra anotações
+      de mestre: criar as próprias na hora, ou usar prontas quando
+      existirem (o Zé tem os PDFs do Guia do Mestre e do Escudo do Mestre
+      pra mandar depois)
+- [ ] **Página de Escudo do Mestre** — referência rápida de regras (o que
+      cada ação faz, tabelas de dificuldade, etc.) pra consultar durante a
+      sessão sem precisar abrir o livro
+
 ### Outros sistemas
 - [ ] Sistema SAO
 - [ ] Thrylikí Chelóna
