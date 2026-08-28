@@ -1,0 +1,2069 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — Sistema SAO</title>
+<style>
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+  --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+.derivado.risco .val{color:var(--alerta)}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.classe-linha{display:grid; grid-template-columns:1fr 90px auto; gap:10px; align-items:end; margin-bottom:10px}
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.cursor{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px}
+.cursor.verde{background:var(--verde)}
+.cursor.laranja{background:var(--laranja)}
+.cursor.vermelho{background:var(--vermelho)}
+.barra-skill{height:6px; border-radius:99px; background:var(--borda); overflow:hidden; margin-top:6px}
+.barra-skill span{display:block; height:100%; background:var(--ambar)}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Sistema SAO</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE PERSONAGEM — SISTEMA SAO (homebrew original do Zé)
+
+   Este é o CHASSI do sistema (decisão #17 do Hub: cada sistema de regras é
+   um módulo próprio). Ele responde as sete perguntas de ARQUITETURA.md:
+   atributos, criação, derivados, teste, condições, progressão e ficha —
+   com um catálogo inicial pequeno de classes/skills, que cresce em fatias
+   futuras (igual o Fabula Ultima foi ganhando classe por classe).
+
+   Inspiração de três obras (não é ficha de nenhuma delas — é design
+   original, sem texto/nome protegido de nenhuma):
+   - Sword Art Online: sem separar "personagem" de "jogo" — o próprio
+     personagem vê PV/PM, nível e nome de golpe na tela. Golpes assistidos
+     pelo sistema (Sword Skills) com uma janela de vulnerabilidade depois.
+   - Overgeared (Satisfy): multiclasse sem limite, cada skill sobe de
+     estágio com o USO (não é escolha em lista), e morrer pesa caro (perde
+     XP, pode derrubar item) mas não é definitivo.
+   - Shangri-La Frontier: nível não é tudo — dar valor a estudar o próprio
+     sistema (a aba Skills existe pra registrar isso).
+
+   Os personagens ficam no SEU navegador (localStorage), igual o Fabula
+   Ultima e o Kaizoku no Sho começaram (decisão #40) — Modo Hub (salvar na
+   conta) é fatia futura, quando o resto do sistema estiver rodando numa
+   mesa de verdade.
+   =========================================================================== */
+
+/* --- Regras do sistema, em forma de dados -------------------------------- */
+
+// Mesma escala de dado do Fabula Ultima (decisão da conversa: reaproveitar
+// o estilo de teste que os jogadores já conhecem). Teste = rola os dois
+// dados dos atributos pedidos + soma, contra uma Dificuldade que o mestre
+// define. Os dois dados iguais e 6+: sucesso crítico. Os dois em 1: falha
+// crítica — igual o Escudo do Mestre do Fabula Ultima já explica.
+const ESCALA = [6, 8, 10, 12];
+
+const ATRIBUTOS = [
+  {id:'forca',     nome:'Força',     abrev:'FOR', sobre:'dano corpo a corpo, capacidade de carga'},
+  {id:'agilidade', nome:'Agilidade', abrev:'AGI', sobre:'iniciativa, evasão, ataque à distância'},
+  {id:'mente',     nome:'Mente',     abrev:'MEN', sobre:'magia, PM, percepção do sistema'},
+  {id:'vontade',   nome:'Vontade',   abrev:'VON', sobre:'resistência mental, foco, negociação'},
+];
+
+const PERFIS = [
+  {id:'especializado', nome:'Especializado',     dados:[10,10,6,6]},
+  {id:'mediano',       nome:'Mediano',           dados:[10,8,8,6]},
+  {id:'toda-obra',     nome:'Pau pra toda obra', dados:[8,8,8,8]},
+];
+
+const CURSORES = [
+  {id:'verde',    nome:'Verde — jogador comum',                  sobre:'nunca atacou outro jogador'},
+  {id:'laranja',  nome:'Laranja — criminoso',                    sobre:'atacou outro jogador (PvP), mas não matou'},
+  {id:'vermelho', nome:'Vermelho — assassino',                   sobre:'matou outro jogador dentro do jogo'},
+];
+
+// Classes acumulam sem limite (multiclasse — decisão da conversa). Cada uma
+// só marca uma "família" (o que ela É), sem números fixos: os poderes de
+// cada classe são fatia futura, igual o Fabula Ultima ganhou os catálogos
+// depois do chassi básico existir.
+const CATEGORIAS_CLASSE = [
+  {id:'combate',  nome:'Combate',  sobre:'skills de ataque e defesa — sobe fácil brigando com monstro'},
+  {id:'producao', nome:'Produção', sobre:'fabricar, refinar e vender itens'},
+  {id:'outras',   nome:'Outras',   sobre:'utilidade fora de combate — fraca em briga, sem ofício'},
+];
+
+const CLASSES = [
+  {id:'espadachim', nome:'Espadachim', categoria:'combate'},
+  {id:'arcanista',  nome:'Arcanista',  categoria:'combate'},
+  {id:'batedor',    nome:'Batedor',    categoria:'combate'},
+  {id:'lanceiro',   nome:'Lanceiro',   categoria:'combate'},
+  {id:'arqueiro',   nome:'Arqueiro',   categoria:'combate'},
+  {id:'ferreiro',   nome:'Ferreiro',   categoria:'producao'},
+  {id:'alquimista', nome:'Alquimista', categoria:'producao'},
+  {id:'encantador', nome:'Encantador', categoria:'producao'},
+  {id:'cozinheiro', nome:'Cozinheiro', categoria:'producao'},
+  {id:'mercador',   nome:'Mercador',   categoria:'outras'},
+  {id:'domador',    nome:'Domador',    categoria:'outras'},
+  {id:'curandeiro', nome:'Curandeiro', categoria:'outras'},
+];
+
+// Cinco poderes por classe, igual o Fabula Ultima — mas cada personagem tem
+// PONTOS DE PODER de uma classe igual ao nível investido nela (sem teto de
+// "3 classes, 5 níveis" porque aqui multiclasse é ilimitada). `max` maior
+// que 1 é um poder repetível (o "(+N)" do Fabula): cada compra empilha o
+// efeito descrito no texto.
+const PODERES_CLASSE = {
+  espadachim: [
+    {id:'postura-combate', nome:'Postura de Combate', max:1,
+      texto:'Ao entrar em combate, escolhe uma postura até o fim da cena: Ofensiva (+2 no dano de golpes, -2 de Defesa) ou Defensiva (+2 de Defesa, -2 no dano de golpes).'},
+    {id:'dominio-arma', nome:'Domínio de Arma', max:3,
+      texto:'Cada compra: +1 no dano de qualquer golpe que usar com a arma marcial que escolheu ao comprar este poder pela primeira vez.'},
+    {id:'combo-assistido', nome:'Combo Assistido', max:1,
+      texto:'Depois de acertar um Golpe (Sword Skill), o próximo ataque livre no mesmo turno não sofre a penalidade da condição Vulnerável (pós-motion).'},
+    {id:'folego-batalha', nome:'Fôlego de Batalha', max:2,
+      texto:'Cada compra: +1 uso por sessão de ignorar a condição Vulnerável (pós-motion) assim que ela aparecer.'},
+    {id:'golpe-original', nome:'Golpe Original', max:1,
+      texto:'Exige ter registrado ao menos um golpe do sistema. Pode marcar um golpe como "Original": mesmo efeito de um golpe do sistema, mas sem a condição de pós-motion — uma vez por sessão.'},
+  ],
+  arcanista: [
+    {id:'afinidade-elemental', nome:'Afinidade Elemental', max:1,
+      texto:'Escolhe um elemento (Fogo, Gelo, Raio, Luz ou Trevas). Magias desse elemento custam -1 PM (mínimo 1).'},
+    {id:'canalizacao-rapida', nome:'Canalização Rápida', max:3,
+      texto:'Cada compra: -1 PM no custo da próxima magia que lançar na cena (não acumula com a Afinidade Elemental no mesmo lance).'},
+    {id:'escudo-de-mana', nome:'Escudo de Mana', max:1,
+      texto:'Uma vez por cena, pode gastar PM no lugar de PV ao sofrer dano — cada 2 PM gastos evita 1 de dano.'},
+    {id:'segunda-magia', nome:'Segunda Magia', max:2,
+      texto:'Cada compra: +1 magia conhecida além do normal para o nível desta classe.'},
+    {id:'explosao-arcana', nome:'Explosão Arcana', max:1,
+      texto:'Uma vez por sessão, gasta todo o PM restante num único golpe mágico que ignora metade da Defesa Mágica do alvo.'},
+  ],
+  batedor: [
+    {id:'passo-silencioso', nome:'Passo Silencioso', max:1,
+      texto:'Testes de furtividade usam Agilidade + Agilidade em vez do par de atributos normal da ação.'},
+    {id:'alvo-fraco', nome:'Alvo Fraco', max:3,
+      texto:'Cada compra: +1 de dano contra um alvo que ainda não agiu nesta cena.'},
+    {id:'detectar-falha', nome:'Detectar Falha', max:1,
+      texto:'Gasta uma ação estudando uma sala ou um chefe pra revelar uma fraqueza mecânica dele — o mestre entrega uma pista concreta de exploração, não só "ele é forte".'},
+    {id:'reflexo-fuga', nome:'Reflexo de Fuga', max:2,
+      texto:'Cada compra: +1 uso por sessão de sair de um combate sem que a Penalidade de Morte se ative, mesmo com PV em risco.'},
+    {id:'sexto-sentido', nome:'Sexto Sentido', max:1,
+      texto:'Nunca é surpreendido, e sempre age na primeira posição da iniciativa no primeiro turno de um combate.'},
+  ],
+  lanceiro: [
+    {id:'alcance-superior', nome:'Alcance Superior', max:1,
+      texto:'Golpes feitos com lança atingem um segundo alvo adjacente ao primeiro, sem gastar outro golpe.'},
+    {id:'ponta-firme', nome:'Ponta Firme', max:3,
+      texto:'Cada compra: +1 de Defesa enquanto estiver com uma lança em mãos e não tiver se movido no próprio turno.'},
+    {id:'investida', nome:'Investida', max:1,
+      texto:'Uma vez por cena, avança até a linha de frente e ataca no mesmo impulso, ignorando a primeira reação que o alvo tentaria fazer.'},
+    {id:'guarda-de-grupo', nome:'Guarda de Grupo', max:2,
+      texto:'Cada compra: +1 uso por sessão de proteger um aliado adjacente, sofrendo o ataque destinado a ele.'},
+    {id:'lanca-que-perfura', nome:'Lança que Perfura o Andar', max:1,
+      texto:'Uma vez por sessão, um golpe que ignora metade da Defesa do alvo e o empurra pra longe.'},
+  ],
+  arqueiro: [
+    {id:'mira-firme', nome:'Mira Firme', max:1,
+      texto:'Ataques à distância contra um alvo que não se moveu desde o último turno ganham +2 no teste.'},
+    {id:'carcaz-ampliado', nome:'Carcaz Ampliado', max:3,
+      texto:'Cada compra: +1 flecha especial (fogo, gelo ou veneno, escolhida na hora) disponível por sessão.'},
+    {id:'tiro-duplo', nome:'Tiro Duplo', max:1,
+      texto:'Uma vez por cena, dispara em dois alvos diferentes no mesmo golpe, dividindo o dano normal entre eles.'},
+    {id:'passo-atras', nome:'Passo Atrás', max:2,
+      texto:'Cada compra: +1 uso por sessão de se afastar do alcance de um inimigo corpo a corpo sem sofrer ataque de oportunidade.'},
+    {id:'flecha-que-cala', nome:'Flecha que Cala o Andar', max:1,
+      texto:'Uma vez por sessão, um tiro à distância máxima que aplica a condição Silenciado além do dano normal.'},
+  ],
+  ferreiro: [
+    {id:'olho-pro-metal', nome:'Olho pro Metal', max:1,
+      texto:'Sabe avaliar a raridade real de um item (Teste de Mente + Vontade) sem precisar de loja ou NPC.'},
+    {id:'forja-reforcada', nome:'Forja Reforçada', max:3,
+      texto:'Cada compra: +1 na durabilidade máxima de qualquer item que este personagem fabricar.'},
+    {id:'reparo-de-campo', nome:'Reparo de Campo', max:1,
+      texto:'Pode restaurar a durabilidade de uma arma ou armadura fora de uma forja, gastando material equivalente.'},
+    {id:'encantamento-simples', nome:'Encantamento Simples', max:2,
+      texto:'Cada compra: libera um encaixe de bônus fixo (Defesa, Dano ou outro combinado com o mestre) pra colocar num item que fabricar.'},
+    {id:'obra-prima', nome:'Obra-Prima', max:1,
+      texto:'Uma vez por item, pode fabricar algo de raridade um degrau acima do normal, gastando o dobro de material.'},
+  ],
+  alquimista: [
+    {id:'estoque-de-pocoes', nome:'Estoque de Poções', max:1,
+      texto:'Começa cada sessão com um número de poções de cura menor prontas igual ao nível desta classe.'},
+    {id:'mistura-potente', nome:'Mistura Potente', max:3,
+      texto:'Cada compra: aumenta em 1 o efeito de qualquer poção que este personagem fabricar.'},
+    {id:'antidoto-universal', nome:'Antídoto Universal', max:1,
+      texto:'Pode fabricar um item que remove uma condição à escolha de quem o usar.'},
+    {id:'explosivos', nome:'Explosivos', max:2,
+      texto:'Cada compra: libera uma bomba ou veneno como item de combate, com dano em área combinado com o mestre.'},
+    {id:'elixir-lendario', nome:'Elixir Lendário', max:1,
+      texto:'Uma vez por sessão, fabrica um item de uso único com efeito acordado com o mestre na hora, sem precisar de loja.'},
+  ],
+  encantador: [
+    {id:'toque-encantado', nome:'Toque Encantado', max:1,
+      texto:'Sabe aplicar um encaixe de encantamento num item já existente, sem precisar tê-lo fabricado.'},
+    {id:'runas-estaveis', nome:'Runas Estáveis', max:3,
+      texto:'Cada compra: +1 na durabilidade máxima de qualquer item que este personagem encantar.'},
+    {id:'desencantar', nome:'Desencantar', max:1,
+      texto:'Pode remover um encantamento de um item sem destruí-lo, guardando a runa pra usar em outro item depois.'},
+    {id:'encantamento-duplo', nome:'Encantamento Duplo', max:2,
+      texto:'Cada compra: +1 encaixe de encantamento liberado num mesmo item (normalmente só cabe um).'},
+    {id:'runa-ancestral', nome:'Runa Ancestral', max:1,
+      texto:'Uma vez por sessão, aplica um encantamento de raridade um degrau acima do que normalmente conseguiria.'},
+  ],
+  cozinheiro: [
+    {id:'tempero-da-casa', nome:'Tempero da Casa', max:1,
+      texto:'Pratos que prepara dão um bônus temporário simples (combinado com o mestre) até o fim da próxima cena.'},
+    {id:'fartura', nome:'Fartura', max:3,
+      texto:'Cada compra: +1 porção de comida preparada por sessão, sem gastar ingrediente extra.'},
+    {id:'banquete-de-grupo', nome:'Banquete de Grupo', max:1,
+      texto:'Uma vez por sessão, prepara um prato que beneficia todos os aliados presentes, não só quem come na hora.'},
+    {id:'receita-secreta', nome:'Receita Secreta', max:2,
+      texto:'Cada compra libera uma combinação de ingredientes própria, registrada como receita permanente deste personagem.'},
+    {id:'prato-lendario', nome:'Prato Lendário', max:1,
+      texto:'Uma vez por sessão, cozinha algo com efeito equivalente a uma poção rara, sem precisar de loja.'},
+  ],
+  mercador: [
+    {id:'faro-pra-barganha', nome:'Faro pra Barganha', max:1,
+      texto:'Sempre consegue um preço melhor numa negociação (vantagem no teste envolvido).'},
+    {id:'rede-de-contatos', nome:'Rede de Contatos', max:3,
+      texto:'Cada compra: acesso a um NPC informante numa cidade diferente, definido em conversa com o mestre.'},
+    {id:'avaliacao-instantanea', nome:'Avaliação Instantânea', max:1,
+      texto:'Identifica preço e raridade de qualquer item à vista, sem precisar de teste.'},
+    {id:'estoque-pessoal', nome:'Estoque Pessoal', max:2,
+      texto:'Cada compra: carrega itens comerciais extras sem que eles contem no peso normal da ficha.'},
+    {id:'investimento', nome:'Investimento', max:1,
+      texto:'Pode gastar moeda entre sessões pra render um bônus fixo (combinado com o mestre) na sessão seguinte.'},
+  ],
+  domador: [
+    {id:'vinculo-com-criatura', nome:'Vínculo com Criatura', max:1,
+      texto:'Tem um companheiro — animal ou monstro domesticado — com uma ficha simplificada à parte.'},
+    {id:'comando', nome:'Comando', max:3,
+      texto:'Cada compra: +1 numa característica do companheiro (PV, dano ou uma perícia, à escolha ao comprar).'},
+    {id:'fala-com-bestas', nome:'Fala com Bestas', max:1,
+      texto:'Consegue se comunicar com criaturas não civilizadas, mesmo sem uma língua em comum.'},
+    {id:'domar-em-campo', nome:'Domar em Campo', max:2,
+      texto:'Cada compra: +1 chance por sessão de tentar domesticar um monstro derrotado ou rendido em campo, além do companheiro inicial.'},
+    {id:'fusao-de-vinculo', nome:'Fusão de Vínculo', max:1,
+      texto:'Uma vez por sessão, o companheiro pode emprestar uma ação extra ao domador — um ataque ou uma defesa conjunta.'},
+  ],
+  curandeiro: [
+    {id:'maos-que-curam', nome:'Mãos que Curam', max:1,
+      texto:'Pode gastar PM pra restaurar PV de um aliado fora de combate, numa proporção combinada com o mestre.'},
+    {id:'fluxo-constante', nome:'Fluxo Constante', max:3,
+      texto:'Cada compra: -1 no custo de PM de uma cura que lançar na cena (mínimo 1 PM).'},
+    {id:'diagnostico', nome:'Diagnóstico', max:1,
+      texto:'Identifica de longe (Teste de Mente + Vontade) qual condição um aliado ou inimigo está sofrendo.'},
+    {id:'cura-em-area', nome:'Cura em Área', max:2,
+      texto:'Cada compra: +1 uso por sessão de curar todo um grupo de aliados de uma vez, com efeito reduzido.'},
+    {id:'milagre', nome:'Milagre', max:1,
+      texto:'Uma vez por sessão, remove a Penalidade de Morte de um aliado antes dela se aplicar, se agir a tempo.'},
+  ],
+};
+
+const CONDICOES = [
+  {id:'atordoado',   nome:'Atordoado'},
+  {id:'envenenado',  nome:'Envenenado'},
+  {id:'sangrando',   nome:'Sangrando'},
+  {id:'silenciado',  nome:'Silenciado (bloqueia magia)'},
+  {id:'enraizado',   nome:'Enraizado'},
+  {id:'cego',        nome:'Cego'},
+  {id:'amedrontado', nome:'Amedrontado'},
+  {id:'exausto',     nome:'Exausto'},
+  {id:'pos-motion',  nome:'Vulnerável (pós-motion)'},
+];
+
+// Skill sobe de ESTÁGIO com o uso em jogo (Overgeared), não é escolha numa
+// lista. Cada estágio tem 10 níveis internos; ao completar o 10º, passa
+// pro próximo estágio. "Mestre 10" é o teto — a skill está dominada.
+const ESTAGIOS_SKILL = [
+  {id:'iniciante',     nome:'Iniciante'},
+  {id:'intermediario', nome:'Intermediário'},
+  {id:'avancado',      nome:'Avançado'},
+  {id:'mestre',        nome:'Mestre'},
+];
+
+// Zona onde o personagem está agora — cidade/base é sempre segura (sem
+// combate real, sem Penalidade de Morte); masmorra é onde o risco existe.
+const ZONAS = [
+  {id:'segura', nome:'Zona segura (cidade/base)'},
+  {id:'perigo', nome:'Masmorra / zona de perigo'},
+];
+
+const RANKS_GUILDA = [
+  {id:'lider',   nome:'Líder'},
+  {id:'oficial', nome:'Oficial'},
+  {id:'membro',  nome:'Membro'},
+  {id:'recruta', nome:'Recruta'},
+];
+
+// Como o resto do jogo enxerga um título — o ponto do "Beater" do SAO
+// original é que nem toda reputação é boa reputação.
+const VISOES_TITULO = [
+  {id:'admirado', nome:'Admirado'},
+  {id:'neutro',   nome:'Neutro'},
+  {id:'malvisto', nome:'Malvisto'},
+];
+
+const RESULTADOS_DUELO = [
+  {id:'pendente', nome:'Pendente'},
+  {id:'venceu',   nome:'Venceu'},
+  {id:'perdeu',   nome:'Perdeu'},
+  {id:'empate',   nome:'Empate'},
+];
+
+// Catálogo de Golpes (Sword Skills) prontos pra escolher, em vez de digitar
+// tudo do zero — mas o campo de texto livre continua existindo pra golpe
+// homebrew ou "Original" (poder do Espadachim). Um por linha de arma.
+const TIPOS_ARMA = [
+  {id:'espada-uma-mao',    nome:'Espada (uma mão)'},
+  {id:'espada-duas-maos',  nome:'Espada (duas mãos)'},
+  {id:'lanca',             nome:'Lança'},
+  {id:'arco',              nome:'Arco'},
+  {id:'adaga',             nome:'Adaga'},
+  {id:'cajado',            nome:'Cajado (arma mágica)'},
+];
+
+const GOLPES_CATALOGO = [
+  {id:'corte-vertical',     nome:'Corte Vertical',      arma:'espada-uma-mao',   dano:'1d8+FOR',                              posMotion:'rígido por 1 turno, Defesa -2'},
+  {id:'investida-linear',   nome:'Investida Linear',    arma:'espada-uma-mao',   dano:'1d10+FOR',                             posMotion:'avança 3m à frente, de costas pro grupo até o próximo turno'},
+  {id:'giro-cortante',      nome:'Giro Cortante',       arma:'espada-uma-mao',   dano:'1d6+FOR (todos ao redor)',             posMotion:'perde a próxima reação'},
+  {id:'talho-pesado',       nome:'Talho Pesado',        arma:'espada-duas-maos', dano:'2d8+FOR',                              posMotion:'rígido por 2 turnos, Defesa -4'},
+  {id:'quebra-guarda',      nome:'Quebra-Guarda',       arma:'espada-duas-maos', dano:'1d10+FOR, ignora Defesa de escudo',    posMotion:'arma presa por 1 turno (precisa de uma ação só pra soltar)'},
+  {id:'estocada-longa',     nome:'Estocada Longa',      arma:'lanca',            dano:'1d8+FOR (alcance dobrado)',            posMotion:'não pode recuar no próximo turno'},
+  {id:'varredura-lanca',    nome:'Varredura de Lança',  arma:'lanca',            dano:'1d6+FOR (linha de alvos)',             posMotion:'Defesa -2 até agir de novo'},
+  {id:'tiro-carregado',     nome:'Tiro Carregado',      arma:'arco',             dano:'2d6+AGI',                              posMotion:'gasta o movimento do próximo turno recarregando'},
+  {id:'chuva-de-flechas',   nome:'Chuva de Flechas',    arma:'arco',             dano:'1d6+AGI (até 3 alvos na área)',        posMotion:'sem flecha pronta — próximo tiro com -2'},
+  {id:'golpe-nas-sombras',  nome:'Golpe nas Sombras',   arma:'adaga',            dano:'1d6+AGI (dobra se não notado)',        posMotion:'fica visível — perde furtividade ativa'},
+  {id:'lamina-dupla',       nome:'Lâmina Dupla',        arma:'adaga',            dano:'1d4+AGI, dois golpes no turno',        posMotion:'Defesa -3 até o fim do turno seguinte'},
+  {id:'impacto-arcano',     nome:'Impacto Arcano',      arma:'cajado',           dano:'1d8+MEN, custa 2 PM',                  posMotion:'não pode concentrar em outro feitiço no próximo turno'},
+  {id:'onda-de-choque',     nome:'Onda de Choque',      arma:'cajado',           dano:'1d6+MEN em área, custa 3 PM',          posMotion:'-2 em testes de Mente até agir de novo'},
+];
+
+// Catálogo de Magias (Grimório), a mesma lógica dos golpes: pronto pra
+// escolher, sem travar quem preferir digitar a própria magia homebrew.
+const ESCOLAS_MAGIA = [
+  {id:'fogo',     nome:'Fogo'},
+  {id:'gelo',     nome:'Gelo'},
+  {id:'raio',     nome:'Raio'},
+  {id:'luz',      nome:'Luz'},
+  {id:'trevas',   nome:'Trevas'},
+  {id:'suporte',  nome:'Suporte'},
+];
+
+const MAGIAS_CATALOGO = [
+  {id:'bola-de-fogo',       nome:'Bola de Fogo',        escola:'fogo',    custoPm:3, efeito:'2d6 de dano de fogo numa área pequena'},
+  {id:'lamina-flamejante',  nome:'Lâmina Flamejante',   escola:'fogo',    custoPm:2, efeito:'+1d4 de dano de fogo no próximo golpe'},
+  {id:'prisao-de-gelo',     nome:'Prisão de Gelo',      escola:'gelo',    custoPm:3, efeito:'imobiliza um alvo por 1 turno'},
+  {id:'sopro-congelante',   nome:'Sopro Congelante',    escola:'gelo',    custoPm:2, efeito:'1d6 de dano e reduz a Agilidade do alvo em 1 degrau até o fim da cena'},
+  {id:'corrente-eletrica',  nome:'Corrente Elétrica',   escola:'raio',    custoPm:3, efeito:'atinge o alvo principal e um adjacente'},
+  {id:'reflexo-veloz',      nome:'Reflexo Veloz',       escola:'raio',    custoPm:2, efeito:'+1 na Iniciativa até o fim da cena'},
+  {id:'cura-menor',         nome:'Cura Menor',          escola:'luz',     custoPm:2, efeito:'restaura PV igual ao dado de Mente'},
+  {id:'luz-reveladora',     nome:'Luz Reveladora',      escola:'luz',     custoPm:1, efeito:'ilumina e revela alvo invisível numa área'},
+  {id:'toque-drenante',     nome:'Toque Drenante',      escola:'trevas',  custoPm:3, efeito:'rouba PV do alvo e transfere pro conjurador'},
+  {id:'manto-de-sombras',   nome:'Manto de Sombras',    escola:'trevas',  custoPm:2, efeito:'vantagem no próximo teste de furtividade'},
+  {id:'bencao',             nome:'Bênção',              escola:'suporte', custoPm:2, efeito:'+2 no próximo teste de um aliado'},
+  {id:'barreira',           nome:'Barreira',            escola:'suporte', custoPm:3, efeito:'+4 de Defesa num aliado até o fim da cena'},
+];
+
+// Seis níveis de raridade, estilo Overgeared — o número é só sugestão de
+// balanceamento pro mestre, o bônus de verdade do item continua sendo o
+// que a pessoa digitar no campo "Efeito".
+const RARIDADES = [
+  {id:'comum',    nome:'Comum',    cor:'#a1937d', sugestao:'+0 a +1'},
+  {id:'incomum',  nome:'Incomum',  cor:'#4c8c5b', sugestao:'+1 a +2'},
+  {id:'raro',     nome:'Raro',     cor:'#3b82c4', sugestao:'+2 a +3'},
+  {id:'epico',    nome:'Épico',    cor:'#9c5fc9', sugestao:'+3 a +5'},
+  {id:'lendario', nome:'Lendário', cor:'#e0a234', sugestao:'+5 a +7'},
+  {id:'unico',    nome:'Único',    cor:'#9c3746', sugestao:'sem tabela — negocia com o mestre'},
+];
+
+const TIPOS_ITEM = [
+  {id:'arma',       nome:'Arma'},
+  {id:'armadura',   nome:'Armadura'},
+  {id:'acessorio',  nome:'Acessório'},
+  {id:'consumivel', nome:'Consumível'},
+  {id:'outro',      nome:'Outro'},
+];
+
+// Que derivado um item equipado alimenta sozinho — o resto (dano de arma,
+// efeito de consumível) fica descrito no campo "Notas" e se aplica à mão,
+// igual o Fabula Ultima faz com acessório fora do catálogo automatizado.
+const EFEITOS_ITEM = [
+  {id:'nenhum',       nome:'Nenhum (só descritivo)'},
+  {id:'defesa',       nome:'Defesa'},
+  {id:'defesaMagica', nome:'Defesa Mágica'},
+  {id:'iniciativa',   nome:'Iniciativa'},
+  {id:'pvMaximo',     nome:'PV máximo'},
+  {id:'pmMaximo',     nome:'PM máximo'},
+];
+
+// Preço de venda sugerido por raridade, em Prata — usado só no botão
+// "Vender" do inventário. Único não tem preço de tabela: negocia com o
+// mestre, por isso fica de fora daqui (e sem botão de venda automática).
+const RARIDADE_PRECO = {comum:5, incomum:15, raro:40, epico:100, lendario:300};
+
+// Receitas de crafting — cada uma pede materiais NOMEADOS específicos (não
+// um "ponto de material" genérico) e só fabrica quem tiver ao menos 1
+// nível na classe dona da receita. O item sai pronto no inventário, com o
+// mesmo formato que uma linha criada à mão.
+const RECEITAS_CATALOGO = [
+  {id:'espada-de-ferro', nome:'Espada de Ferro', classe:'ferreiro',
+    materiais:[{nome:'Minério de Ferro', quantidade:3},{nome:'Carvão', quantidade:1}],
+    item:{tipo:'arma', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:6, durabilidadeMaxima:5, notas:'1d8+FOR'}},
+  {id:'armadura-de-placas', nome:'Armadura de Placas', classe:'ferreiro',
+    materiais:[{nome:'Minério de Ferro', quantidade:5},{nome:'Couro', quantidade:2}],
+    item:{tipo:'armadura', raridade:'incomum', efeitoTipo:'defesa', efeitoValor:2, peso:12, durabilidadeMaxima:6, notas:''}},
+  {id:'pocao-cura-menor', nome:'Poção de Cura Menor', classe:'alquimista',
+    materiais:[{nome:'Erva Curativa', quantidade:2},{nome:'Água Pura', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'restaura PV igual ao dado de Vontade'}},
+  {id:'veneno-paralisante', nome:'Veneno Paralisante', classe:'alquimista',
+    materiais:[{nome:'Veneno Bruto', quantidade:2},{nome:'Erva Curativa', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'alvo fica Atordoado por 1 turno'}},
+  {id:'runa-de-forca', nome:'Runa de Força', classe:'encantador',
+    materiais:[{nome:'Cristal Menor', quantidade:2}],
+    item:{tipo:'acessorio', raridade:'incomum', efeitoTipo:'defesa', efeitoValor:1, peso:1, durabilidadeMaxima:0, notas:'runa aplicada num item já existente'}},
+  {id:'runa-de-vitalidade', nome:'Runa de Vitalidade', classe:'encantador',
+    materiais:[{nome:'Cristal Menor', quantidade:3}],
+    item:{tipo:'acessorio', raridade:'raro', efeitoTipo:'pvMaximo', efeitoValor:5, peso:1, durabilidadeMaxima:0, notas:'runa aplicada num item já existente'}},
+  {id:'ensopado-reforcado', nome:'Ensopado Reforçado', classe:'cozinheiro',
+    materiais:[{nome:'Carne', quantidade:2},{nome:'Vegetais', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'+2 no próximo teste de Força até o fim da cena'}},
+  {id:'prato-elfico', nome:'Prato Élfico', classe:'cozinheiro',
+    materiais:[{nome:'Vegetais', quantidade:3},{nome:'Especiaria Rara', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'pmMaximo', efeitoValor:1, peso:1, durabilidadeMaxima:0, notas:'até o fim da sessão'}},
+];
+
+// Loja: um punhado de itens genéricos de aventureiro, comprados com Prata.
+// Vira dono na hora, sem precisar de mestre resolvendo item por item.
+const ITENS_LOJA = [
+  {id:'pocao-cura-simples', nome:'Poção de Cura Simples', precoPrata:8,
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'restaura 2d6 PV'}},
+  {id:'corda', nome:'Corda (15m)', precoPrata:3,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:2, durabilidadeMaxima:0, notas:''}},
+  {id:'tocha', nome:'Tocha', precoPrata:1,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'ilumina uma área pequena'}},
+  {id:'kit-de-reparo', nome:'Kit de Reparo', precoPrata:12,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:2, durabilidadeMaxima:0, notas:'restaura 3 de durabilidade de um item'}},
+  {id:'antitoxina', nome:'Antitoxina', precoPrata:10,
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'remove a condição Envenenado'}},
+];
+
+/* --- Personagem ----------------------------------------------------------- */
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+function novoPersonagem(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    perfil: {
+      nome: nome || 'Novo Jogador',
+      apelido: '',   // o nick que aparece pro jogo — pode ser diferente do nome de verdade
+      jogo: '',      // qual mundo virtual/campanha esta ficha está jogando
+      guilda: '',
+      aparencia: '',
+    },
+    cursor: 'verde',
+    perfilAtributos: 'mediano',
+    atributos: {forca:8, agilidade:8, mente:8, vontade:6},
+    xp: 0,
+    classes: [{classeId:'', nivel:0}],
+    // poder.escolhas: { 'espadachim': { 'postura-combate': 1, ... }, ... } —
+    // quantas vezes cada poder daquela classe foi comprado (o "NP" dele).
+    poder: {escolhas: {}},
+    atual: {pv:null, pm:null},   // null = cheio
+    bonus: {defesa:0, defesaMagica:0, iniciativa:0}, // "outros bônus", o que o inventário não cobrir
+    condicoes: [],
+    penalidadeMorte: {ativa:false, xpPerdido:0, itemPerdido:'', notas:''},
+    // Switch: a dupla troca de posição em combate (ataque ↔ suporte) —
+    // registro simples, o efeito de verdade se combina com o mestre na mesa.
+    switchAtivo: {parceiro:'', papel:'ataque', ativo:false},
+    golpes: [],           // sword skills: {id, nome, arma, dano, posMotion, origem}
+    magias: [],           // {id, nome, custoPm, efeito}
+    skills: [],           // {id, nome, categoria, estagio, nivelInterno}
+    // inventario: {id, nome, tipo, raridade, efeitoTipo, efeitoValor, peso,
+    // durabilidadeMaxima, durabilidadeAtual, equipado, notas}
+    inventario: [],
+    // materiais: {id, nome, quantidade} — o estoque nomeado que as receitas
+    // consultam (tanto as do catálogo quanto as que o jogador criar).
+    materiais: [],
+    // receitasCustom: mesmo formato de RECEITAS_CATALOGO, mas escrita pelo
+    // próprio jogador e salva na ficha — pra montar um craft que o
+    // catálogo do sistema ainda não previu.
+    receitasCustom: [],
+    carteira: {ouro: 0, prata: 0},
+    andar: {atual: 1, zona: 'segura'},
+    // guilda separado de perfil.guilda (que já existia, texto livre com o
+    // nome): aqui é o "cartão de sócio" — rank e o que ela oferece. Não é
+    // um registro compartilhado de guilda de verdade (isso pede Modo Hub).
+    guilda: {rank: '', papel: '', beneficio: ''},
+    // titulos: {id, nome, comoConseguiu, visao} — reputação, nem sempre boa.
+    titulos: [],
+    duelo: {oponente: '', motivo: '', resultado: 'pendente', consequencia: ''},
+    // corpoReal: o que separa este sistema de um RPG comum — tem alguém de
+    // carne e osso plugado, em algum lugar, o tempo todo.
+    corpoReal: {ondeEsta: '', quemCuida: '', emRisco: false, notasRisco: ''},
+    // permadeath: decisão #64 fixou "sem permadeath" como padrão do
+    // sistema, mas cada mesa pode decidir diferente (registrado na mesma
+    // decisão). Esse interruptor é por personagem porque ainda não existe
+    // campanha de verdade pro SAO (decisão #40) — quando o Modo Hub
+    // chegar, isso vira campo de campanha.
+    permadeath: {ativo: false, morreu: false, comoMorreu: ''},
+    habilidadeUnica: {tem:false, nome:'', descricao:'', comoConseguiu:''},
+    anotacoes: '',
+  };
+}
+
+/* --- Cálculos -------------------------------------------------------------- */
+
+// Nível geral é a soma dos níveis de todas as classes com pelo menos 1
+// ponto — sem teto artificial de "3 classes" como o Fabula Ultima, porque
+// aqui multiclasse é ilimitada de propósito.
+function nivelGeral(p){
+  const soma = p.classes.reduce((total, c) => total + (c.classeId ? (c.nivel||0) : 0), 0);
+  return Math.max(1, soma);
+}
+
+// Nível investido numa classe específica — soma se ela aparecer em mais de
+// uma linha (a UI não incentiva isso, mas o cálculo fica robusto de qualquer
+// jeito). É o teto de pontos de poder daquela classe.
+function nivelDeClasse(p, classeId){
+  return p.classes.reduce((total,c) => total + (c.classeId===classeId ? (c.nivel||0) : 0), 0);
+}
+
+// Lista de classes em que o personagem já investiu ao menos 1 nível, sem
+// repetir — é o que decide quais cartões aparecem na aba Poderes.
+function classesInvestidas(p){
+  const vistos = new Set();
+  return p.classes
+    .filter(c => c.classeId && nivelDeClasse(p, c.classeId) > 0 && !vistos.has(c.classeId) && vistos.add(c.classeId))
+    .map(c => c.classeId);
+}
+
+// Quantos pontos de poder já foram gastos numa classe — soma de todas as
+// compras (incluindo as repetidas dos poderes com max > 1).
+function pontosUsadosClasse(p, classeId){
+  const mapa = p.poder.escolhas[classeId] || {};
+  return Object.values(mapa).reduce((total,n) => total + (n||0), 0);
+}
+
+// Bônus automático que itens EQUIPADOS (e não quebrados) somam num derivado
+// específico — mesma ideia dos acessórios do Fabula Ultima: só automatiza o
+// que é um número sempre visível na ficha (decisão #57 do Hub).
+function bonusInventario(p, tipo){
+  return (p.inventario||[]).reduce((total, it) => {
+    const quebrado = (it.durabilidadeMaxima||0) > 0 && (it.durabilidadeAtual||0) <= 0;
+    return total + (it.equipado && !quebrado && it.efeitoTipo === tipo ? (it.efeitoValor||0) : 0);
+  }, 0);
+}
+
+// Fórmulas de partida — dá pra ajustar na mesa se o número não bater com o
+// ritmo da campanha, igual o Fabula Ultima deixa vários derivados editáveis
+// à mão (decisão #57 do Hub).
+function pvMaximo(p){ return 10 + nivelGeral(p)*3 + p.atributos.forca + bonusInventario(p,'pvMaximo'); }
+function pmMaximo(p){ return 5 + nivelGeral(p)*2 + p.atributos.mente + bonusInventario(p,'pmMaximo'); }
+function defesa(p){ return 8 + Math.floor(p.atributos.agilidade/2) + (p.bonus.defesa||0) + bonusInventario(p,'defesa'); }
+function defesaMagica(p){ return 8 + Math.floor(p.atributos.vontade/2) + (p.bonus.defesaMagica||0) + bonusInventario(p,'defesaMagica'); }
+function iniciativa(p){ return Math.floor(p.atributos.agilidade/2) + (p.bonus.iniciativa||0) + bonusInventario(p,'iniciativa'); }
+function pvRisco(p){ return Math.floor(pvMaximo(p)/2); }
+
+// Capacidade de carga: ligada à Força, igual Overgeared usa STR pro peso
+// que dá pra carregar. Some o peso de TODO item na mochila, equipado ou não.
+function pesoMaximo(p){ return 10 + p.atributos.forca*2; }
+function pesoAtual(p){ return (p.inventario||[]).reduce((total,it) => total + (it.peso||0), 0); }
+
+// Se o personagem já comprou este poder específico — usado pra ligar o
+// desconto de "Faro pra Barganha" no preço de compra, sem precisar
+// codificar isso na aba Poderes.
+function temPoder(p, classeId, poderId){
+  return ((p.poder.escolhas[classeId]||{})[poderId] || 0) > 0;
+}
+
+// Carteira em Ouro/Prata (100 Prata = 1 Ouro, mesma proporção do
+// Overgeared/Satisfy). Gastar/receber sempre passa por aqui, pra nunca
+// deixar a Prata "estourar" 100 sem virar Ouro.
+function totalPrata(p){ return (p.carteira.ouro||0)*100 + (p.carteira.prata||0); }
+function normalizarCarteira(p){
+  const total = Math.max(0, totalPrata(p));
+  p.carteira.ouro = Math.floor(total/100);
+  p.carteira.prata = total % 100;
+}
+function gastarPrata(p, valor){
+  const restante = totalPrata(p) - valor;
+  if(restante < 0) return false;
+  p.carteira.ouro = 0; p.carteira.prata = restante;
+  normalizarCarteira(p);
+  return true;
+}
+function receberPrata(p, valor){
+  const total = totalPrata(p) + valor;
+  p.carteira.ouro = 0; p.carteira.prata = total;
+  normalizarCarteira(p);
+}
+
+// Faro pra Barganha (poder do Mercador) desconta 10% de qualquer compra.
+function precoCompra(p, precoBase){
+  return temPoder(p,'mercador','faro-pra-barganha') ? Math.max(0, Math.round(precoBase*0.9)) : precoBase;
+}
+function precoVenda(item){ return RARIDADE_PRECO[item.raridade] ?? null; }
+
+// Crafting: funciona igual pra receita do catálogo e pra receita que o
+// jogador criou — as duas têm o mesmo formato {nome, materiais, item}.
+function temMateriais(p, receita){
+  return receita.materiais.every(m => {
+    const estoque = (p.materiais||[]).find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    return estoque && estoque.quantidade >= m.quantidade;
+  });
+}
+function fabricar(p, receita){
+  if(!temMateriais(p, receita)) return false;
+  receita.materiais.forEach(m => {
+    const estoque = p.materiais.find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    estoque.quantidade -= m.quantidade;
+  });
+  const it = receita.item;
+  p.inventario.push({
+    id: uid(), nome: receita.nome, tipo: it.tipo, raridade: it.raridade,
+    efeitoTipo: it.efeitoTipo, efeitoValor: it.efeitoValor, peso: it.peso,
+    durabilidadeMaxima: it.durabilidadeMaxima, durabilidadeAtual: it.durabilidadeMaxima,
+    equipado: false, notas: it.notas,
+  });
+  return true;
+}
+
+/* --- Armazenamento ---------------------------------------------------------
+
+   Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+   navegador: /fichas cria a linha no banco e manda pra cá com o id dela.
+   Sem o parâmetro, tudo continua exatamente como sempre — arquivo único,
+   localStorage, sem conta nenhuma (decisão #40). Mesmo mecanismo do
+   Fabula Ultima e do Kaizoku no Sho.
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'sao_fichas';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{
+    const cru = localStorage.getItem(CHAVE);
+    return cru ? JSON.parse(cru) : [];
+  }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
+}
+
+let debounceHub = null;
+// No Hub, cada campo salva sozinho na conta (decisão #44) — sem lista
+// local, sem botão de salvar. O debounce evita uma requisição por tecla.
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    // Falhar em silêncio faria o jogador achar que salvou e perder tudo ao
+    // fechar a aba — por isso o aviso precisa aparecer na tela.
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'status',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,      // 'nao-encontrado' | null
+  // Começa falso de propósito: só vira true depois que o Hub CONFIRMAR que
+  // é dono. Enquanto carrega, ou se a busca falhar, o padrão seguro é "não
+  // é dono" — senão o interruptor de compartilhar apareceria numa ficha
+  // que nem carregou direito.
+  ehDono: false,
+  compartilhado: false,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
+
+const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+// Busca a ficha no Hub uma vez, no início. Preenche estado.fichas com um só
+// personagem — sem lista, sem seletor, exatamente o que /fichas já filtrou.
+// Ler não exige ser o dono: se vier ehDono:false, é o link de leitura de
+// outra pessoa (o mestre vendo a ficha de um jogador).
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+// Dono liga/desliga o link de leitura. Quem não é dono nem vê este controle.
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  salvar(); render();
+}
+
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.perfil === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho da tela --------------------------------------------------- */
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ABAS = [
+  {id:'status',      nome:'Status'},
+  {id:'mundo',       nome:'Mundo'},
+  {id:'classes',     nome:'Classes'},
+  {id:'poderes',     nome:'Poderes'},
+  {id:'combate',     nome:'Combate'},
+  {id:'equipamento', nome:'Equipamento'},
+  {id:'crafting',    nome:'Crafting'},
+  {id:'loja',        nome:'Loja'},
+  {id:'golpes',      nome:'Golpes e Magias'},
+  {id:'skills',      nome:'Skills'},
+  {id:'notas',       nome:'Notas'},
+];
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const p = atual();
+
+  if(!p){
+    app.innerHTML = `<div class="vazio">
+      <h2>Nenhum personagem ainda</h2>
+      <p class="mini">Clique em "+ Novo" para criar a primeira ficha,
+      ou importe um arquivo que você tenha exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a =>
+        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+      ).join('') + `</div>`
+    + painelDerivados(p)
+    + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+
+  ligarEventos();
+
+  // Modo leitura: desliga todo campo/botão de edição, menos as próprias
+  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha).
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  // No Hub, /fichas já é a lista de personagens (decisão #42) — o seletor,
+  // o "+ Novo" e o "Excluir" desta barra são só do modo local (arquivo
+  // avulso, sem conta). "← Fichas" some no modo local pelo mesmo motivo.
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+
+    // Só o dono decide compartilhar. Quem está vendo por um link
+    // compartilhado nem editar consegue, então Importar também some.
+    //
+    // Escondido via style.display, não via atributo `hidden`: esta página
+    // tem uma regra própria `label{display:block}` que, por ser do autor,
+    // vence a regra `[hidden]{display:none}` do navegador — o atributo
+    // ficaria ligado sem esconder nada. Estilo em linha sempre vence.
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.fichas.length
+    ? estado.fichas.map(f =>
+        `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`
+      ).join('')
+    : `<option>— sem personagens —</option>`;
+}
+
+// Painel sempre visível: os quatro números que se consulta o tempo todo
+// numa sessão — igual uma janela de status de jogo de verdade.
+function painelDerivados(p){
+  const pv = p.atual.pv ?? pvMaximo(p);
+  const emRisco = pv <= pvRisco(p);
+  return `<div class="grade g4" style="margin-bottom:14px">
+    <div class="derivado ${emRisco?'risco':''}">
+      <div class="rot">Pontos de Vida</div>
+      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${pvMaximo(p)}</span></div>
+      <div class="obs">${emRisco ? 'em risco' : 'risco em ' + pvRisco(p)}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Pontos de Mana</div>
+      <div class="val">${p.atual.pm ?? pmMaximo(p)}<span style="font-size:16px;color:var(--suave)">/${pmMaximo(p)}</span></div>
+      <div class="obs">5 + nível×2 + Mente</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Defesa</div>
+      <div class="val">${defesa(p)}</div>
+      <div class="obs">mágica ${defesaMagica(p)}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Nível</div>
+      <div class="val">${nivelGeral(p)}</div>
+      <div class="obs">iniciativa ${iniciativa(p)}</div>
+    </div>
+  </div>`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function abaStatus(p){
+  const cursor = CURSORES.find(c => c.id === p.cursor) || CURSORES[0];
+  return `<div class="cartao">
+    <p class="mini" style="margin-bottom:14px">
+      Esta é a <strong>Janela de Status</strong> que seu personagem vê dentro
+      do jogo — ele sabe estes números tanto quanto você. Não é uma
+      abstração escondida da mesa.
+    </p>
+    <div class="grade g2">
+      ${campo('Nome de verdade','nome',p.perfil.nome)}
+      ${campo('Apelido no jogo','apelido',p.perfil.apelido)}
+      ${campo('Jogo / mundo virtual','jogo',p.perfil.jogo)}
+      ${campo('Guilda/clã','guilda',p.perfil.guilda)}
+      <div>
+        <label for="c-cursor">Cursor (flag de PK)</label>
+        <select id="c-cursor" data-campo-raiz="cursor">
+          ${CURSORES.map(c => `<option value="${c.id}" ${c.id===p.cursor?'selected':''}>${c.nome}</option>`).join('')}
+        </select>
+      </div>
+      <div><label for="c-xp">XP</label>
+        <input id="c-xp" data-num="xp" type="number" min="0" value="${p.xp}"></div>
+    </div>
+    <p class="mini" style="margin-top:8px"><span class="cursor ${cursor.id}"></span>${cursor.sobre}</p>
+    <div style="margin-top:14px">
+      <label for="c-aparencia">Aparência</label>
+      <textarea id="c-aparencia" data-perfil="aparencia" rows="3">${esc(p.perfil.aparencia)}</textarea>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Atributos</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Teste = rola o dado dos dois atributos que a ação pedir, soma, compara
+      com a Dificuldade que o mestre define. Os dois dados no mesmo número e 6+:
+      sucesso crítico. Os dois em 1: falha crítica.
+    </p>
+    <div style="max-width:320px;margin-bottom:16px">
+      <label for="c-perfilatr">Perfil de distribuição</label>
+      <select id="c-perfilatr">
+        ${PERFIS.map(x => `<option value="${x.id}" ${x.id===p.perfilAtributos?'selected':''}>
+          ${x.nome} — ${x.dados.map(d=>'d'+d).join(', ')}</option>`).join('')}
+      </select>
+    </div>
+    <div class="grade g4">
+      ${ATRIBUTOS.map(a => `<div>
+        <label for="c-atr-${a.id}">${a.nome}</label>
+        <select id="c-atr-${a.id}" data-atributo="${a.id}">
+          ${ESCALA.map(d => `<option value="${d}" ${d===p.atributos[a.id]?'selected':''}>d${d}</option>`).join('')}
+        </select>
+        <p class="mini" style="margin-top:6px">${a.sobre}</p>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function abaMundo(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Andar</h2>
+    <p class="mini" style="margin:6px 0 14px">Onde o personagem está agora — sem combate real numa zona segura, e sem essa garantia numa masmorra.</p>
+    <div class="grade g2" style="max-width:420px">
+      <div><label for="c-andar">Andar atual</label>
+        <input id="c-andar" data-andar-num="atual" type="number" min="1" value="${p.andar.atual||1}"></div>
+      <div><label for="c-zona">Zona</label>
+        <select id="c-zona" data-andar="zona">
+          ${ZONAS.map(z => `<option value="${z.id}" ${z.id===p.andar.zona?'selected':''}>${z.nome}</option>`).join('')}
+        </select></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Corpo Real</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O que separa este sistema de um RPG comum: em algum lugar do mundo
+      real, tem alguém de carne e osso plugado no jogo, o tempo todo. Nem
+      todo perigo do personagem acontece na tela.
+    </p>
+    <div class="grade g2">
+      <div><label for="c-corpo-onde">Onde o corpo está</label>
+        <input id="c-corpo-onde" data-corporeal="ondeEsta" value="${esc(p.corpoReal.ondeEsta)}" placeholder="ex: no próprio quarto, sozinho"></div>
+      <div><label for="c-corpo-cuida">Quem cuidaria dele</label>
+        <input id="c-corpo-cuida" data-corporeal="quemCuida" value="${esc(p.corpoReal.quemCuida)}" placeholder="ex: a irmã mais nova, se notar"></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:14px">
+      <input type="checkbox" id="c-corpo-risco" style="width:auto" ${p.corpoReal.emRisco?'checked':''}>
+      O corpo real está em risco agora (fora do jogo)
+    </label>
+    ${p.corpoReal.emRisco ? `
+      <div style="margin-top:10px">
+        <label for="c-corpo-notas">O que está acontecendo</label>
+        <textarea id="c-corpo-notas" data-corporeal="notasRisco" rows="2">${esc(p.corpoReal.notasRisco)}</textarea>
+      </div>` : ''}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Guilda</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O nome da guilda já fica no Status. Aqui é o cartão de sócio: seu
+      rank dentro dela e o que ela oferece pros membros.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-guilda-rank">Rank</label>
+        <select id="c-guilda-rank" data-guilda="rank">
+          <option value="">— nenhum —</option>
+          ${RANKS_GUILDA.map(r => `<option value="${r.id}" ${r.id===p.guilda.rank?'selected':''}>${r.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-guilda-papel">Papel na guilda</label>
+        <input id="c-guilda-papel" data-guilda="papel" value="${esc(p.guilda.papel)}" placeholder="ex: tanque do grupo de raide"></div>
+      <div><label for="c-guilda-beneficio">Benefício de ser membro</label>
+        <input id="c-guilda-beneficio" data-guilda="beneficio" value="${esc(p.guilda.beneficio)}" placeholder="ex: desconto na forja da guilda"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Reputação e Títulos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Nem todo título é elogio — quem limpa andar primeiro ("Beater") ganha
+      fama, mas também desconfiança de quem ficou pra trás.
+    </p>
+    ${p.titulos.map((t,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-titulo-campo="${i}|nome" value="${esc(t.nome)}" placeholder="Nome do título" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-titulo="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Como conseguiu</label><input data-titulo-campo="${i}|comoConseguiu" value="${esc(t.comoConseguiu)}"></div>
+        <div><label>Como o resto do jogo vê</label>
+          <select data-titulo-visao="${i}">
+            ${VISOES_TITULO.map(v => `<option value="${v.id}" ${v.id===t.visao?'selected':''}>${v.nome}</option>`).join('')}
+          </select></div>
+      </div>
+    </div>`).join('')}
+    <button id="btAddTitulo">+ Título</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Duelo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Desafio formal entre jogadores — combinado antes, com testemunha.
+      Não muda a cor do Cursor: só ataque não combinado conta como crime.
+    </p>
+    <div class="grade g2">
+      <div><label for="c-duelo-oponente">Oponente</label>
+        <input id="c-duelo-oponente" data-duelo="oponente" value="${esc(p.duelo.oponente)}"></div>
+      <div><label for="c-duelo-motivo">Motivo</label>
+        <input id="c-duelo-motivo" data-duelo="motivo" value="${esc(p.duelo.motivo)}"></div>
+      <div><label for="c-duelo-resultado">Resultado</label>
+        <select id="c-duelo-resultado" data-duelo="resultado">
+          ${RESULTADOS_DUELO.map(r => `<option value="${r.id}" ${r.id===p.duelo.resultado?'selected':''}>${r.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-duelo-consequencia">Consequência combinada</label>
+        <input id="c-duelo-consequencia" data-duelo="consequencia" value="${esc(p.duelo.consequencia)}" placeholder="ex: perdedor paga a rodada"></div>
+    </div>
+  </div>`;
+}
+
+function abaClasses(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Classes</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Multiclasse sem limite — quantas classes o personagem tiver. O nível
+      de cada uma é o que você anota na mesa (não tem cálculo automático de
+      XP aqui ainda: fica pro mestre decidir o ritmo). O Nível geral do
+      personagem, lá em cima, é a soma de todos.
+    </p>
+    ${p.classes.map((c,i) => {
+      const classe = CLASSES.find(x => x.id === c.classeId);
+      const categoria = classe && CATEGORIAS_CLASSE.find(x => x.id === classe.categoria);
+      return `<div class="classe-linha">
+        <div>
+          <label for="c-cl-${i}">${i+1}ª classe</label>
+          <select id="c-cl-${i}" data-classe="${i}">
+            <option value="">— nenhuma —</option>
+            ${CATEGORIAS_CLASSE.map(cat => `<optgroup label="${cat.nome}">
+              ${CLASSES.filter(x => x.categoria===cat.id).map(x =>
+                `<option value="${x.id}" ${x.id===c.classeId?'selected':''}>${x.nome}</option>`).join('')}
+            </optgroup>`).join('')}
+          </select>
+          ${categoria ? `<p class="mini" style="margin-top:6px">${categoria.nome} — ${categoria.sobre}</p>` : ''}
+        </div>
+        <div>
+          <label for="c-nv-${i}">Nível</label>
+          <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" value="${c.nivel||0}">
+        </div>
+        <button data-remover-classe="${i}" ${p.classes.length<=1?'disabled':''}>Tirar</button>
+      </div>`;
+    }).join('')}
+    <button id="btAddClasse">+ Outra classe</button>
+  </div>`;
+}
+
+function abaPoderes(p){
+  const investidas = classesInvestidas(p);
+  if(!investidas.length){
+    return `<div class="cartao vazio">
+      <h2>Nenhuma classe com nível ainda</h2>
+      <p class="mini">Escolha uma classe e dê ao menos 1 nível a ela na aba
+      Classes — os poderes dela aparecem aqui.</p></div>`;
+  }
+  return investidas.map(classeId => {
+    const classe = CLASSES.find(x => x.id === classeId);
+    const poderes = PODERES_CLASSE[classeId] || [];
+    const nivel = nivelDeClasse(p, classeId);
+    const usados = pontosUsadosClasse(p, classeId);
+    const escolhas = p.poder.escolhas[classeId] || {};
+    return `<div class="cartao">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h2 style="font-size:18px">${classe.nome}</h2>
+        <span class="mini">${usados}/${nivel} pontos de poder usados</span>
+      </div>
+      ${usados > nivel
+        ? `<div class="aviso">Comprou mais poderes do que o nível desta classe permite — devolva algum ou suba o nível dela.</div>`
+        : ''}
+      ${poderes.map(poder => {
+        const n = escolhas[poder.id] || 0;
+        const podeComprar = usados < nivel && n < poder.max;
+        return `<div class="linha-lista">
+          <div class="topo">
+            <strong>${poder.nome}${poder.max>1 ? ` (+${poder.max})` : ''}</strong>
+            <span class="mini">${n}/${poder.max}</span>
+          </div>
+          <p class="mini" style="margin-bottom:10px">${poder.texto}</p>
+          <div class="linha">
+            <button data-poder-menos="${classeId}|${poder.id}" ${n<=0?'disabled':''}>-</button>
+            <button data-poder-mais="${classeId}|${poder.id}" ${podeComprar?'':'disabled'}>+ Comprar</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function abaCombate(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES.map(c => `<label>
+        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Penalidade de Morte</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Padrão do sistema: chegar a 0 PV não mata de vez (decisão #64). Mas
+      cada mesa pode combinar diferente — inclusive morte de verdade,
+      estilo SAO original. Isso é um interruptor da mesa, não da cena:
+      combine com o mestre antes de ligar.
+    </p>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:14px">
+      <input type="checkbox" id="c-permadeath-ativo" style="width:auto" ${p.permadeath.ativo?'checked':''}>
+      Esta mesa joga com permadeath (morte é definitiva)
+    </label>
+    ${p.permadeath.ativo ? `
+      <div class="aviso">
+        <strong>Permadeath ativo.</strong> Chegar a 0 PV mata o personagem
+        de verdade — sem respawn, sem Penalidade de XP/item.
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:12px">
+        <input type="checkbox" id="c-permadeath-morreu" style="width:auto" ${p.permadeath.morreu?'checked':''}>
+        Este personagem morreu
+      </label>
+      ${p.permadeath.morreu ? `
+        <div style="margin-top:10px">
+          <label for="c-permadeath-como">Como aconteceu</label>
+          <textarea id="c-permadeath-como" data-permadeath="comoMorreu" rows="2">${esc(p.permadeath.comoMorreu)}</textarea>
+        </div>` : ''}
+    ` : `
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:12px">
+        <input type="checkbox" id="c-morte-ativa" style="width:auto" ${p.penalidadeMorte.ativa?'checked':''}>
+        Penalidade ativa agora
+      </label>
+      ${p.penalidadeMorte.ativa ? `
+        <div class="grade g2">
+          <div><label for="c-morte-xp">XP perdido</label>
+            <div class="linha">
+              <input id="c-morte-xp" data-morte="xpPerdido" type="number" min="0" value="${p.penalidadeMorte.xpPerdido}">
+              <button id="btCalcularPerda">10% do XP atual</button>
+            </div>
+          </div>
+          <div><label for="c-morte-item">Item derrubado</label>
+            <input id="c-morte-item" data-morte="itemPerdido" value="${esc(p.penalidadeMorte.itemPerdido)}"></div>
+        </div>
+        <div style="margin-top:12px">
+          <label for="c-morte-notas">Notas (onde caiu, quando foi)</label>
+          <textarea id="c-morte-notas" data-morte="notas" rows="2">${esc(p.penalidadeMorte.notas)}</textarea>
+        </div>` : ''}
+    `}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Switch</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      A dupla troca de posição em combate: quem está no Ataque avança pra
+      dar o golpe, quem está no Suporte cobre a retaguarda — e trocam
+      quando um dos dois sinaliza. Fica registrado aqui pra lembrar quem é
+      o par e o papel atual; o bônus de verdade (geralmente vantagem no
+      próximo teste de quem entra no Ataque) combina com o mestre na mesa.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-switch-parceiro">Parceiro de Switch</label>
+        <input id="c-switch-parceiro" data-switch="parceiro" value="${esc(p.switchAtivo.parceiro)}"></div>
+      <div><label for="c-switch-papel">Papel agora</label>
+        <select id="c-switch-papel" data-switch="papel">
+          <option value="ataque" ${p.switchAtivo.papel!=='suporte'?'selected':''}>Ataque</option>
+          <option value="suporte" ${p.switchAtivo.papel==='suporte'?'selected':''}>Suporte</option>
+        </select>
+      </div>
+      <div>
+        <label for="c-switch-ativo">Combo ativo</label>
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;padding-top:9px">
+          <input type="checkbox" id="c-switch-ativo" style="width:auto" ${p.switchAtivo.ativo?'checked':''}>
+          Sim, estamos no meio de um Switch
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Bônus de equipamento</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      "Outros bônus" — o que a aba Equipamento ainda não cobre (algo que o
+      mestre concedeu à mão, por exemplo). O que vem de item equipado já
+      soma sozinho nos números lá em cima.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-bonus-def">Defesa</label>
+        <input id="c-bonus-def" data-bonus="defesa" type="number" value="${p.bonus.defesa||0}"></div>
+      <div><label for="c-bonus-defm">Defesa Mágica</label>
+        <input id="c-bonus-defm" data-bonus="defesaMagica" type="number" value="${p.bonus.defesaMagica||0}"></div>
+      <div><label for="c-bonus-ini">Iniciativa</label>
+        <input id="c-bonus-ini" data-bonus="iniciativa" type="number" value="${p.bonus.iniciativa||0}"></div>
+    </div>
+  </div>`;
+}
+
+function abaEquipamento(p){
+  const peso = pesoAtual(p), pesoMax = pesoMaximo(p);
+  const sobrecarregado = peso > pesoMax;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Peso</h2>
+    <p class="mini" style="margin:6px 0 10px">Capacidade de carga ligada à Força — o que a mochila inteira pesa, equipado ou não.</p>
+    <div class="derivado ${sobrecarregado?'risco':''}" style="max-width:200px">
+      <div class="rot">Peso carregado</div>
+      <div class="val">${peso}<span style="font-size:16px;color:var(--suave)">/${pesoMax}</span></div>
+      <div class="obs">${sobrecarregado ? 'sobrecarregado' : '10 + Força×2'}</div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Inventário</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Item <strong>equipado</strong> e não <strong>quebrado</strong> some
+      sozinho no derivado que o "Efeito" apontar. Durabilidade em 0 quebra o
+      item — "Usar" some 1, "Reparar" volta ao máximo (o poder Reparo de
+      Campo do Ferreiro existe pra isso). Durabilidade máxima 0 = item que
+      não desgasta.
+    </p>
+    ${p.inventario.map((it,i) => {
+      const raridade = RARIDADES.find(r => r.id === it.raridade) || RARIDADES[0];
+      const temDurabilidade = (it.durabilidadeMaxima||0) > 0;
+      const quebrado = temDurabilidade && (it.durabilidadeAtual||0) <= 0;
+      const preco = precoVenda(it);
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-item-campo="${i}|nome" value="${esc(it.nome)}" placeholder="Nome do item" style="font-family:Georgia,serif;font-size:16px">
+          <button data-remover-item="${i}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g4">
+          <div><label>Tipo</label>
+            <select data-item-tipo="${i}">
+              ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===it.tipo?'selected':''}>${t.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Raridade</label>
+            <select data-item-raridade="${i}">
+              ${RARIDADES.map(r => `<option value="${r.id}" ${r.id===it.raridade?'selected':''}>${r.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Efeito</label>
+            <select data-item-efeito="${i}">
+              ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===(it.efeitoTipo||'nenhum')?'selected':''}>${e.nome}</option>`).join('')}
+            </select>
+          </div>
+          <div><label>Valor do efeito</label>
+            <input data-item-num="${i}|efeitoValor" type="number" value="${it.efeitoValor||0}"></div>
+        </div>
+        <p class="mini" style="margin:8px 0"><span style="color:${raridade.cor}">●</span> ${raridade.nome} — bônus sugerido ${raridade.sugestao}</p>
+        <div class="grade g3">
+          <div><label>Peso</label><input data-item-num="${i}|peso" type="number" min="0" value="${it.peso||0}"></div>
+          <div><label>Durabilidade máxima</label><input data-item-durmax="${i}" type="number" min="0" value="${it.durabilidadeMaxima||0}"></div>
+          <div>
+            <label>Equipado</label>
+            <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;padding-top:9px">
+              <input type="checkbox" data-item-equipado="${i}" style="width:auto" ${it.equipado?'checked':''}>
+              Em uso agora
+            </label>
+          </div>
+        </div>
+        ${temDurabilidade ? `<div class="linha" style="margin-top:10px">
+          <span class="mini">Durabilidade: ${it.durabilidadeAtual||0}/${it.durabilidadeMaxima}${quebrado?' — quebrado':''}</span>
+          <button data-usar-item="${i}" ${(it.durabilidadeAtual||0)<=0?'disabled':''}>Usar (-1)</button>
+          <button data-reparar-item="${i}" ${(it.durabilidadeAtual||0)>=it.durabilidadeMaxima?'disabled':''}>Reparar</button>
+        </div>` : ''}
+        <div style="margin-top:10px">
+          <label>Notas (dano da arma, o que mais o item faz)</label>
+          <input data-item-campo="${i}|notas" value="${esc(it.notas||'')}">
+        </div>
+        <div class="linha" style="margin-top:10px">
+          ${preco !== null
+            ? `<button data-vender-item="${i}">Vender por ${preco} Prata</button>`
+            : `<span class="mini">Único — sem preço de tabela, negocia com o mestre</span>`}
+        </div>
+      </div>`;
+    }).join('')}
+    <button id="btAddItem">+ Item</button>
+  </div>`;
+}
+
+function cartaoReceita(p, receita, indiceCustom){
+  const classe = CLASSES.find(c => c.id === receita.classe);
+  const temClasse = classe && nivelDeClasse(p, classe.id) > 0;
+  const pronta = temClasse && temMateriais(p, receita);
+  const listaMateriais = receita.materiais.map(m => {
+    const estoque = (p.materiais||[]).find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    const tem = estoque && estoque.quantidade >= m.quantidade;
+    return `<span style="color:${tem?'var(--suave)':'var(--alerta)'}">${m.quantidade}× ${esc(m.nome)}</span>`;
+  }).join(', ');
+  const raridade = RARIDADES.find(r => r.id === receita.item.raridade);
+  return `<div class="linha-lista">
+    <div class="topo">
+      <strong>${esc(receita.nome) || 'Receita sem nome'}</strong>
+      <button data-fabricar="${indiceCustom===undefined?'catalogo':'custom'}|${indiceCustom===undefined?receita.id:indiceCustom}" ${pronta?'':'disabled'}>Fabricar</button>
+    </div>
+    <p class="mini">Pede: ${listaMateriais || '(nenhum material definido ainda)'}</p>
+    <p class="mini">Classe: ${classe?classe.nome:'—'}${classe && !temClasse ? ' (precisa de ao menos 1 nível nela)' : ''} · resulta em ${esc(receita.nome)}${raridade?` (${raridade.nome})`:''}</p>
+  </div>`;
+}
+
+function abaCrafting(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Materiais</h2>
+    <p class="mini" style="margin:6px 0 14px">O estoque nomeado que as receitas consultam — some aqui o que coletar ou ganhar de recompensa.</p>
+    ${(p.materiais||[]).map((m,i) => `<div class="linha" style="margin-bottom:8px">
+      <input data-material-campo="${i}|nome" value="${esc(m.nome)}" placeholder="Nome do material" style="flex:2">
+      <input data-material-num="${i}|quantidade" type="number" min="0" value="${m.quantidade||0}" style="flex:1">
+      <button data-remover-material="${i}" class="perigo">Remover</button>
+    </div>`).join('')}
+    <button id="btAddMaterial">+ Material</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Receitas</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Só fabrica quem tiver ao menos 1 nível na classe da receita, e só com
+      os materiais completos no estoque acima.
+    </p>
+    ${RECEITAS_CATALOGO.map(r => cartaoReceita(p, r)).join('')}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Suas Receitas</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Criadas por você e salvas na ficha, pro craft que o catálogo do
+      sistema ainda não previu. Mesmo botão "Fabricar" das receitas prontas.
+    </p>
+    ${p.receitasCustom.map((r,ri) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-receita-campo="${ri}|nome" value="${esc(r.nome)}" placeholder="Nome da receita" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-receita="${ri}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Classe dona</label>
+          <select data-receita-classe="${ri}">
+            <option value="">— nenhuma —</option>
+            ${CLASSES.map(c => `<option value="${c.id}" ${c.id===r.classe?'selected':''}>${c.nome}</option>`).join('')}
+          </select>
+        </div>
+        <div></div>
+      </div>
+      <p class="mini" style="margin:10px 0 6px">Materiais que pede</p>
+      ${r.materiais.map((m,mi) => `<div class="linha" style="margin-bottom:6px">
+        <input data-receita-material="${ri}|${mi}|nome" value="${esc(m.nome)}" placeholder="Nome do material" style="flex:2">
+        <input data-receita-material="${ri}|${mi}|quantidade" type="number" min="0" value="${m.quantidade||0}" style="flex:1">
+        <button data-remover-receita-material="${ri}|${mi}" class="perigo">Remover</button>
+      </div>`).join('')}
+      <button data-add-receita-material="${ri}">+ Material</button>
+      <p class="mini" style="margin:14px 0 6px">O item que sai fabricado</p>
+      <div class="grade g4">
+        <div><label>Tipo</label>
+          <select data-receita-item="${ri}|tipo">
+            ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===r.item.tipo?'selected':''}>${t.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Raridade</label>
+          <select data-receita-item="${ri}|raridade">
+            ${RARIDADES.map(x => `<option value="${x.id}" ${x.id===r.item.raridade?'selected':''}>${x.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Efeito</label>
+          <select data-receita-item="${ri}|efeitoTipo">
+            ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===r.item.efeitoTipo?'selected':''}>${e.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Valor do efeito</label>
+          <input data-receita-item="${ri}|efeitoValor" type="number" value="${r.item.efeitoValor||0}"></div>
+      </div>
+      <div class="grade g3" style="margin-top:10px">
+        <div><label>Peso</label><input data-receita-item="${ri}|peso" type="number" min="0" value="${r.item.peso||0}"></div>
+        <div><label>Durabilidade máxima</label><input data-receita-item="${ri}|durabilidadeMaxima" type="number" min="0" value="${r.item.durabilidadeMaxima||0}"></div>
+        <div><label>Notas</label><input data-receita-item="${ri}|notas" value="${esc(r.item.notas||'')}"></div>
+      </div>
+      <div class="linha" style="margin-top:12px">
+        <button data-fabricar="custom|${ri}" ${r.classe && nivelDeClasse(p,r.classe)>0 && temMateriais(p,r) ? '' : 'disabled'}>Fabricar</button>
+      </div>
+    </div>`).join('')}
+    <button id="btAddReceita">+ Criar Receita</button>
+  </div>`;
+}
+
+function abaLoja(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Carteira</h2>
+    <p class="mini" style="margin:6px 0 14px">Ouro e Prata — 100 Prata viram 1 Ouro sozinho, ao editar ou ao comprar/vender.</p>
+    <div class="grade g2" style="max-width:320px">
+      <div><label for="c-ouro">Ouro</label><input id="c-ouro" data-carteira="ouro" type="number" min="0" value="${p.carteira.ouro||0}"></div>
+      <div><label for="c-prata">Prata</label><input id="c-prata" data-carteira="prata" type="number" min="0" value="${p.carteira.prata||0}"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Comprar</h2>
+    ${temPoder(p,'mercador','faro-pra-barganha') ? `<p class="mini" style="margin-bottom:10px">Faro pra Barganha ativo — os preços abaixo já saem com 10% de desconto.</p>` : ''}
+    ${ITENS_LOJA.map(item => {
+      const preco = precoCompra(p, item.precoPrata);
+      const daPra = totalPrata(p) >= preco;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <strong>${item.nome}</strong>
+          <button data-comprar="${item.id}" ${daPra?'':'disabled'}>Comprar por ${preco} Prata</button>
+        </div>
+        <p class="mini">${esc(item.item.notas || '')}</p>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function abaGolpesMagias(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Golpes (Sword Skills)</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O sistema assiste o golpe: o jogador faz a pré-motion, e o jogo
+      completa o movimento sozinho — mais dano do que um ataque livre
+      permitiria, mas deixa a condição <strong>Vulnerável (pós-motion)</strong>
+      logo depois. Um <strong>ataque livre</strong> (sem golpe registrado
+      aqui) usa só o atributo puro, sem esse bônus e sem essa vulnerabilidade.
+      Um golpe "Original" é um golpe do sistema que o jogador aprendeu a
+      fazer sem ajuda nenhuma, na mesma velocidade — vira dele.
+    </p>
+    ${p.golpes.map((g,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-golpe-campo="${i}|nome" value="${esc(g.nome)}" placeholder="Nome do golpe" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-golpe="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g3">
+        <div><label>Arma</label><input data-golpe-campo="${i}|arma" value="${esc(g.arma)}" placeholder="ex: espada longa"></div>
+        <div><label>Dano</label><input data-golpe-campo="${i}|dano" value="${esc(g.dano)}" placeholder="ex: 2d6+FOR"></div>
+        <div><label>Origem</label>
+          <select data-golpe-origem="${i}">
+            <option value="sistema" ${g.origem!=='original'?'selected':''}>Do sistema</option>
+            <option value="original" ${g.origem==='original'?'selected':''}>Original</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label>Pós-motion (a vulnerabilidade)</label>
+        <input data-golpe-campo="${i}|posMotion" value="${esc(g.posMotion)}" placeholder="ex: rígido por 1 turno, Defesa -4">
+      </div>
+    </div>`).join('')}
+    <div class="linha" style="margin-bottom:10px">
+      <select id="c-catalogo-golpe" style="max-width:320px">
+        ${TIPOS_ARMA.map(arma => `<optgroup label="${arma.nome}">
+          ${GOLPES_CATALOGO.filter(g => g.arma===arma.id).map(g =>
+            `<option value="${g.id}">${g.nome}</option>`).join('')}
+        </optgroup>`).join('')}
+      </select>
+      <button id="btAddGolpeCatalogo">+ Do catálogo</button>
+    </div>
+    <button id="btAddGolpe">+ Golpe em branco</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Magias</h2>
+    <p class="mini" style="margin:6px 0 14px">Custo em PM e o que cada uma faz.</p>
+    ${p.magias.map((m,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-magia-campo="${i}|nome" value="${esc(m.nome)}" placeholder="Nome da magia" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-magia="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Custo em PM</label><input data-magia-campo="${i}|custoPm" type="number" min="0" value="${m.custoPm||0}"></div>
+        <div><label>Efeito</label><input data-magia-campo="${i}|efeito" value="${esc(m.efeito)}"></div>
+      </div>
+    </div>`).join('')}
+    <div class="linha" style="margin-bottom:10px">
+      <select id="c-catalogo-magia" style="max-width:320px">
+        ${ESCOLAS_MAGIA.map(escola => `<optgroup label="${escola.nome}">
+          ${MAGIAS_CATALOGO.filter(m => m.escola===escola.id).map(m =>
+            `<option value="${m.id}">${m.nome}</option>`).join('')}
+        </optgroup>`).join('')}
+      </select>
+      <button id="btAddMagiaCatalogo">+ Do catálogo</button>
+    </div>
+    <button id="btAddMagia">+ Magia em branco</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Habilidade Única</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Raríssima — poucos personagens no mundo têm uma. Não é escolha normal
+      de criação: começa vazia, e só o mestre libera quando fizer sentido
+      na história.
+    </p>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-bottom:12px">
+      <input type="checkbox" id="c-unica-tem" style="width:auto" ${p.habilidadeUnica.tem?'checked':''}>
+      Este personagem tem uma
+    </label>
+    ${p.habilidadeUnica.tem ? `
+      <div class="grade g2">
+        <div><label for="c-unica-nome">Nome</label>
+          <input id="c-unica-nome" data-unica="nome" value="${esc(p.habilidadeUnica.nome)}"></div>
+        <div><label for="c-unica-como">Como conseguiu</label>
+          <input id="c-unica-como" data-unica="comoConseguiu" value="${esc(p.habilidadeUnica.comoConseguiu)}"></div>
+      </div>
+      <div style="margin-top:12px">
+        <label for="c-unica-desc">Descrição</label>
+        <textarea id="c-unica-desc" data-unica="descricao" rows="3">${esc(p.habilidadeUnica.descricao)}</textarea>
+      </div>` : ''}
+  </div>`;
+}
+
+function abaSkills(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Skills</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Skill sobe de <strong>estágio</strong> com o USO em jogo, não é
+      escolha numa lista. Cada estágio tem 10 níveis internos; ao completar
+      o 10º, avança pro próximo estágio. Clique em "Usar" quando ela
+      aparecer numa cena — combina com o mestre o ritmo que faz sentido
+      pra mesa.
+    </p>
+    ${p.skills.map((s,i) => {
+      const estagioIdx = ESTAGIOS_SKILL.findIndex(e => e.id === s.estagio) ?? 0;
+      const estagio = ESTAGIOS_SKILL[estagioIdx] || ESTAGIOS_SKILL[0];
+      const noTeto = estagio.id === 'mestre' && s.nivelInterno >= 10;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-skill-campo="${i}|nome" value="${esc(s.nome)}" placeholder="Nome da skill" style="font-family:Georgia,serif;font-size:16px">
+          <button data-remover-skill="${i}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g2">
+          <div><label>Categoria</label>
+            <input data-skill-campo="${i}|categoria" value="${esc(s.categoria)}" placeholder="arma, magia, ofício, social..."></div>
+          <div><label>Estágio</label>
+            <div class="linha">
+              <strong>${estagio.nome}</strong>
+              <span class="mini">nível ${s.nivelInterno||1}/10</span>
+            </div>
+            <div class="barra-skill"><span style="width:${((s.nivelInterno||1)/10)*100}%"></span></div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <button data-avancar-skill="${i}" ${noTeto?'disabled':''}>${noTeto?'Dominada':'Usar (+1)'}</button>
+        </div>
+      </div>`;
+    }).join('')}
+    <button id="btAddSkill">+ Skill</button>
+  </div>`;
+}
+
+function abaNotas(p){
+  return `<div class="cartao">
+    <label for="c-anotacoes">Anotações</label>
+    <textarea id="c-anotacoes" data-campo="anotacoes" rows="10">${esc(p.anotacoes)}</textarea>
+  </div>`;
+}
+
+/* --- Eventos --------------------------------------------------------------
+
+   O `render` reescreve a tela inteira, então os eventos são religados a
+   cada desenho — mesmo caminho do Fabula Ultima e do Kaizoku no Sho.
+------------------------------------------------------------------------- */
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b =>
+    b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  app.querySelectorAll('[data-perfil]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.perfil[el.dataset.perfil] = el.value, el));
+
+  app.querySelectorAll('[data-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p[el.dataset.campo] = el.value, el));
+
+  app.querySelectorAll('[data-num]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p[el.dataset.num] = Number(el.value) || 0, el));
+
+  app.querySelectorAll('[data-campo-raiz]').forEach(el =>
+    el.onchange = () => mudar(p => p[el.dataset.campoRaiz] = el.value));
+
+  // Aba Mundo: Andar/Zona, Guilda, Títulos, Duelo — tudo campo simples.
+  app.querySelectorAll('[data-andar-num]').forEach(el =>
+    el.onchange = () => mudar(p => p.andar[el.dataset.andarNum] = Number(el.value) || 1));
+  app.querySelectorAll('[data-andar]').forEach(el =>
+    el.onchange = () => mudar(p => p.andar[el.dataset.andar] = el.value));
+  app.querySelectorAll('[data-guilda]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
+      const mutador = p => p.guilda[el.dataset.guilda] = el.value;
+      el.tagName==='SELECT' ? mudar(mutador) : mudarSemRedesenhar(mutador, el);
+    });
+  app.querySelectorAll('[data-titulo-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.tituloCampo.split('|');
+      p.titulos[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-titulo-visao]').forEach(el =>
+    el.onchange = () => mudar(p => p.titulos[Number(el.dataset.tituloVisao)].visao = el.value));
+  app.querySelectorAll('[data-remover-titulo]').forEach(b =>
+    b.onclick = () => mudar(p => p.titulos.splice(Number(b.dataset.removerTitulo), 1)));
+  const addTitulo = document.getElementById('btAddTitulo');
+  if(addTitulo) addTitulo.onclick = () => mudar(p => p.titulos.push({id:uid(), nome:'', comoConseguiu:'', visao:'neutro'}));
+  app.querySelectorAll('[data-duelo]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
+      const mutador = p => p.duelo[el.dataset.duelo] = el.value;
+      el.tagName==='SELECT' ? mudar(mutador) : mudarSemRedesenhar(mutador, el);
+    });
+
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Number(el.value)));
+
+  const perfilAtr = document.getElementById('c-perfilatr');
+  if(perfilAtr) perfilAtr.onchange = () => mudar(p => {
+    p.perfilAtributos = perfilAtr.value;
+    const modelo = PERFIS.find(x => x.id === perfilAtr.value);
+    if(modelo) ATRIBUTOS.forEach((a,i) => p.atributos[a.id] = modelo.dados[i]);
+  });
+
+  app.querySelectorAll('[data-classe]').forEach(el =>
+    el.onchange = () => mudar(p => p.classes[Number(el.dataset.classe)].classeId = el.value));
+  app.querySelectorAll('[data-nivel]').forEach(el =>
+    el.onchange = () => mudar(p => p.classes[Number(el.dataset.nivel)].nivel = Number(el.value) || 0));
+  app.querySelectorAll('[data-remover-classe]').forEach(b =>
+    b.onclick = () => mudar(p => p.classes.splice(Number(b.dataset.removerClasse), 1)));
+  const addClasse = document.getElementById('btAddClasse');
+  if(addClasse) addClasse.onclick = () => mudar(p => p.classes.push({classeId:'', nivel:0}));
+
+  // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
+  // "|", porque um botão só aceita um valor — mesmo truque do Fabula Ultima.
+  app.querySelectorAll('[data-poder-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMais.split('|');
+      const def = PODERES_CLASSE[classeId].find(x => x.id === poderId);
+      const mapa = p.poder.escolhas[classeId] || (p.poder.escolhas[classeId] = {});
+      if(pontosUsadosClasse(p, classeId) >= nivelDeClasse(p, classeId)) return;
+      mapa[poderId] = Math.min(def.max, (mapa[poderId] || 0) + 1);
+    }));
+  app.querySelectorAll('[data-poder-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderMenos.split('|');
+      const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
+      mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
+    }));
+
+  const switchAtivo = document.getElementById('c-switch-ativo');
+  if(switchAtivo) switchAtivo.onchange = () => mudar(p => p.switchAtivo.ativo = switchAtivo.checked);
+  app.querySelectorAll('[data-switch]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () =>
+      (el.tagName==='SELECT' ? mudar : mudarSemRedesenhar)(p => p.switchAtivo[el.dataset.switch] = el.value, el));
+
+  app.querySelectorAll('[data-condicao]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.condicao;
+      p.condicoes = el.checked ? [...p.condicoes, id] : p.condicoes.filter(c => c !== id);
+    }));
+
+  const morteAtiva = document.getElementById('c-morte-ativa');
+  if(morteAtiva) morteAtiva.onchange = () => mudar(p => p.penalidadeMorte.ativa = morteAtiva.checked);
+  app.querySelectorAll('[data-morte]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const chave = el.dataset.morte;
+      p.penalidadeMorte[chave] = el.type === 'number' ? (Number(el.value) || 0) : el.value;
+    }, el));
+  const btCalcularPerda = document.getElementById('btCalcularPerda');
+  if(btCalcularPerda) btCalcularPerda.onclick = () => mudar(p => {
+    p.penalidadeMorte.xpPerdido = Math.floor((p.xp||0) * 0.1);
+  });
+
+  const permadeathAtivo = document.getElementById('c-permadeath-ativo');
+  if(permadeathAtivo) permadeathAtivo.onchange = () => mudar(p => p.permadeath.ativo = permadeathAtivo.checked);
+  const permadeathMorreu = document.getElementById('c-permadeath-morreu');
+  if(permadeathMorreu) permadeathMorreu.onchange = () => mudar(p => p.permadeath.morreu = permadeathMorreu.checked);
+  app.querySelectorAll('[data-permadeath]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.permadeath[el.dataset.permadeath] = el.value, el));
+
+  app.querySelectorAll('[data-corporeal]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.corpoReal[el.dataset.corporeal] = el.value, el));
+  const corpoRisco = document.getElementById('c-corpo-risco');
+  if(corpoRisco) corpoRisco.onchange = () => mudar(p => p.corpoReal.emRisco = corpoRisco.checked);
+
+  app.querySelectorAll('[data-bonus]').forEach(el =>
+    el.onchange = () => mudar(p => p.bonus[el.dataset.bonus] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-golpe-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.golpeCampo.split('|');
+      p.golpes[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-golpe-origem]').forEach(el =>
+    el.onchange = () => mudar(p => p.golpes[Number(el.dataset.golpeOrigem)].origem = el.value));
+  app.querySelectorAll('[data-remover-golpe]').forEach(b =>
+    b.onclick = () => mudar(p => p.golpes.splice(Number(b.dataset.removerGolpe), 1)));
+  const addGolpe = document.getElementById('btAddGolpe');
+  if(addGolpe) addGolpe.onclick = () => mudar(p =>
+    p.golpes.push({id:uid(), nome:'', arma:'', dano:'', posMotion:'', origem:'sistema'}));
+
+  const addGolpeCatalogo = document.getElementById('btAddGolpeCatalogo');
+  if(addGolpeCatalogo) addGolpeCatalogo.onclick = () => mudar(p => {
+    const sel = document.getElementById('c-catalogo-golpe');
+    const item = GOLPES_CATALOGO.find(g => g.id === sel.value); if(!item) return;
+    const arma = TIPOS_ARMA.find(a => a.id === item.arma);
+    p.golpes.push({id:uid(), nome:item.nome, arma:arma?arma.nome:item.arma, dano:item.dano, posMotion:item.posMotion, origem:'sistema'});
+  });
+
+  app.querySelectorAll('[data-magia-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.magiaCampo.split('|');
+      p.magias[Number(i)][chave] = el.type === 'number' ? (Number(el.value) || 0) : el.value;
+    }, el));
+  app.querySelectorAll('[data-remover-magia]').forEach(b =>
+    b.onclick = () => mudar(p => p.magias.splice(Number(b.dataset.removerMagia), 1)));
+  const addMagia = document.getElementById('btAddMagia');
+  if(addMagia) addMagia.onclick = () => mudar(p => p.magias.push({id:uid(), nome:'', custoPm:0, efeito:''}));
+
+  const addMagiaCatalogo = document.getElementById('btAddMagiaCatalogo');
+  if(addMagiaCatalogo) addMagiaCatalogo.onclick = () => mudar(p => {
+    const sel = document.getElementById('c-catalogo-magia');
+    const item = MAGIAS_CATALOGO.find(m => m.id === sel.value); if(!item) return;
+    p.magias.push({id:uid(), nome:item.nome, custoPm:item.custoPm, efeito:item.efeito});
+  });
+
+  const unicaTem = document.getElementById('c-unica-tem');
+  if(unicaTem) unicaTem.onchange = () => mudar(p => p.habilidadeUnica.tem = unicaTem.checked);
+  app.querySelectorAll('[data-unica]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.habilidadeUnica[el.dataset.unica] = el.value, el));
+
+  app.querySelectorAll('[data-skill-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.skillCampo.split('|');
+      p.skills[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-remover-skill]').forEach(b =>
+    b.onclick = () => mudar(p => p.skills.splice(Number(b.dataset.removerSkill), 1)));
+  app.querySelectorAll('[data-avancar-skill]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const s = p.skills[Number(b.dataset.avancarSkill)];
+      const idx = ESTAGIOS_SKILL.findIndex(e => e.id === s.estagio) ?? 0;
+      if((s.nivelInterno||1) < 10){
+        s.nivelInterno = (s.nivelInterno||1) + 1;
+      }else if(idx < ESTAGIOS_SKILL.length - 1){
+        s.estagio = ESTAGIOS_SKILL[idx+1].id;
+        s.nivelInterno = 1;
+      }
+    }));
+  const addSkill = document.getElementById('btAddSkill');
+  if(addSkill) addSkill.onclick = () => mudar(p =>
+    p.skills.push({id:uid(), nome:'', categoria:'', estagio:'iniciante', nivelInterno:1}));
+
+  app.querySelectorAll('[data-item-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.itemCampo.split('|');
+      p.inventario[Number(i)][chave] = el.type === 'number' ? (Number(el.value) || 0) : el.value;
+    }, el));
+  // Peso e valor de efeito alimentam os números sempre visíveis (peso
+  // carregado, e os derivados que o item alimentar) — por isso usam
+  // 'change' com redesenho completo, e não o 'input' com debounce dos
+  // campos só descritivos: sem isso, o painel ficaria com o número velho
+  // até alguém trocar de aba.
+  app.querySelectorAll('[data-item-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.itemNum.split('|');
+      p.inventario[Number(i)][chave] = Number(el.value) || 0;
+    }));
+  app.querySelectorAll('[data-item-tipo]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemTipo)].tipo = el.value));
+  app.querySelectorAll('[data-item-raridade]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemRaridade)].raridade = el.value));
+  app.querySelectorAll('[data-item-efeito]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemEfeito)].efeitoTipo = el.value));
+  app.querySelectorAll('[data-item-equipado]').forEach(el =>
+    el.onchange = () => mudar(p => p.inventario[Number(el.dataset.itemEquipado)].equipado = el.checked));
+  // Durabilidade máxima tem regra própria: se o item estava cheio (ou era
+  // novo, sem durabilidade nenhuma), sobe a atual junto — senão, quem já
+  // estava com o item quebrado/gasto perderia esse estado só por editar o
+  // teto.
+  app.querySelectorAll('[data-item-durmax]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const it = p.inventario[Number(el.dataset.itemDurmax)];
+      const novoMax = Number(el.value) || 0;
+      if(!it.durabilidadeMaxima || it.durabilidadeAtual >= it.durabilidadeMaxima) it.durabilidadeAtual = novoMax;
+      it.durabilidadeMaxima = novoMax;
+    }));
+  app.querySelectorAll('[data-remover-item]').forEach(b =>
+    b.onclick = () => mudar(p => p.inventario.splice(Number(b.dataset.removerItem), 1)));
+  app.querySelectorAll('[data-usar-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.usarItem)];
+      it.durabilidadeAtual = Math.max(0, (it.durabilidadeAtual||0) - 1);
+    }));
+  app.querySelectorAll('[data-reparar-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.repararItem)];
+      it.durabilidadeAtual = it.durabilidadeMaxima || 0;
+    }));
+  const addItem = document.getElementById('btAddItem');
+  if(addItem) addItem.onclick = () => mudar(p => p.inventario.push({
+    id:uid(), nome:'', tipo:'arma', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0,
+    peso:0, durabilidadeMaxima:0, durabilidadeAtual:0, equipado:false, notas:'',
+  }));
+
+  app.querySelectorAll('[data-vender-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.venderItem)];
+      const preco = precoVenda(it); if(preco === null) return;
+      receberPrata(p, preco);
+      p.inventario.splice(Number(b.dataset.venderItem), 1);
+    }));
+
+  // Materiais: estoque nomeado que as receitas (catálogo e próprias) leem.
+  // A quantidade usa 'change' com redesenho imediato — é ela que decide se
+  // o botão "Fabricar" de cada receita fica travado ou não, então não pode
+  // ficar esperando o debounce do nome (campo só descritivo) pra atualizar.
+  app.querySelectorAll('[data-material-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.materialCampo.split('|');
+      p.materiais[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-material-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.materialNum.split('|');
+      p.materiais[Number(i)][chave] = Number(el.value) || 0;
+    }));
+  app.querySelectorAll('[data-remover-material]').forEach(b =>
+    b.onclick = () => mudar(p => p.materiais.splice(Number(b.dataset.removerMaterial), 1)));
+  const addMaterial = document.getElementById('btAddMaterial');
+  if(addMaterial) addMaterial.onclick = () => mudar(p => p.materiais.push({id:uid(), nome:'', quantidade:0}));
+
+  // Fabricar: "catalogo|receitaId" ou "custom|índice" — mesma função
+  // fabricar() por trás dos dois, já que têm o mesmo formato de dados.
+  app.querySelectorAll('[data-fabricar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [origem, chave] = b.dataset.fabricar.split('|');
+      const receita = origem === 'catalogo'
+        ? RECEITAS_CATALOGO.find(r => r.id === chave)
+        : p.receitasCustom[Number(chave)];
+      if(receita) fabricar(p, receita);
+    }));
+
+  // Suas Receitas: editor completo (nome, classe, materiais, item que sai).
+  app.querySelectorAll('[data-receita-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [ri, chave] = el.dataset.receitaCampo.split('|');
+      p.receitasCustom[Number(ri)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-receita-classe]').forEach(el =>
+    el.onchange = () => mudar(p => p.receitasCustom[Number(el.dataset.receitaClasse)].classe = el.value));
+  app.querySelectorAll('[data-receita-material]').forEach(el => {
+    const [ri, mi, chave] = el.dataset.receitaMaterial.split('|');
+    const mutador = p => p.receitasCustom[Number(ri)].materiais[Number(mi)][chave] = el.type==='number' ? (Number(el.value)||0) : el.value;
+    if(el.type==='number') el.onchange = () => mudar(mutador);
+    else el.oninput = () => mudarSemRedesenhar(mutador, el);
+  });
+  app.querySelectorAll('[data-add-receita-material]').forEach(b =>
+    b.onclick = () => mudar(p => p.receitasCustom[Number(b.dataset.addReceitaMaterial)].materiais.push({nome:'', quantidade:0})));
+  app.querySelectorAll('[data-remover-receita-material]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [ri, mi] = b.dataset.removerReceitaMaterial.split('|');
+      p.receitasCustom[Number(ri)].materiais.splice(Number(mi), 1);
+    }));
+  app.querySelectorAll('[data-receita-item]').forEach(el => {
+    const [ri, chave] = el.dataset.receitaItem.split('|');
+    const mutador = p => p.receitasCustom[Number(ri)].item[chave] = el.type==='number' ? (Number(el.value)||0) : el.value;
+    if(el.tagName==='SELECT' || el.type==='number') el.onchange = () => mudar(mutador);
+    else el.oninput = () => mudarSemRedesenhar(mutador, el);
+  });
+  app.querySelectorAll('[data-remover-receita]').forEach(b =>
+    b.onclick = () => mudar(p => p.receitasCustom.splice(Number(b.dataset.removerReceita), 1)));
+  const addReceita = document.getElementById('btAddReceita');
+  if(addReceita) addReceita.onclick = () => mudar(p => p.receitasCustom.push({
+    nome: '', classe: '', materiais: [{nome:'', quantidade:1}],
+    item: {tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:0, durabilidadeMaxima:0, notas:''},
+  }));
+
+  // Carteira e Loja
+  app.querySelectorAll('[data-carteira]').forEach(el =>
+    el.onchange = () => mudar(p => { p.carteira[el.dataset.carteira] = Number(el.value) || 0; normalizarCarteira(p); }));
+  app.querySelectorAll('[data-comprar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const item = ITENS_LOJA.find(x => x.id === b.dataset.comprar); if(!item) return;
+      const preco = precoCompra(p, item.precoPrata);
+      if(!gastarPrata(p, preco)) return;
+      const it = item.item;
+      p.inventario.push({
+        id: uid(), nome: item.nome, tipo: it.tipo, raridade: it.raridade,
+        efeitoTipo: it.efeitoTipo, efeitoValor: it.efeitoValor, peso: it.peso,
+        durabilidadeMaxima: it.durabilidadeMaxima, durabilidadeAtual: it.durabilidadeMaxima,
+        equipado: false, notas: it.notas,
+      });
+    }));
+}
+
+/* --- Barra do topo ------------------------------------------------------ */
+
+document.getElementById('chkCompartilhar').onchange = e => {
+  alternarCompartilhado(e.target.checked);
+};
+
+document.getElementById('seletor').onchange = e => {
+  estado.atualId = e.target.value; render();
+};
+
+document.getElementById('btNovo').onclick = () => {
+  const p = novoPersonagem();
+  estado.fichas.push(p);
+  estado.atualId = p.id;
+  estado.aba = 'status';
+  salvar(); render();
+};
+
+document.getElementById('btExcluir').onclick = () => {
+  const p = atual(); if(!p) return;
+  if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
+  estado.fichas = estado.fichas.filter(f => f.id !== p.id);
+  estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  salvar(); render();
+};
+
+document.getElementById('btExportar').onclick = () => {
+  const p = atual(); if(!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (p.perfil.nome || 'personagem').replace(/[^\w\-]+/g,'-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('btImportar').onclick = () =>
+  document.getElementById('arquivo').click();
+
+document.getElementById('arquivo').onchange = e => {
+  const arquivo = e.target.files[0]; if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(!lido || !lido.perfil) throw new Error('formato desconhecido');
+      if(MODO_HUB){
+        // No Hub só existe esta ficha — importar restaura o conteúdo dela
+        // a partir de um backup, em vez de criar outra.
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        // Id novo: importar nunca sobrescreve um personagem que já existe.
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
+      salvar(); render();
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
+    }
+    e.target.value = '';
+  };
+  leitor.readAsText(arquivo);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

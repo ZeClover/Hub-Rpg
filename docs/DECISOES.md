@@ -170,7 +170,171 @@ próprio jogador poder sair.
 | 62 | Excluir campanha apaga a campanha, não as fichas | As fichas ligadas (de jogador ou de inimigo) só soltam — `campanhaId` volta a `null`, viram fichas avulsas de novo. Só quem é mestre pode excluir |
 | 63 | Remover jogador e sair usam a mesma rota | `DELETE /api/campanhas/[id]/jogadores/[usuarioId]` serve tanto para o mestre remover alguém quanto para o próprio jogador sair — a permissão dentro da rota é "sou eu mesmo, ou sou o mestre desta campanha". A ficha do jogador removido também só solta, nunca é apagada. O mestre nunca pode ser removido por essa rota — pra encerrar a mesa de vez, é "Excluir campanha" |
 
-## 14. Restrições registradas
+## 14. Sistema SAO — chassi (28/08/2026)
+
+O Zé pediu pra estudar Sword Art Online, Overgeared e Shangri-La Frontier
+antes de desenhar o sistema, porque o traço que ele quer no homebrew é o
+personagem **saber que está dentro de um jogo** — enxergar PV, nível e nome
+de golpe na própria tela, do mesmo jeito que o jogo mostra. Depois da
+pesquisa, as decisões abaixo fecharam o chassi (as sete perguntas de
+`ARQUITETURA.md`), decisão #17.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 64 | Morte | **Penalidade forte, sem permadeath** (estilo Overgeared/Satisfy). Chegar a 0 PV não mata de vez: o personagem "renasce" num ponto de respawn, perde XP na proporção do nível, e há chance de derrubar um item equipado no lugar onde caiu |
+| 65 | Combate | **Híbrido.** Golpes assistidos pelo sistema (Sword Skills, estilo SAO) conseguem mais dano mas deixam a condição "Vulnerável (pós-motion)" depois de usados; ataque livre usa só o atributo, sem bônus e sem essa vulnerabilidade — igual o SAO original permite os dois |
+| 66 | Resolução de teste | **Reaproveita o estilo do Fabula Ultima**: dois dados (d6 a d12, um por atributo) somados contra uma Dificuldade. Duplo 6+ é sucesso crítico, duplo 1 é falha crítica — familiar pra quem já tem ficha nesse sistema |
+| 67 | Magia | **Existe**, ao contrário do SAO original (que não tem magia) — atributo Mente cobre magia e PM, junto de Força/Agilidade/Vontade |
+| 68 | Classes | **Multiclasse sem limite** (estilo Overgeared): o personagem acumula quantas classes quiser, cada uma numa de três categorias (Combate, Produção, Outras). O Nível geral do personagem é a soma dos níveis de todas as classes |
+| 69 | Progressão de skill | **Sobe com o uso**, não por escolha em lista (estilo Overgeared): cada skill tem um estágio (Iniciante → Intermediário → Avançado → Mestre) com 10 níveis internos, avançados um a um conforme aparece em jogo |
+| 70 | Habilidades Únicas | **Entram, como recurso raro.** Campo separado na ficha, começa vazio — não é escolha normal de criação, só o mestre libera quando fizer sentido na história, igual as 10 do SAO original |
+
+O chassi (`public/sao.html`) ficou pronto com essas sete respostas, um
+catálogo-semente de 7 classes (sem poderes próprios ainda) e o painel de
+status (PV/PM/Defesa/Nível) sempre visível. Fica de fora desta fatia, pra
+fatias futuras: catálogo real de poderes por classe, golpes/magias de
+referência prontos pra escolher (hoje é tudo texto livre), inventário e o
+Modo Hub (arquivo único primeiro, decisão #40).
+
+## 15. Sistema SAO — ficha jogável (28/08/2026)
+
+Zé pediu pra completar de uma vez o que o chassi tinha deixado de esqueleto:
+poderes de classe de verdade, mais classes, catálogo de golpes e magias, o
+Switch, e equipamento com raridade e durabilidade.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 71 | Tamanho do catálogo de classes | **Catálogo grande agora (12+).** Cresceu das 7 iniciais pra 12: Espadachim, Arcanista, Batedor, Lanceiro, Arqueiro (Combate); Ferreiro, Alquimista, Encantador, Cozinheiro (Produção); Mercador, Domador, Curandeiro (Outras) |
+| 72 | Durabilidade de equipamento | **N usos até quebrar.** Cada item tem uma durabilidade máxima; "Usar" desconta 1, "Reparar" volta ao máximo. Durabilidade máxima 0 = item que não desgasta |
+| 73 | Raridade de item | **6 níveis, estilo Overgeared:** Comum, Incomum, Raro, Épico, Lendário, Único — cada um com uma sugestão de bônus, mas o bônus de verdade continua sendo o que a pessoa digitar no item |
+| 74 | XP e nível | **Continua manual**, como no chassi — o mestre decide o ritmo, sem tabela de XP fixa por enquanto |
+
+Com essas respostas, `public/sao.html` ganhou: 60 poderes de classe (5 por
+classe, comprados com pontos de poder = nível investido nela, mesma lógica
+do Fabula Ultima); um catálogo de 13 Golpes por tipo de arma e 12 Magias
+por escola, ambos com botão "+ Do catálogo" que preenche a linha sozinha
+sem travar quem preferir digitar a própria; um card de Switch (parceiro,
+papel, combo ativo); e uma aba de Equipamento com peso ligado à Força,
+raridade e durabilidade — item equipado e não quebrado soma sozinho no
+derivado certo (Defesa, Defesa Mágica, Iniciativa, PV ou PM máximos), igual
+os acessórios automáticos do Fabula Ultima.
+
+## 16. Sistema SAO — crafting e economia (28/08/2026)
+
+Parte B: Ferreiro, Alquimista, Encantador e Cozinheiro ganham crafting de
+verdade, e entra a economia (moeda e loja).
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 75 | Nome da moeda | **Ouro e Prata, do Overgeared** (100 Prata = 1 Ouro) — termo genérico o bastante (qualquer MMO de fantasia usa) pra não esbarrar em direito autoral, só a proporção exata é a mesma do livro |
+| 76 | Profundidade do crafting | **Receita com materiais nomeados** — "2 Couro de Lobo, 1 Minério de Ferro", não um "ponto de material" genérico |
+| 77 | Estoque de materiais | **Lista de materiais nomeados com quantidade**, separada do inventário de equipamento |
+| 78 | Loja | **Tela de comprar/vender** — desconta/soma da carteira sozinho, em vez de só carteira + preço pro mestre resolver na mesa |
+
+No meio da sessão, o Zé pediu mais uma coisa: além do catálogo de receitas
+prontas, um jeito de **criar a própria receita e deixar salva** — não só
+usar as 8 do sistema. Virou o card "Suas Receitas": mesmo formato de dado
+de uma receita de catálogo (nome, classe dona, lista de materiais, item que
+sai), só que escrito pelo jogador e mantido na ficha dele.
+
+Dois bugs de verdade apareceram nos testes automatizados e foram corrigidos
+antes de fechar a fatia: o botão "Fabricar" não reagia à quantidade de
+material digitada até trocar de aba (mesma causa do bug de peso da fatia
+anterior — o campo salvava sem redesenhar a tela); e a função de gastar
+Prata zerava o Ouro *antes* de reler o total da carteira, corrompendo a
+conta toda vez que uma compra descontava dinheiro.
+
+## 17. Sistema SAO — mundo e mesa (28/08/2026)
+
+Parte C: o que o mestre precisa pra rodar uma sessão — ficha de inimigo,
+chefe de andar, andares, PvP, reputação e guilda.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 79 | Ficha de Inimigo | **Agora, arquivo próprio local** (`public/sao-inimigo.html`) — mesmo caminho do jogador, sem Modo Hub ainda. Não reaproveita a ficha de jogador (mesma decisão do Fabula Ultima, #54) |
+| 80 | Chefes de Andar | **Mecânica robusta**: Fases (gatilho + mudança de comportamento), Ataques de Área separados, e um Relógio de Batalha (clock de segmentos pro objetivo do grupo na cena) |
+| 81 | Andares/Mapa | **Campo simples**: andar atual + Zona (Segura/Masmorra) na ficha de jogador, sem virar um sistema de progresso de campanha à parte |
+| 82 | PvP, Reputação e Guilda | **Tudo**: Duelo formal, Títulos com "como o resto do jogo vê" (Admirado/Neutro/Malvisto), e um cartão de sócio de Guilda (rank, papel, benefício) — ainda sem registro compartilhado entre fichas (isso pede Modo Hub) |
+
+Saiu desta fatia: `public/sao-inimigo.html` (categoria Comum/Elite/Chefe de
+Andar com multiplicador ×1/×2/×3 de PV/PM, igual o Fabula Ultima faz com
+soldado/elite/campeão) e `public/sao-escudo-mestre.html` (referência
+estática, sem JS, cobrindo tudo do sistema numa página só). `src/lib/
+sistemas.ts` já aponta pros dois — ficam inertes até o SAO ganhar Modo Hub
+e campanha própria (decisão #52), mas prontos pra esse dia.
+
+## 18. Sistema SAO — corpo real, permadeath e falha de chefe (28/08/2026)
+
+Parte D: a camada que mais separa este sistema de um RPG comum — "o
+personagem sabe que está num jogo" (o pedido original do Zé pra este
+sistema inteiro) implica que existe alguém de carne e osso plugado nele.
+
+Sem pergunta nova em aberto desta vez — o desenho já tinha saído definido
+quando o Zé aprovou a lista de fatias, então fui direto pra implementação.
+
+O que entrou:
+
+- **Corpo Real** — card na aba Mundo: onde o corpo está, quem cuidaria
+  dele, e um interruptor "em risco agora" que dá ao mestre uma alavanca de
+  tensão fora do jogo (alguém mexendo no equipamento, um apagão) sem
+  precisar arriscar o personagem dentro dele
+- **Permadeath opcional por mesa** — a decisão #64 já tinha fixado "sem
+  permadeath" como padrão do sistema, registrando que cada mesa podia
+  decidir diferente. Virou um interruptor de verdade no card de
+  Penalidade de Morte: ligado, troca completamente o card (aviso forte +
+  "personagem morreu" + como aconteceu) em vez de mostrar XP/item de
+  penalidade — é por personagem, não por campanha, porque campanha ainda
+  não existe pro SAO (decisão #40)
+- **Falha do Chefe** — o golpe do Shangri-La Frontier, na ficha de
+  inimigo: uma fraqueza específica (como descobrir, como explorar,
+  descrição, se já foi descoberta), pensada pra combinar com o poder
+  Detectar Falha do Batedor (Parte A) — recompensa estudar o encontro em
+  vez de só bater mais forte
+
+Testado de ponta a ponta com Playwright: Corpo Real persistindo, o card de
+Penalidade trocando de conteúdo ao ligar/desligar permadeath (e o campo
+padrão sumindo/voltando da tela), morte permanente registrando a causa,
+Falha do Chefe salvando e sobrevivendo a um recarregamento de página.
+
+## 19. Sistema SAO — Modo Hub (28/08/2026)
+
+Última fatia do Sistema SAO: salvar na conta, aparecer em `/fichas`, e
+campanha de verdade — o mesmo caminho que o Fabula Ultima e o Kaizoku no
+Sho já tinham percorrido (decisão #40). Sem pergunta nova em aberto: o
+mecanismo já estava definido por precedente, então fui direto pra
+implementação, só adaptando pros nomes de `public/sao.html` e
+`public/sao-inimigo.html`.
+
+`public/sao.html` ganhou exatamente o que o Fabula Ultima tem: detecta
+`?id=` na URL, busca/salva via `/api/personagens/[id]`, modo leitura pra
+quem não é dono, interruptor de Compartilhar (decisão #46). `public/
+sao-inimigo.html` ganhou o mesmo mecanismo, sem o interruptor de
+Compartilhar — inimigo não tem link de leitura, só o mestre da campanha
+mexe nele. Os dois continuam funcionando 100% em modo local sem o
+parâmetro, exatamente como as fatias anteriores deixaram. `src/lib/
+sistemas.ts`: `salvaNoHub` virou `true`, e o SAO já aparece em "+ Criar
+ficha" e na criação de campanha.
+
+**Bug encontrado e corrigido no caminho:** a rota `/api/personagens/[id]`
+só lia `dados.perfil.nome` pra atualizar o nome da ficha mostrado nas
+listas do Hub. Ficha de inimigo/NPC não tem `perfil` — guarda o nome
+solto em `dados.nome` (Fabula Ultima já fazia isso, e o Sistema SAO
+seguiu o mesmo formato). Sem o ajuste, todo inimigo criado por qualquer
+mestre ficaria pra sempre listado como "Novo Inimigo" na campanha, não
+importa o que fosse escrito na ficha depois — um bug que já existia
+silenciosamente no Fabula Ultima também. Um `??` a mais
+(`corpo.dados?.perfil?.nome ?? corpo.dados?.nome`) resolve pros dois
+sistemas de uma vez, sem mudar nada pra quem já tinha `perfil.nome`
+(Fabula Ultima de jogador e Kaizoku no Sho).
+
+Testado com Playwright mockando as respostas de `/api/personagens/*`
+(sem credenciais do Supabase neste ambiente pra testar contra o banco de
+verdade): ficha de jogador e de inimigo carregando do Hub, edição
+disparando o PATCH certo depois do debounce duplo, Compartilhar, ficha
+alheia/apagada (404), modo leitura travando todo campo enquanto Exportar
+segue disponível, e o modo local intacto.
+
+## 20. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

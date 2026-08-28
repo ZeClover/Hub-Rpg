@@ -324,7 +324,197 @@ passando.
   - `npm run build`, lint e os 16 testes automatizados passando
 
 ### Outros sistemas
-- [ ] Sistema SAO
+- [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
+      #64), inspirado em Sword Art Online, Overgeared e Shangri-La
+      Frontier: o personagem enxerga a própria ficha como uma Janela de
+      Status de jogo (PV, PM, nível, nome de golpe), não uma abstração
+      escondida da mesa. `public/sao.html`, arquivo único com localStorage
+      (decisão #40, Modo Hub fica pra depois). O que o chassi cobre:
+  - 4 atributos em dado (d6-d12), mesmo estilo de teste do Fabula Ultima
+    (dois dados somados vs Dificuldade, duplo 6+ crítico, duplo 1 falha)
+  - Multiclasse sem limite (estilo Overgeared): 3 categorias (Combate,
+    Produção, Outras), catálogo-semente de 7 classes, nível por classe
+    somado vira o Nível geral
+  - PV/PM/Defesa/Iniciativa calculados por fórmula própria (números de
+    partida, editáveis à mão — mesma filosofia da decisão #57)
+  - Golpes assistidos pelo sistema (Sword Skills) convivendo com ataque
+    livre: golpe registrado dá a condição "Vulnerável (pós-motion)"
+    depois de usado; golpe "Original" marca quando o jogador aprendeu a
+    fazer sem ajuda do sistema
+  - Skills que sobem de ESTÁGIO com o uso em jogo (iniciante → mestre,
+    10 níveis internos cada), não por escolha em lista — estilo Overgeared
+  - Morte não é permanente (estilo Overgeared): card de Penalidade de
+    Morte com perda de XP (botão calcula 10% do XP atual) e chance de
+    item cair no chão, em vez de matar o personagem de vez
+  - Cursor colorido (verde/laranja/vermelho) como flag de PK visível pra
+    todo mundo, igual o SAO original
+  - Habilidade Única: campo raro, começa vazio, só o mestre libera
+  - Ainda falta pra fatia ficar completa: catálogo real de classes com
+    poderes próprios (hoje é só a categoria), catálogo de golpes/magias
+    de referência, inventário/equipamento, e o Modo Hub
+- [x] **Sistema SAO — ficha jogável** (28/08/2026) — decisões #71-#74,
+      completando o que o chassi tinha deixado como esqueleto:
+  - **Catálogo de 12 classes** com **5 poderes próprios cada** (60 no
+    total), comprados com os níveis investidos naquela classe — igual o
+    Fabula Ultima, mas sem teto de "3 classes": os pontos de poder de uma
+    classe são o nível dela, e cada poder tem um "-"/"+ Comprar" próprio,
+    travado quando os pontos acabam. Aba "Poderes" nova. Classes:
+    Espadachim, Arcanista, Batedor, Lanceiro e Arqueiro (Combate);
+    Ferreiro, Alquimista, Encantador e Cozinheiro (Produção); Mercador,
+    Domador e Curandeiro (Outras)
+  - **Catálogo de Golpes (Sword Skills)** — 13 golpes prontos, por tipo de
+    arma (espada de uma/duas mãos, lança, arco, adaga, cajado), com um
+    seletor "+ Do catálogo" que preenche nome/dano/pós-motion sozinho; o
+    "+ Golpe em branco" de sempre continua existindo pra golpe homebrew
+  - **Catálogo de Magias (Grimório)** — 12 feitiços, 2 por escola (Fogo,
+    Gelo, Raio, Luz, Trevas, Suporte), mesmo esquema de catálogo+em branco
+  - **Switch** — card novo na aba Combate: parceiro, papel atual
+    (Ataque/Suporte) e se o combo está ativo. Registro pra lembrar da
+    mecânica na mesa; o bônus de verdade combina com o mestre
+  - **Equipamento e inventário** — aba nova: item com tipo, uma das
+    **6 raridades estilo Overgeared** (Comum a Único, com sugestão de
+    bônus por degrau), peso, e **durabilidade por usos** ("Usar" gasta 1,
+    "Reparar" volta ao máximo — combina com o poder Reparo de Campo do
+    Ferreiro). Item equipado e não quebrado soma sozinho no derivado que
+    o campo "Efeito" apontar (Defesa, Defesa Mágica, Iniciativa, PV ou PM
+    máximos) — mesma lógica dos acessórios automáticos do Fabula Ultima
+  - **Capacidade de carga** — novo derivado ligado à Força (10 + Força×2),
+    soma o peso de tudo na mochila, equipado ou não
+  - XP e nível **continuam manuais** (decisão da conversa: o mestre decide
+    o ritmo, sem tabela fixa por enquanto)
+  - Testado de ponta a ponta com Playwright num navegador real: comprar e
+    devolver poder respeitando o teto de pontos, golpe e magia vindo do
+    catálogo, item equipado somando e um item quebrado deixando de somar
+    no derivado, reparo devolvendo o bônus, peso somando certo, e tudo
+    isso sobrevivendo a um recarregamento de página. Zero erro de
+    JavaScript
+- [x] **Sistema SAO — crafting e economia** (28/08/2026) — decisões
+      #75-#78, a "Parte B": Ferreiro, Alquimista, Encantador e Cozinheiro
+      passam a fabricar de verdade, e o Mercador ganha uma loja:
+  - **Moeda Ouro/Prata** (100 Prata = 1 Ouro, mesma proporção do
+    Overgeared/Satisfy — pedido explícito do Zé) — card "Carteira" na aba
+    Loja nova, sempre normalizada (editar Prata acima de 100 já vira Ouro
+    sozinho)
+  - **Materiais nomeados com estoque** — aba Crafting nova, lista tipo
+    "3× Minério de Ferro" que as receitas consultam
+  - **8 receitas de catálogo**, 2 por classe de Produção (Ferreiro,
+    Alquimista, Encantador, Cozinheiro), cada uma pedindo materiais
+    específicos e só liberada pra quem tem ao menos 1 nível na classe dona
+  - **"Suas Receitas"** — pedido do Zé no meio da sessão: um editor
+    completo pra criar receita própria (nome, classe, lista de materiais,
+    e o item que sai fabricado) e fica salva na ficha, com o mesmo botão
+    "Fabricar" das receitas prontas
+  - **Loja**: 5 itens genéricos de aventureiro comprados com Prata, e
+    "Vender" em qualquer item do inventário (preço automático pela
+    raridade — Único fica de fora, esse negocia com o mestre). O poder
+    Faro pra Barganha do Mercador desconta 10% sozinho no preço de compra
+  - **Dois bugs de verdade corrigidos no caminho, achados pelos próprios
+    testes**: o botão "Fabricar" não reagia à digitação da quantidade de
+    material até trocar de aba (mesma causa do bug de peso corrigido na
+    fatia anterior — resolvido do mesmo jeito, com redesenho imediato); e
+    `gastarPrata` zerava o Ouro antes de reler o total da carteira,
+    corrompendo a conta ao comprar algo
+  - Testado de ponta a ponta com Playwright: receita travada sem
+    material, destravando ao completar o estoque sem precisar trocar de
+    aba, material sendo descontado, item saindo certo no inventário,
+    receita própria funcionando igual à de catálogo, compra e venda
+    acertando a carteira, normalização de Prata em Ouro, tudo
+    sobrevivendo a um recarregamento de página. Zero erro de JavaScript
+- [x] **Sistema SAO — mundo e mesa** (28/08/2026) — decisões #79-#82, a
+      "Parte C": o que o mestre precisa pra rodar uma sessão de verdade.
+  - **Ficha de Inimigo/Monstro própria** — `public/sao-inimigo.html`,
+    arquivo local igual a do jogador (sem Modo Hub ainda). Não reaproveita
+    a ficha de jogador (mesma decisão do Fabula Ultima): sem classe nem
+    poder de catálogo, é atributo em dado + derivados + texto livre
+    (Ataques, Feitiços, Outras Ações, Regras Especiais)
+  - **Categoria com multiplicador de PV/PM** — Comum (×1), Elite (×2),
+    Chefe de Andar (×3). Defesa/Defesa Mágica/Iniciativa não escalam por
+    categoria (isso é destreza, não resistência) — só o "tanque" de dano
+    cresce. Botão "Recalcular pela fórmula" preenche os derivados, mas
+    continuam editáveis à mão (vilão fora do padrão é o normal)
+  - **Chefe de Andar, com mecânica robusta**: Fases (gatilho + o que
+    muda — geralmente um limiar de PV), Ataques de Área separados dos
+    ataques comuns pra achar rápido na mesa, e um **Relógio de Batalha**
+    (clock de segmentos clicáveis pro objetivo do grupo na cena, tipo
+    "destruir os cristais" — clicar um segmento enche até ali, clicar de
+    novo no mesmo esvazia, igual um clock de PbtA/FitD)
+  - **Andar e Zona** na ficha de jogador — card na aba Mundo, nova: andar
+    atual + Segura (cidade/base) ou Masmorra (zona de risco)
+  - **Guilda estruturada** — cartão de sócio (rank, papel, benefício),
+    separado do nome de guilda que já existia no Status. Ainda não é um
+    registro compartilhado entre fichas (isso pede Modo Hub)
+  - **Reputação e Títulos** — lista de títulos com "como o resto do jogo
+    vê" (Admirado/Neutro/Malvisto): o ponto do "Beater" do SAO original é
+    que nem toda fama é bem-vinda
+  - **Duelo** — desafio formal entre jogadores, registrado à parte do
+    Cursor (só ataque não combinado conta como PK)
+  - **Escudo do Mestre** — `public/sao-escudo-mestre.html`, referência
+    estática (sem JS) cobrindo teste, golpe/pós-motion, Penalidade de
+    Morte, Cursor/PvP/Duelo, classes/poderes/skills, crafting/economia,
+    Chefe de Andar e condições — tudo numa página só, pra ter aberta
+    durante a sessão
+  - `src/lib/sistemas.ts` atualizado com os dois arquivos novos
+    (`fichaInimigo`, `escudoMestre`) — inertes por enquanto, porque
+    campanha só existe pra sistema com Modo Hub (decisão #52), mas já
+    prontos pro dia que o SAO ganhar o dele
+  - Testado de ponta a ponta com Playwright nas três páginas: aba Mundo
+    persistindo, multiplicador de categoria calculando certo, Recalcular
+    e edição manual dos derivados, condição marcando, listas de ação
+    salvando, fase e ataque de área registrando, Relógio mudando de
+    tamanho e preenchendo/esvaziando por clique, tudo sobrevivendo a um
+    recarregamento de página, e o Escudo do Mestre carregando sem erro.
+    Zero erro de JavaScript
+- [x] **Sistema SAO — corpo real, permadeath e falha de chefe** (28/08/2026)
+      — docs/DECISOES.md seção 18, a "Parte D": a camada que mais separa
+      este sistema de um RPG comum. Sem pergunta nova em aberto desta vez
+      — o desenho já tinha saído definido quando o Zé aprovou a lista de
+      fatias.
+  - **Corpo Real** — card na aba Mundo: onde o corpo está, quem cuidaria
+    dele, e um interruptor "em risco agora" pro mestre criar tensão fora
+    do jogo sem arriscar o personagem dentro dele
+  - **Permadeath opcional por mesa** — interruptor no card de Penalidade
+    de Morte que troca o card inteiro quando ligado: aviso forte, "este
+    personagem morreu" e como aconteceu, no lugar de XP/item de
+    penalidade. Por personagem (campanha ainda não existe pro SAO)
+  - **Falha do Chefe** — na ficha de inimigo: uma fraqueza específica
+    (como descobrir, como explorar, se já foi descoberta), pensada pra
+    combinar com o poder Detectar Falha do Batedor da Parte A — o golpe
+    do Shangri-La Frontier de recompensar quem estuda o encontro
+  - Escudo do Mestre atualizado com as três peças
+  - Testado de ponta a ponta com Playwright: Corpo Real e Falha
+    persistindo, card de Penalidade trocando de conteúdo certo ao
+    ligar/desligar permadeath, morte permanente registrando a causa.
+    Zero erro de JavaScript
+- [x] **Sistema SAO — Modo Hub** (28/08/2026) — a última fatia: salvar na
+      conta, aparecer em `/fichas`, e campanha de verdade. Fecha o
+      Sistema SAO como sistema completo do Hub, no mesmo pé que o Fabula
+      Ultima e o Kaizoku no Sho.
+  - **`public/sao.html` e `public/sao-inimigo.html`** ganharam o mesmo
+    mecanismo de Modo Hub dos outros dois sistemas: com `?id=` na URL a
+    ficha vive na conta (busca/salva via `/api/personagens/[id]`, modo
+    leitura pra quem não é dono, interruptor de Compartilhar só na de
+    jogador — inimigo não tem link de leitura, só o mestre mexe). Sem o
+    parâmetro, os dois continuam 100% iguais — localStorage, sem conta,
+    exatamente como as fatias anteriores deixaram
+  - **`src/lib/sistemas.ts`**: `salvaNoHub` virou `true` pro SAO — já
+    aparece em "+ Criar ficha" (`/fichas`) e na criação de campanha,
+    igual os outros dois sistemas
+  - **Bug de nome corrigido no caminho**: a rota `/api/personagens/[id]`
+    só lia `dados.perfil.nome` pra atualizar o nome mostrado na lista —
+    mas ficha de inimigo/NPC (Fabula Ultima e agora SAO) guarda o nome
+    solto em `dados.nome`, sem `perfil`. Sem o ajuste, todo inimigo
+    ficaria pra sempre listado como "Novo Inimigo" na campanha, não
+    importa o que o mestre escrevesse na ficha. Um `??` a mais na rota
+    resolve pros dois sistemas, sem mudar nada pra quem já funcionava
+    (Fabula Ultima e Kaizoku no Sho sempre tiveram `perfil.nome`)
+  - Testado com Playwright mockando `/api/personagens/*` (não dá pra
+    testar contra o banco de verdade neste ambiente, sem as credenciais
+    do Supabase): ficha de jogador e de inimigo carregando do Hub,
+    editar campo disparando o PATCH certo depois do debounce duplo
+    (mudarSemRedesenhar + salvarNoHub), interruptor de Compartilhar,
+    ficha alheia/apagada (404), modo leitura travando todo campo da
+    ficha enquanto Exportar continua disponível (mesmo padrão do Fabula
+    Ultima), e o modo local sem `?id=` continuando idêntico ao de antes
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 
