@@ -258,19 +258,35 @@ por `style.display` direto, que sempre tem prioridade. `npm run build`, lint
 e os 12 testes automatizados (dois novos, de `podeAcessarPersonagem`)
 passando.
 
-### Campanhas — próximas peças (anotado em 28/08/2026, ainda não construído)
+### Campanhas — próximas peças
 
-- [ ] **Ficha de Inimigo/Vilão** — molde próprio (bem diferente da ficha de
-      jogador: nível + espécie no cabeçalho, 4 atributos em dado, PV/PM/
-      Iniciativa/Defesa calculados por fórmula, Afinidades, e blocos de
-      texto livre pra Ataques Básicos/Feitiços/Outras Ações/Regras
-      Especiais) mais um catálogo de inimigos prontos pra usar como ponto
-      de partida. O Zé já mandou 4 PDFs com esse material (96 inimigos/
-      vilões ao todo: Bestiário do Livro Básico + os vilões dos três
-      Atlas), mas pediu pra não construir ainda — pode ter mais PDF vindo.
-      Decisão de escopo já combinada: primeiro o catálogo, e o molde da
-      ficha em branco sai do formato que os inimigos do catálogo usam (não
-      o contrário)
+- [x] **Ficha de Inimigo/Vilão + catálogo de 108** (28/08/2026) — nova
+      página `fabula-ultima-inimigo.html`, bem diferente da ficha de
+      jogador: sem classes nem poderes de catálogo, é sobretudo texto
+      livre, igual o Bestiário do livro. Cabeçalho (nome/nível/espécie/
+      papel soldado-elite-campeão), 4 atributos em dado, PV/PM/Iniciativa/
+      Defesa/Defesa Mágica editáveis com um botão "Recalcular pela fórmula
+      do livro" (pág. 303: PV = 2×nível + 5×dado de Vigor, etc., já
+      considerando o dobro/multiplicador de elite e campeão), as mesmas
+      Afinidades e Condições da ficha de jogador, e quatro listas de texto
+      livre (Ataques Básicos, Feitiços, Outras Ações, Regras Especiais)
+      com um editor genérico só (mesmo código pras quatro).
+      O catálogo tem **108 inimigos** — o Bestiário inteiro do Livro
+      Básico (59, incluindo os dois exemplos de chefe do capítulo de
+      Design de Batalhas) mais os vilões e aliados dos três Atlas (16 High
+      Fantasy + 17 Techno Fantasy + 16 Natural Fantasy) — extraídos dos 4
+      PDFs que o Zé mandou por 4 agentes em paralelo, cada um seguindo a
+      mesma regra: só mecânica (números, fórmulas, efeitos de regra,
+      nomes) nunca prosa (história, táticas, falas, traços de
+      personalidade) — igual toda a ficha já respeita. Escolher um
+      inimigo do catálogo preenche a ficha inteira; dá pra editar tudo
+      depois. Só existe em Modo Hub, sempre nascida de "+ Adicionar ficha
+      de inimigo" numa campanha — sistema ganhou um `fichaInimigo`
+      separado do `ficha` de jogador em `src/lib/sistemas.ts`.
+      Testado com Playwright: os cenários de sempre (ficha nova, 404,
+      modo leitura) mais uma varredura carregando as 108 fichas do
+      catálogo uma a uma, conferindo zero erro de JavaScript e nenhum
+      campo virando `undefined`/`NaN`
 - [ ] **Manual do Mestre dentro da campanha** — uma aba/seção pra anotações
       de mestre: criar as próprias na hora, ou usar prontas quando
       existirem (o Zé tem os PDFs do Guia do Mestre e do Escudo do Mestre

@@ -138,7 +138,20 @@ mecanismo do Fabula Ultima (`?id=` na URL, salvar/ler via
 `/api/personagens/[id]`, modo leitura, Compartilhar) e `salvaNoHub` virou
 `true` pra ele. Já entra em "+ Criar ficha" e em "Criar campanha" de novo.
 
-## 11. Restrições registradas
+**Decisão #53 também revertida, no mesmo dia:** o Zé mandou 4 PDFs (o
+capítulo de criação de NPC e o Bestiário do Livro Básico, mais os
+capítulos de Antagonistas dos três Atlas) e pediu o catálogo pronto.
+
+## 11. Ficha de Inimigo/NPC e catálogo (28/08/2026)
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 54 | Ficha própria, não reaproveitada | Um inimigo não tem classes nem poderes de catálogo — é sobretudo texto livre (Ataques, Feitiços, Outras Ações, Regras Especiais), igual o Bestiário do livro apresenta. Por isso ganhou arquivo próprio, `fabula-ultima-inimigo.html`, em vez de virar mais uma aba da ficha de jogador |
+| 55 | Só em Modo Hub | Sem roster local avulso — só existe ligada a uma campanha, criada pelo botão "+ Adicionar ficha de inimigo". Não faz sentido um inimigo existir fora de mesa nenhuma |
+| 56 | Extração do catálogo por agentes em paralelo | Os 4 PDFs foram processados por 4 agentes ao mesmo tempo (um por livro), cada um com a mesma instrução: extrair só MECÂNICA (números, fórmulas, custos, alvo/duração, afinidades, nomes de ataque/feitiço/regra) e nunca prosa (história, táticas, falas entre aspas, traços de personalidade) — a mesma linha já seguida no resto da ficha desde o início do projeto, agora testada em escala (108 fichas) |
+| 57 | Números calculados, mas editáveis | Um botão "Recalcular pela fórmula do livro" (pág. 303) preenche PV/PM/Iniciativa/Defesa/Defesa Mágica a partir do nível, espécie/papel e atributos — mas os campos continuam número solto, editável à mão, porque o próprio livro trata a criação de NPC como processo com julgamento do mestre, não uma fórmula pura (vilões “na mão” fogem do padrão de propósito) |
+
+## 12. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
