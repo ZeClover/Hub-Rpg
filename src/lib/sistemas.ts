@@ -67,8 +67,8 @@ export const SISTEMAS: Sistema[] = [
     ficha: "/sao.html",
     situacao: "em-construcao",
     salvaNoHub: false,
-    fichaInimigo: null,
-    escudoMestre: null,
+    fichaInimigo: "/sao-inimigo.html",
+    escudoMestre: "/sao-escudo-mestre.html",
   },
   {
     chave: "thryliki-chelona",

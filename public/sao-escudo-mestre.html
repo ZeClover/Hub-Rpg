@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escudo do Mestre — Sistema SAO</title>
+<style>
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+main{max-width:900px; margin:0 auto; padding:24px 16px 80px}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+h1{margin-top:10px; font-size:28px}
+.sub{color:var(--suave); font-size:13px; margin-top:6px}
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-top:16px}
+.cartao h2{font-size:17px; color:var(--ambar-forte)}
+.cartao h3{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--suave); margin-top:16px}
+.cartao p{margin:8px 0 0}
+table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+th,td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--suave); font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.05em}
+tr:last-child td{border-bottom:none}
+.mini{font-size:12px; color:var(--suave)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} }
+.tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--borda); border-radius:999px; color:var(--suave)}
+</style>
+</head>
+<body>
+<main>
+  <span class="marca">Sistema SAO</span>
+  <h1>Escudo do Mestre</h1>
+  <p class="sub">
+    Referência rápida pra ter aberta durante a sessão — o que muda entre um
+    combate normal e o clima de "personagem sabe que tá num jogo" que o
+    sistema persegue. Homebrew original do Zé, inspirado em Sword Art
+    Online, Overgeared e Shangri-La Frontier — sem texto nem nome protegido
+    de nenhuma das três obras.
+  </p>
+
+  <div class="cartao">
+    <h2>Fazendo um teste</h2>
+    <p>Rola os 2 dados dos Atributos que a ação pedir (ex: <strong>FOR + AGI</strong>), soma, compara com a Dificuldade que você define na hora.</p>
+    <table>
+      <tr><td><strong>Sucesso crítico</strong></td><td>Os dois dados caem no mesmo número, 6 ou mais.</td></tr>
+      <tr><td><strong>Falha crítica</strong></td><td>Os dois dados caem em 1 — falha automática, não importa o modificador.</td></tr>
+    </table>
+    <p class="mini">Mesma mecânica do Fabula Ultima, de propósito — familiar pra quem já tem ficha nos dois sistemas.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Golpes, ataque livre e pós-motion</h2>
+    <p>Um <strong>Golpe (Sword Skill)</strong> registrado na ficha é assistido pelo sistema: dano maior, mas deixa a condição <strong>Vulnerável (pós-motion)</strong> logo depois. Um <strong>ataque livre</strong> usa só o atributo puro — sem bônus, sem vulnerabilidade.</p>
+    <p><strong>Switch</strong>: dupla trocando Ataque ↔ Suporte em combate. Não tem número fixo — combine na hora, geralmente vantagem no próximo teste de quem entra no Ataque.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Penalidade de Morte</h2>
+    <p>0 PV não mata de vez. O personagem "renasce" num ponto de respawn, mas paga caro:</p>
+    <table>
+      <tr><td><strong>XP perdido</strong></td><td>Proporcional ao nível — a ficha sugere 10% do XP atual, editável.</td></tr>
+      <tr><td><strong>Item derrubado</strong></td><td>Chance de um item equipado cair no lugar da morte — continua ali, achável por qualquer um.</td></tr>
+    </table>
+    <p class="mini">Cada campanha pode decidir diferente (até permadeath de verdade, estilo SAO original) — isto aqui é só o padrão do sistema.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Cursor, PvP e Duelo</h2>
+    <table>
+      <tr><td><strong>Verde</strong></td><td>Jogador comum — nunca atacou outro jogador.</td></tr>
+      <tr><td><strong>Laranja</strong></td><td>Criminoso — atacou outro jogador (PvP não combinado), mas não matou.</td></tr>
+      <tr><td><strong>Vermelho</strong></td><td>Assassino — matou outro jogador dentro do jogo.</td></tr>
+    </table>
+    <p>Um <strong>Duelo</strong> formal (combinado antes, com testemunha) não muda a cor do Cursor — só ataque não combinado conta como crime.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Classes, Poderes e Skills</h2>
+    <div class="grade g2">
+      <div>
+        <h3>Multiclasse</h3>
+        <p>Sem limite de quantas classes. Nível geral = soma dos níveis de todas. Cada classe tem 5 poderes; pontos de poder disponíveis = nível investido naquela classe.</p>
+      </div>
+      <div>
+        <h3>Skills</h3>
+        <p>Sobem de <strong>estágio</strong> (Iniciante → Mestre) com o USO em jogo, não por escolha em lista — 10 níveis internos por estágio.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2>Crafting e Economia</h2>
+    <div class="grade g2">
+      <div>
+        <h3>Fabricar</h3>
+        <p>Receita pede materiais nomeados + nível na classe dona. "Fabricar" desconta o material e entrega o item pronto.</p>
+      </div>
+      <div>
+        <h3>Moeda</h3>
+        <p><strong>100 Prata = 1 Ouro.</strong> Vender um item dá Prata pela raridade (Único não tem tabela — negocia com você).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2>Chefe de Andar</h2>
+    <p>Categoria "Chefe de Andar" na ficha de inimigo multiplica PV/PM por ×3 (Elite é ×2, Comum é ×1) e libera três ferramentas:</p>
+    <table>
+      <tr><td><strong>Fases</strong></td><td>Gatilho (geralmente um limiar de PV) que muda o comportamento do chefe — novo ataque, nova regra, muda de sala.</td></tr>
+      <tr><td><strong>Ataques de Área</strong></td><td>Separados dos ataques comuns na ficha, pra achar rápido na mesa quando o chefe virar de fase.</td></tr>
+      <tr><td><strong>Relógio de Batalha</strong></td><td>Um "clock" de segmentos pro objetivo do grupo na luta (destruir cristais, resistir X rodadas...). Preenche clicando no segmento — não é o PV do chefe, é o progresso da cena.</td></tr>
+    </table>
+  </div>
+
+  <div class="cartao">
+    <h2>Andar e Zona</h2>
+    <p>Cada personagem registra o <strong>andar atual</strong> e a <strong>zona</strong>: Segura (cidade/base, sem combate real, sem Penalidade de Morte) ou Masmorra (o risco vale).</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Reputação e Guilda</h2>
+    <p><strong>Títulos</strong> não são só elogio — quem limpa um andar primeiro ("Beater") ganha fama, mas também desconfiança de quem ficou pra trás. Cada título registra como o resto do jogo o enxerga: Admirado, Neutro ou Malvisto.</p>
+    <p><strong>Guilda</strong>: rank (Líder/Oficial/Membro/Recruta), papel e o que ela oferece pros membros — ainda sem registro compartilhado entre fichas (isso pede Modo Hub).</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Condições</h2>
+    <table>
+      <tr><td>Atordoado</td><td>Envenenado</td></tr>
+      <tr><td>Sangrando</td><td>Silenciado (bloqueia magia)</td></tr>
+      <tr><td>Enraizado</td><td>Cego</td></tr>
+      <tr><td>Amedrontado</td><td>Exausto</td></tr>
+      <tr><td>Vulnerável (pós-motion)</td><td>só na ficha de jogador, depois de um Golpe</td></tr>
+    </table>
+  </div>
+</main>
+</body>
+</html>

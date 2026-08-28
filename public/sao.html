@@ -354,6 +354,35 @@ const ESTAGIOS_SKILL = [
   {id:'mestre',        nome:'Mestre'},
 ];
 
+// Zona onde o personagem está agora — cidade/base é sempre segura (sem
+// combate real, sem Penalidade de Morte); masmorra é onde o risco existe.
+const ZONAS = [
+  {id:'segura', nome:'Zona segura (cidade/base)'},
+  {id:'perigo', nome:'Masmorra / zona de perigo'},
+];
+
+const RANKS_GUILDA = [
+  {id:'lider',   nome:'Líder'},
+  {id:'oficial', nome:'Oficial'},
+  {id:'membro',  nome:'Membro'},
+  {id:'recruta', nome:'Recruta'},
+];
+
+// Como o resto do jogo enxerga um título — o ponto do "Beater" do SAO
+// original é que nem toda reputação é boa reputação.
+const VISOES_TITULO = [
+  {id:'admirado', nome:'Admirado'},
+  {id:'neutro',   nome:'Neutro'},
+  {id:'malvisto', nome:'Malvisto'},
+];
+
+const RESULTADOS_DUELO = [
+  {id:'pendente', nome:'Pendente'},
+  {id:'venceu',   nome:'Venceu'},
+  {id:'perdeu',   nome:'Perdeu'},
+  {id:'empate',   nome:'Empate'},
+];
+
 // Catálogo de Golpes (Sword Skills) prontos pra escolher, em vez de digitar
 // tudo do zero — mas o campo de texto livre continua existindo pra golpe
 // homebrew ou "Original" (poder do Espadachim). Um por linha de arma.
@@ -534,6 +563,14 @@ function novoPersonagem(nome){
     // catálogo do sistema ainda não previu.
     receitasCustom: [],
     carteira: {ouro: 0, prata: 0},
+    andar: {atual: 1, zona: 'segura'},
+    // guilda separado de perfil.guilda (que já existia, texto livre com o
+    // nome): aqui é o "cartão de sócio" — rank e o que ela oferece. Não é
+    // um registro compartilhado de guilda de verdade (isso pede Modo Hub).
+    guilda: {rank: '', papel: '', beneficio: ''},
+    // titulos: {id, nome, comoConseguiu, visao} — reputação, nem sempre boa.
+    titulos: [],
+    duelo: {oponente: '', motivo: '', resultado: 'pendente', consequencia: ''},
     habilidadeUnica: {tem:false, nome:'', descricao:'', comoConseguiu:''},
     anotacoes: '',
   };
@@ -717,6 +754,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
 
 const ABAS = [
   {id:'status',      nome:'Status'},
+  {id:'mundo',       nome:'Mundo'},
   {id:'classes',     nome:'Classes'},
   {id:'poderes',     nome:'Poderes'},
   {id:'combate',     nome:'Combate'},
@@ -752,7 +790,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 }
@@ -851,6 +889,82 @@ function abaStatus(p){
         </select>
         <p class="mini" style="margin-top:6px">${a.sobre}</p>
       </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function abaMundo(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Andar</h2>
+    <p class="mini" style="margin:6px 0 14px">Onde o personagem está agora — sem combate real numa zona segura, e sem essa garantia numa masmorra.</p>
+    <div class="grade g2" style="max-width:420px">
+      <div><label for="c-andar">Andar atual</label>
+        <input id="c-andar" data-andar-num="atual" type="number" min="1" value="${p.andar.atual||1}"></div>
+      <div><label for="c-zona">Zona</label>
+        <select id="c-zona" data-andar="zona">
+          ${ZONAS.map(z => `<option value="${z.id}" ${z.id===p.andar.zona?'selected':''}>${z.nome}</option>`).join('')}
+        </select></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Guilda</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O nome da guilda já fica no Status. Aqui é o cartão de sócio: seu
+      rank dentro dela e o que ela oferece pros membros.
+    </p>
+    <div class="grade g3">
+      <div><label for="c-guilda-rank">Rank</label>
+        <select id="c-guilda-rank" data-guilda="rank">
+          <option value="">— nenhum —</option>
+          ${RANKS_GUILDA.map(r => `<option value="${r.id}" ${r.id===p.guilda.rank?'selected':''}>${r.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-guilda-papel">Papel na guilda</label>
+        <input id="c-guilda-papel" data-guilda="papel" value="${esc(p.guilda.papel)}" placeholder="ex: tanque do grupo de raide"></div>
+      <div><label for="c-guilda-beneficio">Benefício de ser membro</label>
+        <input id="c-guilda-beneficio" data-guilda="beneficio" value="${esc(p.guilda.beneficio)}" placeholder="ex: desconto na forja da guilda"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Reputação e Títulos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Nem todo título é elogio — quem limpa andar primeiro ("Beater") ganha
+      fama, mas também desconfiança de quem ficou pra trás.
+    </p>
+    ${p.titulos.map((t,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-titulo-campo="${i}|nome" value="${esc(t.nome)}" placeholder="Nome do título" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-titulo="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Como conseguiu</label><input data-titulo-campo="${i}|comoConseguiu" value="${esc(t.comoConseguiu)}"></div>
+        <div><label>Como o resto do jogo vê</label>
+          <select data-titulo-visao="${i}">
+            ${VISOES_TITULO.map(v => `<option value="${v.id}" ${v.id===t.visao?'selected':''}>${v.nome}</option>`).join('')}
+          </select></div>
+      </div>
+    </div>`).join('')}
+    <button id="btAddTitulo">+ Título</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Duelo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Desafio formal entre jogadores — combinado antes, com testemunha.
+      Não muda a cor do Cursor: só ataque não combinado conta como crime.
+    </p>
+    <div class="grade g2">
+      <div><label for="c-duelo-oponente">Oponente</label>
+        <input id="c-duelo-oponente" data-duelo="oponente" value="${esc(p.duelo.oponente)}"></div>
+      <div><label for="c-duelo-motivo">Motivo</label>
+        <input id="c-duelo-motivo" data-duelo="motivo" value="${esc(p.duelo.motivo)}"></div>
+      <div><label for="c-duelo-resultado">Resultado</label>
+        <select id="c-duelo-resultado" data-duelo="resultado">
+          ${RESULTADOS_DUELO.map(r => `<option value="${r.id}" ${r.id===p.duelo.resultado?'selected':''}>${r.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-duelo-consequencia">Consequência combinada</label>
+        <input id="c-duelo-consequencia" data-duelo="consequencia" value="${esc(p.duelo.consequencia)}" placeholder="ex: perdedor paga a rodada"></div>
     </div>
   </div>`;
 }
@@ -1387,6 +1501,33 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-campo-raiz]').forEach(el =>
     el.onchange = () => mudar(p => p[el.dataset.campoRaiz] = el.value));
+
+  // Aba Mundo: Andar/Zona, Guilda, Títulos, Duelo — tudo campo simples.
+  app.querySelectorAll('[data-andar-num]').forEach(el =>
+    el.onchange = () => mudar(p => p.andar[el.dataset.andarNum] = Number(el.value) || 1));
+  app.querySelectorAll('[data-andar]').forEach(el =>
+    el.onchange = () => mudar(p => p.andar[el.dataset.andar] = el.value));
+  app.querySelectorAll('[data-guilda]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
+      const mutador = p => p.guilda[el.dataset.guilda] = el.value;
+      el.tagName==='SELECT' ? mudar(mutador) : mudarSemRedesenhar(mutador, el);
+    });
+  app.querySelectorAll('[data-titulo-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.tituloCampo.split('|');
+      p.titulos[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-titulo-visao]').forEach(el =>
+    el.onchange = () => mudar(p => p.titulos[Number(el.dataset.tituloVisao)].visao = el.value));
+  app.querySelectorAll('[data-remover-titulo]').forEach(b =>
+    b.onclick = () => mudar(p => p.titulos.splice(Number(b.dataset.removerTitulo), 1)));
+  const addTitulo = document.getElementById('btAddTitulo');
+  if(addTitulo) addTitulo.onclick = () => mudar(p => p.titulos.push({id:uid(), nome:'', comoConseguiu:'', visao:'neutro'}));
+  app.querySelectorAll('[data-duelo]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
+      const mutador = p => p.duelo[el.dataset.duelo] = el.value;
+      el.tagName==='SELECT' ? mudar(mutador) : mudarSemRedesenhar(mutador, el);
+    });
 
   app.querySelectorAll('[data-atributo]').forEach(el =>
     el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Number(el.value)));

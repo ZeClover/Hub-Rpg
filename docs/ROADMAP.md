@@ -420,6 +420,50 @@ passando.
     receita própria funcionando igual à de catálogo, compra e venda
     acertando a carteira, normalização de Prata em Ouro, tudo
     sobrevivendo a um recarregamento de página. Zero erro de JavaScript
+- [x] **Sistema SAO — mundo e mesa** (28/08/2026) — decisões #79-#82, a
+      "Parte C": o que o mestre precisa pra rodar uma sessão de verdade.
+  - **Ficha de Inimigo/Monstro própria** — `public/sao-inimigo.html`,
+    arquivo local igual a do jogador (sem Modo Hub ainda). Não reaproveita
+    a ficha de jogador (mesma decisão do Fabula Ultima): sem classe nem
+    poder de catálogo, é atributo em dado + derivados + texto livre
+    (Ataques, Feitiços, Outras Ações, Regras Especiais)
+  - **Categoria com multiplicador de PV/PM** — Comum (×1), Elite (×2),
+    Chefe de Andar (×3). Defesa/Defesa Mágica/Iniciativa não escalam por
+    categoria (isso é destreza, não resistência) — só o "tanque" de dano
+    cresce. Botão "Recalcular pela fórmula" preenche os derivados, mas
+    continuam editáveis à mão (vilão fora do padrão é o normal)
+  - **Chefe de Andar, com mecânica robusta**: Fases (gatilho + o que
+    muda — geralmente um limiar de PV), Ataques de Área separados dos
+    ataques comuns pra achar rápido na mesa, e um **Relógio de Batalha**
+    (clock de segmentos clicáveis pro objetivo do grupo na cena, tipo
+    "destruir os cristais" — clicar um segmento enche até ali, clicar de
+    novo no mesmo esvazia, igual um clock de PbtA/FitD)
+  - **Andar e Zona** na ficha de jogador — card na aba Mundo, nova: andar
+    atual + Segura (cidade/base) ou Masmorra (zona de risco)
+  - **Guilda estruturada** — cartão de sócio (rank, papel, benefício),
+    separado do nome de guilda que já existia no Status. Ainda não é um
+    registro compartilhado entre fichas (isso pede Modo Hub)
+  - **Reputação e Títulos** — lista de títulos com "como o resto do jogo
+    vê" (Admirado/Neutro/Malvisto): o ponto do "Beater" do SAO original é
+    que nem toda fama é bem-vinda
+  - **Duelo** — desafio formal entre jogadores, registrado à parte do
+    Cursor (só ataque não combinado conta como PK)
+  - **Escudo do Mestre** — `public/sao-escudo-mestre.html`, referência
+    estática (sem JS) cobrindo teste, golpe/pós-motion, Penalidade de
+    Morte, Cursor/PvP/Duelo, classes/poderes/skills, crafting/economia,
+    Chefe de Andar e condições — tudo numa página só, pra ter aberta
+    durante a sessão
+  - `src/lib/sistemas.ts` atualizado com os dois arquivos novos
+    (`fichaInimigo`, `escudoMestre`) — inertes por enquanto, porque
+    campanha só existe pra sistema com Modo Hub (decisão #52), mas já
+    prontos pro dia que o SAO ganhar o dele
+  - Testado de ponta a ponta com Playwright nas três páginas: aba Mundo
+    persistindo, multiplicador de categoria calculando certo, Recalcular
+    e edição manual dos derivados, condição marcando, listas de ação
+    salvando, fase e ataque de área registrando, Relógio mudando de
+    tamanho e preenchendo/esvaziando por clique, tudo sobrevivendo a um
+    recarregamento de página, e o Escudo do Mestre carregando sem erro.
+    Zero erro de JavaScript
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 

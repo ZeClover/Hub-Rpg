@@ -244,7 +244,26 @@ anterior — o campo salvava sem redesenhar a tela); e a função de gastar
 Prata zerava o Ouro *antes* de reler o total da carteira, corrompendo a
 conta toda vez que uma compra descontava dinheiro.
 
-## 17. Restrições registradas
+## 17. Sistema SAO — mundo e mesa (28/08/2026)
+
+Parte C: o que o mestre precisa pra rodar uma sessão — ficha de inimigo,
+chefe de andar, andares, PvP, reputação e guilda.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 79 | Ficha de Inimigo | **Agora, arquivo próprio local** (`public/sao-inimigo.html`) — mesmo caminho do jogador, sem Modo Hub ainda. Não reaproveita a ficha de jogador (mesma decisão do Fabula Ultima, #54) |
+| 80 | Chefes de Andar | **Mecânica robusta**: Fases (gatilho + mudança de comportamento), Ataques de Área separados, e um Relógio de Batalha (clock de segmentos pro objetivo do grupo na cena) |
+| 81 | Andares/Mapa | **Campo simples**: andar atual + Zona (Segura/Masmorra) na ficha de jogador, sem virar um sistema de progresso de campanha à parte |
+| 82 | PvP, Reputação e Guilda | **Tudo**: Duelo formal, Títulos com "como o resto do jogo vê" (Admirado/Neutro/Malvisto), e um cartão de sócio de Guilda (rank, papel, benefício) — ainda sem registro compartilhado entre fichas (isso pede Modo Hub) |
+
+Saiu desta fatia: `public/sao-inimigo.html` (categoria Comum/Elite/Chefe de
+Andar com multiplicador ×1/×2/×3 de PV/PM, igual o Fabula Ultima faz com
+soldado/elite/campeão) e `public/sao-escudo-mestre.html` (referência
+estática, sem JS, cobrindo tudo do sistema numa página só). `src/lib/
+sistemas.ts` já aponta pros dois — ficam inertes até o SAO ganhar Modo Hub
+e campanha própria (decisão #52), mas prontos pra esse dia.
+
+## 18. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
