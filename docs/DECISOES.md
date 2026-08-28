@@ -111,7 +111,27 @@ não existe no Hub.
 | 46 | Como compartilhar | **Link de leitura**, não campanha. O dono liga um interruptor "Compartilhar" na própria ficha; a partir daí, qualquer um com a URL dela (o id, um UUID, é o segredo do link — como "qualquer um com o link" do Google Docs) abre em modo leitura, **sem precisar de conta**. Nunca dá direito de editar: isso continua exigindo estar logado como dono |
 | 47 | Por que não campanha ainda | Campanha (mesa, convite, mestre/jogador) é depois — o link resolve o caso de uso de hoje ("me manda a ficha") com uma coluna no banco, em vez de três tabelas novas |
 
-## 10. Restrições registradas
+## 10. Campanhas básicas (28/08/2026)
+
+Chegou a hora da campanha que a decisão #47 tinha adiado. O Zé descreveu o
+fluxo que queria: ele cria a campanha, manda um link, o jogador escolhe qual
+ficha dele entra ali (só as do sistema certo aparecem), e só o mestre vê a
+ficha do jogador — nunca o contrário. Ele também apontou, sem eu ter
+perguntado, que o Kaizoku no Sho não tem a base técnica (o "Modo Hub") que o
+Fabula Ultima tem, então campanha daquele sistema ainda não funcionaria de
+verdade — e preferiu seguir com a campanha básica em vez de parar pra
+consertar isso agora.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 48 | Convite | O próprio endereço da campanha (`/campanhas/[id]`, um UUID) é o convite — mesma lógica da decisão #46. Não existe senha nem código de convite separado |
+| 49 | Quem é mestre | Uma `Participacao` com papel MESTRE, não um campo "dono" na campanha — o schema já tinha essa tabela pronta, sem nunca ter sido usada |
+| 50 | O que o mestre vê | Lista de jogadores com a ficha que cada um ligou, e pode criar fichas de inimigo/NPC (mesmo `Personagem`, dono = o mestre). Nunca pode editar a ficha de um jogador — só ler |
+| 51 | O que o jogador vê | Só a própria ficha nesta campanha, filtrada por sistema. Nunca vê a ficha de outro jogador nem os inimigos do mestre |
+| 52 | Kaizoku fica de fora por agora | Sem "Modo Hub" (não entende `?id=`, só salva no navegador), criar ficha dele pela conta hoje resultaria numa ficha morta. Novo campo `salvaNoHub` em `src/lib/sistemas.ts` esconde Kaizoku de "+ Criar ficha" e de "Criar campanha" até ele ganhar essa base — fatia própria, futura |
+| 53 | Catálogo de monstros | Fora de escopo por agora. O Bestiário de Fabula Ultima é livro à parte, com ficha de criatura diferente da de personagem — bem maior que esta fatia. Enquanto isso, inimigo é ficha comum, preenchida à mão |
+
+## 11. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

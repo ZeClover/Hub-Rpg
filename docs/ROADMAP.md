@@ -188,7 +188,45 @@ aparelho, e compartilhados com a mesa. Vale para todas as fichas de uma vez.
       precisar login nenhum. Editar continua exigindo ser o dono logado,
       sempre — o link nunca dá escrita. Migração `0004_compartilhar_personagem.sql`
       (uma coluna booleana só)
-- [ ] Campanhas: juntar mestre e jogadores numa mesa
+- [x] **Campanhas básicas: juntar mestre e jogadores numa mesa** (28/08/2026)
+      — usa `Campanha` e `Participacao`, que já existiam no schema desde o
+      início mas nunca tinham sido usados. Fluxo:
+  - Mestre cria a campanha em `/campanhas` (escolhe sistema + nome) e já
+    nasce mestre dela via `Participacao{papel: MESTRE}` — não existe um
+    campo "dono" separado na campanha, de propósito, porque o schema já
+    previa mais de um mestre
+  - O convite é o próprio endereço da campanha (`/campanhas/[id]`, um UUID
+    — mesma lógica do link de leitura da decisão #46: o segredo é o link
+    em si). Quem abre precisa estar logado no Hub, mas não precisa já ser
+    participante: a tela mostra "você foi convidado" e deixa escolher uma
+    ficha seguinte
+  - O jogador só vê fichas **dele mesmo** e **do sistema da campanha** —
+    filtro por `sistemaId` na consulta, não por confiar no que a tela
+    manda. Escolher uma ficha cria a `Participacao{papel: JOGADOR}` e liga
+    `personagem.campanhaId`; escolher outra depois troca, nunca acumula
+  - **Permissão nova em `podeAcessarPersonagem`** (decisão #13): além do
+    dono, o mestre de uma campanha pode **ler** (nunca editar) a ficha de
+    um personagem ligado a ela. A função continua pura e testada — quem
+    chama é que busca a lista de campanhas onde a pessoa é mestre, e só
+    quando precisa (dono lendo a própria ficha não paga essa consulta).
+    4 testes novos em `dono-personagem.test.ts`
+  - Mestre vê, na página da campanha: o link de convite, a lista de
+    jogadores com a ficha que cada um ligou (ou "ainda não escolheu"), e
+    pode criar **fichas de inimigo/NPC** direto ali (mesmo `Personagem`,
+    só que dono = o próprio mestre) — os jogadores não veem essa lista.
+    Isso cobre a parte de "organizar inimigos" sem precisar de nenhum
+    catálogo de monstros
+  - **Kaizoku no Sho não entra ainda**: a ficha dele nunca ganhou o "Modo
+    Hub" que o Fabula Ultima tem (não entende `?id=`, só salva no
+    navegador) — criar uma ficha dele pela conta hoje resultaria numa
+    ficha que nunca salva nada. Novo campo `salvaNoHub` em cada sistema
+    (`src/lib/sistemas.ts`) filtra tanto "+ Criar ficha" quanto a criação
+    de campanha pra só oferecer sistemas prontos pra isso — hoje, só
+    Fabula Ultima. Dar essa base ao Kaizoku é fatia própria, futura
+  - **Catálogo de monstros dos livros**: fora de escopo por agora — o
+    Bestiário de Fabula Ultima é um livro à parte, com ficha de criatura
+    bem diferente da de personagem. Enquanto não existir, o mestre digita
+    o inimigo à mão, na mesma ficha de sempre
 
 **Confirmado em produção (28/08/2026):** o Zé testou ao vivo em
 `hub-rpg-eight.vercel.app` — criou a ficha "Zé" pelo Fabula Ultima, editou,

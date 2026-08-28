@@ -11,6 +11,14 @@ export type Sistema = {
   descricao: string;
   ficha: string | null;
   situacao: "pronta" | "em-construcao" | "planejada";
+  /*
+    Se o arquivo da ficha entende o `?id=` da URL e salva sozinho na conta
+    (o "Modo Hub" que o Fabula Ultima ganhou). Kaizoku no Sho tem ficha, mas
+    ainda só sabe salvar no navegador — por isso não entra nem em "+ Criar
+    ficha" nem como opção de campanha: criar uma linha no banco pra ele hoje
+    resultaria numa ficha que nunca salva nada ali.
+  */
+  salvaNoHub: boolean;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -21,6 +29,7 @@ export const SISTEMAS: Sistema[] = [
       "Homebrew de One Piece, adaptação do Shinobi no Sho. Livro Base e Expansão.",
     ficha: "/kaizoku-no-sho.html",
     situacao: "pronta",
+    salvaNoHub: false,
   },
   {
     chave: "fabula-ultima",
@@ -29,6 +38,7 @@ export const SISTEMAS: Sistema[] = [
       "TTJRPG inspirado em JRPGs. Livro Básico e os três Atlas.",
     ficha: "/fabula-ultima.html",
     situacao: "em-construcao",
+    salvaNoHub: true,
   },
   {
     chave: "sao",
@@ -36,6 +46,7 @@ export const SISTEMAS: Sistema[] = [
     descricao: "Homebrew inspirado em Sword Art Online.",
     ficha: null,
     situacao: "planejada",
+    salvaNoHub: false,
   },
   {
     chave: "thryliki-chelona",
@@ -43,8 +54,16 @@ export const SISTEMAS: Sistema[] = [
     descricao: "Homebrew do Zé.",
     ficha: null,
     situacao: "planejada",
+    salvaNoHub: false,
   },
 ];
+
+// Sistemas onde dá pra criar ficha pela conta (usada em "+ Criar ficha" e na
+// criação de campanha) — precisa ter arquivo de ficha E saber salvar no Hub.
+export const SISTEMAS_COM_HUB = SISTEMAS.filter(
+  (sistema): sistema is Sistema & { ficha: string } =>
+    sistema.ficha !== null && sistema.salvaNoHub,
+);
 
 export const ROTULO_SITUACAO: Record<Sistema["situacao"], string> = {
   pronta: "Pronta",

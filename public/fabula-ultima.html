@@ -1906,8 +1906,7 @@ function render(){
 
   const alerta = somenteLeitura
     ? `<div class="ok">Modo leitura — você está vendo a ficha de
-       <strong>${esc(p.perfil.nome)}</strong> por um link compartilhado.
-       Só quem é dono edita.</div>`
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
     : falhouAoSalvar
       ? (MODO_HUB
         ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>

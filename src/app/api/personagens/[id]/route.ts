@@ -21,11 +21,18 @@ async function buscarSeFoiDono(id: string, idDoUsuario: string) {
 }
 
 /*
-  Ler não exige ser o dono: se a ficha estiver com "compartilhado" ligado,
-  quem tem o link entra em modo leitura, com ou sem conta — o id, um UUID,
-  é o segredo do link (igual "qualquer um com o link" do Google Docs).
-  Sem estar marcada como compartilhada, vale a mesma regra de sempre: só o
-  dono, e 404 pros dois casos ("não existe" e "não é seu nem compartilhada")
+  Ler não exige ser o dono, por dois motivos possíveis:
+
+  1. A ficha está com "compartilhado" ligado — quem tem o link entra em modo
+     leitura, com ou sem conta (o id, um UUID, é o segredo do link, igual
+     "qualquer um com o link" do Google Docs).
+  2. Quem pergunta é o mestre da campanha à qual esta ficha está ligada —
+     por isso busca as campanhas onde a pessoa é mestre só quando ela não é
+     a dona: a leitura mais comum (dono abrindo a própria ficha) não paga
+     essa consulta extra.
+
+  Fora esses dois casos, vale a regra de sempre: só o dono, e 404 tanto pra
+  "não existe" quanto pra "não é seu nem compartilhada nem sua campanha",
   pra não vazar que a ficha de outra pessoa existe.
 */
 export async function GET(_requisicao: NextRequest, { params }: Contexto) {
@@ -35,10 +42,27 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
+  // `ehDono` (o que a ficha usa pra decidir se edita ou só lê) é sempre
+  // estrito: só a própria dona é dona, mestre nenhum entra aqui. A pergunta
+  // "dá pra ler mesmo assim?" é separada, e é ela que decide o 404.
   const usuario = await usuarioAtual();
-  const ehDono = usuario ? podeAcessarPersonagem(usuario.id, personagem) : false;
+  const ehDono = usuario ? personagem.donoId === usuario.id : false;
 
-  if (!ehDono && !personagem.compartilhado) {
+  const campanhasComoMestre =
+    usuario && !ehDono && personagem.campanhaId
+      ? (
+          await banco.participacao.findMany({
+            where: { usuarioId: usuario.id, papel: "MESTRE" },
+            select: { campanhaId: true },
+          })
+        ).map((c) => c.campanhaId)
+      : [];
+
+  const podeLer = usuario
+    ? podeAcessarPersonagem(usuario.id, personagem, campanhasComoMestre)
+    : false;
+
+  if (!podeLer && !personagem.compartilhado) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
