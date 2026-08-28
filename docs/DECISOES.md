@@ -219,7 +219,32 @@ raridade e durabilidade — item equipado e não quebrado soma sozinho no
 derivado certo (Defesa, Defesa Mágica, Iniciativa, PV ou PM máximos), igual
 os acessórios automáticos do Fabula Ultima.
 
-## 16. Restrições registradas
+## 16. Sistema SAO — crafting e economia (28/08/2026)
+
+Parte B: Ferreiro, Alquimista, Encantador e Cozinheiro ganham crafting de
+verdade, e entra a economia (moeda e loja).
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 75 | Nome da moeda | **Ouro e Prata, do Overgeared** (100 Prata = 1 Ouro) — termo genérico o bastante (qualquer MMO de fantasia usa) pra não esbarrar em direito autoral, só a proporção exata é a mesma do livro |
+| 76 | Profundidade do crafting | **Receita com materiais nomeados** — "2 Couro de Lobo, 1 Minério de Ferro", não um "ponto de material" genérico |
+| 77 | Estoque de materiais | **Lista de materiais nomeados com quantidade**, separada do inventário de equipamento |
+| 78 | Loja | **Tela de comprar/vender** — desconta/soma da carteira sozinho, em vez de só carteira + preço pro mestre resolver na mesa |
+
+No meio da sessão, o Zé pediu mais uma coisa: além do catálogo de receitas
+prontas, um jeito de **criar a própria receita e deixar salva** — não só
+usar as 8 do sistema. Virou o card "Suas Receitas": mesmo formato de dado
+de uma receita de catálogo (nome, classe dona, lista de materiais, item que
+sai), só que escrito pelo jogador e mantido na ficha dele.
+
+Dois bugs de verdade apareceram nos testes automatizados e foram corrigidos
+antes de fechar a fatia: o botão "Fabricar" não reagia à quantidade de
+material digitada até trocar de aba (mesma causa do bug de peso da fatia
+anterior — o campo salvava sem redesenhar a tela); e a função de gastar
+Prata zerava o Ouro *antes* de reler o total da carteira, corrompendo a
+conta toda vez que uma compra descontava dinheiro.
+
+## 17. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

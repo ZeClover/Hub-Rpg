@@ -440,6 +440,57 @@ const EFEITOS_ITEM = [
   {id:'pmMaximo',     nome:'PM máximo'},
 ];
 
+// Preço de venda sugerido por raridade, em Prata — usado só no botão
+// "Vender" do inventário. Único não tem preço de tabela: negocia com o
+// mestre, por isso fica de fora daqui (e sem botão de venda automática).
+const RARIDADE_PRECO = {comum:5, incomum:15, raro:40, epico:100, lendario:300};
+
+// Receitas de crafting — cada uma pede materiais NOMEADOS específicos (não
+// um "ponto de material" genérico) e só fabrica quem tiver ao menos 1
+// nível na classe dona da receita. O item sai pronto no inventário, com o
+// mesmo formato que uma linha criada à mão.
+const RECEITAS_CATALOGO = [
+  {id:'espada-de-ferro', nome:'Espada de Ferro', classe:'ferreiro',
+    materiais:[{nome:'Minério de Ferro', quantidade:3},{nome:'Carvão', quantidade:1}],
+    item:{tipo:'arma', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:6, durabilidadeMaxima:5, notas:'1d8+FOR'}},
+  {id:'armadura-de-placas', nome:'Armadura de Placas', classe:'ferreiro',
+    materiais:[{nome:'Minério de Ferro', quantidade:5},{nome:'Couro', quantidade:2}],
+    item:{tipo:'armadura', raridade:'incomum', efeitoTipo:'defesa', efeitoValor:2, peso:12, durabilidadeMaxima:6, notas:''}},
+  {id:'pocao-cura-menor', nome:'Poção de Cura Menor', classe:'alquimista',
+    materiais:[{nome:'Erva Curativa', quantidade:2},{nome:'Água Pura', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'restaura PV igual ao dado de Vontade'}},
+  {id:'veneno-paralisante', nome:'Veneno Paralisante', classe:'alquimista',
+    materiais:[{nome:'Veneno Bruto', quantidade:2},{nome:'Erva Curativa', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'alvo fica Atordoado por 1 turno'}},
+  {id:'runa-de-forca', nome:'Runa de Força', classe:'encantador',
+    materiais:[{nome:'Cristal Menor', quantidade:2}],
+    item:{tipo:'acessorio', raridade:'incomum', efeitoTipo:'defesa', efeitoValor:1, peso:1, durabilidadeMaxima:0, notas:'runa aplicada num item já existente'}},
+  {id:'runa-de-vitalidade', nome:'Runa de Vitalidade', classe:'encantador',
+    materiais:[{nome:'Cristal Menor', quantidade:3}],
+    item:{tipo:'acessorio', raridade:'raro', efeitoTipo:'pvMaximo', efeitoValor:5, peso:1, durabilidadeMaxima:0, notas:'runa aplicada num item já existente'}},
+  {id:'ensopado-reforcado', nome:'Ensopado Reforçado', classe:'cozinheiro',
+    materiais:[{nome:'Carne', quantidade:2},{nome:'Vegetais', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'+2 no próximo teste de Força até o fim da cena'}},
+  {id:'prato-elfico', nome:'Prato Élfico', classe:'cozinheiro',
+    materiais:[{nome:'Vegetais', quantidade:3},{nome:'Especiaria Rara', quantidade:1}],
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'pmMaximo', efeitoValor:1, peso:1, durabilidadeMaxima:0, notas:'até o fim da sessão'}},
+];
+
+// Loja: um punhado de itens genéricos de aventureiro, comprados com Prata.
+// Vira dono na hora, sem precisar de mestre resolvendo item por item.
+const ITENS_LOJA = [
+  {id:'pocao-cura-simples', nome:'Poção de Cura Simples', precoPrata:8,
+    item:{tipo:'consumivel', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'restaura 2d6 PV'}},
+  {id:'corda', nome:'Corda (15m)', precoPrata:3,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:2, durabilidadeMaxima:0, notas:''}},
+  {id:'tocha', nome:'Tocha', precoPrata:1,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'ilumina uma área pequena'}},
+  {id:'kit-de-reparo', nome:'Kit de Reparo', precoPrata:12,
+    item:{tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:2, durabilidadeMaxima:0, notas:'restaura 3 de durabilidade de um item'}},
+  {id:'antitoxina', nome:'Antitoxina', precoPrata:10,
+    item:{tipo:'consumivel', raridade:'incomum', efeitoTipo:'nenhum', efeitoValor:0, peso:1, durabilidadeMaxima:0, notas:'remove a condição Envenenado'}},
+];
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -475,6 +526,14 @@ function novoPersonagem(nome){
     // inventario: {id, nome, tipo, raridade, efeitoTipo, efeitoValor, peso,
     // durabilidadeMaxima, durabilidadeAtual, equipado, notas}
     inventario: [],
+    // materiais: {id, nome, quantidade} — o estoque nomeado que as receitas
+    // consultam (tanto as do catálogo quanto as que o jogador criar).
+    materiais: [],
+    // receitasCustom: mesmo formato de RECEITAS_CATALOGO, mas escrita pelo
+    // próprio jogador e salva na ficha — pra montar um craft que o
+    // catálogo do sistema ainda não previu.
+    receitasCustom: [],
+    carteira: {ouro: 0, prata: 0},
     habilidadeUnica: {tem:false, nome:'', descricao:'', comoConseguiu:''},
     anotacoes: '',
   };
@@ -537,6 +596,65 @@ function pvRisco(p){ return Math.floor(pvMaximo(p)/2); }
 // que dá pra carregar. Some o peso de TODO item na mochila, equipado ou não.
 function pesoMaximo(p){ return 10 + p.atributos.forca*2; }
 function pesoAtual(p){ return (p.inventario||[]).reduce((total,it) => total + (it.peso||0), 0); }
+
+// Se o personagem já comprou este poder específico — usado pra ligar o
+// desconto de "Faro pra Barganha" no preço de compra, sem precisar
+// codificar isso na aba Poderes.
+function temPoder(p, classeId, poderId){
+  return ((p.poder.escolhas[classeId]||{})[poderId] || 0) > 0;
+}
+
+// Carteira em Ouro/Prata (100 Prata = 1 Ouro, mesma proporção do
+// Overgeared/Satisfy). Gastar/receber sempre passa por aqui, pra nunca
+// deixar a Prata "estourar" 100 sem virar Ouro.
+function totalPrata(p){ return (p.carteira.ouro||0)*100 + (p.carteira.prata||0); }
+function normalizarCarteira(p){
+  const total = Math.max(0, totalPrata(p));
+  p.carteira.ouro = Math.floor(total/100);
+  p.carteira.prata = total % 100;
+}
+function gastarPrata(p, valor){
+  const restante = totalPrata(p) - valor;
+  if(restante < 0) return false;
+  p.carteira.ouro = 0; p.carteira.prata = restante;
+  normalizarCarteira(p);
+  return true;
+}
+function receberPrata(p, valor){
+  const total = totalPrata(p) + valor;
+  p.carteira.ouro = 0; p.carteira.prata = total;
+  normalizarCarteira(p);
+}
+
+// Faro pra Barganha (poder do Mercador) desconta 10% de qualquer compra.
+function precoCompra(p, precoBase){
+  return temPoder(p,'mercador','faro-pra-barganha') ? Math.max(0, Math.round(precoBase*0.9)) : precoBase;
+}
+function precoVenda(item){ return RARIDADE_PRECO[item.raridade] ?? null; }
+
+// Crafting: funciona igual pra receita do catálogo e pra receita que o
+// jogador criou — as duas têm o mesmo formato {nome, materiais, item}.
+function temMateriais(p, receita){
+  return receita.materiais.every(m => {
+    const estoque = (p.materiais||[]).find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    return estoque && estoque.quantidade >= m.quantidade;
+  });
+}
+function fabricar(p, receita){
+  if(!temMateriais(p, receita)) return false;
+  receita.materiais.forEach(m => {
+    const estoque = p.materiais.find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    estoque.quantidade -= m.quantidade;
+  });
+  const it = receita.item;
+  p.inventario.push({
+    id: uid(), nome: receita.nome, tipo: it.tipo, raridade: it.raridade,
+    efeitoTipo: it.efeitoTipo, efeitoValor: it.efeitoValor, peso: it.peso,
+    durabilidadeMaxima: it.durabilidadeMaxima, durabilidadeAtual: it.durabilidadeMaxima,
+    equipado: false, notas: it.notas,
+  });
+  return true;
+}
 
 /* --- Armazenamento ---------------------------------------------------------
 
@@ -603,6 +721,8 @@ const ABAS = [
   {id:'poderes',     nome:'Poderes'},
   {id:'combate',     nome:'Combate'},
   {id:'equipamento', nome:'Equipamento'},
+  {id:'crafting',    nome:'Crafting'},
+  {id:'loja',        nome:'Loja'},
   {id:'golpes',      nome:'Golpes e Magias'},
   {id:'skills',      nome:'Skills'},
   {id:'notas',       nome:'Notas'},
@@ -632,7 +752,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 }
@@ -922,6 +1042,7 @@ function abaEquipamento(p){
       const raridade = RARIDADES.find(r => r.id === it.raridade) || RARIDADES[0];
       const temDurabilidade = (it.durabilidadeMaxima||0) > 0;
       const quebrado = temDurabilidade && (it.durabilidadeAtual||0) <= 0;
+      const preco = precoVenda(it);
       return `<div class="linha-lista">
         <div class="topo">
           <input data-item-campo="${i}|nome" value="${esc(it.nome)}" placeholder="Nome do item" style="font-family:Georgia,serif;font-size:16px">
@@ -967,9 +1088,139 @@ function abaEquipamento(p){
           <label>Notas (dano da arma, o que mais o item faz)</label>
           <input data-item-campo="${i}|notas" value="${esc(it.notas||'')}">
         </div>
+        <div class="linha" style="margin-top:10px">
+          ${preco !== null
+            ? `<button data-vender-item="${i}">Vender por ${preco} Prata</button>`
+            : `<span class="mini">Único — sem preço de tabela, negocia com o mestre</span>`}
+        </div>
       </div>`;
     }).join('')}
     <button id="btAddItem">+ Item</button>
+  </div>`;
+}
+
+function cartaoReceita(p, receita, indiceCustom){
+  const classe = CLASSES.find(c => c.id === receita.classe);
+  const temClasse = classe && nivelDeClasse(p, classe.id) > 0;
+  const pronta = temClasse && temMateriais(p, receita);
+  const listaMateriais = receita.materiais.map(m => {
+    const estoque = (p.materiais||[]).find(x => x.nome.trim().toLowerCase() === m.nome.trim().toLowerCase());
+    const tem = estoque && estoque.quantidade >= m.quantidade;
+    return `<span style="color:${tem?'var(--suave)':'var(--alerta)'}">${m.quantidade}× ${esc(m.nome)}</span>`;
+  }).join(', ');
+  const raridade = RARIDADES.find(r => r.id === receita.item.raridade);
+  return `<div class="linha-lista">
+    <div class="topo">
+      <strong>${esc(receita.nome) || 'Receita sem nome'}</strong>
+      <button data-fabricar="${indiceCustom===undefined?'catalogo':'custom'}|${indiceCustom===undefined?receita.id:indiceCustom}" ${pronta?'':'disabled'}>Fabricar</button>
+    </div>
+    <p class="mini">Pede: ${listaMateriais || '(nenhum material definido ainda)'}</p>
+    <p class="mini">Classe: ${classe?classe.nome:'—'}${classe && !temClasse ? ' (precisa de ao menos 1 nível nela)' : ''} · resulta em ${esc(receita.nome)}${raridade?` (${raridade.nome})`:''}</p>
+  </div>`;
+}
+
+function abaCrafting(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Materiais</h2>
+    <p class="mini" style="margin:6px 0 14px">O estoque nomeado que as receitas consultam — some aqui o que coletar ou ganhar de recompensa.</p>
+    ${(p.materiais||[]).map((m,i) => `<div class="linha" style="margin-bottom:8px">
+      <input data-material-campo="${i}|nome" value="${esc(m.nome)}" placeholder="Nome do material" style="flex:2">
+      <input data-material-num="${i}|quantidade" type="number" min="0" value="${m.quantidade||0}" style="flex:1">
+      <button data-remover-material="${i}" class="perigo">Remover</button>
+    </div>`).join('')}
+    <button id="btAddMaterial">+ Material</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Receitas</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Só fabrica quem tiver ao menos 1 nível na classe da receita, e só com
+      os materiais completos no estoque acima.
+    </p>
+    ${RECEITAS_CATALOGO.map(r => cartaoReceita(p, r)).join('')}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Suas Receitas</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Criadas por você e salvas na ficha, pro craft que o catálogo do
+      sistema ainda não previu. Mesmo botão "Fabricar" das receitas prontas.
+    </p>
+    ${p.receitasCustom.map((r,ri) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-receita-campo="${ri}|nome" value="${esc(r.nome)}" placeholder="Nome da receita" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-receita="${ri}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Classe dona</label>
+          <select data-receita-classe="${ri}">
+            <option value="">— nenhuma —</option>
+            ${CLASSES.map(c => `<option value="${c.id}" ${c.id===r.classe?'selected':''}>${c.nome}</option>`).join('')}
+          </select>
+        </div>
+        <div></div>
+      </div>
+      <p class="mini" style="margin:10px 0 6px">Materiais que pede</p>
+      ${r.materiais.map((m,mi) => `<div class="linha" style="margin-bottom:6px">
+        <input data-receita-material="${ri}|${mi}|nome" value="${esc(m.nome)}" placeholder="Nome do material" style="flex:2">
+        <input data-receita-material="${ri}|${mi}|quantidade" type="number" min="0" value="${m.quantidade||0}" style="flex:1">
+        <button data-remover-receita-material="${ri}|${mi}" class="perigo">Remover</button>
+      </div>`).join('')}
+      <button data-add-receita-material="${ri}">+ Material</button>
+      <p class="mini" style="margin:14px 0 6px">O item que sai fabricado</p>
+      <div class="grade g4">
+        <div><label>Tipo</label>
+          <select data-receita-item="${ri}|tipo">
+            ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===r.item.tipo?'selected':''}>${t.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Raridade</label>
+          <select data-receita-item="${ri}|raridade">
+            ${RARIDADES.map(x => `<option value="${x.id}" ${x.id===r.item.raridade?'selected':''}>${x.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Efeito</label>
+          <select data-receita-item="${ri}|efeitoTipo">
+            ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===r.item.efeitoTipo?'selected':''}>${e.nome}</option>`).join('')}
+          </select></div>
+        <div><label>Valor do efeito</label>
+          <input data-receita-item="${ri}|efeitoValor" type="number" value="${r.item.efeitoValor||0}"></div>
+      </div>
+      <div class="grade g3" style="margin-top:10px">
+        <div><label>Peso</label><input data-receita-item="${ri}|peso" type="number" min="0" value="${r.item.peso||0}"></div>
+        <div><label>Durabilidade máxima</label><input data-receita-item="${ri}|durabilidadeMaxima" type="number" min="0" value="${r.item.durabilidadeMaxima||0}"></div>
+        <div><label>Notas</label><input data-receita-item="${ri}|notas" value="${esc(r.item.notas||'')}"></div>
+      </div>
+      <div class="linha" style="margin-top:12px">
+        <button data-fabricar="custom|${ri}" ${r.classe && nivelDeClasse(p,r.classe)>0 && temMateriais(p,r) ? '' : 'disabled'}>Fabricar</button>
+      </div>
+    </div>`).join('')}
+    <button id="btAddReceita">+ Criar Receita</button>
+  </div>`;
+}
+
+function abaLoja(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Carteira</h2>
+    <p class="mini" style="margin:6px 0 14px">Ouro e Prata — 100 Prata viram 1 Ouro sozinho, ao editar ou ao comprar/vender.</p>
+    <div class="grade g2" style="max-width:320px">
+      <div><label for="c-ouro">Ouro</label><input id="c-ouro" data-carteira="ouro" type="number" min="0" value="${p.carteira.ouro||0}"></div>
+      <div><label for="c-prata">Prata</label><input id="c-prata" data-carteira="prata" type="number" min="0" value="${p.carteira.prata||0}"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Comprar</h2>
+    ${temPoder(p,'mercador','faro-pra-barganha') ? `<p class="mini" style="margin-bottom:10px">Faro pra Barganha ativo — os preços abaixo já saem com 10% de desconto.</p>` : ''}
+    ${ITENS_LOJA.map(item => {
+      const preco = precoCompra(p, item.precoPrata);
+      const daPra = totalPrata(p) >= preco;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <strong>${item.nome}</strong>
+          <button data-comprar="${item.id}" ${daPra?'':'disabled'}>Comprar por ${preco} Prata</button>
+        </div>
+        <p class="mini">${esc(item.item.notas || '')}</p>
+      </div>`;
+    }).join('')}
   </div>`;
 }
 
@@ -1316,6 +1567,96 @@ function ligarEventos(){
     id:uid(), nome:'', tipo:'arma', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0,
     peso:0, durabilidadeMaxima:0, durabilidadeAtual:0, equipado:false, notas:'',
   }));
+
+  app.querySelectorAll('[data-vender-item]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const it = p.inventario[Number(b.dataset.venderItem)];
+      const preco = precoVenda(it); if(preco === null) return;
+      receberPrata(p, preco);
+      p.inventario.splice(Number(b.dataset.venderItem), 1);
+    }));
+
+  // Materiais: estoque nomeado que as receitas (catálogo e próprias) leem.
+  // A quantidade usa 'change' com redesenho imediato — é ela que decide se
+  // o botão "Fabricar" de cada receita fica travado ou não, então não pode
+  // ficar esperando o debounce do nome (campo só descritivo) pra atualizar.
+  app.querySelectorAll('[data-material-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.materialCampo.split('|');
+      p.materiais[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-material-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.materialNum.split('|');
+      p.materiais[Number(i)][chave] = Number(el.value) || 0;
+    }));
+  app.querySelectorAll('[data-remover-material]').forEach(b =>
+    b.onclick = () => mudar(p => p.materiais.splice(Number(b.dataset.removerMaterial), 1)));
+  const addMaterial = document.getElementById('btAddMaterial');
+  if(addMaterial) addMaterial.onclick = () => mudar(p => p.materiais.push({id:uid(), nome:'', quantidade:0}));
+
+  // Fabricar: "catalogo|receitaId" ou "custom|índice" — mesma função
+  // fabricar() por trás dos dois, já que têm o mesmo formato de dados.
+  app.querySelectorAll('[data-fabricar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [origem, chave] = b.dataset.fabricar.split('|');
+      const receita = origem === 'catalogo'
+        ? RECEITAS_CATALOGO.find(r => r.id === chave)
+        : p.receitasCustom[Number(chave)];
+      if(receita) fabricar(p, receita);
+    }));
+
+  // Suas Receitas: editor completo (nome, classe, materiais, item que sai).
+  app.querySelectorAll('[data-receita-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [ri, chave] = el.dataset.receitaCampo.split('|');
+      p.receitasCustom[Number(ri)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-receita-classe]').forEach(el =>
+    el.onchange = () => mudar(p => p.receitasCustom[Number(el.dataset.receitaClasse)].classe = el.value));
+  app.querySelectorAll('[data-receita-material]').forEach(el => {
+    const [ri, mi, chave] = el.dataset.receitaMaterial.split('|');
+    const mutador = p => p.receitasCustom[Number(ri)].materiais[Number(mi)][chave] = el.type==='number' ? (Number(el.value)||0) : el.value;
+    if(el.type==='number') el.onchange = () => mudar(mutador);
+    else el.oninput = () => mudarSemRedesenhar(mutador, el);
+  });
+  app.querySelectorAll('[data-add-receita-material]').forEach(b =>
+    b.onclick = () => mudar(p => p.receitasCustom[Number(b.dataset.addReceitaMaterial)].materiais.push({nome:'', quantidade:0})));
+  app.querySelectorAll('[data-remover-receita-material]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [ri, mi] = b.dataset.removerReceitaMaterial.split('|');
+      p.receitasCustom[Number(ri)].materiais.splice(Number(mi), 1);
+    }));
+  app.querySelectorAll('[data-receita-item]').forEach(el => {
+    const [ri, chave] = el.dataset.receitaItem.split('|');
+    const mutador = p => p.receitasCustom[Number(ri)].item[chave] = el.type==='number' ? (Number(el.value)||0) : el.value;
+    if(el.tagName==='SELECT' || el.type==='number') el.onchange = () => mudar(mutador);
+    else el.oninput = () => mudarSemRedesenhar(mutador, el);
+  });
+  app.querySelectorAll('[data-remover-receita]').forEach(b =>
+    b.onclick = () => mudar(p => p.receitasCustom.splice(Number(b.dataset.removerReceita), 1)));
+  const addReceita = document.getElementById('btAddReceita');
+  if(addReceita) addReceita.onclick = () => mudar(p => p.receitasCustom.push({
+    nome: '', classe: '', materiais: [{nome:'', quantidade:1}],
+    item: {tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0, peso:0, durabilidadeMaxima:0, notas:''},
+  }));
+
+  // Carteira e Loja
+  app.querySelectorAll('[data-carteira]').forEach(el =>
+    el.onchange = () => mudar(p => { p.carteira[el.dataset.carteira] = Number(el.value) || 0; normalizarCarteira(p); }));
+  app.querySelectorAll('[data-comprar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const item = ITENS_LOJA.find(x => x.id === b.dataset.comprar); if(!item) return;
+      const preco = precoCompra(p, item.precoPrata);
+      if(!gastarPrata(p, preco)) return;
+      const it = item.item;
+      p.inventario.push({
+        id: uid(), nome: item.nome, tipo: it.tipo, raridade: it.raridade,
+        efeitoTipo: it.efeitoTipo, efeitoValor: it.efeitoValor, peso: it.peso,
+        durabilidadeMaxima: it.durabilidadeMaxima, durabilidadeAtual: it.durabilidadeMaxima,
+        equipado: false, notas: it.notas,
+      });
+    }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

@@ -388,6 +388,38 @@ passando.
     no derivado, reparo devolvendo o bônus, peso somando certo, e tudo
     isso sobrevivendo a um recarregamento de página. Zero erro de
     JavaScript
+- [x] **Sistema SAO — crafting e economia** (28/08/2026) — decisões
+      #75-#78, a "Parte B": Ferreiro, Alquimista, Encantador e Cozinheiro
+      passam a fabricar de verdade, e o Mercador ganha uma loja:
+  - **Moeda Ouro/Prata** (100 Prata = 1 Ouro, mesma proporção do
+    Overgeared/Satisfy — pedido explícito do Zé) — card "Carteira" na aba
+    Loja nova, sempre normalizada (editar Prata acima de 100 já vira Ouro
+    sozinho)
+  - **Materiais nomeados com estoque** — aba Crafting nova, lista tipo
+    "3× Minério de Ferro" que as receitas consultam
+  - **8 receitas de catálogo**, 2 por classe de Produção (Ferreiro,
+    Alquimista, Encantador, Cozinheiro), cada uma pedindo materiais
+    específicos e só liberada pra quem tem ao menos 1 nível na classe dona
+  - **"Suas Receitas"** — pedido do Zé no meio da sessão: um editor
+    completo pra criar receita própria (nome, classe, lista de materiais,
+    e o item que sai fabricado) e fica salva na ficha, com o mesmo botão
+    "Fabricar" das receitas prontas
+  - **Loja**: 5 itens genéricos de aventureiro comprados com Prata, e
+    "Vender" em qualquer item do inventário (preço automático pela
+    raridade — Único fica de fora, esse negocia com o mestre). O poder
+    Faro pra Barganha do Mercador desconta 10% sozinho no preço de compra
+  - **Dois bugs de verdade corrigidos no caminho, achados pelos próprios
+    testes**: o botão "Fabricar" não reagia à digitação da quantidade de
+    material até trocar de aba (mesma causa do bug de peso corrigido na
+    fatia anterior — resolvido do mesmo jeito, com redesenho imediato); e
+    `gastarPrata` zerava o Ouro antes de reler o total da carteira,
+    corrompendo a conta ao comprar algo
+  - Testado de ponta a ponta com Playwright: receita travada sem
+    material, destravando ao completar o estoque sem precisar trocar de
+    aba, material sendo descontado, item saindo certo no inventário,
+    receita própria funcionando igual à de catálogo, compra e venda
+    acertando a carteira, normalização de Prata em Ouro, tudo
+    sobrevivendo a um recarregamento de página. Zero erro de JavaScript
 - [ ] Thrylikí Chelóna
 - [ ] Ometion
 
