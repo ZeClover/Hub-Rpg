@@ -73,10 +73,11 @@ export const SISTEMAS: Sistema[] = [
   {
     chave: "thryliki-chelona",
     nome: "Thrylikí Chelóna",
-    descricao: "Homebrew do Zé.",
-    ficha: null,
-    situacao: "planejada",
-    salvaNoHub: false,
+    descricao:
+      "Homebrew do Zé sobre uma escola de heróis — atributos por Grau, Ano e Nível como progressões separadas, dezesseis Áreas de Estudo.",
+    ficha: "/thryliki-chelona.html",
+    situacao: "em-construcao",
+    salvaNoHub: true,
     fichaInimigo: null,
     escudoMestre: null,
   },
