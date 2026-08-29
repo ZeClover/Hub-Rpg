@@ -1592,6 +1592,10 @@ function novoPersonagem(nome){
     // todas um recurso 0-3 na mesma forma — um dicionário por areaId evita
     // colisão se o jogador trocar de Área e voltar.
     recursosNovaArea: {},
+    // poderesLivres: cartões do Construtor Livre de Poder (3º Ano em
+    // diante) — vale pras quinze Áreas que não têm gramática própria
+    // (Simbologia Arcana usa a Fórmula, guardada em simbologiaArcana.formulas).
+    poderesLivres: [],
     anotacoes: '',
   };
 }
@@ -1680,6 +1684,68 @@ function calculoFormula(sel){
   const tomos = alcance.tomos + alvo.tomos + essencia.tomos + duracao.tomos
     + clausulas.reduce((soma,c) => soma + c.tomos, 0);
   return {impacto: potencia.impacto, mana, tomos};
+}
+
+// Construtor Livre de Poder: a gramática que vale pras outras quinze Áreas
+// (Simbologia Arcana já tem a sua própria, a Fórmula acima). "Ano libera a
+// gramática, Nível define potência, Categoria e Ascensões definem escala,
+// a Área define como o poder funciona e o que ele custa" — texto do próprio
+// documento de design. Começa no 3º Ano; 1º e 2º usam poder pronto ou
+// modificação guiada, sem criação livre de verdade.
+function liberacaoPorAno(p){
+  if(p.ano >= 5) return {modo:'Ruptura', alteracoes:4, criacaoLivre:true, persistencia:true, conceitual:true};
+  if(p.ano >= 4) return {modo:'Criação Avançada', alteracoes:3, criacaoLivre:true, persistencia:true, conceitual:false};
+  if(p.ano >= 3) return {modo:'Criação Livre', alteracoes:2, criacaoLivre:true, persistencia:false, conceitual:false};
+  if(p.ano >= 2) return {modo:'Modificação Guiada', alteracoes:1, criacaoLivre:false, persistencia:false, conceitual:false};
+  return {modo:'Poderes Prontos', alteracoes:0, criacaoLivre:false, persistencia:false, conceitual:false};
+}
+
+const PODER_POTENCIAS = [
+  {id:'menor',  nome:'Menor',  impacto:0.5, acao:'Parcial ou Reação compatível',       preparacao:0},
+  {id:'basica', nome:'Básica', impacto:1,   acao:'Principal',                          preparacao:0},
+  {id:'forte',  nome:'Forte',  impacto:1.5, acao:'Parcial e Principal, ou custo relevante', preparacao:0},
+  {id:'apice',  nome:'Ápice',  impacto:2.5, acao:'Principal após preparação',          preparacao:1},
+];
+
+// Átomos de Impacto: um poder com vários resultados DIVIDE o Impacto entre
+// eles — não causa o resultado principal cheio mais efeitos de graça.
+const PODER_ATOMOS = [
+  {id:'dano-cura',        nome:'Dano ou Cura de referência',       valor:1},
+  {id:'protecao',         nome:'Proteção por Impacto evitado',     valor:1},
+  {id:'marca',            nome:'Marca ou Deslocamento curto',      valor:0.25},
+  {id:'exposto',          nome:'Exposto',                          valor:0.25},
+  {id:'retirar-menor',    nome:'Retirar Ação Menor',               valor:0.5},
+  {id:'interromper',      nome:'Interromper Sustentação',          valor:0.5},
+  {id:'retirar-principal',nome:'Retirar Principal (com escolha)',  valor:1},
+  {id:'incapacitar',      nome:'Incapacitar por uma rodada',       valor:2},
+];
+
+// Tradução por Área — quanto cada Potência custa nessa Área, mais a regra
+// própria dela. Simbologia Arcana não entra aqui: ela usa a Fórmula acima,
+// que já é a tradução dela por extenso (Mana + Tomos por componente).
+const PODER_CUSTO_AREA = {
+  'corpo-cinetica':          {menor:'0 ou 1 Esforço, conforme a propriedade', basica:'0 ou 1 Esforço, conforme a propriedade', forte:'2 Esforços', apice:'3 Esforços e Rastro legível', regra:'Sequências usam ações normais e ataques dividem o Impacto entre os alvos.'},
+  'robotica-engenharia':     {menor:'1 Carga', basica:'1 Carga', forte:'2 Cargas', apice:'3 Cargas ou Projeto declarado', regra:'+1 Ponto de Comando quando a ação é delegada a um Sistema.'},
+  'botanica-biomancia':      {menor:'Semear um Broto', basica:'Colher um Broto', forte:'Colher em Floração', apice:'Colher em Maturação', regra:'Seiva altera crescimento e propriedades, mas não compra Impacto diretamente.'},
+  'zoologia-etologia':       {menor:'0 ou 1 Dado de Campo', basica:'0 ou 1 Dado de Campo', forte:'2 Dados de Campo', apice:'3 Dados de Campo e Perfil preparado', regra:'Observar informação nova rende no máximo uma vez por rodada.'},
+  'arte-expressao':          {menor:'0 Ressonância', basica:'0 Ressonância', forte:'2 Ressonâncias', apice:'3 Ressonâncias e preparação visível', regra:'Ganho máximo de uma Ressonância por rodada.'},
+  'alquimia-quimica':        {menor:'Fórmula estável, sem Instabilidade', basica:'Fórmula estável', forte:'Reação Volátil — gera 3 Instabilidades', apice:'3 Instabilidades, preparação e amostra rara', regra:'Uma Fórmula tem uma reação principal; propriedades incompatíveis exigem recipiente e vulnerabilidade novos.'},
+  'astronomia-cosmologia':   {menor:'0 ou 1 Alinhamento', basica:'0 ou 1 Alinhamento', forte:'2 Alinhamentos', apice:'3 Alinhamentos e Janela preparada', regra:'Alinhamento só nasce quando a Janela verificável acontece, no máximo uma vez por rodada.'},
+  'matematica-probabilidade':{menor:'0 ou 1 Evidência', basica:'0 ou 1 Evidência', forte:'2 Evidências', apice:'3 Evidências e Demonstração preparada', regra:'A mesma observação não gera Evidência repetida; toda Hipótese precisa poder falhar.'},
+  'psicologia-noetica':      {menor:'0 ou 1 Insight', basica:'0 ou 1 Insight', forte:'2 Insights', apice:'3 Insights e Estado confirmado', regra:'Agência permanece com o alvo; controle hostil é resistível e sempre oferece saída comportamental.'},
+  'medicina-anatomia':       {menor:'0 ou 1 Foco Clínico', basica:'0 ou 1 Foco Clínico', forte:'2 Focos Clínicos', apice:'3 Focos Clínicos, Campo e Procedimento preparados', regra:'Diagnóstico precisa de sinais e pode ser invalidado por mudança anatômica ou evidência contrária.'},
+  'geologia-cristalografia': {menor:'0 ou 1 Tensão da Âncora', basica:'0 ou 1 Tensão da Âncora', forte:'2 Tensões da Âncora', apice:'3 Tensões, Rede estrutural preparada', regra:'Tensão pertence à Âncora material e se perde quando ela é removida ou transformada.'},
+  'historia-arqueologia':    {menor:'0 ou 1 Precedente', basica:'0 ou 1 Precedente', forte:'2 Precedentes', apice:'3 Precedentes, Fontes e contexto preparados', regra:'Fonte falsificada, contexto inadequado ou evidência contraditória reduz ou invalida o Precedente.'},
+  'tanatologia':             {menor:'0 ou 1 Eco', basica:'0 ou 1 Eco', forte:'2 Ecos e Despedida ou Transformação', apice:'3 Ecos, Memorial e Rito preparados', regra:'Reviver exige Pacto com a Realidade — Tanatologia não restaura vida plena nem canal corporal sacrificado.'},
+  'direito-contratologia':   {menor:'0 ou 1 Garantia', basica:'0 ou 1 Garantia', forte:'2 Garantias', apice:'3 Garantias, Instrumento e Jurisdição preparados', regra:'Pacto hostil é resistível, a aceitação precisa ser real, e a mesma Cláusula vincula seu autor.'},
+  'filosofia-metafisica':    {menor:'0 ou 1 Coerência', basica:'0 ou 1 Coerência', forte:'2 Coerências', apice:'3 Coerências, Premissa e Âncora preparadas', regra:'Apenas uma Premissa fica ativa; contradição demonstrada a encerra, e conceitos exigem exemplo concreto.'},
+};
+
+function calculoPoderLivre(sel){
+  const potencia = PODER_POTENCIAS.find(x => x.id === sel.potencia) || PODER_POTENCIAS[1];
+  const resultados = (sel.resultados || []).map(id => PODER_ATOMOS.find(a => a.id === id)).filter(Boolean);
+  const somaResultados = resultados.reduce((soma,a) => soma + a.valor, 0);
+  return {impactoBudget: potencia.impacto, somaResultados, excede: somaResultados > potencia.impacto};
 }
 
 // Robótica e Engenharia — três recursos não intercambiáveis, conferidos
@@ -1786,6 +1852,10 @@ const estado = {
   // Arcana) — não é dado do personagem, só some ao trocar de ficha ou
   // recarregar a página; "Salvar Fórmula" é que grava de verdade.
   construtorFormula: {verbo:'Ferir', potencia:'basica', alcance:'curto', alvo:'um', essencia:'basica', clausulas:[], duracao:'turno', nomeRascunho:''},
+  // construtorPoder: rascunho do Construtor Livre de Poder — mesma lógica
+  // do construtorFormula acima, some ao trocar de ficha/recarregar; só
+  // "Salvar Poder" grava de verdade.
+  construtorPoder: {nome:'', intencao:'', acesso:'', ancora:'', forma:'', potencia:'basica', resultados:[], testeResistencia:'', contrajogo:'', residuo:''},
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1889,6 +1959,7 @@ function render(){
   if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
   if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
   if(!p.recursosNovaArea) p.recursosNovaArea = {};
+  if(!p.poderesLivres) p.poderesLivres = [];
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2549,8 +2620,124 @@ function painelNovaArea(p){
   </div>`;
 }
 
+function painelConstrutorPoder(p){
+  if(!p.perfil.areaId) return '';
+  const area = AREAS.find(a => a.id === p.perfil.areaId);
+  const lib = liberacaoPorAno(p);
+  if(!lib.criacaoLivre){
+    return `<div class="cartao">
+      <h2 style="font-size:18px">Construtor Livre de Poder</h2>
+      <p class="mini" style="margin:6px 0">
+        <strong>${p.ano}º Ano — ${lib.modo}.</strong> Criação livre de
+        verdade começa no 3º Ano. Até lá: 1º usa poderes prontos do Ramo;
+        2º pode alterar 1 campo de uma técnica pronta (Modificação Guiada),
+        sem trocar acesso, recurso ou função principal.
+      </p>
+    </div>`;
+  }
+  // Simbologia Arcana tem gramática própria (a Fórmula, acima) em vez
+  // dessa tradução genérica.
+  if(p.perfil.areaId === 'simbologia-arcana'){
+    return `<div class="cartao">
+      <h2 style="font-size:18px">Construtor Livre de Poder</h2>
+      <p class="mini" style="margin:6px 0">
+        Simbologia Arcana usa sua própria gramática — o Construtor de
+        Fórmula, acima — em vez desta tradução genérica.
+      </p>
+    </div>`;
+  }
+  const custoArea = PODER_CUSTO_AREA[p.perfil.areaId];
+  const cp = estado.construtorPoder;
+  const calc = calculoPoderLivre(cp);
+  const potenciaAtual = PODER_POTENCIAS.find(x => x.id === cp.potencia) || PODER_POTENCIAS[1];
+  const podeSalvar = !calc.excede;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Construtor Livre de Poder</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>${p.ano}º Ano — ${lib.modo}.</strong> Intenção → Área/Acesso →
+      Âncora → função → Potência → distribuir o Impacto → ação/alcance/
+      alvo/duração/custo/teste/contrajogo/Resíduo → validar. Um poder com
+      vários resultados <strong>divide</strong> o Impacto entre eles, não
+      soma um resultado cheio mais efeitos de graça.
+    </p>
+
+    <div class="grade g2">
+      <div><label for="cp-nome">Nome do poder</label>
+        <input id="cp-nome" value="${esc(cp.nome)}" placeholder="ex: Ponte Quebrada"></div>
+      <div><label for="cp-potencia">Potência</label>
+        <select id="cp-potencia">
+          ${PODER_POTENCIAS.map(o => `<option value="${o.id}" ${o.id===cp.potencia?'selected':''}>${o.nome} (${o.impacto} Impacto)</option>`).join('')}
+        </select></div>
+    </div>
+    <p class="mini" style="margin:8px 0 0"><strong>Ação:</strong> ${esc(potenciaAtual.acao)}${potenciaAtual.preparacao ? ` · preparação de ${potenciaAtual.preparacao} rodada(s)` : ''}</p>
+
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="cp-intencao">Intenção (o que muda na cena, numa frase)</label>
+        <input id="cp-intencao" value="${esc(cp.intencao)}"></div>
+      <div><label for="cp-acesso">Acesso (como este personagem chega à Área)</label>
+        <input id="cp-acesso" value="${esc(cp.acesso)}"></div>
+      <div><label for="cp-ancora">Âncora (perceptível e interferível)</label>
+        <input id="cp-ancora" value="${esc(cp.ancora)}"></div>
+      <div><label for="cp-forma">Forma (como o poder se manifesta)</label>
+        <input id="cp-forma" value="${esc(cp.forma)}"></div>
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">Resultados (dividem o Impacto — some até o orçamento da Potência)</p>
+    <div class="condicoes">
+      ${PODER_ATOMOS.map(a => `<label>
+        <input type="checkbox" data-cp-atomo="${a.id}" ${cp.resultados.includes(a.id)?'checked':''}>
+        ${a.nome} (${a.valor})</label>`).join('')}
+    </div>
+    <div class="grade g2" style="margin-top:10px">
+      <div class="derivado ${calc.excede?'risco':''}">
+        <div class="rot">Impacto usado</div>
+        <div class="val">${calc.somaResultados}<span style="font-size:16px;color:var(--suave)">/${calc.impactoBudget}</span></div>
+      </div>
+    </div>
+    ${calc.excede ? `<div class="aviso">Resultados somam mais que o Impacto da Potência escolhida — tire um resultado ou suba a Potência.</div>` : ''}
+
+    <p class="mini" style="margin:14px 0 6px"><strong>Custo em ${area ? esc(area.nome) : 'sua Área'}:</strong>
+      ${custoArea ? esc(custoArea[cp.potencia]) : ''}</p>
+    ${custoArea ? `<p class="mini">${esc(custoArea.regra)}</p>` : ''}
+
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="cp-teste">Teste ou Resistência</label>
+        <input id="cp-teste" value="${esc(cp.testeResistencia)}"></div>
+      <div><label for="cp-contrajogo">Contrajogo</label>
+        <input id="cp-contrajogo" value="${esc(cp.contrajogo)}"></div>
+    </div>
+    <div style="margin-top:10px">
+      <label for="cp-residuo">Resíduo (toda transformação deixa perda, evidência ou vulnerabilidade)</label>
+      <input id="cp-residuo" value="${esc(cp.residuo)}">
+    </div>
+
+    <button id="btSalvarPoder" style="margin-top:12px" ${podeSalvar?'':'disabled'}>+ Salvar Poder</button>
+  </div>`;
+}
+
+function painelPoderesLivres(p, poderes){
+  if(!p.perfil.areaId || p.perfil.areaId === 'simbologia-arcana') return '';
+  const lib = liberacaoPorAno(p);
+  if(!lib.criacaoLivre) return '';
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Poderes livres registrados (${poderes.length})</h2>
+    ${poderes.length ? poderes.map((pw,i) => {
+      const calc = calculoPoderLivre(pw);
+      const potencia = PODER_POTENCIAS.find(x => x.id === pw.potencia) || PODER_POTENCIAS[1];
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-poder-campo="${i}|nome" value="${esc(pw.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
+          <button data-poder-remover="${i}" class="perigo">Remover</button>
+        </div>
+        <p class="mini">${esc(potencia.nome)} · Impacto ${calc.somaResultados}/${calc.impactoBudget}${pw.intencao ? ' · ' + esc(pw.intencao) : ''}</p>
+        ${pw.contrajogo ? `<p class="mini">Contrajogo: ${esc(pw.contrajogo)}</p>` : ''}
+      </div>`;
+    }).join('') : '<p class="mini">(nenhum poder registrado ainda)</p>'}
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2972,6 +3159,44 @@ function ligarEventos(){
     if(!p.recursosNovaArea) p.recursosNovaArea = {};
     p.recursosNovaArea[p.perfil.areaId] = 0;
   });
+
+  // Construtor Livre de Poder (3º Ano+, quinze Áreas fora de Simbologia).
+  const cpPotencia = document.getElementById('cp-potencia');
+  if(cpPotencia) cpPotencia.onchange = () => { estado.construtorPoder.potencia = cpPotencia.value; render(); };
+  app.querySelectorAll('[data-cp-atomo]').forEach(el =>
+    el.onchange = () => {
+      const id = el.dataset.cpAtomo;
+      const lista = estado.construtorPoder.resultados;
+      estado.construtorPoder.resultados = el.checked ? [...lista, id] : lista.filter(r => r !== id);
+      render();
+    });
+  const camposTextoPoder = ['nome','intencao','acesso','ancora','forma','testeResistencia','contrajogo','residuo'];
+  const idsCampoPoder = {nome:'cp-nome', intencao:'cp-intencao', acesso:'cp-acesso', ancora:'cp-ancora', forma:'cp-forma', testeResistencia:'cp-teste', contrajogo:'cp-contrajogo', residuo:'cp-residuo'};
+  camposTextoPoder.forEach(campo => {
+    const el = document.getElementById(idsCampoPoder[campo]);
+    if(el) el.oninput = () => { estado.construtorPoder[campo] = el.value; };
+  });
+  const btSalvarPoder = document.getElementById('btSalvarPoder');
+  if(btSalvarPoder) btSalvarPoder.onclick = () => {
+    const cp = estado.construtorPoder;
+    mudar(p => {
+      p.poderesLivres.push({
+        id: uid(),
+        nome: cp.nome.trim() || 'Poder sem nome',
+        intencao: cp.intencao, acesso: cp.acesso, ancora: cp.ancora, forma: cp.forma,
+        potencia: cp.potencia, resultados: [...cp.resultados],
+        testeResistencia: cp.testeResistencia, contrajogo: cp.contrajogo, residuo: cp.residuo,
+      });
+    });
+    estado.construtorPoder = {nome:'', intencao:'', acesso:'', ancora:'', forma:'', potencia:'basica', resultados:[], testeResistencia:'', contrajogo:'', residuo:''};
+  };
+  app.querySelectorAll('[data-poder-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.poderCampo.split('|');
+      p.poderesLivres[Number(i)][campo] = el.value;
+    }, el));
+  app.querySelectorAll('[data-poder-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.poderesLivres.splice(Number(b.dataset.poderRemover), 1)));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

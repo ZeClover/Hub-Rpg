@@ -842,6 +842,73 @@ tudo — Fórmula salva e Mana gasta — sobrevivendo a um recarregamento de
 página. Os catorze testes das fatias anteriores de Thrylikí Chelóna
 continuam passando. `tsc` e `lint` limpos.
 
+## 33. Thrylikí Chelóna — Construtor Livre de Poder (29/08/2026)
+
+O Zé disse "continue, tudo que precisa continuar até esse sistema estar
+dentro do hub, não pare" — mandato pra fechar sozinho o que ainda faltava
+de "criação livre" em vez de perguntar Área por Área. Reli
+`construtor-livre-de-poderes-v6.1.md` inteiro antes de continuar e
+descobri que ele **não é** um construtor específico de Robótica ou de
+Zoologia (que era minha suposição anterior, registrada no fim da decisão
+#32): é a **gramática genérica que vale pras quinze Áreas que não têm
+gramática própria** — só Simbologia Arcana foge dela, com a Fórmula que
+já tinha ganhado construtor na decisão #32. Isso muda o que "terminar
+criação livre" significa: não são vários construtores por Área, é um
+construtor só, com tradução por Área.
+
+O documento também deixou claro **quando** a criação livre existe: "Ano
+libera a gramática" — 1º Ano usa poder pronto do Ramo, 2º Ano só altera 1
+campo de uma técnica pronta (Modificação Guiada), e só do 3º Ano em
+diante existe criação livre de verdade (Criação Avançada no 4º, Ruptura
+conceitual no 5º). `liberacaoPorAno(p)` codifica essa tabela.
+
+- **Cartão universal**, fiel aos catorze campos do documento: Nome,
+  Intenção, Acesso, Âncora, Forma, Potência, Ação (derivada da Potência),
+  Resultados (Impacto), Custo (derivado da Área), Teste ou Resistência,
+  Contrajogo, Resíduo
+- **Potência → orçamento de Impacto** (Menor 0,5, Básica 1, Forte 1,5,
+  Ápice 2,5) e **Átomos de Impacto** (Dano/Cura 1, Proteção 1, Marca
+  0,25, Exposto 0,25, Retirar Ação Menor 0,5, Interromper Sustentação
+  0,5, Retirar Principal 1, Incapacitar 2) — o jogador marca quais
+  resultados o poder causa, e a soma não pode passar do orçamento da
+  Potência. É a mesma regra da Fórmula ("um poder com vários resultados
+  divide o Impacto, não soma resultado cheio mais efeitos de graça"),
+  só que genérica em vez de ligada às cinco peças da gramática de
+  Simbologia
+- **Tabela `PODER_CUSTO_AREA`**: as quinze Áreas (todas menos Simbologia)
+  têm sua tradução própria de quanto cada Potência custa nela — extraída
+  linha a linha da "Tradução por Área" do documento, incluindo a "regra
+  própria" de cada uma (ex: Alquimia gera Instabilidade em vez de gastar;
+  Zoologia limita ganho de informação a 1x por rodada)
+- **Sem botão de "Manifestar"**: ao contrário da Fórmula (que tem um
+  custo numérico único, a Mana), o custo aqui é texto ("0 ou 1 Esforço,
+  conforme a propriedade", "Colher em Floração", "1 Garantia") — não dá
+  pra descontar de um recurso genérico sem inventar uma conversão que o
+  documento não define. O poder salvo vira **registro de referência**; o
+  jogador gasta o recurso de verdade no painel que a Área já tem (Esforço
+  em Corpo e Cinética, Carga em Robótica, Ressonância em Arte, etc.),
+  igual sempre funcionou
+
+Simbologia Arcana, ao abrir o Construtor Livre de Poder, mostra uma nota
+curta explicando que ela usa a própria gramática (Fórmula, decisão #32)
+em vez do card genérico — evita ter dois construtores concorrentes na
+mesma Área.
+
+Testado com Playwright: card ausente sem Área escolhida; aviso "Poderes
+Prontos" no 1º Ano e "Modificação Guiada" no 2º sem o construtor
+completo aparecer; construtor completo liberado no 3º Ano; orçamento de
+Impacto reagindo à Potência; marcar Resultados somando certo; aviso e
+Salvar desabilitado ao estourar o orçamento; Salvar reabilitando ao
+desmarcar; salvar um poder com nome/Intenção/Contrajogo e ele aparecendo
+na lista com o resumo certo; renomear e remover; persistência após
+recarregar; e Simbologia Arcana mostrando a nota em vez do construtor
+genérico. Os dezesseis testes das fatias anteriores de Thrylikí Chelóna
+continuam passando. `tsc` e `lint` limpos.
+
+Com isso, todas as dezesseis Áreas têm recurso de combate e criação
+livre (nativa ou via este construtor) dentro do Hub — o alvo que o Zé
+pediu pra "esse sistema estar dentro do hub".
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

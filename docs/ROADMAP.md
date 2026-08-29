@@ -718,6 +718,24 @@ passando.
     Encontro) — só "Salvar Fórmula preparada" grava de verdade
   - Testado com Playwright: cálculo ao vivo, aviso e trava ao estourar a
     Matriz, salvar/renomear/Manifestar, persistência após recarregar
+- [x] **Thrylikí Chelóna — Construtor Livre de Poder** (29/08/2026) —
+      decisão #33. A gramática genérica de criação livre que vale pras
+      quinze Áreas sem Fórmula própria (só Simbologia Arcana foge dela).
+  - Cartão universal (Nome, Intenção, Acesso, Âncora, Forma, Potência,
+    Resultados, Custo, Teste/Resistência, Contrajogo, Resíduo); Potência
+    dá o orçamento de Impacto, Resultados (Átomos de Impacto) dividem
+    esse orçamento; Custo vem de uma tabela por Área
+  - Gated por Ano: 1º e 2º mostram só um aviso (Poderes Prontos /
+    Modificação Guiada); construtor completo libera no 3º
+  - Sem botão de gastar recurso — o custo por Área é texto, não número
+    único; o poder salvo é registro de referência, o gasto de verdade
+    continua no painel de recurso que a própria Área já tem
+  - Testado com Playwright: gating por Ano, orçamento de Impacto ao
+    vivo, aviso/trava ao estourar, salvar/renomear/remover, persistência
+    após recarregar, e Simbologia Arcana mostrando nota em vez do
+    construtor genérico
+- [x] Todas as dezesseis Áreas de Estudo têm recurso de combate e
+      criação livre dentro do Hub
 - [ ] Ometion
 
 ---
