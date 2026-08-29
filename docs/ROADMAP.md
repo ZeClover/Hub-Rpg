@@ -734,8 +734,21 @@ passando.
     vivo, aviso/trava ao estourar, salvar/renomear/remover, persistência
     após recarregar, e Simbologia Arcana mostrando nota em vez do
     construtor genérico
-- [x] Todas as dezesseis Áreas de Estudo têm recurso de combate e
-      criação livre dentro do Hub
+- [x] **Thrylikí Chelóna — Técnicas prontas dos 117 Ramos** (29/08/2026)
+      — decisão #34. As 351 técnicas de Pressão/Sobrevivência/Tática do
+      plano de conclusão do autor, que a decisão #21 (catálogo de Ramos)
+      tinha deixado de fora — só rótulo de progressão tinha entrado.
+  - Extraídas dos JSONs `tecnicas-prontas-areas-originais.json` (37
+    Ramos) e `tecnicas-prontas-novas-areas.json` (80 Ramos) do próprio
+    pacote do Zé, cruzadas por posição com os Ramos já cadastrados no
+    Hub — 117/117 batendo, 351/351 técnicas
+  - Aparecem no card de Ramo já existente ao escolher um Ramo (2º Ano+):
+    três técnicas nomeadas, prontas pra jogar sem precisar de criação
+    livre
+  - Testado com Playwright: ausência sem Ramo, técnicas certas ao
+    escolher, troca ao mudar de Ramo, Ramo de Área nova, persistência
+- [x] Todas as dezesseis Áreas de Estudo têm recurso de combate, criação
+      livre e conteúdo pronto (técnicas dos Ramos) dentro do Hub
 - [ ] Ometion
 
 ---

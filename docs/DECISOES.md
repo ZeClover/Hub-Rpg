@@ -909,6 +909,51 @@ Com isso, todas as dezesseis Áreas têm recurso de combate e criação
 livre (nativa ou via este construtor) dentro do Hub — o alvo que o Zé
 pediu pra "esse sistema estar dentro do hub".
 
+## 34. Thrylikí Chelóna — Técnicas prontas dos 117 Ramos (29/08/2026)
+
+Ainda dentro do mandato "continue até esse sistema estar dentro do
+hub" — depois do Construtor Livre de Poder (decisão #33), reli
+`plano-versao-jogavel-v6.1.md` (o próprio checklist de conclusão do
+autor) pra achar o que ainda faltava, e o item 5 ("Conteúdo pronto:
+opções de Pressão, Sobrevivência e Tática pra jogar sem criação livre,
+351 técnicas") não tinha entrado no Hub — a decisão #21 só trouxe
+Assinatura/Especialização/Maestria/Tese (o *rótulo* de progressão do
+Ramo), não essas três técnicas nomeadas e jogáveis que todo Ramo ganha
+a partir do 2º Ano.
+
+Isso é conteúdo grande demais pra copiar à mão sem erro (351 técnicas,
+117 Ramos), mas o próprio pacote do Zé já tinha os dados prontos em
+JSON: `tecnicas-prontas-areas-originais.json` (37 Ramos das seis Áreas
+originais) e `tecnicas-prontas-novas-areas.json` (80 Ramos das dez
+novas) — cada um com Função (Pressão/Sobrevivência/Tática), Nome e
+Efeito por Ramo. Um script Python cruzou os dois arquivos com o `RAMOS`
+que já existe na ficha:
+
+- Os IDs internos dos dois arquivos não batem com os do Hub (o JSON das
+  seis originais usa codinomes tipo `lutador`/`simbolista` pra Área e
+  `artes_marciais` pra Ramo; o das dez novas usa nome por extenso). O
+  cruzamento foi por **posição dentro de cada Área** — a ordem dos
+  Ramos é a mesma nos dois lados — e o script conferiu a contagem antes
+  de aceitar (37+80 = 117 Ramos, 3×117 = 351 técnicas, batendo exato
+  com o que o plano promete)
+- `TECNICAS_RAMO`, dicionário por id de Ramo (`corpo-cinetica__artes-marciais`
+  etc.), cada um com as três técnicas ({funcao, nome, efeito})
+- Aparecem dentro do card de Ramo já existente, só quando um Ramo está
+  escolhido — Ação Principal, até 1 Impacto, usando o recurso normal da
+  Área, exatamente como o "Contrato comum" do documento define
+
+Com isso, um personagem de 2º Ano (que ainda não tem criação livre,
+liberada só no 3º pela decisão #33) já tem três técnicas nomeadas e
+prontas pra jogar assim que escolhe o Ramo — não fica sem nada até
+poder criar poder próprio.
+
+Testado com Playwright: técnicas ausentes sem Ramo escolhido,
+aparecendo com nome/função corretos ao escolher um Ramo original,
+trocando (e não acumulando) ao trocar de Ramo, um Ramo de uma das dez
+Áreas novas mostrando sua própria técnica, e persistência após
+recarregar. Os dezoito testes das fatias anteriores de Thrylikí Chelóna
+continuam passando. `tsc` e `lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
