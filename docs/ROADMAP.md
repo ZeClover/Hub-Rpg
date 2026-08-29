@@ -792,6 +792,15 @@ passando.
       livre, Ramos com técnicas prontas, Kit de 1º Ano, ficha de
       inimigo com Fases de Chefe, Escudo do Mestre completo e
       Inventário com criação/melhoria/reparo
+- [x] **Thrylikí Chelóna — Economia de PE, Marcos da Área e Ascensões**
+      (29/08/2026) — decisão #39. PE não tinha onde ser gasto; agora
+      compra Grau de Atributo, degrau de Treinamento, Talentos, Recursos/
+      Eletivas, e Fórmulas/Poderes além das duas primeiras gratuitas.
+  - Nova aba Progressão: livro-razão de compras, Marcos da Área
+    (registra o que cada Marco escolheu) e Ascensões (registra o eixo)
+  - Testado com Playwright: travas de PE/Categoria/Ano, compras
+    refletindo no Grau/Treinamento real, Marcos/Ascensões por Nível,
+    remover devolve PE, persistência
 - [ ] Ometion
 
 ---

@@ -1165,6 +1165,81 @@ com Fases de Chefe, Escudo do Mestre completo (referência + Orçamento
 de Encontro + Interação Social), e agora Inventário com criação/
 melhoria/reparo de item.
 
+## 39. Thrylikí Chelóna — Economia de PE, Marcos da Área e Ascensões (29/08/2026)
+
+O Zé disse "cara, português por favor" (eu tinha respondido em inglês por
+engano) e depois "coloca tudo isso na ficha, nada pode estar de fora" —
+mandato pra fechar toda lacuna que restava nos documentos de design, sem
+mais perguntar antes de cada uma. Reli o material inteiro (60 documentos)
+procurando o que ainda não tinha virado ficha, e a maior lacuna encontrada
+foi esta: o comentário do próprio código já confessava "o que ainda não
+tem é ONDE gastar" — Ponto de Evolução (PE) só acumulava, nunca comprava
+nada. Isso também destravou `custos-e-economia-de-pe-v6.1.md` e
+`progressao-sem-teto-v6.1.md`, que descrevem a mesma engrenagem.
+
+- **Livro-razão de compras** (`p.compras`), não um contador solto: cada
+  compra de Grau de Atributo, degrau de Treinamento, Talento ou Recurso/
+  Eletiva vira uma linha com descrição e custo — "mostra a origem de cada
+  bônus" é a própria filosofia do núcleo do sistema (`nucleo-v6.1.md`), e
+  ela some se o PE for só um número
+- **Atributos e Treinamentos**: botão "+1 Grau (N PE)"/"+1 Treinamento
+  (N PE)" ao lado de cada seletor já existente (que continua editável à
+  mão, sem travar correções). Custo e Categoria mínima batem com
+  `regras-base.json` (a versão canônica que o próprio pacote do Zé já
+  trazia, evitando reinventar os números): Grau 2 PE/3/4/5, Treinado 2
+  PE (Categoria I), Perito 3 PE (II), Expert 4 PE (III)
+  Grau também trava pelo teto de Categoria (I:3, II:4, III:5)
+- **Fórmulas e Poderes Livres** (Simbologia e as outras quinze Áreas)
+  passam a custar PE pela Potência (Menor 1/Básica 2/Forte 3/Ápice 5),
+  exceto as **duas primeiras** técnicas ou poderes do personagem — o
+  pacote inicial gratuito do próprio `regras-base.json`
+  (`tecnicasOuPoderesBasicosDaArea: 2`). "Salvar" nos dois construtores
+  (decisões #32 e #33) agora também trava sem PE suficiente, e mostra o
+  custo antes de salvar
+- **Talentos** (Refinamento 1 PE / Padrão 2 PE / Maior 4 PE) e
+  **Recursos/Eletivas** (5 tipos, incluindo "Componente persistente",
+  travado até o 4º Ano) — compras livres com descrição, aba Progressão
+  nova
+- **Marcos da Área**: `marcosRecebidos(p)` já calculava a contagem desde
+  o chassi (decisão #20), mas nada registrava o que cada Marco escolheu.
+  Agora um card na aba Progressão deixa registrar até a contagem
+  recebida, com as cinco opções do documento (Repertório/Reserva/
+  Preparação/Refinamento/Talento) — não gasta PE, só documenta a escolha
+- **Ascensões**: mesma lógica pro contador `ascensoesConcluidas(p)` —
+  registra o eixo escolhido (Massa e Volume/Alcance e Área/Quantidade/
+  Duração e Resistência/Profundidade Conceitual, esta travada até o 5º
+  Ano) por Ascensão concluída
+
+Nova aba "Progressão" entre Atributos e Combate, concentrando tudo isso —
+os botões de compra de Grau/Treinamento ficam na própria aba Atributos,
+ao lado do que compram, mas o resto (Talentos, Recursos, Marcos,
+Ascensões, e o histórico de compras) fica junto, sem espalhar a economia
+inteira pela ficha.
+
+**Bug pego e corrigido antes de fechar:** a primeira versão só empurrava
+os botões de Grau/Treinamento pro estado do personagem sem registrar
+uma compra — `peGastoTotal` continuava lendo só Talentos/Recursos/
+Fórmulas/Poderes, então comprar Grau ou Treinamento não descontava PE
+nenhum. Não dava pra "derivar" o custo olhando só o Grau atual, porque o
+pacote inicial gratuito já distribui os atributos de forma livre entre
+Grau 1 e 3 — não existe uma linha de base fixa pra comparar. Corrigido
+fazendo essas duas compras também empurrarem uma linha no livro-razão,
+igual Talentos e Recursos.
+
+Testado com Playwright: compra de Grau travada com PE insuficiente no
+1º Nível, liberada ao subir de Nível, Grau e Treinamento realmente
+mudando após a compra, PE Ganho/Gasto/Disponível corretos no
+livro-razão (incluindo as compras de Grau/Treinamento), Talento e
+Recurso aparecendo na lista com a descrição certa, Recurso "persistente"
+travado sem o 4º Ano, Marcos e Ascensões mostrando a contagem esperada
+pra um Nível específico, registrar e ver a contagem subir, formulário
+sumindo ao completar a cota, remover uma compra devolvendo o PE, e tudo
+persistindo após recarregar. Os vinte e seis testes das fatias
+anteriores de Thrylikí Chelóna continuam passando (incluindo Fórmula e
+Poder, que agora gastam PE mas continuam livres pra alguém testando do
+zero, dentro do pacote inicial de duas técnicas gratuitas). `tsc` e
+`lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
