@@ -1403,6 +1403,40 @@ Ano, remover Módulo, e persistência do Chassi/Núcleo/Módulos após
 recarregar. Os trinta e sete testes das fatias anteriores de Thrylikí
 Chelóna continuam passando. `tsc` e `lint` limpos.
 
+## 44. Thrylikí Chelóna — Bestiário: Perfis e Traços de Zoologia (29/08/2026)
+
+Última peça deixada de fora nas fatias de combate originais: a decisão
+#25 tinha trazido Zoologia e Etologia com "um único campo de texto
+livre 'Perfil Ativo' — a grade completa de três Perfis × três Traços
+ficou de fora, é complexidade de construtor, não de recurso". Com o
+Construtor Livre de Poder, o Inventário e a Robótica já provando que
+esses construtores cabem na ficha, essa lacuna também fecha.
+
+- Até **três Perfis preparados**, cada um com nome e até **três
+  Traços** — cada Traço escolhe uma Família (das sete do documento:
+  Sentido/Locomoção/Defesa/Ataque/Camuflagem/Cooperação/Contramedida) e
+  uma descrição livre
+- Um rádio marca qual Perfil é o **Ativo** — remover o Perfil ativo
+  desmarca, sem travar em referência quebrada
+- O campo de texto livre "Perfil Ativo" que a decisão #25 tinha criado
+  **continua existindo**, agora relabelado "Nota rápida" — vira um
+  resumo de mesa opcional em vez do único lugar pra registrar o Perfil,
+  sem quebrar o teste que já dependia dele
+
+Testado com Playwright: card aparece só na Área certa, Perfil e Traço
+sendo adicionados/removidos com os tetos de 3/3 certos, rádio de Ativo
+mudando e limpando ao remover o Perfil marcado, e persistência do nome
+do Perfil e da contagem após recarregar. Os quarenta testes das fatias
+anteriores de Thrylikí Chelóna continuam passando, incluindo o teste
+original de Zoologia (decisão #25) que ainda depende do campo de texto
+livre. `tsc` e `lint` limpos.
+
+Com Perfis e Traços, o levantamento de peças conscientemente deixadas
+de fora ao longo da sessão — Fórmula de Simbologia, Construtor Livre de
+Poder, Kit de Combate, Inventário, PE, Doenças, Vida editável, Chassi
+de Robótica — está fechado. Não há mais nenhuma lacuna conhecida entre
+os documentos de design e a ficha.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
