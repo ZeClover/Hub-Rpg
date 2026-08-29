@@ -677,6 +677,23 @@ passando.
   - **`src/lib/sistemas.ts`**: `escudoMestre` aponta pro arquivo novo
   - Testado com Playwright: página carrega sem erro de console e as
     seções principais aparecem no texto renderizado
+- [x] **Thrylikí Chelóna — Fases de Chefe** (29/08/2026) — decisão #29.
+      Continuação direta da ficha de inimigo, mesmo ritmo do Chefe de
+      Andar do SAO: ficha básica primeiro, fases depois, numa fatia à
+      parte.
+  - Nova aba "Fases de Chefe" em `thryliki-chelona-inimigo.html`,
+    relevante quando Porte é "Fase de Chefe": cada fase tem os sete
+    campos do documento de criaturas (nome, Gatilho, Sinal, Objetivo,
+    Ação normal, Ação de Fase, Transição) mais os canais marcados Forte
+    naquela fase especificamente, e um card de referência da Economia
+    do Chefe (1 turno, 1 Reação, 1 Ação de Fase, no máximo 1 Impossível
+    por rodada)
+  - Ficha salva antes desta fatia recebe `fasesChefe: []` automaticamente
+    na primeira leitura, sem quebrar
+  - Testado com Playwright: aviso condicional ao Porte, adicionar/
+    remover fases, marcar canais Forte por fase, persistência após
+    recarregar (inclusive ficha antiga sem o campo). Os testes
+    anteriores da ficha de inimigo continuam passando
 - [ ] Ometion
 
 ---

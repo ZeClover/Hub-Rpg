@@ -189,6 +189,12 @@ function novoInimigo(nome){
     comportamentoAtual: '',
     resistenciasEspeciais: '',
     anotacoesMestre: '',
+    // fasesChefe: só importa quando porte === 'chefe', mas fica salvo
+    // sempre — trocar de Porte e voltar não perde o que já foi escrito.
+    // Cada fase registra os sete campos do documento de design: sinal,
+    // objetivo, ação normal, Ação de Fase, dois canais Fortes, uma
+    // Vulnerabilidade e a transição pra próxima fase.
+    fasesChefe: [], // {id, nome, gatilho, sinal, objetivo, acaoNormal, acaoDeFase, canaisFortes:[], vulnerabilidade, transicao}
   };
 }
 
@@ -314,6 +320,7 @@ const ABAS = [
   {id:'perfil',  nome:'Perfil'},
   {id:'combate', nome:'Combate'},
   {id:'acoes',   nome:'Ações'},
+  {id:'fases',   nome:'Fases de Chefe'},
   {id:'notas',   nome:'Notas do Mestre'},
 ];
 
@@ -339,6 +346,8 @@ function render(){
       <p class="mini">Clique em "+ Novo" pra criar a primeira ficha, ou importe um arquivo exportado antes.</p></div>`;
     return;
   }
+  // Ficha salva antes da fatia de Fases de Chefe não tem este campo.
+  if(!inimigo.fasesChefe) inimigo.fasesChefe = [];
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
   const alerta = somenteLeitura
@@ -351,7 +360,7 @@ function render(){
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
     + painelDerivados(inimigo)
-    + ({perfil:abaPerfil, combate:abaCombate, acoes:abaAcoes, notas:abaNotas}[estado.aba])(inimigo);
+    + ({perfil:abaPerfil, combate:abaCombate, acoes:abaAcoes, fases:abaFases, notas:abaNotas}[estado.aba])(inimigo);
   ligarEventos();
 
   if(somenteLeitura){
@@ -504,6 +513,55 @@ function abaAcoes(inimigo){
     </div>`;
 }
 
+function abaFases(inimigo){
+  const ehChefe = inimigo.porte === 'chefe';
+  return (ehChefe ? '' : `<div class="aviso">Porte atual não é "Fase de Chefe" — isto aqui ainda funciona, mas só faz sentido pra um confronto principal de verdade.</div>`)
+    + `<div class="cartao">
+      <p class="mini" style="margin-bottom:14px">
+        Duas fases pra um encontro importante, três pra um clímax longo.
+        Cada fase muda o comportamento quando o gatilho acontece —
+        geralmente um limiar de Vida — e precisa de uma vulnerabilidade
+        descobrível própria. Ao encerrar uma fase, a transição muda pelo
+        menos dois itens: padrão de ataque, posição/terreno, objetivo,
+        vulnerabilidade, aliados ou o custo de ignorar a mecânica.
+      </p>
+      ${inimigo.fasesChefe.map((f,i) => `<div class="linha-lista">
+        <div class="topo">
+          <input data-fase-campo="${i}|nome" value="${esc(f.nome)}" placeholder="Nome da fase" style="font-family:Georgia,serif;font-size:16px">
+          <button data-fase-remover="${i}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g2">
+          <div><label>Gatilho</label><input data-fase-campo="${i}|gatilho" value="${esc(f.gatilho)}" placeholder="ex: Vida abaixo de 50%"></div>
+          <div><label>Sinal</label><input data-fase-campo="${i}|sinal" value="${esc(f.sinal)}" placeholder="como o grupo percebe que a fase mudou"></div>
+        </div>
+        <div class="grade g2" style="margin-top:12px">
+          <div><label>Objetivo</label><input data-fase-campo="${i}|objetivo" value="${esc(f.objetivo)}" placeholder="algo além de só remover Vida"></div>
+          <div><label>Vulnerabilidade</label><input data-fase-campo="${i}|vulnerabilidade" value="${esc(f.vulnerabilidade)}" placeholder="descobrível nesta fase"></div>
+        </div>
+        <div style="margin-top:12px"><label>Canais Fortes nesta fase</label>
+          <div class="condicoes">
+            ${CANAIS.map(c => `<label><input type="checkbox" data-fase-canal="${i}|${c.id}" ${(f.canaisFortes||[]).includes(c.id)?'checked':''}> ${c.nome}</label>`).join('')}
+          </div>
+        </div>
+        <div style="margin-top:12px"><label>Ação normal</label><textarea data-fase-campo="${i}|acaoNormal" rows="2">${esc(f.acaoNormal)}</textarea></div>
+        <div style="margin-top:12px"><label>Ação de Fase (meio da rodada, até 0,5 Impacto)</label><textarea data-fase-campo="${i}|acaoDeFase" rows="2">${esc(f.acaoDeFase)}</textarea></div>
+        <div style="margin-top:12px"><label>Transição pra próxima fase</label><textarea data-fase-campo="${i}|transicao" rows="2">${esc(f.transicao)}</textarea></div>
+      </div>`).join('')}
+      <button id="btAddFase">+ Fase</button>
+    </div>
+    <div class="cartao">
+      <h2 style="font-size:18px">Economia do Chefe</h2>
+      <p class="mini" style="margin-top:10px">
+        1 turno normal · 1 Reação por rodada · 1 Ação de Fase no meio da
+        rodada (até 0,5 Impacto) · no máximo 1 ação Impossível por rodada
+        (uma segunda só por gatilho evitável, usando o orçamento da Ação
+        de Fase e do próximo turno). Incapacitação completa vira Brecha —
+        revela vulnerabilidade e interrompe uma sustentação, sem
+        transformar o chefe num saco de Vida parado.
+      </p>
+    </div>`;
+}
+
 function abaNotas(inimigo){
   return `<div class="cartao">
     <label for="c-notas">Anotações do mestre</label>
@@ -560,6 +618,24 @@ function ligarEventos(){
   app.querySelectorAll('[data-acao-remover]').forEach(b => b.onclick = () => mudar(i => i.acoes.splice(Number(b.dataset.acaoRemover),1)));
   const addAcao = document.querySelector('[data-acao-add]');
   if(addAcao) addAcao.onclick = () => mudar(i => i.acoes.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-fase-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => {
+      const [i, chave] = el.dataset.faseCampo.split('|');
+      inimigo.fasesChefe[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-fase-remover]').forEach(b => b.onclick = () => mudar(inimigo => inimigo.fasesChefe.splice(Number(b.dataset.faseRemover), 1)));
+  const addFase = document.getElementById('btAddFase');
+  if(addFase) addFase.onclick = () => mudar(inimigo => inimigo.fasesChefe.push({
+    id:uid(), nome:'', gatilho:'', sinal:'', objetivo:'', acaoNormal:'', acaoDeFase:'', canaisFortes:[], vulnerabilidade:'', transicao:'',
+  }));
+  app.querySelectorAll('[data-fase-canal]').forEach(el =>
+    el.onchange = () => mudar(inimigo => {
+      const [i, canalId] = el.dataset.faseCanal.split('|');
+      const fase = inimigo.fasesChefe[Number(i)];
+      if(!fase.canaisFortes) fase.canaisFortes = [];
+      fase.canaisFortes = el.checked ? [...fase.canaisFortes, canalId] : fase.canaisFortes.filter(c => c !== canalId);
+    }));
 }
 
 /* --- Barra do topo -------------------------------------------------------- */
