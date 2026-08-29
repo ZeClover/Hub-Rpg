@@ -3553,6 +3553,19 @@ function painelSimbologiaArcana(p){
     <button data-sa-nova-cena style="margin-top:10px" ${!sa.concentrarUsado?'disabled':''}>Nova cena (libera Concentrar de novo)</button>
   </div>
 
+  ${p.ano >= 5 ? `<div class="cartao">
+    <h2 style="font-size:18px">Metassímbolo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      A Matriz de Tomo do 5º Ano ganha +1 Metassímbolo, à parte da conta
+      de Tomos normal — "Tese e exceção autoral precisa" (Linguagem
+      Conceitual). Não é mais um componente de Fórmula: é uma exceção
+      única e nomeada às regras normais de composição, registrada aqui
+      por escrito.
+    </p>
+    <label for="c-sa-metassimbolo">Metassímbolo</label>
+    <textarea id="c-sa-metassimbolo" rows="3" placeholder="nome e a exceção precisa que ele abre — o que ele quebra e o que isso custa">${esc(sa.metassimbolo||'')}</textarea>
+  </div>` : ''}
+
   ${painelConstrutorFormula(p)}
   ${painelFormulasPreparadas(p, formulas)}`;
 }
@@ -5306,6 +5319,11 @@ function ligarEventos(){
       const [i, ti] = el.dataset.tracoDescricao.split('|');
       p.zoologiaEtologia.perfis[Number(i)].tracos[Number(ti)].descricao = el.value;
     }, el));
+
+  const metassimbolo = document.getElementById('c-sa-metassimbolo');
+  if(metassimbolo) metassimbolo.oninput = () => mudarSemRedesenhar(p => {
+    p.simbologiaArcana.metassimbolo = metassimbolo.value;
+  }, metassimbolo);
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

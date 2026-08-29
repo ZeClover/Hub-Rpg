@@ -848,6 +848,13 @@ passando.
     (Família + descrição), um marcado como Ativo por rádio
   - Testado com Playwright: adicionar/remover Perfil e Traço com os
     tetos certos, rádio de Ativo, persistência
+- [x] **Thrylikí Chelóna — Metassímbolo de Simbologia Arcana** (29/08/2026)
+      — decisão #45. O "+1 Metassímbolo" do 5º Ano, citado desde a
+      decisão #23 mas nunca com campo pra escrever o que ele é.
+  - Campo de texto livre, visível só no 5º Ano (sem fórmula numérica —
+    o documento não dá uma; é uma exceção autoral nomeada)
+  - Testado com Playwright: ausente antes do 5º Ano, aparece ao subir,
+    persiste após recarregar
 - [x] Levantamento de peças conscientemente deixadas de fora ao longo
       da sessão está fechado — nenhuma lacuna conhecida entre os
       documentos de design de Thrylikí Chelóna e a ficha
