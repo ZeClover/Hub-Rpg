@@ -2697,6 +2697,10 @@ const estado = {
   compraRecurso: {subtipo:'recurso', descricao:''},
   marcoRascunho: {opcao:'repertorio', descricao:''},
   ascensaoRascunho: {eixo:'massa-volume', descricao:''},
+  // doencaRascunho: qual Par do catálogo está selecionado pra adicionar —
+  // não precisa ler DOENCAS_CATALOGO aqui (evita depender da ordem de
+  // declaração no arquivo), o primeiro Par do catálogo é hardcoded.
+  doencaRascunho: {classificacao:'Comum', id:'lobo__ouvido-canino'},
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -2895,6 +2899,35 @@ function campo(rotulo, chave, valor, tipo){
     <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
 }
 
+// Pares de Manifestação (doencas-e-demi-humanos-v6.1.md) — opcional,
+// a mesa decide se entra na campanha. Cada Par é Pró + Contra + Âncora,
+// nenhum concede ação extra, imunidade absoluta ou bônus permanente amplo.
+const DOENCAS_CATALOGO = [
+  {id:'lobo__ouvido-canino', classificacao:'Comum', criatura:'Lobo', nome:'Ouvido Canino', pro:'Audição lupina: +5 para ouvir, localizar som e evitar surpresa sonora.', contra:'Sensibilidade auditiva: ruído intenso, explosão ou poluição sonora deixa o personagem Abalado até usar uma Parcial para se recompor.', ancora:'Orelhas e ouvido interno.'},
+  {id:'lobo__maos-caninas', classificacao:'Comum', criatura:'Lobo', nome:'Mãos Caninas', pro:'Garras: arma natural cortante de 1 Impacto e permissão para escalar superfícies apropriadas.', contra:'Manipulação difícil: tarefas delicadas e uso de armas incompatíveis ficam desfavoráveis enquanto as garras estiverem expostas.', ancora:'Mãos e unhas transformadas.'},
+  {id:'lobo__instinto-animal', classificacao:'Comum', criatura:'Lobo', nome:'Instinto Animal', pro:'Mandíbula: mordida de 1 Impacto; após acertar, pode converter 0,25 em marca de cheiro ou Ferimento quando permitido.', contra:'Necessidade de carne: após dois dias sem alimentação adequada, começa a próxima cena relevante Abalado e precisa resistir para não priorizar alimento sobre outro objetivo imediato.', ancora:'Mandíbula e metabolismo.'},
+  {id:'raposa__resistencia-de-pelagem', classificacao:'Comum', criatura:'Raposa', nome:'Resistência de Pelagem', pro:'Frio: +5 contra frio e redução de 0,25 Impacto de uma fonte gelada por ação.', contra:'Calor: calor extremo e fogo deixam ações prolongadas desfavoráveis; uma fonte de fogo pode aplicar Exposto junto do dano, dividindo o orçamento normalmente.', ancora:'Pelagem e regulação térmica.'},
+  {id:'raposa__pulo-alto', classificacao:'Comum', criatura:'Raposa', nome:'Pulo Alto', pro:'Salto: três vezes por Descanso completo, dobre a distância de um salto dentro do Movimento normal.', contra:'Cansaço: após o terceiro salto, fique Abalado até um Respiro.', ancora:'Pernas e tendões.'},
+  {id:'raposa__visao-aprimorada', classificacao:'Comum', criatura:'Raposa', nome:'Visão Aprimorada', pro:'Longa distância: +5 para perceber detalhes distantes.', contra:'Visão dicromática: distinguir informação que dependa exclusivamente de cor é desfavorável ou impossível.', ancora:'Olhos.'},
+  {id:'raposa__forma-de-raposa', classificacao:'Comum', criatura:'Raposa', nome:'Forma de Raposa', pro:'Transformar: use Ação Principal para assumir forma animal, ganhando tamanho, passagem estreita, faro e movimento compatíveis.', contra:'Preço corporal: ao transformar ou retornar, sofra 0,5 Impacto inevitável e fique Exposto até o início do próximo turno. A forma não aumenta atributos nem ações.', ancora:'Corpo inteiro.'},
+  {id:'coelho__visao-de-360-graus', classificacao:'Comum', criatura:'Coelho', nome:'Visão de 360 Graus', pro:'Campo amplo: não fica Exposto apenas por flanqueamento e recebe +5 para notar aproximações ao redor.', contra:'Foco distante: reconhecer rosto, escrita ou detalhe frontal a longa distância fica desfavorável.', ancora:'Olhos laterais.'},
+  {id:'coelho__ouvido-aprimorado', classificacao:'Comum', criatura:'Coelho', nome:'Ouvido Aprimorado', pro:'Alcance auditivo: +5 para ouvir e localizar uma fonte distante.', contra:'Sensibilidade: som intenso deixa Abalado e pode interromper Sustentação ligada à concentração.', ancora:'Orelhas.'},
+  {id:'vampiro__armas-naturais', classificacao:'Demi-humano', criatura:'Vampiro', nome:'Armas Naturais', pro:'Presas: mordida de 1 Impacto; pode converter 0,25 em recuperação apenas quando houver sangue adequado e contato.', contra:'Madeira no coração: perfuração de madeira preparada contra o torso pode converter 1 Impacto em Atordoado; remover a Âncora encerra o estado.', ancora:'Presas, sangue e coração.'},
+  {id:'vampiro__corpo-sobrenatural', classificacao:'Demi-humano', criatura:'Vampiro', nome:'Corpo Sobrenatural', pro:'Velocidade noturna: +5 em Reflexos ou deslocamento decisivo sob sombra ou noite, uma vez por rodada.', contra:'Luz solar: sob sol direto, essa vantagem desaparece e ações de velocidade ficam desfavoráveis.', ancora:'Circulação e pele.'},
+  {id:'demonio__resistencia-ao-calor', classificacao:'Demi-humano', criatura:'Demônio', nome:'Resistência ao Calor', pro:'Calor: +5 contra calor e redução de 0,25 Impacto de fogo por ação.', contra:'Frio: frio causa a vulnerabilidade equivalente e pode deixar Abalado.', ancora:'Pele e temperatura corporal.'},
+  {id:'demonio__asas', classificacao:'Demi-humano', criatura:'Demônio', nome:'Asas', pro:'Voo: troque o Movimento terrestre por voo dentro da Categoria e espaço disponível.', contra:'Asas expostas: as asas são Âncoras atacáveis; dano ou Preso aplicado a elas encerra o voo e exige pouso. Aparência social só conta como Contra com consentimento.', ancora:'Asas.'},
+  {id:'demonio__conhecimentos-ocultos', classificacao:'Demi-humano', criatura:'Demônio', nome:'Conhecimentos Ocultos', pro:'Linguagem obscura: +5 para compreender textos, ritos e tradições ocultas.', contra:'Convenções humanas: linguagem burocrática, etiqueta cotidiana ou referências sociais modernas podem ficar desfavoráveis até serem estudadas.', ancora:'Memória ancestral.'},
+  {id:'orc__enxergar-no-escuro', classificacao:'Demi-humano', criatura:'Orc', nome:'Enxergar no Escuro', pro:'Visão noturna: enxerga em escuridão comum e recebe +5 para perceber nela.', contra:'Luz intensa: clarão ou magia luminosa deixa Abalado; exposição preparada pode também aplicar Exposto, dividindo Impacto.', ancora:'Olhos.'},
+  {id:'orc__corpo-gigante', classificacao:'Demi-humano', criatura:'Orc', nome:'Corpo Gigante', pro:'Estrutura monstruosa: conte como um passo maior para carga, empurrão e presença física, sem mudar Categoria.', contra:'Difícil de ocultar: Furtividade e passagem em espaço pequeno ficam desfavoráveis.', ancora:'Corpo inteiro.'},
+  {id:'orc__presas-de-sangue', classificacao:'Demi-humano', criatura:'Orc', nome:'Presas de Sangue', pro:'Presas: arma natural de 1 Impacto.', contra:'Sede de sangue: após provar sangue numa cena de conflito, faça Vontade contra dificuldade apropriada para escolher um objetivo não relacionado à fonte; falhar deixa Abalado, nunca obriga atacar um aliado sem escolha do jogador.', ancora:'Presas e impulso biológico.'},
+  {id:'dragao-negro__chifres-pontudos', classificacao:'Místico', criatura:'Dragão Negro', nome:'Chifres Pontudos', pro:'Chifres: arma natural de 1 Impacto ou ferramenta para arrombar e sustentar carga.', contra:'Estrutura exposta: os chifres podem ser agarrados, presos ou quebrados como Âncora. Repercussão social depende do acordo da campanha.', ancora:'Chifres.'},
+  {id:'dragao-negro__olhos-draconicos', classificacao:'Místico', criatura:'Dragão Negro', nome:'Olhos Dracônicos', pro:'Visão dracônica: enxerga no escuro e recebe +5 para perceber Resíduo ou energia corrosiva.', contra:'Sensibilidade luminosa: luz intensa torna percepção e poderes canalizados pelos olhos desfavoráveis.', ancora:'Olhos.'},
+  {id:'dragao-negro__poderes-de-acido', classificacao:'Místico', criatura:'Dragão Negro', nome:'Poderes de Ácido', pro:'Ácido: ataque próximo de 1 Impacto ou corrosão localizada de objeto; alcance e área maiores usam criação de poderes.', contra:'Autoafetação: o personagem não é imune ao próprio ácido. Falha extrema, recipiente rompido ou contrajogo adequado causa 0,5 Impacto e pode aplicar Ferimento.', ancora:'Boca, glândulas e recipiente quando usado.'},
+  {id:'wendigo__fisiologia-bestial', classificacao:'Místico', criatura:'Wendigo', nome:'Fisiologia Bestial', pro:'Caça: +5 em corrida, Furtividade ou rastreio quando estiver perseguindo uma presa definida; escolha apenas um por teste.', contra:'Fogo: fogo causa +0,25 Impacto ou remove a vantagem até um Respiro.', ancora:'Corpo bestial.'},
+  {id:'wendigo__falas-copiadas', classificacao:'Místico', criatura:'Wendigo', nome:'Falas Copiadas', pro:'Mimetismo: após ouvir uma voz, pode reproduzi-la com precisão; Enganação ainda é usada quando alguém puder contestar.', contra:'Eco involuntário: em Falha extrema de Vontade ou sob Instabilidade, uma frase emocional copiada emerge e revela presença, estado ou memória. O jogador e o Mestre definem previamente limites para esse conteúdo.', ancora:'Garganta e memória sonora.'},
+  {id:'medusa__cabelos-de-cobra-e-olhar-de-pedra', classificacao:'Místico', criatura:'Medusa', nome:'Cabelos de Cobra e Olhar de Pedra', pro:'Petrificação: Ação Principal, contato visual e teste oposto. Resultado básico aplica Preso; técnica forte pode aplicar Atordoado; petrificação completa exige Ápice, preparação e saída visível.', contra:'Olhar indiscriminado: sem venda, controle ou foco preparado, aliados e pessoas queridas dentro da linha também podem ser ameaçados. Fechar os olhos remove o risco e o Pró, deixando ações visuais desfavoráveis.', ancora:'Olhos e serpentes; espelho, cobertura, cegueira e quebra de linha são contrajogos.'},
+];
+
 function abaStatus(p){
   const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
   const area = AREAS.find(a => a.id === p.perfil.areaId);
@@ -2948,7 +2981,64 @@ function abaStatus(p){
     ${area ? `<p class="mini" style="margin-top:10px"><strong>${area.verbos}</strong> — ${area.painel}</p>` : ''}
   </div>
 
-  ${painelRamo(p, area)}`;
+  ${painelRamo(p, area)}
+  ${painelDoencas(p)}`;
+}
+
+// Doenças, Demi-humanos e Místicos — opcional, a mesa decide se entra na
+// campanha (nenhum jogador precisa aceitar uma manifestação que não
+// queira interpretar). Começa com até dois Pares gratuitos; a partir do
+// terceiro, cada novo Par custa 2 PE (peGastoTotal já soma isso).
+function painelDoencas(p){
+  const pares = p.doencas.pares || [];
+  const draft = estado.doencaRascunho;
+  const custoProximo = pares.length < 2 ? 0 : 2;
+  const semPE = peDisponivel(p) < custoProximo;
+  const classificacoes = [...new Set(DOENCAS_CATALOGO.map(d => d.classificacao))];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Doenças, Demi-humanos e Místicos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Opcional — a mesa decide se entra na campanha. Não representa
+      doenças reais nem determina moralidade, personalidade ou valor de
+      uma pessoa. Começa com até dois Pares gratuitos; do terceiro em
+      diante, cada Par novo custa 2 PE. Limite recomendado: seis.
+    </p>
+    <p class="mini" style="margin:6px 0"><strong>Pares ativos (${pares.length}/6)${custoProximo?` — próximo custa ${custoProximo} PE`:' — os próximos são grátis'}</strong></p>
+    ${pares.length ? pares.map((id,i) => {
+      const d = DOENCAS_CATALOGO.find(x => x.id === id);
+      if(!d) return '';
+      return `<div class="linha-lista">
+        <div class="topo">
+          <strong>${esc(d.criatura)} — ${esc(d.nome)}</strong>
+          <button data-doenca-remover="${i}" class="perigo">Remover</button>
+        </div>
+        <p class="mini"><strong>Pró:</strong> ${esc(d.pro)}</p>
+        <p class="mini"><strong>Contra:</strong> ${esc(d.contra)}</p>
+        <p class="mini"><strong>Âncora:</strong> ${esc(d.ancora)}</p>
+      </div>`;
+    }).join('') : '<p class="mini">(nenhum Par ativo)</p>'}
+
+    ${pares.length < 6 ? `
+      <p class="mini" style="margin:14px 0 6px">Catálogo</p>
+      <div class="grade g3">
+        <div><label for="c-doenca-classificacao">Classificação</label>
+          <select id="c-doenca-classificacao">
+            ${classificacoes.map(c => `<option value="${c}" ${c===draft.classificacao?'selected':''}>${c}</option>`).join('')}
+          </select></div>
+        <div style="grid-column:span 2"><label for="c-doenca-par">Par</label>
+          <select id="c-doenca-par">
+            ${DOENCAS_CATALOGO.filter(d => d.classificacao === draft.classificacao).map(d => `<option value="${d.id}" ${d.id===draft.id?'selected':''}>${d.criatura} — ${d.nome}</option>`).join('')}
+          </select></div>
+      </div>
+      ${(() => { const dsel = DOENCAS_CATALOGO.find(x => x.id === draft.id); return dsel ? `
+        <p class="mini" style="margin-top:8px"><strong>Pró:</strong> ${esc(dsel.pro)}</p>
+        <p class="mini"><strong>Contra:</strong> ${esc(dsel.contra)}</p>
+        <p class="mini"><strong>Âncora:</strong> ${esc(dsel.ancora)}</p>
+      ` : ''; })()}
+      <button id="btAddDoenca" style="margin-top:10px" ${semPE?'disabled':''}>+ Adicionar Par${custoProximo?` (${custoProximo} PE)`:''}</button>
+      ${semPE ? `<p class="mini" style="margin-top:6px">PE insuficiente (disponível: ${peDisponivel(p)}).</p>` : ''}
+    ` : `<p class="mini" style="margin-top:10px">Limite recomendado de seis Pares atingido.</p>`}
+  </div>`;
 }
 
 function painelRamo(p, area){
@@ -4639,6 +4729,26 @@ function ligarEventos(){
   };
   app.querySelectorAll('[data-ascensao-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.ascensoes.splice(Number(b.dataset.ascensaoRemover), 1)));
+
+  // Doenças, Demi-humanos e Místicos.
+  const doencaClassificacao = document.getElementById('c-doenca-classificacao');
+  if(doencaClassificacao) doencaClassificacao.onchange = () => {
+    estado.doencaRascunho.classificacao = doencaClassificacao.value;
+    const primeiro = DOENCAS_CATALOGO.find(d => d.classificacao === doencaClassificacao.value);
+    estado.doencaRascunho.id = primeiro ? primeiro.id : '';
+    render();
+  };
+  const doencaPar = document.getElementById('c-doenca-par');
+  if(doencaPar) doencaPar.onchange = () => { estado.doencaRascunho.id = doencaPar.value; render(); };
+  const btAddDoenca = document.getElementById('btAddDoenca');
+  if(btAddDoenca) btAddDoenca.onclick = () => mudar(p => {
+    if(p.doencas.pares.length >= 6) return;
+    const custo = p.doencas.pares.length < 2 ? 0 : 2;
+    if(peDisponivel(p) < custo) return;
+    p.doencas.pares.push(estado.doencaRascunho.id);
+  });
+  app.querySelectorAll('[data-doenca-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.doencas.pares.splice(Number(b.dataset.doencaRemover), 1)));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

@@ -1240,6 +1240,37 @@ Poder, que agora gastam PE mas continuam livres pra alguém testando do
 zero, dentro do pacote inicial de duas técnicas gratuitas). `tsc` e
 `lint` limpos.
 
+## 40. Thrylikí Chelóna — Doenças, Demi-humanos e Místicos (29/08/2026)
+
+Continuação do mandato "nada pode estar de fora": `doencas-e-demi-humanos-v6.1.md`
+era o outro item que eu tinha nomeado como deixado de fora na última
+mensagem. É **opcional** por definição do próprio documento — a mesa
+decide se entra na campanha, e nenhum jogador precisa aceitar uma
+manifestação corporal que não queira interpretar — mas "opcional" não é
+"fora do Hub": vira mais um catálogo que a mesa liga ou não, igual as
+Origens ou as Áreas já são catálogo sem serem obrigatórias.
+
+- **`DOENCAS_CATALOGO`**: as 23 combinações Pró/Contra/Âncora do
+  documento, 9 criaturas em 3 classificações (Comuns: Lobo, Raposa,
+  Coelho; Demi-humanos: Vampiro, Demônio, Orc; Místicos: Dragão Negro,
+  Wendigo, Medusa) — transcrito à mão (o documento não tinha JSON
+  próprio, ao contrário dos outros catálogos grandes desta sessão)
+- Novo card na aba Status, logo depois do Ramo: até **seis Pares
+  ativos**, os dois primeiros gratuitos, cada um a partir do terceiro
+  custando **2 PE** — encaixa direto na economia da decisão #39
+  (`peGastoTotal` já soma `p.doencas.pares`, não precisou mudar nada lá)
+- Cada Par escolhido guarda só o `id` do catálogo (mesmo padrão de Ramos
+  e Origens: uma referência, não uma cópia dos dados) — troca de
+  Classificação já filtra a lista de Pares disponíveis, e a prévia do
+  Pró/Contra/Âncora aparece antes de confirmar
+
+Testado com Playwright: card presente, dois Pares grátis adicionando
+sem exigir PE, terceiro Par travado sem PE suficiente (nível 1),
+liberando ao subir de Nível, PE gasto refletindo a compra e voltando
+ao remover, e persistência do catálogo e da prévia após recarregar. Os
+vinte e sete testes das fatias anteriores de Thrylikí Chelóna continuam
+passando. `tsc` e `lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -801,6 +801,13 @@ passando.
   - Testado com Playwright: travas de PE/Categoria/Ano, compras
     refletindo no Grau/Treinamento real, Marcos/Ascensões por Nível,
     remover devolve PE, persistência
+- [x] **Thrylikí Chelóna — Doenças, Demi-humanos e Místicos** (29/08/2026)
+      — decisão #40. Catálogo opcional de 23 Pares (Pró/Contra/Âncora)
+      em 9 criaturas — Comuns, Demi-humanos e Místicos.
+  - Até seis Pares ativos por personagem, dois grátis, os demais a
+    2 PE cada (usa a economia da decisão #39)
+  - Testado com Playwright: Pares grátis, trava de PE no terceiro,
+    liberação ao subir de Nível, remover devolve PE, persistência
 - [ ] Ometion
 
 ---
