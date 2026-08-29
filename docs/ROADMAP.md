@@ -625,6 +625,29 @@ passando.
   - Testado com os testes de cada agente revalidados contra o arquivo já
     mesclado com as três Áreas juntas, mais os seis testes das fatias
     anteriores pra garantir que nada quebrou
+- [x] **Thrylikí Chelóna — combate das dez Áreas novas** (29/08/2026) —
+      decisão #26. Alquimia, Astronomia, Matemática, Psicologia, Medicina,
+      Geologia, História, Tanatologia, Direito e Filosofia de uma vez —
+      **fecha as 16 Áreas com combate jogável**.
+  - As dez compartilham a mesma forma de recurso (0–3, ganha 1 por regra
+    própria, ação forte gasta 2 pra ir de 1 pra 1,5 Impacto), confirmado
+    contra `automation/novas-areas.json`. Em vez de dez funções quase
+    idênticas, um único `painelNovaArea(p)` dirigido pela tabela
+    `RECURSOS_NOVAS_AREAS` (gerada do JSON) serve pras dez — sem agentes
+    nem risco de merge desta vez, já que virou um problema mecânico de
+    dados, não uma decisão de design por Área
+  - Alquimia e Química quebra o padrão simétrico (a ação forte *gera* 3
+    do recurso em vez de gastar 2) — tratado como exceção explícita na
+    tabela, não como parsing de texto
+  - Estado por Área num dicionário (`p.recursosNovaArea`, chaveado por
+    `areaId`), mesmo padrão usado nos IDs de Ramo — trocar de Área não
+    faz uma herdar o valor da outra
+  - Testado com Playwright: painel ausente sem Área, caso padrão
+    (Astronomia) completo, caso especial (Alquimia) com o delta de +3
+    ainda clampado em 3, estado independente entre Áreas, persistência
+    após recarregar, e varredura das outras oito Áreas pra pegar erro de
+    escape de texto. Os nove testes das fatias anteriores continuam
+    passando
 - [ ] Ometion
 
 ---
