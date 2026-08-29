@@ -1004,6 +1004,35 @@ qualquer Ano — pronto no 1º, técnicas nomeadas no 2º, criação livre a
 partir do 3º. Essa era a lacuna que restava do mandato "esse sistema
 estar dentro do hub".
 
+## 36. Thrylikí Chelóna — Interação Social no Escudo do Mestre (29/08/2026)
+
+Fechando a varredura dos documentos de design que ainda não tinham
+virado nada no Hub (mesmo mandato das decisões #33 a #35):
+`social-e-investigacao-v6.1.md` descreve um motor pra conversas
+importantes (Painel de figura social: Desejo/Objeção/Limite/Posição) e
+reaproveita a mesma Cena de Desafio (Progresso/Pressão) que já
+tinha entrado no Escudo do Mestre (decisão #28) — mas nunca tinha
+ganhado a própria referência.
+
+Igual a Cena de Desafio, isso é **conteúdo de mestre sem número pra
+calcular** (a Posição vai de −2 a +2 e o resto é texto de julgamento na
+mesa) — cabia como mais um card estático no Escudo do Mestre, não como
+ferramenta interativa nova. Adicionado `thryliki-chelona-escudo-mestre.html`:
+o Painel de figura, a tabela de cinco Posições com o que cada uma
+permite pedir, e um parágrafo cobrindo negociação em relógio e Dívidas/
+Promessas como frase registrada (não uma barra numérica nova).
+
+Deixado de fora, de propósito: as tabelas de Grau de resultado social e
+de abordagens por perícia — são reafirmação do motor de teste padrão
+(as mesmas cinco Graus de resultado e a mesma lógica de perícia por
+abordagem já cobertas em outras partes do Escudo), não informação nova
+pro mestre consultar na mesa.
+
+Testado com Playwright: a calculadora de Orçamento de Encontro (única
+parte com `<script>` desta página) continua funcionando sem regressão.
+Sem teste mais profundo — é conteúdo estático, mesmo padrão da decisão
+#28. `tsc` e `lint` limpos (arquivo HTML solto, sem efeito neles).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
