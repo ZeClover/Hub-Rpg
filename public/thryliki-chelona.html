@@ -1370,6 +1370,20 @@ const ROMPER_OPCOES = [
   {custo:3, nome:'Ápice telegrafado', sobre:'até 2,5 Impactos, exige preparação legível'},
 ];
 
+// Botânica e Biomancia: os três estágios de um Cultivo (1=Broto, 2=Floração,
+// 3=Maturação) e o teto de Impacto que a Colheita libera em cada um.
+const ESTAGIOS_CULTIVO = [
+  {n:1, nome:'Broto',     impacto:'até 1 Impacto'},
+  {n:2, nome:'Floração',  impacto:'até 1,5 Impactos'},
+  {n:3, nome:'Maturação', impacto:'até 2,5 Impactos'},
+];
+// Custo em Seiva dos gastos fora de Semear/Cultivar/Colher.
+const GASTOS_SEIVA = [
+  {custo:1, nome:'Crescimento adicional', sobre:'Ação Parcial faz um Cultivo diferente crescer um estágio'},
+  {custo:1, nome:'Trocar propriedade preparada', sobre:'muda uma propriedade já preparada durante o cultivo'},
+  {custo:2, nome:'Sustentar ou transplantar', sobre:'sustenta uma Colheita por +1 rodada, ou transplanta um Cultivo sem perdê-lo'},
+];
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1409,6 +1423,9 @@ function novoPersonagem(nome){
     // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
     // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
     roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
+    // botanicaBiomancia: motor de Botânica e Biomancia — Seiva e até três
+    // Cultivos, cada um num estágio de Broto(1) a Maturação(3).
+    botanicaBiomancia: {seiva:2, cultivos:[]},
     anotacoes: '',
   };
 }
@@ -1627,6 +1644,7 @@ function render(){
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
+  if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1997,8 +2015,71 @@ function painelRoboticaEngenharia(p){
   </div>`;
 }
 
+function painelBotanicaBiomancia(p){
+  if(p.perfil.areaId !== 'botanica-biomancia') return '';
+  const bb = p.botanicaBiomancia || {seiva:2, cultivos:[]};
+  const cultivos = bb.cultivos || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Botânica e Biomancia — Seiva e Cultivos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Semear:</strong> cria um Broto. <strong>Cultivar:</strong> no
+      fim do turno um Cultivo cresce de graça um estágio; 1 Seiva faz um
+      segundo crescer. <strong>Colher:</strong> consome o Cultivo e resolve
+      o efeito do estágio atual.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Seiva</div>
+        <div class="val">${bb.seiva}<span style="font-size:16px;color:var(--suave)">/5</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-bb-seiva="1" ${bb.seiva>=5?'disabled':''}>+1 Seiva (corrigir)</button>
+        <button data-bb-seiva="-1" ${bb.seiva<=0?'disabled':''}>-1 Seiva (corrigir)</button>
+        <button data-bb-reset>Novo conflito (volta pra 2)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Ganho de Seiva (no máximo 1x por rodada)</p>
+    <div class="condicoes">
+      <button data-bb-seiva-gatilho="colheita" ${bb.seiva>=5?'disabled':''}>+1 Seiva — colheu um Cultivo em Maturação</button>
+      <button data-bb-seiva-gatilho="destruicao" ${bb.seiva>=5?'disabled':''}>+1 Seiva — inimigo destruiu Cultivo em Floração/Maturação</button>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Gastar Seiva</p>
+    <div class="grade g3">
+      ${GASTOS_SEIVA.map(g => `<div>
+        <button data-bb-gasto="${g.custo}" style="width:100%" ${bb.seiva<g.custo?'disabled':''}>${g.custo} Seiva${g.custo>1?'s':''} — ${g.nome}</button>
+        <p class="mini" style="margin-top:6px">${g.sobre}</p>
+      </div>`).join('')}
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Cultivos ativos (${cultivos.length}/3)</p>
+    ${cultivos.map(c => `<div class="linha-lista">
+      <div class="topo">
+        <input data-bb-cultivo-nome="${c.id}" value="${esc(c.nome)}" placeholder="Espécie / função do Cultivo" style="font-family:Georgia,serif;font-size:16px">
+      </div>
+      <label>Estágio</label>
+      <div class="trilha">
+        ${ESTAGIOS_CULTIVO.map(e => `<button data-bb-cultivo-estagio="${c.id}|${e.n}" class="${c.estagio>=e.n?'cheio':''}">${e.n}</button>`).join('')}
+        <span class="mini">${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.nome || 'Broto'}</span>
+      </div>
+      <button data-bb-colher="${c.id}" class="perigo" style="margin-top:10px">Colher (${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.nome} — ${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.impacto})</button>
+    </div>`).join('') || '<p class="mini">(nenhum Cultivo ativo)</p>'}
+    <button data-bb-semear ${cultivos.length>=3?'disabled':''}>+ Semear</button>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Semear → Cultivar → Colher:</strong> um Cultivo nunca tem
+      turno, ação ou limite ofensivo próprios — quem age é sempre o
+      Botânico. <strong>Contrajogo:</strong> Cultivos podem ser queimados,
+      arrancados, isolados, envenenados, separados do hospedeiro ou
+      privados de luz e água; destruído antes da Colheita, perde o efeito
+      guardado.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2250,6 +2331,50 @@ function ligarEventos(){
   if(reReservatorio) reReservatorio.onchange = () => mudar(p => {
     p.roboticaEngenharia.reservatorioVital = Math.max(0, Math.min(4, Number(reReservatorio.value) || 0));
   });
+
+  // Botânica e Biomancia: Seiva e Cultivos.
+  app.querySelectorAll('[data-bb-seiva]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.bbSeiva);
+      p.botanicaBiomancia.seiva = Math.max(0, Math.min(5, p.botanicaBiomancia.seiva + delta));
+    }));
+  app.querySelectorAll('[data-bb-seiva-gatilho]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.botanicaBiomancia.seiva = Math.min(5, p.botanicaBiomancia.seiva + 1);
+    }));
+  const bbReset = app.querySelector('[data-bb-reset]');
+  if(bbReset) bbReset.onclick = () => mudar(p => p.botanicaBiomancia.seiva = 2);
+  app.querySelectorAll('[data-bb-gasto]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.bbGasto);
+      if(p.botanicaBiomancia.seiva < custo) return;
+      p.botanicaBiomancia.seiva -= custo;
+    }));
+
+  const bbSemear = app.querySelector('[data-bb-semear]');
+  if(bbSemear) bbSemear.onclick = () => mudar(p => {
+    if(p.botanicaBiomancia.cultivos.length >= 3) return;
+    p.botanicaBiomancia.cultivos.push({id: uid(), nome:'', estagio:1});
+  });
+  app.querySelectorAll('[data-bb-cultivo-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const c = p.botanicaBiomancia.cultivos.find(c => c.id === el.dataset.bbCultivoNome);
+      if(c) c.nome = el.value;
+    }, el));
+  app.querySelectorAll('[data-bb-cultivo-estagio]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [id, n] = b.dataset.bbCultivoEstagio.split('|');
+      const num = Number(n);
+      const c = p.botanicaBiomancia.cultivos.find(c => c.id === id);
+      if(!c) return;
+      // Mesmo padrão de clock da trilha de Consequências: clicar no
+      // estágio já marcado esvazia até ali, com piso em Broto (1).
+      c.estagio = Math.max(1, (num === c.estagio) ? num - 1 : num);
+    }));
+  app.querySelectorAll('[data-bb-colher]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.botanicaBiomancia.cultivos = p.botanicaBiomancia.cultivos.filter(c => c.id !== b.dataset.bbColher);
+    }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
