@@ -1310,6 +1310,55 @@ playtest, notas de auditoria do próprio autor) é material de mestre ou
 meta-processo, não dado de personagem — mesma linha que já valia pra
 Fabula Ultima (decisão #36) desde o início do projeto.
 
+## 42. Thrylikí Chelóna — Vida editável, dano e Recuperação (29/08/2026)
+
+Enquanto revisava o que restava depois da varredura da decisão #41,
+encontrei o buraco mais básico de todos: **Vida nunca tinha ficado
+editável.** `painelDerivados` só lia `p.atual.pv` pra exibir — não
+existia um único botão, campo ou fluxo em `public/thryliki-chelona.html`
+que escrevesse nesse valor. Um personagem literalmente não conseguia
+tomar dano nem se curar na ficha. Comparado a isso, os itens que eu
+ainda tinha na lista (Metassímbolo, Chassi/Módulo de Robótica, Perfis/
+Traços de Zoologia) são refinamento sobre sistemas que já funcionam;
+este era o alicerce faltando.
+
+- **Conversão Impacto ↔ Vida**, do próprio `combate-v6.1.md`: "um
+  Impacto é a unidade interna equivalente a aproximadamente 22% da Vida
+  máxima" — `regras-base.json` fecha esse número em `0,22`, o mesmo que
+  usei. Sofrer Impacto e Curar viram a mesma conta nos dois sentidos
+- **Guarda como desconto manual, não automação cega**: o campo "Guarda
+  gasta agora" reduz o Impacto bruto (0,25 por ponto) antes de
+  converter pra Vida — mas não decrementa sozinho o item de Proteção
+  específico na aba Inventário (decisão #37), porque com mais de uma
+  Proteção equipada não há como saber qual delas gastar sem perguntar.
+  O card mostra a Guarda total disponível como referência e pede pro
+  jogador descontar no item certo
+- **Primeiros Socorros** (0,5 Impacto de cura, uma vez por cena — Respiro
+  libera de novo) e as **quatro escalas de Recuperação**
+  (`recuperacao-v6.1.md`): Respiro (não recupera Vida), Intervalo (+25%,
+  até dois por Descanso completo, com contador próprio), Repouso (+50%),
+  Descanso completo (Vida cheia, zera os dois Intervalos, e reduz cada
+  Consequência em 1 — usando a trilha que já existia desde o chassi)
+- Percentuais de Recuperação **arredondados pra cima**, exatamente como
+  o texto do documento pede; a conversão de dano usa arredondamento
+  comum, porque só a Recuperação é explícita sobre a direção
+
+**Deixado de fora, de propósito:** os recursos por Área ("Respiro
+devolve Esforço ao valor inicial 2", "Intervalo recupera metade da
+Mana"...) já têm os próprios botões de reset em cada painel de Área
+desde as fatias #22-#26 — não recriei isso num botão global, porque um
+"Respiro" único mexendo em sete estruturas de dados diferentes seria
+frágil sem ganhar nada que os botões que já existem não resolvem.
+
+Testado com Playwright: Vida inicial batendo com a fórmula, sofrer
+Impacto descontando a conversão certa, Guarda anulando o dano quando
+gasta o suficiente, Curar e o ajuste manual +1/-1, Primeiros Socorros
+curando e travando até o próximo Respiro, Intervalo recuperando 25% e
+contando até dois, travando no terceiro, e Descanso completo enchendo a
+Vida, zerando os Intervalos e reduzindo Ferimento em 1. Os trinta e três
+testes das fatias anteriores de Thrylikí Chelóna continuam passando.
+`tsc` e `lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
