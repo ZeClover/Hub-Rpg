@@ -1094,6 +1094,77 @@ persistência após recarregar. Os vinte e dois testes das fatias
 anteriores de Thrylikí Chelóna continuam passando. `tsc` e `lint`
 limpos.
 
+## 38. Thrylikí Chelóna — Projetos de Criação, Melhoria e Reparo (29/08/2026)
+
+O Zé mandou "continue" depois da aba Inventário (decisão #37), que
+tinha deixado `criacao-itens-v6.1.md` de fora de propósito — a peça
+que faltava pra fechar o par completo (ter item vs. criar/consertar
+item). Igual o Construtor Livre de Poder (decisão #33) é a gramática
+genérica de poder pras quinze Áreas, este documento é a gramática
+genérica de item: "forjar uma espada, montar um robô, inscrever um
+tomo, cultivar um preparado, registrar um bestiário ou produzir uma
+obra usam o mesmo esqueleto."
+
+Dois pedaços, os dois dentro da aba Inventário (mesmo lugar dos itens
+que eles afetam):
+
+- **Reparar (no item já existente):** botão que aparece só quando o
+  Estado não é Íntegro, e volta direto pra Íntegro — a tabela de Reparo
+  do documento trata Danificado e Quebrado como dois caminhos
+  (Intervalo vs. Repouso/fase de Projeto) que convergem no mesmo
+  resultado, "restaura o Traço perdido"/"restaura o Perfil principal";
+  não modelei os dois como um caminho Quebrado→Danificado→Íntegro
+  porque o documento não descreve assim
+- **Projetos de Criação e Melhoria:** os sete campos do "Projeto"
+  (Intenção, Base, Traços, Fonte e Âncora, Materiais e oficina, Falha
+  interessante) mais Escala (Improviso/Fabricação/Projeto), as quatro
+  Categorias (Projeto/Criador/Material/Oficina) calculando a
+  **Categoria Operacional** (a menor das quatro, ao vivo), a
+  capacidade de Traços por Categoria (I:1 até V:5, com aviso quando o
+  texto de Traços declarado excede), Fase (só quando Escala é
+  "Projeto", com as opções limitadas à capacidade da Categoria
+  Operacional — I libera só Conceito, III libera as três primeiras,
+  V libera as cinco) e Faixa de Custo (0–5). Um botão "Concluir
+  Projeto" — desabilitado enquanto os Traços excedem a capacidade —
+  cria um item novo no Inventário usando Nome/Categoria Operacional/
+  Base→Perfil/Traços/Acesso do projeto, e trava (`concluido: true`)
+  pra não duplicar o item num segundo clique
+
+**Bug de padrão pego antes de fechar, igual a decisão #37:** o campo
+de Traços começou ligado a `oninput`/`mudarSemRedesenhar` (mesmo
+padrão de campo de texto livre) — mas a contagem de Traços, o aviso de
+excesso e o botão de Concluir dependem do valor atualizado no mesmo
+redesenho. Trocado pra `onchange`/`mudar` (atualiza ao sair do campo,
+não a cada tecla), mesma solução já usada pra Guarda máxima na
+decisão #37 — texto explicando isso foi acrescentado sob o campo.
+
+**Deixado de fora, de propósito:** a Cena de Desafio (Progresso/
+Pressão) que cada fase de Projeto usa — já é referência estática no
+Escudo do Mestre (decisões #28 e #36); modelar um clock vivo por fase
+de projeto seria uma ferramenta nova, não uma correção de lacuna.
+Viradas de projeto (a lista de consequências ao encher Pressão) também
+ficam como julgamento de mesa, não um sorteio automatizado — o
+documento já trata isso como escolha do mestre, não tabela de rolagem.
+
+Testado com Playwright: Categoria Operacional reagindo corretamente
+(fica na menor mesmo com só uma das quatro subindo, sobe quando todas
+sobem), capacidade de Traços mudando com a Categoria, aviso e trava do
+Concluir com excesso de Traços, seletor de Fase aparecendo só na
+Escala Projeto com as opções certas por Categoria, Concluir Projeto
+criando o item com os dados certos e travando depois, Reparar
+revertendo Estado pra Íntegro e o botão sumindo depois, remover um
+projeto sem afetar o item que ele já tinha gerado, e persistência após
+recarregar. Os vinte e quatro testes das fatias anteriores de
+Thrylikí Chelóna continuam passando. `tsc` e `lint` limpos.
+
+Com Projetos de Criação, a lista de fatias identificadas na varredura
+de `plano-versao-jogavel-v6.1.md` está fechada: chassi, todas as
+dezesseis Áreas com recurso de combate, criação livre (nativa ou
+genérica) e conteúdo pronto (Ramos + Kit de 1º Ano), ficha de inimigo
+com Fases de Chefe, Escudo do Mestre completo (referência + Orçamento
+de Encontro + Interação Social), e agora Inventário com criação/
+melhoria/reparo de item.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
