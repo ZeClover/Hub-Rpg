@@ -522,7 +522,37 @@ manual, Concentrar somando 2 e travando até "Nova cena", Descanso
 completo recuperando tudo, a Mana atual sendo cortada pro novo máximo
 quando o Reservatório cai, e persistência após recarregar.
 
-## 24. Restrições registradas
+## 24. Thrylikí Chelóna — combate de Robótica e Engenharia (29/08/2026)
+
+Terceira Área, seguindo a mesma ordem (o Zé mandou "continue"). Robótica
+tem três recursos que o próprio documento chama de "não intercambiáveis"
+— Pontos de Comando, Carga e Vitalícia — em vez de um só como as duas
+Áreas anteriores. O Sistema/Chassi/Módulo completo (Encaixes,
+Integridade, Configuração) fica pra fatia futura, do mesmo jeito que a
+calculadora de Fórmula ficou de fora de Simbologia.
+
+- **Pontos de Comando:** 1 no 1º/2º Ano, 2 no 3º/4º, 3 no 5º — "renova
+  no início do turno", modelado como um botão "Novo turno" em vez de um
+  contador de rodada de verdade (a ficha não tem tracker de iniciativa)
+- **Carga:** base 4, com Melhorias compráveis (0–4) até o teto de 8;
+  Recarga (+2) uma vez por cena, mesmo padrão do Concentrar de Mana
+- **Vitalícia:** mesma fórmula estrutural da Mana (`6 + 2×Inteligência +
+  2×Treinamento + Reservatório`), mas lendo o Treinamento em
+  **Conhecimentos** em vez de Simbologia, e só recuperando com Descanso
+  completo — sem Concentrar equivalente, porque o documento não prevê um
+
+Descanso completo nesta Área restaura as três reservas de uma vez
+(Vitalícia, Carga e PC) — diferente de Simbologia, que só tinha uma
+reserva pra descansar.
+
+Testado com Playwright: painel gated por Área e aba, PC mudando de teto
+conforme o Ano sobe (1→2→3) e resetando com "Novo turno", Carga subindo
+de teto com Melhorias e sendo restaurada por Recarga (travando até
+"Nova cena" — só reabre se ainda faltar Carga pra recarregar, não é
+gratuito), Vitalícia reagindo ao Reservatório, Descanso completo
+recuperando as três reservas juntas, e persistência após recarregar.
+
+## 25. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

@@ -1406,6 +1406,9 @@ function novoPersonagem(nome){
     // simbologiaArcana: motor de Simbologia Arcana — manaAtual null = no
     // máximo; reservatorio é melhoria comprada à parte, 0 a 4.
     simbologiaArcana: {manaAtual:null, reservatorio:0, concentrarUsado:false},
+    // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
+    // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
+    roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
     anotacoes: '',
   };
 }
@@ -1424,6 +1427,18 @@ function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
 function manaMaxima(p){
   const reservatorio = (p.simbologiaArcana && p.simbologiaArcana.reservatorio) || 0;
   return 6 + 2*grauAtributo(p,'inteligencia') + 2*grauTreinamento(p.treinamentos['simbologia']||'nada') + reservatorio;
+}
+
+// Robótica e Engenharia — três recursos não intercambiáveis, conferidos
+// contra o documento de design da Área.
+function pcMaximo(p){ return p.ano >= 5 ? 3 : p.ano >= 3 ? 2 : 1; }
+function cargaMaxima(p){
+  const melhorias = (p.roboticaEngenharia && p.roboticaEngenharia.cargaMelhorias) || 0;
+  return 4 + Math.min(4, melhorias); // base 4, teto 8
+}
+function vitaliciaMaxima(p){
+  const reservatorio = (p.roboticaEngenharia && p.roboticaEngenharia.reservatorioVital) || 0;
+  return 6 + 2*grauAtributo(p,'inteligencia') + 2*grauTreinamento(p.treinamentos['conhecimentos']||'nada') + reservatorio;
 }
 
 function ciclo(p){ return Math.floor((p.nivel-1)/20)+1; }
@@ -1611,6 +1626,7 @@ function render(){
   // Ficha salva antes da fatia de Corpo e Cinética não tem este campo.
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
+  if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1915,8 +1931,74 @@ function painelSimbologiaArcana(p){
   </div>`;
 }
 
+function painelRoboticaEngenharia(p){
+  if(p.perfil.areaId !== 'robotica-engenharia') return '';
+  const re = p.roboticaEngenharia || {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
+  const pcMax = pcMaximo(p), pcAtual = Math.min(re.pcAtual ?? pcMax, pcMax);
+  const cargaMax = cargaMaxima(p), cargaAtual = Math.min(re.cargaAtual ?? cargaMax, cargaMax);
+  const vitMax = vitaliciaMaxima(p), vitAtual = Math.min(re.vitaliciaAtual ?? vitMax, vitMax);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Robótica e Engenharia — Comando, Carga e Vitalícia</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Projetar → Configurar → Operar.</strong> Os três recursos
+      não são intercambiáveis. Sistema, Chassi e Módulos completos (com
+      Encaixes, Integridade e Configuração) são fatia futura — por
+      enquanto isso controla só as três reservas.
+    </p>
+    <div class="grade g3">
+      <div class="derivado">
+        <div class="rot">Comando (PC)</div>
+        <div class="val">${pcAtual}<span style="font-size:16px;color:var(--suave)">/${pcMax}</span></div>
+        <div class="obs">renova no início do turno</div>
+      </div>
+      <div class="derivado">
+        <div class="rot">Carga</div>
+        <div class="val">${cargaAtual}<span style="font-size:16px;color:var(--suave)">/${cargaMax}</span></div>
+        <div class="obs">do Sistema Principal</div>
+      </div>
+      <div class="derivado">
+        <div class="rot">Vitalícia</div>
+        <div class="val">${vitAtual}<span style="font-size:16px;color:var(--suave)">/${vitMax}</span></div>
+        <div class="obs">só volta com Descanso completo</div>
+      </div>
+    </div>
+
+    <div class="grade g3" style="margin-top:12px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button data-re-pc="-1" ${pcAtual<=0?'disabled':''}>-1 PC (delegar/trocar Diretriz)</button>
+        <button data-re-pc="1" ${pcAtual>=pcMax?'disabled':''}>+1 PC (corrigir)</button>
+        <button data-re-novo-turno>Novo turno (PC volta ao máximo)</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button data-re-carga="-1" ${cargaAtual<=0?'disabled':''}>-1 Carga (Módulo rotineiro)</button>
+        <button data-re-carga="-2" ${cargaAtual<2?'disabled':''}>-2 Carga (modo potente)</button>
+        <button data-re-recarga ${re.recargaUsada || cargaAtual>=cargaMax?'disabled':''}>Recarga (+2, 1x por cena)</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button data-re-vitalicia="-1" ${vitAtual<=0?'disabled':''}>-1 Vitalícia (= 2 Cargas)</button>
+        <button data-re-vitalicia="1" ${vitAtual>=vitMax?'disabled':''}>+1 Vitalícia (corrigir)</button>
+        <button data-re-descanso>Descanso completo (recupera tudo)</button>
+      </div>
+    </div>
+
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="c-re-melhorias">Melhorias de Carga (0–4, teto 8)</label>
+        <input id="c-re-melhorias" type="number" min="0" max="4" value="${re.cargaMelhorias}"></div>
+      <div><label for="c-re-reservatorio">Reservatório Vital (0–4)</label>
+        <input id="c-re-reservatorio" type="number" min="0" max="4" value="${re.reservatorioVital}"></div>
+    </div>
+    <button data-re-nova-cena style="margin-top:10px" ${!re.recargaUsada?'disabled':''}>Nova cena (libera Recarga de novo)</button>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Sistema:</strong> arma, implante, robô, Formação, veículo ou estrutura — sempre tratado como um único elemento pela mesa.<br>
+      <strong>Trava de Efeito Relevante:</strong> no máximo um Efeito Relevante por ação, não importa quantos corpos, armas ou consciências existam; rajadas e enxames redistribuem, não multiplicam o total.<br>
+      <strong>Núcleo de Consciência:</strong> Sem Núcleo, Programa, IA, Eco Mnêmico ou Alma Vinculada — nunca concede turno próprio.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2119,6 +2201,54 @@ function ligarEventos(){
   const saReservatorio = document.getElementById('c-sa-reservatorio');
   if(saReservatorio) saReservatorio.onchange = () => mudar(p => {
     p.simbologiaArcana.reservatorio = Math.max(0, Math.min(4, Number(saReservatorio.value) || 0));
+  });
+
+  // Robótica e Engenharia: Comando, Carga e Vitalícia.
+  app.querySelectorAll('[data-re-pc]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = pcMaximo(p);
+      const atual = Math.min(p.roboticaEngenharia.pcAtual ?? max, max);
+      p.roboticaEngenharia.pcAtual = Math.max(0, Math.min(max, atual + Number(b.dataset.rePc)));
+    }));
+  const reNovoTurno = app.querySelector('[data-re-novo-turno]');
+  if(reNovoTurno) reNovoTurno.onclick = () => mudar(p => p.roboticaEngenharia.pcAtual = null);
+
+  app.querySelectorAll('[data-re-carga]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = cargaMaxima(p);
+      const atual = Math.min(p.roboticaEngenharia.cargaAtual ?? max, max);
+      p.roboticaEngenharia.cargaAtual = Math.max(0, Math.min(max, atual + Number(b.dataset.reCarga)));
+    }));
+  const reRecarga = app.querySelector('[data-re-recarga]');
+  if(reRecarga) reRecarga.onclick = () => mudar(p => {
+    const max = cargaMaxima(p);
+    const atual = Math.min(p.roboticaEngenharia.cargaAtual ?? max, max);
+    p.roboticaEngenharia.cargaAtual = Math.min(max, atual + 2);
+    p.roboticaEngenharia.recargaUsada = true;
+  });
+  const reNovaCena = app.querySelector('[data-re-nova-cena]');
+  if(reNovaCena) reNovaCena.onclick = () => mudar(p => p.roboticaEngenharia.recargaUsada = false);
+
+  app.querySelectorAll('[data-re-vitalicia]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = vitaliciaMaxima(p);
+      const atual = Math.min(p.roboticaEngenharia.vitaliciaAtual ?? max, max);
+      p.roboticaEngenharia.vitaliciaAtual = Math.max(0, Math.min(max, atual + Number(b.dataset.reVitalicia)));
+    }));
+  const reDescanso = app.querySelector('[data-re-descanso]');
+  if(reDescanso) reDescanso.onclick = () => mudar(p => {
+    p.roboticaEngenharia.vitaliciaAtual = null;
+    p.roboticaEngenharia.cargaAtual = null;
+    p.roboticaEngenharia.pcAtual = null;
+  });
+
+  const reMelhorias = document.getElementById('c-re-melhorias');
+  if(reMelhorias) reMelhorias.onchange = () => mudar(p => {
+    p.roboticaEngenharia.cargaMelhorias = Math.max(0, Math.min(4, Number(reMelhorias.value) || 0));
+  });
+  const reReservatorio = document.getElementById('c-re-reservatorio');
+  if(reReservatorio) reReservatorio.onchange = () => mudar(p => {
+    p.roboticaEngenharia.reservatorioVital = Math.max(0, Math.min(4, Number(reReservatorio.value) || 0));
   });
 }
 
