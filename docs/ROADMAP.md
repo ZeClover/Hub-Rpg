@@ -841,6 +841,16 @@ passando.
   - Testado com Playwright: descrições de Chassi/Núcleo, limites de
     Apoio e Módulos por Ano, Módulo salvo com os campos certos,
     remover, persistência
+- [x] **Thrylikí Chelóna — Bestiário: Perfis e Traços de Zoologia**
+      (29/08/2026) — decisão #44. Última peça deixada de fora pela
+      decisão #25 (só tinha um campo de texto livre).
+  - Até três Perfis preparados, cada um com até três Traços
+    (Família + descrição), um marcado como Ativo por rádio
+  - Testado com Playwright: adicionar/remover Perfil e Traço com os
+    tetos certos, rádio de Ativo, persistência
+- [x] Levantamento de peças conscientemente deixadas de fora ao longo
+      da sessão está fechado — nenhuma lacuna conhecida entre os
+      documentos de design de Thrylikí Chelóna e a ficha
 - [ ] Ometion
 
 ---

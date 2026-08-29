@@ -2051,6 +2051,9 @@ const ZE_GASTOS = [
   {custo:2, nome:'Contramedida reativa', sobre:'gasta uma Reação'},
   {custo:3, nome:'Adaptação/ápice', sobre:'sustentar Adaptação excepcional ou alimentar ápice preparado'},
 ];
+// Famílias de Traço (zoologia-v6.1.md) — até três Traços por Perfil,
+// até três Perfis preparados, um Ativo por vez.
+const TRACO_FAMILIAS = ['Sentido','Locomoção','Defesa','Ataque','Camuflagem','Cooperação','Contramedida'];
 
 // Dez Áreas novas (Alquimia, Astronomia, Matemática, Psicologia,
 // Medicina, Geologia, História, Tanatologia, Direito, Filosofia)
@@ -2264,8 +2267,10 @@ function novoPersonagem(nome){
     // Obra respondendo à cena; motivos são tags de texto livre (até 3).
     arteExpressao: {ressonancia:0, motivos:[], obraPrincipal:''},
     // zoologiaEtologia: Dados de Campo (0-3, gasto pra ativar Traço/trocar
-    // Perfil/preparar contramedida) + o Perfil Ativo em texto livre.
-    zoologiaEtologia: {dados:0, perfilAtivo:''},
+    // Perfil/preparar contramedida) + o Perfil Ativo em texto livre (nota
+    // rápida) + a grade estruturada de até três Perfis preparados, cada
+    // um com até três Traços (decisão #44).
+    zoologiaEtologia: {dados:0, perfilAtivo:'', perfis: [], perfilAtivoId: ''},
     // recursosNovaArea: as dez Áreas novas (Alquimia, Astronomia...) usam
     // todas um recurso 0-3 na mesma forma — um dicionário por areaId evita
     // colisão se o jogador trocar de Área e voltar.
@@ -2867,6 +2872,8 @@ function render(){
   if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
   if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
   if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
+  if(!p.zoologiaEtologia.perfis) p.zoologiaEtologia.perfis = [];
+  if(p.zoologiaEtologia.perfilAtivoId === undefined) p.zoologiaEtologia.perfilAtivoId = '';
   if(!p.recursosNovaArea) p.recursosNovaArea = {};
   if(!p.poderesLivres) p.poderesLivres = [];
   if(!p.inventario) p.inventario = {itens: []};
@@ -3942,22 +3949,53 @@ function painelZoologiaEtologia(p){
     </div>
 
     <div style="margin-top:12px">
-      <label for="c-ze-perfil">Perfil Ativo</label>
+      <label for="c-ze-perfil">Nota rápida do Perfil Ativo</label>
       <input id="c-ze-perfil" data-ze-perfil value="${esc(ze.perfilAtivo)}" placeholder="ex: Predador — perseguição, salto, faro de sangue">
     </div>
-    <p class="mini" style="margin-top:6px">
-      Antes da cena o estudante prepara até três Perfis, mas mantém só um
-      Ativo por vez; cada Perfil cabe num cartão com até três Traços — por
-      enquanto isso é texto livre, o Perfil e seus Traços com nome e vírgula.
-    </p>
 
     <p class="mini" style="margin-top:16px">
       <strong>Verbos:</strong> Observar (ganha Dado), Catalogar (registra o
       comportamento pra uso futuro) e Adaptar (converte o catalogado em
-      Traço ou ajuste de Perfil).<br>
-      <strong>Famílias de Traço:</strong> Sentido, Locomoção, Defesa, Ataque,
-      Camuflagem, Cooperação e Contramedida.
+      Traço ou ajuste de Perfil).
     </p>
+  </div>
+
+  ${painelPerfisZoologia(p, ze)}`;
+}
+
+function painelPerfisZoologia(p, ze){
+  const perfis = ze.perfis || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Bestiário — Perfis preparados (${perfis.length}/3)</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Antes da cena o estudante prepara até três Perfis, mas mantém só um
+      <strong>Ativo</strong> por vez; cada Perfil cabe num cartão com até
+      três Traços, um por Família (Sentido/Locomoção/Defesa/Ataque/
+      Camuflagem/Cooperação/Contramedida). No 1º Ano só uma Adaptação
+      fica ativa; no 4º, duas compatíveis podem coexistir.
+    </p>
+    ${perfis.map((perfil,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-perfil-campo="${i}|nome" value="${esc(perfil.nome)}" placeholder="Nome do Perfil (ex: Predador)" style="font-family:Georgia,serif;font-size:16px">
+        <button data-perfil-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:8px">
+        <input type="radio" name="perfil-ativo" data-perfil-ativo="${perfil.id}" ${ze.perfilAtivoId===perfil.id?'checked':''}>
+        Perfil Ativo
+      </label>
+      <p class="mini" style="margin:10px 0 6px">Traços (${(perfil.tracos||[]).length}/3)</p>
+      ${(perfil.tracos||[]).map((t,ti) => `<div class="grade g3" style="margin-bottom:6px">
+        <select data-traco-familia="${i}|${ti}">
+          ${TRACO_FAMILIAS.map(f => `<option ${f===t.familia?'selected':''}>${f}</option>`).join('')}
+        </select>
+        <input data-traco-descricao="${i}|${ti}" value="${esc(t.descricao)}" placeholder="descrição do Traço" style="grid-column:span 2">
+      </div>`).join('')}
+      <div style="display:flex;gap:8px">
+        ${(perfil.tracos||[]).length < 3 ? `<button data-add-traco="${i}">+ Traço</button>` : ''}
+        ${(perfil.tracos||[]).length > 0 ? `<button data-remover-traco="${i}" class="perigo">- Traço</button>` : ''}
+      </div>
+    </div>`).join('') || '<p class="mini">(nenhum Perfil preparado ainda)</p>'}
+    <button id="btAddPerfil" ${perfis.length>=3?'disabled':''}>+ Preparar Perfil</button>
   </div>`;
 }
 
@@ -5225,6 +5263,49 @@ function ligarEventos(){
     }, el));
   app.querySelectorAll('[data-modulo-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.roboticaEngenharia.modulos.splice(Number(b.dataset.moduloRemover), 1)));
+
+  // Bestiário — Perfis e Traços de Zoologia e Etologia.
+  const btAddPerfil = document.getElementById('btAddPerfil');
+  if(btAddPerfil) btAddPerfil.onclick = () => mudar(p => {
+    if((p.zoologiaEtologia.perfis||[]).length >= 3) return;
+    p.zoologiaEtologia.perfis.push({id: uid(), nome: '', tracos: []});
+  });
+  app.querySelectorAll('[data-perfil-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.perfilCampo.split('|');
+      p.zoologiaEtologia.perfis[Number(i)][campo] = el.value;
+    }, el));
+  app.querySelectorAll('[data-perfil-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const i = Number(b.dataset.perfilRemover);
+      const removido = p.zoologiaEtologia.perfis[i];
+      if(removido && p.zoologiaEtologia.perfilAtivoId === removido.id) p.zoologiaEtologia.perfilAtivoId = '';
+      p.zoologiaEtologia.perfis.splice(i, 1);
+    }));
+  app.querySelectorAll('[data-perfil-ativo]').forEach(el =>
+    el.onchange = () => mudar(p => { p.zoologiaEtologia.perfilAtivoId = el.dataset.perfilAtivo; }));
+  app.querySelectorAll('[data-add-traco]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const perfil = p.zoologiaEtologia.perfis[Number(b.dataset.addTraco)];
+      if(!perfil.tracos) perfil.tracos = [];
+      if(perfil.tracos.length >= 3) return;
+      perfil.tracos.push({familia: TRACO_FAMILIAS[0], descricao: ''});
+    }));
+  app.querySelectorAll('[data-remover-traco]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const perfil = p.zoologiaEtologia.perfis[Number(b.dataset.removerTraco)];
+      if(perfil.tracos && perfil.tracos.length) perfil.tracos.pop();
+    }));
+  app.querySelectorAll('[data-traco-familia]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, ti] = el.dataset.tracoFamilia.split('|');
+      p.zoologiaEtologia.perfis[Number(i)].tracos[Number(ti)].familia = el.value;
+    }));
+  app.querySelectorAll('[data-traco-descricao]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, ti] = el.dataset.tracoDescricao.split('|');
+      p.zoologiaEtologia.perfis[Number(i)].tracos[Number(ti)].descricao = el.value;
+    }, el));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
