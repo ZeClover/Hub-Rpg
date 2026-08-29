@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escudo do Mestre — Thrylikí Chelóna</title>
+<style>
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+main{max-width:900px; margin:0 auto; padding:24px 16px 80px}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+h1{margin-top:10px; font-size:28px}
+.sub{color:var(--suave); font-size:13px; margin-top:6px}
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-top:16px}
+.cartao h2{font-size:17px; color:var(--ambar-forte)}
+.cartao h3{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--suave); margin-top:16px}
+.cartao p{margin:8px 0 0}
+table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+th,td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--suave); font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.05em}
+tr:last-child td{border-bottom:none}
+.mini{font-size:12px; color:var(--suave)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} }
+.tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--borda); border-radius:999px; color:var(--suave)}
+code{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:5px; padding:1px 5px; font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <span class="marca">Thrylikí Chelóna</span>
+  <h1>Escudo do Mestre</h1>
+  <p class="sub">
+    Referência rápida pra ter aberta durante a sessão — o núcleo de regras
+    que se repete em toda mesa, não importa qual das 16 Áreas o personagem
+    estuda. Homebrew original do Zé.
+  </p>
+
+  <div class="cartao">
+    <h2>Teste</h2>
+    <p><code>1d20 + Grau do Atributo + Treinamento + situação</code></p>
+    <p>Treinamento: Nada +0, Treinado +5, Perito +10, Expert +15. Nível e Categoria <strong>nunca</strong> entram no d20 — eles definem potência e escala, não a chance de acertar.</p>
+    <p><code>Dificuldade ou Defesa fixa = 8 + Grau esperado + Treinamento esperado</code>. Referências: comum 9, treinada 15, especializada 21, magistral 27. Depois de comparar as circunstâncias, aplique só <code>−5</code>, <code>+0</code> ou <code>+5</code> de situação.</p>
+    <table>
+      <tr><th>Margem</th><th>Grau</th></tr>
+      <tr><td>−10 ou menos</td><td>Falha extrema</td></tr>
+      <tr><td>−9 a −1</td><td>Falha</td></tr>
+      <tr><td>0 a 4</td><td>Sucesso parcial</td></tr>
+      <tr><td>5 a 9</td><td>Sucesso</td></tr>
+      <tr><td>10 ou mais</td><td>Sucesso extremo</td></tr>
+    </table>
+    <p class="mini"><code>1</code> natural é Falha extrema; <code>20</code> natural é Sucesso extremo. Empate num teste oposto gera impasse ou consequência mútua.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Turno</h2>
+    <p>1 Ação Principal, 1 Ação de Movimento, 1 Ação Parcial, 1 Reação por rodada.</p>
+    <p class="mini">Entidades, armas, Cultivos, companheiros e Obras usam as ações do próprio personagem — nenhum deles ganha turno independente. Um Efeito Relevante por ação; resultados simultâneos dividem o mesmo Impacto.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Impacto</h2>
+    <table>
+      <tr><td><strong>0,5</strong></td><td>efeito pequeno, ajuda ou preparação</td></tr>
+      <tr><td><strong>1</strong></td><td>ataque ou efeito básico</td></tr>
+      <tr><td><strong>1,5</strong></td><td>técnica forte e custosa</td></tr>
+      <tr><td><strong>2,5</strong></td><td>Ápice preparado, anunciado e respondível</td></tr>
+    </table>
+    <p class="mini">Dano, cura, defesa, controle, movimento, alcance, área, duração e número de alvos usam o mesmo orçamento — cura não é gratuita, controle não é ilimitado.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Patamares (diferença de Categoria)</h2>
+    <p>Compare Categoria do ator − Categoria do alvo:</p>
+    <table>
+      <tr><th>Diferença</th><th>Multiplicador no Impacto</th></tr>
+      <tr><td>−2</td><td>×0,25</td></tr>
+      <tr><td>−1</td><td>×0,5</td></tr>
+      <tr><td>0</td><td>×1</td></tr>
+      <tr><td>+1</td><td>×1,5</td></tr>
+      <tr><td>+2 ou mais</td><td>×2</td></tr>
+    </table>
+    <p class="mini">Diferença de −3 ou menor não alcança diretamente sem permissão específica. Uma Brecha, fraqueza ou objetivo pode reduzir a Categoria tratada do alvo em um grau.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Condições</h2>
+    <table>
+      <tr><th>Estado</th><th>Resumo</th><th>Saída comum</th></tr>
+      <tr><td>Exposto</td><td>próximo ataque direto recebe +5, depois termina</td><td>Reação, cobertura ou quebrar Âncora</td></tr>
+      <tr><td>Preso</td><td>não sai da Âncora com a Ação de Movimento</td><td>Parcial + teste, ajuda ou quebrar Âncora</td></tr>
+      <tr><td>Abalado</td><td>perde a próxima Reação</td><td>Parcial para recompor-se</td></tr>
+      <tr><td>Interrompido</td><td>suspende uma sustentação (postura, fórmula, Obra...)</td><td>Parcial + custo para reativar</td></tr>
+      <tr><td>Atordoado</td><td>perde a Ação Principal, ou age normal mas fica Exposto+Abalado</td><td>escolha no começo do turno</td></tr>
+      <tr><td>Incapacitado</td><td>sem ações significativas por uma rodada</td><td>Ápice; chefe converte em Brecha</td></tr>
+    </table>
+    <p class="mini">No máximo uma condição por eixo. Reaplicar a mesma renova; mais forte substitui; mais fraca não acumula. Impacto persistente não se renova sozinho — só existe uma Sustentação relevante por vez (a partir do 4º Ano, um Vínculo Persistente preserva uma Âncora entre cenas, mas nunca Impacto, ações ou recursos).</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Vida zero e Pacto</h2>
+    <p>Em 0 Vida: <strong>Caído, Risco 1</strong>. Fim do próprio turno sem estabilizar: +1 Risco. Golpe direto enquanto Caído: +1 Risco. Em Risco 3, morte confirmada e o Pacto com a Realidade pode ser oferecido.</p>
+    <p><strong>Pacto:</strong> o jogador sacrifica uma parte válida, volta com 50% da Vida e registra uma nova Dívida. O canal sacrificado nunca volta a canalizar poder — prótese ou reposição recupera só a função comum. Ofertas ficam mais caras a cada Pacto, e o mesmo canal não pode ser vendido de novo.</p>
+    <p class="mini">Cura encerra Caído, mas deixa Ferimento 1; uma nova queda não tratada começa direto em Risco 2.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Recuperação</h2>
+    <table>
+      <tr><th>Pausa</th><th>Recupera</th></tr>
+      <tr><td>Respiro (~1 min)</td><td>estados de cena e medidores próprios da Área — não Vida</td></tr>
+      <tr><td>Intervalo (~10 min)</td><td>25% da Vida e a recuperação de pausa da Área; no máximo 2 por Descanso completo</td></tr>
+      <tr><td>Repouso (~1 h)</td><td>50% da Vida, recursos renováveis e um tratamento completo</td></tr>
+      <tr><td>Descanso completo (~8 h)</td><td>toda a Vida e recursos; reduz cada Consequência atendida em 1</td></tr>
+    </table>
+    <p class="mini">Primeiros Socorros: Ação Principal, uma vez por alvo/cena; estabiliza quem está Caído ou cura até 0,5 Impacto em alguém consciente.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Cena de Desafio</h2>
+    <p>Progresso necessário: curta <code>1,5 × participantes</code>, padrão <code>3 ×</code>, extensa <code>5 ×</code>. Pressão vai de 0 a 3.</p>
+    <table>
+      <tr><th>Grau</th><th>Progresso</th><th>Pressão</th></tr>
+      <tr><td>Falha extrema</td><td>0</td><td>+2</td></tr>
+      <tr><td>Falha</td><td>0</td><td>+1</td></tr>
+      <tr><td>Sucesso parcial</td><td>+1</td><td>+1</td></tr>
+      <tr><td>Sucesso</td><td>+2</td><td>0</td></tr>
+      <tr><td>Sucesso extremo</td><td>+3 e Vantagem</td><td>0</td></tr>
+    </table>
+    <p class="mini">Pressão 3 provoca uma Virada: consequência, perda, nova cena, recuo ou sacrifício de Vantagem. Uma pista essencial nunca some por uma única falha.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Criaturas — cartão de mesa</h2>
+    <div class="grade g2">
+      <div>
+        <h3>Defesa fixa</h3>
+        <p><code>8 + Grau + Treinamento</code> por canal (Força/Agilidade/Constituição/Inteligência/Presença). Porte decide quantos canais ficam Forte (+5) ou Fraco (−5): Capanga nenhum forte/um fraco, Padrão um forte/um fraco, Elite dois fortes/um fraco, Fase de Chefe dois fortes/uma Vulnerabilidade.</p>
+      </div>
+      <div>
+        <h3>Vida em Impactos</h3>
+        <p>Capanga 0,5 · Padrão 2,5 · Elite 5 · Fase de Chefe 7 — referência de orçamento, convertida pra Vida numérica pelo mestre conforme Nível e Categoria da mesa.</p>
+      </div>
+    </div>
+    <p class="mini">Cinco funções de ação: Muito Fácil 10% da Vida média, Fácil 15%, Mediana 22%, Difícil 30%, Impossível 40% — uma criatura comum usa principalmente ações Medianas.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Lembretes</h2>
+    <ul style="margin-top:10px;padding-left:20px">
+      <li>ação simples fora de risco acontece sem rolagem;</li>
+      <li>anuncie Âncora, saída e sinal de todo Ápice antes de resolvê-lo;</li>
+      <li>um especialista deve ser superior dentro da própria área;</li>
+      <li>chefes mudam de estado e sempre têm uma vulnerabilidade descobrível;</li>
+      <li>na dúvida de regra: escolha o resultado justo, registre e revise depois.</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

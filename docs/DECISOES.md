@@ -692,7 +692,38 @@ página, e Modo Hub completo mockando `/api/personagens/*` (carregar
 do Hub, editar disparando PATCH). Os sete testes da ficha de jogador
 continuam passando. `tsc` e `lint` limpos.
 
-## 28. Restrições registradas
+## 28. Thrylikí Chelóna — Escudo do Mestre (29/08/2026)
+
+Depois da ficha de inimigo, faltava o último par que o Fabula Ultima e
+o SAO já tinham: uma página de referência rápida pra mesa. O material
+do Zé já tinha exatamente isso pronto em
+`referencia-rapida-v6.1.md` — não precisou inventar nada, só
+transcrever fielmente pro layout que o Hub já usa (mesmo `.cartao`,
+mesma paleta, mesmas tabelas).
+
+`public/thryliki-chelona-escudo-mestre.html` é **página estática**,
+sem `<script>`, sem localStorage, sem Modo Hub — o mesmo formato do
+`sao-escudo-mestre.html`: teste, dificuldade/Defesa fixa e os cinco
+graus de resultado; turno e as quatro ações; a escala de Impacto
+(0,5/1/1,5/2,5); Patamares (multiplicador por diferença de Categoria);
+as seis condições com saída comum; Vida zero e Pacto; as quatro
+escalas de Recuperação; Cena de Desafio (Progresso/Pressão); um card
+de referência rápida de criatura (Defesa fixa por canal, Vida em
+Impactos por Porte) que resume o que a ficha de inimigo já modela; e
+os cinco lembretes de mesa do documento original.
+
+`src/lib/sistemas.ts`: `escudoMestre` deixou de ser `null` — Thrylikí
+Chelóna agora tem os três arquivos que os outros dois sistemas
+completos já tinham (ficha de jogador, ficha de inimigo, Escudo do
+Mestre).
+
+Testado com Playwright: a página carrega sem erro de console, o título
+e as seções principais aparecem no texto renderizado. Sem teste mais
+profundo porque não há interatividade nenhuma pra testar — é
+conteúdo estático fiel à fonte. `tsc` e `lint` limpos (o arquivo não
+tem JS que os afete, mas a mudança em `sistemas.ts` sim).
+
+## 29. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
