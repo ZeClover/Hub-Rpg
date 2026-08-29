@@ -591,6 +591,21 @@ passando.
     correção, Concentrar travando até nova cena, Descanso completo, a
     Mana atual sendo cortada pro novo máximo se o Reservatório cai, e
     persistência após recarregar
+- [x] **Thrylikí Chelóna — combate de Robótica e Engenharia** (29/08/2026) —
+      decisão #24. Terceira Área — três recursos "não intercambiáveis":
+      Pontos de Comando, Carga e Vitalícia.
+  - Card novo na aba Combate, só quando a Área é Robótica e Engenharia:
+    PC (teto sobe com o Ano: 1→2→3, botão "Novo turno" pra resetar),
+    Carga (base 4, Melhorias 0–4 até o teto 8, Recarga +2 uma vez por
+    cena) e Vitalícia (mesma fórmula da Mana, mas lendo Treinamento em
+    Conhecimentos). Descanso completo recupera as três juntas. Sistema/
+    Chassi/Módulo completos ficam pra fatia futura
+  - Testado com Playwright: painel gated por Área e aba, PC mudando de
+    teto pelo Ano e resetando por turno, Carga subindo de teto com
+    Melhorias e voltando por Recarga (travada até nova cena, e só se
+    ainda faltar Carga), Vitalícia reagindo ao Reservatório, Descanso
+    completo nas três reservas de uma vez, e persistência após
+    recarregar
 - [ ] Ometion
 
 ---
