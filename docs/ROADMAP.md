@@ -562,6 +562,21 @@ passando.
     do 2º, etapas aparecendo progressivamente conforme o Ano sobe até
     mostrar todas as quatro no 5º, e a troca de Área não carregando um
     Ramo de nome igual mas de Área diferente
+- [x] **Thrylikí Chelóna — combate de Corpo e Cinética** (29/08/2026) —
+      decisão #22. Primeira Área com recurso e combate de verdade
+      (Esforço, Rastro, Romper), servindo de molde pras outras 15.
+  - Card novo na aba Combate, só quando a Área escolhida é Corpo e
+    Cinética: Esforço (0–5, sobe por ação sob risco ou Forçar o Corpo —
+    que também aplica Exposto, reaproveitando a condição já existente),
+    Rastro (até duas marcas: Impulso/Guarda/Golpe/Controle/Alteração), e
+    Romper (gasta 1/2/3 de Esforço por Manobra/Técnica forte/Ápice,
+    desabilitado quando falta Esforço)
+  - Ficha salva antes desta fatia recebe o valor padrão do novo campo
+    automaticamente na primeira leitura, sem quebrar
+  - Testado com Playwright: painel gated por Área e por aba, Esforço
+    subindo pelos três gatilhos, Rastro travando em duas marcas, Romper
+    gastando o Esforço certo e limpando o Rastro, botão caro demais
+    desabilitado, reset de conflito, e persistência após recarregar
 - [ ] Ometion
 
 ---

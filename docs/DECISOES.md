@@ -445,7 +445,45 @@ certas a partir do 2º Ano, etapas aparecendo progressivamente conforme
 o Ano sobe (só Assinatura no 2º, todas as quatro no 5º), e a troca de
 Área não carregando por engano um Ramo de nome igual de outra Área.
 
-## 22. Restrições registradas
+## 22. Thrylikí Chelóna — combate de Corpo e Cinética (29/08/2026)
+
+Depois do catálogo de Ramos (decisão #21), perguntei qual Área trazer
+primeiro com recurso e combate de verdade — o Zé escolheu **Corpo e
+Cinética**, a mais simples das 16 (recurso Esforço 0–5, sem tabela de
+fórmulas), pra servir de molde nas próximas 15.
+
+Mecânica trazida, fiel ao documento `corpo-e-cinetica-v6.1.md`:
+
+- **Esforço (0–5):** começa em 2 no início de um conflito relevante;
+  sobe 1 por ação física sob risco, ou 1 a mais com "Forçar o Corpo"
+  (Ação Parcial que também aplica a condição Exposto — reaproveitando a
+  condição que já existia na ficha, em vez de duplicar o campo)
+- **Rastro:** até duas marcas visíveis (Impulso, Guarda, Golpe,
+  Controle, Alteração) acumuladas antes de Romper
+- **Romper:** encerra o Rastro e gasta 1/2/3 de Esforço por Manobra,
+  Técnica forte (~1,5 Impacto) ou Ápice telegrafado (~2,5 Impactos) — os
+  botões ficam desabilitados quando o personagem não tem Esforço
+  suficiente para a opção
+
+O painel só aparece na aba Combate, e só quando `perfil.areaId ===
+'corpo-cinetica'` — nenhuma outra Área ganha um card vazio. Impulsos
+Somáticos, Alterações Corporais, Votos Somáticos e Quebra de Padrão
+entraram como texto de referência (não são medidores próprios, são
+manobras que já usam Esforço e Rastro).
+
+Ficha salva antes desta fatia não tinha o campo `corpoCinetica` —
+`render()` preenche o valor padrão (Esforço 2, Rastro vazio) na
+primeira leitura, então uma ficha antiga não quebra ao abrir.
+
+Testado com Playwright: painel ausente sem a Área escolhida e fora da
+aba Combate, Esforço subindo com os três gatilhos (ação sob risco,
+Forçar o Corpo aplicando Exposto automaticamente, correção manual),
+Rastro enchendo até duas marcas e travando o resto dos botões, Romper
+gastando o Esforço certo e limpando o Rastro, botão de Romper mais caro
+desabilitado sem Esforço suficiente, "Novo conflito" resetando pra 2, e
+persistência depois de recarregar a página.
+
+## 23. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
