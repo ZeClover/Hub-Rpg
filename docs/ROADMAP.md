@@ -759,6 +759,10 @@ passando.
     continua visível após subir de Ano, dez Áreas novas sem duplicar
 - [x] Todas as dezesseis Áreas de Estudo têm recurso de combate, criação
       livre, técnicas de Ramo e Kit de Combate do 1º Ano dentro do Hub
+- [x] **Thrylikí Chelóna — Interação Social no Escudo do Mestre**
+      (29/08/2026) — decisão #36. Painel de figura social (Desejo/
+      Objeção/Limite/Posição) e as cinco Posições, reaproveitando a
+      Cena de Desafio que a decisão #28 já tinha trazido.
 - [ ] Ometion
 
 ---
