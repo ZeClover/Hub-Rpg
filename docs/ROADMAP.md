@@ -694,6 +694,19 @@ passando.
     remover fases, marcar canais Forte por fase, persistência após
     recarregar (inclusive ficha antiga sem o campo). Os testes
     anteriores da ficha de inimigo continuam passando
+- [x] **Thrylikí Chelóna — calculadora de Orçamento de Encontro** (29/08/2026)
+      — decisão #30. Última peça do lado do mestre: Força do Grupo ×
+      dificuldade vira Orçamento, e o mestre soma Pontos de Ameaça por
+      Porte pra comparar.
+  - Primeira parte interativa de `thryliki-chelona-escudo-mestre.html`
+    (até aqui só HTML/CSS estático) — sem persistência de propósito, é
+    conta rápida de sessão, não ficha
+  - Campos Força/Dificuldade calculam o Orçamento ao vivo; botões por
+    Porte (Capanga/Padrão/Elite/Fase de Chefe) acumulam uma composição
+    planejada, com remover por linha e Limpar tudo; Total gasto compara
+    com o Orçamento e avisa se passou
+  - Testado com Playwright: Orçamento reagindo aos dois campos, soma por
+    Porte, status dentro/acima do orçamento, remover e limpar
 - [ ] Ometion
 
 ---

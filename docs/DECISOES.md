@@ -757,7 +757,44 @@ sobrevivendo a um recarregamento de página — inclusive uma ficha sem
 o campo novo carregando sem quebrar. Os testes anteriores da ficha de
 inimigo (local e Modo Hub) continuam passando. `tsc` e `lint` limpos.
 
-## 30. Restrições registradas
+## 30. Thrylikí Chelóna — calculadora de Orçamento de Encontro (29/08/2026)
+
+Última peça do lado do mestre: `criaturas-e-encontros-v6.1.md` define
+`Orçamento = Força do Grupo × multiplicador da dificuldade` e Pontos de
+Ameaça por Porte (Capanga 0,25, Padrão 1, Elite 2, Fase de Chefe 2),
+mas isso é conta, não referência de leitura — cabia melhor como
+ferramenta interativa do que mais uma tabela estática.
+
+Virou a primeira parte com `<script>` do
+`thryliki-chelona-escudo-mestre.html`, que até aqui era só HTML/CSS
+estático (igual o `sao-escudo-mestre.html`). Decisão consciente: **sem
+persistência** — nem localStorage, nem Modo Hub. É uma conta rápida
+pra usar durante a preparação ou a sessão, não uma ficha; reiniciar ao
+recarregar a página é o comportamento certo, não uma lacuna.
+
+- Campos: Força do Grupo (número) e Dificuldade (fácil ×0,6, comum ×1,
+  difícil ×1,4, clímax ×1,8) calculam o Orçamento ao vivo
+- Botões "+ Capanga/Padrão/Elite/Fase de Chefe" acumulam uma
+  composição planejada, cada porte com seus Pontos de Ameaça; um "-1"
+  por linha remove, e "Limpar composição" zera tudo
+- Total gasto comparado ao Orçamento mostra quanto sobra (dentro do
+  orçamento) ou quanto passou (acima do orçamento — encontro mais
+  difícil que o planejado)
+
+Com isso, os quatro documentos de mestre de `criaturas-e-encontros-v6.1.md`
+que fazem sentido numa ficha ou ferramenta (cartão de mesa, Defesa por
+Categoria, Fases de Chefe, orçamento de encontro) estão todos no Hub —
+o que sobra do documento (funções táticas, divisão de ação por função,
+construção rápida passo a passo) é texto de preparação de mesa, não
+número pra calcular, e fica como está no material do Zé.
+
+Testado com Playwright: Orçamento reagindo a Força e Dificuldade,
+Total gasto somando por Porte corretamente, status mudando entre
+"dentro" e "acima" do orçamento, remover uma unidade da composição, e
+Limpar composição. `tsc` e `lint` limpos (o arquivo é HTML solto, sem
+efeito neles, mas a checagem roda mesmo assim por hábito).
+
+## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
