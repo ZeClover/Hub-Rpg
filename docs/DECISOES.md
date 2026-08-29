@@ -398,7 +398,54 @@ recarregar a página, e Modo Hub completo mockando `/api/personagens/*`
 (carregar do Hub, editar disparando PATCH, ficha escondendo seletor e
 botão de novo personagem).
 
-## 21. Restrições registradas
+## 21. Thrylikí Chelóna — catálogo de Ramos (29/08/2026)
+
+Depois do chassi (decisão #20), o Zé pediu pra trazer os Ramos e poderes
+das Áreas. Olhando o material de novo, cada uma das 16 Áreas tem seu
+próprio recurso (Esforço, Mana, Pontos de Comando...) e seu próprio
+mini-sistema de combate — não é só uma lista de poderes. Trazer tudo isso
+pras 16 Áreas de uma vez seria uma fatia grande demais pra revisar
+direito, então perguntei como fatiar. O Zé escolheu **catálogo dos Ramos
+primeiro**: nome de cada Ramo (117) + o texto de Assinatura (2º Ano),
+Especialização (3º Ano), Maestria (4º Ano) e Tese (5º Ano) como
+referência na ficha, ligado ao Ano do personagem — sem o recurso e o
+combate únicos de cada Área ainda, isso vem depois, Área por Área.
+
+Os 117 Ramos (37 das seis Áreas originais + 80 das dez novas) vieram dos
+documentos de design que o Zé mandou. Extrair à mão seria lento e
+arriscado — escrevi um script Python que lê os `.md` de cada Área e
+monta os dados. A fonte usa três formatos de marcação ligeiramente
+diferentes entre si (ex: `**2º — Nome:** texto` numa Área, `2º — **Nome:**
+texto` noutra, `2º: **Nome**, texto` numa terceira) — o parser precisou
+tratar os três, e o resultado foi conferido campo a campo até bater
+117/117 sem nenhuma etapa faltando e sem sobra de marcação (`**`) no
+texto final.
+
+Três nomes de Ramo se repetem em Áreas diferentes (Toxicologia existe em
+Botânica e em Alquimia; Paradoxos em Matemática e em Filosofia;
+Identidade em Psicologia e em Filosofia). Sem cuidado, trocar de Área
+podia deixar selecionado um Ramo de nome igual mas de Área errada — os
+IDs viraram `<área>__<ramo>` pra isso nunca acontecer, independente da
+ordem em que os campos são trocados na tela.
+
+**Erro cometido e corrigido no caminho:** minha primeira tentativa de
+inserir o bloco de dados no arquivo usou uma expressão regular pra
+achar onde ele terminava — e essa expressão bateu no lugar errado,
+apagando um trecho grande do meio do arquivo (de `MODO_HUB` até
+`const estado`) sem que o teste de sintaxe acusasse nada, porque o
+resultado continuava sendo JavaScript válido, só que quebrado em tempo
+de execução. Percebido pelo primeiro teste Playwright (`MODO_HUB is not
+defined`), não pela checagem de sintaxe. Reconstruí a partir da versão
+já commitada no Git e reinseri por posição de linha, sem regex sobre o
+conteúdo.
+
+Testado com Playwright: card de Ramo ausente sem Área escolhida, aviso
+"a partir do 2º Ano" no 1º Ano em vez do seletor, seletor com as opções
+certas a partir do 2º Ano, etapas aparecendo progressivamente conforme
+o Ano sobe (só Assinatura no 2º, todas as quatro no 5º), e a troca de
+Área não carregando por engano um Ramo de nome igual de outra Área.
+
+## 22. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

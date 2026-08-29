@@ -537,6 +537,31 @@ passando.
     após recarregar, e Modo Hub completo mockando `/api/personagens/*`.
     Ramos, poderes de Área e combate detalhado ficam para as próximas
     fatias
+- [x] **Thrylikí Chelóna — catálogo de Ramos** (29/08/2026) — decisão #21.
+      Cada uma das 16 Áreas tem recurso e mini-sistema de combate próprios
+      (Esforço, Mana, Pontos de Comando...) — trazer isso tudo de uma vez
+      seria fatia grande demais, então esta trouxe só o catálogo dos 117
+      Ramos como referência; o recurso e o combate de cada Área ficam pra
+      fatias seguintes, Área por Área.
+  - **`public/thryliki-chelona.html`**: novo card "Ramo" na aba Status,
+    abaixo de Área de Estudo — aparece só quando o personagem já tem Área
+    escolhida; abaixo do 2º Ano mostra um aviso em vez do seletor (Ramo é
+    conteúdo curricular, não existe antes disso). Uma vez escolhido, mostra
+    Assinatura/Especialização/Maestria/Tese e o Contrajogo, mas só as
+    etapas que o Ano do personagem já teria cursado
+  - Os 117 Ramos (37 das seis Áreas originais + 80 das dez novas) foram
+    extraídos por script dos documentos de design de cada Área — a fonte
+    usa três formatos de marcação ligeiramente diferentes entre si; o
+    parser foi ajustado e o resultado conferido campo a campo até bater
+    117/117 sem nenhum texto faltando. IDs de Ramo viraram
+    `<área>__<ramo>` porque três nomes se repetem em Áreas diferentes
+    (ex: "Toxicologia" existe em Botânica e em Alquimia) — sem o prefixo,
+    trocar de Área podia deixar o Ramo errado marcado como selecionado
+  - Testado com Playwright: catálogo ausente sem Área escolhida, aviso de
+    "a partir do 2º Ano" no 1º Ano, seletor com as opções certas a partir
+    do 2º, etapas aparecendo progressivamente conforme o Ano sobe até
+    mostrar todas as quatro no 5º, e a troca de Área não carregando um
+    Ramo de nome igual mas de Área diferente
 - [ ] Ometion
 
 ---
