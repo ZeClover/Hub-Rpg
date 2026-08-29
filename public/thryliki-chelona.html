@@ -2258,7 +2258,9 @@ function novoPersonagem(nome){
     poderesLivres: [],
     // inventario: cartão universal de item (nome/Categoria/tipo/Carga/
     // Perfil/Traços/Âncora/estado/acesso), fiel a equipamentos-v6.1.md.
-    inventario: {itens: []},
+    // projetos: registros de Criação/Melhoria (criacao-itens-v6.1.md),
+    // que viram item quando concluídos.
+    inventario: {itens: [], projetos: []},
     anotacoes: '',
   };
 }
@@ -2268,6 +2270,15 @@ function novoItem(){
     id: uid(), nome: '', categoria: 'I', tipo: 'ferramenta', tamanho: 'leve',
     perfil: '', tracos: '', ancora: '', estado: 'integro', acesso: 'comum',
     pronto: true, municao: '', guardaMax: 0, guardaAtual: null,
+  };
+}
+
+function novoProjeto(){
+  return {
+    id: uid(), nome: '', escala: 'projeto',
+    intencao: '', base: '', tracos: '', fonteAncora: '', materiaisOficina: '', falhaInteressante: '',
+    categoriaProjeto: 'I', categoriaCriador: 'I', categoriaMaterial: 'I', categoriaOficina: 'I',
+    faixaCusto: 0, acesso: 'comum', fase: 'conceito', concluido: false,
   };
 }
 
@@ -2314,6 +2325,37 @@ function custoCargaItem(item){
 }
 function cargaUsada(p){
   return (p.inventario.itens || []).filter(i => i.pronto).reduce((soma,i) => soma + custoCargaItem(i), 0);
+}
+
+// Criação, melhoria e reparo (criacao-itens-v6.1.md): "um processo pra
+// todas as Áreas" — Categoria Operacional é sempre a menor entre Projeto,
+// Criador, Material e Oficina; a Categoria decide quantos Traços cabem e,
+// só pra Projeto (a escala "tempo entre missões"), quantas fases existem.
+const ESCALAS_PROJETO = [
+  {id:'improviso',   nome:'Improviso (uma cena)'},
+  {id:'fabricacao',  nome:'Fabricação (um ou mais Intervalos)'},
+  {id:'projeto',     nome:'Projeto (tempo entre missões)'},
+];
+const CAPACIDADE_TRACOS = {I:1, II:2, III:3, IV:4, V:5};
+const FASES_PROJETO = [
+  {id:'conceito',      nome:'Conceito'},
+  {id:'prototipo',     nome:'Protótipo'},
+  {id:'integracao',    nome:'Integração'},
+  {id:'validacao',     nome:'Validação'},
+  {id:'tese-ruptura',  nome:'Tese e Ruptura'},
+];
+const FAIXAS_CUSTO = [
+  {v:0, nome:'0 — trivial'}, {v:1, nome:'1 — cotidiano'}, {v:2, nome:'2 — especializado'},
+  {v:3, nome:'3 — caro'}, {v:4, nome:'4 — institucional'}, {v:5, nome:'5 — único ou estratégico'},
+];
+
+function categoriaOperacional(proj){
+  const idxs = [proj.categoriaProjeto, proj.categoriaCriador, proj.categoriaMaterial, proj.categoriaOficina]
+    .map(c => CATEGORIAS_ITEM.indexOf(c));
+  return CATEGORIAS_ITEM[Math.min(...idxs)];
+}
+function tracosContados(proj){
+  return proj.tracos.split(',').map(s => s.trim()).filter(Boolean).length;
 }
 
 // Mana de Simbologia Arcana — conferida contra o documento de design da Área.
@@ -2669,6 +2711,7 @@ function render(){
   if(!p.poderesLivres) p.poderesLivres = [];
   if(!p.inventario) p.inventario = {itens: []};
   if(!p.inventario.itens) p.inventario.itens = [];
+  if(!p.inventario.projetos) p.inventario.projetos = [];
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -3580,6 +3623,110 @@ function abaInventario(p){
     <h2 style="font-size:18px">Itens (${itens.length})</h2>
     ${itens.map((item,i) => painelItem(item, i)).join('') || '<p class="mini">(nenhum item ainda)</p>'}
     <button id="btAddItem">+ Adicionar item</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Projetos de Criação e Melhoria</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      "Forjar uma espada, montar um robô, inscrever um tomo, cultivar um
+      preparado, registrar um bestiário ou produzir uma obra usam o mesmo
+      esqueleto." Categoria Operacional é sempre a menor entre Projeto,
+      Criador, Material e Oficina.
+    </p>
+    ${(p.inventario.projetos||[]).map((proj,i) => painelProjeto(proj, i)).join('') || '<p class="mini">(nenhum projeto ainda)</p>'}
+    <button id="btAddProjeto">+ Novo Projeto</button>
+  </div>`;
+}
+
+function painelProjeto(proj, i){
+  const operacional = categoriaOperacional(proj);
+  const capacidade = CAPACIDADE_TRACOS[operacional];
+  const contados = tracosContados(proj);
+  const excedeTracos = contados > capacidade;
+  const fasesPermitidas = FASES_PROJETO.slice(0, capacidade);
+  return `<div class="linha-lista">
+    <div class="topo">
+      <input data-projeto-campo="${i}|nome" value="${esc(proj.nome)}" placeholder="Nome do projeto" style="font-family:Georgia,serif;font-size:16px">
+      <button data-projeto-remover="${i}" class="perigo">Remover</button>
+    </div>
+    <div class="grade g3" style="margin-top:8px">
+      <div><label for="projeto-${i}-escala">Escala</label>
+        <select id="projeto-${i}-escala" data-projeto-select="${i}|escala">
+          ${ESCALAS_PROJETO.map(e => `<option value="${e.id}" ${e.id===proj.escala?'selected':''}>${e.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="projeto-${i}-custo">Faixa de Custo</label>
+        <select id="projeto-${i}-custo" data-projeto-select="${i}|faixaCusto">
+          ${FAIXAS_CUSTO.map(f => `<option value="${f.v}" ${f.v===Number(proj.faixaCusto)?'selected':''}>${f.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="projeto-${i}-acesso">Acesso</label>
+        <select id="projeto-${i}-acesso" data-projeto-select="${i}|acesso">
+          ${ACESSOS_ITEM.map(a => `<option value="${a.id}" ${a.id===proj.acesso?'selected':''}>${a.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="grade g2" style="margin-top:8px">
+      <div><label for="projeto-${i}-intencao">Intenção (qual problema resolve)</label>
+        <input id="projeto-${i}-intencao" data-projeto-campo="${i}|intencao" value="${esc(proj.intencao)}"></div>
+      <div><label for="projeto-${i}-base">Base (Perfil universal)</label>
+        <input id="projeto-${i}-base" data-projeto-campo="${i}|base" value="${esc(proj.base)}"></div>
+      <div><label for="projeto-${i}-fonte">Fonte e Âncora</label>
+        <input id="projeto-${i}-fonte" data-projeto-campo="${i}|fonteAncora" value="${esc(proj.fonteAncora)}" placeholder="como funciona e como pode falhar"></div>
+      <div><label for="projeto-${i}-materiais">Materiais e oficina</label>
+        <input id="projeto-${i}-materiais" data-projeto-campo="${i}|materiaisOficina" value="${esc(proj.materiaisOficina)}"></div>
+    </div>
+    <div style="margin-top:8px">
+      <label for="projeto-${i}-tracos">Traços (separados por vírgula)</label>
+      <input id="projeto-${i}-tracos" data-projeto-tracos="${i}" value="${esc(proj.tracos)}" placeholder="alcance, proteção, sensor, condição...">
+      <p class="mini" style="margin-top:4px">A contagem abaixo e o aviso de excesso atualizam ao sair do campo.</p>
+    </div>
+    <div style="margin-top:8px">
+      <label for="projeto-${i}-falha">Falha interessante (Virada de Pressão)</label>
+      <input id="projeto-${i}-falha" data-projeto-campo="${i}|falhaInteressante" value="${esc(proj.falhaInteressante)}">
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">Categoria Operacional = menor entre Projeto, Criador, Material e Oficina</p>
+    <div class="grade g3">
+      <div><label for="projeto-${i}-cat-projeto">Categoria do Projeto</label>
+        <select id="projeto-${i}-cat-projeto" data-projeto-select="${i}|categoriaProjeto">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===proj.categoriaProjeto?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+      <div><label for="projeto-${i}-cat-criador">Categoria do Criador</label>
+        <select id="projeto-${i}-cat-criador" data-projeto-select="${i}|categoriaCriador">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===proj.categoriaCriador?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+      <div><label for="projeto-${i}-cat-material">Categoria do Material</label>
+        <select id="projeto-${i}-cat-material" data-projeto-select="${i}|categoriaMaterial">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===proj.categoriaMaterial?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+      <div><label for="projeto-${i}-cat-oficina">Categoria da Oficina</label>
+        <select id="projeto-${i}-cat-oficina" data-projeto-select="${i}|categoriaOficina">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===proj.categoriaOficina?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="grade g2" style="margin-top:10px">
+      <div class="derivado">
+        <div class="rot">Categoria Operacional</div>
+        <div class="val">${operacional}</div>
+      </div>
+      <div class="derivado ${excedeTracos?'risco':''}">
+        <div class="rot">Traços</div>
+        <div class="val">${contados}<span style="font-size:16px;color:var(--suave)">/${capacidade}</span></div>
+      </div>
+    </div>
+    ${excedeTracos ? `<div class="aviso">Mais Traços do que a Categoria Operacional comporta — reduza ou eleve a menor das quatro Categorias.</div>` : ''}
+
+    ${proj.escala === 'projeto' ? `
+      <div style="margin-top:10px">
+        <label for="projeto-${i}-fase">Fase atual</label>
+        <select id="projeto-${i}-fase" data-projeto-select="${i}|fase">
+          ${fasesPermitidas.map(f => `<option value="${f.id}" ${f.id===proj.fase?'selected':''}>${f.nome}</option>`).join('')}
+        </select>
+      </div>
+      <p class="mini" style="margin-top:6px">Categoria I conclui só Conceito; Categoria V exige as cinco fases — cada fase usa uma Cena de Desafio própria (Progresso/Pressão, referência no Escudo do Mestre).</p>
+    ` : ''}
+
+    <button data-projeto-concluir="${i}" style="margin-top:12px" ${proj.concluido || excedeTracos ? 'disabled' : ''}>
+      ${proj.concluido ? 'Já virou item' : '+ Concluir Projeto → vira item no Inventário'}
+    </button>
   </div>`;
 }
 
@@ -3630,6 +3777,7 @@ function painelItem(item, i){
       <input type="checkbox" data-item-pronto="${i}" ${item.pronto?'checked':''}>
       Pronto (conta na Carga Pronta — ${custoLegivel(tamanho.custo)})
     </label>
+    ${item.estado !== 'integro' ? `<button data-item-reparar="${i}" style="margin-top:10px">Reparar (volta a Íntegro — ${item.estado === 'quebrado' ? 'Repouso ou fase de Projeto' : 'Intervalo'})</button>` : ''}
     ${item.tipo === 'arma' ? `
       <div style="margin-top:10px">
         <label for="item-${i}-municao">Munição</label>
@@ -4083,6 +4231,47 @@ function ligarEventos(){
     }));
   app.querySelectorAll('[data-item-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.inventario.itens.splice(Number(b.dataset.itemRemover), 1)));
+  app.querySelectorAll('[data-item-reparar]').forEach(b =>
+    b.onclick = () => mudar(p => { p.inventario.itens[Number(b.dataset.itemReparar)].estado = 'integro'; }));
+
+  // Projetos de Criação e Melhoria.
+  const btAddProjeto = document.getElementById('btAddProjeto');
+  if(btAddProjeto) btAddProjeto.onclick = () => mudar(p => {
+    if(!p.inventario.projetos) p.inventario.projetos = [];
+    p.inventario.projetos.push(novoProjeto());
+  });
+  app.querySelectorAll('[data-projeto-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.projetoCampo.split('|');
+      p.inventario.projetos[Number(i)][campo] = el.value;
+    }, el));
+  // Traços usa onchange (redesenho imediato ao sair do campo) em vez de
+  // oninput — a contagem, o aviso de excesso e o botão de Concluir
+  // dependem do valor atualizado no mesmo redesenho, igual Guarda máxima.
+  app.querySelectorAll('[data-projeto-tracos]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.inventario.projetos[Number(el.dataset.projetoTracos)].tracos = el.value;
+    }));
+  app.querySelectorAll('[data-projeto-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, campo] = el.dataset.projetoSelect.split('|');
+      p.inventario.projetos[Number(i)][campo] = el.value;
+    }));
+  app.querySelectorAll('[data-projeto-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.inventario.projetos.splice(Number(b.dataset.projetoRemover), 1)));
+  app.querySelectorAll('[data-projeto-concluir]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const proj = p.inventario.projetos[Number(b.dataset.projetoConcluir)];
+      if(!proj || proj.concluido) return;
+      const item = novoItem();
+      item.nome = proj.nome.trim() || 'Item sem nome';
+      item.categoria = categoriaOperacional(proj);
+      item.perfil = proj.base;
+      item.tracos = proj.tracos;
+      item.acesso = proj.acesso;
+      p.inventario.itens.push(item);
+      proj.concluido = true;
+    }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

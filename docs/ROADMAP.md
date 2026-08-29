@@ -774,6 +774,24 @@ passando.
   - Testado com Playwright: Carga Pronta batendo com a fórmula, campos
     condicionais por tipo, soma de Carga por Tamanho, Sobrecarregado,
     Guarda subindo/descendo, remover item, persistência
+- [x] **Thrylikí Chelóna — Projetos de Criação, Melhoria e Reparo**
+      (29/08/2026) — decisão #38. A gramática genérica de item (o par
+      da decisão #33 do lado de itens em vez de poderes) mais um botão
+      Reparar nos itens que a decisão #37 já tinha criado.
+  - Sete campos de Projeto, Escala, quatro Categorias calculando a
+    Categoria Operacional (a menor) ao vivo, capacidade de Traços por
+    Categoria, Fase (só na Escala Projeto, limitada pela Categoria) e
+    Faixa de Custo; "Concluir Projeto" cria o item e trava
+  - Cena de Desafio por fase e Viradas de projeto ficam de fora —
+    julgamento de mesa, não automação
+  - Testado com Playwright: Categoria Operacional, capacidade de
+    Traços, aviso/trava de excesso, Fases por Categoria, criar item e
+    travar, Reparar, persistência
+- [x] Sistema Thrylikí Chelóna fecha a lista de fatias do plano de
+      conclusão do autor: chassi, dezesseis Áreas com combate e criação
+      livre, Ramos com técnicas prontas, Kit de 1º Ano, ficha de
+      inimigo com Fases de Chefe, Escudo do Mestre completo e
+      Inventário com criação/melhoria/reparo
 - [ ] Ometion
 
 ---
