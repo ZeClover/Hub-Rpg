@@ -2250,7 +2250,13 @@ function novoPersonagem(nome){
     simbologiaArcana: {manaAtual:null, reservatorio:0, concentrarUsado:false, formulas:[]},
     // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
     // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
-    roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
+    roboticaEngenharia: {
+      pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false,
+      // chassiTipo/categoriaChassi/nucleo/sistemaPrincipal/sistemasApoio/modulos:
+      // Chassi, Núcleo de Consciência e Módulos (robotica-e-engenharia-v6.1.md).
+      chassiTipo:'', categoriaChassi:'I', nucleo:'sem-nucleo',
+      sistemaPrincipal:'', sistemasApoio:[], modulos:[],
+    },
     // botanicaBiomancia: motor de Botânica e Biomancia — Seiva e até três
     // Cultivos, cada um num estágio de Broto(1) a Maturação(3).
     botanicaBiomancia: {seiva:2, cultivos:[]},
@@ -2545,6 +2551,33 @@ function vitaliciaMaxima(p){
   return 6 + 2*grauAtributo(p,'inteligencia') + 2*grauTreinamento(p.treinamentos['conhecimentos']||'nada') + reservatorio;
 }
 
+// Chassi, Núcleo de Consciência e Módulos (robotica-e-engenharia-v6.1.md):
+// "Projetar define Chassi e Módulos" — o verbo que faltava depois do
+// pool de recursos (decisão #24).
+const CHASSI_TIPOS = [
+  {id:'drone-formacao',   nome:'Drone/Formação',      desc:'unidades Micro–Pessoal condensadas numa ficha e Integridade compartilhada'},
+  {id:'automato',         nome:'Autômato Humanoide',  desc:'corpo Pessoal integrado, natural pra IA, Eco ou Alma'},
+  {id:'exotraje-mecha',   nome:'Exotraje/Mecha',      desc:'Pessoal–Monumental, com Locomoção, Proteção, Armamento, Suporte e Interface integrados'},
+  {id:'pchr',             nome:'PCHR',                desc:'Prótese e Componente Humano Robótico; não restaura canalização de parte sacrificada à Realidade'},
+  {id:'utilitario',       nome:'Utilitário',          desc:'trabalho, investigação, resgate e carga; Armamento incompatível por padrão'},
+  {id:'animal-robotico',  nome:'Animal Robótico',     desc:'transporte, auxílio, furtividade e combate; almas só em indivíduo nomeado e consentido'},
+  {id:'arma',             nome:'Arma',                desc:'Formas portáteis, pesadas ou instaladas; formato muda propriedades, não orçamento'},
+  {id:'veiculo-estrutura',nome:'Veículo/Estrutura',   desc:'mobilidade ou domínio de terreno, da escala Pessoal à Monumental'},
+];
+const NUCLEOS_CONSCIENCIA = [
+  {id:'sem-nucleo', nome:'Sem Núcleo',    desc:'controle direto ou remoto e Diretriz literal'},
+  {id:'programa',   nome:'Programa',      desc:'rotinas preparadas, sem personalidade'},
+  {id:'ia',         nome:'IA',            desc:'personalidade construída e interpretação contextual'},
+  {id:'eco',        nome:'Eco Mnêmico',   desc:'cópia parcial de lembranças; não é a pessoa morta'},
+  {id:'alma',       nome:'Alma Vinculada',desc:'espírito real, consciente, consentido e capaz de recusar'},
+];
+const MODULO_FAMILIAS = ['Locomoção','Sensor','Ferramenta','Proteção','Armamento','Suporte','Núcleo','Interface','Estrutural'];
+const MODULO_TETO_ANO = {1:2, 2:3, 3:4, 4:6, 5:8};
+function moduloTeto(p){ return MODULO_TETO_ANO[Math.min(5, Math.max(1, p.ano))]; }
+function escalaChassi(categoria){
+  return {I:'Pessoal', II:'Pesado', III:'Colossal', IV:'Monumental', V:'escala absurda (com Ascensões)'}[categoria] || 'Pessoal';
+}
+
 function ciclo(p){ return Math.floor((p.nivel-1)/20)+1; }
 function nivelNoCiclo(p){ return ((p.nivel-1)%20)+1; }
 function ascensoesConcluidas(p){ return Math.floor(p.nivel/20); }
@@ -2722,6 +2755,8 @@ const estado = {
   // não precisa ler DOENCAS_CATALOGO aqui (evita depender da ordem de
   // declaração no arquivo), o primeiro Par do catálogo é hardcoded.
   doencaRascunho: {classificacao:'Comum', id:'lobo__ouvido-canino'},
+  // moduloRascunho: rascunho de Módulo de Robótica e Engenharia.
+  moduloRascunho: {nome:'', familia:'Locomoção', categoria:'I', acao:'', custo:'', impacto:1, ancora:'', contrajogo:''},
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -2823,6 +2858,12 @@ function render(){
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false, formulas:[]};
   if(!p.simbologiaArcana.formulas) p.simbologiaArcana.formulas = [];
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
+  if(p.roboticaEngenharia.chassiTipo === undefined) p.roboticaEngenharia.chassiTipo = '';
+  if(!p.roboticaEngenharia.categoriaChassi) p.roboticaEngenharia.categoriaChassi = 'I';
+  if(!p.roboticaEngenharia.nucleo) p.roboticaEngenharia.nucleo = 'sem-nucleo';
+  if(p.roboticaEngenharia.sistemaPrincipal === undefined) p.roboticaEngenharia.sistemaPrincipal = '';
+  if(!p.roboticaEngenharia.sistemasApoio) p.roboticaEngenharia.sistemasApoio = [];
+  if(!p.roboticaEngenharia.modulos) p.roboticaEngenharia.modulos = [];
   if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
   if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
   if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
@@ -3604,9 +3645,8 @@ function painelRoboticaEngenharia(p){
     <h2 style="font-size:18px">Robótica e Engenharia — Comando, Carga e Vitalícia</h2>
     <p class="mini" style="margin:6px 0 14px">
       <strong>Projetar → Configurar → Operar.</strong> Os três recursos
-      não são intercambiáveis. Sistema, Chassi e Módulos completos (com
-      Encaixes, Integridade e Configuração) são fatia futura — por
-      enquanto isso controla só as três reservas.
+      não são intercambiáveis. Chassi, Núcleo de Consciência e Módulos
+      logo abaixo.
     </p>
     <div class="grade g3">
       <div class="derivado">
@@ -3657,6 +3697,91 @@ function painelRoboticaEngenharia(p){
       <strong>Trava de Efeito Relevante:</strong> no máximo um Efeito Relevante por ação, não importa quantos corpos, armas ou consciências existam; rajadas e enxames redistribuem, não multiplicam o total.<br>
       <strong>Núcleo de Consciência:</strong> Sem Núcleo, Programa, IA, Eco Mnêmico ou Alma Vinculada — nunca concede turno próprio.
     </p>
+  </div>
+
+  ${painelChassiRobotico(p)}`;
+}
+
+function painelChassiRobotico(p){
+  const re = p.roboticaEngenharia;
+  const modulos = re.modulos || [];
+  const teto = moduloTeto(p);
+  const chassi = CHASSI_TIPOS.find(c => c.id === re.chassiTipo);
+  const nucleo = NUCLEOS_CONSCIENCIA.find(n => n.id === re.nucleo) || NUCLEOS_CONSCIENCIA[0];
+  const dr = estado.moduloRascunho;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Chassi e Núcleo de Consciência</h2>
+    <div class="grade g3">
+      <div><label for="c-re-chassi">Chassi</label>
+        <select id="c-re-chassi">
+          <option value="">— nenhum —</option>
+          ${CHASSI_TIPOS.map(c => `<option value="${c.id}" ${c.id===re.chassiTipo?'selected':''}>${c.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-re-categoria-chassi">Categoria (escala)</label>
+        <select id="c-re-categoria-chassi">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===re.categoriaChassi?'selected':''}>${c} — ${escalaChassi(c)}</option>`).join('')}
+        </select></div>
+      <div><label for="c-re-nucleo">Núcleo de Consciência</label>
+        <select id="c-re-nucleo">
+          ${NUCLEOS_CONSCIENCIA.map(n => `<option value="${n.id}" ${n.id===re.nucleo?'selected':''}>${n.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    ${chassi ? `<p class="mini" style="margin-top:8px">${esc(chassi.desc)}</p>` : ''}
+    <p class="mini" style="margin-top:6px">${esc(nucleo.desc)} Consciência nunca concede turno próprio.</p>
+
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="c-re-sistema-principal">Sistema Principal</label>
+        <input id="c-re-sistema-principal" value="${esc(re.sistemaPrincipal)}" placeholder="arma, implante, robô, Formação, veículo ou estrutura"></div>
+    </div>
+    <p class="mini" style="margin:12px 0 6px">Sistemas de Apoio (${(re.sistemasApoio||[]).length}/${p.ano>=2?2:1})</p>
+    ${(re.sistemasApoio||[]).map((s,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-apoio-campo="${i}" value="${esc(s)}" placeholder="nome do Sistema de Apoio">
+        <button data-apoio-remover="${i}" class="perigo">Remover</button>
+      </div>
+    </div>`).join('') || '<p class="mini">(nenhum ainda)</p>'}
+    <button id="btAddApoio" ${(re.sistemasApoio||[]).length >= (p.ano>=2?2:1) ? 'disabled' : ''}>+ Sistema de Apoio</button>
+
+    <p class="mini" style="margin:16px 0 6px">Módulos (${modulos.length}/${teto} — teto do ${p.ano}º Ano)</p>
+    ${modulos.map((m,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-modulo-campo="${i}|nome" value="${esc(m.nome)}" placeholder="Nome do Módulo" style="font-family:Georgia,serif;font-size:16px">
+        <button data-modulo-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <p class="mini">${esc(m.familia)} · Categoria ${esc(m.categoria)} · Impacto ${m.impacto} · ${esc(m.acao)} · ${esc(m.custo)}</p>
+      ${m.ancora ? `<p class="mini"><strong>Âncora:</strong> ${esc(m.ancora)}</p>` : ''}
+      ${m.contrajogo ? `<p class="mini"><strong>Contrajogo:</strong> ${esc(m.contrajogo)}</p>` : ''}
+    </div>`).join('') || '<p class="mini">(nenhum Módulo ainda)</p>'}
+
+    ${modulos.length < teto ? `
+      <div class="grade g3" style="margin-top:10px">
+        <div><label for="c-modulo-familia">Família</label>
+          <select id="c-modulo-familia">
+            ${MODULO_FAMILIAS.map(f => `<option ${f===dr.familia?'selected':''}>${f}</option>`).join('')}
+          </select></div>
+        <div><label for="c-modulo-categoria">Categoria</label>
+          <select id="c-modulo-categoria">
+            ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===dr.categoria?'selected':''}>${c}</option>`).join('')}
+          </select></div>
+        <div><label for="c-modulo-impacto">Impacto</label>
+          <select id="c-modulo-impacto">
+            ${PODER_POTENCIAS.map(o => `<option value="${o.impacto}" ${o.impacto===dr.impacto?'selected':''}>${o.nome} (${o.impacto})</option>`).join('')}
+          </select></div>
+      </div>
+      <div class="grade g2" style="margin-top:8px">
+        <div><label for="c-modulo-nome">Nome</label>
+          <input id="c-modulo-nome" value="${esc(dr.nome)}" placeholder="ex: Drone Interceptor"></div>
+        <div><label for="c-modulo-acao">Ação</label>
+          <input id="c-modulo-acao" value="${esc(dr.acao)}" placeholder="Principal, Reação, Parcial..."></div>
+        <div><label for="c-modulo-custo">Custo (PC/Carga/Vitalícia)</label>
+          <input id="c-modulo-custo" value="${esc(dr.custo)}" placeholder="ex: 1 Carga, +1 PC se delegado"></div>
+        <div><label for="c-modulo-ancora">Âncora</label>
+          <input id="c-modulo-ancora" value="${esc(dr.ancora)}"></div>
+        <div style="grid-column:span 2"><label for="c-modulo-contrajogo">Contrajogo</label>
+          <input id="c-modulo-contrajogo" value="${esc(dr.contrajogo)}"></div>
+      </div>
+      <button id="btAddModulo" style="margin-top:10px">+ Adicionar Módulo</button>
+    ` : `<p class="mini">Teto de Módulos do ${p.ano}º Ano atingido.</p>`}
   </div>`;
 }
 
@@ -5038,6 +5163,68 @@ function ligarEventos(){
         Object.keys(p.consequencias).forEach(k => { p.consequencias[k] = Math.max(0, p.consequencias[k] - 1); });
       }
     }));
+
+  // Chassi, Núcleo de Consciência, Sistemas e Módulos de Robótica.
+  const reChassi = document.getElementById('c-re-chassi');
+  if(reChassi) reChassi.onchange = () => mudar(p => { p.roboticaEngenharia.chassiTipo = reChassi.value; });
+  const reCategoriaChassi = document.getElementById('c-re-categoria-chassi');
+  if(reCategoriaChassi) reCategoriaChassi.onchange = () => mudar(p => { p.roboticaEngenharia.categoriaChassi = reCategoriaChassi.value; });
+  const reNucleo = document.getElementById('c-re-nucleo');
+  if(reNucleo) reNucleo.onchange = () => mudar(p => { p.roboticaEngenharia.nucleo = reNucleo.value; });
+  const reSistemaPrincipal = document.getElementById('c-re-sistema-principal');
+  if(reSistemaPrincipal) reSistemaPrincipal.oninput = () => mudarSemRedesenhar(p => {
+    p.roboticaEngenharia.sistemaPrincipal = reSistemaPrincipal.value;
+  }, reSistemaPrincipal);
+
+  const btAddApoio = document.getElementById('btAddApoio');
+  if(btAddApoio) btAddApoio.onclick = () => mudar(p => {
+    const limite = p.ano >= 2 ? 2 : 1;
+    if((p.roboticaEngenharia.sistemasApoio||[]).length >= limite) return;
+    p.roboticaEngenharia.sistemasApoio.push('');
+  });
+  app.querySelectorAll('[data-apoio-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      p.roboticaEngenharia.sistemasApoio[Number(el.dataset.apoioCampo)] = el.value;
+    }, el));
+  app.querySelectorAll('[data-apoio-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.roboticaEngenharia.sistemasApoio.splice(Number(b.dataset.apoioRemover), 1)));
+
+  const moduloFamilia = document.getElementById('c-modulo-familia');
+  if(moduloFamilia) moduloFamilia.onchange = () => { estado.moduloRascunho.familia = moduloFamilia.value; };
+  const moduloCategoria = document.getElementById('c-modulo-categoria');
+  if(moduloCategoria) moduloCategoria.onchange = () => { estado.moduloRascunho.categoria = moduloCategoria.value; };
+  const moduloImpacto = document.getElementById('c-modulo-impacto');
+  if(moduloImpacto) moduloImpacto.onchange = () => { estado.moduloRascunho.impacto = Number(moduloImpacto.value); };
+  const moduloNome = document.getElementById('c-modulo-nome');
+  if(moduloNome) moduloNome.oninput = () => { estado.moduloRascunho.nome = moduloNome.value; };
+  const moduloAcao = document.getElementById('c-modulo-acao');
+  if(moduloAcao) moduloAcao.oninput = () => { estado.moduloRascunho.acao = moduloAcao.value; };
+  const moduloCusto = document.getElementById('c-modulo-custo');
+  if(moduloCusto) moduloCusto.oninput = () => { estado.moduloRascunho.custo = moduloCusto.value; };
+  const moduloAncora = document.getElementById('c-modulo-ancora');
+  if(moduloAncora) moduloAncora.oninput = () => { estado.moduloRascunho.ancora = moduloAncora.value; };
+  const moduloContrajogo = document.getElementById('c-modulo-contrajogo');
+  if(moduloContrajogo) moduloContrajogo.oninput = () => { estado.moduloRascunho.contrajogo = moduloContrajogo.value; };
+  const btAddModulo = document.getElementById('btAddModulo');
+  if(btAddModulo) btAddModulo.onclick = () => {
+    const dr = estado.moduloRascunho;
+    mudar(p => {
+      if((p.roboticaEngenharia.modulos||[]).length >= moduloTeto(p)) return;
+      p.roboticaEngenharia.modulos.push({
+        id: uid(), nome: dr.nome.trim() || 'Módulo sem nome', familia: dr.familia,
+        categoria: dr.categoria, acao: dr.acao, custo: dr.custo, impacto: dr.impacto,
+        ancora: dr.ancora, contrajogo: dr.contrajogo,
+      });
+    });
+    estado.moduloRascunho = {nome:'', familia:'Locomoção', categoria:'I', acao:'', custo:'', impacto:1, ancora:'', contrajogo:''};
+  };
+  app.querySelectorAll('[data-modulo-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.moduloCampo.split('|');
+      p.roboticaEngenharia.modulos[Number(i)][campo] = el.value;
+    }, el));
+  app.querySelectorAll('[data-modulo-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.roboticaEngenharia.modulos.splice(Number(b.dataset.moduloRemover), 1)));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

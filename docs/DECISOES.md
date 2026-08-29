@@ -1359,6 +1359,50 @@ Vida, zerando os Intervalos e reduzindo Ferimento em 1. Os trinta e três
 testes das fatias anteriores de Thrylikí Chelóna continuam passando.
 `tsc` e `lint` limpos.
 
+## 43. Thrylikí Chelóna — Chassi, Núcleo de Consciência e Módulos (29/08/2026)
+
+Voltando à lista de peças deixadas de fora nas fatias de combate
+originais (decisão #24: "Sistema/Chassi/Módulos completos (com
+Encaixes, Integridade e Configuração) são fatia futura"). De todo o
+material de Robótica e Engenharia, esta era a peça que mais faltava —
+o resto (Pontos de Comando, Carga, Vitalícia) já funcionava desde a
+decisão #24.
+
+- **Chassi**: os oito tipos do documento (Drone/Formação, Autômato
+  Humanoide, Exotraje/Mecha, PCHR, Utilitário, Animal Robótico, Arma,
+  Veículo/Estrutura) mais a Categoria (I-V), que define a escala
+  (Pessoal/Pesado/Colossal/Monumental/absurda com Ascensões)
+- **Núcleo de Consciência**: os cinco níveis (Sem Núcleo/Programa/IA/
+  Eco Mnêmico/Alma Vinculada), com o lembrete que nenhum concede turno
+  próprio — reaproveitado da nota que já existia no painel de recurso
+- **Sistemas**: campo de texto pro Sistema Principal, mais Sistemas de
+  Apoio com o limite do próprio documento (1 no 1º Ano, até 2 do 2º em
+  diante)
+- **Módulos**: cartão com Família (das nove do documento: Locomoção/
+  Sensor/Ferramenta/Proteção/Armamento/Suporte/Núcleo/Interface/
+  Estrutural), Categoria, Ação, Custo (texto livre — PC/Carga/
+  Vitalícia variam por Módulo), Impacto (reaproveitando a escala de
+  Potência do Construtor Livre de Poder), Âncora e Contrajogo — travado
+  pelo teto de Módulos ativos por Ano (2/3/4/6/8, a mesma progressão
+  2→8 do documento original)
+
+**Deixado de fora, de propósito:** Encaixe e compatibilidade por Módulo
+(o documento pede que cada Módulo declare Encaixe e compatibilidade
+específicos do Chassi, mas sem uma lista fechada de Encaixes por tipo
+de Chassi pra validar contra, isso viraria texto livre disfarçado de
+campo obrigatório); Configuração como estado separado de "ativo/
+inativo" por Módulo (o documento já limita quantos Módulos existem
+pelo teto — não modelei uma segunda camada de "quais estão ligados
+agora" sem um gatilho de jogo claro pra trocar isso em cena).
+
+Testado com Playwright: card aparece só na Área certa, descrição do
+Chassi e do Núcleo escolhidos aparecendo, limite de Sistemas de Apoio
+por Ano, teto de Módulos por Ano travando o formulário, Módulo salvo
+mostrando Família/Impacto/Custo corretos, teto subindo ao trocar de
+Ano, remover Módulo, e persistência do Chassi/Núcleo/Módulos após
+recarregar. Os trinta e sete testes das fatias anteriores de Thrylikí
+Chelóna continuam passando. `tsc` e `lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

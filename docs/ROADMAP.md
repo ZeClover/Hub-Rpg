@@ -831,6 +831,16 @@ passando.
   - Testado com Playwright: conversão de dano/cura, Guarda anulando
     dano, Primeiros Socorros travando/liberando, Intervalo contando e
     travando, Descanso completo enchendo Vida e reduzindo Consequência
+- [x] **Thrylikí Chelóna — Chassi, Núcleo de Consciência e Módulos**
+      (29/08/2026) — decisão #43. Peça de Robótica e Engenharia que a
+      decisão #24 tinha deixado pra depois.
+  - Chassi (8 tipos + Categoria/escala), Núcleo de Consciência (5
+    níveis), Sistema Principal/Apoio, e Módulos (9 Famílias, Categoria,
+    Ação, Custo, Impacto, Âncora, Contrajogo) travados pelo teto de
+    Módulos por Ano (2/3/4/6/8)
+  - Testado com Playwright: descrições de Chassi/Núcleo, limites de
+    Apoio e Módulos por Ano, Módulo salvo com os campos certos,
+    remover, persistência
 - [ ] Ometion
 
 ---
