@@ -1033,6 +1033,67 @@ parte com `<script>` desta página) continua funcionando sem regressão.
 Sem teste mais profundo — é conteúdo estático, mesmo padrão da decisão
 #28. `tsc` e `lint` limpos (arquivo HTML solto, sem efeito neles).
 
+## 37. Thrylikí Chelóna — Inventário (29/08/2026)
+
+Último buraco de peso encontrado na varredura dos documentos de design
+(mesmo mandato das decisões #33 a #36): `equipamentos-v6.1.md` define
+um sistema inteiro de itens (Cartão universal, Carga Pronta, Guarda de
+proteção, munição controlada) e a ficha de jogador não tinha
+**nenhuma** noção de inventário — nem uma aba, nem um campo. Fabula
+Ultima e o Sistema SAO já tinham o próprio há muitas fatias; Thrylikí
+Chelóna nunca tinha ganhado o dele.
+
+Nova aba "Inventário" em `public/thryliki-chelona.html`, fiel ao
+Cartão universal do documento:
+
+- **Carga Pronta** = `6 + Grau de Força` (fórmula que já existia desde o
+  chassi, decisão #20, só nunca tinha sido usada em lugar nenhum) —
+  card mostrando Carga usada/máxima, com aviso de Sobrecarregado quando
+  a soma dos itens marcados como "Pronto" passa do limite
+- Cada item declara os oito campos do documento: nome, Categoria (I–V),
+  tipo (arma/proteção/ferramenta/foco/consumível/veículo/criação),
+  Tamanho (que define o custo em Carga: mínimo 1/3, leve 1, volumoso 2,
+  pesado 3, transporte 0 — precisa de veículo), Perfil, Traços, Âncora
+  e fonte, Estado (Íntegro/Danificado/Quebrado) e Acesso (Comum/
+  Controlado/Raro/Único)
+- **Munição controlada** (Cheia/Baixa/Vazia) aparece só em itens tipo
+  Arma; **Guarda por cena** (com +/- e clamp automático ao máximo)
+  aparece só em itens tipo Proteção — o documento define os dois como
+  mecânicas específicas desses tipos, não campos universais
+- Item guardado fora da Carga Pronta (checkbox "Pronto" desmarcado)
+  continua existindo na lista, só não conta pro limite — fiel à
+  distinção do documento entre o que está pronto e o que precisa de
+  Ação Principal pra recuperar
+
+**Deixado de fora, de propósito:** conversão automática de Guarda em
+Vida ao sofrer dano — o documento descreve isso como automatizado, mas
+nenhum outro lugar do Hub tem um fluxo de "aplicar dano" pra Thrylikí
+Chelóna (nem Vida, nem Consequências); Guarda fica como reserva
+rastreada manualmente, igual todo o resto da ficha trata os próprios
+recursos. Fabricação/melhoria de item (`criacao-itens-v6.1.md`) também
+fica de fora — é um processo (sete campos, orçamento de Impacto),
+não um dado de personagem, mais parecido com o Construtor Livre de
+Poder do que com o Inventário.
+
+**Bug de padrão encontrado e corrigido antes de fechar:** o campo
+"Guarda por cena (máx)" começou ligado a `mudarSemRedesenhar` (sem
+redesenho imediato), igual os campos de nome/texto livre da ficha. Mas
+os botões +/- de Guarda logo abaixo dependem do novo máximo já
+refletido no redesenho pra saber se travam ou não — outros campos
+numéricos da ficha (Reservatório de Mana, Melhorias de Carga de
+Robótica) já resolvem isso com `onchange` + redesenho imediato, e o
+Inventário devia ter seguido o mesmo padrão desde o início. Corrigido
+antes de considerar a fatia pronta.
+
+Testado com Playwright: aba abre vazia, Carga Pronta batendo com a
+fórmula, item mudando de tipo mostra/esconde Munição e Guarda
+corretamente, Carga usada somando certo por Tamanho, desmarcar
+"Pronto" tirando o item da conta, aviso de Sobrecarregado ao passar do
+limite, Guarda subindo/descendo com o botão corrigido, remover item, e
+persistência após recarregar. Os vinte e dois testes das fatias
+anteriores de Thrylikí Chelóna continuam passando. `tsc` e `lint`
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

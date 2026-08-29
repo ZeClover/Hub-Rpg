@@ -763,6 +763,17 @@ passando.
       (29/08/2026) — decisão #36. Painel de figura social (Desejo/
       Objeção/Limite/Posição) e as cinco Posições, reaproveitando a
       Cena de Desafio que a decisão #28 já tinha trazido.
+- [x] **Thrylikí Chelóna — Inventário** (29/08/2026) — decisão #37.
+      Nova aba de jogador: Carga Pronta (`6 + Força`) e Cartão universal
+      de item (Categoria/Tipo/Tamanho/Perfil/Traços/Âncora/Estado/
+      Acesso), com Munição em armas e Guarda em proteções.
+  - Fabricação/melhoria de item e conversão automática de Guarda em
+    Vida ficam de fora — a primeira é processo, não dado de
+    personagem; a segunda não tem fluxo de "aplicar dano" em nenhum
+    outro lugar da ficha pra se conectar
+  - Testado com Playwright: Carga Pronta batendo com a fórmula, campos
+    condicionais por tipo, soma de Carga por Tamanho, Sobrecarregado,
+    Guarda subindo/descendo, remover item, persistência
 - [ ] Ometion
 
 ---

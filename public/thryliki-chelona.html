@@ -2256,7 +2256,18 @@ function novoPersonagem(nome){
     // diante) — vale pras quinze Áreas que não têm gramática própria
     // (Simbologia Arcana usa a Fórmula, guardada em simbologiaArcana.formulas).
     poderesLivres: [],
+    // inventario: cartão universal de item (nome/Categoria/tipo/Carga/
+    // Perfil/Traços/Âncora/estado/acesso), fiel a equipamentos-v6.1.md.
+    inventario: {itens: []},
     anotacoes: '',
+  };
+}
+
+function novoItem(){
+  return {
+    id: uid(), nome: '', categoria: 'I', tipo: 'ferramenta', tamanho: 'leve',
+    perfil: '', tracos: '', ancora: '', estado: 'integro', acesso: 'comum',
+    pronto: true, municao: '', guardaMax: 0, guardaAtual: null,
   };
 }
 
@@ -2269,6 +2280,41 @@ function grauAtributo(p, id){ return p.atributos[id] ?? 1; }
 function vidaMaxima(p){ return 35 + grauAtributo(p,'constituicao')*5 + Math.floor(p.nivel/2); }
 function deslocamento(p){ return 9 + 2*grauAtributo(p,'agilidade'); }
 function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
+
+// Cartão universal de item (equipamentos-v6.1.md): Categoria mede a escala
+// que o item suporta, não concede precisão/ações/dano de graça. Tamanho
+// define o custo em Carga Pronta — "mínimo" cabe três por espaço, então
+// custa 1/3 de Carga cada.
+const CATEGORIAS_ITEM = ['I','II','III','IV','V'];
+const TIPOS_ITEM = [
+  {id:'arma', nome:'Arma'}, {id:'protecao', nome:'Proteção'},
+  {id:'ferramenta', nome:'Ferramenta'}, {id:'foco', nome:'Foco'},
+  {id:'consumivel', nome:'Consumível'}, {id:'veiculo', nome:'Veículo'},
+  {id:'criacao', nome:'Criação'},
+];
+const TAMANHOS_ITEM = [
+  {id:'minimo', nome:'Mínimo (3 por espaço)', custo:1/3},
+  {id:'leve', nome:'Leve', custo:1},
+  {id:'volumoso', nome:'Volumoso', custo:2},
+  {id:'pesado', nome:'Pesado', custo:3},
+  {id:'transporte', nome:'Transporte (exige veículo/criatura)', custo:0},
+];
+const ESTADOS_ITEM = [
+  {id:'integro', nome:'Íntegro'}, {id:'danificado', nome:'Danificado'}, {id:'quebrado', nome:'Quebrado'},
+];
+const ACESSOS_ITEM = [
+  {id:'comum', nome:'Comum'}, {id:'controlado', nome:'Controlado'},
+  {id:'raro', nome:'Raro'}, {id:'unico', nome:'Único'},
+];
+const MUNICOES_ITEM = ['', 'cheia', 'baixa', 'vazia'];
+
+function custoCargaItem(item){
+  const tamanho = TAMANHOS_ITEM.find(t => t.id === item.tamanho) || TAMANHOS_ITEM[1];
+  return tamanho.custo;
+}
+function cargaUsada(p){
+  return (p.inventario.itens || []).filter(i => i.pronto).reduce((soma,i) => soma + custoCargaItem(i), 0);
+}
 
 // Mana de Simbologia Arcana — conferida contra o documento de design da Área.
 function manaMaxima(p){
@@ -2579,10 +2625,11 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const ABAS = [
-  {id:'status',    nome:'Status'},
-  {id:'atributos', nome:'Atributos e Perícias'},
-  {id:'combate',   nome:'Combate'},
-  {id:'notas',     nome:'Notas'},
+  {id:'status',     nome:'Status'},
+  {id:'atributos',  nome:'Atributos e Perícias'},
+  {id:'combate',    nome:'Combate'},
+  {id:'inventario', nome:'Inventário'},
+  {id:'notas',      nome:'Notas'},
 ];
 
 function render(){
@@ -2620,6 +2667,8 @@ function render(){
   if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
   if(!p.recursosNovaArea) p.recursosNovaArea = {};
   if(!p.poderesLivres) p.poderesLivres = [];
+  if(!p.inventario) p.inventario = {itens: []};
+  if(!p.inventario.itens) p.inventario.itens = [];
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2640,7 +2689,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, atributos:abaAtributos, combate:abaCombate, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, atributos:abaAtributos, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -3506,6 +3555,108 @@ function abaCombate(p){
   </div>`;
 }
 
+function abaInventario(p){
+  const itens = p.inventario.itens || [];
+  const usada = cargaUsada(p);
+  const max = cargaPronta(p);
+  const sobrecarregado = usada > max;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Carga Pronta</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <code>6 + Grau de Força</code> — só o que está <strong>Pronto</strong>
+      conta aqui. Item guardado fora da Carga Pronta existe, mas recuperá-lo
+      em cena exige Ação Principal e acesso ao recipiente.
+    </p>
+    <div class="grade g2">
+      <div class="derivado ${sobrecarregado?'risco':''}">
+        <div class="rot">Carga usada</div>
+        <div class="val">${custoLegivel(usada)}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      </div>
+    </div>
+    ${sobrecarregado ? `<div class="aviso">Sobrecarregado — depois de usar Movimento, o personagem fica Exposto (aplique na aba Combate); acima de ${max}+Força, só se move com ajuda ou transporte.</div>` : ''}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Itens (${itens.length})</h2>
+    ${itens.map((item,i) => painelItem(item, i)).join('') || '<p class="mini">(nenhum item ainda)</p>'}
+    <button id="btAddItem">+ Adicionar item</button>
+  </div>`;
+}
+
+function custoLegivel(n){
+  // Corta casas decimais desnecessárias (1/3 -> "0,33", 2 -> "2").
+  return Number(n.toFixed(2)).toString().replace('.', ',');
+}
+
+function painelItem(item, i){
+  const tamanho = TAMANHOS_ITEM.find(t => t.id === item.tamanho) || TAMANHOS_ITEM[1];
+  const guardaAtual = Math.max(0, Math.min(item.guardaMax || 0, item.guardaAtual ?? item.guardaMax ?? 0));
+  return `<div class="linha-lista">
+    <div class="topo">
+      <input data-item-campo="${i}|nome" value="${esc(item.nome)}" placeholder="Nome do item" style="font-family:Georgia,serif;font-size:16px">
+      <button data-item-remover="${i}" class="perigo">Remover</button>
+    </div>
+    <div class="grade g3" style="margin-top:8px">
+      <div><label for="item-${i}-categoria">Categoria</label>
+        <select id="item-${i}-categoria" data-item-select="${i}|categoria">
+          ${CATEGORIAS_ITEM.map(c => `<option value="${c}" ${c===item.categoria?'selected':''}>${c}</option>`).join('')}
+        </select></div>
+      <div><label for="item-${i}-tipo">Tipo</label>
+        <select id="item-${i}-tipo" data-item-select="${i}|tipo">
+          ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===item.tipo?'selected':''}>${t.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="item-${i}-tamanho">Tamanho (Carga)</label>
+        <select id="item-${i}-tamanho" data-item-select="${i}|tamanho">
+          ${TAMANHOS_ITEM.map(t => `<option value="${t.id}" ${t.id===item.tamanho?'selected':''}>${t.nome} — ${custoLegivel(t.custo)}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="grade g2" style="margin-top:8px">
+      <div><label for="item-${i}-perfil">Perfil (função básica)</label>
+        <input id="item-${i}-perfil" data-item-campo="${i}|perfil" value="${esc(item.perfil)}"></div>
+      <div><label for="item-${i}-tracos">Traços</label>
+        <input id="item-${i}-tracos" data-item-campo="${i}|tracos" value="${esc(item.tracos)}" placeholder="escolhas que diferenciam o item"></div>
+      <div><label for="item-${i}-ancora">Âncora e fonte</label>
+        <input id="item-${i}-ancora" data-item-campo="${i}|ancora" value="${esc(item.ancora)}" placeholder="mão, corpo, munição, energia, Mana, Seiva..."></div>
+      <div><label for="item-${i}-estado">Estado</label>
+        <select id="item-${i}-estado" data-item-select="${i}|estado">
+          ${ESTADOS_ITEM.map(e => `<option value="${e.id}" ${e.id===item.estado?'selected':''}>${e.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="item-${i}-acesso">Acesso</label>
+        <select id="item-${i}-acesso" data-item-select="${i}|acesso">
+          ${ACESSOS_ITEM.map(a => `<option value="${a.id}" ${a.id===item.acesso?'selected':''}>${a.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:10px">
+      <input type="checkbox" data-item-pronto="${i}" ${item.pronto?'checked':''}>
+      Pronto (conta na Carga Pronta — ${custoLegivel(tamanho.custo)})
+    </label>
+    ${item.tipo === 'arma' ? `
+      <div style="margin-top:10px">
+        <label for="item-${i}-municao">Munição</label>
+        <select id="item-${i}-municao" data-item-select="${i}|municao">
+          <option value="" ${!item.municao?'selected':''}>— não usa munição controlada —</option>
+          <option value="cheia" ${item.municao==='cheia'?'selected':''}>Cheia</option>
+          <option value="baixa" ${item.municao==='baixa'?'selected':''}>Baixa</option>
+          <option value="vazia" ${item.municao==='vazia'?'selected':''}>Vazia</option>
+        </select>
+      </div>` : ''}
+    ${item.tipo === 'protecao' ? `
+      <div class="grade g2" style="margin-top:10px">
+        <div><label for="item-${i}-guarda-max">Guarda por cena (máx)</label>
+          <input id="item-${i}-guarda-max" type="number" min="0" data-item-numero="${i}|guardaMax" value="${item.guardaMax||0}"></div>
+        <div>
+          <label>Guarda atual</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button data-item-guarda="${i}|-1" ${guardaAtual<=0?'disabled':''}>-1</button>
+            <span>${guardaAtual}</span>
+            <button data-item-guarda="${i}|1" ${guardaAtual>=(item.guardaMax||0)?'disabled':''}>+1</button>
+          </div>
+        </div>
+      </div>
+      <p class="mini" style="margin-top:6px">Cada ponto de Guarda reduz 0,25 Impacto de um golpe recebido antes de chegar na Vida. Retorna no Respiro se não estiver Danificada.</p>` : ''}
+  </div>`;
+}
+
 function abaNotas(p){
   return `<div class="cartao">
     <label for="c-anotacoes">Anotações</label>
@@ -3896,6 +4047,42 @@ function ligarEventos(){
     }, el));
   app.querySelectorAll('[data-poder-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.poderesLivres.splice(Number(b.dataset.poderRemover), 1)));
+
+  // Inventário: cartão universal de item.
+  const btAddItem = document.getElementById('btAddItem');
+  if(btAddItem) btAddItem.onclick = () => mudar(p => p.inventario.itens.push(novoItem()));
+  app.querySelectorAll('[data-item-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.itemCampo.split('|');
+      p.inventario.itens[Number(i)][campo] = el.value;
+    }, el));
+  app.querySelectorAll('[data-item-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, campo] = el.dataset.itemSelect.split('|');
+      p.inventario.itens[Number(i)][campo] = el.value;
+    }));
+  app.querySelectorAll('[data-item-numero]').forEach(el =>
+    // onchange (não oninput) porque as botões +/- de Guarda logo abaixo
+    // precisam do novo máximo já refletido no redesenho, igual o padrão
+    // de Reservatório/Melhorias de Carga em outras Áreas.
+    el.onchange = () => mudar(p => {
+      const [i, campo] = el.dataset.itemNumero.split('|');
+      p.inventario.itens[Number(i)][campo] = Math.max(0, Number(el.value) || 0);
+    }, el));
+  app.querySelectorAll('[data-item-pronto]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.inventario.itens[Number(el.dataset.itemPronto)].pronto = el.checked;
+    }));
+  app.querySelectorAll('[data-item-guarda]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [i, delta] = b.dataset.itemGuarda.split('|');
+      const item = p.inventario.itens[Number(i)];
+      const max = item.guardaMax || 0;
+      const atual = Math.min(item.guardaAtual ?? max, max);
+      item.guardaAtual = Math.max(0, Math.min(max, atual + Number(delta)));
+    }));
+  app.querySelectorAll('[data-item-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.inventario.itens.splice(Number(b.dataset.itemRemover), 1)));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
