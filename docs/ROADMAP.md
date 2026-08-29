@@ -648,6 +648,22 @@ passando.
     após recarregar, e varredura das outras oito Áreas pra pegar erro de
     escape de texto. Os nove testes das fatias anteriores continuam
     passando
+- [x] **Thrylikí Chelóna — ficha de inimigo** (29/08/2026) — decisão #27.
+      O maior buraco que sobrava depois das 16 Áreas: Fabula Ultima e SAO
+      já tinham ficha de inimigo, Thrylikí Chelóna não.
+  - **`public/thryliki-chelona-inimigo.html`** novo, com Modo Hub desde o
+    início: nome, Categoria (I-V), Porte, Função tática, Defesa fixa por
+    canal (com tabela de referência e "Recalcular pela fórmula" que marca
+    canais Forte/Fraco e ainda deixa sobrepor com valor manual), Vida,
+    deslocamento, condições, resistências especiais, Ações Características
+    (lista livre) e Reação — só o "Cartão de mesa" do documento de
+    criaturas; orçamento de encontro e fases de Chefe ficam pra depois
+  - **`src/lib/sistemas.ts`**: `fichaInimigo` aponta pro arquivo novo
+  - Testado com Playwright: valores iniciais, Defesa-base por Categoria,
+    marcar Forte/Fraco recalculando o canal certo, valor manual sobrepondo
+    o cálculo, condições, Ações Características, persistência após
+    recarregar, e Modo Hub completo mockado. Os testes da ficha de
+    jogador continuam passando
 - [ ] Ometion
 
 ---
