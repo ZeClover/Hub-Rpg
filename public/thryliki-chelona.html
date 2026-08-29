@@ -1351,6 +1351,22 @@ const CONSEQUENCIAS = [
   {id:'instabilidade', nome:'Instabilidade', sobre:'excesso mágico, corrupção, Resíduo da Realidade'},
 ];
 
+// Corpo e Cinética: as cinco marcas de movimento que formam um Rastro (até
+// duas visíveis por vez) antes de Romper e converter em efeito.
+const MARCAS_RASTRO = [
+  {id:'impulso',  nome:'Impulso'},
+  {id:'guarda',   nome:'Guarda'},
+  {id:'golpe',    nome:'Golpe'},
+  {id:'controle', nome:'Controle'},
+  {id:'alteracao',nome:'Alteração'},
+];
+// Custo em Esforço de Romper (encerrar o Rastro e converter em efeito).
+const ROMPER_OPCOES = [
+  {custo:1, nome:'Manobra', sobre:'uma manobra ou propriedade adicional'},
+  {custo:2, nome:'Técnica forte', sobre:'normalmente até 1,5 Impacto'},
+  {custo:3, nome:'Ápice telegrafado', sobre:'até 2,5 Impactos, exige preparação legível'},
+];
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1381,6 +1397,9 @@ function novoPersonagem(nome){
     // pacto: cada parte sacrificada à Realidade — decisão #64-like do SAO,
     // aqui é regra fixa do próprio sistema, não opcional por mesa.
     pacto: {dividas:0, partes:[]}, // partes: [{nome, canal, funcaoPerdida}]
+    // corpoCinetica: motor de combate da Área Corpo e Cinética (decisão
+    // #22) — só é lido/mostrado quando perfil.areaId === 'corpo-cinetica'.
+    corpoCinetica: {esforco:2, rastro:[]}, // rastro: até 2 marcas
     anotacoes: '',
   };
 }
@@ -1576,6 +1595,9 @@ function render(){
       ou importe um arquivo que você tenha exportado antes.</p></div>`;
     return;
   }
+
+  // Ficha salva antes da fatia de Corpo e Cinética não tem este campo.
+  if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1788,8 +1810,59 @@ function abaAtributos(p){
   </div>`;
 }
 
-function abaCombate(p){
+function painelCorpoCinetica(p){
+  if(p.perfil.areaId !== 'corpo-cinetica') return '';
+  const cc = p.corpoCinetica || {esforco:2, rastro:[]};
+  const rastro = cc.rastro || [];
   return `<div class="cartao">
+    <h2 style="font-size:18px">Corpo e Cinética — Esforço e Rastro</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Tensionar:</strong> uma ação física relevante sob risco gera 1
+      Esforço por rodada (0–5). <strong>Encadear:</strong> movimentos
+      compatíveis formam um Rastro de até duas marcas. <strong>Romper:</strong>
+      encerra o Rastro e converte Esforço acumulado em efeito.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Esforço</div>
+        <div class="val">${cc.esforco}<span style="font-size:16px;color:var(--suave)">/5</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-cc-esforco="1" ${cc.esforco>=5?'disabled':''}>+1 (ação sob risco)</button>
+        <button data-cc-forcar ${cc.esforco>=5?'disabled':''}>Forçar o Corpo (+1, fica Exposto)</button>
+        <button data-cc-esforco="-1" ${cc.esforco<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-cc-reset>Novo conflito (volta pra 2)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Rastro atual (${rastro.length}/2)</p>
+    <div class="condicoes">
+      ${rastro.map(m => `<span class="mini" style="border:1px solid var(--borda);border-radius:999px;padding:6px 12px">${MARCAS_RASTRO.find(x=>x.id===m)?.nome || m}</span>`).join('') || '<span class="mini">(vazio)</span>'}
+    </div>
+    <div class="condicoes" style="margin-top:10px">
+      ${MARCAS_RASTRO.map(m => `<button data-cc-marca="${m.id}" ${rastro.length>=2?'disabled':''}>+ ${m.nome}</button>`).join('')}
+      <button data-cc-limpar-rastro class="perigo" ${rastro.length===0?'disabled':''}>Encerrar Rastro</button>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Romper (gasta Esforço, encerra o Rastro)</p>
+    <div class="grade g3">
+      ${ROMPER_OPCOES.map(r => `<div>
+        <button data-cc-romper="${r.custo}" style="width:100%" ${cc.esforco<r.custo?'disabled':''}>${r.custo} Esforço — ${r.nome}</button>
+        <p class="mini" style="margin-top:6px">${r.sobre}</p>
+      </div>`).join('')}
+    </div>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Impulsos Somáticos:</strong> aplicações breves sobre o corpo — aceleração, potência, liberação de bloqueios; concedem propriedade, escala, movimento ou resistência, nunca multiplicam atributos.<br>
+      <strong>Alterações Corporais:</strong> modificam o Padrão do corpo por um tempo; só uma sustentada por vez (o 4º Ano permite duas compatíveis, dividindo orçamento).<br>
+      <strong>Votos Somáticos</strong> (4º Ano): inscrever uma regra no corpo em troca de poder equivalente à limitação aceita.<br>
+      <strong>Quebra de Padrão:</strong> Reação corporal com contato/interceptação — gasta Esforço pra reduzir, desviar ou desorganizar um efeito recebido.
+    </p>
+  </div>`;
+}
+
+function abaCombate(p){
+  return painelCorpoCinetica(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -1943,6 +2016,33 @@ function ligarEventos(){
     p.pacto.partes.push({nome:'', canal:'', funcaoPerdida:''});
     p.pacto.dividas = p.pacto.partes.length;
   });
+
+  // Corpo e Cinética: Esforço, Rastro e Romper.
+  app.querySelectorAll('[data-cc-esforco]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.ccEsforco);
+      p.corpoCinetica.esforco = Math.max(0, Math.min(5, p.corpoCinetica.esforco + delta));
+    }));
+  const ccForcar = document.getElementById('app').querySelector('[data-cc-forcar]');
+  if(ccForcar) ccForcar.onclick = () => mudar(p => {
+    p.corpoCinetica.esforco = Math.min(5, p.corpoCinetica.esforco + 1);
+    if(!p.condicoesEixo.includes('exposto')) p.condicoesEixo = [...p.condicoesEixo, 'exposto'];
+  });
+  const ccReset = app.querySelector('[data-cc-reset]');
+  if(ccReset) ccReset.onclick = () => mudar(p => p.corpoCinetica.esforco = 2);
+  app.querySelectorAll('[data-cc-marca]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      if(p.corpoCinetica.rastro.length < 2) p.corpoCinetica.rastro = [...p.corpoCinetica.rastro, b.dataset.ccMarca];
+    }));
+  const ccLimpar = app.querySelector('[data-cc-limpar-rastro]');
+  if(ccLimpar) ccLimpar.onclick = () => mudar(p => p.corpoCinetica.rastro = []);
+  app.querySelectorAll('[data-cc-romper]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.ccRomper);
+      if(p.corpoCinetica.esforco < custo) return;
+      p.corpoCinetica.esforco -= custo;
+      p.corpoCinetica.rastro = [];
+    }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
