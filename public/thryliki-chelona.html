@@ -1323,6 +1323,597 @@ const RAMOS = {
   ],
 };
 
+// Técnicas prontas por Ramo (Pressão/Sobrevivência/Tática) — conteúdo pronto
+// a partir do 2º Ano, sem depender de criação livre. Cada Ramo tem exatamente
+// três: Ação Principal, até 1 Impacto, usando o recurso normal da Área.
+const TECNICAS_RAMO = {
+  'corpo-cinetica__artes-marciais': [
+    {funcao:'Pressão', nome:'Golpe de Contrafluxo', efeito:'Transite de uma Postura para outra e faça a diferença entre elas definir a ruptura; repetir a mesma sequência torna sua abertura previsível.'},
+    {funcao:'Sobrevivência', nome:'Raiz que Cede', efeito:'Receba a ameaça numa Postura estável e transforme parte dela na transição do próximo turno.'},
+    {funcao:'Tática', nome:'Passo entre Guardas', efeito:'Mude de posição durante a transição e exponha a abertura de quem tentou acompanhar sua Postura antiga.'},
+  ],
+  'corpo-cinetica__armamentos-e-formas': [
+    {funcao:'Pressão', nome:'Gume Metamórfico', efeito:'Altere a Forma da arma no contato para explorar alcance, peso ou perfil previamente preparado.'},
+    {funcao:'Sobrevivência', nome:'Forma de Aparar', efeito:'Converta a arma numa guarda específica; mudar novamente abandona essa proteção.'},
+    {funcao:'Tática', nome:'Troca de Alcance', efeito:'Reposicione o ponto útil da arma e mude qual distância conta como segura até a próxima Forma.'},
+  ],
+  'corpo-cinetica__atletismo-sobrenatural': [
+    {funcao:'Pressão', nome:'Colisão de Momento', efeito:'Complete um Trajeto relevante e entregue o movimento acumulado no obstáculo ou alvo final.'},
+    {funcao:'Sobrevivência', nome:'Queda Convertida', efeito:'Transforme queda ou empurrão em novo trecho do Trajeto, desde que haja superfície alcançável.'},
+    {funcao:'Tática', nome:'Percurso Improvável', efeito:'Encadeie três apoios diferentes e atravesse uma rota que permanece contestável em cada ponto.'},
+  ],
+  'corpo-cinetica__bastiao': [
+    {funcao:'Pressão', nome:'Ombro de Cerco', efeito:'Empurre a ameaça para longe do alvo protegido e assuma você mesmo a nova linha de confronto.'},
+    {funcao:'Sobrevivência', nome:'Corpo Interposto', efeito:'Declare pessoa ou zona protegida e consuma sua reserva defensiva antes que ela seja atingida.'},
+    {funcao:'Tática', nome:'Muralha Ambulante', efeito:'Mova a fronteira protegida junto de você; quem sair dela deixa de consumir seu orçamento.'},
+  ],
+  'corpo-cinetica__tatica-de-combate': [
+    {funcao:'Pressão', nome:'Fogo Convergente', efeito:'Marque um padrão e distribua funções de isca, leitura e execução; cada aliado age no próprio turno e amplia apenas a abertura.'},
+    {funcao:'Sobrevivência', nome:'Cobertura de Contingência', efeito:'Prepare resposta para a manobra anunciada; se ela não ocorrer, a reserva vira informação em vez de proteção.'},
+    {funcao:'Tática', nome:'Mudança de Formação', efeito:'Redistribua papéis e posições após reconhecer o padrão, sem deslocar ninguém que rejeite o plano.'},
+  ],
+  'simbologia-arcana__elementalismo': [
+    {funcao:'Pressão', nome:'Reação de Essências', efeito:'Combine duas Essências presentes ou ancoradas; a interação define a ruptura e nada surge sem fonte material ou energética.'},
+    {funcao:'Sobrevivência', nome:'Manto de Contrário', efeito:'Cubra-se com a Essência que responde à ameaça observada; repetir a mesma combinação acumula instabilidade.'},
+    {funcao:'Tática', nome:'Ponte Elemental', efeito:'Faça uma propriedade viajar entre duas Âncoras que compartilhem uma Essência compatível.'},
+  ],
+  'simbologia-arcana__selos-e-protecoes': [
+    {funcao:'Pressão', nome:'Selo de Repercussão', efeito:'Inscreva uma violação específica; quando ocorrer, a Âncora devolve a consequência anunciada.'},
+    {funcao:'Sobrevivência', nome:'Limiar de Guarda', efeito:'Proteja uma fronteira marcada até alguém pagar Mana, quebrar a Âncora ou cumprir sua condição.'},
+    {funcao:'Tática', nome:'Rede de Inscrições', efeito:'Ligue dois Selos e escolha por qual Âncora a próxima ativação válida será resolvida.'},
+  ],
+  'simbologia-arcana__ilusao': [
+    {funcao:'Pressão', nome:'Premissa Hostil', efeito:'Sustente uma ameaça falsa com duas evidências reais; descobrir a regra permite ao alvo inverter a abertura contra a ilusão.'},
+    {funcao:'Sobrevivência', nome:'Álibi Visual', efeito:'Sustente uma versão protegida da posição enquanto duas evidências visíveis continuarem coerentes.'},
+    {funcao:'Tática', nome:'Evidência Trocada', efeito:'Quando descobrirem uma falsidade, revele qual pista verdadeira estava escondida pelo mesmo Enquadramento.'},
+  ],
+  'simbologia-arcana__encantamento': [
+    {funcao:'Pressão', nome:'Padrão Predatório', efeito:'O portador repete um movimento inscrito e fortalece sua função apenas contra o alvo marcado.'},
+    {funcao:'Sobrevivência', nome:'Motivo Guardião', efeito:'Encante objeto com gesto defensivo que precisa ser reencenado para continuar ativo.'},
+    {funcao:'Tática', nome:'Troca de Portador', efeito:'Transfira o padrão a outro objeto compatível; o antigo perde imediatamente a função encantada.'},
+  ],
+  'simbologia-arcana__ritualistica-e-invocacao': [
+    {funcao:'Pressão', nome:'Culminação Prematura', efeito:'Conclua o Ritual cedo com menos alcance; a etapa sacrificada vira uma fraqueza pública que pode desfazer o resultado.'},
+    {funcao:'Sobrevivência', nome:'Círculo Investido', efeito:'Deixe a invocação incompleta para alimentar proteção enquanto as etapas já concluídas permanecerem intactas.'},
+    {funcao:'Tática', nome:'Etapa Reposicionada', efeito:'Mova uma parte do Ritual para nova Âncora, reabrindo a possibilidade de interrupção naquele ponto.'},
+  ],
+  'simbologia-arcana__linguagem-da-realidade': [
+    {funcao:'Pressão', nome:'Verbo de Ruptura', efeito:'Declare Sujeito, Verbo e limitação; a frase age somente quando a gramática encontra seu referente.'},
+    {funcao:'Sobrevivência', nome:'Cláusula Negativa', efeito:'Defina o que a ameaça não pode fazer, aceitando a mesma limitação para sua própria magia.'},
+    {funcao:'Tática', nome:'Substituição de Sujeito', efeito:'Troque o referente da frase sem alterar Verbo ou limitação; ambiguidade permite resistência.'},
+  ],
+  'robotica-engenharia__drones-e-enxames': [
+    {funcao:'Pressão', nome:'Pulso Convergente', efeito:'Drones ocupam ângulos diferentes e resolvem um único ataque pela interseção da formação.'},
+    {funcao:'Sobrevivência', nome:'Malha de Interceptação', efeito:'Distribua proteção pela zona do enxame; perder uma unidade abre um corredor visível.'},
+    {funcao:'Tática', nome:'Relé de Enxame', efeito:'Transmita sensor ou Ordem entre unidades, mudando o ponto de origem sem criar nova ação.'},
+  ],
+  'robotica-engenharia__exotrajes-e-mechas': [
+    {funcao:'Pressão', nome:'Punho de Sobrecarga', efeito:'Desvie potência de mobilidade ou defesa para o atuador; reutilizá-lo antes de resfriar ameaça a interface do piloto.'},
+    {funcao:'Sobrevivência', nome:'Estrutura Reforçada', efeito:'Concentre potência na blindagem; calor acumulado limita a próxima realocação.'},
+    {funcao:'Tática', nome:'Roteamento de Potência', efeito:'Mova energia entre propulsão, sensores e ferramentas conforme a prioridade atual do traje.'},
+  ],
+  'robotica-engenharia__arsenal': [
+    {funcao:'Pressão', nome:'Munição de Assinatura', efeito:'Escolha Forma e propriedade preparadas; disparar a combinação aumenta Calor no módulo usado.'},
+    {funcao:'Sobrevivência', nome:'Dissipador Reativo', efeito:'Converta Calor em barreira momentânea e deixe o Arsenal incapaz de usar aquela Forma até resfriar.'},
+    {funcao:'Tática', nome:'Plataforma Reconfigurada', efeito:'Troque alcance, área ou mobilidade da arma sem trocar sua propriedade principal.'},
+  ],
+  'robotica-engenharia__cibernetica': [
+    {funcao:'Pressão', nome:'Implante de Ruptura', efeito:'Ative função ofensiva ligada ao corpo; usos consecutivos acumulam interferência na Âncora neural e podem devolver a pressão ao usuário.'},
+    {funcao:'Sobrevivência', nome:'Desvio de Emergência', efeito:'Isole um implante comprometido e transfira sua função vital a outro módulo por um turno.'},
+    {funcao:'Tática', nome:'Sobreposição Sensorial', efeito:'Combine dois sensores para revelar assinatura escondida, aceitando ruído em uma percepção diferente.'},
+  ],
+  'robotica-engenharia__veiculos-e-estruturas': [
+    {funcao:'Pressão', nome:'Rota de Impacto', efeito:'Marque percurso do veículo ou estrutura móvel; obstáculos intactos reduzem a força da chegada.'},
+    {funcao:'Sobrevivência', nome:'Baluarte Desdobrável', efeito:'Converta mobilidade em Estação defensiva; partir exige recolher ou abandonar a proteção.'},
+    {funcao:'Tática', nome:'Estação de Campo', efeito:'Instale função de reparo, transporte ou sensor numa posição que redefine as rotas úteis.'},
+  ],
+  'robotica-engenharia__inteligencias-e-vinculos': [
+    {funcao:'Pressão', nome:'Diretriz de Exploração', efeito:'A inteligência identifica violação da própria regra e você a converte em abertura usando sua ação.'},
+    {funcao:'Sobrevivência', nome:'Protocolo de Salvaguarda', efeito:'Defina o que a inteligência deve preservar antes da eficiência; conflito de prioridades a interrompe.'},
+    {funcao:'Tática', nome:'Consulta Paralela', efeito:'Peça duas análises incompatíveis e escolha uma para executar; a outra permanece apenas informação.'},
+  ],
+  'botanica-biomancia__flora-predatoria': [
+    {funcao:'Pressão', nome:'Mandíbula de Broto', efeito:'O Cultivo fecha a armadilha quando a Presa marcada cruza a zona de emboscada.'},
+    {funcao:'Sobrevivência', nome:'Casca de Espinhos', efeito:'Proteja o Cultivo ou jardineiro e marque como Presa quem romper sua superfície.'},
+    {funcao:'Tática', nome:'Cipó de Caça', efeito:'Desloque a zona de emboscada em direção aos rastros da Presa, sem atacar fora de sua ação.'},
+  ],
+  'botanica-biomancia__fitomedicina': [
+    {funcao:'Pressão', nome:'Seiva Coagulante', efeito:'Interrompa uma função exposta do alvo com composto que também revela como neutralizá-lo.'},
+    {funcao:'Sobrevivência', nome:'Cura Cultivada', efeito:'Escolha estabilizar agora ou deixar o Cultivo amadurecer para recuperação maior depois.'},
+    {funcao:'Tática', nome:'Pólen Diagnóstico', efeito:'Espalhe marcador que muda de cor diante do quadro, vetor ou condição preparada.'},
+  ],
+  'botanica-biomancia__simbiose': [
+    {funcao:'Pressão', nome:'Resposta do Hospedeiro', efeito:'A simbiose manifesta traço ofensivo após observar a ameaça, mas impõe ao hospedeiro a limitação corporal correspondente.'},
+    {funcao:'Sobrevivência', nome:'Tecido Recíproco', efeito:'Hospedeiro e Cultivo dividem a proteção e também a vulnerabilidade específica da adaptação.'},
+    {funcao:'Tática', nome:'Troca Adaptativa', efeito:'Substitua um traço simbiótico por outro preparado; a adaptação abandonada não retorna nesta cena.'},
+  ],
+  'botanica-biomancia__ecologia-aplicada': [
+    {funcao:'Pressão', nome:'Espécie Invasora', efeito:'Introduza função que cresce onde a zona perdeu equilíbrio e recua quando a diversidade é restaurada.'},
+    {funcao:'Sobrevivência', nome:'Bioma de Refúgio', efeito:'Cultivos diferentes sustentam proteção conjunta; remover uma espécie abre sua função ecológica.'},
+    {funcao:'Tática', nome:'Sucessão do Jardim', efeito:'Transforme a zona de pioneira em madura, trocando mobilidade por controle ou controle por recuperação.'},
+  ],
+  'botanica-biomancia__toxicologia': [
+    {funcao:'Pressão', nome:'Seiva Condicionada', efeito:'A toxina vegetal avança apenas quando o alvo executa o comportamento ligado ao vetor.'},
+    {funcao:'Sobrevivência', nome:'Casca Antídoto', efeito:'Cultive proteção contra o composto identificado; outro veneno atravessa normalmente.'},
+    {funcao:'Tática', nome:'Semente Vetorial', efeito:'Marque superfícies por onde o agente viaja e revele a próxima exposição antes do sintoma.'},
+  ],
+  'botanica-biomancia__micologia': [
+    {funcao:'Pressão', nome:'Podridão Seletiva', efeito:'Decomponha somente a matéria ou efeito marcado, convertendo o resíduo em alimento para a rede.'},
+    {funcao:'Sobrevivência', nome:'Leito de Micélio', efeito:'A malha absorve a ameaça e perde conexões conforme sua reserva é consumida.'},
+    {funcao:'Tática', nome:'Rede de Esporos', efeito:'Conecte dois Cultivos para transmitir sinal, nutriente ou função reduzida sem duplicar resultado.'},
+  ],
+  'zoologia-etologia__domesticacao': [
+    {funcao:'Pressão', nome:'Investida por Confiança', efeito:'O companheiro executa comportamento treinado quando há confiança; medo, abuso ou contexto incompatível permitem que ele recuse o comando.'},
+    {funcao:'Sobrevivência', nome:'Guarda do Companheiro', efeito:'O Perfil protege usando sua ação e ganha confiança quando você respeita seu limite.'},
+    {funcao:'Tática', nome:'Sinal Condicionado', efeito:'Associe gesto a comportamento específico; mudar o contexto pode exigir nova leitura do animal.'},
+  ],
+  'zoologia-etologia__ranger-de-campo': [
+    {funcao:'Pressão', nome:'Ataque do Habitat', efeito:'Use terreno e trilha observados para atingir de onde a Presa não espera, sem ignorar cobertura real.'},
+    {funcao:'Sobrevivência', nome:'Abrigo de Campo', efeito:'Construa proteção com sinais do habitat; mudança ambiental reduz sua eficácia.'},
+    {funcao:'Tática', nome:'Trilha de Passagem', efeito:'Leia rastros para revelar rota, ritmo e ponto onde o alvo precisou mudar de comportamento.'},
+  ],
+  'zoologia-etologia__caca-de-monstros': [
+    {funcao:'Pressão', nome:'Golpe de Contramedida', efeito:'Aplique a Fraqueza confirmada com ferramenta preparada; hipótese errada expõe o caçador.'},
+    {funcao:'Sobrevivência', nome:'Resposta Ensaiada', efeito:'Prepare defesa contra a capacidade observada; mudança de fase exige nova contramedida.'},
+    {funcao:'Tática', nome:'Marca de Comportamento', efeito:'Registre o padrão do monstro e anuncie a abertura que sua próxima repetição criará.'},
+  ],
+  'zoologia-etologia__anatomia-comparada': [
+    {funcao:'Pressão', nome:'Traço Incompatível', efeito:'Introduza adaptação que entra em conflito com a função anatômica observada e a limita.'},
+    {funcao:'Sobrevivência', nome:'Órgão Comparado', efeito:'Adote resposta de espécie análoga contra a ameaça, aceitando sua incompatibilidade específica.'},
+    {funcao:'Tática', nome:'Mapa de Homologias', efeito:'Compare corpos e revele onde funções diferentes compartilham a mesma estrutura vulnerável.'},
+  ],
+  'zoologia-etologia__matilhas-e-enxames': [
+    {funcao:'Pressão', nome:'Onda de Flanco', efeito:'A formação cerca por posições sucessivas, mas resolve um único ataque através da melhor abertura.'},
+    {funcao:'Sobrevivência', nome:'Centro da Matilha', efeito:'Distribua proteção aos membros conectados; separar um deles remove apenas sua parcela.'},
+    {funcao:'Tática', nome:'Rotação Coletiva', efeito:'Troque frente, centro e retaguarda da formação sem conceder turnos aos Perfis.'},
+  ],
+  'zoologia-etologia__criptozoologia': [
+    {funcao:'Pressão', nome:'Anomalia Confirmada', efeito:'Use evidência para tornar a propriedade impossível da criatura uma vulnerabilidade verificável.'},
+    {funcao:'Sobrevivência', nome:'Protocolo de Anomalia', efeito:'Prepare proteção para a hipótese atual; evidência contrária obriga revisão.'},
+    {funcao:'Tática', nome:'Isca de Evidência', efeito:'Crie situação que distingue duas hipóteses sem presumir qual criatura ou capacidade existe.'},
+  ],
+  'arte-expressao__musica-e-acustica': [
+    {funcao:'Pressão', nome:'Acorde Dissonante', efeito:'Quebre o Ritmo esperado diante de ouvintes e transforme a tensão acumulada numa abertura; silêncio imposto corta o Crescendo.'},
+    {funcao:'Sobrevivência', nome:'Nota Sustentada', efeito:'Mantenha proteção enquanto o som, a respiração ou a fonte acústica não forem interrompidos.'},
+    {funcao:'Tática', nome:'Mudança de Compasso', efeito:'Altere quando o Crescendo chegar e faça aliados ajustarem suas ações, sem ganhar ações novas.'},
+  ],
+  'arte-expressao__pintura-e-ilustracao': [
+    {funcao:'Pressão', nome:'Perspectiva Agressiva', efeito:'Represente o alvo como próximo, pequeno ou exposto e ancore essa relação numa superfície visível.'},
+    {funcao:'Sobrevivência', nome:'Moldura de Abrigo', efeito:'Pinte uma relação de proteção entre figura e cenário; rasgar a ligação abre a defesa.'},
+    {funcao:'Tática', nome:'Relação Redesenhada', efeito:'Mude qual figura está diante, atrás ou ligada a outra sem criar matéria nova.'},
+  ],
+  'arte-expressao__escultura': [
+    {funcao:'Pressão', nome:'Fratura da Forma', efeito:'Explore a tensão entre material e Forma para romper a função que a escultura representa.'},
+    {funcao:'Sobrevivência', nome:'Estátua Portante', efeito:'Modele estrutura que suporta carga enquanto base, material e pose permanecerem coerentes.'},
+    {funcao:'Tática', nome:'Remodelagem Direta', efeito:'Retire volume de uma parte e o aplique em outra, mudando passagem, alcance ou apoio.'},
+  ],
+  'arte-expressao__teatro-e-dramaturgia': [
+    {funcao:'Pressão', nome:'Entrada do Antagonista', efeito:'Atribua papel hostil a quem entrar na Cena pela deixa preparada; recusar o papel revela a contradição.'},
+    {funcao:'Sobrevivência', nome:'Substituto em Cena', efeito:'Outro participante assume voluntariamente o papel ameaçado e recebe sua proteção e obrigação.'},
+    {funcao:'Tática', nome:'Mudança de Cenário', efeito:'Encerre a Cena atual e estabeleça nova disposição de papéis, objetivo e saída visível.'},
+  ],
+  'arte-expressao__danca-e-coreografia': [
+    {funcao:'Pressão', nome:'Passo Cortante', efeito:'Cruze o espaço pelo gesto coreografado e faça a linha do movimento definir a pressão.'},
+    {funcao:'Sobrevivência', nome:'Par de Esquiva', efeito:'Dois dançarinos coordenam posições e dividem a proteção sem compartilhar ações.'},
+    {funcao:'Tática', nome:'Desenho Coreográfico', efeito:'Cada Passo ocupa um ponto da figura; completá-la abre a transição de toda a formação.'},
+  ],
+  'arte-expressao__literatura-e-poesia': [
+    {funcao:'Pressão', nome:'Ferida Prenunciada', efeito:'Plante sinal narrativo e faça o Desfecho ocorrer somente se o tema se repetir na cena.'},
+    {funcao:'Sobrevivência', nome:'Refrão Protetor', efeito:'Repita uma frase temática em situações diferentes para manter a defesa coerente.'},
+    {funcao:'Tática', nome:'Virada de Enredo', efeito:'Reinterprete um Prenúncio verdadeiro e mude para qual Desfecho compatível ele conduz.'},
+  ],
+  'arte-expressao__fotografia-e-cinema': [
+    {funcao:'Pressão', nome:'Quadro Decisivo', efeito:'Capture o Instante da abertura e preserve sua relação até a montagem ser contestada.'},
+    {funcao:'Sobrevivência', nome:'Continuidade de Cena', efeito:'Mantenha posição ou estado entre dois quadros enquanto nenhuma mudança relevante for registrada.'},
+    {funcao:'Tática', nome:'Montagem Paralela', efeito:'Alterne entre dois Instantes relacionados e revele como ações separadas convergem.'},
+  ],
+  'arte-expressao__moda-e-tecelagem': [
+    {funcao:'Pressão', nome:'Silhueta Dominante', efeito:'Use forma, movimento e identidade do traje para pressionar quem aceita sua leitura visual.'},
+    {funcao:'Sobrevivência', nome:'Trama de Proteção', efeito:'Distribua a ameaça pelas Âncoras do tecido; cada corte remove uma função da composição.'},
+    {funcao:'Tática', nome:'Troca de Figurino', efeito:'Mude a identidade apresentada e quais permissões sociais ou mágicas o traje sustenta.'},
+  ],
+  'alquimia-quimica__pocoes-e-elixires': [
+    {funcao:'Pressão', nome:'Dose de Ruptura', efeito:'Administre ou arremesse uma dose que converte a propriedade corporal preparada numa fraqueza imediata.'},
+    {funcao:'Sobrevivência', nome:'Elixir de Reserva', efeito:'Prepare recuperação que amadurece quando o destinatário cumpre a condição escrita no frasco.'},
+    {funcao:'Tática', nome:'Dose de Mutação', efeito:'Troque temporariamente um sentido ou modo de movimento do destinatário por outro preparado.'},
+  ],
+  'alquimia-quimica__explosivos-e-reacoes': [
+    {funcao:'Pressão', nome:'Carga Direcionada', efeito:'Detone somente o cone marcado da carga, rompendo alvo ou cobertura sem atingir o restante da zona.'},
+    {funcao:'Sobrevivência', nome:'Cápsula de Contenção', efeito:'Faça a explosão dobrar para dentro e absorver uma ameaça que cruzar o recipiente.'},
+    {funcao:'Tática', nome:'Estopim em Cadeia', efeito:'Ligue duas cargas; detonar uma transfere a posição ameaçada para a segunda, sem duplicar Impacto.'},
+  ],
+  'alquimia-quimica__transmutacao': [
+    {funcao:'Pressão', nome:'Troca de Fragilidade', efeito:'Retire dureza de um material tocado e entregue-lhe a fragilidade de outra amostra preparada.'},
+    {funcao:'Sobrevivência', nome:'Dureza Emprestada', efeito:'Transfira resistência de uma amostra para uma proteção; a origem permanece enfraquecida até a devolução.'},
+    {funcao:'Tática', nome:'Ponte de Propriedades', efeito:'Faça dois materiais trocarem aderência, peso ou flexibilidade para abrir uma rota improvável.'},
+  ],
+  'alquimia-quimica__materiais-impossiveis': [
+    {funcao:'Pressão', nome:'Lâmina Faminta', efeito:'Crie peça que atravessa a interação especificada, mas se torna vulnerável ao seu oposto declarado.'},
+    {funcao:'Sobrevivência', nome:'Casca Contraditória', efeito:'Vista uma proteção rígida contra uma ameaça e permeável contra outra escolhida na fabricação.'},
+    {funcao:'Tática', nome:'Cunha de Incompatibilidade', efeito:'Insira material impossível entre duas estruturas e impeça que funcionem juntas enquanto a cunha resistir.'},
+  ],
+  'alquimia-quimica__toxicologia': [
+    {funcao:'Pressão', nome:'Toxina Seletiva', efeito:'Avance um sintoma apenas quando o alvo executar o comportamento ou usar a função anunciada.'},
+    {funcao:'Sobrevivência', nome:'Antídoto Marcador', efeito:'Contenha um estágio e revele pelo corpo qual vetor tentaria avançá-lo novamente.'},
+    {funcao:'Tática', nome:'Rastro Sintomático', efeito:'Use sintomas compartilhados para localizar o vetor, sua origem ou a próxima criatura exposta.'},
+  ],
+  'alquimia-quimica__farmacologia': [
+    {funcao:'Pressão', nome:'Dose Supressora', efeito:'Reduza uma função ativa do alvo enquanto outra propriedade secundária preparada se intensifica.'},
+    {funcao:'Sobrevivência', nome:'Regulador de Emergência', efeito:'Suspenda uma condição até o próximo turno; depois escolha tratá-la ou aceitar seu retorno anunciado.'},
+    {funcao:'Tática', nome:'Prescrição Adaptativa', efeito:'Após observar uma resposta, troque a propriedade secundária da fórmula sem refazer a dose.'},
+  ],
+  'alquimia-quimica__gastronomia-alquimica': [
+    {funcao:'Pressão', nome:'Prato Agressivo', efeito:'Quem cumprir o papel de Caçador converte o próximo curso servido em abertura contra o alvo marcado.'},
+    {funcao:'Sobrevivência', nome:'Curso Restaurador', efeito:'Quem cumprir o papel de Guardião amadurece uma reserva defensiva ao proteger outro comensal.'},
+    {funcao:'Tática', nome:'Serviço Coordenado', efeito:'Sirva funções diferentes; os comensais podem reposicionar a reserva entre papéis sem ganhar ações.'},
+  ],
+  'alquimia-quimica__catalise-e-estabilizacao': [
+    {funcao:'Pressão', nome:'Reação Acelerada', efeito:'Antecipe a resolução de uma reação preparada, assumindo imediatamente sua Instabilidade restante.'},
+    {funcao:'Sobrevivência', nome:'Ponto de Equilíbrio', efeito:'Prenda uma reação perigosa numa Âncora e impeça seu avanço até que ela seja perturbada.'},
+    {funcao:'Tática', nome:'Catalisador Desviado', efeito:'Mude para qual reação conectada o risco ou o momento de resolução será transferido.'},
+  ],
+  'astronomia-cosmologia__gravidade': [
+    {funcao:'Pressão', nome:'Poço de Esmagamento', efeito:'Concentre atração num Ponto e comprima quem permanecer em sua linha de queda anunciada.'},
+    {funcao:'Sobrevivência', nome:'Órbita Defensiva', efeito:'Faça uma ameaça curva ao redor do protegido e terminar num ponto vazio marcado.'},
+    {funcao:'Tática', nome:'Estilingue Gravitacional', efeito:'Cruze dois vetores para lançar criatura ou objeto pela tangente escolhida.'},
+  ],
+  'astronomia-cosmologia__luz-estelar': [
+    {funcao:'Pressão', nome:'Lança de Convergência', efeito:'Faça duas linhas luminosas encontrarem o alvo; cobertura que rompa um traço reduz o resultado.'},
+    {funcao:'Sobrevivência', nome:'Manto Refratado', efeito:'Divida a luz recebida entre três direções visíveis, dispersando a ameaça pelo cenário.'},
+    {funcao:'Tática', nome:'Linha de Farol', efeito:'Marque uma rota luminosa que revela desvios, invisibilidade e o caminho seguro até seu Ponto.'},
+  ],
+  'astronomia-cosmologia__orbitas': [
+    {funcao:'Pressão', nome:'Janela de Colisão', efeito:'Preveja onde duas trajetórias se cruzam e faça a colisão ocorrer somente se ambas mantiverem curso.'},
+    {funcao:'Sobrevivência', nome:'Guarda Orbital', efeito:'Coloque proteção em órbita de um aliado; ela intercepta uma ameaça antes de continuar o percurso.'},
+    {funcao:'Tática', nome:'Troca de Centro', efeito:'Quando órbitas se cruzarem, troque centro e corpo orbital conservando direção e velocidade.'},
+  ],
+  'astronomia-cosmologia__eclipses': [
+    {funcao:'Pressão', nome:'Mordida da Umbra', efeito:'Na sobreposição completa, retire do alvo uma permissão visível até que ele saia da sombra.'},
+    {funcao:'Sobrevivência', nome:'Abrigo de Penumbra', efeito:'Mantenha um protegido parcialmente oculto; atacar dali também revela sua metade iluminada.'},
+    {funcao:'Tática', nome:'Travessia de Fase', efeito:'Cruzar da luz para a sombra troca posição segura por uma propriedade anunciada do eclipse.'},
+  ],
+  'astronomia-cosmologia__adivinhacao': [
+    {funcao:'Pressão', nome:'Abertura Prevista', efeito:'Declare como o alvo se exporá; se ocorrer, converta a previsão numa vulnerabilidade imediata.'},
+    {funcao:'Sobrevivência', nome:'Refúgio Advertido', efeito:'Marque onde a ameaça não alcançará; o abrigo vale somente se o protegido chegar pela rota prevista.'},
+    {funcao:'Tática', nome:'Presságio Bifurcado', efeito:'Prepare dois futuros excludentes e revele a resposta correspondente quando um deles acontecer.'},
+  ],
+  'astronomia-cosmologia__navegacao-dimensional': [
+    {funcao:'Pressão', nome:'Corredor Cortante', efeito:'Abra passagem entre dois Pontos; quem ocupar a linha quando ela fechar sofre a ruptura espacial.'},
+    {funcao:'Sobrevivência', nome:'Porta de Evasão', efeito:'Ancore uma saída que transfere o protegido ao destino anunciado quando a ameaça o alcança.'},
+    {funcao:'Tática', nome:'Rede de Portais', efeito:'Ligue três destinos; cada viajante declara sua saída antes de entrar e pode ter a rota bloqueada.'},
+  ],
+  'astronomia-cosmologia__fenomenos-solares-e-lunares': [
+    {funcao:'Pressão', nome:'Clarão Solar', efeito:'Na fase solar, exponha e sobrecarregue um alvo; a próxima transição entrega cobertura em vez de dano.'},
+    {funcao:'Sobrevivência', nome:'Guarda Lunar', efeito:'Na fase lunar, absorva uma ameaça em silêncio; mudar para solar libera a energia como sinal visível.'},
+    {funcao:'Tática', nome:'Troca de Fase', efeito:'Atrase uma transição para fortalecer a seguinte, permanecendo preso à propriedade atual por um turno.'},
+  ],
+  'astronomia-cosmologia__cronologia-avancada': [
+    {funcao:'Pressão', nome:'Golpe Adiado', efeito:'Deixe o resultado pendente até o marco anunciado; interromper o evento cancela o dano.'},
+    {funcao:'Sobrevivência', nome:'Instante Emprestado', efeito:'Adie uma consequência recebida até o fim do próximo turno, quando deverá ser tratada ou resolvida.'},
+    {funcao:'Tática', nome:'Ordem Reescrita', efeito:'Troque a ordem de dois eventos pendentes que ainda não produziram resultado.'},
+  ],
+  'matematica-probabilidade__geometria': [
+    {funcao:'Pressão', nome:'Polígono de Corte', efeito:'Feche uma figura ao redor do alvo; cada lado intacto define por onde a ruptura não escapa.'},
+    {funcao:'Sobrevivência', nome:'Forma Fechada', efeito:'Construa proteção cujo interior permanece seguro enquanto nenhum vértice for movido ou apagado.'},
+    {funcao:'Tática', nome:'Troca de Vértice', efeito:'Mova um vértice e recalcule imediatamente qual região, rota ou alvo pertence à figura.'},
+  ],
+  'matematica-probabilidade__probabilidade': [
+    {funcao:'Pressão', nome:'Falha Carregada', efeito:'Associe uma consequência ao resultado provável do alvo e uma abertura menor à alternativa.'},
+    {funcao:'Sobrevivência', nome:'Alternativa Segura', efeito:'Prepare uma saída menos eficiente que substitui a consequência principal se a condição prevista falhar.'},
+    {funcao:'Tática', nome:'Árvore de Contingência', efeito:'Declare duas saídas excludentes e mantenha apenas a que os fatos da cena confirmarem.'},
+  ],
+  'matematica-probabilidade__logica': [
+    {funcao:'Pressão', nome:'Conclusão Forçada', efeito:'Se a premissa pública ocorrer, aplique a consequência anunciada a quem confirmou a regra.'},
+    {funcao:'Sobrevivência', nome:'Lema Protetor', efeito:'Demonstre uma condição suficiente para negar uma ameaça específica enquanto ela continuar verdadeira.'},
+    {funcao:'Tática', nome:'Contraexemplo', efeito:'Apresente caso que viola uma regra declarada e abra uma exceção estreita para a cena.'},
+  ],
+  'matematica-probabilidade__topologia': [
+    {funcao:'Pressão', nome:'Armadilha Interior', efeito:'Faça o lado interno de uma borda desembocar no próprio perigo até alguém romper sua continuidade.'},
+    {funcao:'Sobrevivência', nome:'Abrigo Contínuo', efeito:'Transfira uma abertura da proteção para outra superfície conectada sem criar novo acesso.'},
+    {funcao:'Tática', nome:'Atalho Homeomorfo', efeito:'Dobre uma rota sem cortar sua continuidade, aproximando pontos que preservem a mesma ordem.'},
+  ],
+  'matematica-probabilidade__numerologia': [
+    {funcao:'Pressão', nome:'Contagem de Golpes', efeito:'Escolha um número; quando a sequência o alcançar, converta o último termo em ruptura e reinicie.'},
+    {funcao:'Sobrevivência', nome:'Número de Guarda', efeito:'Distribua proteção em parcelas contadas; exceder o número encerra a reserva restante.'},
+    {funcao:'Tática', nome:'Passo da Sequência', efeito:'Cada ação coerente completa um termo e libera a posição correspondente no padrão preparado.'},
+  ],
+  'matematica-probabilidade__paradoxos': [
+    {funcao:'Pressão', nome:'Imposto da Contradição', efeito:'Mantenha duas saídas incompatíveis; o alvo escolhe uma e a outra se torna sua vulnerabilidade.'},
+    {funcao:'Sobrevivência', nome:'Exceção Provisória', efeito:'Adie qual regra protege você até a ameaça revelar como tenta atravessá-la.'},
+    {funcao:'Tática', nome:'Escolha Não Resolvida', efeito:'Suspenda duas posições possíveis até agir; uma interferência externa força a decisão imediatamente.'},
+  ],
+  'matematica-probabilidade__calculo-de-trajetorias': [
+    {funcao:'Pressão', nome:'Interseção Balística', efeito:'Calcule onde alvo e ataque se cruzarão; mudar velocidade ou rota quebra a solução.'},
+    {funcao:'Sobrevivência', nome:'Deflexão Calculada', efeito:'Redirecione a ameaça pela tangente prevista e registre onde ela terminará.'},
+    {funcao:'Tática', nome:'Cruzamento Previsto', efeito:'Marque a próxima interseção de duas rotas confirmadas e permita alcançá-la pelo menor percurso.'},
+  ],
+  'matematica-probabilidade__demonstracoes-impossiveis': [
+    {funcao:'Pressão', nome:'Exceção Necessária', efeito:'Construa uma cadeia que obriga uma única exceção ofensiva; quebrar qualquer etapa a invalida.'},
+    {funcao:'Sobrevivência', nome:'Refúgio Axiomático', efeito:'Declare o axioma que torna a proteção necessária e aceite sua limitação simétrica.'},
+    {funcao:'Tática', nome:'Prova por Construção', efeito:'Transforme cada etapa visível cumprida numa rota para a conclusão, sem saltar premissas.'},
+  ],
+  'psicologia-noetica__emocoes': [
+    {funcao:'Pressão', nome:'Impulso Incômodo', efeito:'Intensifique emoção manifestada até ela pressionar a escolha que o alvo tentava evitar.'},
+    {funcao:'Sobrevivência', nome:'Coragem Compartilhada', efeito:'Transforme medo reconhecido em proteção para quem agir apesar dele, não para quem o negar.'},
+    {funcao:'Tática', nome:'Virada Emocional', efeito:'Mude o sentido de uma emoção sem apagá-la, convertendo raiva em foco ou tristeza em vínculo.'},
+  ],
+  'psicologia-noetica__memoria': [
+    {funcao:'Pressão', nome:'Eco da Dor', efeito:'Faça uma lembrança registrada repetir sua função quando o alvo recriar a condição associada.'},
+    {funcao:'Sobrevivência', nome:'Memória de Abrigo', efeito:'Ancore a sensação de segurança a um objeto; rompê-lo ou contradizê-la enfraquece a proteção.'},
+    {funcao:'Tática', nome:'Caminho Recordado', efeito:'Reconstitua uma rota vivida e revele desvios, ausências ou mudanças feitas desde então.'},
+  ],
+  'psicologia-noetica__percepcao-e-ilusao-mental': [
+    {funcao:'Pressão', nome:'Ameaça Fantasma', efeito:'Plante foco falso sustentado por indício real; evidência contraditória desloca, em vez de apagar, a ilusão.'},
+    {funcao:'Sobrevivência', nome:'Refúgio no Ponto Cego', efeito:'Oculte o protegido naquilo que o observador já decidiu ignorar; atenção direta rompe o abrigo.'},
+    {funcao:'Tática', nome:'Troca de Foco', efeito:'Quando o alvo encontra contradição, mova a atenção para outro indício preparado e revele seu antigo ponto cego.'},
+  ],
+  'psicologia-noetica__vinculos': [
+    {funcao:'Pressão', nome:'Recuo Relacional', efeito:'Faça uma agressão atravessar o vínculo e retornar como tensão a quem ameaçou a relação.'},
+    {funcao:'Sobrevivência', nome:'Guarda Compartilhada', efeito:'Divida a proteção entre participantes consentidos; romper confiança encerra a parcela correspondente.'},
+    {funcao:'Tática', nome:'Transferência de Tensão', efeito:'Mova um Estado pelo vínculo para quem escolher recebê-lo, sem removê-lo do orçamento.'},
+  ],
+  'psicologia-noetica__sonhos': [
+    {funcao:'Pressão', nome:'Mordida do Pesadelo', efeito:'Faça símbolo temido agir quando o alvo repete no mundo desperto o comportamento que o alimenta.'},
+    {funcao:'Sobrevivência', nome:'Símbolo de Santuário', efeito:'Crie imagem onírica que protege enquanto o participante aceita o significado e a saída oferecidos.'},
+    {funcao:'Tática', nome:'Porta de Sonho', efeito:'Conecte dois símbolos equivalentes e atravesse entre eles; destruir um símbolo fecha a passagem.'},
+  ],
+  'psicologia-noetica__trauma-e-medo': [
+    {funcao:'Pressão', nome:'Gatilho Exposto', efeito:'Associe a ameaça a um gatilho estreito; repeti-lo aprofunda o medo e revela como confrontá-lo.'},
+    {funcao:'Sobrevivência', nome:'Rotina de Aterramento', efeito:'Nomeie sinais presentes e impeça um estágio de tensão de avançar enquanto a rotina for cumprida.'},
+    {funcao:'Tática', nome:'Janela de Enfrentamento', efeito:'Abra uma ação clara que permite converter o próximo avanço de medo em coragem ou fuga consciente.'},
+  ],
+  'psicologia-noetica__comunicacao-psiquica': [
+    {funcao:'Pressão', nome:'Vetor Coordenado', efeito:'Compartilhe a abertura confirmada; outro participante pode usá-la na própria ação, sem receber ação adicional.'},
+    {funcao:'Sobrevivência', nome:'Sinal de Calma', efeito:'Distribua uma instrução protetora pela rede; ruído ou desconfiança corta participantes individualmente.'},
+    {funcao:'Tática', nome:'Malha de Intenções', efeito:'Todos declaram destino ou prioridade e recebem informação imediata quando os planos passam a colidir.'},
+  ],
+  'psicologia-noetica__identidade': [
+    {funcao:'Pressão', nome:'Ferida da Contradição', efeito:'Pressione quem age contra o papel ou valor que declarou sustentar e torne a incoerência observável.'},
+    {funcao:'Sobrevivência', nome:'Valor Nuclear', efeito:'Proteja uma ação coerente com o valor escolhido, expondo especialmente qualquer contradição posterior.'},
+    {funcao:'Tática', nome:'Troca de Máscara', efeito:'Alterne entre dois papéis compatíveis e mude qual deles responde à intervenção recebida.'},
+  ],
+  'medicina-anatomia__cirurgia': [
+    {funcao:'Pressão', nome:'Incisão Funcional', efeito:'Abra Acesso à função diagnosticada e interrompa seu funcionamento sem aumentar o Impacto do procedimento.'},
+    {funcao:'Sobrevivência', nome:'Fechamento de Campo', efeito:'Conclua o procedimento, remova o risco clínico aberto e estabilize a função tratada.'},
+    {funcao:'Tática', nome:'Janela Operatória', efeito:'Mantenha um Acesso aberto para a equipe explorar; mover o paciente ou contaminar o campo o fecha.'},
+  ],
+  'medicina-anatomia__emergencia-e-trauma': [
+    {funcao:'Pressão', nome:'Intervenção de Choque', efeito:'Use a urgência marcada para interromper imediatamente a função que está agravando o quadro.'},
+    {funcao:'Sobrevivência', nome:'Estabilização de Ouro', efeito:'Suspenda o agravamento do paciente prioritário até seu próximo turno, exigindo tratamento depois.'},
+    {funcao:'Tática', nome:'Extração de Risco', efeito:'Abra uma rota curta para retirar o urgente; abandonar outro paciente altera a prioridade da triagem.'},
+  ],
+  'medicina-anatomia__diagnostico': [
+    {funcao:'Pressão', nome:'Hipótese Confirmada', efeito:'Elimine a hipótese errada e transforme a correta numa vulnerabilidade utilizável contra a função observada.'},
+    {funcao:'Sobrevivência', nome:'Prognóstico Protetor', efeito:'Preveja o próximo agravamento confirmado e prepare a intervenção que o conterá.'},
+    {funcao:'Tática', nome:'Achado Diferencial', efeito:'Compare dois sinais e revele qual hipótese, alvo ou rota não combina com o quadro.'},
+  ],
+  'medicina-anatomia__patologia': [
+    {funcao:'Pressão', nome:'Sintoma Induzido', efeito:'Avance o estágio anunciado quando o alvo se expuser ao vetor definido.'},
+    {funcao:'Sobrevivência', nome:'Barreira de Contenção', efeito:'Isole o vetor numa fronteira clínica; atravessá-la informa e arrisca nova exposição.'},
+    {funcao:'Tática', nome:'Mapa de Transmissão', efeito:'Trace por onde o agente passou e identifique a próxima zona ou função ameaçada.'},
+  ],
+  'medicina-anatomia__proteses-e-aprimoramentos': [
+    {funcao:'Pressão', nome:'Módulo de Sobrecarga', efeito:'Force a função ofensiva instalada e marque desgaste que poderá quebrar sua interface.'},
+    {funcao:'Sobrevivência', nome:'Função Substituta', efeito:'Ative módulo que contorna uma limitação definida sem apagar a lesão ou o sacrifício original.'},
+    {funcao:'Tática', nome:'Troca Modular', efeito:'Desative uma função e instale outra preparada; o desgaste permanece preso a cada peça.'},
+  ],
+  'medicina-anatomia__regeneracao': [
+    {funcao:'Pressão', nome:'Crescimento Invasivo', efeito:'Faça tecido regenerativo ocupar a abertura diagnosticada; nova ruptura interrompe o crescimento.'},
+    {funcao:'Sobrevivência', nome:'Cura em Maturação', efeito:'Plante reserva tecidual que recupera no próximo turno se o paciente permanecer protegido.'},
+    {funcao:'Tática', nome:'Adaptação Cicatricial', efeito:'Após sofrer uma ameaça, amadureça resistência estreita contra sua repetição exata.'},
+  ],
+  'medicina-anatomia__reabilitacao': [
+    {funcao:'Pressão', nome:'Retorno ao Movimento', efeito:'Converta uma limitação enfrentada pelo exercício em impulso contra quem tentou explorá-la.'},
+    {funcao:'Sobrevivência', nome:'Padrão Estável', efeito:'Repita o exercício registrado e transforme uma penalidade recorrente em progresso que não se perde na cena.'},
+    {funcao:'Tática', nome:'Função Alternativa', efeito:'Use apoio ou técnica treinada para cumprir a tarefa por outro caminho, sem restaurar a função perdida.'},
+  ],
+  'medicina-anatomia__anatomia-sobrenatural': [
+    {funcao:'Pressão', nome:'Golpe no Órgão Impossível', efeito:'Ataque o ponto onde a criatura armazena a função mapeada, mesmo que ele não pareça corporal.'},
+    {funcao:'Sobrevivência', nome:'Bloqueio Funcional', efeito:'Proteja-se da capacidade impossível ao isolar sua conexão com o órgão-Âncora.'},
+    {funcao:'Tática', nome:'Mapa de Metamorfose', efeito:'Acompanhe para onde a função migra quando o alvo muda de forma e mantenha-a observável.'},
+  ],
+  'geologia-cristalografia__cristais': [
+    {funcao:'Pressão', nome:'Retorno Prismático', efeito:'Frature a semente e devolva a função ofensiva armazenada numa direção escolhida.'},
+    {funcao:'Sobrevivência', nome:'Prisma de Reserva', efeito:'Armazene parte da ameaça recebida; sobrecarga ou desafinação libera a carga cedo.'},
+    {funcao:'Tática', nome:'Par de Frequência', efeito:'Afine duas sementes para transmitir sinal, posição ou interação reduzida entre elas.'},
+  ],
+  'geologia-cristalografia__tectonica': [
+    {funcao:'Pressão', nome:'Ruptura de Placa', efeito:'Frature uma Estrutura e faça a linha de falha emergir no outro ponto conectado.'},
+    {funcao:'Sobrevivência', nome:'Placa de Contraforça', efeito:'Mova uma camada contra a ameaça e redistribua sua Tensão para a borda.'},
+    {funcao:'Tática', nome:'Deriva do Terreno', efeito:'Desloque duas regiões ao longo da falha, alterando vizinhança sem criar distância gratuita.'},
+  ],
+  'geologia-cristalografia__pressao': [
+    {funcao:'Pressão', nome:'Descarga de Câmara', efeito:'Abra a válvula anunciada e libere a Tensão acumulada pela única saída restante.'},
+    {funcao:'Sobrevivência', nome:'Confinamento Isobárico', efeito:'Distribua a ameaça pela fronteira selada; abrir qualquer brecha encerra a proteção.'},
+    {funcao:'Tática', nome:'Válvula Vetorial', efeito:'Transforme parte da pressão em deslocamento pela direção marcada, sem Fraturar a câmara inteira.'},
+  ],
+  'geologia-cristalografia__metalurgia': [
+    {funcao:'Pressão', nome:'Fio Temperado', efeito:'Ative a propriedade ofensiva da peça e revele a fragilidade que ela assume sob estresse.'},
+    {funcao:'Sobrevivência', nome:'Malha Flexível', efeito:'Troque dureza por flexão para dispersar a ameaça, ficando vulnerável à propriedade oposta.'},
+    {funcao:'Tática', nome:'Liga de Ocasião', efeito:'Combine duas peças compatíveis numa ferramenta provisória; corrosão ou separação desfaz a função.'},
+  ],
+  'geologia-cristalografia__cavernas-e-estruturas': [
+    {funcao:'Pressão', nome:'Colapso Dirigido', efeito:'Derrube um suporte e conduza sua carga pela rota de queda marcada entre as Estruturas.'},
+    {funcao:'Sobrevivência', nome:'Abrigo de Carga', efeito:'Distribua a ameaça entre suportes conectados; cada perda reduz a reserva do conjunto.'},
+    {funcao:'Tática', nome:'Túnel de Serviço', efeito:'Converta um vão protegido numa passagem entre dois pontos da rede de suportes.'},
+  ],
+  'geologia-cristalografia__memoria-mineral': [
+    {funcao:'Pressão', nome:'Impacto Reencenado', efeito:'Frature o estrato e repita de modo reduzido a função da última ameaça que ele registrou.'},
+    {funcao:'Sobrevivência', nome:'Camada Testemunha', efeito:'Faça a matéria lembrar a proteção que recebeu e reproduzir sua forma enquanto o contexto permanecer.'},
+    {funcao:'Tática', nome:'Leitura Estratigráfica', efeito:'Compare camadas para revelar qual ação alterou o terreno e em que ordem ocorreu.'},
+  ],
+  'geologia-cristalografia__vulcanologia': [
+    {funcao:'Pressão', nome:'Chaminé de Lava', efeito:'Libere calor e pressão pela rota anunciada; abrir outra saída divide o fluxo.'},
+    {funcao:'Sobrevivência', nome:'Crosta de Resfriamento', efeito:'Converta a superfície da câmara em barreira até novo aquecimento ou Fratura.'},
+    {funcao:'Tática', nome:'Nuvem de Cinzas', efeito:'Espalhe cobertura pela direção do vento e revele tudo que perturbar o depósito.'},
+  ],
+  'geologia-cristalografia__ressonancia-geologica': [
+    {funcao:'Pressão', nome:'Pulso do Veio', efeito:'Envie uma ruptura pelo mesmo material e divida seu Impacto entre os nós atingidos.'},
+    {funcao:'Sobrevivência', nome:'Contrafrequência', efeito:'Afine a Estrutura contra a vibração recebida; sinal incompatível desfaz o cancelamento.'},
+    {funcao:'Tática', nome:'Caminho Ressonante', efeito:'Localize e mova o efeito entre objetos do mesmo material ligados pelo veio.'},
+  ],
+  'historia-arqueologia__reliquias': [
+    {funcao:'Pressão', nome:'Arma Desperta', efeito:'Use a relíquia conforme o conflito de sua proveniência e reencene a função que a tornou temida.'},
+    {funcao:'Sobrevivência', nome:'Legado Guardião', efeito:'Desperte a função pela qual o objeto preservava pessoas, lugares ou memória.'},
+    {funcao:'Tática', nome:'Ferramenta de Época', efeito:'Recupere o uso histórico da peça para abrir rota ou resolver obstáculo compatível.'},
+  ],
+  'historia-arqueologia__ecos-historicos': [
+    {funcao:'Pressão', nome:'Investida Recorrente', efeito:'Quando a formação registrada se repetir, reencene sua ruptura no mesmo tipo de abertura.'},
+    {funcao:'Sobrevivência', nome:'Erro Evitado', efeito:'Reconheça a condição da tragédia gravada e altere um elemento para impedir o mesmo desfecho.'},
+    {funcao:'Tática', nome:'Virada Repetida', efeito:'Recrie a função de uma mudança histórica quando a cena alcançar condições equivalentes.'},
+  ],
+  'historia-arqueologia__civilizacoes-perdidas': [
+    {funcao:'Pressão', nome:'Doutrina de Cerco', efeito:'Participantes que cumprem o costume coletivo pressionam a mesma estrutura por papéis diferentes.'},
+    {funcao:'Sobrevivência', nome:'Lei de Hospitalidade', efeito:'Quem respeita o costume declarado recebe abrigo; violá-lo perde a proteção de forma pública.'},
+    {funcao:'Tática', nome:'Engenharia Recuperada', efeito:'Reencene uma solução logística antiga enquanto o grupo mantiver sua divisão de funções.'},
+  ],
+  'historia-arqueologia__arqueologia-de-campo': [
+    {funcao:'Pressão', nome:'Armadilha Estratificada', efeito:'Revele o risco enterrado na camada e faça-o atuar somente dentro de seu contexto original.'},
+    {funcao:'Sobrevivência', nome:'Conservação de Emergência', efeito:'Estabilize camada, objeto ou abrigo ameaçado sem apagar seus vestígios úteis.'},
+    {funcao:'Tática', nome:'Passagem Escavada', efeito:'Exponha uma rota existente sob a cena; escavação brutal pode colapsá-la.'},
+  ],
+  'historia-arqueologia__lendas': [
+    {funcao:'Pressão', nome:'Feito do Arquétipo', efeito:'Repita um sinal da lenda e pressione como Herói, Monstro ou Trapaceiro, expondo sua fraqueza.'},
+    {funcao:'Sobrevivência', nome:'Proteção da Testemunha', efeito:'Uma testemunha sustenta o sinal defensivo enquanto continuar narrando ou encenando seu significado.'},
+    {funcao:'Tática', nome:'Sinal Inevitável', efeito:'Introduza um sinal reconhecível que aproxima a próxima etapa da lenda e avisa o adversário.'},
+  ],
+  'historia-arqueologia__tecnicas-ancestrais': [
+    {funcao:'Pressão', nome:'Golpe Herdado', efeito:'Execute a manobra exatamente pela postura e distância preservadas na linhagem.'},
+    {funcao:'Sobrevivência', nome:'Guarda de Linhagem', efeito:'Assuma a defesa ancestral preservada; quebrar a postura ou a distância impede sua continuação.'},
+    {funcao:'Tática', nome:'Sinal do Mestre', efeito:'Use o comando histórico para ordenar formação ou ferramenta compatível, sem conceder ação.'},
+  ],
+  'historia-arqueologia__memoria-de-lugares': [
+    {funcao:'Pressão', nome:'O Chão Recorda', efeito:'Faça a zona repetir a função de uma queda, impacto ou investida registrada ali.'},
+    {funcao:'Sobrevivência', nome:'Abrigo Familiar', efeito:'O lugar protege quem reproduz o hábito de segurança que ele testemunhou.'},
+    {funcao:'Tática', nome:'Porta Lembrada', efeito:'Revele onde entradas, saídas ou limiares existiram enquanto permanecer ligado ao lugar.'},
+  ],
+  'historia-arqueologia__reconstrucao-de-acontecimentos': [
+    {funcao:'Pressão', nome:'Causa Decisiva', efeito:'Complete a sequência de provas e reencene somente a função que produziu a ruptura.'},
+    {funcao:'Sobrevivência', nome:'Falha Prevenida', efeito:'Identifique o elo que levou ao desastre e impeça sua repetição equivalente.'},
+    {funcao:'Tática', nome:'Ordem Forense', efeito:'Organize vestígios para revelar autoria, trajeto ou instante ausente sem inventar evidência.'},
+  ],
+  'tanatologia__espiritismo': [
+    {funcao:'Pressão', nome:'Reivindicação do Eco', efeito:'O Eco manifesta seu desejo contra quem o impede, usando sua ação e respeitando o limite acordado.'},
+    {funcao:'Sobrevivência', nome:'Vigília Consentida', efeito:'Um Eco guardião protege a Âncora enquanto vivos respeitarem sua condição.'},
+    {funcao:'Tática', nome:'Conselho do Ausente', efeito:'Mude a Diretriz após ouvir desejo e limite, abrindo uma nova forma de cooperação.'},
+  ],
+  'tanatologia__necromancia': [
+    {funcao:'Pressão', nome:'Membro Animado', efeito:'A Âncora executa uma função ofensiva da parte vinculada usando sua Ação Principal.'},
+    {funcao:'Sobrevivência', nome:'Carcaça Interposta', efeito:'Desloque a Âncora para receber a ameaça; a parte atingida pode perder sua função.'},
+    {funcao:'Tática', nome:'Montagem Cadavérica', efeito:'Troque uma parte e sua função na Âncora sem criar novo corpo ou turno.'},
+  ],
+  'tanatologia__exorcismo': [
+    {funcao:'Pressão', nome:'Ruptura de Apego', efeito:'Ataque a camada identificada; removê-la revela qual vínculo seguinte sustenta a presença.'},
+    {funcao:'Sobrevivência', nome:'Círculo de Contenção', efeito:'Impeça a presença de trocar de hospedeiro enquanto a borda e a vítima permanecerem protegidas.'},
+    {funcao:'Tática', nome:'Nome da Âncora', efeito:'Compare os apegos removidos e torne o vínculo verdadeiro diretamente contestável.'},
+  ],
+  'tanatologia__ritos-funerarios': [
+    {funcao:'Pressão', nome:'Repulsa Cerimonial', efeito:'A etapa cumprida afasta quem profana o rito pela saída designada no círculo de passagem.'},
+    {funcao:'Sobrevivência', nome:'Guarda do Velório', efeito:'Proteja vivos e acalme Ecos dentro do círculo enquanto participantes mantiverem a cerimônia.'},
+    {funcao:'Tática', nome:'Passo da Procissão', efeito:'Mova círculo, participantes e restos para o próximo marco sem romper a ordem ritual.'},
+  ],
+  'tanatologia__possessao': [
+    {funcao:'Pressão', nome:'Mão do Hóspede', efeito:'O hospedeiro usa a capacidade ofensiva negociada e aumenta o risco de conflito de identidade.'},
+    {funcao:'Sobrevivência', nome:'Reflexo Simbiótico', efeito:'Eco e hospedeiro dividem a ameaça conforme o limite de consentimento declarado.'},
+    {funcao:'Tática', nome:'Troca de Condutor', efeito:'Alterne qual identidade conduz a função atual; a outra mantém direito à palavra de saída.'},
+  ],
+  'tanatologia__comunicacao-com-mortos': [
+    {funcao:'Pressão', nome:'Acusação do Morto', efeito:'Use testemunho ligado à memória para expor uma abertura; perspectiva limitada continua contestável.'},
+    {funcao:'Sobrevivência', nome:'Aviso Derradeiro', efeito:'Pergunte qual perigo o Eco percebeu e prepare proteção apenas contra essa resposta.'},
+    {funcao:'Tática', nome:'Pergunta Vinculada', efeito:'Formule questão específica e receba direção verdadeira dentro da memória e perspectiva do Eco.'},
+  ],
+  'tanatologia__corpos-reconstruidos': [
+    {funcao:'Pressão', nome:'Função Enxertada', efeito:'Use a parte ofensiva costurada; forçá-la fora de sua origem marca degradação.'},
+    {funcao:'Sobrevivência', nome:'Carcaça de Reserva', efeito:'Uma parte assume temporariamente a função defensiva de outra e ambas acumulam degradação.'},
+    {funcao:'Tática', nome:'Costura de Movimento', efeito:'Recombine partes para obter modo de deslocamento específico enquanto as costuras resistirem.'},
+  ],
+  'tanatologia__dividas-e-contratos-espirituais': [
+    {funcao:'Pressão', nome:'Cobrança da Pendência', efeito:'Execute a consequência anunciada quando o devedor violar obrigação comprovada.'},
+    {funcao:'Sobrevivência', nome:'Proteção do Credor', efeito:'Vincule guarda à manutenção da obrigação; quitá-la encerra a proteção sem punição.'},
+    {funcao:'Tática', nome:'Herança de Dever', efeito:'Transfira dívida a quem aceitar seu benefício ou assumir voluntariamente sua prova.'},
+  ],
+  'direito-contratologia__juramentos': [
+    {funcao:'Pressão', nome:'Desafio Juramentado', efeito:'Prometa cumprir uma condição contra o alvo; fazê-lo libera pressão, quebrá-la pune primeiro você.'},
+    {funcao:'Sobrevivência', nome:'Voto de Guarda', efeito:'Empenhe sua palavra em proteger alguém e gere Garantia ao suportar o preço declarado.'},
+    {funcao:'Tática', nome:'Dever Assumido', efeito:'Declare missão e limite; enquanto ambos forem respeitados, resista a desvios impostos.'},
+  ],
+  'direito-contratologia__contratos-magicos': [
+    {funcao:'Pressão', nome:'Cláusula de Inadimplência', efeito:'Execute a consequência previamente aceita quando a prestação ofensiva for violada.'},
+    {funcao:'Sobrevivência', nome:'Seguro Recíproco', efeito:'Duas partes prometem proteção equivalente; quem não cumprir perde sua Garantia.'},
+    {funcao:'Tática', nome:'Aditivo de Campo', efeito:'Proponha troca de prestação ou prazo; só vale após nova aceitação explícita.'},
+  ],
+  'direito-contratologia__proibicoes': [
+    {funcao:'Pressão', nome:'Interdito de Agressão', efeito:'Proíba uma ação ofensiva específica na jurisdição e anuncie a consequência resistível da violação.'},
+    {funcao:'Sobrevivência', nome:'Área Protegida', efeito:'Interdite a entrada de uma ameaça definida; exceções publicadas continuam funcionando.'},
+    {funcao:'Tática', nome:'Objeto Vedado', efeito:'Proíba tocar ou ativar o objeto marcado enquanto a publicação permanecer visível.'},
+  ],
+  'direito-contratologia__julgamentos': [
+    {funcao:'Pressão', nome:'Sentença Comprovada', efeito:'Converta acusação e prova confirmada em consequência proporcional à infração demonstrada.'},
+    {funcao:'Sobrevivência', nome:'Presunção de Defesa', efeito:'Proteja o acusado de Execução até que a prova exigida seja apresentada.'},
+    {funcao:'Tática', nome:'Oitiva de Campo', efeito:'Compare fato e testemunho para registrar contradição, autoria ou elemento ainda não provado.'},
+  ],
+  'direito-contratologia__brechas': [
+    {funcao:'Pressão', nome:'Leitura Adversa', efeito:'Use termo ambíguo contra quem redigiu a Cláusula; a nova leitura também passa a vincular você.'},
+    {funcao:'Sobrevivência', nome:'Exceção Semântica', efeito:'Demonstre que o protegido não pertence à categoria atingida, aceitando a definição pelo resto da cena.'},
+    {funcao:'Tática', nome:'Conflito de Jurisdição', efeito:'Mostre que outra regra governa o ponto atual e suspenda uma aplicação até resolver o conflito.'},
+  ],
+  'direito-contratologia__punicoes': [
+    {funcao:'Pressão', nome:'Sanção Graduada', efeito:'Aplique a menor sanção compatível; reincidência comprovada libera o grau seguinte.'},
+    {funcao:'Sobrevivência', nome:'Reparação Aceita', efeito:'Converta cumprimento voluntário da reparação em proteção contra agravamento da pena.'},
+    {funcao:'Tática', nome:'Medida Restritiva', efeito:'Limite acesso, objeto ou rota ligada à infração sem impedir todas as ações do alvo.'},
+  ],
+  'direito-contratologia__protecao-de-direitos': [
+    {funcao:'Pressão', nome:'Reparação Imediata', efeito:'Quando o direito tutelado for impedido, use a Garantia para cobrar a resposta anunciada.'},
+    {funcao:'Sobrevivência', nome:'Direito à Integridade', efeito:'Proteja corpo, mente ou identidade contra a ameaça específica declarada.'},
+    {funcao:'Tática', nome:'Direito de Passagem', efeito:'Garanta uma rota ou ação permitida; bloqueá-la cria remédio, não movimento gratuito.'},
+  ],
+  'direito-contratologia__pactos-entre-entidades': [
+    {funcao:'Pressão', nome:'Cobrança Alienígena', efeito:'Entregue a Garantia estranha para executar a consequência segundo a lógica traduzida da entidade.'},
+    {funcao:'Sobrevivência', nome:'Custódia Extraplanar', efeito:'Deposite proteção em moeda não humana; erro de tradução expõe o risco literal.'},
+    {funcao:'Tática', nome:'Protocolo entre Mundos', efeito:'Abra cooperação estreita entre duas ordens de realidade enquanto todos cumprem os termos traduzidos.'},
+  ],
+  'filosofia-metafisica__identidade': [
+    {funcao:'Pressão', nome:'Prova de Impostura', efeito:'Aplique o critério declarado e exponha qual função da cópia não preserva a identidade.'},
+    {funcao:'Sobrevivência', nome:'Continuidade do Eu', efeito:'Resista a apagamento ou transformação enquanto memória, trajetória ou Âncora satisfizerem o critério.'},
+    {funcao:'Tática', nome:'Máscara Legítima', efeito:'Troque a apresentação sem mudar a identidade e revele quem confunde aparência com essência.'},
+  ],
+  'filosofia-metafisica__verdade-e-mentira': [
+    {funcao:'Pressão', nome:'Fato Inconveniente', efeito:'Sustente proposição com prova e pressione quem age como se ela fosse falsa.'},
+    {funcao:'Sobrevivência', nome:'Verdade de Defesa', efeito:'Ancore proteção num fato verificável; refutá-lo ou mudá-lo encerra o efeito.'},
+    {funcao:'Tática', nome:'Ônus Declarado', efeito:'Defina qual prova resolverá a proposição e quem precisa apresentá-la, sem tratar silêncio como culpa.'},
+  ],
+  'filosofia-metafisica__existencia': [
+    {funcao:'Pressão', nome:'Presença Irrecusável', efeito:'Faça a ameaça interagir com aquilo cuja existência está demonstrada pela Âncora.'},
+    {funcao:'Sobrevivência', nome:'Eu Ainda Existo', efeito:'Mantenha uma função contra apagamento enquanto lugar, essência ou testemunha continuar presente.'},
+    {funcao:'Tática', nome:'Manifestação Possível', efeito:'Permita uma interação de algo ausente através da Âncora sem trazê-lo por completo.'},
+  ],
+  'filosofia-metafisica__causalidade': [
+    {funcao:'Pressão', nome:'Efeito Condicionado', efeito:'Declare causa observável e ruptura resultante; interromper a sequência cancela o efeito.'},
+    {funcao:'Sobrevivência', nome:'Causa Interceptada', efeito:'Proteja ao remover um elo necessário da cadeia ameaçadora antes da resolução.'},
+    {funcao:'Tática', nome:'Bifurcação Causal', efeito:'Prepare duas causas alternativas para um efeito; somente a primeira confirmada permanece.'},
+  ],
+  'filosofia-metafisica__livre-arbitrio': [
+    {funcao:'Pressão', nome:'Recusa Autêntica', efeito:'Quem declarou intenção pode transformar uma coerção rompida em pressão contra sua fonte.'},
+    {funcao:'Sobrevivência', nome:'Escolha Protegida', efeito:'Defenda intenção voluntária contra controle; o participante continua livre para abandoná-la.'},
+    {funcao:'Tática', nome:'Consentimento Revogável', efeito:'Estabeleça permissão e limite que podem ser retirados sem consumir ação ou punir a mudança de ideia.'},
+  ],
+  'filosofia-metafisica__paradoxos': [
+    {funcao:'Pressão', nome:'Consequência Dupla', efeito:'Apresente duas Premissas incompatíveis; o alvo escolhe qual consequência limitada enfrenta.'},
+    {funcao:'Sobrevivência', nome:'Defesa Contraditória', efeito:'Alterne entre duas justificativas opostas, perdendo Coerência a cada troca sem síntese.'},
+    {funcao:'Tática', nome:'Síntese Momentânea', efeito:'Encontre ação compatível com ambas as Premissas por um instante antes de a contradição retornar.'},
+  ],
+  'filosofia-metafisica__conceitos-abstratos': [
+    {funcao:'Pressão', nome:'Conceito Hostil', efeito:'Faça o alvo encarnar o exemplo concreto de distância, silêncio ou coragem que definiu.'},
+    {funcao:'Sobrevivência', nome:'Exemplo Protetor', efeito:'Ancore a defesa num caso concreto; um contraexemplo válido reduz ou encerra a proteção.'},
+    {funcao:'Tática', nome:'Transferência de Exemplo', efeito:'Mova o conceito para outro caso equivalente sem ampliar sua definição.'},
+  ],
+  'filosofia-metafisica__limites-da-realidade': [
+    {funcao:'Pressão', nome:'Preço da Travessia', efeito:'Quem cruza a fronteira aceita a consequência anunciada em troca da permissão obtida.'},
+    {funcao:'Sobrevivência', nome:'Lado Protegido', efeito:'Dentro do limite, negue a interação definida; sair ou mover o marco encerra a proteção.'},
+    {funcao:'Tática', nome:'Fronteira Móvel', efeito:'Desloque o limite junto do marco sem reaplicar consequências a quem não o atravessou.'},
+  ],
+};
+
 // Ano mede currículo (o que o personagem sabe fazer); Nível mede potência.
 // Os dois avançam de forma independente.
 const ANOS = [
@@ -2129,8 +2720,24 @@ function painelRamo(p, area){
         <p class="mini" style="margin-top:10px"><strong>${e.rotulo}:</strong> ${esc(e.texto)}</p>
       `).join('')}
       ${ramo.contrajogo ? `<p class="mini" style="margin-top:10px"><strong>Contrajogo:</strong> ${esc(ramo.contrajogo)}</p>` : ''}
+      ${painelTecnicasRamo(ramo)}
     ` : ''}
   </div>`;
+}
+
+// Técnicas prontas (Pressão/Sobrevivência/Tática): conteúdo já jogável a
+// partir do 2º Ano, sem precisar do Construtor Livre de Poder — Ação
+// Principal, até 1 Impacto, usando o recurso normal da Área.
+function painelTecnicasRamo(ramo){
+  const tecnicas = TECNICAS_RAMO[ramo.id];
+  if(!tecnicas) return '';
+  return `<p class="mini" style="margin:14px 0 6px"><strong>Técnicas prontas</strong> (Ação Principal, até 1 Impacto — não precisam de criação livre)</p>
+    <div class="grade g3">
+      ${tecnicas.map(t => `<div>
+        <p class="mini" style="margin:0"><strong>${esc(t.nome)}</strong> <span style="color:var(--suave)">(${esc(t.funcao)})</span></p>
+        <p class="mini" style="margin-top:4px">${esc(t.efeito)}</p>
+      </div>`).join('')}
+    </div>`;
 }
 
 function abaAtributos(p){
