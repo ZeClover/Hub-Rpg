@@ -577,6 +577,20 @@ passando.
     subindo pelos três gatilhos, Rastro travando em duas marcas, Romper
     gastando o Esforço certo e limpando o Rastro, botão caro demais
     desabilitado, reset de conflito, e persistência após recarregar
+- [x] **Thrylikí Chelóna — combate de Simbologia Arcana** (29/08/2026) —
+      decisão #23. Segunda Área com recurso de verdade: pool de Mana.
+  - Card novo na aba Combate, só quando a Área é Simbologia Arcana:
+    Mana Máxima calculada (Inteligência, Treinamento em Simbologia e
+    Reservatório comprado 0–4), gastar/corrigir, Concentrar (+2, uma
+    vez por cena) e Descanso completo. A calculadora de Fórmula
+    (Verbo + Essência + Moldura + Cláusulas com custo por peça) é fatia
+    própria futura — grande demais pra entrar junto, do tamanho da
+    calculadora de Rituais do Fabula Ultima
+  - Testado com Playwright: painel gated por Área e aba, fórmula da
+    Mana Máxima batendo ao mudar Inteligência/Reservatório, gasto e
+    correção, Concentrar travando até nova cena, Descanso completo, a
+    Mana atual sendo cortada pro novo máximo se o Reservatório cai, e
+    persistência após recarregar
 - [ ] Ometion
 
 ---

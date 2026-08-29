@@ -141,6 +141,9 @@ const TREINAMENTOS = [
   {id:'expert',   nome:'Expert',   bonus:15},
 ];
 function bonusTreinamento(id){ return (TREINAMENTOS.find(t => t.id === id) || TREINAMENTOS[0]).bonus; }
+// Índice 0-3 (Nada/Treinado/Perito/Expert) — algumas fórmulas de Área (como
+// a Mana de Simbologia) usam essa escala, diferente do bônus de d20.
+function grauTreinamento(id){ return Math.max(0, TREINAMENTOS.findIndex(t => t.id === id)); }
 
 // As 24 Perícias do livro original, cada uma com um Atributo principal —
 // a ficção pode trocar o Atributo usado, mas o Treinamento não muda.
@@ -1400,6 +1403,9 @@ function novoPersonagem(nome){
     // corpoCinetica: motor de combate da Área Corpo e Cinética (decisão
     // #22) — só é lido/mostrado quando perfil.areaId === 'corpo-cinetica'.
     corpoCinetica: {esforco:2, rastro:[]}, // rastro: até 2 marcas
+    // simbologiaArcana: motor de Simbologia Arcana — manaAtual null = no
+    // máximo; reservatorio é melhoria comprada à parte, 0 a 4.
+    simbologiaArcana: {manaAtual:null, reservatorio:0, concentrarUsado:false},
     anotacoes: '',
   };
 }
@@ -1413,6 +1419,12 @@ function grauAtributo(p, id){ return p.atributos[id] ?? 1; }
 function vidaMaxima(p){ return 35 + grauAtributo(p,'constituicao')*5 + Math.floor(p.nivel/2); }
 function deslocamento(p){ return 9 + 2*grauAtributo(p,'agilidade'); }
 function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
+
+// Mana de Simbologia Arcana — conferida contra o documento de design da Área.
+function manaMaxima(p){
+  const reservatorio = (p.simbologiaArcana && p.simbologiaArcana.reservatorio) || 0;
+  return 6 + 2*grauAtributo(p,'inteligencia') + 2*grauTreinamento(p.treinamentos['simbologia']||'nada') + reservatorio;
+}
 
 function ciclo(p){ return Math.floor((p.nivel-1)/20)+1; }
 function nivelNoCiclo(p){ return ((p.nivel-1)%20)+1; }
@@ -1598,6 +1610,7 @@ function render(){
 
   // Ficha salva antes da fatia de Corpo e Cinética não tem este campo.
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
+  if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1861,8 +1874,49 @@ function painelCorpoCinetica(p){
   </div>`;
 }
 
+function painelSimbologiaArcana(p){
+  if(p.perfil.areaId !== 'simbologia-arcana') return '';
+  const sa = p.simbologiaArcana || {manaAtual:null, reservatorio:0, concentrarUsado:false};
+  const max = manaMaxima(p);
+  const atual = Math.min(sa.manaAtual ?? max, max);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Simbologia Arcana — Mana</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Compor → Inscrever → Manifestar.</strong> Mana Máxima =
+      6 + 2×Grau de Inteligência + 2×Grau de Treinamento em Simbologia +
+      Reservatório. A construção da Fórmula em si (Verbo + Essência +
+      Moldura + Cláusulas, com o custo de cada peça) é fatia futura —
+      por enquanto isso controla só a reserva de Mana.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Mana</div>
+        <div class="val">${atual}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-sa-mana="-1" ${atual<=0?'disabled':''}>-1 Mana (gastar)</button>
+        <button data-sa-mana="1" ${atual>=max?'disabled':''}>+1 Mana (corrigir)</button>
+        <button data-sa-concentrar ${sa.concentrarUsado || atual>=max?'disabled':''}>Concentrar (+2, 1x por cena)</button>
+        <button data-sa-descansar>Descanso completo (recupera tudo)</button>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label for="c-sa-reservatorio">Reservatório (0–4)</label>
+      <input id="c-sa-reservatorio" type="number" min="0" max="4" value="${sa.reservatorio}">
+    </div>
+    <button data-sa-nova-cena style="margin-top:10px" ${!sa.concentrarUsado?'disabled':''}>Nova cena (libera Concentrar de novo)</button>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Verbo:</strong> Ferir, Proteger, Mover, Restaurar, Alterar, Criar, Perceber, Vincular ou Selar.<br>
+      <strong>Essência:</strong> Fogo, Água, Vento e Terra são bases; Sagrado (remover/purificar), Sombrio (adicionar/intensificar) e Desviante (transformar/refinar) operam sobre elas.<br>
+      <strong>Moldura:</strong> Alcance, Alvo/Área e Duração — a Categoria define os valores concretos.<br>
+      <strong>Cláusulas:</strong> Seguir, Observar, Criação, Selar, Gatilho, Persistência, Retorno e Seleção.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2043,6 +2097,29 @@ function ligarEventos(){
       p.corpoCinetica.esforco -= custo;
       p.corpoCinetica.rastro = [];
     }));
+
+  // Simbologia Arcana: Mana.
+  app.querySelectorAll('[data-sa-mana]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = manaMaxima(p);
+      const atual = Math.min(p.simbologiaArcana.manaAtual ?? max, max);
+      p.simbologiaArcana.manaAtual = Math.max(0, Math.min(max, atual + Number(b.dataset.saMana)));
+    }));
+  const saConcentrar = app.querySelector('[data-sa-concentrar]');
+  if(saConcentrar) saConcentrar.onclick = () => mudar(p => {
+    const max = manaMaxima(p);
+    const atual = Math.min(p.simbologiaArcana.manaAtual ?? max, max);
+    p.simbologiaArcana.manaAtual = Math.min(max, atual + 2);
+    p.simbologiaArcana.concentrarUsado = true;
+  });
+  const saDescansar = app.querySelector('[data-sa-descansar]');
+  if(saDescansar) saDescansar.onclick = () => mudar(p => p.simbologiaArcana.manaAtual = null);
+  const saNovaCena = app.querySelector('[data-sa-nova-cena]');
+  if(saNovaCena) saNovaCena.onclick = () => mudar(p => p.simbologiaArcana.concentrarUsado = false);
+  const saReservatorio = document.getElementById('c-sa-reservatorio');
+  if(saReservatorio) saReservatorio.onchange = () => mudar(p => {
+    p.simbologiaArcana.reservatorio = Math.max(0, Math.min(4, Number(saReservatorio.value) || 0));
+  });
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
