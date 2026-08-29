@@ -1437,6 +1437,28 @@ Poder, Kit de Combate, Inventário, PE, Doenças, Vida editável, Chassi
 de Robótica — está fechado. Não há mais nenhuma lacuna conhecida entre
 os documentos de design e a ficha.
 
+## 45. Thrylikí Chelóna — Metassímbolo de Simbologia Arcana (29/08/2026)
+
+A decisão #44 declarou o levantamento fechado cedo demais — faltava
+ainda o Metassímbolo, citado desde a decisão #23 ("5º Ano: 20 + 1
+Metassímbolo") e sempre referenciado no texto do Construtor de
+Fórmula, mas nunca com um lugar pra escrever o que ele é.
+
+O documento não dá uma fórmula numérica pro Metassímbolo — só "a
+capacidade não aumenta dano, Mana ou d20" e "Tese e exceção autoral
+precisa" (Linguagem Conceitual, 5º Ano). Por isso não virou mais um
+componente da Fórmula com custo em Tomos/Mana: é um campo de texto
+livre, visível só no 5º Ano, pra registrar a exceção nomeada — mesmo
+tratamento que Tese já recebe em outros Ramos.
+
+Testado com Playwright: campo ausente antes do 5º Ano, aparece ao
+subir de Ano, e persiste após recarregar. Os quarenta e um testes das
+fatias anteriores de Thrylikí Chelóna continuam passando. `tsc` e
+`lint` limpos.
+
+Agora sim: não há mais lacuna conhecida entre os documentos de design
+de Thrylikí Chelóna e a ficha.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
