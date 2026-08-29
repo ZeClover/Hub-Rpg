@@ -2277,6 +2277,14 @@ function novoPersonagem(nome){
     // doencas: Pares de Manifestação (doencas-e-demi-humanos-v6.1.md) —
     // opcional, a mesa decide se entra na campanha (decisão #40).
     doencas: {pares: []},
+    // progressaoEscolar: ritmo de Nível, Portfólio de Prova de Passagem e
+    // Atividades de Recesso — campanha-escolar-v6.1.md (decisão #41).
+    progressaoEscolar: {
+      ritmo: 'padrao', progressoNivel: 0,
+      portfolio: {dominio:false, criacao:false, cooperacao:false, consequencia:false},
+      recuperacao: '',
+      recesso: {atividades: [], anotacoes: ''},
+    },
     anotacoes: '',
   };
 }
@@ -2815,6 +2823,12 @@ function render(){
   if(!p.ascensoes) p.ascensoes = [];
   if(!p.doencas) p.doencas = {pares: []};
   if(!p.doencas.pares) p.doencas.pares = [];
+  if(!p.progressaoEscolar) p.progressaoEscolar = {
+    ritmo: 'padrao', progressoNivel: 0,
+    portfolio: {dominio:false, criacao:false, cooperacao:false, consequencia:false},
+    recuperacao: '', recesso: {atividades: [], anotacoes: ''},
+  };
+  if(!p.progressaoEscolar.recesso) p.progressaoEscolar.recesso = {atividades: [], anotacoes: ''};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -3288,6 +3302,107 @@ function abaProgressao(p){
       <p class="mini" style="margin-top:6px">${esc((ASCENSAO_EIXOS.find(e=>e.id===estado.ascensaoRascunho.eixo)||{}).desc || '')}</p>
       <button id="btRegistrarAscensao" style="margin-top:8px">+ Registrar Ascensão</button>
     ` : `<p class="mini">Todas as Ascensões concluídas já estão registradas.</p>`}
+  </div>
+
+  ${painelProgressoNivel(p)}
+  ${painelPortfolio(p)}
+  ${painelRecesso(p)}`;
+}
+
+// Progresso de Nível, Portfólio de Prova de Passagem e Atividades de
+// Recesso — campanha-escolar-v6.1.md. Ano avança por julgamento da mesa
+// (Prova de Passagem), nunca automaticamente por PE ou Portfólio cheio.
+const RITMOS_NIVEL = [
+  {id:'acelerado',    nome:'Acelerado',    desc:'1 Nível por sessão concluída'},
+  {id:'padrao',       nome:'Padrão',       desc:'1 Nível a cada 2 sessões — usa duas caixas de Progresso'},
+  {id:'contemplativo',nome:'Contemplativo',desc:'1 Nível por Semestre'},
+];
+const PORTFOLIO_ITENS = [
+  {id:'dominio',      nome:'Domínio',      desc:'usou de forma competente o núcleo do Ano atual'},
+  {id:'criacao',      nome:'Criação',      desc:'adaptou, combinou ou produziu algo permitido'},
+  {id:'cooperacao',   nome:'Cooperação',   desc:'resolveu um problema com outra pessoa ou Área'},
+  {id:'consequencia', nome:'Consequência', desc:'enfrentou uma falha, custo ou responsabilidade real'},
+];
+const ATIVIDADES_RECESSO = [
+  {id:'estudar',    nome:'Estudar',    desc:'aprender Lição, pesquisar pista ou preparar Prova'},
+  {id:'treinar',    nome:'Treinar',    desc:'reorganizar uma escolha permitida ou preparar nova técnica'},
+  {id:'projetar',   nome:'Projetar',   desc:'avançar uma fase de item, Obra, habitat ou estrutura'},
+  {id:'recuperar',  nome:'Recuperar',  desc:'tratar Consequência ou reconstruir recurso duradouro'},
+  {id:'relacionar', nome:'Relacionar', desc:'criar, reparar ou aprofundar vínculo'},
+  {id:'servir',     nome:'Servir',     desc:'trabalhar para escola, facção ou comunidade e ganhar acesso'},
+];
+
+function painelProgressoNivel(p){
+  const pe = p.progressaoEscolar;
+  const ritmoInfo = RITMOS_NIVEL.find(r => r.id === pe.ritmo) || RITMOS_NIVEL[1];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Progresso de Nível</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      A campanha escolhe um ritmo na sessão zero. Não se ganha progresso
+      por matar criaturas individualmente — resolver, contornar,
+      convencer ou compreender uma ameaça vale tanto quanto derrotá-la.
+    </p>
+    <label for="c-ritmo-nivel">Ritmo</label>
+    <select id="c-ritmo-nivel">
+      ${RITMOS_NIVEL.map(r => `<option value="${r.id}" ${r.id===pe.ritmo?'selected':''}>${r.nome}</option>`).join('')}
+    </select>
+    <p class="mini" style="margin-top:6px">${ritmoInfo.desc}</p>
+    ${pe.ritmo === 'padrao' ? `
+      <p class="mini" style="margin:14px 0 6px">Caixas marcadas ao concluir uma sessão com decisão ou objetivo significativo</p>
+      <div class="trilha">
+        ${[0,1,2].map(n => `<button data-progresso-nivel="${n}" class="${pe.progressoNivel>=n && n>0?'cheio':''}">${n}</button>`).join('')}
+      </div>
+      <button id="btSubirNivelPadrao" style="margin-top:10px" ${pe.progressoNivel<2?'disabled':''}>Subir de Nível (zera Progresso)</button>
+    ` : `
+      <button id="btSubirNivelDireto" style="margin-top:10px">Concluiu ${pe.ritmo==='acelerado'?'a sessão':'o Semestre'} → Subir de Nível</button>
+    `}
+  </div>`;
+}
+
+function painelPortfolio(p){
+  const pe = p.progressaoEscolar;
+  const completo = PORTFOLIO_ITENS.every(i => pe.portfolio[i.id]);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Portfólio de Prova de Passagem</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Ano não é comprado com PE nem calculado pelo Nível — avança quando
+      o grupo monta este Portfólio e passa pela Prova (Preparação,
+      Aplicação, Reflexão) com o Mestre. Falhar não remove nada: vira
+      uma Recuperação e uma nova tentativa.
+    </p>
+    <div class="condicoes">
+      ${PORTFOLIO_ITENS.map(i => `<label title="${esc(i.desc)}">
+        <input type="checkbox" data-portfolio="${i.id}" ${pe.portfolio[i.id]?'checked':''}>
+        ${i.nome}</label>`).join('')}
+    </div>
+    ${completo ? `<p class="mini" style="margin-top:10px">Portfólio completo — pronto pra Prova de Passagem com o Mestre.</p>` : ''}
+    <div style="margin-top:12px">
+      <label for="c-recuperacao">Recuperação (se a Prova apontar uma lacuna)</label>
+      <input id="c-recuperacao" value="${esc(pe.recuperacao)}" placeholder="tarefa curta que aborda a lacuna observada">
+    </div>
+    <button id="btNovoPortfolio" style="margin-top:10px">Novo Ano (limpa o Portfólio)</button>
+  </div>`;
+}
+
+function painelRecesso(p){
+  const recesso = p.progressaoEscolar.recesso;
+  const atividades = recesso.atividades || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Recesso</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Entre Semestres, cada personagem realiza <strong>duas Atividades de
+      Recesso</strong>. Só exige teste quando há risco, oposição ou prazo.
+    </p>
+    <div class="condicoes">
+      ${ATIVIDADES_RECESSO.map(a => `<label title="${esc(a.desc)}">
+        <input type="checkbox" data-recesso-atividade="${a.id}" ${atividades.includes(a.id)?'checked':''} ${!atividades.includes(a.id) && atividades.length>=2?'disabled':''}>
+        ${a.nome}</label>`).join('')}
+    </div>
+    <div style="margin-top:12px">
+      <label for="c-recesso-anotacoes">Anotações</label>
+      <textarea id="c-recesso-anotacoes" rows="3">${esc(recesso.anotacoes)}</textarea>
+    </div>
+    <button id="btNovoRecesso" style="margin-top:10px">Novo Recesso (limpa)</button>
   </div>`;
 }
 
@@ -4749,6 +4864,52 @@ function ligarEventos(){
   });
   app.querySelectorAll('[data-doenca-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.doencas.pares.splice(Number(b.dataset.doencaRemover), 1)));
+
+  // Progresso de Nível, Portfólio de Prova de Passagem e Recesso.
+  const ritmoNivel = document.getElementById('c-ritmo-nivel');
+  if(ritmoNivel) ritmoNivel.onchange = () => mudar(p => { p.progressaoEscolar.ritmo = ritmoNivel.value; });
+  app.querySelectorAll('[data-progresso-nivel]').forEach(b =>
+    b.onclick = () => mudar(p => { p.progressaoEscolar.progressoNivel = Number(b.dataset.progressoNivel); }));
+  const btSubirNivelPadrao = document.getElementById('btSubirNivelPadrao');
+  if(btSubirNivelPadrao) btSubirNivelPadrao.onclick = () => mudar(p => {
+    if(p.progressaoEscolar.progressoNivel < 2) return;
+    p.nivel += 1;
+    p.progressaoEscolar.progressoNivel = 0;
+  });
+  const btSubirNivelDireto = document.getElementById('btSubirNivelDireto');
+  if(btSubirNivelDireto) btSubirNivelDireto.onclick = () => mudar(p => { p.nivel += 1; });
+
+  app.querySelectorAll('[data-portfolio]').forEach(el =>
+    el.onchange = () => mudar(p => { p.progressaoEscolar.portfolio[el.dataset.portfolio] = el.checked; }));
+  const recuperacaoInput = document.getElementById('c-recuperacao');
+  if(recuperacaoInput) recuperacaoInput.oninput = () => mudarSemRedesenhar(p => {
+    p.progressaoEscolar.recuperacao = recuperacaoInput.value;
+  }, recuperacaoInput);
+  const btNovoPortfolio = document.getElementById('btNovoPortfolio');
+  if(btNovoPortfolio) btNovoPortfolio.onclick = () => mudar(p => {
+    p.progressaoEscolar.portfolio = {dominio:false, criacao:false, cooperacao:false, consequencia:false};
+    p.progressaoEscolar.recuperacao = '';
+  });
+
+  app.querySelectorAll('[data-recesso-atividade]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.recessoAtividade;
+      const lista = p.progressaoEscolar.recesso.atividades;
+      if(el.checked){
+        if(lista.length >= 2) return;
+        p.progressaoEscolar.recesso.atividades = [...lista, id];
+      }else{
+        p.progressaoEscolar.recesso.atividades = lista.filter(a => a !== id);
+      }
+    }));
+  const recessoAnotacoes = document.getElementById('c-recesso-anotacoes');
+  if(recessoAnotacoes) recessoAnotacoes.oninput = () => mudarSemRedesenhar(p => {
+    p.progressaoEscolar.recesso.anotacoes = recessoAnotacoes.value;
+  }, recessoAnotacoes);
+  const btNovoRecesso = document.getElementById('btNovoRecesso');
+  if(btNovoRecesso) btNovoRecesso.onclick = () => mudar(p => {
+    p.progressaoEscolar.recesso = {atividades: [], anotacoes: ''};
+  });
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

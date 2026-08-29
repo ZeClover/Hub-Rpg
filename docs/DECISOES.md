@@ -1271,6 +1271,45 @@ ao remover, e persistência do catálogo e da prévia após recarregar. Os
 vinte e sete testes das fatias anteriores de Thrylikí Chelóna continuam
 passando. `tsc` e `lint` limpos.
 
+## 41. Thrylikí Chelóna — Progresso de Nível, Portfólio e Recesso (29/08/2026)
+
+Última peça de `campanha-escolar-v6.1.md` que cabia na ficha (o resto —
+recompensas, Facções, Sessão Zero — é procedimento de campanha/mestre,
+fora do escopo de "ficha de personagem", igual `manualMestre` já é
+texto livre em vez de campo estruturado, decisão #58). Três pedaços:
+
+- **Progresso de Nível**: a campanha escolhe um Ritmo (Acelerado/
+  Padrão/Contemplativo) na sessão zero. Só o Padrão usa a trilha de
+  duas caixas do documento ("marca uma ao concluir uma sessão com
+  decisão significativa; ao preencher duas, sobe de Nível e zera");
+  os outros dois ritmos usam um botão direto ("concluiu a sessão/o
+  Semestre → sobe de Nível"), porque o documento não descreve caixa
+  nenhuma pra eles
+- **Portfólio de Prova de Passagem**: os quatro itens (Domínio/Criação/
+  Cooperação/Consequência) mais um campo de Recuperação. **Não muda o
+  Ano sozinho** — o documento é explícito que a Prova é julgada pelo
+  Mestre (Preparação/Aplicação/Reflexão), então o Portfólio completo só
+  mostra um aviso; subir de Ano continua sendo o seletor que já existia
+  desde o chassi. "Novo Ano" limpa o Portfólio pro próximo ciclo
+- **Recesso**: até duas Atividades (das seis do documento) por Recesso,
+  com anotações livres — trava a terceira, "Novo Recesso" limpa
+
+Testado com Playwright: os três cards aparecem, trilha de Progresso
+travando/liberando o botão de subir, Nível realmente mudando pelos dois
+caminhos (trilha e botão direto), Portfólio completo mostrando o aviso,
+"Novo Ano" limpando Portfólio e Recuperação, terceira Atividade de
+Recesso travada com duas já marcadas, "Novo Recesso" limpando, e
+persistência de tudo após recarregar. Os trinta testes das fatias
+anteriores de Thrylikí Chelóna continuam passando. `tsc` e `lint`
+limpos.
+
+Com isso a varredura dos 60 documentos de design está fechada: tudo que
+tinha conteúdo mecânico de personagem virou ficha; o que sobrou
+(aventura pronta, glossário puro de vocabulário de campanha, pontos de
+playtest, notas de auditoria do próprio autor) é material de mestre ou
+meta-processo, não dado de personagem — mesma linha que já valia pra
+Fabula Ultima (decisão #36) desde o início do projeto.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

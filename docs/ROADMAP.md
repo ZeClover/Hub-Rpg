@@ -808,6 +808,18 @@ passando.
     2 PE cada (usa a economia da decisão #39)
   - Testado com Playwright: Pares grátis, trava de PE no terceiro,
     liberação ao subir de Nível, remover devolve PE, persistência
+- [x] **Thrylikí Chelóna — Progresso de Nível, Portfólio e Recesso**
+      (29/08/2026) — decisão #41. Última peça de `campanha-escolar-v6.1.md`
+      que cabia em ficha de personagem (o resto é procedimento de mesa).
+  - Progresso de Nível por Ritmo (trilha de duas caixas no Padrão, botão
+    direto nos outros dois); Portfólio de Prova de Passagem (4 itens,
+    não muda o Ano sozinho — isso é julgamento do Mestre); Recesso (até
+    duas Atividades das seis do documento)
+  - Testado com Playwright: trilha/botão subindo o Nível de verdade,
+    aviso de Portfólio completo, "Novo Ano"/"Novo Recesso" limpando,
+    trava de duas Atividades, persistência
+- [x] Varredura completa dos 60 documentos de design de Thrylikí Chelóna
+      fechada — todo conteúdo mecânico de personagem está na ficha
 - [ ] Ometion
 
 ---
