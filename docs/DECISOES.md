@@ -483,7 +483,46 @@ gastando o Esforço certo e limpando o Rastro, botão de Romper mais caro
 desabilitado sem Esforço suficiente, "Novo conflito" resetando pra 2, e
 persistência depois de recarregar a página.
 
-## 23. Restrições registradas
+## 23. Thrylikí Chelóna — combate de Simbologia Arcana (29/08/2026)
+
+Depois de Corpo e Cinética (decisão #22), o Zé disse "continue" — segui
+pra próxima Área sem perguntar de novo qual, já que o padrão (uma Área
+por vez, seguindo a ordem da lista) estava estabelecido.
+
+Simbologia Arcana é bem mais complexa que Corpo e Cinética: a Fórmula
+mágica tem gramática própria (Verbo + Essência + Moldura + Cláusulas),
+cada peça com peso em Mana e em Tomos, junto de uma tabela de Potência,
+pesos adicionais, dispersão por número de alvos etc. — construir a
+calculadora de Fórmula completa seria uma fatia por si só (do tamanho
+da calculadora de Rituais que o Fabula Ultima ganhou). Por isso esta
+fatia trouxe só o que dá pra jogar sem essa calculadora: o **pool de
+Mana**.
+
+- `Mana Máxima = 6 + 2×Grau de Inteligência + 2×Grau de Treinamento em
+  Simbologia + Reservatório` — Treinamento aqui usa a escala 0-3
+  (Nada/Treinado/Perito/Expert), diferente do bônus +0/+5/+10/+15 que
+  o mesmo Treinamento dá no teste de d20; criei `grauTreinamento()`
+  como uma segunda leitura do mesmo dado, sem duplicar o campo.
+  Reservatório é melhoria comprada à parte (0–4), campo novo
+- Botões de gastar/corrigir Mana, **Concentrar** (Ação Principal, +2
+  Mana, uma vez por cena — trava sozinho e "Nova cena" libera de novo)
+  e Descanso completo (recupera tudo)
+- Verbo/Essência/Moldura/Cláusulas entraram como texto de referência,
+  não como calculadora
+
+Igual ao Esforço, `render()` preenche o campo `simbologiaArcana` padrão
+numa ficha salva antes desta fatia. A Mana atual é sempre recalculada
+contra o máximo (`Math.min`) — importante porque o máximo pode diminuir
+se o jogador baixar o Reservatório ou o Treinamento, e o valor
+guardado não pode ficar acima do novo teto.
+
+Testado com Playwright: painel gated por Área e aba, fórmula de Mana
+Máxima batendo ao mudar Inteligência e Reservatório, gasto e correção
+manual, Concentrar somando 2 e travando até "Nova cena", Descanso
+completo recuperando tudo, a Mana atual sendo cortada pro novo máximo
+quando o Reservatório cai, e persistência após recarregar.
+
+## 24. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
