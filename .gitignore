@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# git worktrees criados pelo Claude Code para agentes em background
+.claude/worktrees/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

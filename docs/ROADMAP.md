@@ -606,6 +606,25 @@ passando.
     ainda faltar Carga), Vitalícia reagindo ao Reservatório, Descanso
     completo nas três reservas de uma vez, e persistência após
     recarregar
+- [x] **Thrylikí Chelóna — combate de Botânica, Arte e Zoologia** (29/08/2026)
+      — decisão #25. Três Áreas de uma vez, construídas em paralelo por três
+      agentes (primeira vez usando subagentes neste projeto), cada um num
+      worktree isolado. Fecha o grupo das seis Áreas originais com combate
+      de verdade — restam as dez novas.
+  - **Botânica e Biomancia:** Seiva (0–5) + até três Cultivos com estágio
+    Broto/Floração/Maturação (mesma trilha de clock das Consequências)
+  - **Zoologia e Etologia:** Dados de Campo (0–3) + campo de texto livre
+    "Perfil Ativo" (a grade completa de Perfis/Traços fica pra depois)
+  - **Arte e Expressão:** Ressonância (0–3), Apresentação Forte e Clímax
+    (que zera a Ressonância inteira) + até três Motivos + Obra Principal
+  - Merge manual necessário: os três agentes partiram do mesmo commit e
+    mexeram nos mesmos pontos de extensão do arquivo — sempre inserções
+    independentes competindo pelo mesmo lugar, nunca mudança incompatível.
+    Resolvido concatenando as três adições, com sintaxe/CJK/testes
+    reconferidos depois de cada merge
+  - Testado com os testes de cada agente revalidados contra o arquivo já
+    mesclado com as três Áreas juntas, mais os seis testes das fatias
+    anteriores pra garantir que nada quebrou
 - [ ] Ometion
 
 ---

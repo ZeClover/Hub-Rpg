@@ -1370,6 +1370,28 @@ const ROMPER_OPCOES = [
   {custo:3, nome:'Ápice telegrafado', sobre:'até 2,5 Impactos, exige preparação legível'},
 ];
 
+// Botânica e Biomancia: os três estágios de um Cultivo (1=Broto, 2=Floração,
+// 3=Maturação) e o teto de Impacto que a Colheita libera em cada um.
+const ESTAGIOS_CULTIVO = [
+  {n:1, nome:'Broto',     impacto:'até 1 Impacto'},
+  {n:2, nome:'Floração',  impacto:'até 1,5 Impactos'},
+  {n:3, nome:'Maturação', impacto:'até 2,5 Impactos'},
+];
+// Custo em Seiva dos gastos fora de Semear/Cultivar/Colher.
+const GASTOS_SEIVA = [
+  {custo:1, nome:'Crescimento adicional', sobre:'Ação Parcial faz um Cultivo diferente crescer um estágio'},
+  {custo:1, nome:'Trocar propriedade preparada', sobre:'muda uma propriedade já preparada durante o cultivo'},
+  {custo:2, nome:'Sustentar ou transplantar', sobre:'sustenta uma Colheita por +1 rodada, ou transplanta um Cultivo sem perdê-lo'},
+];
+// Gastos de Dados de Campo (Zoologia e Etologia) — cada opção consome a
+// quantidade de Dados indicada, algumas também custam uma ação da rodada.
+const ZE_GASTOS = [
+  {custo:1, nome:'Ativar Traço preparado', sobre:'não interrompe a ação'},
+  {custo:1, nome:'Trocar o Perfil Ativo', sobre:'gasta uma Ação Parcial'},
+  {custo:2, nome:'Contramedida reativa', sobre:'gasta uma Reação'},
+  {custo:3, nome:'Adaptação/ápice', sobre:'sustentar Adaptação excepcional ou alimentar ápice preparado'},
+];
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1409,6 +1431,15 @@ function novoPersonagem(nome){
     // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
     // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
     roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
+    // botanicaBiomancia: motor de Botânica e Biomancia — Seiva e até três
+    // Cultivos, cada um num estágio de Broto(1) a Maturação(3).
+    botanicaBiomancia: {seiva:2, cultivos:[]},
+    // arteExpressao: motor de Arte e Expressão — ressonancia sobe com a
+    // Obra respondendo à cena; motivos são tags de texto livre (até 3).
+    arteExpressao: {ressonancia:0, motivos:[], obraPrincipal:''},
+    // zoologiaEtologia: Dados de Campo (0-3, gasto pra ativar Traço/trocar
+    // Perfil/preparar contramedida) + o Perfil Ativo em texto livre.
+    zoologiaEtologia: {dados:0, perfilAtivo:''},
     anotacoes: '',
   };
 }
@@ -1627,6 +1658,9 @@ function render(){
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
+  if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
+  if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
+  if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1997,8 +2031,184 @@ function painelRoboticaEngenharia(p){
   </div>`;
 }
 
+function painelBotanicaBiomancia(p){
+  if(p.perfil.areaId !== 'botanica-biomancia') return '';
+  const bb = p.botanicaBiomancia || {seiva:2, cultivos:[]};
+  const cultivos = bb.cultivos || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Botânica e Biomancia — Seiva e Cultivos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Semear:</strong> cria um Broto. <strong>Cultivar:</strong> no
+      fim do turno um Cultivo cresce de graça um estágio; 1 Seiva faz um
+      segundo crescer. <strong>Colher:</strong> consome o Cultivo e resolve
+      o efeito do estágio atual.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Seiva</div>
+        <div class="val">${bb.seiva}<span style="font-size:16px;color:var(--suave)">/5</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-bb-seiva="1" ${bb.seiva>=5?'disabled':''}>+1 Seiva (corrigir)</button>
+        <button data-bb-seiva="-1" ${bb.seiva<=0?'disabled':''}>-1 Seiva (corrigir)</button>
+        <button data-bb-reset>Novo conflito (volta pra 2)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Ganho de Seiva (no máximo 1x por rodada)</p>
+    <div class="condicoes">
+      <button data-bb-seiva-gatilho="colheita" ${bb.seiva>=5?'disabled':''}>+1 Seiva — colheu um Cultivo em Maturação</button>
+      <button data-bb-seiva-gatilho="destruicao" ${bb.seiva>=5?'disabled':''}>+1 Seiva — inimigo destruiu Cultivo em Floração/Maturação</button>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Gastar Seiva</p>
+    <div class="grade g3">
+      ${GASTOS_SEIVA.map(g => `<div>
+        <button data-bb-gasto="${g.custo}" style="width:100%" ${bb.seiva<g.custo?'disabled':''}>${g.custo} Seiva${g.custo>1?'s':''} — ${g.nome}</button>
+        <p class="mini" style="margin-top:6px">${g.sobre}</p>
+      </div>`).join('')}
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Cultivos ativos (${cultivos.length}/3)</p>
+    ${cultivos.map(c => `<div class="linha-lista">
+      <div class="topo">
+        <input data-bb-cultivo-nome="${c.id}" value="${esc(c.nome)}" placeholder="Espécie / função do Cultivo" style="font-family:Georgia,serif;font-size:16px">
+      </div>
+      <label>Estágio</label>
+      <div class="trilha">
+        ${ESTAGIOS_CULTIVO.map(e => `<button data-bb-cultivo-estagio="${c.id}|${e.n}" class="${c.estagio>=e.n?'cheio':''}">${e.n}</button>`).join('')}
+        <span class="mini">${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.nome || 'Broto'}</span>
+      </div>
+      <button data-bb-colher="${c.id}" class="perigo" style="margin-top:10px">Colher (${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.nome} — ${ESTAGIOS_CULTIVO.find(e=>e.n===c.estagio)?.impacto})</button>
+    </div>`).join('') || '<p class="mini">(nenhum Cultivo ativo)</p>'}
+    <button data-bb-semear ${cultivos.length>=3?'disabled':''}>+ Semear</button>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Semear → Cultivar → Colher:</strong> um Cultivo nunca tem
+      turno, ação ou limite ofensivo próprios — quem age é sempre o
+      Botânico. <strong>Contrajogo:</strong> Cultivos podem ser queimados,
+      arrancados, isolados, envenenados, separados do hospedeiro ou
+      privados de luz e água; destruído antes da Colheita, perde o efeito
+      guardado.
+    </p>
+  </div>`;
+}
+
+function painelArteExpressao(p){
+  if(p.perfil.areaId !== 'arte-expressao') return '';
+  const ae = p.arteExpressao || {ressonancia:0, motivos:[], obraPrincipal:''};
+  const motivos = ae.motivos || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Arte e Expressão — Ressonância e Motivos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Inspirar:</strong> a Obra ganha 1 Ressonância (0–3) quando
+      afeta de verdade um público, encontra resposta verdadeira, ou faz um
+      Motivo retornar sob nova circunstância. <strong>Compor:</strong>
+      acontecimentos, emoções, imagens ou ideias viram Motivos registrados.
+      <strong>Apresentar:</strong> gasta Ressonância acumulada em efeito.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Ressonância</div>
+        <div class="val">${ae.ressonancia}<span style="font-size:16px;color:var(--suave)">/3</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-ae-ressonancia="1" ${ae.ressonancia>=3?'disabled':''}>+1 (Obra ressoou)</button>
+        <button data-ae-ressonancia="-1" ${ae.ressonancia<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-ae-reset>Nova cena (volta pra 0)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Apresentar (gasta Ressonância)</p>
+    <div class="grade g2">
+      <div>
+        <button data-ae-apresentar="2" style="width:100%" ${ae.ressonancia<2?'disabled':''}>2 Ressonância — Apresentação Forte</button>
+        <p class="mini" style="margin-top:6px">Até 1,5 Impacto.</p>
+      </div>
+      <div>
+        <button data-ae-climax style="width:100%" ${ae.ressonancia<3?'disabled':''}>3 Ressonância — Clímax</button>
+        <p class="mini" style="margin-top:6px">Até 2,5 Impactos. Depois do Clímax, Ressonância volta a 0 e a Obra precisa mudar de Ato ou ser recomposta.</p>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Motivos preparados (${motivos.length}/3)</p>
+    ${motivos.map((m,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-ae-motivo="${i}" value="${esc(m)}" placeholder="ex: medo da queda, promessa quebrada" style="font-family:Georgia,serif;font-size:16px">
+        <button data-ae-remover-motivo="${i}" class="perigo">Remover</button>
+      </div>
+    </div>`).join('') || '<p class="mini">(nenhum registrado)</p>'}
+    <button id="btAddMotivo" ${motivos.length>=3?'disabled':''}>+ Registrar Motivo</button>
+
+    <div style="margin-top:14px">
+      <label for="c-ae-obra">Obra Principal</label>
+      <input id="c-ae-obra" data-ae-obra value="${esc(ae.obraPrincipal)}" placeholder="a Obra que combina até dois Motivos">
+    </div>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Inspirar → Compor → Apresentar:</strong> os três verbos da
+      Área. O Clímax é uma forma de Apresentação (a mais intensa), não um
+      quarto recurso separado.
+    </p>
+  </div>`;
+}
+
+function painelZoologiaEtologia(p){
+  if(p.perfil.areaId !== 'zoologia-etologia') return '';
+  const ze = p.zoologiaEtologia || {dados:0, perfilAtivo:''};
+  const max = 3;
+  const dados = Math.min(ze.dados, max);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Zoologia e Etologia — Dados de Campo e Perfil Ativo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Observar → Catalogar → Adaptar.</strong> Dados de Campo
+      começam em 0 na cena; preparação adequada à missão/habitat dá 1 de
+      partida. Observar um comportamento novo e relevante (sem interromper
+      o turno) rende 1 Dado, no máximo 1 por rodada.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Dados de Campo</div>
+        <div class="val">${dados}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-ze-dados="1" ${dados>=max?'disabled':''}>+1 (observou algo novo)</button>
+        <button data-ze-preparacao ${dados>=max?'disabled':''}>Preparação adequada (+1, começa a cena com 1)</button>
+        <button data-ze-dados="-1" ${dados<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-ze-nova-cena>Nova cena (volta pra 0)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Gastar Dados</p>
+    <div class="grade g2">
+      ${ZE_GASTOS.map(g => `<div>
+        <button data-ze-gastar="${g.custo}" style="width:100%" ${dados<g.custo?'disabled':''}>${g.custo} Dado${g.custo>1?'s':''} — ${g.nome}</button>
+        <p class="mini" style="margin-top:6px">${g.sobre}</p>
+      </div>`).join('')}
+    </div>
+
+    <div style="margin-top:12px">
+      <label for="c-ze-perfil">Perfil Ativo</label>
+      <input id="c-ze-perfil" data-ze-perfil value="${esc(ze.perfilAtivo)}" placeholder="ex: Predador — perseguição, salto, faro de sangue">
+    </div>
+    <p class="mini" style="margin-top:6px">
+      Antes da cena o estudante prepara até três Perfis, mas mantém só um
+      Ativo por vez; cada Perfil cabe num cartão com até três Traços — por
+      enquanto isso é texto livre, o Perfil e seus Traços com nome e vírgula.
+    </p>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Verbos:</strong> Observar (ganha Dado), Catalogar (registra o
+      comportamento pra uso futuro) e Adaptar (converte o catalogado em
+      Traço ou ajuste de Perfil).<br>
+      <strong>Famílias de Traço:</strong> Sentido, Locomoção, Defesa, Ataque,
+      Camuflagem, Cooperação e Contramedida.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2250,6 +2460,107 @@ function ligarEventos(){
   if(reReservatorio) reReservatorio.onchange = () => mudar(p => {
     p.roboticaEngenharia.reservatorioVital = Math.max(0, Math.min(4, Number(reReservatorio.value) || 0));
   });
+
+  // Botânica e Biomancia: Seiva e Cultivos.
+  app.querySelectorAll('[data-bb-seiva]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.bbSeiva);
+      p.botanicaBiomancia.seiva = Math.max(0, Math.min(5, p.botanicaBiomancia.seiva + delta));
+    }));
+  app.querySelectorAll('[data-bb-seiva-gatilho]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.botanicaBiomancia.seiva = Math.min(5, p.botanicaBiomancia.seiva + 1);
+    }));
+  const bbReset = app.querySelector('[data-bb-reset]');
+  if(bbReset) bbReset.onclick = () => mudar(p => p.botanicaBiomancia.seiva = 2);
+  app.querySelectorAll('[data-bb-gasto]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.bbGasto);
+      if(p.botanicaBiomancia.seiva < custo) return;
+      p.botanicaBiomancia.seiva -= custo;
+    }));
+
+  const bbSemear = app.querySelector('[data-bb-semear]');
+  if(bbSemear) bbSemear.onclick = () => mudar(p => {
+    if(p.botanicaBiomancia.cultivos.length >= 3) return;
+    p.botanicaBiomancia.cultivos.push({id: uid(), nome:'', estagio:1});
+  });
+  app.querySelectorAll('[data-bb-cultivo-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const c = p.botanicaBiomancia.cultivos.find(c => c.id === el.dataset.bbCultivoNome);
+      if(c) c.nome = el.value;
+    }, el));
+  app.querySelectorAll('[data-bb-cultivo-estagio]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [id, n] = b.dataset.bbCultivoEstagio.split('|');
+      const num = Number(n);
+      const c = p.botanicaBiomancia.cultivos.find(c => c.id === id);
+      if(!c) return;
+      // Mesmo padrão de clock da trilha de Consequências: clicar no
+      // estágio já marcado esvazia até ali, com piso em Broto (1).
+      c.estagio = Math.max(1, (num === c.estagio) ? num - 1 : num);
+    }));
+  app.querySelectorAll('[data-bb-colher]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.botanicaBiomancia.cultivos = p.botanicaBiomancia.cultivos.filter(c => c.id !== b.dataset.bbColher);
+    }));
+
+  // Arte e Expressão: Ressonância, Apresentar/Clímax e Motivos.
+  app.querySelectorAll('[data-ae-ressonancia]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.aeRessonancia);
+      p.arteExpressao.ressonancia = Math.max(0, Math.min(3, p.arteExpressao.ressonancia + delta));
+    }));
+  const aeReset = app.querySelector('[data-ae-reset]');
+  if(aeReset) aeReset.onclick = () => mudar(p => p.arteExpressao.ressonancia = 0);
+  app.querySelectorAll('[data-ae-apresentar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.aeApresentar);
+      if(p.arteExpressao.ressonancia < custo) return;
+      p.arteExpressao.ressonancia -= custo;
+    }));
+  const aeClimax = app.querySelector('[data-ae-climax]');
+  if(aeClimax) aeClimax.onclick = () => mudar(p => {
+    if(p.arteExpressao.ressonancia < 3) return;
+    p.arteExpressao.ressonancia = 0;
+  });
+  app.querySelectorAll('[data-ae-motivo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      p.arteExpressao.motivos[Number(el.dataset.aeMotivo)] = el.value;
+    }, el));
+  app.querySelectorAll('[data-ae-remover-motivo]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.arteExpressao.motivos.splice(Number(b.dataset.aeRemoverMotivo), 1);
+    }));
+  const addMotivo = document.getElementById('btAddMotivo');
+  if(addMotivo) addMotivo.onclick = () => mudar(p => {
+    if(p.arteExpressao.motivos.length < 3) p.arteExpressao.motivos = [...p.arteExpressao.motivos, ''];
+  });
+  const aeObra = app.querySelector('[data-ae-obra]');
+  if(aeObra) aeObra.oninput = () => mudarSemRedesenhar(p => {
+    p.arteExpressao.obraPrincipal = aeObra.value;
+  }, aeObra);
+
+  // Zoologia e Etologia: Dados de Campo e Perfil Ativo.
+  app.querySelectorAll('[data-ze-dados]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.zeDados);
+      p.zoologiaEtologia.dados = Math.max(0, Math.min(3, p.zoologiaEtologia.dados + delta));
+    }));
+  const zePreparacao = app.querySelector('[data-ze-preparacao]');
+  if(zePreparacao) zePreparacao.onclick = () => mudar(p => {
+    p.zoologiaEtologia.dados = Math.min(3, p.zoologiaEtologia.dados + 1);
+  });
+  const zeNovaCena = app.querySelector('[data-ze-nova-cena]');
+  if(zeNovaCena) zeNovaCena.onclick = () => mudar(p => p.zoologiaEtologia.dados = 0);
+  app.querySelectorAll('[data-ze-gastar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.zeGastar);
+      if(p.zoologiaEtologia.dados < custo) return;
+      p.zoologiaEtologia.dados -= custo;
+    }));
+  const zePerfil = document.getElementById('c-ze-perfil');
+  if(zePerfil) zePerfil.oninput = () => mudarSemRedesenhar(p => p.zoologiaEtologia.perfilAtivo = zePerfil.value, zePerfil);
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

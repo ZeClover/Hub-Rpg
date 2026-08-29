@@ -552,7 +552,56 @@ de teto com Melhorias e sendo restaurada por Recarga (travando até
 gratuito), Vitalícia reagindo ao Reservatório, Descanso completo
 recuperando as três reservas juntas, e persistência após recarregar.
 
-## 25. Restrições registradas
+## 25. Thrylikí Chelóna — combate de Botânica, Arte e Zoologia (29/08/2026)
+
+O Zé disse "continue, use agentes pfv" — a primeira vez que pediu
+explicitamente pra usar subagentes neste projeto. Fechei o grupo das
+seis Áreas originais (as que já tinham Ramos completos desde a versão
+V6) disparando três agentes em paralelo, cada um num worktree Git
+isolado (cópia própria do repositório), um pra cada Área restante:
+Botânica e Biomancia, Zoologia e Etologia, Arte e Expressão.
+
+Cada agente recebeu o mesmo nível de detalhe que eu mesmo uso: a
+mecânica já extraída dos documentos de design (não "leia e resolva
+sozinho"), os trechos de código das três Áreas já prontas como molde
+literal, e a mesma disciplina de escopo (só o resumo do recurso e um
+rastreador leve — nada de calculadora de poder). Cada um rodou os
+próprios testes Playwright, `node --check`, varredura de CJK, `tsc` e
+`lint`, e comitou sozinho — sem tocar documentação nem fazer merge,
+isso ficou comigo.
+
+- **Botânica e Biomancia:** Seiva (0–5, mesmo formato do Esforço) +
+  até três Cultivos, cada um com nome livre e um estágio Broto→
+  Floração→Maturação usando a mesma trilha de clock das Consequências;
+  Colher remove o Cultivo e o rótulo do botão já mostra o teto de
+  Impacto do estágio atual
+- **Zoologia e Etologia:** Dados de Campo (0–3) com os quatro gastos
+  do documento, mais um único campo de texto livre "Perfil Ativo" — a
+  grade completa de três Perfis × três Traços ficou de fora, é
+  complexidade de construtor, não de recurso
+- **Arte e Expressão:** Ressonância (0–3) com Apresentação Forte (2,
+  subtrai) e Clímax (3, zera a Ressonância inteira, não só subtrai 3),
+  mais até três Motivos em texto livre e um campo de Obra Principal
+
+**Trabalhar em paralelo tem um custo previsível: merge manual.** Os
+três agentes partiram do mesmo commit em worktrees isolados, então
+todos mexeram nos mesmos pontos de extensão do arquivo — a lista de
+campos em `novoPersonagem()`, a normalização em `render()`, a
+concatenação em `abaCombate()` e o fim de `ligarEventos()` — e ao
+juntar os três de volta na branch de trabalho, cada merge sucessivo
+gerou conflito nesses mesmos pontos. Nenhum era um conflito de
+verdade (mudanças incompatíveis); eram sempre duas inserções
+independentes competindo pelo mesmo lugar no arquivo. Resolvi cada um
+concatenando as duas adições lado a lado, sem perder conteúdo de
+nenhum agente, e reconferi sintaxe/CJK/testes depois de cada merge.
+
+Testado com os testes que cada agente já tinha escrito, revalidados
+contra o arquivo final já mesclado com as três Áreas juntas (não só
+contra a versão isolada de cada agente) — mais os seis testes das
+fatias anteriores, pra garantir que juntar as três não quebrou nada
+que já funcionava. `tsc` e `lint` limpos.
+
+## 26. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
