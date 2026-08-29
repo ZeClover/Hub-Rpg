@@ -1459,6 +1459,78 @@ fatias anteriores de Thrylikí Chelóna continuam passando. `tsc` e
 Agora sim: não há mais lacuna conhecida entre os documentos de design
 de Thrylikí Chelóna e a ficha.
 
+## 46. Mesa ao Vivo — Painel de Vida e Ordem de Iniciativa (29/08/2026)
+
+Primeira fatia fora de Thrylikí Chelóna desde a virada de escopo: o Zé
+pediu uma forma de acompanhar a vida dos jogadores e dos inimigos
+durante a sessão, e um "hub de mestre" com o que se usa numa mesa.
+Vale pros quatro sistemas do Hub (Kaizoku no Sho, Fabula Ultima,
+Sistema SAO, Thrylikí Chelóna), não só o que estava em construção.
+
+**Vida dos jogadores: acompanhada sozinha, mas só de leitura.** Cada
+ficha (jogador e inimigo, dos quatro sistemas) passou a espelhar, a
+cada salvamento, um campo genérico `dados.resumoVida = {atual, maxima,
+rotulo}` — calculado com a fórmula que já existia naquele sistema (PV
+do Fabula Ultima e do SAO, Vida de Thrylikí Chelóna, Vitalidade do
+Kaizoku no Sho). É só um espelho: o Hub nunca calcula vida sozinho,
+só lê o que a ficha já calculou (decisão #17 — regra de sistema fica
+no módulo). O Painel de Vida da Mesa ao Vivo busca esse campo a cada 8
+segundos enquanto a tela do mestre estiver aberta — não é tempo real
+de verdade (isso pediria Supabase Realtime com política de leitura em
+`personagens`, hoje travada por completo, decisão #31), é a versão de
+custo zero: o navegador do mestre pergunta de novo sozinho. Na prática
+o mestre vê a vida de cada jogador atualizar sozinha em poucos
+segundos depois de qualquer mudança na ficha dele — não instantâneo,
+mas automático.
+
+Deliberado não deixar o mestre editar a vida do jogador por aqui:
+esse número é da ficha do jogador (decisão #13 vale também ao
+contrário — o mestre acompanha, não sobrescreve).
+
+**Vida dos inimigos: acompanhada e ajustável, sem abrir a ficha.**
+Como o mestre é dono das fichas de inimigo (mesma regra desde
+`AdicionarInimigo`), o Painel de Vida tem botões de -5/-1/+1/+5 que
+ajustam a vida ali mesmo. Pra ficha de inimigo, aberta depois, não
+mostrar um número velho, o ajuste escreve em dois lugares: o espelho
+`resumoVida.atual` e o campo "de verdade" daquele sistema — o caminho
+de cada um está em `campoVidaInimigo`, um mapa novo em `sistemas.ts`
+(`pvAtual` no Fabula Ultima; `atual.pv` no SAO e em Thrylikí Chelóna;
+Kaizoku no Sho não tem ficha de inimigo própria, fica de fora). Uma
+ficha de inimigo criada mas nunca aberta ainda não tem `resumoVida`
+calculado — o painel avisa "abra a ficha uma vez" em vez de adivinhar
+um número.
+
+**Ordem de iniciativa.** Lista simples — nome, condição em texto
+livre, mover pra cima/baixo, marcar de quem é a vez, contador de
+rodada. Fica só no navegador do mestre, por `localStorage`, sem rota
+nova nem gasto de banco: não é informação de personagem, é só o
+estado da cena de agora.
+
+**Deixado de fora, de propósito:** rolador de dados virtual (as
+próprias fichas já assumem "o dado é rolado na mesa", comentário do
+Kaizoku no Sho); qualquer coisa em tempo real de verdade (pediria
+abrir política de leitura no banco pra tabela `personagens`, hoje
+fechada por completo — decisão #31 — e duplicar em SQL a mesma
+verificação de permissão que já existe em `podeAcessarPersonagem`);
+editar a vida do jogador pelo painel do mestre.
+
+Testado: nove testes automáticos novos (`resumo-vida.test.ts`) para a
+leitura, o ajuste com delta e a escrita no caminho aninhado — os 25
+testes de `node --test` do projeto continuam passando. Um teste de
+Playwright novo confirma que as 7 fichas (4 de jogador, 3 de inimigo)
+mandam `resumoVida` válido no PATCH pro Hub a cada salvamento; os
+quarenta e um testes das fatias anteriores de Thrylikí Chelóna
+continuam passando, sem nenhuma regressão. `tsc --noEmit`, `npm run
+build` e `npm run lint` limpos nas duas branches.
+
+**Limite desta verificação:** esta sessão não tem acesso ao Supabase
+nem ao login real, então a tela da Mesa ao Vivo e as duas rotas novas
+(`/api/campanhas/[id]/vida` e `/api/campanhas/[id]/vida/[personagemId]`)
+foram conferidas por `tsc`, `next build` (compila todas as rotas) e
+lint — não por um clique de verdade no navegador com uma campanha e
+jogadores reais. Fica pro Zé confirmar visualmente na primeira sessão
+em que usar.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

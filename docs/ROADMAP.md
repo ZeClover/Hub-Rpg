@@ -323,6 +323,24 @@ passando.
     `0006_corrigir_delecao_personagem_campanha.sql`
   - `npm run build`, lint e os 16 testes automatizados passando
 
+- [x] **Mesa ao Vivo — Painel de Vida e Ordem de Iniciativa** (29/08/2026)
+      — decisão #46. Página nova (`/campanhas/[id]/mesa`, só pro mestre)
+      pra usar durante a sessão, separada da tela de organização.
+  - Painel de Vida: vida de jogadores acompanhada sozinha (busca a cada
+    8s um campo `resumoVida` que toda ficha — dos quatro sistemas —
+    passou a espelhar a cada salvamento) e vida de inimigos ajustável
+    ali mesmo, com botões -5/-1/+1/+5, sem abrir a ficha
+  - Ordem de iniciativa: nome, condição livre, mover, marcar de quem é
+    a vez, contador de rodada — só no navegador do mestre (localStorage)
+  - Deixado de fora, de propósito: tempo real de verdade (pediria abrir
+    política de leitura em `personagens`, hoje travada — decisão #31),
+    editar vida de jogador pelo painel, rolador de dados
+  - Testado: 9 testes automáticos novos de `resumo-vida.ts` (25 no
+    total do projeto), 1 teste de Playwright novo cobrindo as 7 fichas,
+    e os 41 testes de Thrylikí Chelóna sem regressão. `tsc`, `next
+    build` e lint limpos. Sem acesso a Supabase/login nesta sessão — a
+    tela em si fica pro Zé confirmar visualmente na primeira sessão
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

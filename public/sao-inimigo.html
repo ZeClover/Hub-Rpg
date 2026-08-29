@@ -202,6 +202,9 @@ function salvarNoHub(){
   clearTimeout(debounceHub);
   debounceHub = setTimeout(async () => {
     const inimigo = atual(); if(!inimigo) return;
+    // Resumo genérico pro Hub de Mestre ler e ajustar sem saber a fórmula
+    // de PV deste sistema (decisão #46) — espelhado a cada salvamento.
+    inimigo.resumoVida = {atual: Math.max(0, Math.min(pvMaximo(inimigo), inimigo.atual.pv ?? pvMaximo(inimigo))), maxima: pvMaximo(inimigo), rotulo: 'PV'};
     try{
       const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
         method: 'PATCH',
