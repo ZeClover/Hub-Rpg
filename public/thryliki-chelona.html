@@ -1426,6 +1426,9 @@ function novoPersonagem(nome){
     // botanicaBiomancia: motor de Botânica e Biomancia — Seiva e até três
     // Cultivos, cada um num estágio de Broto(1) a Maturação(3).
     botanicaBiomancia: {seiva:2, cultivos:[]},
+    // arteExpressao: motor de Arte e Expressão — ressonancia sobe com a
+    // Obra respondendo à cena; motivos são tags de texto livre (até 3).
+    arteExpressao: {ressonancia:0, motivos:[], obraPrincipal:''},
     anotacoes: '',
   };
 }
@@ -1645,6 +1648,7 @@ function render(){
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
   if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
+  if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2078,8 +2082,67 @@ function painelBotanicaBiomancia(p){
   </div>`;
 }
 
+function painelArteExpressao(p){
+  if(p.perfil.areaId !== 'arte-expressao') return '';
+  const ae = p.arteExpressao || {ressonancia:0, motivos:[], obraPrincipal:''};
+  const motivos = ae.motivos || [];
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Arte e Expressão — Ressonância e Motivos</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Inspirar:</strong> a Obra ganha 1 Ressonância (0–3) quando
+      afeta de verdade um público, encontra resposta verdadeira, ou faz um
+      Motivo retornar sob nova circunstância. <strong>Compor:</strong>
+      acontecimentos, emoções, imagens ou ideias viram Motivos registrados.
+      <strong>Apresentar:</strong> gasta Ressonância acumulada em efeito.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Ressonância</div>
+        <div class="val">${ae.ressonancia}<span style="font-size:16px;color:var(--suave)">/3</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-ae-ressonancia="1" ${ae.ressonancia>=3?'disabled':''}>+1 (Obra ressoou)</button>
+        <button data-ae-ressonancia="-1" ${ae.ressonancia<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-ae-reset>Nova cena (volta pra 0)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Apresentar (gasta Ressonância)</p>
+    <div class="grade g2">
+      <div>
+        <button data-ae-apresentar="2" style="width:100%" ${ae.ressonancia<2?'disabled':''}>2 Ressonância — Apresentação Forte</button>
+        <p class="mini" style="margin-top:6px">Até 1,5 Impacto.</p>
+      </div>
+      <div>
+        <button data-ae-climax style="width:100%" ${ae.ressonancia<3?'disabled':''}>3 Ressonância — Clímax</button>
+        <p class="mini" style="margin-top:6px">Até 2,5 Impactos. Depois do Clímax, Ressonância volta a 0 e a Obra precisa mudar de Ato ou ser recomposta.</p>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Motivos preparados (${motivos.length}/3)</p>
+    ${motivos.map((m,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-ae-motivo="${i}" value="${esc(m)}" placeholder="ex: medo da queda, promessa quebrada" style="font-family:Georgia,serif;font-size:16px">
+        <button data-ae-remover-motivo="${i}" class="perigo">Remover</button>
+      </div>
+    </div>`).join('') || '<p class="mini">(nenhum registrado)</p>'}
+    <button id="btAddMotivo" ${motivos.length>=3?'disabled':''}>+ Registrar Motivo</button>
+
+    <div style="margin-top:14px">
+      <label for="c-ae-obra">Obra Principal</label>
+      <input id="c-ae-obra" data-ae-obra value="${esc(ae.obraPrincipal)}" placeholder="a Obra que combina até dois Motivos">
+    </div>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Inspirar → Compor → Apresentar:</strong> os três verbos da
+      Área. O Clímax é uma forma de Apresentação (a mais intensa), não um
+      quarto recurso separado.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2375,6 +2438,42 @@ function ligarEventos(){
     b.onclick = () => mudar(p => {
       p.botanicaBiomancia.cultivos = p.botanicaBiomancia.cultivos.filter(c => c.id !== b.dataset.bbColher);
     }));
+
+  // Arte e Expressão: Ressonância, Apresentar/Clímax e Motivos.
+  app.querySelectorAll('[data-ae-ressonancia]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.aeRessonancia);
+      p.arteExpressao.ressonancia = Math.max(0, Math.min(3, p.arteExpressao.ressonancia + delta));
+    }));
+  const aeReset = app.querySelector('[data-ae-reset]');
+  if(aeReset) aeReset.onclick = () => mudar(p => p.arteExpressao.ressonancia = 0);
+  app.querySelectorAll('[data-ae-apresentar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.aeApresentar);
+      if(p.arteExpressao.ressonancia < custo) return;
+      p.arteExpressao.ressonancia -= custo;
+    }));
+  const aeClimax = app.querySelector('[data-ae-climax]');
+  if(aeClimax) aeClimax.onclick = () => mudar(p => {
+    if(p.arteExpressao.ressonancia < 3) return;
+    p.arteExpressao.ressonancia = 0;
+  });
+  app.querySelectorAll('[data-ae-motivo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      p.arteExpressao.motivos[Number(el.dataset.aeMotivo)] = el.value;
+    }, el));
+  app.querySelectorAll('[data-ae-remover-motivo]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.arteExpressao.motivos.splice(Number(b.dataset.aeRemoverMotivo), 1);
+    }));
+  const addMotivo = document.getElementById('btAddMotivo');
+  if(addMotivo) addMotivo.onclick = () => mudar(p => {
+    if(p.arteExpressao.motivos.length < 3) p.arteExpressao.motivos = [...p.arteExpressao.motivos, ''];
+  });
+  const aeObra = app.querySelector('[data-ae-obra]');
+  if(aeObra) aeObra.oninput = () => mudarSemRedesenhar(p => {
+    p.arteExpressao.obraPrincipal = aeObra.value;
+  }, aeObra);
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
