@@ -95,6 +95,15 @@ export default async function PaginaCampanha({
       <h1 className="mt-3 font-titulo text-3xl">{campanha.nome}</h1>
       <p className="mt-2 text-sm text-texto-suave">{campanha.sistema.nome}</p>
 
+      {souMestre && (
+        <Link
+          href={`/campanhas/${campanha.id}/mesa`}
+          className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
+        >
+          Abrir Mesa ao vivo →
+        </Link>
+      )}
+
       {souMestre ? (
         <VisaoDoMestre
           campanhaId={campanha.id}
