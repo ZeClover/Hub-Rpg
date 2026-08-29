@@ -1914,6 +1914,75 @@ const TECNICAS_RAMO = {
   ],
 };
 
+// Kit de Combate do 1º Ano — conteúdo pronto por Área, independente de Ramo:
+// "o Ramo não desbloqueia o direito de combater — isso já existe no kit da
+// Área" (texto do próprio documento). Só as seis Áreas originais têm kit
+// próprio aqui; as dez novas usam as "ações comuns" já mostradas no painel
+// de recurso genérico (RECURSOS_NOVAS_AREAS), que vêm da mesma fonte.
+const KITS_COMBATE_ANO1 = {
+  'corpo-cinetica': {
+    entrada: 'corpo, respiração e técnica fundamental. Começa um conflito relevante com 2 Esforços.',
+    opcoes: [
+      {nome:'Golpe Fundamental', acao:'Principal', custo:'', impacto:'1', uso:'Ataque corporal ou com arma. Registra "Golpe" no Rastro e pode gerar o Esforço natural da rodada.'},
+      {nome:'Guarda Enraizada', acao:'Parcial; usa a Reação quando disparada', custo:'', impacto:'0,5', uso:'Registra "Guarda" e reduz ou redireciona um efeito. A proteção compromete o orçamento, não cria uma segunda ação ofensiva.'},
+      {nome:'Passo de Choque', acao:'Movimento + Principal', custo:'', impacto:'1', uso:'Aproxima, atravessa uma posição perigosa ou desloca o alvo; dano e deslocamento dividem o Impacto. Registra "Impulso".'},
+      {nome:'Rompimento Didático', acao:'Principal (exige 2 Esforços e duas marcas no Rastro)', custo:'', impacto:'1,5', uso:'Converte a sequência em dano, quebra de postura ou combinação dos dois e então apaga o Rastro.'},
+    ],
+    turno: 'escolha entre Golpe para pressionar, Guarda para sobreviver ou Passo para mudar a geometria; Rompa quando o Rastro estiver pronto.',
+  },
+  'simbologia-arcana': {
+    entrada: 'quatro Fórmulas preparadas, já compostas numa Matriz de Tomo 4. O estudante ainda escolhe aparência e uma Essência fundamental.',
+    opcoes: [
+      {nome:'Projétil Elemental', acao:'Principal', custo:'2 Mana', impacto:'1', uso:'Ferir um alvo a alcance curto com Fogo, Água, Vento ou Terra.'},
+      {nome:'Selo de Guarda', acao:'Reação', custo:'2 Mana', impacto:'0,5', uso:'Reduz um efeito contra uma criatura próxima. Se também causar resposta ofensiva, compromete o próximo limite ofensivo.'},
+      {nome:'Impulso Vetorial', acao:'Principal', custo:'2 Mana', impacto:'1', uso:'Move alvo ou objeto, cria abertura ou causa dano; os resultados dividem o Impacto.'},
+      {nome:'Restauração Simples', acao:'Principal', custo:'2 Mana', impacto:'1', uso:'Recupera Vida ou reduz uma condição compatível, sem exceder o orçamento de cura.'},
+    ],
+    turno: 'manifeste uma Fórmula preparada. Concentrar existe como recuperação de emergência, não como obrigação para começar a luta.',
+  },
+  'robotica-engenharia': {
+    entrada: 'um Sistema Principal configurado, 4 Cargas, 1 PC por rodada e dois Módulos ativos escolhidos do kit. Ferramenta comum continua disponível mesmo que um Módulo seja desativado.',
+    opcoes: [
+      {nome:'Ferramenta Ofensiva', acao:'Principal', custo:'1 Carga; +1 PC se delegada', impacto:'1', uso:'Disparo, lâmina, pulso, drone ou ferramenta convertida em ataque.'},
+      {nome:'Escudo Interceptor', acao:'Reação', custo:'1 Carga; +1 PC se delegada', impacto:'0,5', uso:'Intercepta, cria cobertura breve ou reduz dano. Usa a Reação normal do personagem.'},
+      {nome:'Varredura Tática', acao:'Parcial', custo:'1 Carga', impacto:'0,5', uso:'Revela uma informação acionável e pode converter parte do efeito em marca, Exposto ou correção de posição.'},
+      {nome:'Propulsor Configurado', acao:'Principal', custo:'1 Carga', impacto:'1', uso:'Reposiciona personagem, aliado ou Sistema e pode gerar proteção ou impacto físico, dividindo o orçamento.'},
+    ],
+    turno: 'escolha qual corpo executa sua ação. PC autoriza delegação; nunca cria uma ação nova.',
+  },
+  'botanica-biomancia': {
+    entrada: 'três Sementes Preparadas, substrato portátil e 2 Seivas. Nenhuma opção exige vegetação anterior no cenário.',
+    opcoes: [
+      {nome:'Semente de Estalo', acao:'Principal', custo:'', impacto:'1', uso:'Rompe uma Semente Preparada para atacar, proteger ou espalhar raízes imediatamente. Não cria Cultivo nem gera Seiva; é a ferramenta de emergência.'},
+      {nome:'Mandíbula Solar', acao:'Semear/Colher', custo:'', impacto:'0,5 / 1 / 1,5 / 2,5', uso:'Broto marca ou fere; Floração ataca; Maturação produz mordida telegrafada.'},
+      {nome:'Cipó de Guarda', acao:'Semear/Colher', custo:'', impacto:'0,5 / 1 / 1,5 / 2,5', uso:'Prende, cria cobertura ou protege uma zona. Controle total contra chefe vira Brecha.'},
+      {nome:'Flor Hemática', acao:'Semear/Colher', custo:'', impacto:'0,5 / 1 / 1,5 / 2,5', uso:'Estabiliza no Broto, cura ou restaura mais ao amadurecer.'},
+      {nome:'Estoura-Esporos', acao:'Semear/Colher', custo:'', impacto:'0,5 / 1 / 1,5 / 2,5', uso:'Marca área, oculta, enfraquece ou causa dano disperso.'},
+    ],
+    turno: 'Semeie para obter 0,5 e preparar o futuro; deixe um Cultivo crescer gratuitamente; Colha cedo por segurança ou espere por potência.',
+  },
+  'zoologia-etologia': {
+    entrada: 'três Perfis preparados e um Perfil Ativo. O personagem consegue realizar ataque básico mesmo com zero Dados de Campo; Dados ampliam a resposta, não autorizam sua existência.',
+    opcoes: [
+      {nome:'Instinto Predador', acao:'Principal', custo:'', impacto:'1', uso:'Ataque, perseguição ou marca. Com 1 Dado, um Traço preparado converte parte do efeito em salto, faro ou pressão.'},
+      {nome:'Carapaça Reativa', acao:'Reação', custo:'1 Dado', impacto:'0,5', uso:'Reduz dano, ancora posição ou protege uma parte vulnerável.'},
+      {nome:'Rapina de Campo', acao:'Principal', custo:'1 Dado', impacto:'1', uso:'Reposiciona, alcança ponto difícil ou ataca em passagem; movimento e dano dividem Impacto.'},
+      {nome:'Resposta Catalogada', acao:'Reação', custo:'2 Dados', impacto:'1', uso:'Contramedida contra comportamento observado. Contra chefe, interrompe componente, cria Brecha ou avança medidor; não apaga a fase.'},
+    ],
+    turno: 'ataque ou cumpra objetivo com o Perfil Ativo; Observe uma novidade por rodada; gaste Dados quando o Traço mudar concretamente a resposta.',
+  },
+  'arte-expressao': {
+    entrada: 'três Motivos e uma Obra Principal preparada com Âncora simples — voz, gesto, instrumento, imagem, objeto, texto ou vestimenta. Público humano não é obrigatório; basta haver algo capaz de perceber ou ser afetado pela manifestação.',
+    opcoes: [
+      {nome:'Manifestação Incisiva', acao:'Principal', custo:'', impacto:'1', uso:'Som, imagem, matéria, movimento ou palavra produz pressão ofensiva.'},
+      {nome:'Refrão Guardião', acao:'Principal', custo:'', impacto:'1', uso:'Converte a Obra em proteção, coragem, distração ou cobertura.'},
+      {nome:'Cenário em Movimento', acao:'Principal', custo:'', impacto:'1', uso:'Altera posição, percepção, terreno ou papel; dano e controle dividem Impacto.'},
+      {nome:'Clímax Preparado', acao:'Principal', custo:'3 Ressonâncias e preparação visível', impacto:'2,5', uso:'Resolve um auge ofensivo, protetor ou tático e zera a Ressonância. Chefes convertem encerramento absoluto em Brecha ou avanço de fase.'},
+    ],
+    turno: 'Apresente a Obra preparada; registre no máximo 1 Ressonância por rodada quando a cena responder; mude Motivo quando repetir já não produzir significado novo.',
+  },
+};
+
 // Ano mede currículo (o que o personagem sabe fazer); Nível mede potência.
 // Os dois avançam de forma independente.
 const ANOS = [
@@ -3343,8 +3412,31 @@ function painelPoderesLivres(p, poderes){
   </div>`;
 }
 
+// Kit de Combate do 1º Ano: "o Ramo não desbloqueia o direito de combater
+// — isso já existe no kit da Área". Vale pro personagem inteiro, não só
+// no 1º Ano (Ramo muda a pergunta tática, não substitui o kit).
+function painelKitCombateAno1(p){
+  const kit = KITS_COMBATE_ANO1[p.perfil.areaId];
+  if(!kit) return '';
+  const area = AREAS.find(a => a.id === p.perfil.areaId);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Kit de Combate — ${area ? esc(area.nome) : ''}</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Conteúdo pronto desde o 1º Ano, sem depender de criação livre nem
+      de Ramo escolhido. <strong>Entrada pronta:</strong> ${esc(kit.entrada)}
+    </p>
+    <div class="grade g2">
+      ${kit.opcoes.map(o => `<div>
+        <p class="mini" style="margin:0"><strong>${esc(o.nome)}</strong> — ${esc(o.acao)}${o.custo ? ` (${esc(o.custo)})` : ''} · ${esc(o.impacto)} Impacto</p>
+        <p class="mini" style="margin-top:4px">${esc(o.uso)}</p>
+      </div>`).join('')}
+    </div>
+    <p class="mini" style="margin-top:14px"><strong>Turno simples sugerido:</strong> ${esc(kit.turno)}</p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelKitCombateAno1(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">

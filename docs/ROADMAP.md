@@ -747,8 +747,18 @@ passando.
     livre
   - Testado com Playwright: ausência sem Ramo, técnicas certas ao
     escolher, troca ao mudar de Ramo, Ramo de Área nova, persistência
+- [x] **Thrylikí Chelóna — Kit de Combate do 1º Ano** (29/08/2026) —
+      decisão #35. As opções nomeadas que um personagem de 1º Ano usa
+      pra combater antes de ter Ramo ou criação livre — "o Ramo não
+      desbloqueia o direito de combater, isso já existe no kit da Área".
+  - `KITS_COMBATE_ANO1`: Entrada pronta + 3 a 5 opções (Ação/Custo/
+    Impacto/Uso) + Turno sugerido, por Área — só as seis originais (as
+    dez novas já têm o próprio kit nas "ações comuns")
+  - Fica visível em qualquer Ano, não some ao escolher Ramo
+  - Testado com Playwright: presença/ausência por Área, opções certas,
+    continua visível após subir de Ano, dez Áreas novas sem duplicar
 - [x] Todas as dezesseis Áreas de Estudo têm recurso de combate, criação
-      livre e conteúdo pronto (técnicas dos Ramos) dentro do Hub
+      livre, técnicas de Ramo e Kit de Combate do 1º Ano dentro do Hub
 - [ ] Ometion
 
 ---
