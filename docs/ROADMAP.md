@@ -707,6 +707,17 @@ passando.
     com o Orçamento e avisa se passou
   - Testado com Playwright: Orçamento reagindo aos dois campos, soma por
     Porte, status dentro/acima do orçamento, remover e limpar
+- [x] **Thrylikí Chelóna — Construtor de Fórmula (Simbologia Arcana)**
+      (29/08/2026) — decisão #32. Calculadora de Fórmula que a decisão
+      #23 tinha deixado pendente: Verbo + Potência + Essência + Alcance +
+      Alvo + Duração + Cláusulas viram Impacto/Mana/Tomos ao vivo.
+  - Matriz de Tomo (por Ano) trava "Salvar Fórmula" quando a combinação
+    não cabe; Fórmulas salvas entram numa lista com nome editável e
+    botão Manifestar que desconta a Mana do pool
+  - Rascunho do construtor não persiste (mesmo padrão do Orçamento de
+    Encontro) — só "Salvar Fórmula preparada" grava de verdade
+  - Testado com Playwright: cálculo ao vivo, aviso e trava ao estourar a
+    Matriz, salvar/renomear/Manifestar, persistência após recarregar
 - [ ] Ometion
 
 ---

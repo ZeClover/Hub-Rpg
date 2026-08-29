@@ -1575,7 +1575,7 @@ function novoPersonagem(nome){
     corpoCinetica: {esforco:2, rastro:[]}, // rastro: até 2 marcas
     // simbologiaArcana: motor de Simbologia Arcana — manaAtual null = no
     // máximo; reservatorio é melhoria comprada à parte, 0 a 4.
-    simbologiaArcana: {manaAtual:null, reservatorio:0, concentrarUsado:false},
+    simbologiaArcana: {manaAtual:null, reservatorio:0, concentrarUsado:false, formulas:[]},
     // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
     // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
     roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
@@ -1610,6 +1610,76 @@ function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
 function manaMaxima(p){
   const reservatorio = (p.simbologiaArcana && p.simbologiaArcana.reservatorio) || 0;
   return 6 + 2*grauAtributo(p,'inteligencia') + 2*grauTreinamento(p.treinamentos['simbologia']||'nada') + reservatorio;
+}
+
+// Construtor de Fórmula (Simbologia Arcana): Verbo + Essência + Moldura +
+// Cláusulas. Só o Verbo é puro sabor; os outros componentes têm peso em
+// Tomos (capacidade da Matriz do Ano) e custo adicional de Mana — a
+// fórmula final soma tudo, exatamente como o documento de design descreve.
+const FORMULA_VERBOS = ['Ferir','Proteger','Mover','Restaurar','Alterar','Criar','Perceber','Vincular','Selar'];
+const FORMULA_POTENCIAS = [
+  {id:'menor',   nome:'Menor',   impacto:0.5, mana:1, execucao:'utilidade ou efeito secundário'},
+  {id:'basica',  nome:'Básica',  impacto:1,   mana:2, execucao:'Ação Principal'},
+  {id:'potente', nome:'Potente', impacto:1.5, mana:4, execucao:'Parcial + Principal'},
+  {id:'apice',   nome:'Ápice',   impacto:2.5, mana:7, execucao:'preparação anterior + Principal'},
+];
+const FORMULA_ALCANCES = [
+  {id:'curto',  nome:'Próprio / toque / curto',   tomos:1, mana:0},
+  {id:'medio',  nome:'Médio',                     tomos:2, mana:1},
+  {id:'longo',  nome:'Longo',                     tomos:3, mana:2},
+  {id:'remoto', nome:'Remoto por Âncora',         tomos:4, mana:3},
+];
+const FORMULA_ALVOS = [
+  {id:'um',     nome:'Um alvo',        tomos:1, mana:0},
+  {id:'dois',   nome:'Dois alvos',     tomos:2, mana:1},
+  {id:'area',   nome:'Pequena área',   tomos:3, mana:2},
+  {id:'grupo',  nome:'Grande grupo',   tomos:5, mana:4},
+];
+const FORMULA_ESSENCIAS = [
+  {id:'basica',      nome:'Básica (Fogo/Água/Vento/Terra)', tomos:1, mana:0},
+  {id:'derivacao',   nome:'Derivação (combinação conhecida)', tomos:2, mana:0},
+  {id:'segunda',     nome:'Segunda ordem',                  tomos:3, mana:1},
+  {id:'complexa',    nome:'Complexa',                       tomos:5, mana:2},
+  {id:'conceitual',  nome:'Conceitual',                     tomos:8, mana:4},
+];
+const FORMULA_CLAUSULAS = [
+  {id:'seguir',       nome:'Seguir',       tomos:2, mana:1},
+  {id:'observar',     nome:'Observar',     tomos:2, mana:1},
+  {id:'gatilho',      nome:'Gatilho',      tomos:2, mana:1},
+  {id:'persistencia', nome:'Persistência', tomos:2, mana:1},
+  {id:'criacao',      nome:'Criação',      tomos:3, mana:2},
+  {id:'selar',        nome:'Selar',        tomos:3, mana:2},
+];
+const FORMULA_DURACOES = [
+  {id:'turno',       nome:'Até o próximo turno', tomos:1, mana:1},
+  {id:'tres',        nome:'Três rodadas',        tomos:2, mana:2},
+  {id:'cena',        nome:'Cena',                tomos:3, mana:3},
+  {id:'persistente', nome:'Persistente',         tomos:5, mana:5},
+];
+
+// Matriz de Tomo: capacidade da Fórmula por Ano (5º ganha +1 Metassímbolo,
+// que não entra nessa conta numérica — é uma exceção autoral à parte).
+function matrizTomo(p){
+  if(p.ano <= 1) return 4;
+  if(p.ano === 2) return 8;
+  if(p.ano === 3) return 14;
+  return 20;
+}
+// Fórmulas preparadas: quatro no 1º Ano, cinco no 3º, seis no 5º.
+function limiteFormulasPreparadas(p){ return p.ano >= 5 ? 6 : p.ano >= 3 ? 5 : 4; }
+
+function calculoFormula(sel){
+  const potencia = FORMULA_POTENCIAS.find(x => x.id === sel.potencia) || FORMULA_POTENCIAS[1];
+  const alcance = FORMULA_ALCANCES.find(x => x.id === sel.alcance) || FORMULA_ALCANCES[0];
+  const alvo = FORMULA_ALVOS.find(x => x.id === sel.alvo) || FORMULA_ALVOS[0];
+  const essencia = FORMULA_ESSENCIAS.find(x => x.id === sel.essencia) || FORMULA_ESSENCIAS[0];
+  const duracao = FORMULA_DURACOES.find(x => x.id === sel.duracao) || FORMULA_DURACOES[0];
+  const clausulas = (sel.clausulas || []).map(id => FORMULA_CLAUSULAS.find(c => c.id === id)).filter(Boolean);
+  const mana = potencia.mana + alcance.mana + alvo.mana + essencia.mana + duracao.mana
+    + clausulas.reduce((soma,c) => soma + c.mana, 0);
+  const tomos = alcance.tomos + alvo.tomos + essencia.tomos + duracao.tomos
+    + clausulas.reduce((soma,c) => soma + c.tomos, 0);
+  return {impacto: potencia.impacto, mana, tomos};
 }
 
 // Robótica e Engenharia — três recursos não intercambiáveis, conferidos
@@ -1712,6 +1782,10 @@ const estado = {
   erroHub: null,
   ehDono: false,
   compartilhado: false,
+  // construtorFormula: rascunho do Construtor de Fórmula (Simbologia
+  // Arcana) — não é dado do personagem, só some ao trocar de ficha ou
+  // recarregar a página; "Salvar Fórmula" é que grava de verdade.
+  construtorFormula: {verbo:'Ferir', potencia:'basica', alcance:'curto', alvo:'um', essencia:'basica', clausulas:[], duracao:'turno', nomeRascunho:''},
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1808,7 +1882,8 @@ function render(){
 
   // Ficha salva antes da fatia de Corpo e Cinética não tem este campo.
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
-  if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
+  if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false, formulas:[]};
+  if(!p.simbologiaArcana.formulas) p.simbologiaArcana.formulas = [];
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
   if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
   if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
@@ -2079,7 +2154,8 @@ function painelCorpoCinetica(p){
 
 function painelSimbologiaArcana(p){
   if(p.perfil.areaId !== 'simbologia-arcana') return '';
-  const sa = p.simbologiaArcana || {manaAtual:null, reservatorio:0, concentrarUsado:false};
+  const sa = p.simbologiaArcana || {manaAtual:null, reservatorio:0, concentrarUsado:false, formulas:[]};
+  const formulas = sa.formulas || [];
   const max = manaMaxima(p);
   const atual = Math.min(sa.manaAtual ?? max, max);
   return `<div class="cartao">
@@ -2087,9 +2163,7 @@ function painelSimbologiaArcana(p){
     <p class="mini" style="margin:6px 0 14px">
       <strong>Compor → Inscrever → Manifestar.</strong> Mana Máxima =
       6 + 2×Grau de Inteligência + 2×Grau de Treinamento em Simbologia +
-      Reservatório. A construção da Fórmula em si (Verbo + Essência +
-      Moldura + Cláusulas, com o custo de cada peça) é fatia futura —
-      por enquanto isso controla só a reserva de Mana.
+      Reservatório.
     </p>
     <div class="grade g2">
       <div class="derivado">
@@ -2108,13 +2182,90 @@ function painelSimbologiaArcana(p){
       <input id="c-sa-reservatorio" type="number" min="0" max="4" value="${sa.reservatorio}">
     </div>
     <button data-sa-nova-cena style="margin-top:10px" ${!sa.concentrarUsado?'disabled':''}>Nova cena (libera Concentrar de novo)</button>
+  </div>
 
-    <p class="mini" style="margin-top:16px">
-      <strong>Verbo:</strong> Ferir, Proteger, Mover, Restaurar, Alterar, Criar, Perceber, Vincular ou Selar.<br>
-      <strong>Essência:</strong> Fogo, Água, Vento e Terra são bases; Sagrado (remover/purificar), Sombrio (adicionar/intensificar) e Desviante (transformar/refinar) operam sobre elas.<br>
-      <strong>Moldura:</strong> Alcance, Alvo/Área e Duração — a Categoria define os valores concretos.<br>
-      <strong>Cláusulas:</strong> Seguir, Observar, Criação, Selar, Gatilho, Persistência, Retorno e Seleção.
+  ${painelConstrutorFormula(p)}
+  ${painelFormulasPreparadas(p, formulas)}`;
+}
+
+function painelConstrutorFormula(p){
+  const cf = estado.construtorFormula;
+  const calc = calculoFormula(cf);
+  const matriz = matrizTomo(p);
+  const excedeTomos = calc.tomos > matriz;
+  const limite = limiteFormulasPreparadas(p);
+  const cheio = (p.simbologiaArcana.formulas||[]).length >= limite;
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Construtor de Fórmula</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Verbo + Essência + Moldura + Cláusulas. Precisa caber na Matriz de
+      Tomo do ${p.ano}º Ano (${matriz} Tomos${p.ano>=5?' + 1 Metassímbolo, à parte desta conta':''}).
     </p>
+    <div class="grade g3">
+      <div><label for="cf-verbo">Verbo</label>
+        <select id="cf-verbo">
+          ${FORMULA_VERBOS.map(v => `<option ${v===cf.verbo?'selected':''}>${v}</option>`).join('')}
+        </select></div>
+      <div><label for="cf-potencia">Potência</label>
+        <select id="cf-potencia">
+          ${FORMULA_POTENCIAS.map(o => `<option value="${o.id}" ${o.id===cf.potencia?'selected':''}>${o.nome} (${o.impacto} Impacto)</option>`).join('')}
+        </select></div>
+      <div><label for="cf-essencia">Essência</label>
+        <select id="cf-essencia">
+          ${FORMULA_ESSENCIAS.map(o => `<option value="${o.id}" ${o.id===cf.essencia?'selected':''}>${o.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="cf-alcance">Alcance</label>
+        <select id="cf-alcance">
+          ${FORMULA_ALCANCES.map(o => `<option value="${o.id}" ${o.id===cf.alcance?'selected':''}>${o.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="cf-alvo">Alvo</label>
+        <select id="cf-alvo">
+          ${FORMULA_ALVOS.map(o => `<option value="${o.id}" ${o.id===cf.alvo?'selected':''}>${o.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="cf-duracao">Duração</label>
+        <select id="cf-duracao">
+          ${FORMULA_DURACOES.map(o => `<option value="${o.id}" ${o.id===cf.duracao?'selected':''}>${o.nome}</option>`).join('')}
+        </select></div>
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">Cláusulas</p>
+    <div class="condicoes">
+      ${FORMULA_CLAUSULAS.map(c => `<label>
+        <input type="checkbox" data-cf-clausula="${c.id}" ${cf.clausulas.includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
+
+    <div class="grade g3" style="margin-top:14px">
+      <div class="derivado"><div class="rot">Impacto</div><div class="val">${calc.impacto}</div></div>
+      <div class="derivado"><div class="rot">Mana</div><div class="val">${calc.mana}</div></div>
+      <div class="derivado ${excedeTomos?'risco':''}"><div class="rot">Tomos</div><div class="val">${calc.tomos}<span style="font-size:16px;color:var(--suave)">/${matriz}</span></div></div>
+    </div>
+    ${excedeTomos ? `<div class="aviso">Não cabe na Matriz do Ano atual — reduza componentes ou espere subir de Ano.</div>` : ''}
+
+    <div style="margin-top:14px">
+      <label for="cf-nome">Nome da Fórmula</label>
+      <input id="cf-nome" value="${esc(cf.nomeRascunho)}" placeholder="ex: Lança de Fogo Curta">
+    </div>
+    <button id="btSalvarFormula" style="margin-top:10px" ${cheio || excedeTomos?'disabled':''}>+ Salvar Fórmula preparada</button>
+    ${cheio ? `<p class="mini" style="margin-top:6px">Limite de Fórmulas preparadas do ${p.ano}º Ano (${limite}) atingido.</p>` : ''}
+  </div>`;
+}
+
+function painelFormulasPreparadas(p, formulas){
+  const limite = limiteFormulasPreparadas(p);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Fórmulas preparadas (${formulas.length}/${limite})</h2>
+    ${formulas.length ? formulas.map((f,i) => {
+      const calc = calculoFormula(f);
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-formula-campo="${i}|nome" value="${esc(f.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
+          <button data-formula-remover="${i}" class="perigo">Remover</button>
+        </div>
+        <p class="mini">${esc(f.verbo)} · ${esc((FORMULA_ESSENCIAS.find(e=>e.id===f.essencia)||{}).nome || '')} · Impacto ${calc.impacto} · Mana ${calc.mana} · Tomos ${calc.tomos}</p>
+        <button data-formula-manifestar="${i}" ${calc.mana > (Math.min(p.simbologiaArcana.manaAtual ?? manaMaxima(p), manaMaxima(p)))?'disabled':''}>Manifestar (-${calc.mana} Mana)</button>
+      </div>`;
+    }).join('') : '<p class="mini">(nenhuma Fórmula preparada ainda)</p>'}
   </div>`;
 }
 
@@ -2603,6 +2754,62 @@ function ligarEventos(){
   if(saReservatorio) saReservatorio.onchange = () => mudar(p => {
     p.simbologiaArcana.reservatorio = Math.max(0, Math.min(4, Number(saReservatorio.value) || 0));
   });
+
+  // Construtor de Fórmula: rascunho fica em estado.construtorFormula, não
+  // é dado do personagem — só "Salvar Fórmula" grava de verdade.
+  const cfVerbo = document.getElementById('cf-verbo');
+  if(cfVerbo) cfVerbo.onchange = () => { estado.construtorFormula.verbo = cfVerbo.value; render(); };
+  const cfPotencia = document.getElementById('cf-potencia');
+  if(cfPotencia) cfPotencia.onchange = () => { estado.construtorFormula.potencia = cfPotencia.value; render(); };
+  const cfEssencia = document.getElementById('cf-essencia');
+  if(cfEssencia) cfEssencia.onchange = () => { estado.construtorFormula.essencia = cfEssencia.value; render(); };
+  const cfAlcance = document.getElementById('cf-alcance');
+  if(cfAlcance) cfAlcance.onchange = () => { estado.construtorFormula.alcance = cfAlcance.value; render(); };
+  const cfAlvo = document.getElementById('cf-alvo');
+  if(cfAlvo) cfAlvo.onchange = () => { estado.construtorFormula.alvo = cfAlvo.value; render(); };
+  const cfDuracao = document.getElementById('cf-duracao');
+  if(cfDuracao) cfDuracao.onchange = () => { estado.construtorFormula.duracao = cfDuracao.value; render(); };
+  app.querySelectorAll('[data-cf-clausula]').forEach(el =>
+    el.onchange = () => {
+      const id = el.dataset.cfClausula;
+      const lista = estado.construtorFormula.clausulas;
+      estado.construtorFormula.clausulas = el.checked ? [...lista, id] : lista.filter(c => c !== id);
+      render();
+    });
+  const cfNome = document.getElementById('cf-nome');
+  if(cfNome) cfNome.oninput = () => { estado.construtorFormula.nomeRascunho = cfNome.value; };
+  const btSalvarFormula = document.getElementById('btSalvarFormula');
+  if(btSalvarFormula) btSalvarFormula.onclick = () => {
+    const cf = estado.construtorFormula;
+    mudar(p => {
+      p.simbologiaArcana.formulas.push({
+        id: uid(),
+        nome: cf.nomeRascunho.trim() || 'Fórmula sem nome',
+        verbo: cf.verbo, potencia: cf.potencia, alcance: cf.alcance, alvo: cf.alvo,
+        essencia: cf.essencia, clausulas: [...cf.clausulas], duracao: cf.duracao,
+      });
+    });
+    estado.construtorFormula.nomeRascunho = '';
+  };
+
+  // Fórmulas preparadas: renomear, remover, manifestar (gasta a Mana dela).
+  app.querySelectorAll('[data-formula-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, campo] = el.dataset.formulaCampo.split('|');
+      p.simbologiaArcana.formulas[Number(i)][campo] = el.value;
+    }, el));
+  app.querySelectorAll('[data-formula-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.simbologiaArcana.formulas.splice(Number(b.dataset.formulaRemover), 1)));
+  app.querySelectorAll('[data-formula-manifestar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const formula = p.simbologiaArcana.formulas[Number(b.dataset.formulaManifestar)];
+      if(!formula) return;
+      const custo = calculoFormula(formula).mana;
+      const max = manaMaxima(p);
+      const atual = Math.min(p.simbologiaArcana.manaAtual ?? max, max);
+      if(atual < custo) return;
+      p.simbologiaArcana.manaAtual = atual - custo;
+    }));
 
   // Robótica e Engenharia: Comando, Carga e Vitalícia.
   app.querySelectorAll('[data-re-pc]').forEach(b =>
