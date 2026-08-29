@@ -2221,7 +2221,16 @@ function novoPersonagem(nome){
     treinamentos: {},
     // especialidades: texto livre pra Conhecimentos e Profissão (pedem campo aberto)
     especialidades: {conhecimentos:'', profissao:''},
-    peGasto: 0,
+    // compras: livro-razão de PE gasto em Talentos e Recursos/Eletivas —
+    // Atributos e Treinamentos não entram aqui (o custo é derivado do
+    // Grau/degrau atual na hora, não precisa de registro duplicado).
+    compras: [],
+    // marcos: uma escolha por posição de Marco da Área já recebida
+    // (marcosRecebidos conta quantas; isso registra o que foi escolhido).
+    marcos: [],
+    // ascensoes: um eixo por Ascensão concluída (ascensoesConcluidas conta
+    // quantas; isso registra qual eixo cada uma escolheu).
+    ascensoes: [],
     atual: {pv: null},
     condicoesEixo: [],    // ids de CONDICOES_EIXO ativas
     condicoesGraves: [],  // ids de CONDICOES_GRAVES ativas
@@ -2261,6 +2270,13 @@ function novoPersonagem(nome){
     // projetos: registros de Criação/Melhoria (criacao-itens-v6.1.md),
     // que viram item quando concluídos.
     inventario: {itens: [], projetos: []},
+    // compras/marcos/ascensoes: economia de PE e progressão (decisão #39).
+    compras: [],
+    marcos: [],
+    ascensoes: [],
+    // doencas: Pares de Manifestação (doencas-e-demi-humanos-v6.1.md) —
+    // opcional, a mesa decide se entra na campanha (decisão #40).
+    doencas: {pares: []},
     anotacoes: '',
   };
 }
@@ -2533,11 +2549,82 @@ function marcosRecebidos(p){
   return 5*ciclosCompletos + posicoesNoCicloAtual;
 }
 
-// PE: 1 por Nível, acumula se não gasto. O que ainda não tem é ONDE gastar
-// (talentos/técnicas/poderes) — isso é conteúdo de fatia futura; por
-// enquanto só registra ganho e gasto.
+// PE: 1 por Nível, acumula se não gasto — economia de custos-e-economia-de-pe-v6.1.md.
+// "Mostrar a origem de cada bônus" (filosofia do núcleo): PE gasto nunca é
+// um número solto, é a soma de um livro-razão de compras (p.compras) mais
+// o custo registrado em cada Fórmula/Poder/Par de Doença já salvo — cada
+// um sabe seu próprio custo, em vez de um contador central duplicado.
 function peGanho(p){ return p.nivel; }
-function peDisponivel(p){ return peGanho(p) - (p.peGasto||0); }
+function peGastoTotal(p){
+  const compras = (p.compras||[]).reduce((soma,c) => soma + c.custo, 0);
+  const formulas = ((p.simbologiaArcana && p.simbologiaArcana.formulas) || []).reduce((soma,f) => soma + (f.custoPE||0), 0);
+  const poderes = (p.poderesLivres||[]).reduce((soma,pw) => soma + (pw.custoPE||0), 0);
+  // Pacote inicial gratuito: as duas primeiras técnicas/poderes/Pares de
+  // Doença não custam PE — só a partir do terceiro.
+  const paresPagos = Math.max(0, ((p.doencas && p.doencas.pares) || []).length - 2);
+  return compras + formulas + poderes + paresPagos*2;
+}
+function peDisponivel(p){ return peGanho(p) - peGastoTotal(p); }
+
+// Quantas técnicas/poderes "gratuitos" (Fórmulas + Poderes Livres, nessa
+// ordem de criação) o personagem já tem — usado pra decidir se a próxima
+// Fórmula/Poder salvo ainda cai no pacote inicial ou já cobra PE.
+function tecnicasGratuitasUsadas(p){
+  return ((p.simbologiaArcana && p.simbologiaArcana.formulas) || []).length + (p.poderesLivres || []).length;
+}
+function custoPeProximaTecnica(p, impacto){
+  return tecnicasGratuitasUsadas(p) < 2 ? 0 : custoPePorImpacto(impacto);
+}
+function custoPePorImpacto(impacto){
+  if(impacto <= 0.5) return 1;
+  if(impacto <= 1) return 2;
+  if(impacto <= 1.5) return 3;
+  return 5; // Ápice, 2,5 Impactos
+}
+
+// Atributos e Treinamentos: custo pra alcançar o PRÓXIMO degrau, travado
+// pela Categoria atual do personagem (I a V).
+const CUSTO_GRAU_ATRIBUTO = {2:2, 3:3, 4:4, 5:5};
+const GRAU_MAXIMO_CATEGORIA = {I:3, II:4, III:5, IV:5, V:5};
+const CUSTO_TREINAMENTO_DEGRAU = {treinado:2, perito:3, expert:4};
+const CATEGORIA_MINIMA_TREINAMENTO = {treinado:'I', perito:'II', expert:'III'};
+
+function custoProximoGrau(grauAtual){ return CUSTO_GRAU_ATRIBUTO[grauAtual+1]; }
+function podeComprarGrau(p, atributoId){
+  const atual = grauAtributo(p, atributoId);
+  const custo = custoProximoGrau(atual);
+  if(!custo) return false;
+  if(atual+1 > GRAU_MAXIMO_CATEGORIA[categoria(p)]) return false;
+  return peDisponivel(p) >= custo;
+}
+function proximoTreinamento(id){
+  const idx = TREINAMENTOS.findIndex(t => t.id === id);
+  return TREINAMENTOS[idx+1];
+}
+function podeComprarTreinamento(p, periciaId){
+  const atual = p.treinamentos[periciaId] || 'nada';
+  const proximo = proximoTreinamento(atual);
+  if(!proximo) return false;
+  const custo = CUSTO_TREINAMENTO_DEGRAU[proximo.id];
+  const minima = CATEGORIA_MINIMA_TREINAMENTO[proximo.id];
+  if(CATEGORIAS_ITEM.indexOf(categoria(p)) < CATEGORIAS_ITEM.indexOf(minima)) return false;
+  return peDisponivel(p) >= custo;
+}
+
+// Talentos e Recursos/Eletivas: compras livres, registradas com descrição
+// (são ligadas ao motor de uma Área, então não têm catálogo fixo).
+const CUSTO_TALENTOS = [
+  {id:'refinamento', nome:'Refinamento', custo:1, funcao:'Melhora estreita, sem nova economia'},
+  {id:'padrao',       nome:'Padrão',       custo:2, funcao:'Nova opção ou conversão tática'},
+  {id:'maior',        nome:'Maior',        custo:4, funcao:'Permissão rara, com limite e contrajogo'},
+];
+const CUSTO_RECURSOS_ELETIVAS = [
+  {id:'recurso',     nome:'+1 no recurso principal',                   custo:2, limite:'no máximo 2 compras por ciclo'},
+  {id:'preparacao',  nome:'+1 opção preparada',                        custo:2, limite:'respeita o limite da Área'},
+  {id:'recuperacao', nome:'Recuperação situacional',                   custo:3, limite:'o custo mínimo continua sendo 1'},
+  {id:'persistente', nome:'Componente persistente ou contingência',    custo:3, limite:'exige 4º Ano', anoMinimo:4},
+  {id:'eletiva',     nome:'Eletiva de outra Área',                     custo:4, limite:'não concede o motor completo da outra Área'},
+];
 
 /* --- Armazenamento -----------------------------------------------------
 
@@ -2604,6 +2691,12 @@ const estado = {
   // do construtorFormula acima, some ao trocar de ficha/recarregar; só
   // "Salvar Poder" grava de verdade.
   construtorPoder: {nome:'', intencao:'', acesso:'', ancora:'', forma:'', potencia:'basica', resultados:[], testeResistencia:'', contrajogo:'', residuo:''},
+  // Rascunhos da aba Progressão — mesma lógica de scratch state, só
+  // "Comprar"/"Registrar" grava de verdade no personagem.
+  compraTalento: {subtipo:'padrao', descricao:''},
+  compraRecurso: {subtipo:'recurso', descricao:''},
+  marcoRascunho: {opcao:'repertorio', descricao:''},
+  ascensaoRascunho: {eixo:'massa-volume', descricao:''},
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -2667,11 +2760,12 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const ABAS = [
-  {id:'status',     nome:'Status'},
-  {id:'atributos',  nome:'Atributos e Perícias'},
-  {id:'combate',    nome:'Combate'},
-  {id:'inventario', nome:'Inventário'},
-  {id:'notas',      nome:'Notas'},
+  {id:'status',      nome:'Status'},
+  {id:'atributos',   nome:'Atributos e Perícias'},
+  {id:'progressao',  nome:'Progressão'},
+  {id:'combate',     nome:'Combate'},
+  {id:'inventario',  nome:'Inventário'},
+  {id:'notas',       nome:'Notas'},
 ];
 
 function render(){
@@ -2712,6 +2806,11 @@ function render(){
   if(!p.inventario) p.inventario = {itens: []};
   if(!p.inventario.itens) p.inventario.itens = [];
   if(!p.inventario.projetos) p.inventario.projetos = [];
+  if(!p.compras) p.compras = [];
+  if(!p.marcos) p.marcos = [];
+  if(!p.ascensoes) p.ascensoes = [];
+  if(!p.doencas) p.doencas = {pares: []};
+  if(!p.doencas.pares) p.doencas.pares = [];
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2732,7 +2831,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, atributos:abaAtributos, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -2786,7 +2885,7 @@ function painelDerivados(p){
     <div class="derivado">
       <div class="rot">PE disponível</div>
       <div class="val">${peDisponivel(p)}</div>
-      <div class="obs">${peGanho(p)} ganhos, ${p.peGasto||0} gastos</div>
+      <div class="obs">${peGanho(p)} ganhos, ${peGastoTotal(p)} gastos</div>
     </div>
   </div>`;
 }
@@ -2910,13 +3009,18 @@ function abaAtributos(p){
       3,3,2,1,1). Grau nunca passa de 5 na progressão comum.
     </p>
     <div class="grade g5">
-      ${ATRIBUTOS.map(a => `<div>
+      ${ATRIBUTOS.map(a => {
+        const custo = custoProximoGrau(grauAtributo(p,a.id));
+        const pode = podeComprarGrau(p, a.id);
+        return `<div>
         <label for="c-atr-${a.id}">${a.nome}</label>
         <select id="c-atr-${a.id}" data-atributo="${a.id}">
           ${GRAUS_ATRIBUTO.map(g => `<option value="${g}" ${g===grauAtributo(p,a.id)?'selected':''}>${g}</option>`).join('')}
         </select>
         <p class="mini" style="margin-top:6px">${LEITURA_GRAU[grauAtributo(p,a.id)]}</p>
-      </div>`).join('')}
+        ${custo ? `<button data-comprar-grau="${a.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>+1 Grau (${custo} PE)</button>` : ''}
+      </div>`;
+      }).join('')}
     </div>
   </div>
 
@@ -2924,19 +3028,176 @@ function abaAtributos(p){
     <h2 style="font-size:18px">Perícias e Treinamentos</h2>
     <p class="mini" style="margin:6px 0 16px">
       Teste = 1d20 + Grau do Atributo + Treinamento + situação (−5/0/+5).
-      Cinco Treinamentos iniciais: três livres, dois da Origem.
+      Cinco Treinamentos iniciais: três livres, dois da Origem. Subir de
+      degrau depois da criação custa PE e exige a Categoria mínima
+      (Treinado: I, Perito: II, Expert: III).
     </p>
     ${ATRIBUTOS.map(atr => `
       <p class="mini" style="margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em">${atr.nome}</p>
       <div class="grade g3">
-        ${PERICIAS.filter(per => per.atributo === atr.id).map(per => `<div>
+        ${PERICIAS.filter(per => per.atributo === atr.id).map(per => {
+          const proximo = proximoTreinamento(p.treinamentos[per.id] || 'nada');
+          const custo = proximo ? CUSTO_TREINAMENTO_DEGRAU[proximo.id] : null;
+          const pode = podeComprarTreinamento(p, per.id);
+          return `<div>
           <label for="c-per-${per.id}">${per.nome}</label>
           <select id="c-per-${per.id}" data-treinamento="${per.id}">
             ${TREINAMENTOS.map(t => `<option value="${t.id}" ${(p.treinamentos[per.id]||'nada')===t.id?'selected':''}>${t.nome} (+${t.bonus})</option>`).join('')}
           </select>
           ${per.especialidade ? `<input data-especialidade="${per.id}" style="margin-top:6px" placeholder="especialidade" value="${esc(p.especialidades[per.id]||'')}">` : ''}
-        </div>`).join('')}
+          ${custo ? `<button data-comprar-treinamento="${per.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>${proximo.nome} (${custo} PE)</button>` : ''}
+        </div>`;
+        }).join('')}
       </div>`).join('')}
+  </div>`;
+}
+
+// Marcos da Área (posições 1/5/9/13/17 do ciclo) e Ascensões (a cada 20
+// Níveis) — progressao-sem-teto-v6.1.md. marcosRecebidos/ascensoesConcluidas
+// já existiam desde o chassi; só faltava registrar O QUE cada um escolheu.
+const MARCO_OPCOES = [
+  {id:'repertorio',  nome:'Repertório',   desc:'aprenda uma técnica ou poder Básico da própria Área'},
+  {id:'reserva',     nome:'Reserva',      desc:'aumente em 1 o recurso principal (máximo de duas escolhas de Reserva por ciclo)'},
+  {id:'preparacao',  nome:'Preparação',   desc:'prepare uma opção adicional, respeitando o limite da Área'},
+  {id:'refinamento', nome:'Refinamento',  desc:'aplique dois refinamentos estreitos em opções já conhecidas; nenhum aumenta Impacto'},
+  {id:'talento',     nome:'Talento',      desc:'receba um Talento Padrão ligado ao motor da Área'},
+];
+const ASCENSAO_EIXOS = [
+  {id:'massa-volume',            nome:'Massa e Volume',            desc:'tamanho, peso ou capacidade física afetada'},
+  {id:'alcance-area',            nome:'Alcance e Área',            desc:'distância ou espaço coberto'},
+  {id:'quantidade',              nome:'Quantidade',                desc:'número ou escala coletiva dos alvos, sem multiplicar ações ou Impacto'},
+  {id:'duracao-resistencia',     nome:'Duração e Resistência',     desc:'permanência e dificuldade ficcional de desfazer'},
+  {id:'profundidade-conceitual', nome:'Profundidade Conceitual',   desc:'abstração ou camada de realidade alcançada; exige 5º Ano', anoMinimo:5},
+];
+
+function abaProgressao(p){
+  const compras = p.compras || [];
+  const talentos = compras.filter(c => c.tipo === 'talento');
+  const recursos = compras.filter(c => c.tipo === 'recurso');
+  const marcos = p.marcos || [];
+  const ascensoes = p.ascensoes || [];
+  const marcosMax = marcosRecebidos(p);
+  const ascensoesMax = ascensoesConcluidas(p);
+  const ct = estado.compraTalento;
+  const cr = estado.compraRecurso;
+  const talentoInfo = CUSTO_TALENTOS.find(t => t.id === ct.subtipo);
+  const recursoInfo = CUSTO_RECURSOS_ELETIVAS.find(r => r.id === cr.subtipo);
+  const recursoBloqueado = recursoInfo.anoMinimo && p.ano < recursoInfo.anoMinimo;
+
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Pontos de Evolução</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      1 PE por Nível, acumula se não gasto. Compra Grau de Atributo e
+      Treinamento (na aba Atributos), Talentos, Recursos/Eletivas, e
+      Fórmulas/Poderes além dos dois primeiros gratuitos do pacote inicial.
+    </p>
+    <div class="grade g3">
+      <div class="derivado"><div class="rot">Ganho</div><div class="val">${peGanho(p)}</div></div>
+      <div class="derivado"><div class="rot">Gasto</div><div class="val">${peGastoTotal(p)}</div></div>
+      <div class="derivado"><div class="rot">Disponível</div><div class="val">${peDisponivel(p)}</div></div>
+    </div>
+    ${compras.length ? `<p class="mini" style="margin:14px 0 6px">Histórico de compras (mostra a origem de cada bônus)</p>
+      <table style="width:100%;border-collapse:collapse">
+        ${compras.map(c => `<tr><td class="mini" style="padding:3px 0">${esc(c.descricao)}</td><td class="mini" style="padding:3px 0;text-align:right;white-space:nowrap">${c.custo} PE</td></tr>`).join('')}
+      </table>` : ''}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Talentos (${talentos.length})</h2>
+    ${talentos.map((c,i) => `<div class="linha-lista">
+      <div class="topo">
+        <strong>${esc((CUSTO_TALENTOS.find(t=>t.id===c.subtipo)||{}).nome || c.subtipo)}</strong> — ${c.custo} PE
+        <button data-compra-remover="${compras.indexOf(c)}" class="perigo">Remover</button>
+      </div>
+      <p class="mini">${esc(c.descricao)}</p>
+    </div>`).join('') || '<p class="mini">(nenhum Talento comprado ainda)</p>'}
+    <div class="grade g3" style="margin-top:10px">
+      <div><label for="c-talento-tipo">Tipo</label>
+        <select id="c-talento-tipo">
+          ${CUSTO_TALENTOS.map(t => `<option value="${t.id}" ${t.id===ct.subtipo?'selected':''}>${t.nome} (${t.custo} PE)</option>`).join('')}
+        </select></div>
+      <div style="grid-column:span 2"><label for="c-talento-desc">Descrição</label>
+        <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ligado ao motor da Área"></div>
+    </div>
+    <p class="mini" style="margin-top:6px">${esc(talentoInfo.funcao)}</p>
+    <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Recursos e Eletivas (${recursos.length})</h2>
+    ${recursos.map((c,i) => `<div class="linha-lista">
+      <div class="topo">
+        <strong>${esc((CUSTO_RECURSOS_ELETIVAS.find(r=>r.id===c.subtipo)||{}).nome || c.subtipo)}</strong> — ${c.custo} PE
+        <button data-compra-remover="${compras.indexOf(c)}" class="perigo">Remover</button>
+      </div>
+      <p class="mini">${esc(c.descricao)}</p>
+    </div>`).join('') || '<p class="mini">(nenhuma compra ainda)</p>'}
+    <div class="grade g3" style="margin-top:10px">
+      <div><label for="c-recurso-tipo">Tipo</label>
+        <select id="c-recurso-tipo">
+          ${CUSTO_RECURSOS_ELETIVAS.map(r => `<option value="${r.id}" ${r.id===cr.subtipo?'selected':''}>${r.nome} (${r.custo} PE)</option>`).join('')}
+        </select></div>
+      <div style="grid-column:span 2"><label for="c-recurso-desc">Descrição</label>
+        <input id="c-recurso-desc" value="${esc(cr.descricao)}" placeholder="qual recurso, opção ou Área"></div>
+    </div>
+    <p class="mini" style="margin-top:6px">${esc(recursoInfo.limite)}</p>
+    ${recursoBloqueado ? `<p class="mini">Exige ${recursoInfo.anoMinimo}º Ano — personagem está no ${p.ano}º.</p>` : ''}
+    <button id="btComprarRecurso" style="margin-top:8px" ${recursoBloqueado || peDisponivel(p)<recursoInfo.custo?'disabled':''}>+ Comprar (${recursoInfo.custo} PE)</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Marcos da Área (${marcos.length}/${marcosMax})</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Recebido nas posições 1/5/9/13/17 de cada ciclo de 20 Níveis — não
+      gasta PE, não pode virar PE, só escolhe conteúdo do Currículo já
+      liberado pelo Ano atual.
+    </p>
+    ${marcos.map((m,i) => `<div class="linha-lista">
+      <div class="topo">
+        <strong>${esc((MARCO_OPCOES.find(o=>o.id===m.opcao)||{}).nome || m.opcao)}</strong>
+        <button data-marco-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <p class="mini">${esc(m.descricao)}</p>
+    </div>`).join('') || '<p class="mini">(nenhum Marco registrado ainda)</p>'}
+    ${marcos.length < marcosMax ? `
+      <div class="grade g3" style="margin-top:10px">
+        <div><label for="c-marco-opcao">Opção</label>
+          <select id="c-marco-opcao">
+            ${MARCO_OPCOES.map(o => `<option value="${o.id}" ${o.id===estado.marcoRascunho.opcao?'selected':''}>${o.nome}</option>`).join('')}
+          </select></div>
+        <div style="grid-column:span 2"><label for="c-marco-desc">Descrição</label>
+          <input id="c-marco-desc" value="${esc(estado.marcoRascunho.descricao)}"></div>
+      </div>
+      <p class="mini" style="margin-top:6px">${esc((MARCO_OPCOES.find(o=>o.id===estado.marcoRascunho.opcao)||{}).desc || '')}</p>
+      <button id="btRegistrarMarco" style="margin-top:8px">+ Registrar Marco</button>
+    ` : `<p class="mini">Todos os Marcos recebidos já estão registrados.</p>`}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Ascensões (${ascensoes.length}/${ascensoesMax})</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Uma a cada 20 Níveis — 4 degraus de escala num único eixo. Não
+      concede bônus no d20, Impacto gratuito, ação extra nem Categoria VI.
+    </p>
+    ${ascensoes.map((a,i) => `<div class="linha-lista">
+      <div class="topo">
+        <strong>${esc((ASCENSAO_EIXOS.find(e=>e.id===a.eixo)||{}).nome || a.eixo)}</strong>
+        <button data-ascensao-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <p class="mini">${esc(a.descricao)}</p>
+    </div>`).join('') || '<p class="mini">(nenhuma Ascensão registrada ainda)</p>'}
+    ${ascensoes.length < ascensoesMax ? `
+      <div class="grade g3" style="margin-top:10px">
+        <div><label for="c-ascensao-eixo">Eixo</label>
+          <select id="c-ascensao-eixo">
+            ${ASCENSAO_EIXOS.map(e => `<option value="${e.id}" ${e.id===estado.ascensaoRascunho.eixo?'selected':''} ${e.anoMinimo && p.ano<e.anoMinimo?'disabled':''}>${e.nome}${e.anoMinimo?` (exige ${e.anoMinimo}º Ano)`:''}</option>`).join('')}
+          </select></div>
+        <div style="grid-column:span 2"><label for="c-ascensao-desc">Descrição</label>
+          <input id="c-ascensao-desc" value="${esc(estado.ascensaoRascunho.descricao)}"></div>
+      </div>
+      <p class="mini" style="margin-top:6px">${esc((ASCENSAO_EIXOS.find(e=>e.id===estado.ascensaoRascunho.eixo)||{}).desc || '')}</p>
+      <button id="btRegistrarAscensao" style="margin-top:8px">+ Registrar Ascensão</button>
+    ` : `<p class="mini">Todas as Ascensões concluídas já estão registradas.</p>`}
   </div>`;
 }
 
@@ -3034,11 +3295,14 @@ function painelConstrutorFormula(p){
   const excedeTomos = calc.tomos > matriz;
   const limite = limiteFormulasPreparadas(p);
   const cheio = (p.simbologiaArcana.formulas||[]).length >= limite;
+  const custoPE = custoPeProximaTecnica(p, calc.impacto);
+  const semPE = peDisponivel(p) < custoPE;
   return `<div class="cartao">
     <h2 style="font-size:18px">Construtor de Fórmula</h2>
     <p class="mini" style="margin:6px 0 14px">
       Verbo + Essência + Moldura + Cláusulas. Precisa caber na Matriz de
       Tomo do ${p.ano}º Ano (${matriz} Tomos${p.ano>=5?' + 1 Metassímbolo, à parte desta conta':''}).
+      ${custoPE ? `Custa ${custoPE} PE pra salvar.` : 'Grátis — ainda dentro do pacote inicial (duas primeiras técnicas/poderes).'}
     </p>
     <div class="grade g3">
       <div><label for="cf-verbo">Verbo</label>
@@ -3085,8 +3349,9 @@ function painelConstrutorFormula(p){
       <label for="cf-nome">Nome da Fórmula</label>
       <input id="cf-nome" value="${esc(cf.nomeRascunho)}" placeholder="ex: Lança de Fogo Curta">
     </div>
-    <button id="btSalvarFormula" style="margin-top:10px" ${cheio || excedeTomos?'disabled':''}>+ Salvar Fórmula preparada</button>
+    <button id="btSalvarFormula" style="margin-top:10px" ${cheio || excedeTomos || semPE?'disabled':''}>+ Salvar Fórmula preparada${custoPE ? ` (${custoPE} PE)` : ''}</button>
     ${cheio ? `<p class="mini" style="margin-top:6px">Limite de Fórmulas preparadas do ${p.ano}º Ano (${limite}) atingido.</p>` : ''}
+    ${semPE ? `<p class="mini" style="margin-top:6px">PE insuficiente (disponível: ${peDisponivel(p)}).</p>` : ''}
   </div>`;
 }
 
@@ -3101,7 +3366,7 @@ function painelFormulasPreparadas(p, formulas){
           <input data-formula-campo="${i}|nome" value="${esc(f.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
           <button data-formula-remover="${i}" class="perigo">Remover</button>
         </div>
-        <p class="mini">${esc(f.verbo)} · ${esc((FORMULA_ESSENCIAS.find(e=>e.id===f.essencia)||{}).nome || '')} · Impacto ${calc.impacto} · Mana ${calc.mana} · Tomos ${calc.tomos}</p>
+        <p class="mini">${esc(f.verbo)} · ${esc((FORMULA_ESSENCIAS.find(e=>e.id===f.essencia)||{}).nome || '')} · Impacto ${calc.impacto} · Mana ${calc.mana} · Tomos ${calc.tomos}${f.custoPE ? ` · ${f.custoPE} PE` : ''}</p>
         <button data-formula-manifestar="${i}" ${calc.mana > (Math.min(p.simbologiaArcana.manaAtual ?? manaMaxima(p), manaMaxima(p)))?'disabled':''}>Manifestar (-${calc.mana} Mana)</button>
       </div>`;
     }).join('') : '<p class="mini">(nenhuma Fórmula preparada ainda)</p>'}
@@ -3418,7 +3683,9 @@ function painelConstrutorPoder(p){
   const cp = estado.construtorPoder;
   const calc = calculoPoderLivre(cp);
   const potenciaAtual = PODER_POTENCIAS.find(x => x.id === cp.potencia) || PODER_POTENCIAS[1];
-  const podeSalvar = !calc.excede;
+  const custoPE = custoPeProximaTecnica(p, potenciaAtual.impacto);
+  const semPE = peDisponivel(p) < custoPE;
+  const podeSalvar = !calc.excede && !semPE;
   return `<div class="cartao">
     <h2 style="font-size:18px">Construtor Livre de Poder</h2>
     <p class="mini" style="margin:6px 0 14px">
@@ -3479,7 +3746,9 @@ function painelConstrutorPoder(p){
       <input id="cp-residuo" value="${esc(cp.residuo)}">
     </div>
 
-    <button id="btSalvarPoder" style="margin-top:12px" ${podeSalvar?'':'disabled'}>+ Salvar Poder</button>
+    <p class="mini" style="margin-top:10px">${custoPE ? `Custa ${custoPE} PE pra salvar.` : 'Grátis — ainda dentro do pacote inicial (duas primeiras técnicas/poderes).'}</p>
+    <button id="btSalvarPoder" style="margin-top:6px" ${podeSalvar?'':'disabled'}>+ Salvar Poder${custoPE ? ` (${custoPE} PE)` : ''}</button>
+    ${semPE ? `<p class="mini" style="margin-top:6px">PE insuficiente (disponível: ${peDisponivel(p)}).</p>` : ''}
   </div>`;
 }
 
@@ -3497,7 +3766,7 @@ function painelPoderesLivres(p, poderes){
           <input data-poder-campo="${i}|nome" value="${esc(pw.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
           <button data-poder-remover="${i}" class="perigo">Remover</button>
         </div>
-        <p class="mini">${esc(potencia.nome)} · Impacto ${calc.somaResultados}/${calc.impactoBudget}${pw.intencao ? ' · ' + esc(pw.intencao) : ''}</p>
+        <p class="mini">${esc(potencia.nome)} · Impacto ${calc.somaResultados}/${calc.impactoBudget}${pw.custoPE ? ` · ${pw.custoPE} PE` : ''}${pw.intencao ? ' · ' + esc(pw.intencao) : ''}</p>
         ${pw.contrajogo ? `<p class="mini">Contrajogo: ${esc(pw.contrajogo)}</p>` : ''}
       </div>`;
     }).join('') : '<p class="mini">(nenhum poder registrado ainda)</p>'}
@@ -3849,6 +4118,27 @@ function ligarEventos(){
   app.querySelectorAll('[data-especialidade]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => p.especialidades[el.dataset.especialidade] = el.value, el));
 
+  app.querySelectorAll('[data-comprar-grau]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const id = b.dataset.comprarGrau;
+      if(!podeComprarGrau(p, id)) return;
+      const atual = grauAtributo(p, id);
+      const custo = custoProximoGrau(atual);
+      const nome = (ATRIBUTOS.find(a => a.id === id) || {}).nome || id;
+      p.atributos[id] = atual + 1;
+      p.compras.push({id: uid(), tipo:'atributo', descricao: `${nome}: Grau ${atual} → ${atual+1}`, custo});
+    }));
+  app.querySelectorAll('[data-comprar-treinamento]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const id = b.dataset.comprarTreinamento;
+      if(!podeComprarTreinamento(p, id)) return;
+      const proximo = proximoTreinamento(p.treinamentos[id] || 'nada');
+      const custo = CUSTO_TREINAMENTO_DEGRAU[proximo.id];
+      const nome = (PERICIAS.find(per => per.id === id) || {}).nome || id;
+      p.treinamentos[id] = proximo.id;
+      p.compras.push({id: uid(), tipo:'treinamento', descricao: `${nome}: ${proximo.nome}`, custo});
+    }));
+
   app.querySelectorAll('[data-condicao-eixo]').forEach(el =>
     el.onchange = () => mudar(p => {
       const id = el.dataset.condicaoEixo;
@@ -3967,11 +4257,15 @@ function ligarEventos(){
   if(btSalvarFormula) btSalvarFormula.onclick = () => {
     const cf = estado.construtorFormula;
     mudar(p => {
+      const calc = calculoFormula(cf);
+      const custoPE = custoPeProximaTecnica(p, calc.impacto);
+      if(peDisponivel(p) < custoPE) return;
       p.simbologiaArcana.formulas.push({
         id: uid(),
         nome: cf.nomeRascunho.trim() || 'Fórmula sem nome',
         verbo: cf.verbo, potencia: cf.potencia, alcance: cf.alcance, alvo: cf.alvo,
         essencia: cf.essencia, clausulas: [...cf.clausulas], duracao: cf.duracao,
+        custoPE,
       });
     });
     estado.construtorFormula.nomeRascunho = '';
@@ -4178,12 +4472,16 @@ function ligarEventos(){
   if(btSalvarPoder) btSalvarPoder.onclick = () => {
     const cp = estado.construtorPoder;
     mudar(p => {
+      const potenciaInfo = PODER_POTENCIAS.find(x => x.id === cp.potencia) || PODER_POTENCIAS[1];
+      const custoPE = custoPeProximaTecnica(p, potenciaInfo.impacto);
+      if(peDisponivel(p) < custoPE) return;
       p.poderesLivres.push({
         id: uid(),
         nome: cp.nome.trim() || 'Poder sem nome',
         intencao: cp.intencao, acesso: cp.acesso, ancora: cp.ancora, forma: cp.forma,
         potencia: cp.potencia, resultados: [...cp.resultados],
         testeResistencia: cp.testeResistencia, contrajogo: cp.contrajogo, residuo: cp.residuo,
+        custoPE,
       });
     });
     estado.construtorPoder = {nome:'', intencao:'', acesso:'', ancora:'', forma:'', potencia:'basica', resultados:[], testeResistencia:'', contrajogo:'', residuo:''};
@@ -4272,6 +4570,75 @@ function ligarEventos(){
       p.inventario.itens.push(item);
       proj.concluido = true;
     }));
+
+  // Progressão: Talentos, Recursos/Eletivas, Marcos da Área, Ascensões.
+  const talentoTipo = document.getElementById('c-talento-tipo');
+  if(talentoTipo) talentoTipo.onchange = () => { estado.compraTalento.subtipo = talentoTipo.value; render(); };
+  const talentoDesc = document.getElementById('c-talento-desc');
+  if(talentoDesc) talentoDesc.oninput = () => { estado.compraTalento.descricao = talentoDesc.value; };
+  const btComprarTalento = document.getElementById('btComprarTalento');
+  if(btComprarTalento) btComprarTalento.onclick = () => {
+    const ct = estado.compraTalento;
+    const info = CUSTO_TALENTOS.find(t => t.id === ct.subtipo);
+    mudar(p => {
+      if(peDisponivel(p) < info.custo) return;
+      p.compras.push({id: uid(), tipo:'talento', subtipo: ct.subtipo, descricao: ct.descricao, custo: info.custo});
+    });
+    estado.compraTalento = {subtipo:'padrao', descricao:''};
+  };
+
+  const recursoTipo = document.getElementById('c-recurso-tipo');
+  if(recursoTipo) recursoTipo.onchange = () => { estado.compraRecurso.subtipo = recursoTipo.value; render(); };
+  const recursoDesc = document.getElementById('c-recurso-desc');
+  if(recursoDesc) recursoDesc.oninput = () => { estado.compraRecurso.descricao = recursoDesc.value; };
+  const btComprarRecurso = document.getElementById('btComprarRecurso');
+  if(btComprarRecurso) btComprarRecurso.onclick = () => {
+    const cr = estado.compraRecurso;
+    const info = CUSTO_RECURSOS_ELETIVAS.find(r => r.id === cr.subtipo);
+    mudar(p => {
+      if(info.anoMinimo && p.ano < info.anoMinimo) return;
+      if(peDisponivel(p) < info.custo) return;
+      p.compras.push({id: uid(), tipo:'recurso', subtipo: cr.subtipo, descricao: cr.descricao, custo: info.custo});
+    });
+    estado.compraRecurso = {subtipo:'recurso', descricao:''};
+  };
+
+  app.querySelectorAll('[data-compra-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.compras.splice(Number(b.dataset.compraRemover), 1)));
+
+  const marcoOpcao = document.getElementById('c-marco-opcao');
+  if(marcoOpcao) marcoOpcao.onchange = () => { estado.marcoRascunho.opcao = marcoOpcao.value; render(); };
+  const marcoDesc = document.getElementById('c-marco-desc');
+  if(marcoDesc) marcoDesc.oninput = () => { estado.marcoRascunho.descricao = marcoDesc.value; };
+  const btRegistrarMarco = document.getElementById('btRegistrarMarco');
+  if(btRegistrarMarco) btRegistrarMarco.onclick = () => {
+    const mr = estado.marcoRascunho;
+    mudar(p => {
+      if((p.marcos||[]).length >= marcosRecebidos(p)) return;
+      p.marcos.push({id: uid(), opcao: mr.opcao, descricao: mr.descricao});
+    });
+    estado.marcoRascunho = {opcao:'repertorio', descricao:''};
+  };
+  app.querySelectorAll('[data-marco-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.marcos.splice(Number(b.dataset.marcoRemover), 1)));
+
+  const ascensaoEixo = document.getElementById('c-ascensao-eixo');
+  if(ascensaoEixo) ascensaoEixo.onchange = () => { estado.ascensaoRascunho.eixo = ascensaoEixo.value; render(); };
+  const ascensaoDesc = document.getElementById('c-ascensao-desc');
+  if(ascensaoDesc) ascensaoDesc.oninput = () => { estado.ascensaoRascunho.descricao = ascensaoDesc.value; };
+  const btRegistrarAscensao = document.getElementById('btRegistrarAscensao');
+  if(btRegistrarAscensao) btRegistrarAscensao.onclick = () => {
+    const ar = estado.ascensaoRascunho;
+    const eixoInfo = ASCENSAO_EIXOS.find(e => e.id === ar.eixo);
+    mudar(p => {
+      if((p.ascensoes||[]).length >= ascensoesConcluidas(p)) return;
+      if(eixoInfo.anoMinimo && p.ano < eixoInfo.anoMinimo) return;
+      p.ascensoes.push({id: uid(), eixo: ar.eixo, descricao: ar.descricao});
+    });
+    estado.ascensaoRascunho = {eixo:'massa-volume', descricao:''};
+  };
+  app.querySelectorAll('[data-ascensao-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.ascensoes.splice(Number(b.dataset.ascensaoRemover), 1)));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
