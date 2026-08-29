@@ -794,6 +794,54 @@ Total gasto somando por Porte corretamente, status mudando entre
 Limpar composição. `tsc` e `lint` limpos (o arquivo é HTML solto, sem
 efeito neles, mas a checagem roda mesmo assim por hábito).
 
+## 32. Thrylikí Chelóna — Construtor de Fórmula (Simbologia Arcana) (29/08/2026)
+
+A decisão #23 tinha deixado a calculadora de Fórmula de fora de propósito,
+prometendo que viria como fatia própria — igual a calculadora de Rituais
+que o Fabula Ultima ganhou. Com o Zé mandando "seguir" depois das
+ferramentas de mestre (decisões #27 a #30), essa era a "criação livre"
+mais natural pra construir a seguir: é a peça que mais faltava do lado do
+jogador de Simbologia Arcana.
+
+Seguindo a gramática de `simbologia-arcana-v6.1.md` (Verbo + Potência +
+Essência + Moldura + Cláusulas), o construtor virou um formulário vivo
+dentro da aba Combate, só quando `perfil.areaId === 'simbologia-arcana'`:
+
+- Seis campos (Verbo, Potência, Essência, Alcance, Alvo, Duração) mais um
+  grupo de seis Cláusulas opcionais, cada um com seu custo de Mana e de
+  Tomos tirado direto das tabelas do documento
+- Impacto/Mana/Tomos calculados ao vivo (`calculoFormula`) a cada troca,
+  sem precisar apertar botão nenhum pra ver o resultado
+- **Matriz de Tomo** (capacidade que cresce por Ano: 4/8/14/20/20) trava
+  o "Salvar Fórmula" quando os Tomos da combinação atual excedem o limite,
+  com aviso "Não cabe na Matriz" — não deixa salvar uma Fórmula inválida
+- Fórmulas salvas entram numa lista própria (até 4/5/6, conforme o Ano),
+  cada uma com nome editável, um resumo de uma linha e um botão
+  "Manifestar" que desconta a Mana da Fórmula do pool — desabilitado
+  quando a Mana atual não é suficiente
+
+**Rascunho do construtor não é dado de personagem.** As seleções em
+andamento (`estado.construtorFormula`) ficam só na memória da aba aberta,
+não gravam no personagem nem sobrevivem a um recarregamento — só "Salvar
+Fórmula preparada" grava de verdade. Mesma lógica da calculadora de
+Orçamento de Encontro (decisão #30): é bancada de trabalho, não ficha.
+
+**Fora desta fatia, de propósito:** Metassímbolos (5º Ano) e regras de
+combinação mais avançadas do documento (interação entre Cláusulas,
+restrições de Verbo por Essência) — o construtor cobre a gramática base
+que gera o custo em Mana e Tomos, que é o que decide se uma Fórmula cabe
+na Matriz e quanto custa manifestar.
+
+Testado com Playwright: card ausente sem a Área escolhida, cálculo
+padrão batendo, subir Potência/Alcance/marcar uma Cláusula somando
+Mana e Tomos corretamente, aviso de "não cabe" e botão de Salvar
+desabilitado ao estourar a Matriz do 1º Ano, reduzir a seleção
+reabilitando o botão, salvar uma Fórmula com nome e ela aparecendo na
+lista (contador 1/4), Manifestar descontando a Mana certa do pool, e
+tudo — Fórmula salva e Mana gasta — sobrevivendo a um recarregamento de
+página. Os catorze testes das fatias anteriores de Thrylikí Chelóna
+continuam passando. `tsc` e `lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
