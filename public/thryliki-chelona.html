@@ -1370,6 +1370,15 @@ const ROMPER_OPCOES = [
   {custo:3, nome:'Ápice telegrafado', sobre:'até 2,5 Impactos, exige preparação legível'},
 ];
 
+// Gastos de Dados de Campo (Zoologia e Etologia) — cada opção consome a
+// quantidade de Dados indicada, algumas também custam uma ação da rodada.
+const ZE_GASTOS = [
+  {custo:1, nome:'Ativar Traço preparado', sobre:'não interrompe a ação'},
+  {custo:1, nome:'Trocar o Perfil Ativo', sobre:'gasta uma Ação Parcial'},
+  {custo:2, nome:'Contramedida reativa', sobre:'gasta uma Reação'},
+  {custo:3, nome:'Adaptação/ápice', sobre:'sustentar Adaptação excepcional ou alimentar ápice preparado'},
+];
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1409,6 +1418,9 @@ function novoPersonagem(nome){
     // roboticaEngenharia: três recursos não intercambiáveis — Pontos de
     // Comando (por rodada), Carga (do Chassi) e Vitalícia (pessoal).
     roboticaEngenharia: {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false},
+    // zoologiaEtologia: Dados de Campo (0-3, gasto pra ativar Traço/trocar
+    // Perfil/preparar contramedida) + o Perfil Ativo em texto livre.
+    zoologiaEtologia: {dados:0, perfilAtivo:''},
     anotacoes: '',
   };
 }
@@ -1627,6 +1639,7 @@ function render(){
   if(!p.corpoCinetica) p.corpoCinetica = {esforco:2, rastro:[]};
   if(!p.simbologiaArcana) p.simbologiaArcana = {manaAtual:null, reservatorio:0, concentrarUsado:false};
   if(!p.roboticaEngenharia) p.roboticaEngenharia = {pcAtual:null, cargaAtual:null, cargaMelhorias:0, vitaliciaAtual:null, reservatorioVital:0, recargaUsada:false};
+  if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -1997,8 +2010,62 @@ function painelRoboticaEngenharia(p){
   </div>`;
 }
 
+function painelZoologiaEtologia(p){
+  if(p.perfil.areaId !== 'zoologia-etologia') return '';
+  const ze = p.zoologiaEtologia || {dados:0, perfilAtivo:''};
+  const max = 3;
+  const dados = Math.min(ze.dados, max);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Zoologia e Etologia — Dados de Campo e Perfil Ativo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Observar → Catalogar → Adaptar.</strong> Dados de Campo
+      começam em 0 na cena; preparação adequada à missão/habitat dá 1 de
+      partida. Observar um comportamento novo e relevante (sem interromper
+      o turno) rende 1 Dado, no máximo 1 por rodada.
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">Dados de Campo</div>
+        <div class="val">${dados}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-ze-dados="1" ${dados>=max?'disabled':''}>+1 (observou algo novo)</button>
+        <button data-ze-preparacao ${dados>=max?'disabled':''}>Preparação adequada (+1, começa a cena com 1)</button>
+        <button data-ze-dados="-1" ${dados<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-ze-nova-cena>Nova cena (volta pra 0)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Gastar Dados</p>
+    <div class="grade g2">
+      ${ZE_GASTOS.map(g => `<div>
+        <button data-ze-gastar="${g.custo}" style="width:100%" ${dados<g.custo?'disabled':''}>${g.custo} Dado${g.custo>1?'s':''} — ${g.nome}</button>
+        <p class="mini" style="margin-top:6px">${g.sobre}</p>
+      </div>`).join('')}
+    </div>
+
+    <div style="margin-top:12px">
+      <label for="c-ze-perfil">Perfil Ativo</label>
+      <input id="c-ze-perfil" data-ze-perfil value="${esc(ze.perfilAtivo)}" placeholder="ex: Predador — perseguição, salto, faro de sangue">
+    </div>
+    <p class="mini" style="margin-top:6px">
+      Antes da cena o estudante prepara até três Perfis, mas mantém só um
+      Ativo por vez; cada Perfil cabe num cartão com até três Traços — por
+      enquanto isso é texto livre, o Perfil e seus Traços com nome e vírgula.
+    </p>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Verbos:</strong> Observar (ganha Dado), Catalogar (registra o
+      comportamento pra uso futuro) e Adaptar (converte o catalogado em
+      Traço ou ajuste de Perfil).<br>
+      <strong>Famílias de Traço:</strong> Sentido, Locomoção, Defesa, Ataque,
+      Camuflagem, Cooperação e Contramedida.
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelZoologiaEtologia(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2250,6 +2317,27 @@ function ligarEventos(){
   if(reReservatorio) reReservatorio.onchange = () => mudar(p => {
     p.roboticaEngenharia.reservatorioVital = Math.max(0, Math.min(4, Number(reReservatorio.value) || 0));
   });
+
+  // Zoologia e Etologia: Dados de Campo e Perfil Ativo.
+  app.querySelectorAll('[data-ze-dados]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const delta = Number(b.dataset.zeDados);
+      p.zoologiaEtologia.dados = Math.max(0, Math.min(3, p.zoologiaEtologia.dados + delta));
+    }));
+  const zePreparacao = app.querySelector('[data-ze-preparacao]');
+  if(zePreparacao) zePreparacao.onclick = () => mudar(p => {
+    p.zoologiaEtologia.dados = Math.min(3, p.zoologiaEtologia.dados + 1);
+  });
+  const zeNovaCena = app.querySelector('[data-ze-nova-cena]');
+  if(zeNovaCena) zeNovaCena.onclick = () => mudar(p => p.zoologiaEtologia.dados = 0);
+  app.querySelectorAll('[data-ze-gastar]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const custo = Number(b.dataset.zeGastar);
+      if(p.zoologiaEtologia.dados < custo) return;
+      p.zoologiaEtologia.dados -= custo;
+    }));
+  const zePerfil = document.getElementById('c-ze-perfil');
+  if(zePerfil) zePerfil.oninput = () => mudarSemRedesenhar(p => p.zoologiaEtologia.perfilAtivo = zePerfil.value, zePerfil);
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
