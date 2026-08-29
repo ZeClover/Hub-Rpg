@@ -820,6 +820,17 @@ passando.
     trava de duas Atividades, persistência
 - [x] Varredura completa dos 60 documentos de design de Thrylikí Chelóna
       fechada — todo conteúdo mecânico de personagem está na ficha
+- [x] **Thrylikí Chelóna — Vida editável, dano e Recuperação** (29/08/2026)
+      — decisão #42. O buraco mais básico da ficha: Vida nunca tinha
+      ficado editável, só exibida.
+  - Sofrer Impacto/Curar convertendo pela fórmula de combate-v6.1.md
+    (1 Impacto ≈ 22% da Vida máxima); desconto manual de Guarda;
+    Primeiros Socorros (1x por cena); as quatro escalas de Recuperação
+    (Respiro/Intervalo/Repouso/Descanso completo), Intervalo com
+    contador de até dois por Descanso completo
+  - Testado com Playwright: conversão de dano/cura, Guarda anulando
+    dano, Primeiros Socorros travando/liberando, Intervalo contando e
+    travando, Descanso completo enchendo Vida e reduzindo Consequência
 - [ ] Ometion
 
 ---

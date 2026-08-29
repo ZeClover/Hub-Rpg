@@ -2231,7 +2231,10 @@ function novoPersonagem(nome){
     // ascensoes: um eixo por Ascensão concluída (ascensoesConcluidas conta
     // quantas; isso registra qual eixo cada uma escolheu).
     ascensoes: [],
-    atual: {pv: null},
+    // atual: Vida corrente e as duas caixas de Intervalo por Descanso
+    // completo (recuperacao-v6.1.md) — até aqui Vida só era exibida,
+    // nunca editável (decisão #42 fecha isso).
+    atual: {pv: null, intervalosUsados: 0, primeirosSocorrosUsado: false},
     condicoesEixo: [],    // ids de CONDICOES_EIXO ativas
     condicoesGraves: [],  // ids de CONDICOES_GRAVES ativas
     consequencias: {ferimento:0, exaustao:0, instabilidade:0},
@@ -2313,6 +2316,16 @@ function grauAtributo(p, id){ return p.atributos[id] ?? 1; }
 // Vida = 35 + Constituição×5 + piso(Nível/2) — conferido contra a planilha
 // de referência do próprio Zé (Constituição 2, Nível 1 = 45).
 function vidaMaxima(p){ return 35 + grauAtributo(p,'constituicao')*5 + Math.floor(p.nivel/2); }
+function vidaAtual(p){ return Math.max(0, Math.min(vidaMaxima(p), p.atual.pv ?? vidaMaxima(p))); }
+
+// Conversão Impacto ↔ Vida (combate-v6.1.md): "um Impacto é a unidade
+// interna equivalente a aproximadamente 22% da Vida média de um
+// personagem do mesmo nível" — regras-base.json fecha o número em 0,22.
+// Recuperação usa percentuais fixos, "arredondados pra cima" (o próprio
+// texto do documento).
+const FRACAO_IMPACTO_VIDA = 0.22;
+function impactoParaVida(p, impacto){ return Math.round(impacto * FRACAO_IMPACTO_VIDA * vidaMaxima(p)); }
+function vidaPorPercentual(p, fracao){ return Math.ceil(fracao * vidaMaxima(p)); }
 function deslocamento(p){ return 9 + 2*grauAtributo(p,'agilidade'); }
 function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
 
@@ -2829,6 +2842,9 @@ function render(){
     recuperacao: '', recesso: {atividades: [], anotacoes: ''},
   };
   if(!p.progressaoEscolar.recesso) p.progressaoEscolar.recesso = {atividades: [], anotacoes: ''};
+  if(!p.atual) p.atual = {pv: null, intervalosUsados: 0, primeirosSocorrosUsado: false};
+  if(p.atual.intervalosUsados === undefined) p.atual.intervalosUsados = 0;
+  if(p.atual.primeirosSocorrosUsado === undefined) p.atual.primeirosSocorrosUsado = false;
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2882,7 +2898,7 @@ function desenharBarra(){
 
 // Painel sempre visível — os números que se consulta o tempo todo na mesa.
 function painelDerivados(p){
-  const pv = p.atual.pv ?? vidaMaxima(p);
+  const pv = vidaAtual(p);
   const emRisco = pv <= Math.floor(vidaMaxima(p)/2);
   return `<div class="grade g4" style="margin-bottom:14px">
     <div class="derivado ${emRisco?'risco':''}">
@@ -4001,8 +4017,74 @@ function painelKitCombateAno1(p){
   </div>`;
 }
 
+// Vida — sofrer Impacto, curar, Primeiros Socorros e as quatro escalas de
+// Recuperação (recuperacao-v6.1.md). Até aqui Vida só era exibida em
+// painelDerivados, nunca editável.
+function painelVida(p){
+  const max = vidaMaxima(p);
+  const atual = vidaAtual(p);
+  const intervalosDisponiveis = 2 - (p.atual.intervalosUsados || 0);
+  const guardaTotal = (p.inventario.itens || [])
+    .filter(i => i.tipo === 'protecao')
+    .reduce((soma,i) => soma + Math.max(0, Math.min(i.guardaMax||0, i.guardaAtual ?? i.guardaMax ?? 0)), 0);
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Vida</h2>
+    <div class="grade g2">
+      <div class="derivado ${atual<=Math.floor(max/2)?'risco':''}">
+        <div class="rot">Vida</div>
+        <div class="val">${atual}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-vida-ajuste="-1" ${atual<=0?'disabled':''}>-1 (corrigir)</button>
+        <button data-vida-ajuste="1" ${atual>=max?'disabled':''}>+1 (corrigir)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">
+      Sofrer Impacto — 1 Impacto equivale a ~22% da Vida máxima.
+      ${guardaTotal ? `Guarda disponível nas Proteções equipadas: ${guardaTotal} (cada ponto reduz 0,25 Impacto — desconte aqui e gaste a Guarda correspondente no item, na aba Inventário).` : ''}
+    </p>
+    <div class="grade g3">
+      <div><label for="c-vida-impacto">Impacto bruto</label>
+        <input id="c-vida-impacto" type="number" min="0" step="0.25" value="1"></div>
+      <div><label for="c-vida-guarda">Guarda gasta agora</label>
+        <input id="c-vida-guarda" type="number" min="0" step="1" value="0"></div>
+      <div style="display:flex;align-items:flex-end">
+        <button id="btSofrerImpacto" style="width:100%">Aplicar dano</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">Curar</p>
+    <div class="grade g3">
+      <div><label for="c-vida-cura">Impacto de cura</label>
+        <input id="c-vida-cura" type="number" min="0" step="0.25" value="1"></div>
+      <div style="display:flex;align-items:flex-end;grid-column:span 2">
+        <button id="btCurarImpacto" style="width:100%">Curar</button>
+      </div>
+    </div>
+    <button id="btPrimeirosSocorros" style="margin-top:10px" ${p.atual.primeirosSocorrosUsado?'disabled':''}>Primeiros Socorros (0,5 Impacto, 1x por cena)</button>
+
+    <p class="mini" style="margin:16px 0 6px">Recuperação</p>
+    <div class="grade g3">
+      <div>
+        <button data-recuperacao="respiro" style="width:100%">Respiro</button>
+        <p class="mini" style="margin-top:4px">Não recupera Vida — encerra condições de Janela/Cena.</p>
+      </div>
+      <div>
+        <button data-recuperacao="intervalo" style="width:100%" ${intervalosDisponiveis<=0?'disabled':''}>Intervalo (${intervalosDisponiveis}/2)</button>
+        <p class="mini" style="margin-top:4px">+25% da Vida máxima. Até dois por Descanso completo.</p>
+      </div>
+      <div>
+        <button data-recuperacao="repouso" style="width:100%">Repouso</button>
+        <p class="mini" style="margin-top:4px">+50% da Vida máxima.</p>
+      </div>
+    </div>
+    <button data-recuperacao="descanso-completo" style="margin-top:10px">Descanso completo (Vida cheia, zera Intervalos, -1 em cada Consequência)</button>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelKitCombateAno1(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
+  return painelVida(p) + painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelKitCombateAno1(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -4910,6 +4992,52 @@ function ligarEventos(){
   if(btNovoRecesso) btNovoRecesso.onclick = () => mudar(p => {
     p.progressaoEscolar.recesso = {atividades: [], anotacoes: ''};
   });
+
+  // Vida: sofrer Impacto, curar, Primeiros Socorros, Recuperação.
+  app.querySelectorAll('[data-vida-ajuste]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = vidaMaxima(p);
+      p.atual.pv = Math.max(0, Math.min(max, vidaAtual(p) + Number(b.dataset.vidaAjuste)));
+    }));
+  const btSofrerImpacto = document.getElementById('btSofrerImpacto');
+  if(btSofrerImpacto) btSofrerImpacto.onclick = () => mudar(p => {
+    const bruto = Number(document.getElementById('c-vida-impacto').value) || 0;
+    const guarda = Math.max(0, Number(document.getElementById('c-vida-guarda').value) || 0);
+    const liquido = Math.max(0, bruto - guarda*0.25);
+    const perda = impactoParaVida(p, liquido);
+    p.atual.pv = Math.max(0, vidaAtual(p) - perda);
+  });
+  const btCurarImpacto = document.getElementById('btCurarImpacto');
+  if(btCurarImpacto) btCurarImpacto.onclick = () => mudar(p => {
+    const impacto = Number(document.getElementById('c-vida-cura').value) || 0;
+    const cura = impactoParaVida(p, impacto);
+    p.atual.pv = Math.min(vidaMaxima(p), vidaAtual(p) + cura);
+  });
+  const btPrimeirosSocorros = document.getElementById('btPrimeirosSocorros');
+  if(btPrimeirosSocorros) btPrimeirosSocorros.onclick = () => mudar(p => {
+    if(p.atual.primeirosSocorrosUsado) return;
+    p.atual.pv = Math.min(vidaMaxima(p), vidaAtual(p) + impactoParaVida(p, 0.5));
+    p.atual.primeirosSocorrosUsado = true;
+  });
+  app.querySelectorAll('[data-recuperacao]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = vidaMaxima(p);
+      const tipo = b.dataset.recuperacao;
+      if(tipo === 'respiro'){
+        p.atual.primeirosSocorrosUsado = false;
+      }else if(tipo === 'intervalo'){
+        if((p.atual.intervalosUsados||0) >= 2) return;
+        p.atual.pv = Math.min(max, vidaAtual(p) + vidaPorPercentual(p, 0.25));
+        p.atual.intervalosUsados = (p.atual.intervalosUsados||0) + 1;
+      }else if(tipo === 'repouso'){
+        p.atual.pv = Math.min(max, vidaAtual(p) + vidaPorPercentual(p, 0.5));
+      }else if(tipo === 'descanso-completo'){
+        p.atual.pv = max;
+        p.atual.intervalosUsados = 0;
+        p.atual.primeirosSocorrosUsado = false;
+        Object.keys(p.consequencias).forEach(k => { p.consequencias[k] = Math.max(0, p.consequencias[k] - 1); });
+      }
+    }));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
