@@ -79,7 +79,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "em-construcao",
     salvaNoHub: true,
     fichaInimigo: "/thryliki-chelona-inimigo.html",
-    escudoMestre: null,
+    escudoMestre: "/thryliki-chelona-escudo-mestre.html",
   },
 ];
 

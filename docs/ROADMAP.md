@@ -664,6 +664,19 @@ passando.
     o cálculo, condições, Ações Características, persistência após
     recarregar, e Modo Hub completo mockado. Os testes da ficha de
     jogador continuam passando
+- [x] **Thrylikí Chelóna — Escudo do Mestre** (29/08/2026) — decisão #28.
+      Página de referência rápida, mesmo formato do SAO e do Fabula
+      Ultima — fecha o trio ficha de jogador + ficha de inimigo + Escudo
+      do Mestre que os outros dois sistemas completos já tinham.
+  - **`public/thryliki-chelona-escudo-mestre.html`**: página estática
+    (sem script, sem localStorage), transcrita fielmente de
+    `referencia-rapida-v6.1.md` — teste e graus de resultado, turno,
+    escala de Impacto, Patamares, condições, Vida zero e Pacto,
+    Recuperação, Cena de Desafio, referência rápida de criatura e os
+    lembretes de mesa
+  - **`src/lib/sistemas.ts`**: `escudoMestre` aponta pro arquivo novo
+  - Testado com Playwright: página carrega sem erro de console e as
+    seções principais aparecem no texto renderizado
 - [ ] Ometion
 
 ---
