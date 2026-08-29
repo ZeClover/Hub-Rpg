@@ -723,7 +723,41 @@ profundo porque não há interatividade nenhuma pra testar — é
 conteúdo estático fiel à fonte. `tsc` e `lint` limpos (o arquivo não
 tem JS que os afete, mas a mudança em `sistemas.ts` sim).
 
-## 29. Restrições registradas
+## 29. Thrylikí Chelóna — Fases de Chefe (29/08/2026)
+
+Continuação direta da ficha de inimigo (decisão #27), que tinha
+deixado "orçamento de encontro e fases de Chefe" explicitamente de
+fora. Com as outras três peças fechadas (16 Áreas, ficha de inimigo,
+Escudo do Mestre), essa era a continuação mais natural: estender o
+arquivo que já existe em vez de abrir uma frente nova.
+
+O SAO seguiu o mesmo ritmo: ficha básica de inimigo primeiro, Chefe
+de Andar (com Fases, Ataques de Área e Relógio de Batalha) só depois,
+numa fatia separada.
+
+Nova aba "Fases de Chefe" em `public/thryliki-chelona-inimigo.html`,
+só relevante quando Porte é "Fase de Chefe" (mostra um aviso, não
+trava, se não for). Cada fase registra exatamente os sete campos que
+`criaturas-e-encontros-v6.1.md` define: nome, Gatilho (geralmente um
+limiar de Vida), Sinal (como o grupo percebe a mudança), Objetivo (que
+não seja só remover Vida), Ação normal, Ação de Fase (até 0,5 Impacto)
+e Transição — mais os canais marcados como Forte nesta fase
+especificamente (reaproveitando a lista `CANAIS` já usada na aba
+Combate). Um card de "Economia do Chefe" fecha a aba com a referência
+fixa do documento (1 turno, 1 Reação, 1 Ação de Fase, no máximo 1 ação
+Impossível por rodada).
+
+Ficha de inimigo salva antes desta fatia não tinha `fasesChefe` —
+`render()` preenche `[]` na primeira leitura, mesmo padrão já usado
+várias vezes na ficha de jogador.
+
+Testado com Playwright: aviso aparecendo/sumindo conforme o Porte,
+adicionar/remover fases, marcar canais Forte por fase, e tudo
+sobrevivendo a um recarregamento de página — inclusive uma ficha sem
+o campo novo carregando sem quebrar. Os testes anteriores da ficha de
+inimigo (local e Modo Hub) continuam passando. `tsc` e `lint` limpos.
+
+## 30. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
