@@ -601,7 +601,52 @@ contra a versão isolada de cada agente) — mais os seis testes das
 fatias anteriores, pra garantir que juntar as três não quebrou nada
 que já funcionava. `tsc` e `lint` limpos.
 
-## 26. Restrições registradas
+## 26. Thrylikí Chelóna — combate das dez Áreas novas (29/08/2026)
+
+Ia continuar disparando agentes um por Área, como nas seis originais,
+mas ao ler o documento de design de Astronomia percebi que as dez Áreas
+novas (Alquimia, Astronomia, Matemática, Psicologia, Medicina,
+Geologia, História, Tanatologia, Direito, Filosofia) foram desenhadas
+com a **mesma forma de recurso**: 0 a 3, sobe 1 quando uma regra
+específica da Área acontece, e uma ação forte gasta 2 pra ir de 1 pra
+1,5 Impacto. Conferi isso contra `automation/novas-areas.json` — dado
+já estruturado que o próprio autor gerou pras dez, com o recurso, as
+três "ações comuns" e o contrajogo de cada Área em JSON.
+
+Com o padrão confirmado, gerar dez funções quase idênticas (como as
+seis originais, que precisaram de merge manual porque cada agente
+mexeu nos mesmos pontos do arquivo) seria pior que um único painel
+genérico dirigido por dados — menos código, sem risco de merge, e mais
+fácil de manter se algum número dessas Áreas mudar depois. Por isso
+esta fatia não usou agentes: escrevi um script que lê o JSON e gera a
+tabela `RECURSOS_NOVAS_AREAS` (nome do recurso, rótulo e delta do
+ganho, rótulo e delta do gasto, geração, limite, recuperação,
+contrajogo e as três ações comuns), e uma função `painelNovaArea(p)`
+única que lê a Área atual do personagem nessa tabela.
+
+**Uma das dez quebra o padrão simétrico:** Alquimia e Química não
+"ganha 1, gasta 2" — a Reação Volátil (a ação forte) *gera* 3
+Instabilidade em vez de custar pontos, e uma ação separada
+(Estabilização de Emergência) reduz 2. É economia de acúmulo de risco,
+não de gasto de reserva. A tabela trata isso como uma exceção
+explícita (delta de ganho +3 em vez de +1), não como parsing de texto
+livre — mais seguro que tentar inferir a mecânica automaticamente a
+partir da string de custo.
+
+O estado de cada Área fica num dicionário por `areaId`
+(`p.recursosNovaArea`), o mesmo padrão usado pros IDs de Ramo — troca
+de Área não faz uma herdar ou perder o valor da outra.
+
+Testado com Playwright: painel ausente sem Área escolhida, o caso
+padrão (Astronomia) com ganho/gasto/teto/reset corretos, o caso
+especial (Alquimia, +3 em vez de +1, ainda clampado em 3), estado
+independente entre Áreas diferentes mesmo trocando de uma pra outra, e
+persistência após recarregar — mais uma varredura renderizando as
+outras oito Áreas pra pegar problema de escape de texto. Os nove
+testes das fatias anteriores continuam passando. `tsc` e `lint`
+limpos.
+
+## 27. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

@@ -1392,6 +1392,154 @@ const ZE_GASTOS = [
   {custo:3, nome:'Adaptação/ápice', sobre:'sustentar Adaptação excepcional ou alimentar ápice preparado'},
 ];
 
+// Dez Áreas novas (Alquimia, Astronomia, Matemática, Psicologia,
+// Medicina, Geologia, História, Tanatologia, Direito, Filosofia)
+// compartilham a mesma forma de recurso — 0 a 3, ganha com uma regra
+// específica, gasta 2 (ou o valor indicado) numa ação forte de 1,5
+// Impacto. Um único painel genérico serve pras dez.
+const RECURSOS_NOVAS_AREAS = {
+  'alquimia-quimica': {
+    nome: 'Instabilidade',
+    ganhoLabel: '+3 (Reação Volátil)', ganhoDelta: 3,
+    gastoLabel: '-2 (Estabilização de Emergência)', gastoDelta: -2,
+    geracao: 'Reação Volátil gera 3; outras técnicas só geram o valor declarado.',
+    limite: 'Com Instabilidade 3, não pode usar outra reação volátil.',
+    recuperacao: 'Respiro reduz Instabilidade a 0 se o kit estiver acessível; Intervalo também recompõe reagentes narrativamente consumidos.',
+    contrajogo: 'Diluir ou contaminar reagentes, romper recipientes, separar componentes, provocar reação prematura ou retirar o kit.',
+    acoes: [
+      {nome: 'Fórmula Estável', impacto: 1, efeito: 'Resolva uma Fórmula preparada com Pressão, Sobrevivência ou Tática.'},
+      {nome: 'Reação Volátil', impacto: 1.5, efeito: 'Amplie uma Fórmula preparada; exige recipiente e contrajogo visíveis.'},
+      {nome: 'Estabilização de Emergência', impacto: 0.5, efeito: 'Reduza Instabilidade em 2 e produza apenas preparação, proteção pequena ou limpeza de risco.'},
+    ],
+  },
+  'astronomia-cosmologia': {
+    nome: 'Alinhamento',
+    ganhoLabel: '+1 (Janela cumprida)', ganhoDelta: 1,
+    gastoLabel: '-2 (Convergência)', gastoDelta: -2,
+    geracao: 'Ganhe 1 quando uma Janela anunciada for cumprida; no máximo uma vez por rodada.',
+    limite: 'Janelas precisam ser públicas, possíveis e contrariáveis.',
+    recuperacao: 'Respiro zera Alinhamento e encerra Janelas; Pontos artificiais podem ser remapeados na cena seguinte.',
+    contrajogo: 'Mudar orientação, romper a linha entre Pontos, criar referência falsa, agir fora da Janela ou remover o astrolábio.',
+    acoes: [
+      {nome: 'Mapear Ponto', impacto: 0, efeito: 'Marque ou mova um dos três Pontos e anuncie uma Janela.'},
+      {nome: 'Efeito Orbital', impacto: 1, efeito: 'Produza luz, gravidade, proteção ou movimento entre Pontos.'},
+      {nome: 'Convergência', impacto: 1.5, efeito: 'Concentre o Efeito Orbital numa intervenção forte.'},
+    ],
+  },
+  'matematica-probabilidade': {
+    nome: 'Evidência',
+    ganhoLabel: '+1 (fato confirma a Hipótese)', ganhoDelta: 1,
+    gastoLabel: '-2 (Resolver)', gastoDelta: -2,
+    geracao: 'Ganhe 1 quando um fato relevante confirmar a Hipótese ativa; no máximo uma vez por rodada.',
+    limite: 'Mantenha uma Hipótese ativa; premissa falsa ou irrelevante a encerra.',
+    recuperacao: 'Respiro zera Evidência e encerra a Hipótese; Modelos preparados permanecem.',
+    contrajogo: 'Falsificar a premissa, introduzir variável desconhecida, tornar a Hipótese irrelevante ou agir antes da demonstração.',
+    acoes: [
+      {nome: 'Declarar Hipótese', impacto: 0, efeito: 'Escolha uma premissa verificável ligada a um Modelo preparado.'},
+      {nome: 'Aplicar Modelo', impacto: 1, efeito: 'Converta o Modelo em Pressão, Sobrevivência ou Tática.'},
+      {nome: 'Resolver', impacto: 1.5, efeito: 'Produza a solução forte prevista pela Hipótese.'},
+    ],
+  },
+  'psicologia-noetica': {
+    nome: 'Insight',
+    ganhoLabel: '+1 (Estado orienta uma decisão)', ganhoDelta: 1,
+    gastoLabel: '-2 (Intervenção Profunda)', gastoDelta: -2,
+    geracao: 'Ganhe 1 quando um Estado enquadrado orientar uma decisão visível; no máximo uma vez por rodada.',
+    limite: 'Mantenha até um Enquadramento por alvo e no máximo três ativos; toda intervenção hostil admite resistência.',
+    recuperacao: 'Respiro zera Insight e encerra Enquadramentos de cena; vínculos narrativos continuam sem bônus ativo.',
+    contrajogo: 'Mudar honestamente de objetivo, romper contato, agir de forma ambígua, contestar o Enquadramento ou usar proteção mental.',
+    acoes: [
+      {nome: 'Enquadrar Estado', impacto: 0, efeito: 'Nomeie medo, foco, dúvida, vínculo ou outro Estado visível.'},
+      {nome: 'Intervenção Breve', impacto: 1, efeito: 'Fortaleça, redirecione ou interrompa o Estado sem controlar a personagem.'},
+      {nome: 'Intervenção Profunda', impacto: 1.5, efeito: 'Produza mudança intensa e resistível no Estado enquadrado.'},
+    ],
+  },
+  'medicina-anatomia': {
+    nome: 'Foco Clínico',
+    ganhoLabel: '+1 (confirma/acompanha Diagnóstico)', ganhoDelta: 1,
+    gastoLabel: '-2 (Procedimento Preciso)', gastoDelta: -2,
+    geracao: 'Ganhe 1 ao confirmar ou acompanhar um Diagnóstico relevante; no máximo uma vez por rodada.',
+    limite: 'Mantenha até três Diagnósticos; mudança corporal ou evidência contrária pode invalidá-los.',
+    recuperacao: 'Respiro zera Foco Clínico; Diagnósticos permanecem apenas enquanto o quadro observado continuar válido.',
+    contrajogo: 'Mascarar sintomas, mudar anatomia, remover acesso ao paciente, acelerar o quadro ou invalidar o Diagnóstico.',
+    acoes: [
+      {nome: 'Diagnóstico de Campo', impacto: 0, efeito: 'Registre um quadro, vulnerabilidade ou função corporal observável.'},
+      {nome: 'Intervenção Clínica', impacto: 1, efeito: 'Cure, proteja, contenha ou explore precisamente um Diagnóstico.'},
+      {nome: 'Procedimento Preciso', impacto: 1.5, efeito: 'Realize uma intervenção forte ligada a um Diagnóstico válido.'},
+    ],
+  },
+  'geologia-cristalografia': {
+    nome: 'Tensão',
+    ganhoLabel: '+1 (Estrutura pressurizada)', ganhoDelta: 1,
+    gastoLabel: '-2 (Fraturar)', gastoDelta: -2,
+    geracao: 'Ganhe 1 numa Estrutura afetada por Pressurizar; no máximo uma vez por rodada.',
+    limite: 'Tensão fica presa à Âncora; remover a Estrutura perde seus pontos.',
+    recuperacao: 'Respiro dissipa Tensão. Cristais-semente recuperáveis voltam ao kit; um Intervalo repõe os perdidos se houver material.',
+    contrajogo: 'Remover a Âncora, trocar o material, dissipar Tensão, interromper contato ou provocar Fratura prematura.',
+    acoes: [
+      {nome: 'Prospectar Estrutura', impacto: 0, efeito: 'Identifique matéria útil ou plante um cristal-semente.'},
+      {nome: 'Pressurizar', impacto: 1, efeito: 'Produza dano, suporte ou terreno e gere Tensão na Âncora.'},
+      {nome: 'Fraturar', impacto: 1.5, efeito: 'Libere uma ruptura forte a partir da Estrutura.'},
+    ],
+  },
+  'historia-arqueologia': {
+    nome: 'Precedente',
+    ganhoLabel: '+1 (fonte confirma o contexto)', ganhoDelta: 1,
+    gastoLabel: '-2 (Legado Desperto)', gastoDelta: -2,
+    geracao: 'Ganhe 1 quando uma fonte ou ação confirmar o contexto declarado; no máximo uma vez por rodada.',
+    limite: 'Cada ponto registra origem e função; contexto falsificado ou irrelevante o invalida.',
+    recuperacao: 'Respiro remove Precedentes de cena; as três fontes estudadas permanecem disponíveis como entrada.',
+    contrajogo: 'Contestar evidência, mudar contexto, destruir ou falsificar a fonte e tornar a função histórica inadequada.',
+    acoes: [
+      {nome: 'Contextualizar Fonte', impacto: 0, efeito: 'Ligue evidência, objeto ou fonte estudada a uma função histórica.'},
+      {nome: 'Reencenação', impacto: 1, efeito: 'Reproduza uma função de técnica, formação, proteção, rota ou falha.'},
+      {nome: 'Legado Desperto', impacto: 1.5, efeito: 'Reencene fortemente a função comprovada.'},
+    ],
+  },
+  'tanatologia': {
+    nome: 'Ecos',
+    ganhoLabel: '+1 (Escutar ou cumprir Diretriz)', ganhoDelta: 1,
+    gastoLabel: '-2 (Despedida Potente)', gastoDelta: -2,
+    geracao: 'Ganhe 1 ao Escutar uma ausência relevante ou cumprir a Diretriz de um Eco; no máximo uma vez por rodada.',
+    limite: 'Mantenha até três Ecos vinculados; todos usam as ações do Tanatólogo.',
+    recuperacao: 'Respiro encerra Ecos de cena. O memorial preserva histórias, não pontos; um Vínculo Persistente segue a regra do 4º Ano.',
+    contrajogo: 'Romper vínculo, profanar ou consagrar Âncora, concluir a despedida, negar a Diretriz ou proteger identidade.',
+    acoes: [
+      {nome: 'Escutar e Vincular', impacto: 0, efeito: 'Crie uma Âncora e uma Diretriz para um Eco disponível ou preparado.'},
+      {nome: 'Diretriz do Eco', impacto: 1, efeito: 'O Eco informa, protege, assombra ou move energia usando sua Âncora.'},
+      {nome: 'Despedida Potente', impacto: 1.5, efeito: 'Consuma vínculos numa intervenção espiritual forte.'},
+    ],
+  },
+  'direito-contratologia': {
+    nome: 'Garantia',
+    ganhoLabel: '+1 (Cláusula aceita/cumprida/violada)', ganhoDelta: 1,
+    gastoLabel: '-2 (Executar Garantia)', gastoDelta: -2,
+    geracao: 'Ganhe 1 quando uma parte aceitar, cumprir ou violar Cláusula válida; no máximo uma vez por rodada.',
+    limite: 'Mantenha até três Cláusulas e vincule também o autor; imposição hostil é resistível.',
+    recuperacao: 'Respiro zera Garantia e encerra Cláusulas de cena; obrigações narrativas continuam sem efeito automático.',
+    contrajogo: 'Recusar o pacto, cumprir literalmente, explorar brecha, invalidar testemunho, provar contradição ou fazer o autor violar a Cláusula.',
+    acoes: [
+      {nome: 'Declarar Cláusula', impacto: 0, efeito: 'Defina beneficiário, obrigação e consequência pública.'},
+      {nome: 'Execução Menor', impacto: 1, efeito: 'Proteja direito, cobre violação ou imponha Cláusula resistível.'},
+      {nome: 'Executar Garantia', impacto: 1.5, efeito: 'Aplique fortemente a consequência já anunciada.'},
+    ],
+  },
+  'filosofia-metafisica': {
+    nome: 'Coerência',
+    ganhoLabel: '+1 (agir conforme a Premissa)', ganhoDelta: 1,
+    gastoLabel: '-2 (Derivação Necessária)', gastoDelta: -2,
+    geracao: 'Ganhe 1 ao aceitar a limitação e agir de acordo com a Premissa; no máximo uma vez por rodada.',
+    limite: 'Mantenha uma Premissa ativa; formulações vagas não geram recurso e contradição a encerra.',
+    recuperacao: 'Respiro zera Coerência e encerra Premissas de cena; Princípios pessoais permanecem preparados.',
+    contrajogo: 'Expor contradição, recusar definição, mudar contexto, aceitar a consequência ou explorar o limite assumido pelo Filósofo.',
+    acoes: [
+      {nome: 'Definir Premissa', impacto: 0, efeito: 'Declare o que será sustentado e como pode ser contestado.'},
+      {nome: 'Sustentar Consequência', impacto: 1, efeito: 'Aplique Pressão, Sobrevivência ou Tática compatível com a Premissa.'},
+      {nome: 'Derivação Necessária', impacto: 1.5, efeito: 'Produza consequência forte sem ultrapassar a definição aceita.'},
+    ],
+  },
+};
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1440,6 +1588,10 @@ function novoPersonagem(nome){
     // zoologiaEtologia: Dados de Campo (0-3, gasto pra ativar Traço/trocar
     // Perfil/preparar contramedida) + o Perfil Ativo em texto livre.
     zoologiaEtologia: {dados:0, perfilAtivo:''},
+    // recursosNovaArea: as dez Áreas novas (Alquimia, Astronomia...) usam
+    // todas um recurso 0-3 na mesma forma — um dicionário por areaId evita
+    // colisão se o jogador trocar de Área e voltar.
+    recursosNovaArea: {},
     anotacoes: '',
   };
 }
@@ -1661,6 +1813,7 @@ function render(){
   if(!p.botanicaBiomancia) p.botanicaBiomancia = {seiva:2, cultivos:[]};
   if(!p.arteExpressao) p.arteExpressao = {ressonancia:0, motivos:[], obraPrincipal:''};
   if(!p.zoologiaEtologia) p.zoologiaEtologia = {dados:0, perfilAtivo:''};
+  if(!p.recursosNovaArea) p.recursosNovaArea = {};
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
@@ -2207,8 +2360,46 @@ function painelZoologiaEtologia(p){
   </div>`;
 }
 
+function painelNovaArea(p){
+  const cfg = RECURSOS_NOVAS_AREAS[p.perfil.areaId];
+  if(!cfg) return '';
+  const area = AREAS.find(a => a.id === p.perfil.areaId);
+  const valor = Math.min(3, Math.max(0, (p.recursosNovaArea && p.recursosNovaArea[p.perfil.areaId]) || 0));
+  return `<div class="cartao">
+    <h2 style="font-size:18px">${area ? esc(area.nome) : ''} — ${esc(cfg.nome)}</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      <strong>Geração:</strong> ${esc(cfg.geracao)}<br>
+      <strong>Limite:</strong> ${esc(cfg.limite)}
+    </p>
+    <div class="grade g2">
+      <div class="derivado">
+        <div class="rot">${esc(cfg.nome)}</div>
+        <div class="val">${valor}<span style="font-size:16px;color:var(--suave)">/3</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;justify-content:center">
+        <button data-na-delta="${cfg.ganhoDelta}" ${valor>=3?'disabled':''}>${esc(cfg.ganhoLabel)}</button>
+        <button data-na-delta="${cfg.gastoDelta}" ${valor+cfg.gastoDelta<0?'disabled':''}>${esc(cfg.gastoLabel)}</button>
+        <button data-na-reset>Respiro / Nova cena (volta pra 0)</button>
+      </div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Ações comuns</p>
+    <div class="grade g3">
+      ${cfg.acoes.map(ac => `<div>
+        <p class="mini" style="margin:0"><strong>${esc(ac.nome)}</strong> (${ac.impacto} Impacto)</p>
+        <p class="mini" style="margin-top:4px">${esc(ac.efeito)}</p>
+      </div>`).join('')}
+    </div>
+
+    <p class="mini" style="margin-top:16px">
+      <strong>Contrajogo:</strong> ${esc(cfg.contrajogo)}<br>
+      <strong>Recuperação:</strong> ${esc(cfg.recuperacao)}
+    </p>
+  </div>`;
+}
+
 function abaCombate(p){
-  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + `<div class="cartao">
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -2561,6 +2752,19 @@ function ligarEventos(){
     }));
   const zePerfil = document.getElementById('c-ze-perfil');
   if(zePerfil) zePerfil.oninput = () => mudarSemRedesenhar(p => p.zoologiaEtologia.perfilAtivo = zePerfil.value, zePerfil);
+
+  // Dez Áreas novas: painel genérico de recurso 0-3.
+  app.querySelectorAll('[data-na-delta]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      if(!p.recursosNovaArea) p.recursosNovaArea = {};
+      const atual = Math.min(3, Math.max(0, p.recursosNovaArea[p.perfil.areaId] || 0));
+      p.recursosNovaArea[p.perfil.areaId] = Math.max(0, Math.min(3, atual + Number(b.dataset.naDelta)));
+    }));
+  const naReset = app.querySelector('[data-na-reset]');
+  if(naReset) naReset.onclick = () => mudar(p => {
+    if(!p.recursosNovaArea) p.recursosNovaArea = {};
+    p.recursosNovaArea[p.perfil.areaId] = 0;
+  });
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
