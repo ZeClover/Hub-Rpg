@@ -954,6 +954,56 @@ trocando (e não acumulando) ao trocar de Ramo, um Ramo de uma das dez
 recarregar. Os dezoito testes das fatias anteriores de Thrylikí Chelóna
 continuam passando. `tsc` e `lint` limpos.
 
+## 35. Thrylikí Chelóna — Kit de Combate do 1º Ano (29/08/2026)
+
+Última peça encontrada relendo `kits-de-combate-ano1-v6.1.md` durante o
+mesmo mandato "continue até esse sistema estar dentro do hub": o
+próprio texto que já vivia no Hub desde o chassi (decisão #20) — "no
+1º Ano o personagem só tem a Área e o Kit de Combate dela" — descrevia
+uma peça que nunca tinha sido construída de verdade. Um personagem de
+1º Ano tinha o recurso da Área (Esforço, Mana...) mas nenhuma opção
+nomeada e pronta pra usar esse recurso em combate.
+
+O documento confirma que o kit **não é exclusivo do 1º Ano** — "o Ramo
+escolhido no 2º Ano muda a pergunta tática do personagem; ele não
+desbloqueia o direito de combater, isso já existe no kit da Área" — por
+isso o card fica visível em qualquer Ano, não só quando `p.ano === 1`.
+
+- `KITS_COMBATE_ANO1`, transcrito à mão do documento (sem JSON pronto
+  pra essas seis Áreas, ao contrário das técnicas de Ramo da decisão
+  #34) — cada uma com a Entrada pronta, de três a cinco opções
+  nomeadas (Ação, Custo, Impacto, Uso em batalha) e um Turno simples
+  sugerido
+- Só as **seis Áreas originais** ganham este card — as dez novas já
+  têm o próprio kit dentro de `RECURSOS_NOVAS_AREAS.acoes` (decisão
+  #26), vindo da mesma fonte (`automation/novas-areas.json`), e o
+  documento é explícito que não duplica esse conteúdo
+- Aparece dentro da aba Combate, logo depois do painel de recurso da
+  Área
+
+**Bug de teste encontrado no caminho:** o teste já existente de Arte e
+Expressão (`test-arte.js`) contava `h2:has-text("Arte e Expressão")`
+esperando exatamente 1 — o novo card "Kit de Combate — Arte e
+Expressão" também bate nesse texto (`has-text` é substring), quebrando
+a contagem. Não é bug de produto: o seletor do teste era frágil demais
+(dependia do nome da Área aparecer só uma vez na tela). Corrigido pra
+mirar no título específico do card de recurso ("Ressonância e
+Motivos") em vez do nome da Área.
+
+Testado com Playwright: card ausente sem Área escolhida, presente com
+as quatro opções nomeadas de Corpo e Cinética, continua visível depois
+de subir de Ano, troca corretamente ao mudar de Área (Simbologia
+mostra o próprio kit), e as dez Áreas novas não ganham esse card
+duplicado (continuam só com as próprias ações comuns). Os vinte testes
+das fatias anteriores de Thrylikí Chelóna continuam passando, incluindo
+o de Arte e Expressão já corrigido. `tsc` e `lint` limpos.
+
+Com Kit de Combate, Técnicas de Ramo, Construtor Livre de Poder e a
+Fórmula de Simbologia Arcana, todo personagem tem conteúdo jogável em
+qualquer Ano — pronto no 1º, técnicas nomeadas no 2º, criação livre a
+partir do 3º. Essa era a lacuna que restava do mandato "esse sistema
+estar dentro do hub".
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
