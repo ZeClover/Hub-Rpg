@@ -334,7 +334,71 @@ disparando o PATCH certo depois do debounce duplo, Compartilhar, ficha
 alheia/apagada (404), modo leitura travando todo campo enquanto Exportar
 segue disponível, e o modo local intacto.
 
-## 20. Restrições registradas
+## 20. Thrylikí Chelóna — descoberta e chassi (29/08/2026)
+
+O Zé mandou três arquivos sem nenhuma mensagem junto: um .zip
+(`HBEscolinhaV6.1SistemaCompleto.zip`), um .md
+(`HBEscolinhaV6.1SistemaLivro.md`) e um .txt
+(`HBEscolinhaV6.1Homebrewery.txt`). Perguntei o que fazer com eles em vez
+de supor — o Zé escolheu "Trazer pro Hub RPG como um sistema novo".
+
+Abrindo o material, descobri que não era um sistema novo sendo inventado
+agora: é o **Thrylikí Chelóna**, o 4º sistema que `src/lib/sistemas.ts`
+já registrava como "planejada" sem nenhuma ficha — e o design já estava
+inteiramente fechado (fila de execução no material do Zé mostra os 12
+itens da versão jogável marcados "concluído", só faltando playtest de
+mesa, que ele mesmo adiou). Isso muda o tipo de tarefa: não é desenhar
+mecânica do zero como o SAO, é **codificar fielmente** um sistema já
+pronto, do jeito que o Fabula Ultima foi.
+
+O sistema é uma escola de heróis. Estrutura confirmada com o Zé antes de
+começar a fatia:
+
+- **Grau (0-5)** como escala de atributo (Força, Agilidade, Constituição,
+  Inteligência, Presença), com Treinamento em perícia por cima
+  (Nada/Treinado/Perito/Expert = +0/+5/+10/+15)
+- Teste = `1d20 + Grau + Treinamento + situação (-5/0/+5)`
+- **Ano (1-5, currículo) e Nível (força) são eixos independentes** — uma
+  campanha pode combiná-los como quiser, e o Ano decide quais marcos
+  curriculares (Ramo, Assinatura, Especialização, Maestria, Tese) o
+  personagem já recebeu
+- Derivados: `Vida = 35 + Constituição×5 + piso(Nível/2)`,
+  `Deslocamento = 9 + 2×Agilidade`, `Carga Pronta = 6 + Força` — conferidos
+  contra os exemplos do material do Zé antes de codificar
+- Progressão sem teto: Ciclo (a cada 20 Níveis), Categoria (I-V dentro do
+  ciclo) e Ascensão, com PE ganho igual ao Nível
+- 26 Origens (2 Treinamentos fixos + Permissão narrativa) e 16 Áreas de
+  Estudo (o "curso" do personagem)
+- Condições por eixo, condições graves, e três trilhas de Consequência
+  (Ferimento/Exaustão/Instabilidade) em vez de morte instantânea
+- Pacto com a Realidade: sacrificar uma parte do corpo ou canalização
+  para escapar da morte, registrado como dívida permanente
+
+**Escopo desta fatia (uma fatia por vez, decisão #26):** só o chassi —
+os sete campos acima, seleção de Origem e de Área (Área como categoria,
+sem Ramos/poderes ainda), condições e Pacto como registro. Ramos (117),
+poderes de Área, combate detalhado e Impacto ficam para fatias
+seguintes, do mesmo jeito que o Fabula Ultima e o SAO cresceram aos
+poucos.
+
+`public/thryliki-chelona.html` nasceu com Modo Hub desde o primeiro
+commit (URL `?id=`, `/api/personagens/[id]`, modo leitura, Compartilhar)
+em vez de ganhar isso só numa fatia posterior como o SAO — o padrão já
+estava maduro o suficiente pra copiar de uma vez. `src/lib/sistemas.ts`
+passou a apontar pra ele (`situacao: "em-construcao"`,
+`salvaNoHub: true`), e a migração `0008_sistema_thryliki_chelona.sql`
+garante a linha correspondente na tabela `sistemas`, espelhando a
+`0007_sistema_sao.sql`.
+
+Testado com Playwright: criação de personagem em modo local, os cinco
+Graus e as fórmulas derivadas batendo com os valores esperados,
+seleção de Origem/Área mostrando os detalhes certos, condições e as
+trilhas de Consequência clicáveis sem erro de JS, persistência após
+recarregar a página, e Modo Hub completo mockando `/api/personagens/*`
+(carregar do Hub, editar disparando PATCH, ficha escondendo seletor e
+botão de novo personagem).
+
+## 21. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

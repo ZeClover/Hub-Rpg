@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — Thrylikí Chelóna</title>
+<style>
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+.derivado.risco .val{color:var(--alerta)}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.trilha{display:flex; gap:6px; align-items:center}
+.trilha button{width:28px; height:28px; padding:0; border-radius:50%}
+.trilha button.cheio{background:var(--alerta); border-color:var(--alerta); color:var(--texto)}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Thrylikí Chelóna</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE PERSONAGEM — THRYLIKÍ CHELÓNA V6.1 (homebrew original do Zé)
+
+   Este é o CHASSI do sistema (decisão #17 do Hub: cada sistema de regras é
+   um módulo próprio). O Zé já tinha o design inteiro pronto (60 documentos,
+   "concluído" em todo item de conteúdo, só faltando integração no Hub) —
+   este arquivo não inventa mecânica nova, só codifica o que já está escrito
+   nos arquivos de design dele. Prioridade: os graus de atributo, perícias,
+   fórmula de teste, derivados (Vida/Deslocamento/Carga/Categoria/Ciclo),
+   Origem, Área de Estudo (só como escolha — Ramos e poderes ficam pra
+   fatias futuras, igual o Fabula Ultima ganhou classe por classe) e o
+   painel de condições/consequências/Pacto com a Realidade.
+
+   Arquivo único, salvando no navegador (localStorage) OU na conta do Hub
+   se aberto com ?id= — mesmo mecanismo que Fabula Ultima, Kaizoku no Sho
+   e Sistema SAO já usam.
+   =========================================================================== */
+
+/* --- Regras do sistema, em forma de dados -------------------------------- */
+
+// Teste = 1d20 + Grau do Atributo + Treinamento + situação(-5/0/+5).
+// Grau vai de 0 a 5; Nível, Categoria e Ascensões nunca entram no d20.
+const GRAUS_ATRIBUTO = [0, 1, 2, 3, 4, 5];
+const LEITURA_GRAU = {0:'debilitado ou incapaz', 1:'comum', 2:'competente', 3:'excepcional', 4:'mestre', 5:'ápice de controle'};
+
+const ATRIBUTOS = [
+  {id:'forca',         nome:'Força'},
+  {id:'agilidade',     nome:'Agilidade'},
+  {id:'constituicao',  nome:'Constituição'},
+  {id:'inteligencia',  nome:'Inteligência'},
+  {id:'presenca',      nome:'Presença'},
+];
+
+const TREINAMENTOS = [
+  {id:'nada',     nome:'Nada',     bonus:0},
+  {id:'treinado', nome:'Treinado', bonus:5},
+  {id:'perito',   nome:'Perito',   bonus:10},
+  {id:'expert',   nome:'Expert',   bonus:15},
+];
+function bonusTreinamento(id){ return (TREINAMENTOS.find(t => t.id === id) || TREINAMENTOS[0]).bonus; }
+
+// As 24 Perícias do livro original, cada uma com um Atributo principal —
+// a ficção pode trocar o Atributo usado, mas o Treinamento não muda.
+const PERICIAS = [
+  {id:'fortitude',      nome:'Fortitude',      atributo:'constituicao'},
+  {id:'acrobacia',      nome:'Acrobacia',      atributo:'agilidade'},
+  {id:'crime',          nome:'Crime',          atributo:'agilidade'},
+  {id:'furtividade',    nome:'Furtividade',    atributo:'agilidade'},
+  {id:'iniciativa',     nome:'Iniciativa',     atributo:'agilidade'},
+  {id:'pilotagem',      nome:'Pilotagem',      atributo:'agilidade'},
+  {id:'pontaria',       nome:'Pontaria',       atributo:'agilidade'},
+  {id:'reflexos',       nome:'Reflexos',       atributo:'agilidade'},
+  {id:'atletismo',      nome:'Atletismo',      atributo:'forca'},
+  {id:'luta',           nome:'Luta',           atributo:'forca'},
+  {id:'artes',          nome:'Artes',          atributo:'presenca'},
+  {id:'enganacao',      nome:'Enganação',      atributo:'presenca'},
+  {id:'diplomacia',     nome:'Diplomacia',     atributo:'presenca'},
+  {id:'intimidacao',    nome:'Intimidação',    atributo:'presenca'},
+  {id:'percepcao',      nome:'Percepção',      atributo:'presenca'},
+  {id:'vontade',        nome:'Vontade',        atributo:'presenca'},
+  {id:'conhecimentos',  nome:'Conhecimentos',  atributo:'inteligencia', especialidade:true},
+  {id:'investigacao',   nome:'Investigação',   atributo:'inteligencia'},
+  {id:'medicina',       nome:'Medicina',       atributo:'inteligencia'},
+  {id:'simbologia',     nome:'Simbologia',     atributo:'inteligencia'},
+  {id:'profissao',      nome:'Profissão',      atributo:'inteligencia', especialidade:true},
+  {id:'sobrevivencia',  nome:'Sobrevivência',  atributo:'inteligencia'},
+  {id:'tatica',         nome:'Tática',         atributo:'inteligencia'},
+  {id:'tecnologia',     nome:'Tecnologia',     atributo:'inteligencia'},
+];
+
+// As 26 Origens do livro original — cada uma concede 2 Treinamentos fixos
+// (algumas deixam a escolha com o Mestre, registradas como lista vazia) e
+// uma Permissão narrativa, resumida aqui como referência de mesa.
+const ORIGENS = [
+  {id:'estudante', nome:'Estudante', treinamentos:['conhecimentos','diplomacia'], permissao:'"Eu lembro disso" (1×/sessão): ao encontrar um assunto estudável, ganha uma informação verdadeira útil ou +5 pra recordá-la.'},
+  {id:'saude', nome:'Especializado em Saúde', treinamentos:['medicina','percepcao'], permissao:'"Eu já cuidei de muitos" (1×/cena): +5 ao estabilizar, diagnosticar ou tratar alguém.'},
+  {id:'artista', nome:'Artista', treinamentos:['artes','enganacao'], permissao:'"Minha arte é minha essência" (1×/sessão): uma apresentação consegue audiência, abrigo, informação ou acesso de Faixa de Custo até 2.'},
+  {id:'esportista', nome:'Esportista', treinamentos:['atletismo','reflexos'], permissao:'"Determinação implacável" (1×/cena): repete um teste físico e mantém o novo resultado.'},
+  {id:'cozinheiro', nome:'Cozinheiro', treinamentos:['fortitude','profissao'], permissao:'"Preparo excepcional": numa refeição de Intervalo, todo o grupo ganha uma Vantagem de Campo estreita até o próximo Intervalo.'},
+  {id:'atendente-bar', nome:'Atendente de Bar', treinamentos:['diplomacia','percepcao'], permissao:'"Domínio das relações sociais" (1×/sessão): descobre uma informação, tensão ou quem está disposto a conversar num ambiente social.'},
+  {id:'ladrao', nome:'Ladrão', treinamentos:['enganacao','furtividade'], permissao:'"Passos sombrios" (1×/cena): declara uma pequena preparação criminosa plausível (esconderijo, ferramenta, rota de fuga).'},
+  {id:'sobrevivente', nome:'Sobrevivente', treinamentos:['sobrevivencia','fortitude'], permissao:'"Rastreamento exímio" (1×/cena): examinando trilha/abrigo/perigo, recebe uma resposta acionável sobre rota, quantidade ou risco.'},
+  {id:'engenharia-robotica', nome:'Engenharia Robótica', treinamentos:['tecnologia','conhecimentos'], permissao:'"Eu consigo criar tudo": ferramentas, oficina conhecida e um reparo de Categoria I por missão.'},
+  {id:'soldado', nome:'Soldado', treinamentos:['pontaria','reflexos'], permissao:'"Estrategista militar hábil" (1×/cena): ignora um modificador desfavorável causado por medo, fogo de supressão ou caos de batalha.'},
+  {id:'estudante-simbologia', nome:'Estudante de Simbologia', treinamentos:['simbologia','conhecimentos'], permissao:'"Eu aprendo fácil": após um dia estudando um símbolo conhecido, compreende sua função básica e riscos.'},
+  {id:'hacker', nome:'Hacker', treinamentos:['tecnologia','investigacao'], permissao:'"Controle robótico avançado" (1×/cena): com acesso a uma Interface, obtém credencial, informação ou comando simples de um sistema comum.'},
+  {id:'cacador-recompensa', nome:'Caçador de Recompensa', treinamentos:['pontaria','furtividade'], permissao:'"Eu aprendi com os erros": começa com uma peça PCHR/ferramenta de rastreio de Categoria I e um Traço não ofensivo.'},
+  {id:'executivo', nome:'Executivo', treinamentos:['diplomacia','percepcao'], permissao:'"Eu conheço um cara" (1×/sessão): convoca um contato estabelecido com o Mestre.'},
+  {id:'detetive', nome:'Detetive', treinamentos:['investigacao','iniciativa'], permissao:'"Eu sei o que aconteceu" (1×/cena): reanalisa um local e pergunta o que deixou uma pista, foi removido, ou contradiz a versão atual.'},
+  {id:'lutador-origem', nome:'Lutador', treinamentos:['luta','reflexos'], permissao:'"Eu aprendi com o tempo": conhece os princípios de uma tradição de combate.'},
+  {id:'operario', nome:'Operário', treinamentos:['fortitude','profissao'], permissao:'"Eu resisto aos traumas" (1×/sessão): ao receber Ferimento 1 por esforço físico, adia a restrição até o fim da cena.'},
+  {id:'estudante-ocultos', nome:'Estudante dos Ocultos', treinamentos:['conhecimentos','investigacao'], permissao:'"Eu sei demais" (1×/sessão): reconhece um segredo, símbolo proibido ou vulnerabilidade reputacional relevante.'},
+  {id:'amnesico', nome:'Amnésico', treinamentos:[], permissao:'Dois Treinamentos escolhidos pelo Mestre com participação do jogador. "Eu pude me lembrar por instantes" (1×/sessão): recebe uma informação útil e +5 na primeira ação ligada ao fragmento de memória.'},
+  {id:'artesao', nome:'Artesão', treinamentos:['profissao','vontade'], permissao:'"Eu sei fazer algo igual": depois de estudar um objeto mundano, reproduz sua função com ferramentas e material compatíveis.'},
+  {id:'escravo', nome:'Escravo — ou Ex-escravizado', treinamentos:['fortitude','vontade'], permissao:'"Eu já sofri o suficiente" (1×/cena): +5 ao resistir a coerção, aprisionamento ou controle.'},
+  {id:'forasteiro', nome:'Forasteiro', treinamentos:['reflexos','acrobacia'], permissao:'"Eu sei resolver isto" (1×/sessão): declara uma rota, costume, idioma ou solução aprendida em outro lugar.'},
+  {id:'mercador', nome:'Mercador', treinamentos:['diplomacia','percepcao'], permissao:'"Eu sei que você quer isso" (1×/sessão): reduz em 1 a Faixa de Custo efetiva numa negociação, ou descobre uma condição não monetária.'},
+  {id:'herdeiro', nome:'Herdeiro', treinamentos:[], permissao:'Dois Treinamentos escolhidos com o Mestre. "Eu mereço": começa com item adicional de Faixa de Custo 2, ou acesso familiar a um recurso de Faixa 3.'},
+  {id:'marinheiro', nome:'Marinheiro', treinamentos:['fortitude','iniciativa'], permissao:'"Terra à vista" (1×/cena): ignora um modificador desfavorável causado por água, enjoo, tempestade ou superfície instável.'},
+  {id:'cacador', nome:'Caçador', treinamentos:['sobrevivencia'], permissao:'Segundo Treinamento: Pontaria ou Luta. "Eu já vi essa criatura": +5 (1×/cena) ao explorar um comportamento observado de uma família de criaturas conhecida.'},
+];
+
+// As 16 Áreas de Estudo — as antigas classes/Caminhos. Cada uma só marca a
+// categoria aqui: Ramos (subclasses, escolhidos no 2º Ano), poderes e o
+// motor mecânico próprio de cada Área são fatia futura, igual o Fabula
+// Ultima ganhou os poderes de cada classe depois do chassi existir.
+const AREAS = [
+  {id:'corpo-cinetica',          nome:'Corpo e Cinética',          verbos:'Tensionar → Encadear → Romper',       painel:'Esforço 0–5 e Rastro'},
+  {id:'simbologia-arcana',       nome:'Simbologia Arcana',         verbos:'Compor → Inscrever → Manifestar',     painel:'Mana, Fórmula e Matriz de Tomo'},
+  {id:'robotica-engenharia',     nome:'Robótica e Engenharia',     verbos:'Projetar → Configurar → Operar',      painel:'Sistemas, Carga e Comandos'},
+  {id:'botanica-biomancia',      nome:'Botânica e Biomancia',      verbos:'Semear → Cultivar → Colher',          painel:'até três Cultivos e Seiva'},
+  {id:'zoologia-etologia',       nome:'Zoologia e Etologia',       verbos:'Observar → Catalogar → Adaptar',      painel:'Dados de Campo e Perfil Ativo'},
+  {id:'arte-expressao',          nome:'Arte e Expressão',          verbos:'Inspirar → Compor → Apresentar',      painel:'Motivos, Obra e Ressonância'},
+  {id:'alquimia-quimica',        nome:'Alquimia e Química',        verbos:'Dosar → Reagir → Estabilizar',        painel:'Fórmulas e Instabilidade'},
+  {id:'astronomia-cosmologia',   nome:'Astronomia e Cosmologia',   verbos:'Mapear → Alinhar → Convergir',        painel:'Pontos, Janelas e Alinhamento'},
+  {id:'matematica-probabilidade',nome:'Matemática e Probabilidade',verbos:'Modelar → Demonstrar → Resolver',     painel:'Hipótese e Evidência'},
+  {id:'psicologia-noetica',      nome:'Psicologia e Noética',      verbos:'Perceber → Enquadrar → Intervir',     painel:'Estados, Enquadramentos e Insight'},
+  {id:'medicina-anatomia',       nome:'Medicina e Anatomia',       verbos:'Diagnosticar → Intervir → Acompanhar',painel:'Diagnósticos e Foco Clínico'},
+  {id:'geologia-cristalografia', nome:'Geologia e Cristalografia', verbos:'Prospectar → Pressurizar → Fraturar', painel:'Estruturas e Tensão'},
+  {id:'historia-arqueologia',    nome:'História e Arqueologia',    verbos:'Investigar → Contextualizar → Reencenar', painel:'Fontes e Precedentes'},
+  {id:'tanatologia',             nome:'Tanatologia',               verbos:'Escutar → Vincular → Despedir',       painel:'Ecos, Âncoras e Diretrizes'},
+  {id:'direito-contratologia',   nome:'Direito e Contratologia',   verbos:'Declarar → Pactuar → Executar',       painel:'Cláusulas e Garantia'},
+  {id:'filosofia-metafisica',    nome:'Filosofia e Metafísica',    verbos:'Questionar → Definir → Sustentar',    painel:'Premissas e Coerência'},
+];
+
+// Ano mede currículo (o que o personagem sabe fazer); Nível mede potência.
+// Os dois avançam de forma independente.
+const ANOS = [
+  {id:1, nome:'1º Ano', sobre:'Área, Kit de Combate e duas opções Básicas — ainda não escolhe Ramo'},
+  {id:2, nome:'2º Ano', sobre:'Escolhe o Ramo Principal e recebe sua Assinatura'},
+  {id:3, nome:'3º Ano', sobre:'Recebe a Especialização — pode criar poderes livremente a partir daqui'},
+  {id:4, nome:'4º Ano', sobre:'Recebe a Maestria e libera o Vínculo Persistente'},
+  {id:5, nome:'5º Ano', sobre:'Recebe a Tese'},
+];
+
+// Condições comuns: no máximo uma por eixo. Reaplicar igual renova; mais
+// forte substitui; mais fraca não acumula.
+const CONDICOES_EIXO = [
+  {id:'exposto',       nome:'Exposto',       eixo:'Defesa',       efeito:'próximo ataque direto recebe +5, depois termina'},
+  {id:'preso',         nome:'Preso',         eixo:'Movimento',    efeito:'não usa a Ação de Movimento pra sair da Âncora'},
+  {id:'abalado',       nome:'Abalado',       eixo:'Resposta',     efeito:'perde a próxima Reação'},
+  {id:'interrompido',  nome:'Interrompido',  eixo:'Sustentação',  efeito:'uma sustentação/postura/fórmula/obra é suspensa'},
+];
+const CONDICOES_GRAVES = [
+  {id:'atordoado',     nome:'Atordoado',     efeito:'perde a Ação Principal, ou age normal mas fica Exposto+Abalado'},
+  {id:'incapacitado',  nome:'Incapacitado',  efeito:'sem ações significativas até o início do próximo turno'},
+  {id:'brecha',        nome:'Brecha',        efeito:'Exposto+Abalado, perde uma sustentação — a "incapacitação" de chefe'},
+];
+
+// Consequências persistentes: três trilhas de 0 a 3.
+const CONSEQUENCIAS = [
+  {id:'ferimento',     nome:'Ferimento',     sobre:'lesão, sangramento, queimadura, órgão ou membro'},
+  {id:'exaustao',      nome:'Exaustão',      sobre:'fome, privação, sobrecarga, esforço prolongado'},
+  {id:'instabilidade', nome:'Instabilidade', sobre:'excesso mágico, corrupção, Resíduo da Realidade'},
+];
+
+/* --- Personagem ------------------------------------------------------------ */
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+function novoPersonagem(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    perfil: {
+      nome: nome || 'Novo Estudante',
+      origemId: '',
+      areaId: '',
+      aparencia: '',
+    },
+    ano: 1,
+    nivel: 1,
+    atributos: {forca:1, agilidade:1, constituicao:1, inteligencia:1, presenca:1},
+    // treinamentos: { periciaId: 'nada'|'treinado'|'perito'|'expert' }
+    treinamentos: {},
+    // especialidades: texto livre pra Conhecimentos e Profissão (pedem campo aberto)
+    especialidades: {conhecimentos:'', profissao:''},
+    peGasto: 0,
+    atual: {pv: null},
+    condicoesEixo: [],    // ids de CONDICOES_EIXO ativas
+    condicoesGraves: [],  // ids de CONDICOES_GRAVES ativas
+    consequencias: {ferimento:0, exaustao:0, instabilidade:0},
+    risco: {caido:false, quantidade:0},
+    // pacto: cada parte sacrificada à Realidade — decisão #64-like do SAO,
+    // aqui é regra fixa do próprio sistema, não opcional por mesa.
+    pacto: {dividas:0, partes:[]}, // partes: [{nome, canal, funcaoPerdida}]
+    anotacoes: '',
+  };
+}
+
+/* --- Cálculos ---------------------------------------------------------- */
+
+function grauAtributo(p, id){ return p.atributos[id] ?? 1; }
+
+// Vida = 35 + Constituição×5 + piso(Nível/2) — conferido contra a planilha
+// de referência do próprio Zé (Constituição 2, Nível 1 = 45).
+function vidaMaxima(p){ return 35 + grauAtributo(p,'constituicao')*5 + Math.floor(p.nivel/2); }
+function deslocamento(p){ return 9 + 2*grauAtributo(p,'agilidade'); }
+function cargaPronta(p){ return 6 + grauAtributo(p,'forca'); }
+
+function ciclo(p){ return Math.floor((p.nivel-1)/20)+1; }
+function nivelNoCiclo(p){ return ((p.nivel-1)%20)+1; }
+function ascensoesConcluidas(p){ return Math.floor(p.nivel/20); }
+
+// Categoria I-V: a tabela vale pro primeiro ciclo. Categoria nunca passa de
+// V — ciclos seguintes já começam e continuam em V (progressão daí em
+// diante é por Ascensão, não por nova Categoria).
+function categoria(p){
+  if(ciclo(p) > 1) return 'V';
+  const n = nivelNoCiclo(p);
+  if(n <= 4) return 'I';
+  if(n <= 8) return 'II';
+  if(n <= 12) return 'III';
+  if(n <= 16) return 'IV';
+  return 'V';
+}
+
+// Marcos da Área: posições 1, 5, 9, 13, 17 de cada ciclo — 5 por ciclo
+// completo, mais os já alcançados no ciclo atual.
+function marcosRecebidos(p){
+  const ciclosCompletos = ciclo(p) - 1;
+  const posicoesNoCicloAtual = [1,5,9,13,17].filter(x => x <= nivelNoCiclo(p)).length;
+  return 5*ciclosCompletos + posicoesNoCicloAtual;
+}
+
+// PE: 1 por Nível, acumula se não gasto. O que ainda não tem é ONDE gastar
+// (talentos/técnicas/poderes) — isso é conteúdo de fatia futura; por
+// enquanto só registra ganho e gasto.
+function peGanho(p){ return p.nivel; }
+function peDisponivel(p){ return peGanho(p) - (p.peGasto||0); }
+
+/* --- Armazenamento -----------------------------------------------------
+
+   Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+   navegador — mesmo mecanismo do Fabula Ultima, Kaizoku no Sho e Sistema
+   SAO. Sem o parâmetro, arquivo único com localStorage, sem conta.
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'thryliki_chelona_fichas';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{
+    const cru = localStorage.getItem(CHAVE);
+    return cru ? JSON.parse(cru) : [];
+  }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'status',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,
+  ehDono: false,
+  compartilhado: false,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
+
+const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  salvar(); render();
+}
+
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.perfil === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho da tela --------------------------------------------------- */
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ABAS = [
+  {id:'status',    nome:'Status'},
+  {id:'atributos', nome:'Atributos e Perícias'},
+  {id:'combate',   nome:'Combate'},
+  {id:'notas',     nome:'Notas'},
+];
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const p = atual();
+  if(!p){
+    app.innerHTML = `<div class="vazio">
+      <h2>Nenhum personagem ainda</h2>
+      <p class="mini">Clique em "+ Novo" para criar a primeira ficha,
+      ou importe um arquivo que você tenha exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a =>
+        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+      ).join('') + `</div>`
+    + painelDerivados(p)
+    + ({status:abaStatus, atributos:abaAtributos, combate:abaCombate, notas:abaNotas}[estado.aba])(p);
+
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.fichas.length
+    ? estado.fichas.map(f =>
+        `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`
+      ).join('')
+    : `<option>— sem personagens —</option>`;
+}
+
+// Painel sempre visível — os números que se consulta o tempo todo na mesa.
+function painelDerivados(p){
+  const pv = p.atual.pv ?? vidaMaxima(p);
+  const emRisco = pv <= Math.floor(vidaMaxima(p)/2);
+  return `<div class="grade g4" style="margin-bottom:14px">
+    <div class="derivado ${emRisco?'risco':''}">
+      <div class="rot">Vida</div>
+      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${vidaMaxima(p)}</span></div>
+      <div class="obs">35 + Const×5 + piso(Nível/2)</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Categoria</div>
+      <div class="val">${categoria(p)}</div>
+      <div class="obs">Ciclo ${ciclo(p)} · posição ${nivelNoCiclo(p)}/20</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Deslocamento</div>
+      <div class="val">${deslocamento(p)}</div>
+      <div class="obs">Carga Pronta ${cargaPronta(p)}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">PE disponível</div>
+      <div class="val">${peDisponivel(p)}</div>
+      <div class="obs">${peGanho(p)} ganhos, ${p.peGasto||0} gastos</div>
+    </div>
+  </div>`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function abaStatus(p){
+  const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
+  const area = AREAS.find(a => a.id === p.perfil.areaId);
+  const ano = ANOS.find(a => a.id === p.ano);
+  return `<div class="cartao">
+    <p class="mini" style="margin-bottom:14px">
+      <strong>Ano</strong> mede o currículo que o personagem já aprendeu.
+      <strong>Nível</strong> mede a força dele. Os dois avançam separados —
+      uma campanha pode começar em qualquer combinação.
+    </p>
+    <div class="grade g3">
+      ${campo('Nome', 'nome', p.perfil.nome)}
+      <div><label for="c-ano">Ano</label>
+        <select id="c-ano" data-num-raiz="ano">
+          ${ANOS.map(a => `<option value="${a.id}" ${a.id===p.ano?'selected':''}>${a.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-nivel">Nível</label>
+        <input id="c-nivel" data-num-raiz="nivel" type="number" min="1" value="${p.nivel}"></div>
+    </div>
+    ${ano ? `<p class="mini" style="margin-top:8px">${ano.sobre}</p>` : ''}
+    <div style="margin-top:14px">
+      <label for="c-aparencia">Aparência</label>
+      <textarea id="c-aparencia" data-perfil="aparencia" rows="3">${esc(p.perfil.aparencia)}</textarea>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Origem</h2>
+    <p class="mini" style="margin:6px 0 14px">Como o personagem viveu antes da campanha — concede 2 Treinamentos fixos e uma Permissão narrativa.</p>
+    <select id="c-origem" data-campo-raiz="perfil.origemId">
+      <option value="">— nenhuma —</option>
+      ${ORIGENS.map(o => `<option value="${o.id}" ${o.id===p.perfil.origemId?'selected':''}>${o.nome}</option>`).join('')}
+    </select>
+    ${origem ? `<p class="mini" style="margin-top:10px">
+      <strong>Treinamentos:</strong> ${origem.treinamentos.length ? origem.treinamentos.map(t => PERICIAS.find(x=>x.id===t)?.nome || t).join(', ') : '(escolhidos com o Mestre)'}<br>
+      <strong>Permissão:</strong> ${origem.permissao}</p>` : ''}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Área de Estudo</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      O curso principal do personagem — o motor de poder dele. Ramos
+      (a partir do 2º Ano), técnicas e poderes de cada Área são fatia
+      futura; por enquanto isso só marca qual Área o personagem estuda.
+    </p>
+    <select id="c-area" data-campo-raiz="perfil.areaId">
+      <option value="">— nenhuma —</option>
+      ${AREAS.map(a => `<option value="${a.id}" ${a.id===p.perfil.areaId?'selected':''}>${a.nome}</option>`).join('')}
+    </select>
+    ${area ? `<p class="mini" style="margin-top:10px"><strong>${area.verbos}</strong> — ${area.painel}</p>` : ''}
+  </div>`;
+}
+
+function abaAtributos(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Atributos</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Na criação, os cinco começam em Grau 1 e o jogador distribui 5 pontos
+      adicionais, com máximo de Grau 3 na criação (ex: 3,2,2,2,1 ou
+      3,3,2,1,1). Grau nunca passa de 5 na progressão comum.
+    </p>
+    <div class="grade g5">
+      ${ATRIBUTOS.map(a => `<div>
+        <label for="c-atr-${a.id}">${a.nome}</label>
+        <select id="c-atr-${a.id}" data-atributo="${a.id}">
+          ${GRAUS_ATRIBUTO.map(g => `<option value="${g}" ${g===grauAtributo(p,a.id)?'selected':''}>${g}</option>`).join('')}
+        </select>
+        <p class="mini" style="margin-top:6px">${LEITURA_GRAU[grauAtributo(p,a.id)]}</p>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Perícias e Treinamentos</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Teste = 1d20 + Grau do Atributo + Treinamento + situação (−5/0/+5).
+      Cinco Treinamentos iniciais: três livres, dois da Origem.
+    </p>
+    ${ATRIBUTOS.map(atr => `
+      <p class="mini" style="margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em">${atr.nome}</p>
+      <div class="grade g3">
+        ${PERICIAS.filter(per => per.atributo === atr.id).map(per => `<div>
+          <label for="c-per-${per.id}">${per.nome}</label>
+          <select id="c-per-${per.id}" data-treinamento="${per.id}">
+            ${TREINAMENTOS.map(t => `<option value="${t.id}" ${(p.treinamentos[per.id]||'nada')===t.id?'selected':''}>${t.nome} (+${t.bonus})</option>`).join('')}
+          </select>
+          ${per.especialidade ? `<input data-especialidade="${per.id}" style="margin-top:6px" placeholder="especialidade" value="${esc(p.especialidades[per.id]||'')}">` : ''}
+        </div>`).join('')}
+      </div>`).join('')}
+  </div>`;
+}
+
+function abaCombate(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Condições</h2>
+    <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
+    <div class="condicoes">
+      ${CONDICOES_EIXO.map(c => `<label title="${c.efeito}">
+        <input type="checkbox" data-condicao-eixo="${c.id}" ${p.condicoesEixo.includes(c.id)?'checked':''}>
+        ${c.nome} <span class="mini">(${c.eixo})</span></label>`).join('')}
+    </div>
+    <p class="mini" style="margin:14px 0 6px">Graves</p>
+    <div class="condicoes">
+      ${CONDICOES_GRAVES.map(c => `<label title="${c.efeito}">
+        <input type="checkbox" data-condicao-grave="${c.id}" ${p.condicoesGraves.includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Consequências</h2>
+    <p class="mini" style="margin:6px 0 14px">Três trilhas de 0 a 3 — lesão, desgaste e instabilidade que descanso sozinho não apaga rápido.</p>
+    <div class="grade g3">
+      ${CONSEQUENCIAS.map(c => `<div>
+        <label>${c.nome}</label>
+        <div class="trilha">
+          ${[0,1,2,3].map(n => `<button data-consequencia="${c.id}|${n}" class="${(p.consequencias[c.id]||0)>=n && n>0?'cheio':''}">${n}</button>`).join('')}
+        </div>
+        <p class="mini" style="margin-top:6px">${c.sobre}</p>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Vida zero e Risco</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Em 0 Vida: Caído, 1 Risco. Fim de turno sem estabilizar: +1. Golpe
+      direto: +1. Em 3 Riscos, morte confirmada — o Pacto pode ser
+      oferecido.
+    </p>
+    <div class="grade g2">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal">
+        <input type="checkbox" id="c-caido" style="width:auto" ${p.risco.caido?'checked':''}>
+        Caído agora
+      </label>
+      <div><label for="c-risco">Risco (0-3)</label>
+        <input id="c-risco" data-risco type="number" min="0" max="3" value="${p.risco.quantidade}"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Pacto com a Realidade</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Em vez de morrer de vez, o personagem pode sacrificar uma parte
+      válida à Realidade: volta com 50% da Vida, sem Caído nem Risco, e
+      registra uma nova Dívida. O canal sacrificado nunca volta a
+      canalizar poder, mesmo com prótese ou regeneração.
+    </p>
+    <p class="mini" style="margin-bottom:10px"><strong>Dívidas atuais:</strong> ${p.pacto.dividas}</p>
+    ${p.pacto.partes.map((parte,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-pacto-campo="${i}|nome" value="${esc(parte.nome)}" placeholder="Parte sacrificada" style="font-family:Georgia,serif;font-size:16px">
+        <button data-remover-pacto="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2">
+        <div><label>Canal</label><input data-pacto-campo="${i}|canal" value="${esc(parte.canal)}" placeholder="ex: manipulação, locomoção, sentido"></div>
+        <div><label>Função perdida</label><input data-pacto-campo="${i}|funcaoPerdida" value="${esc(parte.funcaoPerdida)}"></div>
+      </div>
+    </div>`).join('')}
+    <button id="btAddPacto">+ Registrar sacrifício</button>
+  </div>`;
+}
+
+function abaNotas(p){
+  return `<div class="cartao">
+    <label for="c-anotacoes">Anotações</label>
+    <textarea id="c-anotacoes" data-perfil="anotacoes-raiz" data-campo="anotacoes" rows="10">${esc(p.anotacoes)}</textarea>
+  </div>`;
+}
+
+/* --- Eventos --------------------------------------------------------------
+
+   O `render` reescreve a tela inteira, então os eventos são religados a
+   cada desenho — mesmo caminho dos outros sistemas do Hub.
+------------------------------------------------------------------------- */
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b =>
+    b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  app.querySelectorAll('[data-perfil]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      if(el.dataset.campo) p[el.dataset.campo] = el.value;
+      else p.perfil[el.dataset.perfil] = el.value;
+    }, el));
+
+  // Campos "de raiz" (fora de p.perfil) que precisam de redesenho imediato
+  // porque alimentam o painel de derivados ou textos condicionais (Origem,
+  // Área, Ano).
+  app.querySelectorAll('[data-num-raiz]').forEach(el =>
+    el.onchange = () => mudar(p => p[el.dataset.numRaiz] = Number(el.value) || 1));
+  app.querySelectorAll('[data-campo-raiz]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [raiz, chave] = el.dataset.campoRaiz.split('.');
+      p[raiz][chave] = el.value;
+    }));
+
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Number(el.value)));
+
+  app.querySelectorAll('[data-treinamento]').forEach(el =>
+    el.onchange = () => mudar(p => p.treinamentos[el.dataset.treinamento] = el.value));
+  app.querySelectorAll('[data-especialidade]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.especialidades[el.dataset.especialidade] = el.value, el));
+
+  app.querySelectorAll('[data-condicao-eixo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.condicaoEixo;
+      p.condicoesEixo = el.checked ? [...p.condicoesEixo, id] : p.condicoesEixo.filter(c => c !== id);
+    }));
+  app.querySelectorAll('[data-condicao-grave]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.condicaoGrave;
+      p.condicoesGraves = el.checked ? [...p.condicoesGraves, id] : p.condicoesGraves.filter(c => c !== id);
+    }));
+
+  app.querySelectorAll('[data-consequencia]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [id, n] = b.dataset.consequencia.split('|');
+      const num = Number(n);
+      // Clicar no grau já marcado esvazia até ali (toggle); clicar além
+      // enche até ali — mesmo padrão de clock usado no Relógio de Batalha.
+      p.consequencias[id] = (num === (p.consequencias[id]||0)) ? num - 1 : num;
+    }));
+
+  const caido = document.getElementById('c-caido');
+  if(caido) caido.onchange = () => mudar(p => p.risco.caido = caido.checked);
+  const risco = document.getElementById('c-risco');
+  if(risco) risco.onchange = () => mudar(p => p.risco.quantidade = Math.max(0, Math.min(3, Number(risco.value) || 0)));
+
+  app.querySelectorAll('[data-pacto-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.pactoCampo.split('|');
+      p.pacto.partes[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-remover-pacto]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      p.pacto.partes.splice(Number(b.dataset.removerPacto), 1);
+      p.pacto.dividas = Math.max(0, p.pacto.partes.length);
+    }));
+  const addPacto = document.getElementById('btAddPacto');
+  if(addPacto) addPacto.onclick = () => mudar(p => {
+    p.pacto.partes.push({nome:'', canal:'', funcaoPerdida:''});
+    p.pacto.dividas = p.pacto.partes.length;
+  });
+}
+
+/* --- Barra do topo ------------------------------------------------------ */
+
+document.getElementById('chkCompartilhar').onchange = e => {
+  alternarCompartilhado(e.target.checked);
+};
+
+document.getElementById('seletor').onchange = e => {
+  estado.atualId = e.target.value; render();
+};
+
+document.getElementById('btNovo').onclick = () => {
+  const p = novoPersonagem();
+  estado.fichas.push(p);
+  estado.atualId = p.id;
+  estado.aba = 'status';
+  salvar(); render();
+};
+
+document.getElementById('btExcluir').onclick = () => {
+  const p = atual(); if(!p) return;
+  if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
+  estado.fichas = estado.fichas.filter(f => f.id !== p.id);
+  estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  salvar(); render();
+};
+
+document.getElementById('btExportar').onclick = () => {
+  const p = atual(); if(!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (p.perfil.nome || 'personagem').replace(/[^\w\-]+/g,'-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('btImportar').onclick = () =>
+  document.getElementById('arquivo').click();
+
+document.getElementById('arquivo').onchange = e => {
+  const arquivo = e.target.files[0]; if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(!lido || !lido.perfil) throw new Error('formato desconhecido');
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
+      salvar(); render();
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
+    }
+    e.target.value = '';
+  };
+  leitor.readAsText(arquivo);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

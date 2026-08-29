@@ -515,7 +515,28 @@ passando.
     ficha alheia/apagada (404), modo leitura travando todo campo da
     ficha enquanto Exportar continua disponível (mesmo padrão do Fabula
     Ultima), e o modo local sem `?id=` continuando idêntico ao de antes
-- [ ] Thrylikí Chelóna
+- [x] **Thrylikí Chelóna — chassi** (29/08/2026) — decisão #20. O Zé mandou o
+      material do sistema já pronto (design fechado, só faltando playtest de
+      mesa); esta fatia traz o chassi jogável, não o sistema inteiro.
+  - **`public/thryliki-chelona.html`** — atributos por Grau (0-5) com
+    Treinamento em perícia por cima, teste `1d20 + Grau + Treinamento +
+    situação`, Vida/Deslocamento/Carga Pronta derivados, Ano e Nível como
+    progressões independentes, seleção de Origem (26) e Área de Estudo (16,
+    só como categoria — sem Ramos/poderes ainda), condições, três trilhas de
+    Consequência, e registro do Pacto com a Realidade. Nasceu com Modo Hub
+    desde o primeiro commit, copiando o padrão já maduro do Fabula Ultima e
+    do SAO em vez de ganhar isso numa fatia posterior
+  - **`src/lib/sistemas.ts`**: `situacao` virou `"em-construcao"` e
+    `salvaNoHub` virou `true` — já aparece em "+ Criar ficha" e na criação
+    de campanha
+  - **`prisma/migrations/0008_sistema_thryliki_chelona.sql`** — garante a
+    linha do sistema na tabela `sistemas`, espelhando a `0007_sistema_sao.sql`
+  - Testado com Playwright: criação em modo local, fórmulas derivadas
+    batendo com os valores esperados, Origem/Área mostrando os detalhes
+    certos, condições e trilhas de Consequência clicáveis, persistência
+    após recarregar, e Modo Hub completo mockando `/api/personagens/*`.
+    Ramos, poderes de Área e combate detalhado ficam para as próximas
+    fatias
 - [ ] Ometion
 
 ---
