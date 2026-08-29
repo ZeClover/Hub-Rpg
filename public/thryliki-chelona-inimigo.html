@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Inimigo — Thrylikí Chelóna</title>
+<style>
+/* Mesma paleta do Hub RPG e do resto de Thrylikí Chelóna. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.canal{text-align:center}
+.canal label{margin-bottom:4px}
+.canal .marca-canal{display:flex; gap:4px; justify-content:center; margin-top:4px}
+.canal button.marca{width:auto; padding:2px 8px; font-size:11px; border-radius:999px}
+.canal button.marca.ativo-forte{border-color:rgba(224,162,52,.6); color:var(--ambar-forte); background:rgba(224,162,52,.12)}
+.canal button.marca.ativo-fraco{border-color:rgba(156,55,70,.6); color:var(--alerta); background:rgba(156,55,70,.12)}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Thrylikí Chelóna — Inimigo</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE INIMIGO — THRYLIKÍ CHELÓNA (homebrew do Zé)
+
+   Segue o mesmo padrão do Fabula Ultima e do Sistema SAO: ficha própria,
+   não reaproveita a de jogador — inimigo não tem Ramo nem Treinamento por
+   perícia, é sobretudo números direto e texto livre (Ações, Reação).
+
+   Modela só o "Cartão de mesa" descrito em `criaturas-e-encontros-v6.1.md`:
+   nome, Categoria e função; Defesa fixa por canal e resistências especiais;
+   Vida atual e total; deslocamento; ação característica; Reação; condição
+   atual; comportamento atual. O orçamento de encontro (Pontos de Ameaça,
+   fases de Chefe, composição de grupo) fica pra fatia futura — igual o
+   Chefe de Andar do SAO, que só chegou depois da ficha básica existir.
+
+   Arquivo único, salvando no navegador (localStorage) OU na conta do Hub
+   se aberto com ?id= — mesmo mecanismo que o resto do Hub já usa.
+   =========================================================================== */
+
+// Defesa = 8 + Grau + Treinamento. A tabela abaixo é a referência do
+// documento de design pra um inimigo "comum" de cada Categoria — o mestre
+// pode digitar outro valor à vontade, isto só ajuda o primeiro rascunho.
+const CATEGORIAS = [
+  {id:'I',   nome:'I',   defesaBase:15},
+  {id:'II',  nome:'II',  defesaBase:16},
+  {id:'III', nome:'III', defesaBase:22},
+  {id:'IV',  nome:'IV',  defesaBase:23},
+  {id:'V',   nome:'V',   defesaBase:28},
+];
+
+// Porte muda quantos canais ficam Fortes (+5) ou Fracos (-5) — os ajustes
+// em si o mestre marca canal por canal, isto só descreve quantos marcar.
+const PORTES = [
+  {id:'capanga', nome:'Capanga',       ajusteBase:-5, fortes:0, fracos:1, uso:'massa, cenário e demonstração de poder'},
+  {id:'padrao',  nome:'Padrão',        ajusteBase:0,  fortes:1, fracos:1, uso:'unidade básica de encontro'},
+  {id:'elite',   nome:'Elite',         ajusteBase:0,  fortes:2, fracos:1, uso:'minichefe ou ameaça especializada'},
+  {id:'chefe',   nome:'Fase de Chefe', ajusteBase:0,  fortes:2, fracos:0, uso:'confronto principal — o canal fraco vira uma Vulnerabilidade descoberta em jogo'},
+];
+
+const FUNCOES = [
+  {id:'agressor',       nome:'Agressor',       faz:'dano e perseguição'},
+  {id:'bruto',          nome:'Bruto',          faz:'pressão alta e deslocamento'},
+  {id:'defensor',       nome:'Defensor',       faz:'intercepta e protege'},
+  {id:'controlador',    nome:'Controlador',    faz:'terreno e condições'},
+  {id:'escaramucador',  nome:'Escaramuçador',  faz:'mobilidade e troca de alvo'},
+  {id:'suporte',        nome:'Suporte',        faz:'cura, informação e melhorias'},
+];
+
+const CANAIS = [
+  {id:'forca',        nome:'Força'},
+  {id:'agilidade',     nome:'Agilidade'},
+  {id:'constituicao',  nome:'Constituição'},
+  {id:'inteligencia',  nome:'Inteligência'},
+  {id:'presenca',      nome:'Presença'},
+];
+
+// Mesmo vocabulário de condições da ficha de jogador — o sistema usa as
+// mesmas em qualquer criatura, jogador ou não.
+const CONDICOES_EIXO = [
+  {id:'exposto',       nome:'Exposto'},
+  {id:'preso',         nome:'Preso'},
+  {id:'abalado',       nome:'Abalado'},
+  {id:'interrompido',  nome:'Interrompido'},
+];
+const CONDICOES_GRAVES = [
+  {id:'atordoado',     nome:'Atordoado'},
+  {id:'incapacitado',  nome:'Incapacitado'},
+  {id:'brecha',        nome:'Brecha'},
+];
+
+/* --- Inimigo --------------------------------------------------------- */
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+function novoInimigo(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    nome: nome || 'Novo Inimigo',
+    categoria: 'I', porte: 'padrao', funcao: 'agressor',
+    // defesas: null = usa o cálculo pela fórmula/tabela; número = valor à mão.
+    defesas: {forca:null, agilidade:null, constituicao:null, inteligencia:null, presenca:null},
+    fortes: [], fracos: [], // ids de CANAIS marcados como canal Forte/Fraco
+    vidaMaxima: 20,
+    atual: {pv: null},
+    deslocamento: 9,
+    condicoesEixo: [], condicoesGraves: [],
+    acoes: [], // {id, nome, texto} — ação característica, uma ou mais
+    reacao: '',
+    comportamentoAtual: '',
+    resistenciasEspeciais: '',
+    anotacoesMestre: '',
+  };
+}
+
+/* --- Cálculos ---------------------------------------------------------- */
+
+function defesaBase(inimigo){
+  const cat = CATEGORIAS.find(c => c.id === inimigo.categoria) || CATEGORIAS[0];
+  const porte = PORTES.find(p => p.id === inimigo.porte) || PORTES[1];
+  return cat.defesaBase + porte.ajusteBase;
+}
+function defesaCanalCalc(inimigo, canalId){
+  let base = defesaBase(inimigo);
+  if(inimigo.fortes.includes(canalId)) base += 5;
+  if(inimigo.fracos.includes(canalId)) base -= 5;
+  return base;
+}
+function defesaCanal(inimigo, canalId){ return inimigo.defesas[canalId] ?? defesaCanalCalc(inimigo, canalId); }
+function vidaMaxima(inimigo){ return inimigo.vidaMaxima; }
+
+/* --- Armazenamento ------------------------------------------------------
+
+   Mesmo mecanismo de Modo Hub do resto do Hub: presente na URL (?id=...),
+   a ficha vive na conta em vez do navegador. O mestre chega aqui pelo
+   botão "+ Adicionar ficha de inimigo" da campanha.
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'thryliki_chelona_inimigos';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru) : []; }
+  catch(e){ console.error('Não consegui ler os inimigos salvos', e); return []; }
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const inimigo = atual(); if(!inimigo) return;
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: inimigo}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.inimigos));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  inimigos: MODO_HUB ? [] : carregar(),
+  atualId: null, aba: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null, // 'nao-encontrado' | null
+  ehDono: false,
+};
+if(!MODO_HUB && estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
+const atual = () => estado.inimigos.find(i => i.id === estado.atualId) || null;
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const inimigo = (dados && dados.nome) ? dados : novoInimigo();
+    inimigo.id = MODO_HUB;
+    estado.inimigos = [inimigo];
+    estado.atualId = inimigo.id;
+    estado.ehDono = !!personagem.ehDono;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
+  const inimigo = atual(); if(!inimigo) return;
+  mudanca(inimigo);
+  inimigo.atualizadoEm = Date.now();
+  salvar(); render();
+}
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
+  const inimigo = atual(); if(!inimigo) return;
+  mudanca(inimigo);
+  inimigo.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.campo === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho -------------------------------------------------------------- */
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ABAS = [
+  {id:'perfil',  nome:'Perfil'},
+  {id:'combate', nome:'Combate'},
+  {id:'acoes',   nome:'Ações'},
+  {id:'notas',   nome:'Notas do Mestre'},
+];
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const inimigo = atual();
+  if(!inimigo){
+    app.innerHTML = `<div class="vazio"><h2>Nenhum inimigo ainda</h2>
+      <p class="mini">Clique em "+ Novo" pra criar a primeira ficha, ou importe um arquivo exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(inimigo.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong> Exporte agora para não perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
+    + painelDerivados(inimigo)
+    + ({perfil:abaPerfil, combate:abaCombate, acoes:abaAcoes, notas:abaNotas}[estado.aba])(inimigo);
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.inimigos.length
+    ? estado.inimigos.map(i => `<option value="${i.id}" ${i.id===estado.atualId?'selected':''}>${esc(i.nome)}</option>`).join('')
+    : `<option>— sem inimigos —</option>`;
+}
+
+function painelDerivados(inimigo){
+  const pv = inimigo.atual.pv ?? vidaMaxima(inimigo);
+  const porte = PORTES.find(p => p.id === inimigo.porte);
+  return `<div class="grade g4" style="margin-bottom:14px">
+    <div class="derivado"><div class="rot">Vida</div>
+      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${vidaMaxima(inimigo)}</span></div></div>
+    <div class="derivado"><div class="rot">Categoria</div>
+      <div class="val" style="font-size:22px">${inimigo.categoria}</div></div>
+    <div class="derivado"><div class="rot">Porte</div>
+      <div class="val" style="font-size:16px">${porte.nome}</div>
+      <div class="obs">${porte.uso}</div></div>
+    <div class="derivado"><div class="rot">Deslocamento</div>
+      <div class="val">${inimigo.deslocamento}</div></div>
+  </div>`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-campo="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function abaPerfil(inimigo){
+  const funcao = FUNCOES.find(f => f.id === inimigo.funcao);
+  return `<div class="cartao">
+    <div class="grade g3">
+      ${campo('Nome','nome',inimigo.nome)}
+      <div><label for="c-categoria">Categoria</label>
+        <select id="c-categoria" data-select="categoria">
+          ${CATEGORIAS.map(c => `<option value="${c.id}" ${c.id===inimigo.categoria?'selected':''}>${c.nome} (Defesa-base ${c.defesaBase})</option>`).join('')}
+        </select></div>
+      <div><label for="c-deslocamento">Deslocamento</label>
+        <input id="c-deslocamento" data-num="deslocamento" type="number" min="0" value="${inimigo.deslocamento}"></div>
+    </div>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Porte e Função</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Porte decide quantos canais defensivos ficam Fortes (+5) ou Fracos
+      (-5) — quem marca cada canal é você, na aba Combate. Função é só
+      referência de mesa; não muda nenhum número sozinha.
+    </p>
+    <div class="grade g2">
+      <div><label for="c-porte">Porte</label>
+        <select id="c-porte" data-select="porte">
+          ${PORTES.map(p => `<option value="${p.id}" ${p.id===inimigo.porte?'selected':''}>${p.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-funcao">Função</label>
+        <select id="c-funcao" data-select="funcao">
+          ${FUNCOES.map(f => `<option value="${f.id}" ${f.id===inimigo.funcao?'selected':''}>${f.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <p class="mini" style="margin-top:10px">${funcao.nome}: ${funcao.faz}.</p>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Vida</h2>
+    <div class="grade g2" style="margin-top:10px">
+      <div><label for="c-vida-max">Vida máxima</label>
+        <input id="c-vida-max" data-num="vidaMaxima" type="number" min="1" value="${inimigo.vidaMaxima}"></div>
+      <div><label for="c-vida-atual">Vida atual</label>
+        <input id="c-vida-atual" data-atual="pv" type="number" min="0" value="${inimigo.atual.pv ?? inimigo.vidaMaxima}"></div>
+    </div>
+    <p class="mini" style="margin-top:10px">
+      Referência de Impactos por Porte: Capanga 0,5 · Padrão 2,5 · Elite 5
+      · Fase de Chefe 7 — a ficha converte pra Vida como o mestre achar
+      melhor pro Nível e Categoria da mesa; não há fórmula fixa ainda.
+    </p>
+  </div>`;
+}
+
+function abaCombate(inimigo){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Defesa por canal</h2>
+    <p class="mini" style="margin:6px 0 14px">Defesa = 8 + Grau + Treinamento. Marque até ${PORTES.find(p=>p.id===inimigo.porte).fortes} canal(is) Forte e ${PORTES.find(p=>p.id===inimigo.porte).fracos} Fraco — o resto usa a Defesa-base da Categoria. Também dá pra digitar um número direto por cima.</p>
+    <div class="grade g5">
+      ${CANAIS.map(c => `<div class="canal">
+        <label for="c-def-${c.id}">${c.nome}</label>
+        <input id="c-def-${c.id}" data-defesa="${c.id}" type="number" value="${defesaCanal(inimigo,c.id)}">
+        <div class="marca-canal">
+          <button type="button" class="marca ${inimigo.fortes.includes(c.id)?'ativo-forte':''}" data-marca-forte="${c.id}">Forte</button>
+          <button type="button" class="marca ${inimigo.fracos.includes(c.id)?'ativo-fraco':''}" data-marca-fraco="${c.id}">Fraco</button>
+        </div>
+      </div>`).join('')}
+    </div>
+    <button id="btRecalcularDefesas" class="destaque" style="margin-top:14px">Recalcular pela fórmula</button>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES_EIXO.map(c => `<label><input type="checkbox" data-condicao-eixo="${c.id}" ${inimigo.condicoesEixo.includes(c.id)?'checked':''}> ${c.nome}</label>`).join('')}
+    </div>
+    <p class="mini" style="margin:14px 0 6px">Graves</p>
+    <div class="condicoes">
+      ${CONDICOES_GRAVES.map(c => `<label><input type="checkbox" data-condicao-grave="${c.id}" ${inimigo.condicoesGraves.includes(c.id)?'checked':''}> ${c.nome}</label>`).join('')}
+    </div>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Resistências especiais</h2>
+    <p class="mini" style="margin:6px 0 14px">Substitui um canal Forte; precisa de Âncora e contrajogo visíveis — nunca imunidade genérica nem anula uma Área inteira.</p>
+    <textarea data-campo="resistenciasEspeciais" rows="3">${esc(inimigo.resistenciasEspeciais)}</textarea>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Comportamento atual</h2>
+    <textarea data-campo="comportamentoAtual" rows="2" placeholder="fase, objetivo momentâneo, o que está fazendo agora">${esc(inimigo.comportamentoAtual)}</textarea>
+  </div>`;
+}
+
+function listaGenerica(titulo, lista, chaveAttr, dica){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">${titulo}</h2>
+    ${dica ? `<p class="mini" style="margin:6px 0 14px">${dica}</p>` : ''}
+    ${lista.map((item,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-${chaveAttr}-campo="${i}|nome" value="${esc(item.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
+        <button data-${chaveAttr}-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <textarea data-${chaveAttr}-campo="${i}|texto" rows="2" placeholder="O que faz">${esc(item.texto)}</textarea>
+    </div>`).join('')}
+    <button data-${chaveAttr}-add>+ ${titulo.replace(/s$/,'')}</button>
+  </div>`;
+}
+
+function abaAcoes(inimigo){
+  return listaGenerica('Ações Características', inimigo.acoes, 'acao', 'Cada ação: sinal, alcance/alvo, teste contra Defesa ou resistência, parcela de dano/Impacto, condição ou movimento comprado, janela de resposta.')
+    + `<div class="cartao">
+      <h2 style="font-size:18px">Reação</h2>
+      <textarea data-campo="reacao" rows="3" placeholder="1 Reação por rodada, se houver">${esc(inimigo.reacao)}</textarea>
+    </div>`;
+}
+
+function abaNotas(inimigo){
+  return `<div class="cartao">
+    <label for="c-notas">Anotações do mestre</label>
+    <textarea id="c-notas" data-campo="anotacoesMestre" rows="10">${esc(inimigo.anotacoesMestre)}</textarea>
+  </div>`;
+}
+
+/* --- Eventos --------------------------------------------------------------- */
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+  app.querySelectorAll('[data-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => inimigo[el.dataset.campo] = el.value, el));
+  app.querySelectorAll('[data-num]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo[el.dataset.num] = Math.max(0, Number(el.value) || 0)));
+  app.querySelectorAll('[data-select]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo[el.dataset.select] = el.value));
+  const vidaAtual = document.getElementById('c-vida-atual');
+  if(vidaAtual) vidaAtual.onchange = () => mudar(inimigo => inimigo.atual.pv = Math.max(0, Number(vidaAtual.value) || 0));
+
+  app.querySelectorAll('[data-defesa]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo.defesas[el.dataset.defesa] = Number(el.value) || 0));
+  app.querySelectorAll('[data-marca-forte]').forEach(b =>
+    b.onclick = () => mudar(inimigo => {
+      const id = b.dataset.marcaForte;
+      inimigo.fortes = inimigo.fortes.includes(id) ? inimigo.fortes.filter(x => x !== id) : [...inimigo.fortes, id];
+      inimigo.fracos = inimigo.fracos.filter(x => x !== id);
+    }));
+  app.querySelectorAll('[data-marca-fraco]').forEach(b =>
+    b.onclick = () => mudar(inimigo => {
+      const id = b.dataset.marcaFraco;
+      inimigo.fracos = inimigo.fracos.includes(id) ? inimigo.fracos.filter(x => x !== id) : [...inimigo.fracos, id];
+      inimigo.fortes = inimigo.fortes.filter(x => x !== id);
+    }));
+  const btRecalcularDefesas = document.getElementById('btRecalcularDefesas');
+  if(btRecalcularDefesas) btRecalcularDefesas.onclick = () => mudar(inimigo => {
+    CANAIS.forEach(c => inimigo.defesas[c.id] = defesaCanalCalc(inimigo, c.id));
+  });
+
+  app.querySelectorAll('[data-condicao-eixo]').forEach(el =>
+    el.onchange = () => mudar(inimigo => {
+      const id = el.dataset.condicaoEixo;
+      inimigo.condicoesEixo = el.checked ? [...inimigo.condicoesEixo, id] : inimigo.condicoesEixo.filter(c => c !== id);
+    }));
+  app.querySelectorAll('[data-condicao-grave]').forEach(el =>
+    el.onchange = () => mudar(inimigo => {
+      const id = el.dataset.condicaoGrave;
+      inimigo.condicoesGraves = el.checked ? [...inimigo.condicoesGraves, id] : inimigo.condicoesGraves.filter(c => c !== id);
+    }));
+
+  app.querySelectorAll('[data-acao-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.acaoCampo.split('|'); i.acoes[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-acao-remover]').forEach(b => b.onclick = () => mudar(i => i.acoes.splice(Number(b.dataset.acaoRemover),1)));
+  const addAcao = document.querySelector('[data-acao-add]');
+  if(addAcao) addAcao.onclick = () => mudar(i => i.acoes.push({id:uid(), nome:'', texto:''}));
+}
+
+/* --- Barra do topo -------------------------------------------------------- */
+
+document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
+document.getElementById('btNovo').onclick = () => {
+  const inimigo = novoInimigo();
+  estado.inimigos.push(inimigo);
+  estado.atualId = inimigo.id;
+  estado.aba = 'perfil';
+  salvar(); render();
+};
+document.getElementById('btExcluir').onclick = () => {
+  const inimigo = atual(); if(!inimigo) return;
+  if(!confirm(`Excluir "${inimigo.nome}"? Não dá para desfazer.`)) return;
+  estado.inimigos = estado.inimigos.filter(i => i.id !== inimigo.id);
+  estado.atualId = estado.inimigos.length ? estado.inimigos[0].id : null;
+  salvar(); render();
+};
+document.getElementById('btExportar').onclick = () => {
+  const inimigo = atual(); if(!inimigo) return;
+  const blob = new Blob([JSON.stringify(inimigo, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (inimigo.nome || 'inimigo').replace(/[^\w\-]+/g,'-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById('btImportar').onclick = () => document.getElementById('arquivo').click();
+document.getElementById('arquivo').onchange = e => {
+  const arquivo = e.target.files[0]; if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(!lido || !lido.nome) throw new Error('formato desconhecido');
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.inimigos = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.inimigos.push(lido);
+        estado.atualId = lido.id;
+      }
+      salvar(); render();
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
+    }
+    e.target.value = '';
+  };
+  leitor.readAsText(arquivo);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

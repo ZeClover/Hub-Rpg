@@ -646,7 +646,53 @@ outras oito Áreas pra pegar problema de escape de texto. Os nove
 testes das fatias anteriores continuam passando. `tsc` e `lint`
 limpos.
 
-## 27. Restrições registradas
+## 27. Thrylikí Chelóna — ficha de inimigo (29/08/2026)
+
+Com as 16 Áreas jogáveis, o maior buraco que sobrou era não ter ficha
+de inimigo — Fabula Ultima e o SAO já tinham a deles, Thrylikí Chelóna
+não. Segui o mesmo caminho dos dois: `public/thryliki-chelona-inimigo.html`,
+arquivo próprio (inimigo não usa Ramo nem Treinamento por perícia, é
+número direto e texto livre), com Modo Hub desde o primeiro commit.
+
+Modela só o **"Cartão de mesa"** que `criaturas-e-encontros-v6.1.md`
+define — o que aparece na mesa durante o jogo: nome, Categoria e
+função; Defesa fixa por canal e resistências especiais; Vida atual e
+total; deslocamento; ação característica; Reação; condição atual;
+comportamento atual.
+
+- **Defesa por canal:** `8 + Grau + Treinamento`, com uma tabela de
+  referência por Categoria (I a V) e um Porte (Capanga/Padrão/Elite/
+  Fase de Chefe) que decide quantos canais marcar como Forte (+5) ou
+  Fraco (−5) — o mestre marca qual canal é qual com dois botões por
+  canal, e um "Recalcular pela fórmula" preenche os cinco de uma vez;
+  digitar um número por cima sempre sobrepõe o cálculo, mesmo padrão
+  do "Recalcular" do SAO e do Fabula Ultima
+- **Vida:** máximo digitado à mão — o documento dá Impactos de
+  referência por Porte (Capanga 0,5, Padrão 2,5, Elite 5, Chefe 7) mas
+  não uma fórmula fixa de conversão pra Vida numérica, então a ficha
+  só mostra a referência como texto em vez de inventar uma fórmula
+- **Função** (Agressor/Bruto/Defensor/Controlador/Escaramuçador/
+  Suporte) é só rótulo de mesa, não mexe em nenhum número sozinha
+
+**Fora desta fatia, de propósito:** orçamento de encontro (Pontos de
+Ameaça, composição de grupo), fases de Chefe e Ação de Fase — essa
+peça só chegou pro SAO depois que a ficha básica de inimigo já
+existia (decisão #64+), e aqui repete o mesmo ritmo.
+
+`src/lib/sistemas.ts`: `fichaInimigo` do Thrylikí Chelóna deixou de
+ser `null` e aponta pro arquivo novo — o botão "+ Adicionar ficha de
+inimigo" da campanha passa a funcionar pra esse sistema.
+
+Testado com Playwright: valores iniciais (Categoria I, Vida 20/20),
+Defesa-base mudando com a Categoria, marcar Forte/Fraco e recalcular
+alterando o canal certo, digitar valor manual sobrepondo o cálculo,
+condições marcando e persistindo, Ação Característica sendo
+adicionada e preenchida, tudo sobrevivendo a um recarregamento de
+página, e Modo Hub completo mockando `/api/personagens/*` (carregar
+do Hub, editar disparando PATCH). Os sete testes da ficha de jogador
+continuam passando. `tsc` e `lint` limpos.
+
+## 28. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
