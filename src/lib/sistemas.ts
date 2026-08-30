@@ -34,6 +34,17 @@ export type Sistema = {
     não muda por campanha. null pra sistema sem essa referência ainda.
   */
   escudoMestre: string | null;
+  /*
+    Onde, dentro do `dados` de uma ficha de INIMIGO deste sistema, mora o
+    número de vida atual "de verdade" — o mesmo que a ficha lê ao abrir.
+    Cada ficha já espelha vida atual/máxima num campo genérico `resumoVida`
+    a cada salvamento (decisão #46), e é só nele que o Painel de Vida da
+    Mesa ao Vivo lê. Mas ajustar vida ali sem escrever também no campo de
+    verdade deixaria a ficha aberta depois mostrando um número velho — por
+    isso o Hub, quando o mestre ajusta um inimigo pelo painel, escreve nos
+    dois lugares. null pra sistema sem ficha de inimigo própria.
+  */
+  campoVidaInimigo: string[] | null;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -47,6 +58,7 @@ export const SISTEMAS: Sistema[] = [
     salvaNoHub: true,
     fichaInimigo: null,
     escudoMestre: null,
+    campoVidaInimigo: null,
   },
   {
     chave: "fabula-ultima",
@@ -58,26 +70,31 @@ export const SISTEMAS: Sistema[] = [
     salvaNoHub: true,
     fichaInimigo: "/fabula-ultima-inimigo.html",
     escudoMestre: "/fabula-ultima-escudo-mestre.html",
+    campoVidaInimigo: ["pvAtual"],
   },
   {
     chave: "sao",
     nome: "Sistema SAO",
-    descricao: "Homebrew inspirado em Sword Art Online.",
-    ficha: null,
-    situacao: "planejada",
-    salvaNoHub: false,
-    fichaInimigo: null,
-    escudoMestre: null,
+    descricao:
+      "Homebrew original inspirado em Sword Art Online, Overgeared e Shangri-La Frontier — o personagem sabe que está num jogo.",
+    ficha: "/sao.html",
+    situacao: "em-construcao",
+    salvaNoHub: true,
+    fichaInimigo: "/sao-inimigo.html",
+    escudoMestre: "/sao-escudo-mestre.html",
+    campoVidaInimigo: ["atual", "pv"],
   },
   {
     chave: "thryliki-chelona",
     nome: "Thrylikí Chelóna",
-    descricao: "Homebrew do Zé.",
-    ficha: null,
-    situacao: "planejada",
-    salvaNoHub: false,
-    fichaInimigo: null,
-    escudoMestre: null,
+    descricao:
+      "Homebrew do Zé sobre uma escola de heróis — atributos por Grau, Ano e Nível como progressões separadas, dezesseis Áreas de Estudo.",
+    ficha: "/thryliki-chelona.html",
+    situacao: "em-construcao",
+    salvaNoHub: true,
+    fichaInimigo: "/thryliki-chelona-inimigo.html",
+    escudoMestre: "/thryliki-chelona-escudo-mestre.html",
+    campoVidaInimigo: ["atual", "pv"],
   },
 ];
 

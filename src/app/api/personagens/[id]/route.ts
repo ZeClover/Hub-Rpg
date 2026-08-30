@@ -97,8 +97,11 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   // O nome da ficha segue o que a pessoa digitou dentro dela — não precisa
-  // de um campo de nome separado em nenhuma tela do Hub.
-  const nomeDentroDaFicha = temDados ? corpo.dados?.perfil?.nome : null;
+  // de um campo de nome separado em nenhuma tela do Hub. A maioria das
+  // fichas de jogador guarda o nome em `perfil.nome`; ficha de inimigo/NPC
+  // (sem "perfil", só um `nome` solto — Fabula Ultima e Sistema SAO) cai
+  // no `??` de baixo.
+  const nomeDentroDaFicha = temDados ? (corpo.dados?.perfil?.nome ?? corpo.dados?.nome) : null;
   const nome =
     typeof nomeDentroDaFicha === "string" && nomeDentroDaFicha.trim()
       ? nomeDentroDaFicha.trim()

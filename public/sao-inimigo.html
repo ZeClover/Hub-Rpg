@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Inimigo — Sistema SAO</title>
+<style>
+/* Mesma paleta do Hub RPG e do resto do Sistema SAO. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.segmentos{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0}
+.segmento{width:26px; height:26px; border-radius:50%; border:2px solid var(--borda); cursor:pointer}
+.segmento.cheio{background:var(--alerta); border-color:var(--alerta)}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Sistema SAO — Inimigo</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE INIMIGO — SISTEMA SAO (homebrew original do Zé)
+
+   Ficha própria, não reaproveita a de jogador — mesma decisão do Fabula
+   Ultima (`fabula-ultima-inimigo.html`): inimigo não tem classe nem poder
+   de catálogo, é sobretudo números direto e texto livre (Ataques, Outras
+   Ações, Regras Especiais). O que muda pro SAO: categoria com multiplicador
+   de PV/PM (Comum/Elite/Chefe de Andar), e uma seção só de Chefe de Andar
+   com Fases, Ataques de Área e um Relógio de Batalha — o "clock" de
+   objetivo do grupo na luta.
+
+   Arquivo único com localStorage, igual o resto do sistema por enquanto
+   (decisão #40) — Modo Hub é fatia futura.
+   =========================================================================== */
+
+const ESCALA = [6, 8, 10, 12];
+const ATRIBUTOS = [
+  {id:'forca',     nome:'Força',     abrev:'FOR'},
+  {id:'agilidade', nome:'Agilidade', abrev:'AGI'},
+  {id:'mente',     nome:'Mente',     abrev:'MEN'},
+  {id:'vontade',   nome:'Vontade',   abrev:'VON'},
+];
+
+// Multiplicador de PV/PM por categoria — Elite e Chefe de Andar são
+// esponjas de dano de propósito; Defesa/Iniciativa não escalam por
+// categoria (isso é destreza, não resistência).
+const CATEGORIAS = [
+  {id:'comum', nome:'Comum',          multiplicador:1},
+  {id:'elite',  nome:'Elite',         multiplicador:2},
+  {id:'chefe',  nome:'Chefe de Andar',multiplicador:3},
+];
+
+const CONDICOES = [
+  {id:'atordoado',   nome:'Atordoado'},
+  {id:'envenenado',  nome:'Envenenado'},
+  {id:'sangrando',   nome:'Sangrando'},
+  {id:'silenciado',  nome:'Silenciado (bloqueia magia)'},
+  {id:'enraizado',   nome:'Enraizado'},
+  {id:'cego',        nome:'Cego'},
+  {id:'amedrontado', nome:'Amedrontado'},
+  {id:'exausto',     nome:'Exausto'},
+];
+
+/* --- Inimigo --------------------------------------------------------- */
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+function novoInimigo(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    nome: nome || 'Novo Inimigo', nivel: 1, categoria: 'comum',
+    atributos: {forca:8, agilidade:8, mente:8, vontade:6},
+    derivados: {pv:null, pm:null, defesa:null, defesaMagica:null, iniciativa:null},
+    atual: {pv:null, pm:null},
+    condicoes: [],
+    ataques: [], feiticos: [], outrasAcoes: [], regrasEspeciais: [],
+    // Só importa quando categoria === 'chefe', mas fica salvo sempre —
+    // trocar de categoria e voltar não perde o que já foi escrito.
+    fases: [],
+    ataquesArea: [],
+    relogio: {nome: 'Relógio da Batalha', total: 6, preenchidos: 0},
+    // Falha: o golpe do Shangri-La Frontier — um chefe "quebrado" por uma
+    // fraqueza específica, achável por quem estuda o encontro em vez de
+    // só bater mais forte. Combina com o poder Detectar Falha do Batedor.
+    falha: {descricao: '', comoDescobrir: '', comoExplorar: '', descoberta: false},
+    anotacoesMestre: '',
+  };
+}
+
+/* --- Cálculos ---------------------------------------------------------- */
+
+function multiplicador(inimigo){ return (CATEGORIAS.find(c => c.id === inimigo.categoria) || CATEGORIAS[0]).multiplicador; }
+function pvMaximoCalc(inimigo){ return Math.round((10 + inimigo.nivel*3 + inimigo.atributos.forca) * multiplicador(inimigo)); }
+function pmMaximoCalc(inimigo){ return Math.round((5 + inimigo.nivel*2 + inimigo.atributos.mente) * multiplicador(inimigo)); }
+function defesaCalc(inimigo){ return 8 + Math.floor(inimigo.atributos.agilidade/2); }
+function defesaMagicaCalc(inimigo){ return 8 + Math.floor(inimigo.atributos.vontade/2); }
+function iniciativaCalc(inimigo){ return Math.floor(inimigo.atributos.agilidade/2); }
+
+function pvMaximo(inimigo){ return inimigo.derivados.pv ?? pvMaximoCalc(inimigo); }
+function pmMaximo(inimigo){ return inimigo.derivados.pm ?? pmMaximoCalc(inimigo); }
+function defesaAtual(inimigo){ return inimigo.derivados.defesa ?? defesaCalc(inimigo); }
+function defesaMagicaAtual(inimigo){ return inimigo.derivados.defesaMagica ?? defesaMagicaCalc(inimigo); }
+function iniciativaAtual(inimigo){ return inimigo.derivados.iniciativa ?? iniciativaCalc(inimigo); }
+
+/* --- Armazenamento ------------------------------------------------------
+
+   Mesmo mecanismo de Modo Hub do sao.html e do resto do Hub: presente na
+   URL (?id=...), a ficha vive na conta em vez do navegador. O mestre chega
+   aqui pelo botão "+ Adicionar ficha de inimigo" da campanha, que já cria
+   a linha e manda pra cá com o id dela.
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'sao_inimigos';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru) : []; }
+  catch(e){ console.error('Não consegui ler os inimigos salvos', e); return []; }
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const inimigo = atual(); if(!inimigo) return;
+    // Resumo genérico pro Hub de Mestre ler e ajustar sem saber a fórmula
+    // de PV deste sistema (decisão #46) — espelhado a cada salvamento.
+    inimigo.resumoVida = {atual: Math.max(0, Math.min(pvMaximo(inimigo), inimigo.atual.pv ?? pvMaximo(inimigo))), maxima: pvMaximo(inimigo), rotulo: 'PV'};
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: inimigo}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.inimigos));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  inimigos: MODO_HUB ? [] : carregar(),
+  atualId: null, aba: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null, // 'nao-encontrado' | null
+  ehDono: false,
+};
+if(!MODO_HUB && estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
+const atual = () => estado.inimigos.find(i => i.id === estado.atualId) || null;
+
+// Diferente da ficha de jogador, o inimigo não tem link de leitura pra
+// compartilhar — só o mestre (dono) mexe nele, então "não é dono" aqui só
+// acontece se o link foi aberto por engano ou por outra pessoa.
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const inimigo = (dados && dados.nome) ? dados : novoInimigo();
+    inimigo.id = MODO_HUB;
+    estado.inimigos = [inimigo];
+    estado.atualId = inimigo.id;
+    estado.ehDono = !!personagem.ehDono;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
+  const inimigo = atual(); if(!inimigo) return;
+  mudanca(inimigo);
+  inimigo.atualizadoEm = Date.now();
+  salvar(); render();
+}
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
+  const inimigo = atual(); if(!inimigo) return;
+  mudanca(inimigo);
+  inimigo.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.campo === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho -------------------------------------------------------------- */
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ABAS = [
+  {id:'perfil',  nome:'Perfil'},
+  {id:'combate', nome:'Combate'},
+  {id:'acoes',   nome:'Ações'},
+  {id:'chefe',   nome:'Chefe de Andar'},
+  {id:'notas',   nome:'Notas do Mestre'},
+];
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const inimigo = atual();
+  if(!inimigo){
+    app.innerHTML = `<div class="vazio"><h2>Nenhum inimigo ainda</h2>
+      <p class="mini">Clique em "+ Novo" pra criar a primeira ficha, ou importe um arquivo exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(inimigo.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong> Exporte agora para não perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
+    + painelDerivados(inimigo)
+    + ({perfil:abaPerfil, combate:abaCombate, acoes:abaAcoes, chefe:abaChefe, notas:abaNotas}[estado.aba])(inimigo);
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.inimigos.length
+    ? estado.inimigos.map(i => `<option value="${i.id}" ${i.id===estado.atualId?'selected':''}>${esc(i.nome)}</option>`).join('')
+    : `<option>— sem inimigos —</option>`;
+}
+
+function painelDerivados(inimigo){
+  const pv = inimigo.atual.pv ?? pvMaximo(inimigo);
+  return `<div class="grade g4" style="margin-bottom:14px">
+    <div class="derivado"><div class="rot">Pontos de Vida</div>
+      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${pvMaximo(inimigo)}</span></div></div>
+    <div class="derivado"><div class="rot">Pontos de Mana</div>
+      <div class="val">${inimigo.atual.pm ?? pmMaximo(inimigo)}<span style="font-size:16px;color:var(--suave)">/${pmMaximo(inimigo)}</span></div></div>
+    <div class="derivado"><div class="rot">Defesa</div>
+      <div class="val">${defesaAtual(inimigo)}</div><div class="obs">mágica ${defesaMagicaAtual(inimigo)}</div></div>
+    <div class="derivado"><div class="rot">Categoria</div>
+      <div class="val" style="font-size:18px">${CATEGORIAS.find(c=>c.id===inimigo.categoria).nome}</div>
+      <div class="obs">iniciativa ${iniciativaAtual(inimigo)}</div></div>
+  </div>`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-campo="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function abaPerfil(inimigo){
+  return `<div class="cartao">
+    <div class="grade g3">
+      ${campo('Nome','nome',inimigo.nome)}
+      <div><label for="c-nivel">Nível</label><input id="c-nivel" data-num="nivel" type="number" min="1" value="${inimigo.nivel}"></div>
+      <div><label for="c-categoria">Categoria</label>
+        <select id="c-categoria" data-categoria>
+          ${CATEGORIAS.map(c => `<option value="${c.id}" ${c.id===inimigo.categoria?'selected':''}>${c.nome} (×${c.multiplicador} PV/PM)</option>`).join('')}
+        </select></div>
+    </div>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Atributos</h2>
+    <div class="grade g4" style="margin-top:12px">
+      ${ATRIBUTOS.map(a => `<div>
+        <label for="c-atr-${a.id}">${a.nome}</label>
+        <select id="c-atr-${a.id}" data-atributo="${a.id}">
+          ${ESCALA.map(d => `<option value="${d}" ${d===inimigo.atributos[a.id]?'selected':''}>d${d}</option>`).join('')}
+        </select></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function abaCombate(inimigo){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Derivados</h2>
+    <p class="mini" style="margin:6px 0 14px">Calculados pela fórmula, mas editáveis à mão — vilão fora do padrão é o normal, não a exceção.</p>
+    <button id="btRecalcular" class="destaque">Recalcular pela fórmula</button>
+    <div class="grade g3" style="margin-top:14px">
+      <div><label for="c-d-pv">PV máximo</label><input id="c-d-pv" data-derivado="pv" type="number" value="${pvMaximo(inimigo)}"></div>
+      <div><label for="c-d-pm">PM máximo</label><input id="c-d-pm" data-derivado="pm" type="number" value="${pmMaximo(inimigo)}"></div>
+      <div><label for="c-d-def">Defesa</label><input id="c-d-def" data-derivado="defesa" type="number" value="${defesaAtual(inimigo)}"></div>
+      <div><label for="c-d-defm">Defesa Mágica</label><input id="c-d-defm" data-derivado="defesaMagica" type="number" value="${defesaMagicaAtual(inimigo)}"></div>
+      <div><label for="c-d-ini">Iniciativa</label><input id="c-d-ini" data-derivado="iniciativa" type="number" value="${iniciativaAtual(inimigo)}"></div>
+    </div>
+  </div>
+  <div class="cartao">
+    <h2 style="font-size:18px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES.map(c => `<label><input type="checkbox" data-condicao="${c.id}" ${inimigo.condicoes.includes(c.id)?'checked':''}> ${c.nome}</label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function listaGenerica(titulo, lista, chaveAttr, dica){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">${titulo}</h2>
+    ${dica ? `<p class="mini" style="margin:6px 0 14px">${dica}</p>` : ''}
+    ${lista.map((item,i) => `<div class="linha-lista">
+      <div class="topo">
+        <input data-${chaveAttr}-campo="${i}|nome" value="${esc(item.nome)}" placeholder="Nome" style="font-family:Georgia,serif;font-size:16px">
+        <button data-${chaveAttr}-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <textarea data-${chaveAttr}-campo="${i}|texto" rows="2" placeholder="O que faz">${esc(item.texto)}</textarea>
+    </div>`).join('')}
+    <button data-${chaveAttr}-add>+ ${titulo.replace(/s$/,'')}</button>
+  </div>`;
+}
+
+function abaAcoes(inimigo){
+  return listaGenerica('Ataques Básicos', inimigo.ataques, 'ataque')
+    + listaGenerica('Feitiços', inimigo.feiticos, 'feitico')
+    + listaGenerica('Outras Ações', inimigo.outrasAcoes, 'outra')
+    + listaGenerica('Regras Especiais', inimigo.regrasEspeciais, 'regra');
+}
+
+function abaChefe(inimigo){
+  const ehChefe = inimigo.categoria === 'chefe';
+  const relogio = inimigo.relogio;
+  return (ehChefe ? '' : `<div class="aviso">Categoria atual não é "Chefe de Andar" — isto aqui ainda funciona, mas só faz sentido pra um encontro de chefe de verdade.</div>`)
+    + `<div class="cartao">
+      <h2 style="font-size:18px">Fases</h2>
+      <p class="mini" style="margin:6px 0 14px">Cada fase muda o comportamento do chefe quando o gatilho acontece — geralmente um limiar de PV.</p>
+      ${inimigo.fases.map((f,i) => `<div class="linha-lista">
+        <div class="topo">
+          <input data-fase-campo="${i}|nome" value="${esc(f.nome)}" placeholder="Nome da fase" style="font-family:Georgia,serif;font-size:16px">
+          <button data-fase-remover="${i}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g2">
+          <div><label>Gatilho</label><input data-fase-campo="${i}|gatilho" value="${esc(f.gatilho)}" placeholder="ex: PV abaixo de 50%"></div>
+          <div><label>Muda o quê</label><input data-fase-campo="${i}|mudanca" value="${esc(f.mudanca)}" placeholder="ex: ganha um ataque de área novo"></div>
+        </div>
+      </div>`).join('')}
+      <button id="btAddFase">+ Fase</button>
+    </div>
+    ${listaGenerica('Ataques de Área', inimigo.ataquesArea, 'area', 'Separados dos ataques comuns pra ficar fácil de achar na mesa quando o chefe virar de fase.')}
+    <div class="cartao">
+      <h2 style="font-size:18px">Relógio de Batalha</h2>
+      <p class="mini" style="margin:6px 0 14px">O "clock" do objetivo do grupo na luta (destruir cristais, resistir X rodadas...) — clique num segmento pra preencher até ali.</p>
+      <div class="grade g2" style="max-width:420px;margin-bottom:10px">
+        <div><label for="c-relogio-nome">Nome do relógio</label><input id="c-relogio-nome" data-relogio="nome" value="${esc(relogio.nome)}"></div>
+        <div><label for="c-relogio-total">Segmentos totais</label><input id="c-relogio-total" data-relogio-total type="number" min="1" max="12" value="${relogio.total}"></div>
+      </div>
+      <div class="segmentos">
+        ${Array.from({length: relogio.total}, (_,i) => `<div class="segmento ${i<relogio.preenchidos?'cheio':''}" data-segmento="${i+1}"></div>`).join('')}
+      </div>
+      <p class="mini">${relogio.preenchidos}/${relogio.total} preenchidos</p>
+    </div>
+    <div class="cartao">
+      <h2 style="font-size:18px">Falha</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        O golpe do Shangri-La Frontier: um chefe "quebrado" por uma
+        fraqueza específica, achável por quem estuda o encontro em vez de
+        só bater mais forte. Combina com o poder Detectar Falha do
+        Batedor — só o mestre vê esta seção.
+      </p>
+      <div class="grade g2">
+        <div><label for="c-falha-descoberta">Como descobrir</label>
+          <input id="c-falha-descoberta" data-falha="comoDescobrir" value="${esc(inimigo.falha.comoDescobrir)}" placeholder="ex: examinar o padrão do brilho antes de atacar"></div>
+        <div><label for="c-falha-explorar">Como explorar</label>
+          <input id="c-falha-explorar" data-falha="comoExplorar" value="${esc(inimigo.falha.comoExplorar)}" placeholder="ex: atacar o núcleo cancela a fase atual"></div>
+      </div>
+      <div style="margin-top:12px">
+        <label for="c-falha-descricao">A fraqueza em si</label>
+        <textarea id="c-falha-descricao" data-falha="descricao" rows="2">${esc(inimigo.falha.descricao)}</textarea>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:normal;margin-top:12px">
+        <input type="checkbox" id="c-falha-descoberta-flag" style="width:auto" ${inimigo.falha.descoberta?'checked':''}>
+        O grupo já descobriu esta falha
+      </label>
+    </div>`;
+}
+
+function abaNotas(inimigo){
+  return `<div class="cartao">
+    <label for="c-notas">Anotações do mestre</label>
+    <textarea id="c-notas" data-campo="anotacoesMestre" rows="10">${esc(inimigo.anotacoesMestre)}</textarea>
+  </div>`;
+}
+
+/* --- Eventos --------------------------------------------------------------- */
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+  app.querySelectorAll('[data-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => inimigo[el.dataset.campo] = el.value, el));
+  app.querySelectorAll('[data-num]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo[el.dataset.num] = Number(el.value) || 1));
+  const categoria = document.getElementById('c-categoria');
+  if(categoria) categoria.onchange = () => mudar(inimigo => inimigo.categoria = categoria.value);
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo.atributos[el.dataset.atributo] = Number(el.value)));
+
+  const btRecalcular = document.getElementById('btRecalcular');
+  if(btRecalcular) btRecalcular.onclick = () => mudar(inimigo => {
+    inimigo.derivados = {pv: pvMaximoCalc(inimigo), pm: pmMaximoCalc(inimigo), defesa: defesaCalc(inimigo), defesaMagica: defesaMagicaCalc(inimigo), iniciativa: iniciativaCalc(inimigo)};
+  });
+  app.querySelectorAll('[data-derivado]').forEach(el =>
+    el.onchange = () => mudar(inimigo => inimigo.derivados[el.dataset.derivado] = Number(el.value) || 0));
+
+  app.querySelectorAll('[data-condicao]').forEach(el =>
+    el.onchange = () => mudar(inimigo => {
+      const id = el.dataset.condicao;
+      inimigo.condicoes = el.checked ? [...inimigo.condicoes, id] : inimigo.condicoes.filter(c => c !== id);
+    }));
+
+  // Listas genéricas (Ataques, Feitiços, Outras Ações, Regras, Ataques de
+  // Área): todas usam o mesmo padrão data-<chave>-campo/remover/add.
+  app.querySelectorAll('[data-ataque-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.ataqueCampo.split('|'); i.ataques[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-ataque-remover]').forEach(b => b.onclick = () => mudar(i => i.ataques.splice(Number(b.dataset.ataqueRemover),1)));
+  const addAtaque = document.querySelector('[data-ataque-add]');
+  if(addAtaque) addAtaque.onclick = () => mudar(i => i.ataques.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-feitico-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.feiticoCampo.split('|'); i.feiticos[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-feitico-remover]').forEach(b => b.onclick = () => mudar(i => i.feiticos.splice(Number(b.dataset.feiticoRemover),1)));
+  const addFeitico = document.querySelector('[data-feitico-add]');
+  if(addFeitico) addFeitico.onclick = () => mudar(i => i.feiticos.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-outra-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.outraCampo.split('|'); i.outrasAcoes[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-outra-remover]').forEach(b => b.onclick = () => mudar(i => i.outrasAcoes.splice(Number(b.dataset.outraRemover),1)));
+  const addOutra = document.querySelector('[data-outra-add]');
+  if(addOutra) addOutra.onclick = () => mudar(i => i.outrasAcoes.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-regra-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.regraCampo.split('|'); i.regrasEspeciais[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-regra-remover]').forEach(b => b.onclick = () => mudar(i => i.regrasEspeciais.splice(Number(b.dataset.regraRemover),1)));
+  const addRegra = document.querySelector('[data-regra-add]');
+  if(addRegra) addRegra.onclick = () => mudar(i => i.regrasEspeciais.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-area-campo]').forEach(el => el.oninput = () => mudarSemRedesenhar(i => { const [x,c]=el.dataset.areaCampo.split('|'); i.ataquesArea[Number(x)][c]=el.value; }, el));
+  app.querySelectorAll('[data-area-remover]').forEach(b => b.onclick = () => mudar(i => i.ataquesArea.splice(Number(b.dataset.areaRemover),1)));
+  const addArea = document.querySelector('[data-area-add]');
+  if(addArea) addArea.onclick = () => mudar(i => i.ataquesArea.push({id:uid(), nome:'', texto:''}));
+
+  app.querySelectorAll('[data-fase-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => {
+      const [i, chave] = el.dataset.faseCampo.split('|');
+      inimigo.fases[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-fase-remover]').forEach(b => b.onclick = () => mudar(inimigo => inimigo.fases.splice(Number(b.dataset.faseRemover), 1)));
+  const addFase = document.getElementById('btAddFase');
+  if(addFase) addFase.onclick = () => mudar(inimigo => inimigo.fases.push({id:uid(), nome:'', gatilho:'', mudanca:''}));
+
+  const relogioNome = document.getElementById('c-relogio-nome');
+  if(relogioNome) relogioNome.oninput = () => mudarSemRedesenhar(inimigo => inimigo.relogio.nome = relogioNome.value, relogioNome);
+  const relogioTotal = document.getElementById('c-relogio-total');
+  if(relogioTotal) relogioTotal.onchange = () => mudar(inimigo => {
+    inimigo.relogio.total = Math.max(1, Number(relogioTotal.value) || 1);
+    inimigo.relogio.preenchidos = Math.min(inimigo.relogio.preenchidos, inimigo.relogio.total);
+  });
+  app.querySelectorAll('[data-segmento]').forEach(el =>
+    el.onclick = () => mudar(inimigo => {
+      const n = Number(el.dataset.segmento);
+      // Clicar no segmento já preenchido esvazia até ali (toggle); clicar
+      // além do preenchido enche até ali — igual um clock de PbtA/FitD.
+      inimigo.relogio.preenchidos = (n === inimigo.relogio.preenchidos) ? n - 1 : n;
+    }));
+
+  app.querySelectorAll('[data-falha]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(inimigo => inimigo.falha[el.dataset.falha] = el.value, el));
+  const falhaDescoberta = document.getElementById('c-falha-descoberta-flag');
+  if(falhaDescoberta) falhaDescoberta.onchange = () => mudar(inimigo => inimigo.falha.descoberta = falhaDescoberta.checked);
+}
+
+/* --- Barra do topo -------------------------------------------------------- */
+
+document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
+document.getElementById('btNovo').onclick = () => {
+  const inimigo = novoInimigo();
+  estado.inimigos.push(inimigo);
+  estado.atualId = inimigo.id;
+  estado.aba = 'perfil';
+  salvar(); render();
+};
+document.getElementById('btExcluir').onclick = () => {
+  const inimigo = atual(); if(!inimigo) return;
+  if(!confirm(`Excluir "${inimigo.nome}"? Não dá para desfazer.`)) return;
+  estado.inimigos = estado.inimigos.filter(i => i.id !== inimigo.id);
+  estado.atualId = estado.inimigos.length ? estado.inimigos[0].id : null;
+  salvar(); render();
+};
+document.getElementById('btExportar').onclick = () => {
+  const inimigo = atual(); if(!inimigo) return;
+  const blob = new Blob([JSON.stringify(inimigo, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (inimigo.nome || 'inimigo').replace(/[^\w\-]+/g,'-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById('btImportar').onclick = () => document.getElementById('arquivo').click();
+document.getElementById('arquivo').onchange = e => {
+  const arquivo = e.target.files[0]; if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(!lido || !lido.nome) throw new Error('formato desconhecido');
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.inimigos = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.inimigos.push(lido);
+        estado.atualId = lido.id;
+      }
+      salvar(); render();
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
+    }
+    e.target.value = '';
+  };
+  leitor.readAsText(arquivo);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

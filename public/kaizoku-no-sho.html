@@ -3784,6 +3784,10 @@ function salvarNoHub(){
   clearTimeout(debounceHub);
   debounceHub = setTimeout(async () => {
     const p = personagemAtual(); if(!p) return;
+    // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de
+    // Vitalidade deste sistema (decisão #46) — espelhado a cada salvamento.
+    const vitMaxAoSalvar = vitalidadeMax(p);
+    p.resumoVida = {atual: Math.max(0, Math.min(vitMaxAoSalvar, vitMaxAoSalvar - (p.recursos.vitalidadePerdida||0))), maxima: vitMaxAoSalvar, rotulo: 'Vitalidade'};
     try{
       const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
         method: 'PATCH',

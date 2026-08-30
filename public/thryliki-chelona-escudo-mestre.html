@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escudo do Mestre — Thrylikí Chelóna</title>
+<style>
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+main{max-width:900px; margin:0 auto; padding:24px 16px 80px}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+h1{margin-top:10px; font-size:28px}
+.sub{color:var(--suave); font-size:13px; margin-top:6px}
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-top:16px}
+.cartao h2{font-size:17px; color:var(--ambar-forte)}
+.cartao h3{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--suave); margin-top:16px}
+.cartao p{margin:8px 0 0}
+table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+th,td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--suave); font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:.05em}
+tr:last-child td{border-bottom:none}
+.mini{font-size:12px; color:var(--suave)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} }
+.tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--borda); border-radius:999px; color:var(--suave)}
+code{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:5px; padding:1px 5px; font-size:13px}
+button,input,select{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+}
+button:hover{border-color:var(--suave)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus{outline:none; border-color:rgba(224,162,52,.6)}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:32px; color:var(--ambar-forte); margin-top:4px}
+</style>
+</head>
+<body>
+<main>
+  <span class="marca">Thrylikí Chelóna</span>
+  <h1>Escudo do Mestre</h1>
+  <p class="sub">
+    Referência rápida pra ter aberta durante a sessão — o núcleo de regras
+    que se repete em toda mesa, não importa qual das 16 Áreas o personagem
+    estuda. Homebrew original do Zé.
+  </p>
+
+  <div class="cartao">
+    <h2>Teste</h2>
+    <p><code>1d20 + Grau do Atributo + Treinamento + situação</code></p>
+    <p>Treinamento: Nada +0, Treinado +5, Perito +10, Expert +15. Nível e Categoria <strong>nunca</strong> entram no d20 — eles definem potência e escala, não a chance de acertar.</p>
+    <p><code>Dificuldade ou Defesa fixa = 8 + Grau esperado + Treinamento esperado</code>. Referências: comum 9, treinada 15, especializada 21, magistral 27. Depois de comparar as circunstâncias, aplique só <code>−5</code>, <code>+0</code> ou <code>+5</code> de situação.</p>
+    <table>
+      <tr><th>Margem</th><th>Grau</th></tr>
+      <tr><td>−10 ou menos</td><td>Falha extrema</td></tr>
+      <tr><td>−9 a −1</td><td>Falha</td></tr>
+      <tr><td>0 a 4</td><td>Sucesso parcial</td></tr>
+      <tr><td>5 a 9</td><td>Sucesso</td></tr>
+      <tr><td>10 ou mais</td><td>Sucesso extremo</td></tr>
+    </table>
+    <p class="mini"><code>1</code> natural é Falha extrema; <code>20</code> natural é Sucesso extremo. Empate num teste oposto gera impasse ou consequência mútua.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Turno</h2>
+    <p>1 Ação Principal, 1 Ação de Movimento, 1 Ação Parcial, 1 Reação por rodada.</p>
+    <p class="mini">Entidades, armas, Cultivos, companheiros e Obras usam as ações do próprio personagem — nenhum deles ganha turno independente. Um Efeito Relevante por ação; resultados simultâneos dividem o mesmo Impacto.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Impacto</h2>
+    <table>
+      <tr><td><strong>0,5</strong></td><td>efeito pequeno, ajuda ou preparação</td></tr>
+      <tr><td><strong>1</strong></td><td>ataque ou efeito básico</td></tr>
+      <tr><td><strong>1,5</strong></td><td>técnica forte e custosa</td></tr>
+      <tr><td><strong>2,5</strong></td><td>Ápice preparado, anunciado e respondível</td></tr>
+    </table>
+    <p class="mini">Dano, cura, defesa, controle, movimento, alcance, área, duração e número de alvos usam o mesmo orçamento — cura não é gratuita, controle não é ilimitado.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Patamares (diferença de Categoria)</h2>
+    <p>Compare Categoria do ator − Categoria do alvo:</p>
+    <table>
+      <tr><th>Diferença</th><th>Multiplicador no Impacto</th></tr>
+      <tr><td>−2</td><td>×0,25</td></tr>
+      <tr><td>−1</td><td>×0,5</td></tr>
+      <tr><td>0</td><td>×1</td></tr>
+      <tr><td>+1</td><td>×1,5</td></tr>
+      <tr><td>+2 ou mais</td><td>×2</td></tr>
+    </table>
+    <p class="mini">Diferença de −3 ou menor não alcança diretamente sem permissão específica. Uma Brecha, fraqueza ou objetivo pode reduzir a Categoria tratada do alvo em um grau.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Condições</h2>
+    <table>
+      <tr><th>Estado</th><th>Resumo</th><th>Saída comum</th></tr>
+      <tr><td>Exposto</td><td>próximo ataque direto recebe +5, depois termina</td><td>Reação, cobertura ou quebrar Âncora</td></tr>
+      <tr><td>Preso</td><td>não sai da Âncora com a Ação de Movimento</td><td>Parcial + teste, ajuda ou quebrar Âncora</td></tr>
+      <tr><td>Abalado</td><td>perde a próxima Reação</td><td>Parcial para recompor-se</td></tr>
+      <tr><td>Interrompido</td><td>suspende uma sustentação (postura, fórmula, Obra...)</td><td>Parcial + custo para reativar</td></tr>
+      <tr><td>Atordoado</td><td>perde a Ação Principal, ou age normal mas fica Exposto+Abalado</td><td>escolha no começo do turno</td></tr>
+      <tr><td>Incapacitado</td><td>sem ações significativas por uma rodada</td><td>Ápice; chefe converte em Brecha</td></tr>
+    </table>
+    <p class="mini">No máximo uma condição por eixo. Reaplicar a mesma renova; mais forte substitui; mais fraca não acumula. Impacto persistente não se renova sozinho — só existe uma Sustentação relevante por vez (a partir do 4º Ano, um Vínculo Persistente preserva uma Âncora entre cenas, mas nunca Impacto, ações ou recursos).</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Vida zero e Pacto</h2>
+    <p>Em 0 Vida: <strong>Caído, Risco 1</strong>. Fim do próprio turno sem estabilizar: +1 Risco. Golpe direto enquanto Caído: +1 Risco. Em Risco 3, morte confirmada e o Pacto com a Realidade pode ser oferecido.</p>
+    <p><strong>Pacto:</strong> o jogador sacrifica uma parte válida, volta com 50% da Vida e registra uma nova Dívida. O canal sacrificado nunca volta a canalizar poder — prótese ou reposição recupera só a função comum. Ofertas ficam mais caras a cada Pacto, e o mesmo canal não pode ser vendido de novo.</p>
+    <p class="mini">Cura encerra Caído, mas deixa Ferimento 1; uma nova queda não tratada começa direto em Risco 2.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Recuperação</h2>
+    <table>
+      <tr><th>Pausa</th><th>Recupera</th></tr>
+      <tr><td>Respiro (~1 min)</td><td>estados de cena e medidores próprios da Área — não Vida</td></tr>
+      <tr><td>Intervalo (~10 min)</td><td>25% da Vida e a recuperação de pausa da Área; no máximo 2 por Descanso completo</td></tr>
+      <tr><td>Repouso (~1 h)</td><td>50% da Vida, recursos renováveis e um tratamento completo</td></tr>
+      <tr><td>Descanso completo (~8 h)</td><td>toda a Vida e recursos; reduz cada Consequência atendida em 1</td></tr>
+    </table>
+    <p class="mini">Primeiros Socorros: Ação Principal, uma vez por alvo/cena; estabiliza quem está Caído ou cura até 0,5 Impacto em alguém consciente.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Cena de Desafio</h2>
+    <p>Progresso necessário: curta <code>1,5 × participantes</code>, padrão <code>3 ×</code>, extensa <code>5 ×</code>. Pressão vai de 0 a 3.</p>
+    <table>
+      <tr><th>Grau</th><th>Progresso</th><th>Pressão</th></tr>
+      <tr><td>Falha extrema</td><td>0</td><td>+2</td></tr>
+      <tr><td>Falha</td><td>0</td><td>+1</td></tr>
+      <tr><td>Sucesso parcial</td><td>+1</td><td>+1</td></tr>
+      <tr><td>Sucesso</td><td>+2</td><td>0</td></tr>
+      <tr><td>Sucesso extremo</td><td>+3 e Vantagem</td><td>0</td></tr>
+    </table>
+    <p class="mini">Pressão 3 provoca uma Virada: consequência, perda, nova cena, recuo ou sacrifício de Vantagem. Uma pista essencial nunca some por uma única falha.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Interação social</h2>
+    <p>Painel de uma figura: <strong>Desejo</strong> (o que quer agora), <strong>Objeção</strong> (o que impede o acordo), <strong>Limite</strong> (o que não aceita sem transformação real — precisa aparecer por sinais antes de ser testado), <strong>Posição</strong> e uma ou duas resistências fixas.</p>
+    <table>
+      <tr><th>Posição</th><th>Pedido normalmente possível</th></tr>
+      <tr><td>−2 Hostil</td><td>pausa, retirada, resposta curta ou acordo contra ameaça maior</td></tr>
+      <tr><td>−1 Fechada</td><td>informação pública, pequena tolerância ou negociação formal</td></tr>
+      <tr><td>0 Neutra</td><td>favor razoável mediante troca ou argumento</td></tr>
+      <tr><td>+1 Aberta</td><td>ajuda custosa, informação reservada ou risco moderado</td></tr>
+      <tr><td>+2 Aliada</td><td>sacrifício importante coerente com o vínculo</td></tr>
+    </table>
+    <p class="mini">Um único teste move a Posição no máximo um grau — sucesso extremo cria oportunidade ou remove uma Objeção, não transforma inimigo em aliado. Trair um valor central ou mudar de lado exige mudança de ficção, não uma dificuldade alta. Negociações com várias partes usam a mesma Cena de Desafio acima (Progresso = Objeções resolvidas, Pressão = impaciência/suspeita/prazo). Dívidas e Promessas viram frase registrada ("Devo proteção à diretora Iara"), não uma barra numérica nova.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Criaturas — cartão de mesa</h2>
+    <div class="grade g2">
+      <div>
+        <h3>Defesa fixa</h3>
+        <p><code>8 + Grau + Treinamento</code> por canal (Força/Agilidade/Constituição/Inteligência/Presença). Porte decide quantos canais ficam Forte (+5) ou Fraco (−5): Capanga nenhum forte/um fraco, Padrão um forte/um fraco, Elite dois fortes/um fraco, Fase de Chefe dois fortes/uma Vulnerabilidade.</p>
+      </div>
+      <div>
+        <h3>Vida em Impactos</h3>
+        <p>Capanga 0,5 · Padrão 2,5 · Elite 5 · Fase de Chefe 7 — referência de orçamento, convertida pra Vida numérica pelo mestre conforme Nível e Categoria da mesa.</p>
+      </div>
+    </div>
+    <p class="mini">Cinco funções de ação: Muito Fácil 10% da Vida média, Fácil 15%, Mediana 22%, Difícil 30%, Impossível 40% — uma criatura comum usa principalmente ações Medianas.</p>
+  </div>
+
+  <div class="cartao">
+    <h2>Calculadora de Orçamento de Encontro</h2>
+    <p class="mini" style="margin-top:6px">
+      <code>Orçamento = Força do Grupo × multiplicador da dificuldade</code>.
+      Some os Pontos de Ameaça de tudo que participa e compare com o
+      orçamento — eles medem pressão simultânea, não a força total do
+      universo. Fica só nesta aba: nada aqui é salvo, é uma conta rápida
+      pra usar durante a preparação ou a própria sessão.
+    </p>
+    <div class="grade g2" style="margin-top:14px">
+      <div>
+        <label for="oe-forca">Força do Grupo</label>
+        <input id="oe-forca" type="number" min="1" value="4">
+      </div>
+      <div>
+        <label for="oe-dificuldade">Dificuldade</label>
+        <select id="oe-dificuldade">
+          <option value="facil">Fácil (×0,6, 1–3 rodadas)</option>
+          <option value="comum" selected>Comum (×1, 3–5 rodadas)</option>
+          <option value="dificil">Difícil (×1,4, 4–6 rodadas)</option>
+          <option value="climax">Clímax (×1,8, 6–10 rodadas e fases)</option>
+        </select>
+      </div>
+    </div>
+    <div class="derivado" style="margin-top:14px">
+      <div class="rot">Orçamento</div>
+      <div class="val" id="oe-orcamento">4</div>
+    </div>
+
+    <p class="mini" style="margin:16px 0 6px">Composição planejada</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" id="oe-add-capanga">+ Capanga (0,25)</button>
+      <button type="button" id="oe-add-padrao">+ Padrão (1)</button>
+      <button type="button" id="oe-add-elite">+ Elite (2)</button>
+      <button type="button" id="oe-add-chefe">+ Fase de Chefe (2)</button>
+    </div>
+    <table>
+      <tr><th>Porte</th><th>Quantidade</th><th>Pontos</th><th></th></tr>
+      <tbody id="oe-composicao"></tbody>
+    </table>
+    <div class="derivado" style="margin-top:14px">
+      <div class="rot">Total gasto</div>
+      <div class="val" id="oe-total">0</div>
+      <p class="mini" id="oe-status" style="margin-top:6px"></p>
+    </div>
+    <button type="button" id="oe-limpar" class="perigo" style="margin-top:14px">Limpar composição</button>
+  </div>
+
+  <div class="cartao">
+    <h2>Lembretes</h2>
+    <ul style="margin-top:10px;padding-left:20px">
+      <li>ação simples fora de risco acontece sem rolagem;</li>
+      <li>anuncie Âncora, saída e sinal de todo Ápice antes de resolvê-lo;</li>
+      <li>um especialista deve ser superior dentro da própria área;</li>
+      <li>chefes mudam de estado e sempre têm uma vulnerabilidade descobrível;</li>
+      <li>na dúvida de regra: escolha o resultado justo, registre e revise depois.</li>
+    </ul>
+  </div>
+</main>
+<script>
+/* Calculadora de Orçamento de Encontro — única parte interativa desta
+   página. Sem persistência de propósito: é uma conta rápida pra usar na
+   hora, não uma ficha; reiniciar ao recarregar é o comportamento certo. */
+const PORTES_AMEACA = {
+  capanga: {nome:'Capanga', pontos:0.25},
+  padrao:  {nome:'Padrão', pontos:1},
+  elite:   {nome:'Elite', pontos:2},
+  chefe:   {nome:'Fase de Chefe', pontos:2},
+};
+const DIFICULDADES = {facil:0.6, comum:1, dificil:1.4, climax:1.8};
+let composicao = {capanga:0, padrao:0, elite:0, chefe:0};
+
+// Corta zeros à direita (4.00 -> "4", 2.40 -> "2.4") sem depender de locale.
+const numero = n => Number(n.toFixed(2)).toString();
+
+function orcamentoAtual(){
+  const forca = Math.max(1, Number(document.getElementById('oe-forca').value) || 1);
+  const dificuldade = document.getElementById('oe-dificuldade').value;
+  return forca * (DIFICULDADES[dificuldade] ?? 1);
+}
+function totalGasto(){
+  return Object.keys(composicao).reduce((soma, id) => soma + composicao[id] * PORTES_AMEACA[id].pontos, 0);
+}
+function renderCalculadora(){
+  const orcamento = orcamentoAtual();
+  const total = totalGasto();
+  document.getElementById('oe-orcamento').textContent = numero(orcamento);
+  document.getElementById('oe-total').textContent = numero(total);
+
+  const tbody = document.getElementById('oe-composicao');
+  const linhas = Object.keys(composicao).filter(id => composicao[id] > 0);
+  tbody.innerHTML = linhas.length
+    ? linhas.map(id => `<tr>
+        <td>${PORTES_AMEACA[id].nome}</td>
+        <td>${composicao[id]}</td>
+        <td>${numero(composicao[id] * PORTES_AMEACA[id].pontos)}</td>
+        <td><button type="button" data-remover="${id}" style="padding:2px 8px;font-size:12px">-1</button></td>
+      </tr>`).join('')
+    : `<tr><td colspan="4" class="mini">nenhuma criatura adicionada ainda</td></tr>`;
+
+  const status = document.getElementById('oe-status');
+  if(total === 0){
+    status.textContent = '';
+  }else if(total <= orcamento){
+    status.textContent = `Dentro do orçamento — sobram ${numero(orcamento - total)} pontos.`;
+    status.style.color = 'var(--suave)';
+  }else{
+    status.textContent = `Acima do orçamento em ${numero(total - orcamento)} — encontro mais difícil que o planejado.`;
+    status.style.color = 'var(--alerta)';
+  }
+
+  tbody.querySelectorAll('[data-remover]').forEach(b =>
+    b.onclick = () => { composicao[b.dataset.remover] = Math.max(0, composicao[b.dataset.remover] - 1); renderCalculadora(); });
+}
+
+document.getElementById('oe-forca').oninput = renderCalculadora;
+document.getElementById('oe-dificuldade').onchange = renderCalculadora;
+document.getElementById('oe-add-capanga').onclick = () => { composicao.capanga++; renderCalculadora(); };
+document.getElementById('oe-add-padrao').onclick = () => { composicao.padrao++; renderCalculadora(); };
+document.getElementById('oe-add-elite').onclick = () => { composicao.elite++; renderCalculadora(); };
+document.getElementById('oe-add-chefe').onclick = () => { composicao.chefe++; renderCalculadora(); };
+document.getElementById('oe-limpar').onclick = () => { composicao = {capanga:0, padrao:0, elite:0, chefe:0}; renderCalculadora(); };
+
+renderCalculadora();
+</script>
+</body>
+</html>
