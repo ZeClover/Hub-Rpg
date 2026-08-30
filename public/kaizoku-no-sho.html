@@ -3819,6 +3819,9 @@ const state = {
   // nem carregou direito.
   ehDono: false,
   compartilhado: false,
+  // Resumo transitório do último Level Up — só de exibição, não é salvo na
+  // ficha (some ao trocar de aba ou ao fechar).
+  levelUpResumo: null,
 };
 
 if(!MODO_HUB && state.roster.length && !state.personagemId){
@@ -4976,6 +4979,12 @@ function panelPerfil(p){
           <select id="f_tendencia">${['L','N','C'].map(t=>`<option ${p.perfil.tendencia===t?'selected':''}>${t}</option>`).join('')}</select>
         </div>
       </div>
+      <div class="field-row" style="align-items:center;">
+        ${p.nc >= 20
+          ? `<button type="button" class="btn" disabled>NC máximo (20) atingido</button>`
+          : `<button type="button" class="btn primary" id="btnLevelUp">⭐ Level Up — subir para NC ${p.nc + 1}</button>`}
+      </div>
+      ${state.levelUpResumo ? panelResumoLevelUp(state.levelUpResumo) : ''}
       <div class="field-row">
         <div class="field"><label>Sexualidade</label><input type="text" id="f_sexualidade" value="${escapeHtml(p.perfil.sexualidade)}"></div>
         <div class="field"><label>Gênero</label><input type="text" id="f_genero" value="${escapeHtml(p.perfil.genero)}"></div>
@@ -5104,6 +5113,62 @@ function bindPerfil(p){
     p.nc = v;
     onFieldChange();
   });
+  const btnLevelUp = document.getElementById('btnLevelUp');
+  if(btnLevelUp) btnLevelUp.addEventListener('click', ()=>{ subirDeNivel(p); });
+  const btnFecharResumoLevelUp = document.getElementById('btnFecharResumoLevelUp');
+  if(btnFecharResumoLevelUp) btnFecharResumoLevelUp.addEventListener('click', ()=>{
+    state.levelUpResumo = null;
+    renderPanel();
+  });
+}
+
+// Fotografia dos números que mudam só por causa do NC — usada pra montar o
+// resumo do Level Up (antes/depois), sem duplicar as fórmulas em outro lugar.
+function snapshotNC(p){
+  return {
+    nc: p.nc,
+    vitalidade: vitalidadeMax(p),
+    pontosAtributos: pontosAtributos(p.nc),
+    pontosPericias: pontosPericias(p.nc),
+    pontosPoder: pontosPoder(p.nc),
+    limiteAtributo: limiteAtributo(p.nc),
+    limitePericia: limitePericia(p.nc),
+    limiteNivelPoder: limiteNivelPoder(p.nc),
+    atributoMinimo: atributoMinimo(p.nc),
+  };
+}
+function subirDeNivel(p){
+  if(p.nc >= 20) return;
+  const antes = snapshotNC(p);
+  p.nc = p.nc + 1;
+  const depois = snapshotNC(p);
+  state.levelUpResumo = {antes, depois};
+  onFieldChange();
+  renderPanel();
+}
+function panelResumoLevelUp(resumo){
+  const {antes, depois} = resumo;
+  const linha = (rotulo, chave) => {
+    const a = antes[chave], d = depois[chave], delta = d - a;
+    if(delta === 0) return '';
+    return `<div class="stat-line"><span class="k">${rotulo}</span><span class="v">${a} → ${d} <span style="color:var(--brass-bright);">(+${delta})</span></span></div>`;
+  };
+  return `
+    <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
+    <p class="panel-note">Resumo do que ficou disponível — os pontos e limites novos já valem nas abas Atributos, Perícias e Poderes, é só ir lá gastar.</p>
+    <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
+      ${linha('Vitalidade Máxima', 'vitalidade')}
+      ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
+      ${linha('Pontos de Perícias (total)', 'pontosPericias')}
+      ${linha('Pontos de Poder (total)', 'pontosPoder')}
+      ${linha('Limite por Atributo', 'limiteAtributo')}
+      ${linha('Limite por Perícia', 'limitePericia')}
+      ${linha('Limite de Nível do Poder', 'limiteNivelPoder')}
+      ${linha('Mínimo obrigatório por atributo', 'atributoMinimo')}
+    </div>
+    ${depois.nc === 20 ? `<div class="info-box">NC 20 é o topo da tabela (Yonkou/Almirante) — o salto de Pontos de Poder acima já inclui o bônus extra de +6 dessa faixa.</div>` : ''}
+    <button type="button" class="btn" id="btnFecharResumoLevelUp" style="margin-top:10px;">Fechar</button>
+  `;
 }
 
 /* ---------- Atributos ---------- */
