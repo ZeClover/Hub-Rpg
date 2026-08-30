@@ -181,6 +181,31 @@
   .info-box.leitura{border-color:var(--verdigris); color:var(--verdigris-bright); background:rgba(76,122,115,0.12); margin:0 0 16px;}
   .info-box.erro{border-color:#c2503a; color:#ffd9d1; background:rgba(194,80,58,.18); margin:0 0 16px;}
 
+  /* ---------- Resumo ao subir NC ---------- */
+  .nivel-modal-overlay{
+    position:fixed; inset:0; z-index:50; background:rgba(15,33,54,0.78);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .nivel-modal{
+    position:relative; max-width:480px; width:100%; max-height:86vh; overflow-y:auto;
+    background:var(--navy-mid); border:1px solid var(--brass); border-radius:var(--radius);
+    padding:22px 22px 18px; box-shadow:0 12px 40px rgba(0,0,0,0.45);
+  }
+  .nivel-modal h2{font-family:var(--disp); font-size:22px; margin:0 0 14px; color:var(--parchment);}
+  .nivel-modal h3{font-family:var(--disp); font-weight:600; font-size:14px; margin:16px 0 8px; color:var(--brass-bright);}
+  .nivel-modal-fechar{
+    position:absolute; top:10px; right:10px; width:28px; height:28px;
+    background:transparent; border:none; color:var(--parchment-dim);
+    font-size:20px; line-height:1; cursor:pointer;
+  }
+  .nivel-modal-fechar:hover{color:var(--parchment);}
+  .nivel-modal-lista{list-style:none; margin:0 0 4px; padding:0;}
+  .nivel-modal-lista li{
+    display:flex; justify-content:space-between; padding:7px 0;
+    border-bottom:1px solid var(--line); font-size:13px; color:var(--parchment-dim);
+  }
+  .nivel-modal-lista li strong{font-family:var(--mono); color:var(--brass-bright); font-size:14px;}
+
   /* ---------- Peculiaridades picker ---------- */
   .pecu-search{margin-bottom:10px;}
   .pecu-list{max-height:420px; overflow-y:auto; border:1px solid var(--line); border-radius:var(--radius);}
@@ -4948,7 +4973,13 @@ function panelPerfil(p){
       </div>
       <p class="panel-note">Um personagem normalmente tem 1 profissão só — os dois campos existem porque Livro Base e Expansão têm listas de profissões diferentes. Escolha a do livro que você está usando (ou nenhuma, se for "Vagabundo"). <span class="tag-imported" title="${escapeHtml(PROFISSOES_BASE_DEF.regraGeral)}">regra geral (Livro Base)</span></p>
       <div class="field-row">
-        <div class="field"><label>Nível de Campanha (NC)</label><input type="number" id="f_nc" min="4" max="20" value="${p.nc}"></div>
+        <div class="field">
+          <label>Nível de Campanha (NC)</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="number" id="f_nc" min="4" max="20" value="${p.nc}" style="flex:1;">
+            <button type="button" id="btn_subir_nc" class="btn primary" style="white-space:nowrap;">▲ Subir NC</button>
+          </div>
+        </div>
         <div class="field"><label>Idade</label><input type="number" id="f_idade" value="${p.perfil.idade ?? ''}"></div>
         <div class="field">
           <label>Tendência</label>
@@ -5083,6 +5114,113 @@ function bindPerfil(p){
     p.nc = v;
     onFieldChange();
   });
+  document.getElementById('btn_subir_nc').addEventListener('click', ()=>{
+    subirNC(p);
+  });
+}
+
+// Subir NC não é "escolher 1 prêmio" como em outros sistemas — o NC alimenta
+// vários orçamentos ao mesmo tempo (pontos de atributo, de perícia, de
+// Poder, limites de perícia/Nível do Poder, Vitalidade). Por isso o botão
+// só soma 1 no NC e mostra o que abriu de espaço em cada um; quem decide
+// onde gastar continua sendo o jogador nas próprias abas.
+function subirNC(p){
+  const ncAntes = p.nc;
+  if(ncAntes >= 30) return;
+
+  const minAtrAntes = atributoMinimo(ncAntes);
+  const limPerAntes = limitePericia(ncAntes);
+  const limPoderAntes = limiteNivelPoder(ncAntes);
+  const ptsAtrAntes = pontosAtributos(ncAntes);
+  const ptsPerAntes = pontosPericias(ncAntes);
+  const ptsPoderAntes = pontosPoder(ncAntes);
+  const vitAntes = vitalidadeMax(p);
+
+  const ncDepois = ncAntes + 1;
+  p.nc = ncDepois;
+
+  const minAtrDepois = atributoMinimo(ncDepois);
+  const limPerDepois = limitePericia(ncDepois);
+  const limPoderDepois = limiteNivelPoder(ncDepois);
+  const deltaLimPoder = limPoderDepois - limPoderAntes;
+
+  const budo = budoAtual(p);
+  const nivelPoderAtual = totalNivelPoder(p);
+  const tecnicasNovas = (deltaLimPoder > 0 && budo)
+    ? (budo.efeitos||[]).filter(e => e.nivel === nivelPoderAtual + 1)
+    : [];
+
+  onFieldChange();
+  renderPanel();
+
+  abrirModalNivel(p, {
+    ncAntes, ncDepois,
+    deltaPtsAtr: pontosAtributos(ncDepois) - ptsAtrAntes,
+    deltaPtsPer: pontosPericias(ncDepois) - ptsPerAntes,
+    deltaPtsPoder: pontosPoder(ncDepois) - ptsPoderAntes,
+    deltaVitalidade: vitalidadeMax(p) - vitAntes,
+    limAtrDepois: limiteAtributo(ncDepois),
+    deltaLimPericia: limPerDepois - limPerAntes,
+    deltaLimPoder,
+    minAtrDepois,
+    atributosAbaixoDoMinimo: ATRIBUTOS_DEF.filter(a => (p.atributos[a.id]||0) < minAtrDepois),
+    tecnicasNovas,
+    budoEscolhido: !!budo,
+    budoNome: budo ? (budo.poderNome || budo.nome) : null,
+  });
+}
+
+function abrirModalNivel(p, r){
+  const overlay = document.createElement('div');
+  overlay.className = 'nivel-modal-overlay';
+  overlay.innerHTML = `
+    <div class="nivel-modal">
+      <button type="button" class="nivel-modal-fechar" aria-label="Fechar">×</button>
+      <p class="eyebrow">Nível de Campanha</p>
+      <h2>NC ${r.ncAntes} → NC ${r.ncDepois}</h2>
+      <ul class="nivel-modal-lista">
+        <li><span>Pontos de Atributo</span><strong>+${r.deltaPtsAtr}</strong></li>
+        <li><span>Pontos de Perícia</span><strong>+${r.deltaPtsPer}</strong></li>
+        <li><span>Pontos de Poder</span><strong>+${r.deltaPtsPoder}</strong></li>
+        <li><span>Vitalidade máxima</span><strong>+${r.deltaVitalidade}</strong></li>
+        <li><span>Máximo por atributo</span><strong>${r.limAtrDepois}</strong></li>
+        ${r.deltaLimPericia > 0 ? `<li><span>Limite por perícia</span><strong>+${r.deltaLimPericia}</strong></li>` : ''}
+        ${r.deltaLimPoder > 0 ? `<li><span>Limite de Nível do Poder</span><strong>+${r.deltaLimPoder}</strong></li>` : ''}
+      </ul>
+      ${r.atributosAbaixoDoMinimo.length ? `<div class="warn-box">O mínimo por atributo subiu para ${r.minAtrDepois} — ${r.atributosAbaixoDoMinimo.map(a=>a.nome).join(', ')} ficou(aram) abaixo disso.</div>` : ''}
+      ${r.deltaLimPoder > 0 && r.budoEscolhido ? `
+        <h3>${r.tecnicasNovas.length ? `Se investir esse ponto em ${r.budoNome}, destrava:` : `Investir esse ponto em ${r.budoNome}`}</h3>
+        ${r.tecnicasNovas.length ? `
+        <table class="data">
+          <thead><tr><th>Técnica</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
+          <tbody>
+            ${r.tecnicasNovas.map(e => `
+              <tr>
+                <td>${e.nome}</td>
+                <td>${e.acao||'—'}</td>
+                <td>${e.custo||'—'}</td>
+                <td style="font-size:12px;">${e.efeito}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        ` : `<p class="panel-note">Nenhuma técnica nova exatamente neste nível — o catálogo de ${r.budoNome} pode pular níveis (ex: vai do 3 pro 5). Ainda dá pra investir o ponto, guardando o avanço pra quando destravar.</p>`}
+        <button type="button" class="btn primary" id="nivel_investir">Investir o ponto agora</button>
+      ` : (r.deltaLimPoder > 0 ? `<p class="panel-note">O limite de Nível do Poder subiu, mas o personagem ainda não tem um Budô escolhido na aba Poderes.</p>` : '')}
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e=>{ if(e.target === overlay) overlay.remove(); });
+  overlay.querySelector('.nivel-modal-fechar').addEventListener('click', ()=> overlay.remove());
+  const investirBtn = overlay.querySelector('#nivel_investir');
+  if(investirBtn){
+    investirBtn.addEventListener('click', ()=>{
+      p.poder.nivel.pontos = (p.poder.nivel.pontos||0) + 1;
+      onFieldChange();
+      renderPanel();
+      overlay.remove();
+    });
+  }
 }
 
 /* ---------- Atributos ---------- */

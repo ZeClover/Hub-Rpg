@@ -876,6 +876,19 @@ passando.
 - [x] Levantamento de peças conscientemente deixadas de fora ao longo
       da sessão está fechado — nenhuma lacuna conhecida entre os
       documentos de design de Thrylikí Chelóna e a ficha
+- [x] **Kaizoku no Sho — botão de Subir NC** (30/08/2026) — decisão #47.
+      Nesse sistema, nível não é "escolher 1 prêmio" como no Fabula
+      Ultima: o NC (Nível de Campanha) alimenta vários orçamentos ao
+      mesmo tempo (pontos de atributo, de perícia, de Poder, limite de
+      Nível do Poder, Vitalidade máxima). Botão "▲ Subir NC" soma 1 no
+      NC e mostra um resumo dos ganhos; quando o limite de Nível do
+      Poder sobe e o personagem já tem um Budô escolhido, mostra as
+      técnicas que aquele ponto destravaria, com "Investir agora"
+  - Testado com Playwright: resumo com os deltas certos, aviso de
+    atributo abaixo do novo mínimo, tabela de técnicas certa ao cruzar
+    o nível de um Budô transcrito, "Investir agora" somando o ponto de
+    verdade na aba Poderes, NC persistindo após recarregar, e as 12
+    abas da ficha sem nenhum erro de JavaScript
 - [ ] Ometion
 
 ---

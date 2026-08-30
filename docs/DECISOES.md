@@ -1546,3 +1546,41 @@ em 27/08/2026.
 **Permissão de campo é do servidor, não da tela.** Um campo marcado como "só mestre" nunca pode ser enviado ao navegador de quem não é mestre daquela campanha. Esconder na interface não é suficiente.
 
 **Plano gratuito é uma restrição de projeto, não um detalhe.** Imagens comprimidas na subida, banco enxuto, nada que exija processo rodando 24h.
+
+## 47. Kaizoku no Sho — botão de Subir NC (30/08/2026)
+
+O Zé pediu um botão de "evoluir de nível" que mostrasse o que se ganha —
+ideia que veio de como Fabula Ultima já funciona (investir 1 ponto numa
+classe libera a escolha de 1 poder). O Kaizoku no Sho não funciona assim:
+não existe "nível do personagem" nem "escolher 1 prêmio por nível". Existe
+um único número, o **NC (Nível de Campanha)**, que alimenta vários
+orçamentos ao mesmo tempo — pontos de atributo, pontos de perícia, pontos
+de Poder, o limite de Nível do Poder investido no Budô escolhido, e a
+Vitalidade máxima.
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 47 | Comportamento do botão | Soma 1 no NC e mostra um resumo de tudo que abriu (deltas de pontos e limites) — não escolhe nada sozinho, quem decide onde gastar continua sendo o jogador nas próprias abas |
+| 48 | Ponto de Nível do Poder | Quando o limite de Nível do Poder sobe (a cada 2 NC) e o personagem já tem um Budô escolhido, o resumo mostra quais técnicas aquele Budô destravaria com mais 1 ponto, com um botão "Investir agora" que soma o ponto direto na aba Poderes — sem forçar a escolha |
+
+Implementado em `public/kaizoku-no-sho.html`: botão "▲ Subir NC" ao lado do
+campo que já existia, e um modal novo — nenhum outro lugar do Hub tinha
+esse padrão ainda (os Escudos do Mestre de outros sistemas são páginas
+estáticas sem interação nenhuma).
+
+**Detalhe achado no caminho:** o catálogo de Budô pula níveis em vários
+poderes de propósito (o próprio código já tinha uma nota sobre isso: um
+efeito "pula de Nível 3 pra Nível 5"). Sem cuidado, o resumo dizia "o
+personagem ainda não tem Budô escolhido" mesmo quando tinha — só não
+havia técnica exatamente naquele nível novo. Corrigido pra distinguir os
+dois casos de verdade: sem Budô escolhido (sem botão de investir) vs.
+Budô escolhido sem técnica nova nesse nível específico (aviso + botão de
+investir aparecem do mesmo jeito, porque o ponto continua valendo pra
+quando destravar).
+
+Testado com Playwright: resumo com os deltas certos ao subir NC, aviso de
+atributo abaixo do novo mínimo, limite de perícia/Poder só subindo a cada
+2 NC, tabela de técnicas certa ao cruzar o nível de um Budô com catálogo
+transcrito, "Investir agora" somando o ponto de verdade na aba Poderes,
+NC persistindo após recarregar (modo local, `localStorage`), e uma
+varredura pelas 12 abas da ficha sem nenhum erro de JavaScript.
