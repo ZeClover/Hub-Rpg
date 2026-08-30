@@ -187,11 +187,15 @@
   .pecu-item{padding:9px 12px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:flex-start;}
   .pecu-item:last-child{border-bottom:none;}
   .pecu-item input[type=checkbox]{margin-top:3px; width:16px; height:16px; accent-color:var(--brass);}
-  .pecu-item .nome{font-weight:600; color:var(--parchment); font-size:13px;}
+  .pecu-item .nome{font-weight:600; color:var(--parchment); font-size:13.5px; line-height:1.4;}
   .pecu-item .custo{font-family:var(--mono); font-size:11px; color:var(--brass-bright);}
-  .pecu-item .efeito{font-size:12px; color:var(--parchment-dim); margin-top:2px;}
+  .pecu-item .efeito{font-size:12.5px; color:var(--parchment-dim); margin-top:3px; line-height:1.55;}
   .pecu-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .pecu-cols-auto{grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));}
   @media (max-width:760px){.pecu-cols{grid-template-columns:1fr;}}
+  .pecu-search-wrap{position:relative; margin-bottom:10px;}
+  .pecu-search-wrap .pecu-search{margin-bottom:0; padding-right:60px;}
+  .pecu-count{position:absolute; right:10px; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:11px; color:var(--parchment-dim); pointer-events:none;}
   .pecu-col-title{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;}
   .pecu-col-title.qual{color:var(--verdigris-bright);}
   .pecu-col-title.def{color:var(--danger);}
@@ -4805,6 +4809,23 @@ function renderRosterBar(){
 function escapeHtml(s){
   return String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+// Campo de busca reaproveitado nas listas de aptidões: mostra quantos itens batem
+// com o termo digitado, pra achar uma aptidão específica sem abrir cada categoria.
+function inputBusca(id, placeholder){
+  return `<div class="pecu-search-wrap"><input type="text" class="pecu-search" id="${id}" placeholder="${escapeHtml(placeholder)}"><span class="pecu-count" id="${id}_contador"></span></div>`;
+}
+function setContadorBusca(id, n){
+  const el = document.getElementById(id+'_contador');
+  if(!el) return;
+  el.textContent = n === null ? '' : `${n} ${n===1?'encontrada':'encontradas'}`;
+}
+function bateBusca(item, termo){
+  if(!termo) return true;
+  const t = termo.toLowerCase();
+  return (item.nome||'').toLowerCase().includes(t)
+    || (item.efeito||'').toLowerCase().includes(t)
+    || (item.prereq && item.prereq!=='—' && item.prereq.toLowerCase().includes(t));
+}
 
 /* =========================================================================
    RENDER — App root (tabs + painel + ficha lateral)
@@ -5577,7 +5598,8 @@ function panelAptidoes(p){
       <p class="panel-note">Todo personagem escolhe <b>3 aptidões gratuitas</b> deste capítulo na criação (independente de Budô/Akuma no Mi — essas são as aptidões "de base" do sistema). Marque as escolhidas nas 4 categorias abaixo.</p>
       <div class="limit-caption"><span>Escolhidas: ${total} / 3</span></div>
       ${total > 3 ? `<div class="warn-box">Você marcou ${total} aptidões, o padrão da criação de personagem é 3. Se for compra extra com pontos/aptidão que dá mais escolhas, tudo bem — só confira com o mestre.</div>` : ''}
-      <div class="pecu-cols" style="grid-template-columns:repeat(4, 1fr);">
+      ${inputBusca('apb_busca', 'Buscar aptidão por nome, efeito ou pré-requisito...')}
+      <div class="pecu-cols pecu-cols-auto">
         ${APTIDOES_BASE_CATEGORIAS.map(cat => `
           <div>
             <div class="pecu-col-title qual">${cat.titulo}</div>
@@ -5590,30 +5612,40 @@ function panelAptidoes(p){
   `;
 }
 function bindAptidoes(p){
-  APTIDOES_BASE_CATEGORIAS.forEach(cat=>{
-    const hostId = 'apb_lista_'+cat.chave;
-    const host = document.getElementById(hostId);
-    if(!host) return;
-    host.innerHTML = cat.lista.map(a => `
-      <label class="pecu-item">
-        <input type="checkbox" data-apb="${escapeHtml(a.nome)}" ${p.aptidoesBase.includes(a.nome)?'checked':''}>
-        <div>
-          <div class="nome">${a.nome}${a.especie?` <span class="custo">(${escapeHtml(a.especie)})</span>`:''}${a.prereq && a.prereq!=='—'?` <span class="custo">(pré-req: ${escapeHtml(a.prereq)})</span>`:''}${a.nota?` <span class="tag-imported" title="${escapeHtml(a.nota)}">nota</span>`:''}</div>
-          <div class="efeito">${a.efeito}</div>
-          ${a.escolhaAlvo && p.aptidoesBase.includes(a.nome) ? seletorEscolhaAlvo(p, a) : ''}
-        </div>
-      </label>
-    `).join('') || '<div style="padding:12px; font-size:12px; color:var(--parchment-dim);">Nada aqui.</div>';
-    document.querySelectorAll('#'+hostId+' [data-apb]').forEach(cb=>{
-      cb.addEventListener('change', ()=>{
-        const nome = cb.dataset.apb;
-        if(cb.checked) p.aptidoesBase.push(nome);
-        else p.aptidoesBase = p.aptidoesBase.filter(x=>x!==nome);
-        onFieldChange(); renderPanel();
+  let busca = '';
+  const draw = ()=>{
+    let totalEncontrado = 0;
+    APTIDOES_BASE_CATEGORIAS.forEach(cat=>{
+      const hostId = 'apb_lista_'+cat.chave;
+      const host = document.getElementById(hostId);
+      if(!host) return;
+      const lista = cat.lista.filter(a => bateBusca(a, busca));
+      totalEncontrado += lista.length;
+      host.innerHTML = lista.map(a => `
+        <label class="pecu-item">
+          <input type="checkbox" data-apb="${escapeHtml(a.nome)}" ${p.aptidoesBase.includes(a.nome)?'checked':''}>
+          <div>
+            <div class="nome">${a.nome}${a.especie?` <span class="custo">(${escapeHtml(a.especie)})</span>`:''}${a.prereq && a.prereq!=='—'?` <span class="custo">(pré-req: ${escapeHtml(a.prereq)})</span>`:''}${a.nota?` <span class="tag-imported" title="${escapeHtml(a.nota)}">nota</span>`:''}</div>
+            <div class="efeito">${a.efeito}</div>
+            ${a.escolhaAlvo && p.aptidoesBase.includes(a.nome) ? seletorEscolhaAlvo(p, a) : ''}
+          </div>
+        </label>
+      `).join('') || `<div style="padding:12px; font-size:12px; color:var(--parchment-dim);">${busca?'Nada encontrado.':'Nada aqui.'}</div>`;
+      document.querySelectorAll('#'+hostId+' [data-apb]').forEach(cb=>{
+        cb.addEventListener('change', ()=>{
+          const nome = cb.dataset.apb;
+          if(cb.checked) p.aptidoesBase.push(nome);
+          else p.aptidoesBase = p.aptidoesBase.filter(x=>x!==nome);
+          onFieldChange(); renderPanel();
+        });
       });
     });
-  });
-  bindEscolhasAptidao(p);
+    setContadorBusca('apb_busca', busca ? totalEncontrado : null);
+    bindEscolhasAptidao(p);
+  };
+  draw();
+  const buscaEl = document.getElementById('apb_busca');
+  if(buscaEl) buscaEl.addEventListener('input', e=>{ busca = e.target.value; draw(); });
   bindAptidoesExpansao(p);
 }
 // Seletores das aptidoes "a sua escolha" — quem decide o alvo e o jogador.
@@ -5659,7 +5691,8 @@ function panelAptidoesExpansao(p){
     <div class="panel">
       <h2>Aptidões <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">(Expansão)</span></h2>
       <p class="panel-note">Aptidões adicionais do livro de Expansão, por categoria. Só consulta/seleção — não alteram os números da ficha automaticamente ainda (assim como as demais aptidões e peculiaridades).</p>
-      <div class="pecu-cols" style="grid-template-columns:repeat(5, 1fr);">
+      ${inputBusca('apx_busca', 'Buscar aptidão por nome, efeito ou pré-requisito...')}
+      <div class="pecu-cols pecu-cols-auto">
         ${APTIDOES_EXPANSAO_CATEGORIAS.map(cat => `
           <div>
             <div class="pecu-col-title qual">${cat.titulo}</div>
@@ -5672,32 +5705,42 @@ function panelAptidoesExpansao(p){
 }
 function bindAptidoesExpansao(p){
   const escolhidas = p.poder.expansao.aptidoes;
-  APTIDOES_EXPANSAO_CATEGORIAS.forEach(cat=>{
-    const hostId = 'apx_lista_'+cat.chave;
-    const host = document.getElementById(hostId);
-    if(!host) return;
-    const sel = escolhidas[cat.chave];
-    host.innerHTML = cat.lista.map(a => `
-      <label class="pecu-item">
-        <input type="checkbox" data-apx="${escapeHtml(a.nome)}" ${sel.includes(a.nome)?'checked':''}>
-        <div>
-          <div class="nome">${a.nome}${a.prereq && a.prereq!=='—'?` <span class="custo">(pré-req: ${a.prereq})</span>`:''}${a.nota?` <span class="tag-imported" title="${escapeHtml(a.nota)}">nota</span>`:''}</div>
-          <div class="efeito">${a.efeito}</div>
-        </div>
-      </label>
-    `).join('') || '<div style="padding:12px; font-size:12px; color:var(--parchment-dim);">Nada aqui.</div>';
-    document.querySelectorAll('#'+hostId+' [data-apx]').forEach(cb=>{
-      cb.addEventListener('change', ()=>{
-        const nome = cb.dataset.apx;
-        if(cb.checked) sel.push(nome);
-        else{
-          const i = sel.indexOf(nome);
-          if(i>=0) sel.splice(i,1);
-        }
-        onFieldChange();
+  let busca = '';
+  const draw = ()=>{
+    let totalEncontrado = 0;
+    APTIDOES_EXPANSAO_CATEGORIAS.forEach(cat=>{
+      const hostId = 'apx_lista_'+cat.chave;
+      const host = document.getElementById(hostId);
+      if(!host) return;
+      const sel = escolhidas[cat.chave];
+      const lista = cat.lista.filter(a => bateBusca(a, busca));
+      totalEncontrado += lista.length;
+      host.innerHTML = lista.map(a => `
+        <label class="pecu-item">
+          <input type="checkbox" data-apx="${escapeHtml(a.nome)}" ${sel.includes(a.nome)?'checked':''}>
+          <div>
+            <div class="nome">${a.nome}${a.prereq && a.prereq!=='—'?` <span class="custo">(pré-req: ${a.prereq})</span>`:''}${a.nota?` <span class="tag-imported" title="${escapeHtml(a.nota)}">nota</span>`:''}</div>
+            <div class="efeito">${a.efeito}</div>
+          </div>
+        </label>
+      `).join('') || `<div style="padding:12px; font-size:12px; color:var(--parchment-dim);">${busca?'Nada encontrado.':'Nada aqui.'}</div>`;
+      document.querySelectorAll('#'+hostId+' [data-apx]').forEach(cb=>{
+        cb.addEventListener('change', ()=>{
+          const nome = cb.dataset.apx;
+          if(cb.checked) sel.push(nome);
+          else{
+            const i = sel.indexOf(nome);
+            if(i>=0) sel.splice(i,1);
+          }
+          onFieldChange();
+        });
       });
     });
-  });
+    setContadorBusca('apx_busca', busca ? totalEncontrado : null);
+  };
+  draw();
+  const buscaEl = document.getElementById('apx_busca');
+  if(buscaEl) buscaEl.addEventListener('input', e=>{ busca = e.target.value; draw(); });
 }
 function panelAkumaDetalhe(p){
   const ak = p.poder.akuma;
@@ -5859,6 +5902,29 @@ function renderAkumaEfeitosLista(termo){
     </table>
   `;
 }
+function renderBudoAptidoesLista(p, budo, termo){
+  const host = document.getElementById('budoapt_lista');
+  if(!host) return;
+  const lista = (budo.aptidoes||[]).filter(a => bateBusca(a, termo));
+  host.innerHTML = lista.map(a => `
+    <label class="pecu-item">
+      <input type="checkbox" data-budoapt="${escapeHtml(a.nome)}" ${p.poder.aptidoes.includes(a.nome)?'checked':''}>
+      <div>
+        <div class="nome">${a.nome} ${a.prereq && a.prereq!=='—' ? `<span class="custo">(pré-req: ${a.prereq})</span>` : ''}</div>
+        <div class="efeito">${a.efeito}</div>
+      </div>
+    </label>
+  `).join('') || `<div style="padding:12px; font-size:12px; color:var(--parchment-dim);">${termo?'Nada encontrado.':'Nada aqui.'}</div>`;
+  setContadorBusca('budoapt_busca', termo ? lista.length : null);
+  document.querySelectorAll('#budoapt_lista [data-budoapt]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const nome = cb.dataset.budoapt;
+      if(cb.checked) p.poder.aptidoes.push(nome);
+      else p.poder.aptidoes = p.poder.aptidoes.filter(x=>x!==nome);
+      onFieldChange(); renderPanel();
+    });
+  });
+}
 function panelBudoDetalhe(p, budo, nivelTotal){
   if(!budo.transcrito){
     return `<div class="info-box">O catálogo de "${budo.nome}" ainda não foi transcrito do livro nesta ficha — só o nome está registrado. ${budo.resumo||''}</div>`;
@@ -5871,17 +5937,8 @@ function panelBudoDetalhe(p, budo, nivelTotal){
     ${budo.regras && budo.regras.length ? `<ul style="font-size:13px; color:var(--parchment-dim); padding-left:18px; margin:0 0 12px;">${budo.regras.map(r=>`<li>${r}</li>`).join('')}</ul>` : ''}
 
     <h3>Aptidões</h3>
-    <div class="pecu-list" style="max-height:260px;">
-      ${budo.aptidoes.map(a => `
-        <label class="pecu-item">
-          <input type="checkbox" data-budoapt="${a.nome}" ${p.poder.aptidoes.includes(a.nome)?'checked':''}>
-          <div>
-            <div class="nome">${a.nome} ${a.prereq && a.prereq!=='—' ? `<span class="custo">(pré-req: ${a.prereq})</span>` : ''}</div>
-            <div class="efeito">${a.efeito}</div>
-          </div>
-        </label>
-      `).join('')}
-    </div>
+    ${budo.aptidoes.length > 5 ? inputBusca('budoapt_busca', `Buscar aptidão de ${escapeHtml(budo.nome)}...`) : ''}
+    <div class="pecu-list" id="budoapt_lista" style="max-height:260px;"></div>
 
     ${budo.efeitos && budo.efeitos.length ? `
     <h3>Técnicas de ${budo.poderNome} disponíveis (Nível ≤ ${Math.max(1,nivelTotal)})</h3>
@@ -5953,14 +6010,12 @@ function bindPoderes(p){
     p.poder.nivel.outro = Number(e.target.value)||0;
     onFieldChange(); renderPanel();
   });
-  document.querySelectorAll('[data-budoapt]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      const nome = cb.dataset.budoapt;
-      if(cb.checked) p.poder.aptidoes.push(nome);
-      else p.poder.aptidoes = p.poder.aptidoes.filter(x=>x!==nome);
-      onFieldChange(); renderPanel();
-    });
-  });
+  const budoAtualDetalhe = budoAtual(p);
+  if(budoAtualDetalhe && budoAtualDetalhe.transcrito){
+    renderBudoAptidoesLista(p, budoAtualDetalhe, '');
+    const budoaptBusca = document.getElementById('budoapt_busca');
+    if(budoaptBusca) budoaptBusca.addEventListener('input', e=>{ renderBudoAptidoesLista(p, budoAtualDetalhe, e.target.value); });
+  }
 
   const aexBusca = document.getElementById('aex_busca');
   if(aexBusca){
