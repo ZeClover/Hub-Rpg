@@ -193,6 +193,8 @@
   .pecu-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
   .pecu-cols-auto{grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));}
   @media (max-width:760px){.pecu-cols{grid-template-columns:1fr;}}
+  .ataque-card{border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:12px; background:rgba(15,33,54,0.25);}
+  .ataque-card .info-box{margin-top:10px;}
   .pecu-search-wrap{position:relative; margin-bottom:10px;}
   .pecu-search-wrap .pecu-search{margin-bottom:0; padding-right:60px;}
   .pecu-count{position:absolute; right:10px; top:50%; transform:translateY(-50%); font-family:var(--mono); font-size:11px; color:var(--parchment-dim); pointer-events:none;}
@@ -3653,6 +3655,11 @@ function novoPersonagem(nome){
     inventario: { itens: [], belly: 0 },
     companheiro: null,
     kugutsu: null,
+    // Ataques pré-prontos: pra não recalcular acerto/dano toda hora na mesa.
+    // Cada um guarda só o que é específico DAQUELE ataque (dano extra, nível
+    // do efeito) — o resto (atributo, bônus de Combate, Dificuldade) vem
+    // das mesmas fórmulas já usadas nas abas Combate/Danos/Recursos.
+    ataquesProntos: [],
   };
   ATRIBUTOS_DEF.forEach(a => p.atributos[a.id] = 0);
   COMBATE_DEF.forEach(c => p.combate[c.id] = { base:3, outro:0 });
@@ -3691,6 +3698,7 @@ function migrarPersonagem(p){
   if(!Array.isArray(p.togglesAtivos)) p.togglesAtivos = [];
   if(!Array.isArray(p.aptidoesBase)) p.aptidoesBase = [];
   if(!p.escolhasAptidao || typeof p.escolhasAptidao !== 'object') p.escolhasAptidao = {};
+  if(!Array.isArray(p.ataquesProntos)) p.ataquesProntos = [];
   return p;
 }
 
@@ -4849,6 +4857,7 @@ const TABS = [
   {id:'aptidoes', nome:'Aptidões'},
   {id:'poderes', nome:'Poderes'},
   {id:'inventario', nome:'Inventário'},
+  {id:'ataques', nome:'Ataques'},
   {id:'companheiro', nome:'Companheiro', stub:true},
   {id:'kugutsu', nome:'Kugutsu', stub:true},
 ];
@@ -4917,6 +4926,7 @@ function renderPanel(){
     case 'aptidoes': host.innerHTML = panelAptidoes(p); bindAptidoes(p); break;
     case 'poderes': host.innerHTML = panelPoderes(p); bindPoderes(p); break;
     case 'inventario': host.innerHTML = panelInventario(p); bindInventario(p); break;
+    case 'ataques': host.innerHTML = panelAtaques(p); bindAtaques(p); break;
     default: host.innerHTML = panelStub(TABS.find(t=>t.id===state.tab)); break;
   }
 }
@@ -6502,6 +6512,109 @@ function religarBotoesAdd(p){
     if(btn.dataset.ligado) return;
     btn.dataset.ligado = '1';
     btn.addEventListener('click', ()=> adicionarAoInventario(p, btn.dataset.addcat, btn.dataset.addnome));
+  });
+}
+
+/* ---------- Ataques prontos ---------- */
+// Só reaproveita fórmulas que já existem (Combate, Danos, Recursos) pra
+// montar uma frase pronta de acerto/dano — nada de duplicar regra aqui.
+const ATAQUE_TIPOS = [
+  {id:'cc', nome:'Corporal'},
+  {id:'cd', nome:'Distância'},
+  {id:'poder', nome:'Poder / Akuma no Mi'},
+];
+const ATAQUE_ACOES = ['Padrão','Parcial','Livre','Reação'];
+function novoAtaquePronto(){
+  return { id: uid(), nome:'', tipo:'cc', acao:'Padrão', bonusDano:0, nivelEfeito:0, observacao:'' };
+}
+function resumoAtaquePronto(p, a){
+  if(a.tipo === 'poder'){
+    const vontade = (p.atributos.vontade||0) + bonusAtributoMecanico(p, 'vontade');
+    const base = Math.ceil(vontade/2) + (a.nivelEfeito||0) + bonusMecanico(p, 'danoBase', 'poder') + (a.bonusDano||0);
+    const dif = dificuldadePoder(p, a.nivelEfeito||0);
+    return `Dificuldade pro alvo resistir: <b>${dif}</b> (9 + nível ${a.nivelEfeito||0} + metade da Vontade) · Dano por Grau: ${danoPorGrau(base).join(' / ')}`;
+  }
+  const def = COMBATE_DEF.find(c=>c.id===a.tipo);
+  const acerto = totalCombate(p, def);
+  const base = (a.tipo==='cc' ? danoBaseCC(p) : danoBaseCD(p)) + (a.bonusDano||0);
+  return `Acerto: 2d8 ${acerto>=0?'+':''}${acerto} (${def.nome}) contra a Reação de Esquiva do alvo · Dano por Grau: ${danoPorGrau(base).join(' / ')}`;
+}
+function panelAtaques(p){
+  return `
+    <div class="panel">
+      <h2>Ataques Prontos</h2>
+      <p class="panel-note">Monte aqui os golpes que você mais usa — acerto e dano já saem calculados na hora, sem precisar abrir Combate/Danos/Recursos toda vez na mesa. Cada um usa o Grau (1 a 4) do resultado de 2d8 no teste de acerto pra saber qual dano vale.</p>
+      ${p.ataquesProntos.length === 0 ? `<p class="panel-note">Nenhum ataque pronto ainda.</p>` : ''}
+      ${p.ataquesProntos.map((a, idx) => `
+        <div class="ataque-card">
+          <div class="field-row">
+            <div class="field" style="flex:2;"><label>Nome</label><input type="text" data-atqnome="${idx}" placeholder="Ex: Soco de Aço, Shigan, Tiro Certeiro..." value="${escapeHtml(a.nome)}"></div>
+            <div class="field"><label>Tipo</label>
+              <select data-atqtipo="${idx}">${ATAQUE_TIPOS.map(t=>`<option value="${t.id}" ${a.tipo===t.id?'selected':''}>${t.nome}</option>`).join('')}</select>
+            </div>
+            <div class="field"><label>Ação</label>
+              <select data-atqacao="${idx}">${ATAQUE_ACOES.map(o=>`<option ${a.acao===o?'selected':''}>${o}</option>`).join('')}</select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Dano extra (arma/técnica)</label><input type="number" data-atqextra="${idx}" value="${a.bonusDano||0}"></div>
+            ${a.tipo === 'poder' ? `<div class="field"><label>Nível do Efeito</label><input type="number" min="0" data-atqnivel="${idx}" value="${a.nivelEfeito||0}"></div>` : ''}
+            <div class="field" style="flex:2;"><label>Observação / Efeito</label><input type="text" data-atqobs="${idx}" placeholder="Ex: ignora armadura, aplica Atordoado..." value="${escapeHtml(a.observacao||'')}"></div>
+          </div>
+          <div class="info-box">${resumoAtaquePronto(p, a)}</div>
+          <button type="button" class="btn danger" data-atqdel="${idx}" style="margin-top:10px;">Remover</button>
+        </div>
+      `).join('')}
+      <button type="button" class="btn primary" id="btnAtaqueAdd">+ Adicionar ataque</button>
+    </div>
+  `;
+}
+function bindAtaques(p){
+  document.querySelectorAll('[data-atqnome]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      p.ataquesProntos[Number(inp.dataset.atqnome)].nome = inp.value;
+      onFieldChange();
+    });
+  });
+  document.querySelectorAll('[data-atqobs]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      p.ataquesProntos[Number(inp.dataset.atqobs)].observacao = inp.value;
+      onFieldChange();
+    });
+  });
+  document.querySelectorAll('[data-atqtipo]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      p.ataquesProntos[Number(sel.dataset.atqtipo)].tipo = sel.value;
+      onFieldChange(); renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-atqacao]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      p.ataquesProntos[Number(sel.dataset.atqacao)].acao = sel.value;
+      onFieldChange(); renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-atqextra]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      p.ataquesProntos[Number(inp.dataset.atqextra)].bonusDano = Number(inp.value)||0;
+      onFieldChange(); renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-atqnivel]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      p.ataquesProntos[Number(inp.dataset.atqnivel)].nivelEfeito = Math.max(0, Number(inp.value)||0);
+      onFieldChange(); renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-atqdel]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      p.ataquesProntos.splice(Number(btn.dataset.atqdel), 1);
+      onFieldChange(); renderPanel();
+    });
+  });
+  document.getElementById('btnAtaqueAdd').addEventListener('click', ()=>{
+    p.ataquesProntos.push(novoAtaquePronto());
+    onFieldChange(); renderPanel();
   });
 }
 
