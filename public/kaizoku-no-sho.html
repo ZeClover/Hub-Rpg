@@ -5942,10 +5942,11 @@ function panelZoanDetalhe(p){
 
     <h3>Técnicas Zoan disponíveis (Nível ≤ ${Math.max(1,nivelTotal)})</h3>
     <table class="data">
-      <thead><tr><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
+      <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${efeitosDisponiveis.map(e => `
           <tr>
+            <td>${btnSugerirAtaque(e)}</td>
             <td>${e.nome}</td>
             <td class="num">${e.nivel}</td>
             <td>${e.acao||'—'}</td>
@@ -5965,10 +5966,11 @@ function renderAkumaEfeitosLista(termo){
   const filtrados = AKUMA_EFEITOS_EXCLUSIVOS.filter(e => !t || e.nome.toLowerCase().includes(t) || (e.categoria||'').toLowerCase().includes(t));
   host.innerHTML = `
     <table class="data">
-      <thead><tr><th>Técnica</th><th class="num">Nível</th><th>Categoria</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
+      <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Categoria</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${filtrados.map(e => `
           <tr>
+            <td>${btnSugerirAtaque(e)}</td>
             <td>${e.nome}${e.prereq?` <span class="tag-imported" title="Pré-requisito: ${escapeHtml(e.prereq)}">pré-req</span>`:''}</td>
             <td class="num">${e.nivel}</td>
             <td>${e.categoria||'—'}</td>
@@ -5976,10 +5978,11 @@ function renderAkumaEfeitosLista(termo){
             <td>${e.custo||'—'}</td>
             <td style="font-size:12px;">${e.efeito}${e.evolucoes && e.evolucoes.length?`<br><span style="color:var(--brass-bright);">Evoluções: ${e.evolucoes.join(' ')}</span>`:''}${e.nota?`<br><span class="tag-imported" title="${escapeHtml(e.nota)}">nota</span>`:''}</td>
           </tr>
-        `).join('') || '<tr><td colspan="6" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
+        `).join('') || '<tr><td colspan="7" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
       </tbody>
     </table>
   `;
+  ligarBotoesSugerirAtaque();
 }
 function renderBudoAptidoesLista(p, budo, termo){
   const host = document.getElementById('budoapt_lista');
@@ -6022,10 +6025,11 @@ function panelBudoDetalhe(p, budo, nivelTotal){
     ${budo.efeitos && budo.efeitos.length ? `
     <h3>Técnicas de ${budo.poderNome} disponíveis (Nível ≤ ${Math.max(1,nivelTotal)})</h3>
     <table class="data">
-      <thead><tr><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
+      <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${efeitosDisponiveis.map(e => `
           <tr>
+            <td>${btnSugerirAtaque(e)}</td>
             <td>${e.nome}${e.prereq?` <span class="tag-imported" title="Pré-requisito: ${escapeHtml(e.prereq)}">pré-req</span>`:''}</td>
             <td class="num">${e.nivel}</td>
             <td>${e.acao||'—'}</td>
@@ -6047,10 +6051,11 @@ function renderEfeitosGeraisLista(termo){
   const filtrados = EFEITOS_GERAIS.filter(e => !t || e.nome.toLowerCase().includes(t) || e.tag.toLowerCase().includes(t));
   host.innerHTML = `
     <table class="data">
-      <thead><tr><th>Técnica</th><th class="num">Nível</th><th>Tag</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
+      <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Tag</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${filtrados.map(e => `
           <tr>
+            <td>${btnSugerirAtaque(e)}</td>
             <td>${e.nome}</td>
             <td class="num">${e.nivel}</td>
             <td>${e.tag}</td>
@@ -6058,10 +6063,11 @@ function renderEfeitosGeraisLista(termo){
             <td>${e.custo||'—'}</td>
             <td style="font-size:12px;">${e.efeito}${e.dano?`<br><span style="color:var(--parchment-dim);">Dano: ${e.dano}</span>`:''}${e.evolucoes?`<br><span style="color:var(--brass-bright);">Evoluções: ${e.evolucoes.join(' ')}</span>`:''}${e.nota?`<br><span class="tag-imported" title="${escapeHtml(e.nota)}">nota</span>`:''}</td>
           </tr>
-        `).join('') || '<tr><td colspan="6" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
+        `).join('') || '<tr><td colspan="7" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
       </tbody>
     </table>
   `;
+  ligarBotoesSugerirAtaque();
 }
 function bindPoderes(p){
   renderEfeitosGeraisLista('');
@@ -6149,6 +6155,9 @@ function bindPoderes(p){
       onFieldChange(); renderPanel();
     });
   });
+  // Cobre as tabelas de técnica que não têm busca própria (Zoan e Budô) —
+  // as outras duas (Efeitos Gerais/Exclusivos) já se religam sozinhas acima.
+  ligarBotoesSugerirAtaque();
 }
 
 /* ---------- Inventário (Fase 3) ---------- */
@@ -6615,6 +6624,49 @@ function bindAtaques(p){
   document.getElementById('btnAtaqueAdd').addEventListener('click', ()=>{
     p.ataquesProntos.push(novoAtaquePronto());
     onFieldChange(); renderPanel();
+  });
+}
+
+// Botão "+ Ataque" que aparece nas tabelas de técnica (Budô, Zoan, Akuma,
+// Efeitos Gerais) — sugestão rápida: manda nome/nível/ação/efeito pra um
+// Ataque Pronto novo (tipo Poder), sem tentar adivinhar um dano numérico que
+// o livro não dá pra toda técnica. O jogador ajusta o resto na aba Ataques.
+function btnSugerirAtaque(efeito){
+  const obs = [efeito.efeito, efeito.dano ? `Dano: ${efeito.dano}` : null].filter(Boolean).join(' — ');
+  return `<button class="btn" type="button"
+    data-sugnome="${escapeHtml(efeito.nome||'')}"
+    data-sugnivel="${Number(efeito.nivel)||0}"
+    data-sugacao="${escapeHtml(efeito.acao||'')}"
+    data-sugobs="${escapeHtml(obs)}"
+    title="Sugerir como Ataque Pronto">+ Ataque</button>`;
+}
+function sugerirAtaquePronto(p, dados){
+  const acaoValida = ATAQUE_ACOES.includes(dados.acao) ? dados.acao : 'Padrão';
+  p.ataquesProntos.push({
+    id: uid(), nome: dados.nome || '', tipo: 'poder', acao: acaoValida,
+    bonusDano: 0, nivelEfeito: Number(dados.nivel)||0, observacao: dados.efeito || '',
+  });
+  onFieldChange();
+}
+// Religa os botões "+ Ataque" sempre que uma dessas tabelas é redesenhada
+// (inclusive nas buscas, que substituem o innerHTML sem passar por
+// renderPanel). Não usa renderPanel de propósito — trocaria o botão clicado
+// e resetaria a busca em andamento; o próprio botão vira "✓" pra confirmar.
+function ligarBotoesSugerirAtaque(){
+  const p = personagemAtual();
+  if(!p) return;
+  document.querySelectorAll('[data-sugnome]').forEach(btn=>{
+    if(btn.dataset.ligado) return;
+    btn.dataset.ligado = '1';
+    btn.addEventListener('click', ()=>{
+      sugerirAtaquePronto(p, {
+        nome: btn.dataset.sugnome, nivel: btn.dataset.sugnivel,
+        acao: btn.dataset.sugacao, efeito: btn.dataset.sugobs,
+      });
+      btn.textContent = '✓ Ataques';
+      btn.disabled = true;
+      btn.title = 'Adicionado à aba Ataques';
+    });
   });
 }
 
