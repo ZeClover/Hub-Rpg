@@ -30,6 +30,8 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
     moedas: { ...atual.moedas },
     inventario: atual.inventario.map((item) => ({ ...item })),
     notas: [...atual.notas],
+    missoes: atual.missoes.map((m) => ({ ...m, objetivos: m.objetivos.map((o) => ({ ...o })), recompensas: [...m.recompensas], anotacoes: [...m.anotacoes] })),
+    npcs: atual.npcs.map((n) => ({ ...n, conhecimento: [...n.conhecimento], relacoes: { ...n.relacoes } })),
   };
   const resumos: string[] = [];
 
@@ -149,6 +151,91 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
       const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
       dados.moedas[mudanca.nome] = depois;
       resumos.push(`${mudanca.nome}: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "missao_add") {
+      const existente = dados.missoes.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Missão "${mudanca.nome}" já existia — ignorada`);
+        continue;
+      }
+      dados.missoes.push({
+        id: gerarId(),
+        nome: mudanca.nome,
+        descricao: mudanca.descricao,
+        status: mudanca.status,
+        objetivos: mudanca.objetivos,
+        recompensas: [],
+        anotacoes: [],
+        criadaEm: Date.now(),
+      });
+      resumos.push(`Nova missão: ${mudanca.nome} (${mudanca.status})`);
+      continue;
+    }
+
+    if (mudanca.tipo === "missao_update") {
+      const missao = dados.missoes.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!missao) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      if (mudanca.objetivo && ["add_objective", "complete_objective", "fail_objective", "reopen_objective"].includes(mudanca.acao)) {
+        if (mudanca.acao === "add_objective") {
+          missao.objetivos.push({ texto: mudanca.objetivo, status: "pendente" });
+          resumos.push(`${mudanca.nome}: novo objetivo "${mudanca.objetivo}"`);
+        } else {
+          const objetivo = missao.objetivos.find((o) => o.texto.trim().toLowerCase() === mudanca.objetivo!.trim().toLowerCase());
+          if (objetivo) {
+            objetivo.status = mudanca.acao === "complete_objective" ? "concluido" : mudanca.acao === "fail_objective" ? "falhou" : "pendente";
+            resumos.push(`${mudanca.nome}: "${mudanca.objetivo}" → ${objetivo.status}`);
+          }
+        }
+      } else if (mudanca.acao === "set_status" && mudanca.status) {
+        missao.status = mudanca.status;
+        resumos.push(`${mudanca.nome}: status → ${mudanca.status}`);
+      } else if (mudanca.acao === "append_note" && mudanca.nota) {
+        missao.anotacoes.push(mudanca.nota);
+        resumos.push(`${mudanca.nome}: anotação adicionada`);
+      } else if ((mudanca.acao === "add_reward" || mudanca.acao === "reveal_reward") && mudanca.recompensa) {
+        missao.recompensas.push(mudanca.recompensa);
+        resumos.push(`${mudanca.nome}: recompensa — ${mudanca.recompensa}`);
+      }
+      continue;
+    }
+
+    if (mudanca.tipo === "npc_add") {
+      const existente = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`NPC "${mudanca.nome}" já existia — ignorado`);
+        continue;
+      }
+      dados.npcs.push({
+        id: gerarId(),
+        nome: mudanca.nome,
+        descricao: mudanca.descricao,
+        primeiroEncontro: mudanca.primeiroEncontro,
+        tags: mudanca.tags,
+        conhecimento: [],
+        relacoes: {},
+        criadoEm: Date.now(),
+      });
+      resumos.push(`Novo NPC: ${mudanca.nome}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "npc_update") {
+      const npc = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!npc) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      npc.conhecimento.push(...mudanca.conhecimentoNovo);
+      resumos.push(`${mudanca.nome}: +${mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)`);
+      continue;
+    }
+
+    if (mudanca.tipo === "relacao") {
+      const npc = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
+      if (!npc) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = npc.relacoes[mudanca.stat] ?? 0;
+      const depois = antes + mudanca.valor;
+      npc.relacoes[mudanca.stat] = depois;
+      resumos.push(`${mudanca.npc}.${mudanca.stat}: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
       continue;
     }
   }

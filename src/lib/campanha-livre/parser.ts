@@ -2,19 +2,22 @@
   Parser do protocolo HUB_UPDATE (ver pacote de especificação entregue pelo
   Zé — 02_HUB_UPDATE_SPEC_v1.md é a fonte de verdade).
 
-  Segunda fatia: mais 5 operações de personagem/inventário — level,
-  attributes, items_update, equipment, currency — além das 5 da fatia
-  mínima (xp, resources, items_add, items_remove, notes_add). O resto do
-  protocolo (missions, npcs, discoveries, undo, snapshots, event log em
-  tabela própria...) fica pra fatias futuras (decisão #26) — mas o formato
-  do bloco e as regras de segurança abaixo já seguem a especificação
-  inteira, pra não ter que reescrever quando essas fatias chegarem.
+  Terceira fatia: missions_add, missions_update, npcs_add, npcs_update,
+  relationships — além das 10 anteriores (xp, resources, items_add,
+  items_remove, notes_add, level, attributes, items_update, equipment,
+  currency). O resto do protocolo (discoveries, locations, bestiary,
+  codex, journal, undo, snapshots, event log em tabela própria...) fica
+  pra fatias futuras (decisão #26) — mas o formato do bloco e as regras
+  de segurança abaixo já seguem a especificação inteira, pra não ter que
+  reescrever quando essas fatias chegarem.
 
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
   revisão decidir o que aplicar (regras #1 e #2 da especificação).
 */
 import { parse as parseYaml } from "yaml";
+
+import type { ObjetivoMissao, StatusMissao } from "./tipos.ts";
 
 export type NivelAlerta = "info" | "warning" | "error";
 export type Alerta = { nivel: NivelAlerta; mensagem: string };
@@ -109,6 +112,56 @@ export type MudancaMoeda = Base & {
   motivo?: string;
 };
 
+export type AcaoMissaoUpdate =
+  | "add_objective"
+  | "complete_objective"
+  | "fail_objective"
+  | "reopen_objective"
+  | "set_status"
+  | "append_note"
+  | "add_reward"
+  | "reveal_reward";
+
+export type MudancaMissaoAdd = Base & {
+  tipo: "missao_add";
+  nome: string;
+  descricao?: string;
+  status: StatusMissao;
+  objetivos: ObjetivoMissao[];
+};
+
+export type MudancaMissaoUpdate = Base & {
+  tipo: "missao_update";
+  nome: string;
+  acao: AcaoMissaoUpdate;
+  objetivo?: string;
+  status?: StatusMissao;
+  nota?: string;
+  recompensa?: string;
+};
+
+export type MudancaNpcAdd = Base & {
+  tipo: "npc_add";
+  nome: string;
+  descricao?: string;
+  primeiroEncontro?: string;
+  tags?: string[];
+};
+
+export type MudancaNpcUpdate = Base & {
+  tipo: "npc_update";
+  nome: string;
+  conhecimentoNovo: string[];
+};
+
+export type MudancaRelacao = Base & {
+  tipo: "relacao";
+  npc: string;
+  stat: string;
+  valor: number;
+  motivo?: string;
+};
+
 export type Mudanca =
   | MudancaXp
   | MudancaRecurso
@@ -119,7 +172,12 @@ export type Mudanca =
   | MudancaAtributo
   | MudancaItemUpdate
   | MudancaEquipamento
-  | MudancaMoeda;
+  | MudancaMoeda
+  | MudancaMissaoAdd
+  | MudancaMissaoUpdate
+  | MudancaNpcAdd
+  | MudancaNpcUpdate
+  | MudancaRelacao;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -179,6 +237,37 @@ const CAMPOS_CONHECIDOS = new Set([
   "items_update",
   "equipment",
   "currency",
+  "missions_add",
+  "missions_update",
+  "npcs_add",
+  "npcs_update",
+  "relationships",
+]);
+
+const STATUS_MISSAO_MAP: Record<string, StatusMissao> = {
+  available: "disponivel",
+  active: "ativa",
+  completed: "concluida",
+  failed: "falhou",
+  abandoned: "abandonada",
+  hidden: "oculta",
+};
+
+const STATUS_OBJETIVO_MAP: Record<string, ObjetivoMissao["status"]> = {
+  pending: "pendente",
+  completed: "concluido",
+  failed: "falhou",
+};
+
+const ACOES_MISSAO_UPDATE = new Set<AcaoMissaoUpdate>([
+  "add_objective",
+  "complete_objective",
+  "fail_objective",
+  "reopen_objective",
+  "set_status",
+  "append_note",
+  "add_reward",
+  "reveal_reward",
 ]);
 
 let contadorId = 0;
@@ -281,6 +370,31 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
     }
   }
 
+  // --- missions_add (spec §20) ---
+  if (Array.isArray(raiz.missions_add)) {
+    for (const missao of raiz.missions_add) mudancas.push(interpretarMissaoAdd(missao));
+  }
+
+  // --- missions_update (spec §20) ---
+  if (Array.isArray(raiz.missions_update)) {
+    for (const missao of raiz.missions_update) mudancas.push(interpretarMissaoUpdate(missao));
+  }
+
+  // --- npcs_add (spec §21) ---
+  if (Array.isArray(raiz.npcs_add)) {
+    for (const npc of raiz.npcs_add) mudancas.push(interpretarNpcAdd(npc));
+  }
+
+  // --- npcs_update (spec §21) ---
+  if (Array.isArray(raiz.npcs_update)) {
+    for (const npc of raiz.npcs_update) mudancas.push(interpretarNpcUpdate(npc));
+  }
+
+  // --- relationships (spec §22) ---
+  if (Array.isArray(raiz.relationships)) {
+    for (const relacao of raiz.relationships) mudancas.push(interpretarRelacao(relacao));
+  }
+
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
 
   if (mudancas.length === 0) {
@@ -289,7 +403,7 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
       erro:
         camposDesconhecidos.length > 0
           ? `Nenhuma operação reconhecida nesta fatia do Hub (só campo(s) desconhecido(s): ${camposDesconhecidos.join(", ")}).`
-          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment ou currency).",
+          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment, currency, missions_add, missions_update, npcs_add, npcs_update ou relationships).",
     };
   }
 
@@ -587,6 +701,151 @@ function interpretarMoeda(nome: string, bruto: unknown): MudancaMoeda {
     tipo: "moeda",
     nome,
     operacao,
+    valor: valor ?? 0,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarMissaoAdd(bruto: unknown): MudancaMissaoAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Missão em missions_add sem 'name'." });
+
+  const statusBruto = typeof objeto.status === "string" ? objeto.status : "active";
+  const status = STATUS_MISSAO_MAP[statusBruto];
+  if (!status) alertas.push({ nivel: "error", mensagem: `Status de missão desconhecido: "${statusBruto}".` });
+
+  const objetivosBruto = Array.isArray(objeto.objectives) ? objeto.objectives : [];
+  const objetivos: ObjetivoMissao[] = objetivosBruto.map((itemBruto) => {
+    const o = typeof itemBruto === "object" && itemBruto !== null ? (itemBruto as Record<string, unknown>) : {};
+    const texto = typeof o.text === "string" ? o.text : "(sem texto)";
+    const statusObjBruto = typeof o.status === "string" ? o.status : "pending";
+    return { texto, status: STATUS_OBJETIVO_MAP[statusObjBruto] ?? "pendente" };
+  });
+
+  return {
+    id: proximoId(),
+    tipo: "missao_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    status: status ?? "ativa",
+    objetivos,
+    alertas,
+  };
+}
+
+function interpretarMissaoUpdate(bruto: unknown): MudancaMissaoUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em missions_update sem 'name'." });
+
+  const acaoBruta = typeof objeto.action === "string" ? objeto.action : null;
+  if (!acaoBruta || !ACOES_MISSAO_UPDATE.has(acaoBruta as AcaoMissaoUpdate)) {
+    alertas.push({ nivel: "error", mensagem: `Ação desconhecida em missions_update: "${String(acaoBruta)}".` });
+  }
+  const acao: AcaoMissaoUpdate =
+    acaoBruta && ACOES_MISSAO_UPDATE.has(acaoBruta as AcaoMissaoUpdate) ? (acaoBruta as AcaoMissaoUpdate) : "append_note";
+
+  const objetivo = typeof objeto.objective === "string" ? objeto.objective : undefined;
+  if (["add_objective", "complete_objective", "fail_objective", "reopen_objective"].includes(acao) && !objetivo) {
+    alertas.push({ nivel: "error", mensagem: `Ação "${acao}" precisa de 'objective'.` });
+  }
+
+  let status: StatusMissao | undefined;
+  if (acao === "set_status") {
+    const statusBruto = typeof objeto.status === "string" ? objeto.status : null;
+    status = statusBruto ? STATUS_MISSAO_MAP[statusBruto] : undefined;
+    if (!status) alertas.push({ nivel: "error", mensagem: `set_status precisa de 'status' válido (veio "${String(statusBruto)}").` });
+  }
+
+  let nota: string | undefined;
+  if (acao === "append_note") {
+    nota = typeof objeto.note === "string" ? objeto.note : undefined;
+    if (!nota) alertas.push({ nivel: "error", mensagem: "append_note precisa de 'note'." });
+  }
+
+  // reveal_reward não tem estado de "oculto/visível" nesta fatia — trata igual a add_reward.
+  let recompensa: string | undefined;
+  if (acao === "add_reward" || acao === "reveal_reward") {
+    recompensa = typeof objeto.reward === "string" ? objeto.reward : undefined;
+    if (!recompensa) alertas.push({ nivel: "error", mensagem: `${acao} precisa de 'reward'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "missao_update",
+    nome: nome ?? "(sem nome)",
+    acao,
+    objetivo,
+    status,
+    nota,
+    recompensa,
+    alertas,
+  };
+}
+
+function interpretarNpcAdd(bruto: unknown): MudancaNpcAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "NPC em npcs_add sem 'name'." });
+
+  return {
+    id: proximoId(),
+    tipo: "npc_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    primeiroEncontro: typeof objeto.first_met === "string" ? objeto.first_met : undefined,
+    tags: Array.isArray(objeto.tags) ? objeto.tags.filter((t): t is string => typeof t === "string") : undefined,
+    alertas,
+  };
+}
+
+function interpretarNpcUpdate(bruto: unknown): MudancaNpcUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em npcs_update sem 'name'." });
+
+  const conhecimentoNovo = Array.isArray(objeto.known_information_add)
+    ? objeto.known_information_add.filter((t): t is string => typeof t === "string")
+    : [];
+  if (conhecimentoNovo.length === 0) {
+    alertas.push({ nivel: "error", mensagem: `npcs_update para "${nome ?? "?"}" não tem 'known_information_add'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "npc_update",
+    nome: nome ?? "(sem nome)",
+    conhecimentoNovo,
+    alertas,
+  };
+}
+
+function interpretarRelacao(bruto: unknown): MudancaRelacao {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const npc = typeof objeto.npc === "string" ? objeto.npc : null;
+  if (!npc) alertas.push({ nivel: "error", mensagem: "Item em relationships sem 'npc'." });
+  const stat = typeof objeto.stat === "string" ? objeto.stat : null;
+  if (!stat) alertas.push({ nivel: "error", mensagem: `relationships para "${npc ?? "?"}" sem 'stat'.` });
+
+  const valor = paraNumero(objeto.change);
+  if (objeto.change === undefined) {
+    alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa de 'change'.` });
+  } else if (valor === null) {
+    alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa ser numérico.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "relacao",
+    npc: npc ?? "(sem nome)",
+    stat: stat ?? "(sem stat)",
     valor: valor ?? 0,
     motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
     alertas,

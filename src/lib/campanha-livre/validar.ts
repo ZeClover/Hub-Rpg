@@ -104,6 +104,58 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "missao_update") {
+      const missao = atual.missoes.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!missao) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Missão "${mudanca.nome}" não existe — crie com missions_add primeiro.` },
+          ],
+        };
+      }
+      if (
+        ["complete_objective", "fail_objective", "reopen_objective"].includes(mudanca.acao) &&
+        mudanca.objetivo &&
+        !missao.objetivos.some((o) => o.texto.trim().toLowerCase() === mudanca.objetivo!.trim().toLowerCase())
+      ) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Objetivo "${mudanca.objetivo}" não existe na missão "${mudanca.nome}".` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "npc_update") {
+      const existe = atual.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `NPC "${mudanca.nome}" não existe — crie com npcs_add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "relacao") {
+      const existe = atual.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `NPC "${mudanca.npc}" não existe — crie com npcs_add primeiro.` },
+          ],
+        };
+      }
+    }
+
     if (mudanca.tipo === "moeda" && mudanca.operacao === "change") {
       const antes = atual.moedas[mudanca.nome] ?? 0;
       const depois = antes + mudanca.valor;

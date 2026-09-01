@@ -64,7 +64,14 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
     setMudancas((atual) =>
       (atual ?? []).map((m) => {
         if (m.id !== id) return m;
-        if (m.tipo === "xp" || m.tipo === "recurso" || m.tipo === "nivel" || m.tipo === "atributo" || m.tipo === "moeda") {
+        if (
+          m.tipo === "xp" ||
+          m.tipo === "recurso" ||
+          m.tipo === "nivel" ||
+          m.tipo === "atributo" ||
+          m.tipo === "moeda" ||
+          m.tipo === "relacao"
+        ) {
           return { ...m, valor: novoValor };
         }
         if (m.tipo === "item_add" || m.tipo === "item_remove") return { ...m, quantidade: novoValor };
@@ -414,11 +421,96 @@ function DescricaoMudanca({
       </div>
     );
   }
-  // equipamento
+  if (mudanca.tipo === "equipamento") {
+    return (
+      <p className="text-sm text-texto">
+        {mudanca.acao === "equipar" ? "Equipar" : "Desequipar"} <strong>{mudanca.nome}</strong>
+        {mudanca.acao === "equipar" && mudanca.slot && <span className="text-xs text-texto-suave"> · {mudanca.slot}</span>}
+      </p>
+    );
+  }
+  if (mudanca.tipo === "missao_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova missão: <strong>{mudanca.nome}</strong>{" "}
+          <span className="text-xs text-texto-suave">({STATUS_MISSAO_LABEL[mudanca.status]})</span>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+        {mudanca.objetivos.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.objetivos.map((o, i) => (
+              <li key={i}>{o.texto}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "missao_update") {
+    const rotulosAcao: Record<string, string> = {
+      add_objective: `novo objetivo: "${mudanca.objetivo}"`,
+      complete_objective: `objetivo concluído: "${mudanca.objetivo}"`,
+      fail_objective: `objetivo falhou: "${mudanca.objetivo}"`,
+      reopen_objective: `objetivo reaberto: "${mudanca.objetivo}"`,
+      set_status: `status → ${mudanca.status ? STATUS_MISSAO_LABEL[mudanca.status] : "?"}`,
+      append_note: `nova anotação: "${mudanca.nota}"`,
+      add_reward: `nova recompensa: "${mudanca.recompensa}"`,
+      reveal_reward: `recompensa revelada: "${mudanca.recompensa}"`,
+    };
+    return (
+      <p className="text-sm text-texto">
+        Missão <strong>{mudanca.nome}</strong>: {rotulosAcao[mudanca.acao]}
+      </p>
+    );
+  }
+  if (mudanca.tipo === "npc_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo NPC: <strong>{mudanca.nome}</strong>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "npc_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          <strong>{mudanca.nome}</strong>: +{mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)
+        </p>
+        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+          {mudanca.conhecimentoNovo.map((c, i) => (
+            <li key={i}>{c}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+  // relacao
+  const npcExistente = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
+  const antesRelacao = npcExistente?.relacoes[mudanca.stat] ?? 0;
+  const depoisRelacao = antesRelacao + mudanca.valor;
   return (
     <p className="text-sm text-texto">
-      {mudanca.acao === "equipar" ? "Equipar" : "Desequipar"} <strong>{mudanca.nome}</strong>
-      {mudanca.acao === "equipar" && mudanca.slot && <span className="text-xs text-texto-suave"> · {mudanca.slot}</span>}
+      {mudanca.npc}.{mudanca.stat}: {antesRelacao} → {depoisRelacao}{" "}
+      <input
+        type="number"
+        value={mudanca.valor}
+        onChange={(e) => onEditar(Number(e.target.value) || 0)}
+        className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+      />{" "}
+      <span className="text-xs text-texto-suave">{mudanca.motivo ? `— ${mudanca.motivo}` : ""}</span>
     </p>
   );
 }
+
+const STATUS_MISSAO_LABEL: Record<string, string> = {
+  disponivel: "disponível",
+  ativa: "ativa",
+  concluida: "concluída",
+  falhou: "falhou",
+  abandonada: "abandonada",
+  oculta: "oculta",
+};

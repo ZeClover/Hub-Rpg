@@ -5,7 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { aplicarMudancas } from "@/lib/campanha-livre/aplicar.ts";
-import { normalizarPersonagemLivre, type PersonagemLivre } from "@/lib/campanha-livre/tipos.ts";
+import {
+  normalizarPersonagemLivre,
+  type MissaoLivre,
+  type NpcLivre,
+  type PersonagemLivre,
+  type StatusMissao,
+  type StatusObjetivo,
+} from "@/lib/campanha-livre/tipos.ts";
 
 import { ImportarDoChat } from "./importar-do-chat";
 
@@ -149,6 +156,8 @@ export function FichaCampanhaLivre() {
       <Atributos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Moedas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Inventario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Missoes dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Npcs dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} />
     </main>
@@ -596,6 +605,383 @@ function Inventario({
         </div>
       )}
     </section>
+  );
+}
+
+const STATUS_MISSAO_OPCOES: { valor: StatusMissao; rotulo: string }[] = [
+  { valor: "disponivel", rotulo: "Disponível" },
+  { valor: "ativa", rotulo: "Ativa" },
+  { valor: "concluida", rotulo: "Concluída" },
+  { valor: "falhou", rotulo: "Falhou" },
+  { valor: "abandonada", rotulo: "Abandonada" },
+  { valor: "oculta", rotulo: "Oculta" },
+];
+
+const STATUS_OBJETIVO_OPCOES: { valor: StatusObjetivo; rotulo: string }[] = [
+  { valor: "pendente", rotulo: "Pendente" },
+  { valor: "concluido", rotulo: "Concluído" },
+  { valor: "falhou", rotulo: "Falhou" },
+];
+
+/* ---------- Missões ---------- */
+function Missoes({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNova, setNomeNova] = useState("");
+
+  function atualizarMissao(id: string, parcial: Partial<MissaoLivre>) {
+    onSalvar({ ...dados, missoes: dados.missoes.map((m) => (m.id === id ? { ...m, ...parcial } : m)) });
+  }
+
+  function removerMissao(id: string) {
+    onSalvar({ ...dados, missoes: dados.missoes.filter((m) => m.id !== id) });
+  }
+
+  function adicionarMissao() {
+    if (!nomeNova.trim()) return;
+    const nova: MissaoLivre = {
+      id: `missao-${Date.now().toString(36)}`,
+      nome: nomeNova.trim(),
+      status: "ativa",
+      objetivos: [],
+      recompensas: [],
+      anotacoes: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, missoes: [...dados.missoes, nova] });
+    setNomeNova("");
+  }
+
+  function atualizarObjetivo(missaoId: string, indice: number, status: StatusObjetivo) {
+    const missao = dados.missoes.find((m) => m.id === missaoId);
+    if (!missao) return;
+    const objetivos = missao.objetivos.map((o, i) => (i === indice ? { ...o, status } : o));
+    atualizarMissao(missaoId, { objetivos });
+  }
+
+  function removerObjetivo(missaoId: string, indice: number) {
+    const missao = dados.missoes.find((m) => m.id === missaoId);
+    if (!missao) return;
+    atualizarMissao(missaoId, { objetivos: missao.objetivos.filter((_, i) => i !== indice) });
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Missões</h2>
+      {dados.missoes.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma missão ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.missoes.map((missao) => (
+          <li key={missao.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">{missao.nome}</p>
+              {!somenteLeitura && (
+                <button
+                  type="button"
+                  onClick={() => removerMissao(missao.id)}
+                  className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
+            {missao.descricao && <p className="mt-1 text-sm text-texto-suave">{missao.descricao}</p>}
+            <select
+              value={missao.status}
+              disabled={somenteLeitura}
+              onChange={(e) => atualizarMissao(missao.id, { status: e.target.value as StatusMissao })}
+              className="mt-2 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto disabled:opacity-60"
+            >
+              {STATUS_MISSAO_OPCOES.map((o) => (
+                <option key={o.valor} value={o.valor}>
+                  {o.rotulo}
+                </option>
+              ))}
+            </select>
+
+            {missao.objetivos.length > 0 && (
+              <ul className="mt-3 space-y-1">
+                {missao.objetivos.map((objetivo, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-texto">
+                    <select
+                      value={objetivo.status}
+                      disabled={somenteLeitura}
+                      onChange={(e) => atualizarObjetivo(missao.id, i, e.target.value as StatusObjetivo)}
+                      className="rounded border border-borda bg-fundo px-1 py-0.5 text-xs text-texto disabled:opacity-60"
+                    >
+                      {STATUS_OBJETIVO_OPCOES.map((o) => (
+                        <option key={o.valor} value={o.valor}>
+                          {o.rotulo}
+                        </option>
+                      ))}
+                    </select>
+                    <span className={objetivo.status === "concluido" ? "line-through text-texto-suave" : ""}>{objetivo.texto}</span>
+                    {!somenteLeitura && (
+                      <button
+                        type="button"
+                        onClick={() => removerObjetivo(missao.id, i)}
+                        className="text-xs text-texto-suave hover:text-segredo"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!somenteLeitura && <ObjetivoNovo onAdicionar={(texto) => atualizarMissao(missao.id, { objetivos: [...missao.objetivos, { texto, status: "pendente" }] })} />}
+
+            {missao.recompensas.length > 0 && (
+              <p className="mt-2 text-xs text-texto-suave">Recompensas: {missao.recompensas.join(", ")}</p>
+            )}
+            {missao.anotacoes.length > 0 && (
+              <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+                {missao.anotacoes.map((a, i) => (
+                  <li key={i}>{a}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNova}
+            onChange={(e) => setNomeNova(e.target.value)}
+            placeholder="nome da missão"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button
+            type="button"
+            onClick={adicionarMissao}
+            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20"
+          >
+            + Missão
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ObjetivoNovo({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
+  const [texto, setTexto] = useState("");
+  return (
+    <div className="mt-2 flex gap-2">
+      <input
+        type="text"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+        placeholder="novo objetivo"
+        className="flex-1 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          if (!texto.trim()) return;
+          onAdicionar(texto.trim());
+          setTexto("");
+        }}
+        className="rounded border border-ambar/40 bg-ambar/10 px-2 py-1 text-xs text-ambar-forte hover:bg-ambar/20"
+      >
+        + Objetivo
+      </button>
+    </div>
+  );
+}
+
+/* ---------- NPCs ---------- */
+function Npcs({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNovo, setNomeNovo] = useState("");
+
+  function atualizarNpc(id: string, parcial: Partial<NpcLivre>) {
+    onSalvar({ ...dados, npcs: dados.npcs.map((n) => (n.id === id ? { ...n, ...parcial } : n)) });
+  }
+
+  function removerNpc(id: string) {
+    onSalvar({ ...dados, npcs: dados.npcs.filter((n) => n.id !== id) });
+  }
+
+  function adicionarNpc() {
+    if (!nomeNovo.trim()) return;
+    const novo: NpcLivre = {
+      id: `npc-${Date.now().toString(36)}`,
+      nome: nomeNovo.trim(),
+      conhecimento: [],
+      relacoes: {},
+      criadoEm: Date.now(),
+    };
+    onSalvar({ ...dados, npcs: [...dados.npcs, novo] });
+    setNomeNovo("");
+  }
+
+  function atualizarRelacao(npcId: string, stat: string, valor: number) {
+    const npc = dados.npcs.find((n) => n.id === npcId);
+    if (!npc) return;
+    atualizarNpc(npcId, { relacoes: { ...npc.relacoes, [stat]: valor } });
+  }
+
+  function removerRelacao(npcId: string, stat: string) {
+    const npc = dados.npcs.find((n) => n.id === npcId);
+    if (!npc) return;
+    const resto = { ...npc.relacoes };
+    delete resto[stat];
+    atualizarNpc(npcId, { relacoes: resto });
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">NPCs</h2>
+      {dados.npcs.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum NPC ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.npcs.map((npc) => (
+          <li key={npc.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">
+                {npc.nome}
+                {npc.primeiroEncontro && <span className="ml-2 text-xs font-normal text-texto-suave">· {npc.primeiroEncontro}</span>}
+              </p>
+              {!somenteLeitura && (
+                <button
+                  type="button"
+                  onClick={() => removerNpc(npc.id)}
+                  className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                >
+                  Remover
+                </button>
+              )}
+            </div>
+            {npc.descricao && <p className="mt-1 text-sm text-texto-suave">{npc.descricao}</p>}
+            {npc.tags && npc.tags.length > 0 && (
+              <p className="mt-1 flex flex-wrap gap-1">
+                {npc.tags.map((t) => (
+                  <span key={t} className="rounded-full border border-borda px-2 py-0.5 text-[11px] text-texto-suave">
+                    {t}
+                  </span>
+                ))}
+              </p>
+            )}
+
+            {npc.conhecimento.length > 0 && (
+              <ul className="mt-2 list-inside list-disc text-xs text-texto-suave">
+                {npc.conhecimento.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            )}
+            {!somenteLeitura && (
+              <ConhecimentoNovo onAdicionar={(texto) => atualizarNpc(npc.id, { conhecimento: [...npc.conhecimento, texto] })} />
+            )}
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {Object.entries(npc.relacoes).map(([stat, valor]) => (
+                <div key={stat} className="flex items-center gap-1 rounded border border-borda bg-fundo px-2 py-1">
+                  <span className="text-xs text-texto-suave">{stat}</span>
+                  <input
+                    type="number"
+                    value={valor}
+                    disabled={somenteLeitura}
+                    onChange={(e) => atualizarRelacao(npc.id, stat, Number(e.target.value) || 0)}
+                    className="w-14 rounded border border-borda bg-superficie px-1 py-0.5 text-xs text-texto disabled:opacity-60"
+                  />
+                  {!somenteLeitura && (
+                    <button type="button" onClick={() => removerRelacao(npc.id, stat)} className="text-xs text-texto-suave hover:text-segredo">
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            {!somenteLeitura && <RelacaoNova onAdicionar={(stat) => atualizarRelacao(npc.id, stat, 0)} />}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNovo}
+            onChange={(e) => setNomeNovo(e.target.value)}
+            placeholder="nome do NPC"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button
+            type="button"
+            onClick={adicionarNpc}
+            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20"
+          >
+            + NPC
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ConhecimentoNovo({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
+  const [texto, setTexto] = useState("");
+  return (
+    <div className="mt-2 flex gap-2">
+      <input
+        type="text"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+        placeholder="o que o jogador descobriu sobre este NPC"
+        className="flex-1 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          if (!texto.trim()) return;
+          onAdicionar(texto.trim());
+          setTexto("");
+        }}
+        className="rounded border border-ambar/40 bg-ambar/10 px-2 py-1 text-xs text-ambar-forte hover:bg-ambar/20"
+      >
+        + Conhecimento
+      </button>
+    </div>
+  );
+}
+
+function RelacaoNova({ onAdicionar }: { onAdicionar: (stat: string) => void }) {
+  const [stat, setStat] = useState("");
+  return (
+    <div className="mt-2 flex gap-2">
+      <input
+        type="text"
+        value={stat}
+        onChange={(e) => setStat(e.target.value)}
+        placeholder="relação (ex: trust)"
+        className="w-40 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          if (!stat.trim()) return;
+          onAdicionar(stat.trim());
+          setStat("");
+        }}
+        className="rounded border border-ambar/40 bg-ambar/10 px-2 py-1 text-xs text-ambar-forte hover:bg-ambar/20"
+      >
+        + Relação
+      </button>
+    </div>
   );
 }
 

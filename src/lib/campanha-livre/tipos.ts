@@ -41,6 +41,38 @@ export type NotaLivre = {
   criadaEm: number;
 };
 
+export type StatusMissao = "disponivel" | "ativa" | "concluida" | "falhou" | "abandonada" | "oculta";
+export type StatusObjetivo = "pendente" | "concluido" | "falhou";
+
+export type ObjetivoMissao = {
+  texto: string;
+  status: StatusObjetivo;
+};
+
+export type MissaoLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  status: StatusMissao;
+  objetivos: ObjetivoMissao[];
+  recompensas: string[];
+  anotacoes: string[];
+  criadaEm: number;
+};
+
+export type NpcLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  primeiroEncontro?: string;
+  tags?: string[];
+  /** Só o que o jogador já sabe sobre o NPC — nunca segredo de mestre (regra #55 do protocolo). */
+  conhecimento: string[];
+  /** Nomes livres (trust, proximity, o que a campanha usar) — igual a `atributos`. */
+  relacoes: Record<string, number>;
+  criadoEm: number;
+};
+
 /*
   Registro mínimo de importações já aplicadas — só o suficiente pra avisar
   "isso já foi importado antes" (regra #7 do protocolo). Um event log de
@@ -64,6 +96,8 @@ export type PersonagemLivre = {
   moedas: Record<string, number>;
   inventario: ItemLivre[];
   notas: NotaLivre[];
+  missoes: MissaoLivre[];
+  npcs: NpcLivre[];
   historicoImportacoes: ImportacaoAplicada[];
 };
 
@@ -77,6 +111,8 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     moedas: {},
     inventario: [],
     notas: [],
+    missoes: [],
+    npcs: [],
     historicoImportacoes: [],
   };
 }
@@ -97,6 +133,8 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     moedas: d.moedas && typeof d.moedas === "object" ? d.moedas : {},
     inventario: Array.isArray(d.inventario) ? d.inventario : [],
     notas: Array.isArray(d.notas) ? d.notas : [],
+    missoes: Array.isArray(d.missoes) ? d.missoes : [],
+    npcs: Array.isArray(d.npcs) ? d.npcs : [],
     historicoImportacoes: Array.isArray(d.historicoImportacoes) ? d.historicoImportacoes : [],
   };
 }

@@ -143,3 +143,65 @@ test("aplica currency change criando a moeda se não existir", () => {
   const { dados } = aplicarMudancas(ficha, mudancasDe("currency:\n  berries:\n    change: 500000"));
   assert.equal(dados.moedas.berries, 500000);
 });
+
+test("aplica missions_add com objetivos", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados, resumos } = aplicarMudancas(
+    ficha,
+    mudancasDe("missions_add:\n  - name: Pesquisa\n    status: active\n    objectives:\n      - text: Testar coesão"),
+  );
+  assert.equal(dados.missoes.length, 1);
+  assert.equal(dados.missoes[0].nome, "Pesquisa");
+  assert.equal(dados.missoes[0].status, "ativa");
+  assert.deepEqual(dados.missoes[0].objetivos, [{ texto: "Testar coesão", status: "pendente" }]);
+  assert.match(resumos[0], /Nova missão/);
+});
+
+test("missions_add não duplica missão com mesmo nome", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("missions_add:\n  - name: Pesquisa"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("missions_add:\n  - name: Pesquisa"));
+  assert.equal(segundo.dados.missoes.length, 1);
+});
+
+test("aplica missions_update: complete_objective, set_status, append_note, add_reward", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("missions_add:\n  - name: Pesquisa\n    objectives:\n      - text: Testar coesão"));
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("missions_update:\n  - name: Pesquisa\n    action: complete_objective\n    objective: Testar coesão"));
+  assert.equal(d2.missoes[0].objetivos[0].status, "concluido");
+
+  const { dados: d3 } = aplicarMudancas(d2, mudancasDe("missions_update:\n  - name: Pesquisa\n    action: set_status\n    status: completed"));
+  assert.equal(d3.missoes[0].status, "concluida");
+
+  const { dados: d4 } = aplicarMudancas(d3, mudancasDe("missions_update:\n  - name: Pesquisa\n    action: append_note\n    note: Concluída com sucesso."));
+  assert.deepEqual(d4.missoes[0].anotacoes, ["Concluída com sucesso."]);
+
+  const { dados: d5 } = aplicarMudancas(d4, mudancasDe("missions_update:\n  - name: Pesquisa\n    action: add_reward\n    reward: 100 berries"));
+  assert.deepEqual(d5.missoes[0].recompensas, ["100 berries"]);
+});
+
+test("aplica npcs_add e npcs_update", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Lina\n    description: Estudante."));
+  assert.equal(d1.npcs.length, 1);
+  assert.equal(d1.npcs[0].nome, "Lina");
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("npcs_update:\n  - name: Lina\n    known_information_add:\n      - Faz muitas anotações."));
+  assert.deepEqual(d2.npcs[0].conhecimento, ["Faz muitas anotações."]);
+});
+
+test("npcs_add não duplica NPC com mesmo nome", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Lina"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("npcs_add:\n  - name: Lina"));
+  assert.equal(segundo.dados.npcs.length, 1);
+});
+
+test("aplica relationships somando ao stat existente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.npcs.push({ id: "n1", nome: "Lina", conhecimento: [], relacoes: { trust: 2 }, criadoEm: 1 });
+  const { dados, resumos } = aplicarMudancas(ficha, mudancasDe("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1"));
+  assert.equal(dados.npcs[0].relacoes.trust, 3);
+  assert.match(resumos[0], /2 → 3/);
+});

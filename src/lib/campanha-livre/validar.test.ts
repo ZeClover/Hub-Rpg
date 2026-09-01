@@ -98,3 +98,76 @@ test("moeda ficando negativa vira warning, não bloqueia", () => {
   assert.ok(validadas[0].alertas.some((a) => a.nivel === "warning"));
   assert.equal(temErro(validadas[0]), false);
 });
+
+test("missions_update em missão inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Missão Fantasma\n    action: set_status\n    status: completed"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("complete_objective em objetivo inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.missoes.push({
+    id: "m1",
+    nome: "Pesquisa",
+    status: "ativa",
+    objetivos: [{ texto: "Testar coesão", status: "pendente" }],
+    recompensas: [],
+    anotacoes: [],
+    criadaEm: 1,
+  });
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Pesquisa\n    action: complete_objective\n    objective: Objetivo que não existe"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("complete_objective em objetivo existente não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.missoes.push({
+    id: "m1",
+    nome: "Pesquisa",
+    status: "ativa",
+    objetivos: [{ texto: "Testar coesão", status: "pendente" }],
+    recompensas: [],
+    anotacoes: [],
+    criadaEm: 1,
+  });
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Pesquisa\n    action: complete_objective\n    objective: Testar coesão"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), false);
+});
+
+test("npcs_update em NPC inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina\n    known_information_add:\n      - Algo novo."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("relationships com NPC inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("relationships com NPC existente não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.npcs.push({ id: "n1", nome: "Lina", conhecimento: [], relacoes: {}, criadoEm: 1 });
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), false);
+});

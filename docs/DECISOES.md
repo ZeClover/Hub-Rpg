@@ -1628,6 +1628,66 @@ edição manual de Atributos/Moedas/Equipado; os dois testes de Playwright
 da fatia anterior continuam passando sem regressão. `tsc --noEmit`,
 `npm run build` e `npm run lint` limpos.
 
+## 49. Campanha Livre — terceira fatia: Missões e NPCs (01/09/2026)
+
+Terceira fatia do protocolo HUB_UPDATE, escolhida pelo Zé entre três
+opções restantes (conhecimento/mundo e desfazer-com-event-log ficam
+documentadas no pacote original pra depois, decisão #26). Cobre o
+grupo "Missões" e "NPC" da especificação: `missions_add`,
+`missions_update`, `npcs_add`, `npcs_update`, `relationships`.
+
+**Dois campos novos na ficha, ambos listas** (diferente de
+`recursos`/`atributos`/`moedas`, que são mapas de nome livre — aqui
+cada missão e cada NPC precisa de identidade própria, então é lista de
+objetos com `id`): `missoes` e `npcs`.
+
+**Missão** guarda nome, descrição, status (disponível/ativa/concluída/
+falhou/abandonada/oculta — tradução direta dos seis valores do
+protocolo), uma lista de objetivos (texto + pendente/concluído/falhou)
+e duas listas de texto livre (recompensas, anotações). `missions_update`
+tem 8 ações possíveis (regra do protocolo): 6 mexem em objetivo/status/
+anotação/recompensa da missão, e `reveal_reward` foi simplificada pra
+se comportar igual a `add_reward` — esta fatia não modela recompensa
+oculta vs. revelada como dois estados, só uma lista de recompensas
+conhecidas, então "revelar" e "adicionar" dão no mesmo.
+
+**NPC** guarda nome, descrição, onde foi conhecido, tags, uma lista de
+"conhecimento" (regra #55 do protocolo: só o que o jogador já sabe,
+nunca segredo de mestre ainda não revelado) e `relacoes` — um mapa de
+nome livre (trust, proximity, o que a campanha usar), no mesmo estilo
+de `atributos`.
+
+**Toda mudança que referencia uma missão/NPC exige que ele já exista**
+na ficha atual (checado contra o estado de antes da importação, não
+contra outras mudanças do mesmo lote) — senão vira erro bloqueante,
+mesma regra já usada em `items_remove`/`items_update` desde fatias
+anteriores. Na prática: um `missions_update` pra uma missão criada no
+mesmo bloco de `missions_add` é rejeitado — o ChatGPT deve colocar os
+objetivos iniciais direto dentro de `missions_add.objectives`, não
+como uma atualização separada no mesmo bloco.
+
+Tudo também editável direto na ficha: seções "Missões" (com seletor de
+status por missão e por objetivo, e "+ Objetivo"/"+ Missão" manuais) e
+"NPCs" (relações como números editáveis igual a Atributos, "+
+Conhecimento"/"+ NPC" manuais).
+
+Testado: 23 testes automáticos novos (105 no total do projeto)
+cobrindo parser, validação e aplicação das 5 operações. Um teste de
+Playwright novo cobre duas importações em sequência (a primeira cria
+missão/NPC/relação, a segunda atualiza a missão já existente — provando
+na prática por que a mesma importação não funciona) mais a edição
+manual de status de objetivo/criação de missão/NPC; os três testes de
+Playwright das fatias anteriores continuam passando sem regressão.
+`tsc --noEmit`, `npm run build` e `npm run lint` limpos.
+
+**Nota técnica:** durante a verificação desta fatia, o servidor de
+produção rodando nesta sessão (`npm run start`) começou a servir
+arquivos estáticos com hash de um build anterior — cache incremental do
+Turbopack ficando incoerente entre builds sucessivos na mesma sessão de
+terminal, não um bug do código. Resolvido apagando `.next` e
+reconstruindo do zero; não afeta o Zé (cada deploy no Vercel já parte
+de um build limpo).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

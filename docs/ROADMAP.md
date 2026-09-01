@@ -378,6 +378,24 @@ passando.
     testes de Playwright da fatia anterior sem regressão. `tsc`, `next
     build` e lint limpos
 
+- [x] **Campanha Livre — terceira fatia: Missões e NPCs** (01/09/2026)
+      — decisão #49. Mais 5 operações do protocolo HUB_UPDATE:
+      `missions_add`, `missions_update`, `npcs_add`, `npcs_update`,
+      `relationships`.
+  - Campos novos: `missoes` (nome, status, objetivos, recompensas,
+    anotações) e `npcs` (descrição, conhecimento — só o que o jogador
+    sabe, regra #55 — e `relacoes`, mapa livre igual a Atributos)
+  - Toda referência a missão/NPC exige que ele já exista na ficha —
+    senão vira erro bloqueante, mesma regra de `items_remove`/
+    `items_update`
+  - Tudo também editável direto na ficha: seletor de status por
+    missão/objetivo, relações como números editáveis, "+ Missão"/"+
+    NPC"/"+ Objetivo"/"+ Conhecimento" manuais
+  - Testado: 23 testes automáticos novos (105 no total), 1 teste de
+    Playwright novo com duas importações em sequência + edição manual;
+    os 3 testes de Playwright das fatias anteriores sem regressão.
+    `tsc`, `next build` e lint limpos
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

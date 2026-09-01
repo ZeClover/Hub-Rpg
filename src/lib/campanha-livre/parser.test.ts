@@ -308,3 +308,109 @@ test("currency: set gera warning", () => {
   assert.equal(r.ok, true);
   if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "warning"));
 });
+
+test("missions_add: com objetivos e status", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "missions_add:\n  - name: Pesquisa sobre Coesão\n    description: Investigar a relação.\n    status: active\n    objectives:\n      - text: Testar coesão\n        status: pending",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "missao_add");
+    if (m.tipo === "missao_add") {
+      assert.equal(m.nome, "Pesquisa sobre Coesão");
+      assert.equal(m.status, "ativa");
+      assert.deepEqual(m.objetivos, [{ texto: "Testar coesão", status: "pendente" }]);
+    }
+  }
+});
+
+test("missions_add: status desconhecido gera error", () => {
+  const r = interpretarHubUpdate(bloco("missions_add:\n  - name: Missão X\n    status: not_a_real_status"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("missions_update: complete_objective com objective", () => {
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Pesquisa sobre Coesão\n    action: complete_objective\n    objective: Testar coesão"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "missao_update");
+    if (m.tipo === "missao_update") {
+      assert.equal(m.acao, "complete_objective");
+      assert.equal(m.objetivo, "Testar coesão");
+      assert.equal(m.alertas.length, 0);
+    }
+  }
+});
+
+test("missions_update: ação desconhecida gera error", () => {
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Missão X\n    action: dance"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("missions_update: complete_objective sem objective gera error", () => {
+  const r = interpretarHubUpdate(bloco("missions_update:\n  - name: Missão X\n    action: complete_objective"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("npcs_add: com tags e first_met", () => {
+  const r = interpretarHubUpdate(bloco("npcs_add:\n  - name: Lina\n    description: Estudante.\n    first_met: Entrada\n    tags:\n      - estudante"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "npc_add");
+    if (m.tipo === "npc_add") {
+      assert.equal(m.nome, "Lina");
+      assert.equal(m.primeiroEncontro, "Entrada");
+      assert.deepEqual(m.tags, ["estudante"]);
+    }
+  }
+});
+
+test("npcs_add: sem name gera error", () => {
+  const r = interpretarHubUpdate(bloco("npcs_add:\n  - description: Sem nome"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("npcs_update: known_information_add", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina\n    known_information_add:\n      - Faz muitas anotações."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "npc_update");
+    if (m.tipo === "npc_update") assert.deepEqual(m.conhecimentoNovo, ["Faz muitas anotações."]);
+  }
+});
+
+test("npcs_update: sem known_information_add gera error", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("relationships: change válido", () => {
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1\n    reason: Trabalharam juntos."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "relacao");
+    if (m.tipo === "relacao") {
+      assert.equal(m.npc, "Lina");
+      assert.equal(m.stat, "trust");
+      assert.equal(m.valor, 1);
+    }
+  }
+});
+
+test("relationships: sem change gera error", () => {
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
