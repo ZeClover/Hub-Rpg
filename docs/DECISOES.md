@@ -1531,6 +1531,63 @@ lint — não por um clique de verdade no navegador com uma campanha e
 jogadores reais. Fica pro Zé confirmar visualmente na primeira sessão
 em que usar.
 
+## 47. Campanha Livre — sistema novo para importar do ChatGPT (01/09/2026)
+
+O Zé trouxe um pacote de especificação (`HUB_UPDATE`) para as campanhas
+de mesa solo, onde o ChatGPT faz de mestre: ele responde com um bloco
+`[HUB_UPDATE]...[/HUB_UPDATE]` em YAML (XP, recursos, itens, etc.) que
+o jogador cola no Hub, revisa e confirma.
+
+**Virou um sistema novo, "Campanha Livre", em vez de entrar num dos
+quatro sistemas existentes.** O vocabulário do pacote (XP genérico,
+"recursos" de nome livre, missões, NPCs, bestiário próprio) não é regra
+de nenhum sistema de RPG específico — é o formato que o ChatGPT usa
+como mestre livre. Colocar isso dentro do Kaizoku ou do Fabula Ultima
+teria espalhado uma coisa genérica dentro de um módulo de sistema
+específico, contra a decisão #17. Perguntei ao Zé antes de começar; ele
+confirmou sistema novo.
+
+**Primeira fatia: só o núcleo mínimo** (decisão #26 — o pacote descreve
+quase vinte tipos de operação, undo, snapshot, event log; isso tudo
+fica documentado no pacote pra depois). O que está no ar agora: colar
+o texto → interpretar o bloco YAML → revisar cada mudança numa lista
+com checkbox (com o "antes → depois" de cada valor, editável antes de
+confirmar) → confirmar → salva na ficha. Cinco operações: `xp`,
+`resources`, `items_add`, `items_remove`, `notes_add`.
+
+Regras que vieram do pacote e foram mantidas: `version: 1` obrigatório
+no cabeçalho; delta (`add`/`remove`/`change`) é preferido a valor
+absoluto (`set` dá aviso); detecção de duplicidade por `update_id` ou
+hash do bloco colado, bloqueando confirmação de novo até a pessoa
+escolher "Importar mesmo assim"; mudança com erro (ex.: remover item
+que não existe no inventário) nunca é aplicável, mesmo marcada; um
+campo que o Hub ainda não entende é ignorado com aviso, nunca quebra o
+resto do bloco.
+
+**Ficha nova, arquitetura nova pro Hub.** É o primeiro dos cinco
+sistemas que não é um HTML estático em `/public` — é uma página
+Next.js normal (`/campanha-livre`), porque o fluxo de revisão em
+etapas (colar → interpretar → editar antes de confirmar → histórico)
+pedia estado de componente que dava mais trabalho em JS puro do que em
+React. O contrato com o resto do Hub continua o mesmo: `?id=` na URL,
+ler/salvar por `/api/personagens/[id]`, mesma checagem de permissão de
+sempre (decisão #13) — só quem é dono edita ou importa; quem só tem
+acesso compartilhado vê tudo em modo leitura.
+
+Testado: 62 testes automáticos (`node --test`) cobrindo o parser, a
+validação contra o estado atual da ficha e a aplicação das mudanças.
+Dois testes de Playwright novos: um fluxo completo (colar bloco com as
+cinco operações, conferir contas de antes/depois no preview, confirmar,
+conferir o PATCH final, reabrir com o mesmo bloco e confirmar que trava
+por duplicidade) e um do modo leitura (confirma que os botões de editar
+e o de importar somem, campos ficam desabilitados). `tsc --noEmit`,
+`npm run build` (rota aparece prerenderizada) e `npm run lint` limpos.
+
+**Pendência de banco:** a migração `0009_sistema_campanha_livre.sql`
+cadastra o sistema na tabela `sistemas` — sem rodar ela no Supabase,
+criar uma ficha de Campanha Livre falha com "sistema desconhecido",
+mesma situação já vista nas migrações 0007/0008.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

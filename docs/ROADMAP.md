@@ -341,6 +341,27 @@ passando.
     build` e lint limpos. Sem acesso a Supabase/login nesta sessão — a
     tela em si fica pro Zé confirmar visualmente na primeira sessão
 
+- [x] **Campanha Livre — núcleo mínimo de importação do ChatGPT**
+      (01/09/2026) — decisão #47. Sistema novo (5º do Hub), pra quem
+      joga campanha solo com o ChatGPT de mestre.
+  - Página `/campanha-livre` (primeira ficha do Hub em Next.js/React em
+    vez de HTML estático), com Modo Hub (`?id=`, `/api/personagens/[id]`)
+  - Colar o bloco `[HUB_UPDATE]` → interpretar → revisar cada mudança
+    numa lista com checkbox e "antes → depois" editável → confirmar →
+    salva. Só 5 operações desta fatia: `xp`, `resources`, `items_add`,
+    `items_remove`, `notes_add` — o resto do pacote (undo, snapshot,
+    event log, as outras ~15 operações) fica documentado pra depois
+    (decisão #26)
+  - Detecção de duplicidade por `update_id`/hash, mudança com erro nunca
+    aplicável mesmo marcada, campo desconhecido ignorado com aviso sem
+    quebrar o resto do bloco, modo leitura pra quem só tem acesso
+    compartilhado
+  - Testado: 62 testes automáticos (`node --test`), 2 testes de
+    Playwright novos (fluxo completo de importação + modo leitura).
+    `tsc`, `next build` e lint limpos
+  - Pendência: rodar `0009_sistema_campanha_livre.sql` no Supabase antes
+    de criar a primeira ficha (mesma situação das migrações 0007/0008)
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

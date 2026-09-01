@@ -85,6 +85,18 @@ export const SISTEMAS: Sistema[] = [
     campoVidaInimigo: ["atual", "pv"],
   },
   {
+    chave: "campanha-livre",
+    nome: "Campanha Livre",
+    descricao:
+      "Campanhas narradas livremente (ChatGPT como Mestre, geralmente solo) — sem um livro de regras fechado. Editada principalmente colando o que o ChatGPT escreveu.",
+    ficha: "/campanha-livre",
+    situacao: "em-construcao",
+    salvaNoHub: true,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+  },
+  {
     chave: "thryliki-chelona",
     nome: "Thrylikí Chelóna",
     descricao:
