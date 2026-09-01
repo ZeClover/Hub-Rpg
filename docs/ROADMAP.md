@@ -360,7 +360,23 @@ passando.
     Playwright novos (fluxo completo de importação + modo leitura).
     `tsc`, `next build` e lint limpos
   - Pendência: rodar `0009_sistema_campanha_livre.sql` no Supabase antes
-    de criar a primeira ficha (mesma situação das migrações 0007/0008)
+    de criar a primeira ficha (mesma situação das migrações 0007/0008) —
+    **feito pelo Zé em 01/09/2026**
+
+- [x] **Campanha Livre — segunda fatia: Nível e ficha** (01/09/2026) —
+      decisão #48. Mais 5 operações do protocolo HUB_UPDATE: `level`,
+      `attributes`, `items_update`, `equipment`, `currency`.
+  - Campos novos na ficha: `atributos` (FOR, INT, sem teto) e `moedas`
+    (berries, sem teto) — mapas de nome livre, mesmo estilo de
+    `recursos`. Item ganhou `equipado`/`slot`
+  - `items_update` mostra antes → depois de cada campo mudado;
+    `equipment.equip`/`unequip` fazem a mesma coisa com nome de slot
+  - Tudo também editável direto na ficha, sem o ChatGPT: seções
+    Atributos e Moedas, caixinha "Equipado" + slot no Inventário
+  - Testado: 20 testes automáticos novos (82 no total), 1 teste de
+    Playwright novo com as 5 operações combinadas + edição manual; os 2
+    testes de Playwright da fatia anterior sem regressão. `tsc`, `next
+    build` e lint limpos
 
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão

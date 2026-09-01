@@ -196,3 +196,115 @@ test("hash muda quando o conteúdo muda", () => {
 test("extrairBlocoHubUpdate devolve null sem delimitadores", () => {
   assert.equal(extrairBlocoHubUpdate("sem bloco nenhum aqui"), null);
 });
+
+test("level: change válido", () => {
+  const r = interpretarHubUpdate(bloco("level:\n  change: 1\n  reason: Progressão"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "nivel");
+    if (m.tipo === "nivel") {
+      assert.equal(m.operacao, "change");
+      assert.equal(m.valor, 1);
+      assert.equal(m.motivo, "Progressão");
+      assert.equal(m.alertas.length, 0);
+    }
+  }
+});
+
+test("level: sem change nem set gera error", () => {
+  const r = interpretarHubUpdate(bloco("level:\n  reason: Progressão"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("attributes: change com reason", () => {
+  const r = interpretarHubUpdate(bloco("attributes:\n  - attribute: INT\n    change: 1\n    reason: Evolução permanente"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "atributo");
+    if (m.tipo === "atributo") {
+      assert.equal(m.nome, "INT");
+      assert.equal(m.operacao, "change");
+      assert.equal(m.valor, 1);
+    }
+  }
+});
+
+test("attributes: sem 'attribute' gera error", () => {
+  const r = interpretarHubUpdate(bloco("attributes:\n  - change: 1"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("items_update: changes reconhecidos", () => {
+  const r = interpretarHubUpdate(
+    bloco("items_update:\n  - name: Luva Catalisadora\n    changes:\n      equipped: true\n      description: Catalisador principal."),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "item_update");
+    if (m.tipo === "item_update") {
+      assert.equal(m.nome, "Luva Catalisadora");
+      assert.equal(m.campos.equipado, true);
+      assert.equal(m.campos.descricao, "Catalisador principal.");
+    }
+  }
+});
+
+test("items_update: sem nenhum campo reconhecido em changes gera error", () => {
+  const r = interpretarHubUpdate(bloco("items_update:\n  - name: Luva\n    changes:\n      unknown_field: 1"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("equipment: equip com slot", () => {
+  const r = interpretarHubUpdate(bloco("equipment:\n  equip:\n    - item: Luva Catalisadora\n      slot: hand"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "equipamento");
+    if (m.tipo === "equipamento") {
+      assert.equal(m.acao, "equipar");
+      assert.equal(m.nome, "Luva Catalisadora");
+      assert.equal(m.slot, "hand");
+    }
+  }
+});
+
+test("equipment: unequip", () => {
+  const r = interpretarHubUpdate(bloco("equipment:\n  unequip:\n    - item: Luva Catalisadora"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "equipamento");
+    if (m.tipo === "equipamento") assert.equal(m.acao, "desequipar");
+  }
+});
+
+test("equipment: sem 'item' gera error", () => {
+  const r = interpretarHubUpdate(bloco("equipment:\n  equip:\n    - slot: hand"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("currency: change válido", () => {
+  const r = interpretarHubUpdate(bloco("currency:\n  berries:\n    change: 500000\n    reason: Recompensa"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "moeda");
+    if (m.tipo === "moeda") {
+      assert.equal(m.nome, "berries");
+      assert.equal(m.valor, 500000);
+    }
+  }
+});
+
+test("currency: set gera warning", () => {
+  const r = interpretarHubUpdate(bloco("currency:\n  berries:\n    set: 1000"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "warning"));
+});

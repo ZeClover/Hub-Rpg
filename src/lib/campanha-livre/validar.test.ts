@@ -59,3 +59,42 @@ test("remover item existente em quantidade exata não gera alerta extra", () => 
   const validadas = validarContraPersonagem(r.mudancas, ficha);
   assert.equal(validadas[0].alertas.length, 0);
 });
+
+test("items_update em item inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("items_update:\n  - name: Item Que Não Existe\n    changes:\n      equipped: true"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("items_update em item existente não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.inventario.push({ id: "i1", nome: "Luva Catalisadora", quantidade: 1 });
+  const r = interpretarHubUpdate(bloco("items_update:\n  - name: Luva Catalisadora\n    changes:\n      equipped: true"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), false);
+});
+
+test("equipar item inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("equipment:\n  equip:\n    - item: Luva Catalisadora\n      slot: hand"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("moeda ficando negativa vira warning, não bloqueia", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.moedas.berries = 100;
+  const r = interpretarHubUpdate(bloco("currency:\n  berries:\n    change: -500"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas[0].alertas.some((a) => a.nivel === "warning"));
+  assert.equal(temErro(validadas[0]), false);
+});

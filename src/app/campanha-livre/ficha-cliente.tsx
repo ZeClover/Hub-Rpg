@@ -146,6 +146,8 @@ export function FichaCampanhaLivre() {
       )}
 
       <Recursos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Atributos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Moedas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Inventario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} />
@@ -309,6 +311,166 @@ function Recursos({
   );
 }
 
+/* ---------- Atributos: livres, sem teto (FOR, INT, o que a campanha usar) ---------- */
+function Atributos({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNovo, setNomeNovo] = useState("");
+  const nomes = Object.keys(dados.atributos);
+
+  function adicionar() {
+    const chave = nomeNovo.trim();
+    if (!chave || dados.atributos[chave] !== undefined) return;
+    onSalvar({ ...dados, atributos: { ...dados.atributos, [chave]: 0 } });
+    setNomeNovo("");
+  }
+
+  function remover(nome: string) {
+    const resto = { ...dados.atributos };
+    delete resto[nome];
+    onSalvar({ ...dados, atributos: resto });
+  }
+
+  function atualizar(nome: string, valor: number) {
+    onSalvar({ ...dados, atributos: { ...dados.atributos, [nome]: valor } });
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Atributos</h2>
+      <p className="mt-1 text-sm text-texto-suave">FOR, INT, o que a sua campanha usar — sem teto fixo.</p>
+      {nomes.length === 0 && <p className="mt-3 text-sm text-texto-suave">Nenhum atributo ainda.</p>}
+      <div className="mt-3 flex flex-wrap gap-3">
+        {nomes.map((nome) => (
+          <div key={nome} className="flex items-center gap-2 rounded-lg border border-borda bg-superficie px-3 py-2">
+            <span className="font-titulo text-sm uppercase text-texto">{nome}</span>
+            <input
+              type="number"
+              value={dados.atributos[nome]}
+              disabled={somenteLeitura}
+              onChange={(e) => atualizar(nome, Number(e.target.value) || 0)}
+              className="w-16 rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto disabled:opacity-60"
+            />
+            {!somenteLeitura && (
+              <button
+                type="button"
+                onClick={() => remover(nome)}
+                className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNovo}
+            onChange={(e) => setNomeNovo(e.target.value)}
+            placeholder="nome do atributo (ex: FOR)"
+            className="rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button
+            type="button"
+            onClick={adicionar}
+            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20"
+          >
+            + Atributo
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Moedas: berries, ouro, o que a campanha usar — só um total, sem teto ---------- */
+function Moedas({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNovo, setNomeNovo] = useState("");
+  const nomes = Object.keys(dados.moedas);
+
+  function adicionar() {
+    const chave = nomeNovo.trim();
+    if (!chave || dados.moedas[chave] !== undefined) return;
+    onSalvar({ ...dados, moedas: { ...dados.moedas, [chave]: 0 } });
+    setNomeNovo("");
+  }
+
+  function remover(nome: string) {
+    const resto = { ...dados.moedas };
+    delete resto[nome];
+    onSalvar({ ...dados, moedas: resto });
+  }
+
+  function atualizar(nome: string, valor: number) {
+    onSalvar({ ...dados, moedas: { ...dados.moedas, [nome]: valor } });
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Moedas</h2>
+      <p className="mt-1 text-sm text-texto-suave">Berries, ouro, o que a sua campanha usar.</p>
+      {nomes.length === 0 && <p className="mt-3 text-sm text-texto-suave">Nenhuma moeda ainda.</p>}
+      <div className="mt-3 flex flex-wrap gap-3">
+        {nomes.map((nome) => (
+          <div key={nome} className="flex items-center gap-2 rounded-lg border border-borda bg-superficie px-3 py-2">
+            <span className="font-titulo text-sm capitalize text-texto">{nome}</span>
+            <input
+              type="number"
+              value={dados.moedas[nome]}
+              disabled={somenteLeitura}
+              onChange={(e) => atualizar(nome, Number(e.target.value) || 0)}
+              className="w-24 rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto disabled:opacity-60"
+            />
+            {!somenteLeitura && (
+              <button
+                type="button"
+                onClick={() => remover(nome)}
+                className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNovo}
+            onChange={(e) => setNomeNovo(e.target.value)}
+            placeholder="nome da moeda (ex: berries)"
+            className="rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button
+            type="button"
+            onClick={adicionar}
+            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20"
+          >
+            + Moeda
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
 /* ---------- Inventário ---------- */
 function Inventario({
   dados,
@@ -339,6 +501,17 @@ function Inventario({
     onSalvar({ ...dados, inventario: dados.inventario.filter((i) => i.id !== id) });
   }
 
+  function alternarEquipado(id: string) {
+    onSalvar({
+      ...dados,
+      inventario: dados.inventario.map((i) => (i.id === id ? { ...i, equipado: !i.equipado, slot: i.equipado ? undefined : i.slot } : i)),
+    });
+  }
+
+  function mudarSlot(id: string, slot: string) {
+    onSalvar({ ...dados, inventario: dados.inventario.map((i) => (i.id === id ? { ...i, slot: slot || undefined } : i)) });
+  }
+
   return (
     <section className="mt-8">
       <h2 className="font-titulo text-xl">Inventário</h2>
@@ -349,6 +522,7 @@ function Inventario({
             <div>
               <p className="text-texto">
                 {item.nome} <span className="text-texto-suave">×{item.quantidade}</span>
+                {item.equipado && <span className="ml-2 text-xs text-ambar-forte">equipado{item.slot ? ` · ${item.slot}` : ""}</span>}
               </p>
               {(item.categoria || item.descricao) && (
                 <p className="mt-1 text-xs text-texto-suave">
@@ -365,6 +539,23 @@ function Inventario({
                     </span>
                   ))}
                 </p>
+              )}
+              {!somenteLeitura && (
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <label className="flex items-center gap-1 text-texto-suave">
+                    <input type="checkbox" checked={!!item.equipado} onChange={() => alternarEquipado(item.id)} />
+                    Equipado
+                  </label>
+                  {item.equipado && (
+                    <input
+                      type="text"
+                      value={item.slot ?? ""}
+                      onChange={(e) => mudarSlot(item.id, e.target.value)}
+                      placeholder="onde (ex: mão)"
+                      className="w-28 rounded border border-borda bg-fundo px-2 py-1 text-texto placeholder:text-texto-suave"
+                    />
+                  )}
+                </div>
               )}
             </div>
             {!somenteLeitura && (

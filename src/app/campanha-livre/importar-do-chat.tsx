@@ -64,7 +64,9 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
     setMudancas((atual) =>
       (atual ?? []).map((m) => {
         if (m.id !== id) return m;
-        if (m.tipo === "xp" || m.tipo === "recurso") return { ...m, valor: novoValor };
+        if (m.tipo === "xp" || m.tipo === "recurso" || m.tipo === "nivel" || m.tipo === "atributo" || m.tipo === "moeda") {
+          return { ...m, valor: novoValor };
+        }
         if (m.tipo === "item_add" || m.tipo === "item_remove") return { ...m, quantidade: novoValor };
         return m;
       }),
@@ -325,14 +327,98 @@ function DescricaoMudanca({
       </p>
     );
   }
-  // nota_add
-  return (
-    <div className="text-sm text-texto">
-      <p>
-        Nova colinha: <strong>{mudanca.titulo}</strong>
-        {mudanca.categoria && <span className="text-xs text-texto-suave"> · {mudanca.categoria}</span>}
+  if (mudanca.tipo === "nota_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova colinha: <strong>{mudanca.titulo}</strong>
+          {mudanca.categoria && <span className="text-xs text-texto-suave"> · {mudanca.categoria}</span>}
+        </p>
+        <p className="mt-1 text-xs text-texto-suave">{mudanca.texto}</p>
+      </div>
+    );
+  }
+  if (mudanca.tipo === "nivel") {
+    const depois = mudanca.operacao === "set" ? mudanca.valor : dados.nivel + mudanca.valor;
+    return (
+      <p className="text-sm text-texto">
+        Nível: {dados.nivel} → {depois}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">({mudanca.operacao}{mudanca.motivo ? ` — ${mudanca.motivo}` : ""})</span>
       </p>
-      <p className="mt-1 text-xs text-texto-suave">{mudanca.texto}</p>
-    </div>
+    );
+  }
+  if (mudanca.tipo === "atributo") {
+    const antes = dados.atributos[mudanca.nome] ?? 0;
+    const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+    return (
+      <p className="text-sm text-texto">
+        {mudanca.nome}: {antes} → {depois}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">({mudanca.operacao}{mudanca.motivo ? ` — ${mudanca.motivo}` : ""})</span>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "moeda") {
+    const antes = dados.moedas[mudanca.nome] ?? 0;
+    const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+    return (
+      <p className="text-sm text-texto">
+        {mudanca.nome}: {antes} → {depois}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">({mudanca.operacao}{mudanca.motivo ? ` — ${mudanca.motivo}` : ""})</span>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "item_update") {
+    const existente = dados.inventario.find((item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+    const rotulos: Record<string, string> = {
+      descricao: "descrição",
+      categoria: "categoria",
+      raridade: "raridade",
+      origem: "origem",
+      notas: "notas",
+      quantidade: "quantidade",
+      equipado: "equipado",
+    };
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Atualizar <strong>{mudanca.nome}</strong>
+        </p>
+        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+          {Object.entries(mudanca.campos).map(([campo, valor]) => {
+            const antes = existente ? (existente as unknown as Record<string, unknown>)[campo] : undefined;
+            return (
+              <li key={campo}>
+                {rotulos[campo] ?? campo}: {String(antes ?? "—")} → {String(valor)}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+  // equipamento
+  return (
+    <p className="text-sm text-texto">
+      {mudanca.acao === "equipar" ? "Equipar" : "Desequipar"} <strong>{mudanca.nome}</strong>
+      {mudanca.acao === "equipar" && mudanca.slot && <span className="text-xs text-texto-suave"> · {mudanca.slot}</span>}
+    </p>
   );
 }

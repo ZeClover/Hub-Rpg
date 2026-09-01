@@ -26,6 +26,9 @@ export type ItemLivre = {
   origem?: string;
   tags?: string[];
   notas?: string;
+  equipado?: boolean;
+  /** Onde está equipado (ex: "mão", "cabeça") — só faz sentido se `equipado` for true. */
+  slot?: string;
 };
 
 export type NotaLivre = {
@@ -55,6 +58,10 @@ export type PersonagemLivre = {
   xp: number;
   nivel: number;
   recursos: Record<string, RecursoLivre>;
+  /** Nomes livres, definidos pela campanha (ex: FOR, INT) — igual a `recursos`, mas sem teto. */
+  atributos: Record<string, number>;
+  /** Moedas da campanha (ex: berries, ouro) — só um total, sem teto. */
+  moedas: Record<string, number>;
   inventario: ItemLivre[];
   notas: NotaLivre[];
   historicoImportacoes: ImportacaoAplicada[];
@@ -66,6 +73,8 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     xp: 0,
     nivel: 1,
     recursos: {},
+    atributos: {},
+    moedas: {},
     inventario: [],
     notas: [],
     historicoImportacoes: [],
@@ -84,6 +93,8 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     xp: typeof d.xp === "number" ? d.xp : 0,
     nivel: typeof d.nivel === "number" ? d.nivel : 1,
     recursos: d.recursos && typeof d.recursos === "object" ? d.recursos : {},
+    atributos: d.atributos && typeof d.atributos === "object" ? d.atributos : {},
+    moedas: d.moedas && typeof d.moedas === "object" ? d.moedas : {},
     inventario: Array.isArray(d.inventario) ? d.inventario : [],
     notas: Array.isArray(d.notas) ? d.notas : [],
     historicoImportacoes: Array.isArray(d.historicoImportacoes) ? d.historicoImportacoes : [],

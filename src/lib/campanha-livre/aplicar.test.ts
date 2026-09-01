@@ -97,3 +97,49 @@ test("não muta o objeto original", () => {
   aplicarMudancas(ficha, mudancasDe("items_add:\n  - name: Poção\n    quantity: 1"));
   assert.deepEqual(ficha, congelado);
 });
+
+test("aplica level change e set", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.nivel = 3;
+  assert.equal(aplicarMudancas(ficha, mudancasDe("level:\n  change: 1")).dados.nivel, 4);
+  assert.equal(aplicarMudancas(ficha, mudancasDe("level:\n  set: 10")).dados.nivel, 10);
+});
+
+test("aplica attributes criando o atributo se não existir e somando se já existir", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("attributes:\n  - attribute: INT\n    change: 1"));
+  assert.equal(primeiro.dados.atributos.INT, 1);
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("attributes:\n  - attribute: INT\n    change: 2"));
+  assert.equal(segundo.dados.atributos.INT, 3);
+});
+
+test("aplica items_update trocando só os campos enviados", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.inventario.push({ id: "i1", nome: "Luva Catalisadora", quantidade: 1, categoria: "equipamento" });
+  const { dados, resumos } = aplicarMudancas(
+    ficha,
+    mudancasDe("items_update:\n  - name: Luva Catalisadora\n    changes:\n      equipped: true\n      description: Catalisador principal."),
+  );
+  assert.equal(dados.inventario[0].equipado, true);
+  assert.equal(dados.inventario[0].descricao, "Catalisador principal.");
+  assert.equal(dados.inventario[0].categoria, "equipamento");
+  assert.match(resumos[0], /atualizado/);
+});
+
+test("aplica equipment.equip e equipment.unequip", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.inventario.push({ id: "i1", nome: "Luva Catalisadora", quantidade: 1 });
+  const { dados } = aplicarMudancas(ficha, mudancasDe("equipment:\n  equip:\n    - item: Luva Catalisadora\n      slot: hand"));
+  assert.equal(dados.inventario[0].equipado, true);
+  assert.equal(dados.inventario[0].slot, "hand");
+
+  const { dados: dados2 } = aplicarMudancas(dados, mudancasDe("equipment:\n  unequip:\n    - item: Luva Catalisadora"));
+  assert.equal(dados2.inventario[0].equipado, false);
+  assert.equal(dados2.inventario[0].slot, undefined);
+});
+
+test("aplica currency change criando a moeda se não existir", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("currency:\n  berries:\n    change: 500000"));
+  assert.equal(dados.moedas.berries, 500000);
+});

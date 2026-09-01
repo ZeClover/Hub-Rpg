@@ -1586,7 +1586,47 @@ e o de importar somem, campos ficam desabilitados). `tsc --noEmit`,
 **Pendência de banco:** a migração `0009_sistema_campanha_livre.sql`
 cadastra o sistema na tabela `sistemas` — sem rodar ela no Supabase,
 criar uma ficha de Campanha Livre falha com "sistema desconhecido",
-mesma situação já vista nas migrações 0007/0008.
+mesma situação já vista nas migrações 0007/0008. **Rodada pelo Zé em
+01/09/2026** — confirmada com "Success. No rows returned."
+
+## 48. Campanha Livre — segunda fatia: Nível e ficha (01/09/2026)
+
+Segunda fatia do protocolo HUB_UPDATE, escolhida pelo Zé entre quatro
+opções (a outras três — missões/NPCs, conhecimento/mundo, desfazer com
+event log — ficam documentadas no pacote original pra depois, decisão
+#26). Cobre o grupo "Personagem/Inventário" que faltava da
+especificação: `level`, `attributes`, `items_update`, `equipment`,
+`currency`.
+
+**Dois campos novos na ficha, no mesmo formato de `recursos`** (mapa de
+nome livre, decidido pela campanha, não uma lista fixa): `atributos`
+(ex: FOR, INT — sem teto, diferente de `recursos` que tem `maximo`) e
+`moedas` (ex: berries — só um total). `nivel` já existia desde a fatia
+mínima; agora o protocolo pode alterá-lo via `level.change`/`level.set`
+além de editar direto no cabeçalho da ficha.
+
+**Item ganhou `equipado` e `slot`.** `items_update.changes` aceita um
+subconjunto de campos do item (descrição, categoria, raridade, origem,
+notas, quantidade, e o booleano `equipped`) e mostra antes → depois de
+cada campo mudado no preview (regra #15 do protocolo). `equipment.equip`
+e `equipment.unequip` fazem a mesma coisa de forma mais específica — com
+o nome do slot (ex: "hand"). As duas formas convivem porque o pacote
+define os dois jeitos de mexer no mesmo estado; ambas passam pela mesma
+validação (item precisa existir no inventário, senão vira erro
+bloqueante, igual a `items_remove` desde a fatia mínima).
+
+Todos os campos novos também dá pra editar direto na ficha, sem passar
+pelo ChatGPT: seções "Atributos" e "Moedas" (adicionar/remover/editar,
+igual a Recursos) e uma caixinha "Equipado" com campo de slot em cada
+item do Inventário.
+
+Testado: 20 testes automáticos novos (82 no total do projeto) cobrindo
+parser, validação e aplicação das 5 operações. Um teste de Playwright
+novo cobre o fluxo completo de importação com as 5 operações
+combinadas (nível, atributo, item atualizado, item equipado, moeda) e a
+edição manual de Atributos/Moedas/Equipado; os dois testes de Playwright
+da fatia anterior continuam passando sem regressão. `tsc --noEmit`,
+`npm run build` e `npm run lint` limpos.
 
 ## 31. Restrições registradas
 

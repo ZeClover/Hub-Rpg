@@ -71,6 +71,56 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "item_update") {
+      const existente = atual.inventario.find(
+        (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
+      );
+      if (!existente) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `"${mudanca.nome}" não está no inventário — não dá pra atualizar.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "equipamento") {
+      const existente = atual.inventario.find(
+        (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
+      );
+      if (!existente) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "error" as const,
+              mensagem: `"${mudanca.nome}" não está no inventário — não dá pra ${mudanca.acao === "equipar" ? "equipar" : "desequipar"}.`,
+            },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "moeda" && mudanca.operacao === "change") {
+      const antes = atual.moedas[mudanca.nome] ?? 0;
+      const depois = antes + mudanca.valor;
+      if (depois < 0) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "warning" as const,
+              mensagem: `Vai ficar negativo: ${antes} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor} = ${depois}.`,
+            },
+          ],
+        };
+      }
+    }
+
     return mudanca;
   });
 }

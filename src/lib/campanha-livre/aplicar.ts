@@ -26,6 +26,8 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
   const dados: PersonagemLivre = {
     ...atual,
     recursos: { ...atual.recursos },
+    atributos: { ...atual.atributos },
+    moedas: { ...atual.moedas },
     inventario: atual.inventario.map((item) => ({ ...item })),
     notas: [...atual.notas],
   };
@@ -96,6 +98,57 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
         criadaEm: Date.now(),
       });
       resumos.push(`Nova colinha: ${mudanca.titulo}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "nivel") {
+      const antes = dados.nivel;
+      const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+      dados.nivel = depois;
+      resumos.push(`Nível: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "atributo") {
+      const antes = dados.atributos[mudanca.nome] ?? 0;
+      const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+      dados.atributos[mudanca.nome] = depois;
+      resumos.push(`${mudanca.nome}: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "item_update") {
+      const existente = dados.inventario.find(
+        (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
+      );
+      if (!existente) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      Object.assign(existente, mudanca.campos);
+      resumos.push(`${mudanca.nome} atualizado`);
+      continue;
+    }
+
+    if (mudanca.tipo === "equipamento") {
+      const existente = dados.inventario.find(
+        (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
+      );
+      if (!existente) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      if (mudanca.acao === "equipar") {
+        existente.equipado = true;
+        existente.slot = mudanca.slot;
+        resumos.push(`${mudanca.nome} equipado${mudanca.slot ? ` (${mudanca.slot})` : ""}`);
+      } else {
+        existente.equipado = false;
+        existente.slot = undefined;
+        resumos.push(`${mudanca.nome} desequipado`);
+      }
+      continue;
+    }
+
+    if (mudanca.tipo === "moeda") {
+      const antes = dados.moedas[mudanca.nome] ?? 0;
+      const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+      dados.moedas[mudanca.nome] = depois;
+      resumos.push(`${mudanca.nome}: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
       continue;
     }
   }

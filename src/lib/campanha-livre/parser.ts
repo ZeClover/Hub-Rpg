@@ -2,12 +2,13 @@
   Parser do protocolo HUB_UPDATE (ver pacote de especificação entregue pelo
   Zé — 02_HUB_UPDATE_SPEC_v1.md é a fonte de verdade).
 
-  Fatia atual (núcleo mínimo): só 5 operações — xp, resources, items_add,
-  items_remove, notes_add. O resto do protocolo (missions, npcs,
-  discoveries, undo, snapshots, event log em tabela própria...) fica pra
-  fatias futuras (decisão #26) — mas o formato do bloco e as regras de
-  segurança abaixo já seguem a especificação inteira, pra não ter que
-  reescrever quando essas fatias chegarem.
+  Segunda fatia: mais 5 operações de personagem/inventário — level,
+  attributes, items_update, equipment, currency — além das 5 da fatia
+  mínima (xp, resources, items_add, items_remove, notes_add). O resto do
+  protocolo (missions, npcs, discoveries, undo, snapshots, event log em
+  tabela própria...) fica pra fatias futuras (decisão #26) — mas o formato
+  do bloco e as regras de segurança abaixo já seguem a especificação
+  inteira, pra não ter que reescrever quando essas fatias chegarem.
 
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
@@ -62,7 +63,63 @@ export type MudancaNotaAdd = Base & {
   flags?: Record<string, boolean>;
 };
 
-export type Mudanca = MudancaXp | MudancaRecurso | MudancaItemAdd | MudancaItemRemove | MudancaNotaAdd;
+export type MudancaNivel = Base & {
+  tipo: "nivel";
+  operacao: "change" | "set";
+  valor: number;
+  motivo?: string;
+};
+
+export type MudancaAtributo = Base & {
+  tipo: "atributo";
+  nome: string;
+  operacao: "change" | "set";
+  valor: number;
+  motivo?: string;
+};
+
+export type CamposItemUpdate = {
+  descricao?: string;
+  categoria?: string;
+  raridade?: string;
+  origem?: string;
+  notas?: string;
+  quantidade?: number;
+  equipado?: boolean;
+};
+
+export type MudancaItemUpdate = Base & {
+  tipo: "item_update";
+  nome: string;
+  campos: CamposItemUpdate;
+};
+
+export type MudancaEquipamento = Base & {
+  tipo: "equipamento";
+  acao: "equipar" | "desequipar";
+  nome: string;
+  slot?: string;
+};
+
+export type MudancaMoeda = Base & {
+  tipo: "moeda";
+  nome: string;
+  operacao: "change" | "set";
+  valor: number;
+  motivo?: string;
+};
+
+export type Mudanca =
+  | MudancaXp
+  | MudancaRecurso
+  | MudancaItemAdd
+  | MudancaItemRemove
+  | MudancaNotaAdd
+  | MudancaNivel
+  | MudancaAtributo
+  | MudancaItemUpdate
+  | MudancaEquipamento
+  | MudancaMoeda;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -117,6 +174,11 @@ const CAMPOS_CONHECIDOS = new Set([
   "items_add",
   "items_remove",
   "notes_add",
+  "level",
+  "attributes",
+  "items_update",
+  "equipment",
+  "currency",
 ]);
 
 let contadorId = 0;
@@ -186,6 +248,39 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
     for (const nota of raiz.notes_add) mudancas.push(interpretarNotaAdd(nota));
   }
 
+  // --- level (spec §8) ---
+  if (raiz.level !== undefined) {
+    mudancas.push(interpretarLevel(raiz.level));
+  }
+
+  // --- attributes (spec §10) ---
+  if (Array.isArray(raiz.attributes)) {
+    for (const atributo of raiz.attributes) mudancas.push(interpretarAtributo(atributo));
+  }
+
+  // --- items_update (spec §15) ---
+  if (Array.isArray(raiz.items_update)) {
+    for (const item of raiz.items_update) mudancas.push(interpretarItemUpdate(item));
+  }
+
+  // --- equipment (spec §16) ---
+  if (typeof raiz.equipment === "object" && raiz.equipment !== null) {
+    const equipamento = raiz.equipment as Record<string, unknown>;
+    if (Array.isArray(equipamento.equip)) {
+      for (const item of equipamento.equip) mudancas.push(interpretarEquipamento("equipar", item));
+    }
+    if (Array.isArray(equipamento.unequip)) {
+      for (const item of equipamento.unequip) mudancas.push(interpretarEquipamento("desequipar", item));
+    }
+  }
+
+  // --- currency (spec §17) ---
+  if (typeof raiz.currency === "object" && raiz.currency !== null) {
+    for (const [nome, def] of Object.entries(raiz.currency as Record<string, unknown>)) {
+      mudancas.push(interpretarMoeda(nome, def));
+    }
+  }
+
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
 
   if (mudancas.length === 0) {
@@ -194,7 +289,7 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
       erro:
         camposDesconhecidos.length > 0
           ? `Nenhuma operação reconhecida nesta fatia do Hub (só campo(s) desconhecido(s): ${camposDesconhecidos.join(", ")}).`
-          : "O bloco não contém nenhuma operação (xp, resources, items_add, items_remove ou notes_add).",
+          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment ou currency).",
     };
   }
 
@@ -355,6 +450,145 @@ function interpretarNotaAdd(bruto: unknown): MudancaNotaAdd {
     texto: texto ?? "",
     tags: Array.isArray(objeto.tags) ? objeto.tags.filter((t): t is string => typeof t === "string") : undefined,
     flags,
+    alertas,
+  };
+}
+
+function interpretarLevel(bruto: unknown): MudancaNivel {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const temChange = objeto.change !== undefined;
+  const temSet = objeto.set !== undefined;
+
+  if (!temChange && !temSet) {
+    alertas.push({ nivel: "error", mensagem: "level precisa de 'change' ou 'set'." });
+  } else if (temChange && temSet) {
+    alertas.push({ nivel: "error", mensagem: "level usa 'change' e 'set' ao mesmo tempo — escolha só um." });
+  }
+  const operacao: "change" | "set" = temSet ? "set" : "change";
+  const valorBruto = objeto[operacao];
+  const valor = paraNumero(valorBruto);
+  if ((temChange || temSet) && valor === null) {
+    alertas.push({ nivel: "error", mensagem: `level.${operacao} precisa ser numérico.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "nivel",
+    operacao,
+    valor: valor ?? 0,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarAtributo(bruto: unknown): MudancaAtributo {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.attribute === "string" ? objeto.attribute : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em attributes sem 'attribute'." });
+
+  const temChange = objeto.change !== undefined;
+  const temSet = objeto.set !== undefined;
+  if (!temChange && !temSet) {
+    alertas.push({ nivel: "error", mensagem: `attributes.${nome ?? "?"} precisa de 'change' ou 'set'.` });
+  } else if (temChange && temSet) {
+    alertas.push({ nivel: "error", mensagem: `attributes.${nome ?? "?"} usa 'change' e 'set' ao mesmo tempo — escolha só um.` });
+  }
+  const operacao: "change" | "set" = temSet ? "set" : "change";
+  const valorBruto = objeto[operacao];
+  const valor = paraNumero(valorBruto);
+  if ((temChange || temSet) && valor === null) {
+    alertas.push({ nivel: "error", mensagem: `attributes.${nome ?? "?"}.${operacao} precisa ser numérico.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "atributo",
+    nome: nome ?? "(sem nome)",
+    operacao,
+    valor: valor ?? 0,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarItemUpdate(bruto: unknown): MudancaItemUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : typeof objeto.id === "string" ? objeto.id : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em items_update sem 'name' nem 'id'." });
+
+  const mudancasBruto = typeof objeto.changes === "object" && objeto.changes !== null ? (objeto.changes as Record<string, unknown>) : {};
+  const campos: CamposItemUpdate = {};
+  if (typeof mudancasBruto.description === "string") campos.descricao = mudancasBruto.description;
+  if (typeof mudancasBruto.category === "string") campos.categoria = mudancasBruto.category;
+  if (typeof mudancasBruto.rarity === "string") campos.raridade = mudancasBruto.rarity;
+  if (typeof mudancasBruto.origin === "string") campos.origem = mudancasBruto.origin;
+  if (typeof mudancasBruto.notes === "string") campos.notas = mudancasBruto.notes;
+  if (typeof mudancasBruto.equipped === "boolean") campos.equipado = mudancasBruto.equipped;
+  const quantidade = paraNumero(mudancasBruto.quantity);
+  if (mudancasBruto.quantity !== undefined && quantidade !== null) campos.quantidade = quantidade;
+
+  if (Object.keys(campos).length === 0) {
+    alertas.push({ nivel: "error", mensagem: `items_update para "${nome ?? "?"}" não tem nenhum campo reconhecido em 'changes'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "item_update",
+    nome: nome ?? "(sem nome)",
+    campos,
+    alertas,
+  };
+}
+
+function interpretarEquipamento(acao: "equipar" | "desequipar", bruto: unknown): MudancaEquipamento {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.item === "string" ? objeto.item : null;
+  if (!nome) {
+    alertas.push({ nivel: "error", mensagem: `Item em equipment.${acao === "equipar" ? "equip" : "unequip"} sem 'item'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "equipamento",
+    acao,
+    nome: nome ?? "(sem nome)",
+    slot: typeof objeto.slot === "string" ? objeto.slot : undefined,
+    alertas,
+  };
+}
+
+function interpretarMoeda(nome: string, bruto: unknown): MudancaMoeda {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const temChange = objeto.change !== undefined;
+  const temSet = objeto.set !== undefined;
+
+  if (!temChange && !temSet) {
+    alertas.push({ nivel: "error", mensagem: `currency.${nome} precisa de 'change' ou 'set'.` });
+  } else if (temChange && temSet) {
+    alertas.push({ nivel: "error", mensagem: `currency.${nome} usa 'change' e 'set' ao mesmo tempo — escolha só um.` });
+  }
+  const operacao: "change" | "set" = temSet ? "set" : "change";
+  const valorBruto = objeto[operacao];
+  const valor = paraNumero(valorBruto);
+  if ((temChange || temSet) && valor === null) {
+    alertas.push({ nivel: "error", mensagem: `currency.${nome}.${operacao} precisa ser numérico.` });
+  }
+  if (temSet) {
+    alertas.push({ nivel: "warning", mensagem: `Uso de 'set' substitui ${nome} direto — prefira 'change'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "moeda",
+    nome,
+    operacao,
+    valor: valor ?? 0,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
     alertas,
   };
 }
