@@ -396,6 +396,24 @@ passando.
     os 3 testes de Playwright das fatias anteriores sem regressão.
     `tsc`, `next build` e lint limpos
 
+- [x] **Campanha Livre — quarta fatia: Conhecimento e mundo**
+      (01/09/2026) — decisão #50. Mais 9 operações do protocolo
+      HUB_UPDATE: `notes_update`, `notes_remove`, `discoveries_add`,
+      `discoveries_update`, `codex_add`, `locations_add`,
+      `locations_update`, `bestiary_add`, `journal`.
+  - Cinco listas novas: `descobertas` (status em 7 graus), `codex`
+    (lore só de leitura, sem update/remove), `locais` (descoberto +
+    conhecimento acumulado), `criaturas` (bestiário) e `diario`
+  - Remover uma colinha (`notes_remove`) vem sempre desmarcado por
+    padrão na revisão — única mudança destrutiva do protocolo até
+    agora, sem precisar de um 4º nível de alerta
+  - Toda atualização exige que a entidade já exista, mesma regra das
+    fatias anteriores; toda criação evita duplicar pelo nome/título
+  - Testado: 28 testes automáticos novos (133 no total), 1 teste de
+    Playwright novo com três importações em sequência + edição manual;
+    os 4 testes de Playwright das fatias anteriores sem regressão.
+    `tsc`, `next build` e lint limpos
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

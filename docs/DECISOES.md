@@ -1688,6 +1688,62 @@ terminal, não um bug do código. Resolvido apagando `.next` e
 reconstruindo do zero; não afeta o Zé (cada deploy no Vercel já parte
 de um build limpo).
 
+## 50. Campanha Livre — quarta fatia: Conhecimento e mundo (01/09/2026)
+
+Quarta fatia do protocolo HUB_UPDATE, escolhida pelo Zé entre as duas
+opções restantes (desfazer-com-event-log fica documentada no pacote
+original pra depois, decisão #26). Cobre o grupo "Conhecimento" e
+"Mundo" da especificação: `notes_update`, `notes_remove`,
+`discoveries_add`, `discoveries_update`, `codex_add`, `locations_add`,
+`locations_update`, `bestiary_add`, `journal`.
+
+**Cinco campos novos na ficha, todos listas** (mesmo padrão de
+`missoes`/`npcs`): `descobertas` (título, status em sete graus —
+desconhecido/suspeita/teoria/testando/parcial/confirmada/refutada —,
+evidências), `codex` (lore de referência, só `titulo`+`texto`, sem
+update/remove — o protocolo só define `codex_add`), `locais`
+(descoberto ou não, conhecimento acumulado), `criaturas` (bestiário,
+com traços conhecidos) e `diario` (entradas com resumo e lista de
+eventos).
+
+**Regra #40 do protocolo — "remover é perigoso"** — implementada sem
+inventar um quarto nível de alerta (o Hub só tem
+info/warning/error desde a primeira fatia): `notes_remove` continua
+igual às outras mudanças na tela de revisão, mas **não vem marcado por
+padrão** como todas as outras — a pessoa precisa marcar a caixa
+ativamente pra confirmar a remoção. Mais simples que adicionar um nível
+"perigo" à interface inteira, e cumpre a mesma função.
+
+**`notes_remove` referencia por `title`, não por `id`.** O protocolo
+sugere `id: note-001`, mas esse id é conceitual do lado do ChatGPT — as
+colinhas do Hub têm um id interno gerado no servidor que o ChatGPT
+nunca vê. Na prática ele só conhece o título que ele mesmo deu na
+colinha (via `notes_add`), então a resolução é por título — mesmo
+padrão já usado em toda mudança que referencia algo por nome (item,
+missão, NPC). Aceita `id` como alternativa, se algum dia o protocolo
+mandar um.
+
+Toda mudança que atualiza uma descoberta ou local exige que ele já
+exista (mesma regra de `items_remove`/`missions_update`/`npcs_update`
+das fatias anteriores). `discoveries_add`/`codex_add`/`locations_add`/
+`bestiary_add` não duplicam entrada com o mesmo título/nome — reimportar
+o mesmo bloco não cria cópias.
+
+Tudo também editável direto na ficha: cinco seções novas (Descobertas,
+Locais, Bestiário, Codex, Diário), cada uma com adicionar/remover
+manual; Descobertas ganha seletor de status, Locais ganha checkbox de
+"descoberto" e campo de conhecimento adicional.
+
+Testado: 28 testes automáticos novos (133 no total do projeto)
+cobrindo parser, validação e aplicação das 9 operações. Um teste de
+Playwright novo cobre três importações em sequência (criar
+descoberta/local/criatura/codex/diário e acrescentar numa colinha
+existente; atualizar descoberta/local já existentes; remover uma
+colinha confirmando que vem desmarcada por padrão) mais a criação
+manual de descoberta e local; os 4 testes de Playwright das fatias
+anteriores continuam passando sem regressão. `tsc --noEmit`, `npm run
+build` e `npm run lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

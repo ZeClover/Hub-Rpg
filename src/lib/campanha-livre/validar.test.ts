@@ -171,3 +171,49 @@ test("relationships com NPC existente não gera erro", () => {
   const validadas = validarContraPersonagem(r.mudancas, ficha);
   assert.equal(temErro(validadas[0]), false);
 });
+
+test("notes_update em colinha inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("notes_update:\n  - title: Colinha Fantasma\n    append: Mais texto."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("notes_update em colinha existente não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.notas.push({ id: "n1", titulo: "Coesão", texto: "texto original", criadaEm: 1 });
+  const r = interpretarHubUpdate(bloco("notes_update:\n  - title: Coesão\n    append: Mais texto."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), false);
+});
+
+test("notes_remove em colinha inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("notes_remove:\n  - title: Colinha Fantasma"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("discoveries_update em descoberta inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("discoveries_update:\n  - title: Descoberta Fantasma\n    status: confirmed"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("locations_update em local inexistente vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("locations_update:\n  - name: Local Fantasma\n    known_information_add:\n      - Algo."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});

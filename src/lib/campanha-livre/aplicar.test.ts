@@ -205,3 +205,68 @@ test("aplica relationships somando ao stat existente", () => {
   assert.equal(dados.npcs[0].relacoes.trust, 3);
   assert.match(resumos[0], /2 → 3/);
 });
+
+test("aplica notes_update acrescentando ao texto existente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.notas.push({ id: "n1", titulo: "Coesão", texto: "texto original", criadaEm: 1 });
+  const { dados } = aplicarMudancas(ficha, mudancasDe("notes_update:\n  - title: Coesão\n    append: Mais uma linha."));
+  assert.equal(dados.notas[0].texto, "texto original\nMais uma linha.");
+});
+
+test("aplica notes_remove por title", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.notas.push({ id: "n1", titulo: "Coesão", texto: "texto", criadaEm: 1 });
+  const { dados, resumos } = aplicarMudancas(ficha, mudancasDe("notes_remove:\n  - title: Coesão\n    reason: Errado"));
+  assert.equal(dados.notas.length, 0);
+  assert.match(resumos[0], /removida/);
+});
+
+test("aplica discoveries_add e discoveries_update", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("discoveries_add:\n  - title: Relação X\n    status: partial\n    evidence:\n      - Evidência 1"));
+  assert.equal(d1.descobertas.length, 1);
+  assert.equal(d1.descobertas[0].status, "parcial");
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("discoveries_update:\n  - title: Relação X\n    status: confirmed\n    evidence_add:\n      - Evidência 2"));
+  assert.equal(d2.descobertas[0].status, "confirmada");
+  assert.deepEqual(d2.descobertas[0].evidencias, ["Evidência 1", "Evidência 2"]);
+});
+
+test("discoveries_add não duplica descoberta com mesmo título", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("discoveries_add:\n  - title: Relação X"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("discoveries_add:\n  - title: Relação X"));
+  assert.equal(segundo.dados.descobertas.length, 1);
+});
+
+test("aplica codex_add", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("codex_add:\n  - title: Catalisadores\n    text: Auxiliam na estabilização."));
+  assert.equal(dados.codex.length, 1);
+  assert.equal(dados.codex[0].titulo, "Catalisadores");
+});
+
+test("aplica locations_add e locations_update", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("locations_add:\n  - name: Jardim Norte\n    description: Região de coleta."));
+  assert.equal(d1.locais.length, 1);
+  assert.equal(d1.locais[0].descoberto, true);
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("locations_update:\n  - name: Jardim Norte\n    known_information_add:\n      - Reage à mana."));
+  assert.deepEqual(d2.locais[0].conhecimento, ["Reage à mana."]);
+});
+
+test("aplica bestiary_add", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("bestiary_add:\n  - name: Besouro Luminoso\n    known_traits:\n      - Luminescência"));
+  assert.equal(dados.criaturas.length, 1);
+  assert.deepEqual(dados.criaturas[0].tracosConhecidos, ["Luminescência"]);
+});
+
+test("aplica journal.add", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados, resumos } = aplicarMudancas(ficha, mudancasDe("journal:\n  add:\n    title: Aula de Fundamentos\n    summary: Aula prática."));
+  assert.equal(dados.diario.length, 1);
+  assert.equal(dados.diario[0].titulo, "Aula de Fundamentos");
+  assert.match(resumos[0], /Novo diário/);
+});

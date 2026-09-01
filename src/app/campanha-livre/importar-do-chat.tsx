@@ -48,7 +48,9 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
     setCamposDesconhecidos(resultado.camposDesconhecidos);
     setDuplicadoConfirmado(false);
     // Marca tudo que não tem erro, por padrão — a pessoa desmarca o que não quer.
-    setSelecionados(new Set(validadas.filter((m) => !temErro(m)).map((m) => m.id)));
+    // Exceção: remover uma colinha é destrutivo (regra #40 do protocolo) — fica
+    // sempre desmarcado, a pessoa decide ativamente se quer mesmo apagar.
+    setSelecionados(new Set(validadas.filter((m) => !temErro(m) && m.tipo !== "nota_remove").map((m) => m.id)));
   }
 
   function alternar(id: string) {
@@ -488,23 +490,130 @@ function DescricaoMudanca({
       </div>
     );
   }
-  // relacao
-  const npcExistente = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
-  const antesRelacao = npcExistente?.relacoes[mudanca.stat] ?? 0;
-  const depoisRelacao = antesRelacao + mudanca.valor;
+  if (mudanca.tipo === "relacao") {
+    const npcExistente = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
+    const antesRelacao = npcExistente?.relacoes[mudanca.stat] ?? 0;
+    const depoisRelacao = antesRelacao + mudanca.valor;
+    return (
+      <p className="text-sm text-texto">
+        {mudanca.npc}.{mudanca.stat}: {antesRelacao} → {depoisRelacao}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">{mudanca.motivo ? `— ${mudanca.motivo}` : ""}</span>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "nota_update") {
+    return (
+      <p className="text-sm text-texto">
+        Acrescentar à colinha <strong>{mudanca.titulo}</strong>: {mudanca.acrescimo}
+      </p>
+    );
+  }
+  if (mudanca.tipo === "nota_remove") {
+    return (
+      <p className="text-sm text-texto">
+        Remover colinha <strong>{mudanca.titulo ?? mudanca.idNota}</strong>
+        {mudanca.motivo && <span className="text-xs text-texto-suave"> — {mudanca.motivo}</span>}
+      </p>
+    );
+  }
+  if (mudanca.tipo === "descoberta_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova descoberta: <strong>{mudanca.titulo}</strong>{" "}
+          <span className="text-xs text-texto-suave">({STATUS_DESCOBERTA_LABEL[mudanca.status]})</span>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "descoberta_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Descoberta <strong>{mudanca.titulo}</strong>
+          {mudanca.status && <>: status → {STATUS_DESCOBERTA_LABEL[mudanca.status]}</>}
+        </p>
+        {mudanca.evidenciasNovas.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.evidenciasNovas.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "codex_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo codex: <strong>{mudanca.titulo}</strong>
+        </p>
+        <p className="mt-1 text-xs text-texto-suave">{mudanca.texto}</p>
+      </div>
+    );
+  }
+  if (mudanca.tipo === "local_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo local: <strong>{mudanca.nome}</strong>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "local_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          <strong>{mudanca.nome}</strong>: +{mudanca.conhecimentoNovo.length} informação(ões)
+        </p>
+        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+          {mudanca.conhecimentoNovo.map((c, i) => (
+            <li key={i}>{c}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+  if (mudanca.tipo === "criatura_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo no bestiário: <strong>{mudanca.nome}</strong>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  // diario_add
   return (
-    <p className="text-sm text-texto">
-      {mudanca.npc}.{mudanca.stat}: {antesRelacao} → {depoisRelacao}{" "}
-      <input
-        type="number"
-        value={mudanca.valor}
-        onChange={(e) => onEditar(Number(e.target.value) || 0)}
-        className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
-      />{" "}
-      <span className="text-xs text-texto-suave">{mudanca.motivo ? `— ${mudanca.motivo}` : ""}</span>
-    </p>
+    <div className="text-sm text-texto">
+      <p>
+        Novo diário: <strong>{mudanca.titulo}</strong>
+      </p>
+      {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
+    </div>
   );
 }
+
+const STATUS_DESCOBERTA_LABEL: Record<string, string> = {
+  desconhecido: "desconhecido",
+  suspeita: "suspeita",
+  teoria: "teoria",
+  testando: "testando",
+  parcial: "parcial",
+  confirmada: "confirmada",
+  refutada: "refutada",
+};
 
 const STATUS_MISSAO_LABEL: Record<string, string> = {
   disponivel: "disponível",

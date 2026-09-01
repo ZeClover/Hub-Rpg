@@ -414,3 +414,156 @@ test("relationships: sem change gera error", () => {
   assert.equal(r.ok, true);
   if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
+
+test("notes_update: com append válido", () => {
+  const r = interpretarHubUpdate(bloco("notes_update:\n  - title: Coesão\n    append: Coesão insuficiente pode causar colapso."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "nota_update");
+    if (m.tipo === "nota_update") {
+      assert.equal(m.titulo, "Coesão");
+      assert.equal(m.acrescimo, "Coesão insuficiente pode causar colapso.");
+      assert.equal(m.alertas.length, 0);
+    }
+  }
+});
+
+test("notes_update: sem append gera error", () => {
+  const r = interpretarHubUpdate(bloco("notes_update:\n  - title: Coesão"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("notes_remove: por title", () => {
+  const r = interpretarHubUpdate(bloco("notes_remove:\n  - title: Coesão\n    reason: Informação incorreta"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "nota_remove");
+    if (m.tipo === "nota_remove") {
+      assert.equal(m.titulo, "Coesão");
+      assert.equal(m.motivo, "Informação incorreta");
+    }
+  }
+});
+
+test("notes_remove: sem title nem id gera error", () => {
+  const r = interpretarHubUpdate(bloco("notes_remove:\n  - reason: Sem referência"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("discoveries_add: com evidence e status", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "discoveries_add:\n  - title: Relação entre Coesão e Estabilidade\n    category: teoria-magica\n    status: partial\n    evidence:\n      - Magia permaneceu estável por mais tempo.",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "descoberta_add");
+    if (m.tipo === "descoberta_add") {
+      assert.equal(m.status, "parcial");
+      assert.deepEqual(m.evidencias, ["Magia permaneceu estável por mais tempo."]);
+    }
+  }
+});
+
+test("discoveries_add: status desconhecido gera error", () => {
+  const r = interpretarHubUpdate(bloco("discoveries_add:\n  - title: X\n    status: not_a_status"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("discoveries_update: status e evidence_add", () => {
+  const r = interpretarHubUpdate(
+    bloco("discoveries_update:\n  - title: Relação entre Coesão e Estabilidade\n    status: confirmed\n    evidence_add:\n      - Segundo teste reproduziu o resultado."),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "descoberta_update");
+    if (m.tipo === "descoberta_update") {
+      assert.equal(m.status, "confirmada");
+      assert.deepEqual(m.evidenciasNovas, ["Segundo teste reproduziu o resultado."]);
+    }
+  }
+});
+
+test("codex_add: com category e text", () => {
+  const r = interpretarHubUpdate(bloco("codex_add:\n  - title: Catalisadores\n    category: teoria\n    text: Catalisadores auxiliam na estabilização da magia."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "codex_add");
+    if (m.tipo === "codex_add") assert.equal(m.categoria, "teoria");
+  }
+});
+
+test("codex_add: sem text gera error", () => {
+  const r = interpretarHubUpdate(bloco("codex_add:\n  - title: Catalisadores"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("locations_add: discovered default true", () => {
+  const r = interpretarHubUpdate(bloco("locations_add:\n  - name: Jardim Norte\n    description: Região usada para coleta."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "local_add");
+    if (m.tipo === "local_add") assert.equal(m.descoberto, true);
+  }
+});
+
+test("locations_add: discovered false respeitado", () => {
+  const r = interpretarHubUpdate(bloco("locations_add:\n  - name: Jardim Oculto\n    discovered: false"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    if (m.tipo === "local_add") assert.equal(m.descoberto, false);
+  }
+});
+
+test("locations_update: known_information_add", () => {
+  const r = interpretarHubUpdate(bloco("locations_update:\n  - name: Jardim Norte\n    known_information_add:\n      - Algumas plantas reagem à presença de mana."));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "local_update");
+    if (m.tipo === "local_update") assert.deepEqual(m.conhecimentoNovo, ["Algumas plantas reagem à presença de mana."]);
+  }
+});
+
+test("bestiary_add: com known_traits", () => {
+  const r = interpretarHubUpdate(bloco("bestiary_add:\n  - name: Besouro Luminoso\n    category: criatura-magica\n    known_traits:\n      - Luminescência"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "criatura_add");
+    if (m.tipo === "criatura_add") assert.deepEqual(m.tracosConhecidos, ["Luminescência"]);
+  }
+});
+
+test("journal.add: com summary e events", () => {
+  const r = interpretarHubUpdate(
+    bloco("journal:\n  add:\n    title: Aula de Fundamentos\n    summary: Houve uma aula prática.\n    events:\n      - Teste de manifestação."),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "diario_add");
+    if (m.tipo === "diario_add") {
+      assert.equal(m.resumo, "Houve uma aula prática.");
+      assert.deepEqual(m.eventos, ["Teste de manifestação."]);
+    }
+  }
+});
+
+test("journal sem 'add' não gera mudança", () => {
+  const r = interpretarHubUpdate(bloco("journal:\n  other_field: x\n\nxp:\n  add: 5"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.equal(r.mudancas.length, 1);
+});

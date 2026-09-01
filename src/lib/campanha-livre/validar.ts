@@ -156,6 +156,51 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "nota_update" || mudanca.tipo === "nota_remove") {
+      const titulo = mudanca.titulo;
+      const idNota = mudanca.tipo === "nota_remove" ? mudanca.idNota : undefined;
+      const existente = titulo
+        ? atual.notas.find((n) => n.titulo.trim().toLowerCase() === titulo.trim().toLowerCase())
+        : idNota
+          ? atual.notas.find((n) => n.id === idNota)
+          : undefined;
+      if (!existente) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Colinha "${titulo ?? idNota}" não existe.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "descoberta_update") {
+      const existe = atual.descobertas.some((d) => d.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Descoberta "${mudanca.titulo}" não existe — crie com discoveries_add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "local_update") {
+      const existe = atual.locais.some((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Local "${mudanca.nome}" não existe — crie com locations_add primeiro.` },
+          ],
+        };
+      }
+    }
+
     if (mudanca.tipo === "moeda" && mudanca.operacao === "change") {
       const antes = atual.moedas[mudanca.nome] ?? 0;
       const depois = antes + mudanca.valor;

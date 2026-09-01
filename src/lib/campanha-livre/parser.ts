@@ -2,14 +2,16 @@
   Parser do protocolo HUB_UPDATE (ver pacote de especificação entregue pelo
   Zé — 02_HUB_UPDATE_SPEC_v1.md é a fonte de verdade).
 
-  Terceira fatia: missions_add, missions_update, npcs_add, npcs_update,
-  relationships — além das 10 anteriores (xp, resources, items_add,
-  items_remove, notes_add, level, attributes, items_update, equipment,
-  currency). O resto do protocolo (discoveries, locations, bestiary,
-  codex, journal, undo, snapshots, event log em tabela própria...) fica
-  pra fatias futuras (decisão #26) — mas o formato do bloco e as regras
-  de segurança abaixo já seguem a especificação inteira, pra não ter que
-  reescrever quando essas fatias chegarem.
+  Quarta fatia: notes_update, notes_remove, discoveries_add,
+  discoveries_update, codex_add, locations_add, locations_update,
+  bestiary_add, journal — além das 15 anteriores (xp, resources,
+  items_add, items_remove, notes_add, level, attributes, items_update,
+  equipment, currency, missions_add, missions_update, npcs_add,
+  npcs_update, relationships). O resto do protocolo (undo, snapshots,
+  event log em tabela própria...) fica pra uma fatia futura (decisão
+  #26) — mas o formato do bloco e as regras de segurança abaixo já
+  seguem a especificação inteira, pra não ter que reescrever quando essa
+  fatia chegar.
 
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
@@ -17,7 +19,7 @@
 */
 import { parse as parseYaml } from "yaml";
 
-import type { ObjetivoMissao, StatusMissao } from "./tipos.ts";
+import type { ObjetivoMissao, StatusDescoberta, StatusMissao } from "./tipos.ts";
 
 export type NivelAlerta = "info" | "warning" | "error";
 export type Alerta = { nivel: NivelAlerta; mensagem: string };
@@ -162,6 +164,70 @@ export type MudancaRelacao = Base & {
   motivo?: string;
 };
 
+export type MudancaNotaUpdate = Base & {
+  tipo: "nota_update";
+  titulo: string;
+  acrescimo: string;
+};
+
+export type MudancaNotaRemove = Base & {
+  tipo: "nota_remove";
+  titulo?: string;
+  idNota?: string;
+  motivo?: string;
+};
+
+export type MudancaDescobertaAdd = Base & {
+  tipo: "descoberta_add";
+  titulo: string;
+  categoria?: string;
+  status: StatusDescoberta;
+  descricao?: string;
+  evidencias: string[];
+};
+
+export type MudancaDescobertaUpdate = Base & {
+  tipo: "descoberta_update";
+  titulo: string;
+  status?: StatusDescoberta;
+  evidenciasNovas: string[];
+};
+
+export type MudancaCodexAdd = Base & {
+  tipo: "codex_add";
+  titulo: string;
+  categoria?: string;
+  texto: string;
+};
+
+export type MudancaLocalAdd = Base & {
+  tipo: "local_add";
+  nome: string;
+  descricao?: string;
+  descoberto: boolean;
+};
+
+export type MudancaLocalUpdate = Base & {
+  tipo: "local_update";
+  nome: string;
+  conhecimentoNovo: string[];
+};
+
+export type MudancaCriaturaAdd = Base & {
+  tipo: "criatura_add";
+  nome: string;
+  categoria?: string;
+  descricao?: string;
+  tracosConhecidos: string[];
+};
+
+export type MudancaDiarioAdd = Base & {
+  tipo: "diario_add";
+  titulo: string;
+  resumo?: string;
+  eventos: string[];
+};
+
 export type Mudanca =
   | MudancaXp
   | MudancaRecurso
@@ -177,7 +243,16 @@ export type Mudanca =
   | MudancaMissaoUpdate
   | MudancaNpcAdd
   | MudancaNpcUpdate
-  | MudancaRelacao;
+  | MudancaRelacao
+  | MudancaNotaUpdate
+  | MudancaNotaRemove
+  | MudancaDescobertaAdd
+  | MudancaDescobertaUpdate
+  | MudancaCodexAdd
+  | MudancaLocalAdd
+  | MudancaLocalUpdate
+  | MudancaCriaturaAdd
+  | MudancaDiarioAdd;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -242,7 +317,26 @@ const CAMPOS_CONHECIDOS = new Set([
   "npcs_add",
   "npcs_update",
   "relationships",
+  "notes_update",
+  "notes_remove",
+  "discoveries_add",
+  "discoveries_update",
+  "codex_add",
+  "locations_add",
+  "locations_update",
+  "bestiary_add",
+  "journal",
 ]);
+
+const STATUS_DESCOBERTA_MAP: Record<string, StatusDescoberta> = {
+  unknown: "desconhecido",
+  suspicion: "suspeita",
+  theory: "teoria",
+  testing: "testando",
+  partial: "parcial",
+  confirmed: "confirmada",
+  disproved: "refutada",
+};
 
 const STATUS_MISSAO_MAP: Record<string, StatusMissao> = {
   available: "disponivel",
@@ -395,6 +489,52 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
     for (const relacao of raiz.relationships) mudancas.push(interpretarRelacao(relacao));
   }
 
+  // --- notes_update (spec §18) ---
+  if (Array.isArray(raiz.notes_update)) {
+    for (const nota of raiz.notes_update) mudancas.push(interpretarNotaUpdate(nota));
+  }
+
+  // --- notes_remove (spec §18) ---
+  if (Array.isArray(raiz.notes_remove)) {
+    for (const nota of raiz.notes_remove) mudancas.push(interpretarNotaRemove(nota));
+  }
+
+  // --- discoveries_add (spec §23) ---
+  if (Array.isArray(raiz.discoveries_add)) {
+    for (const descoberta of raiz.discoveries_add) mudancas.push(interpretarDescobertaAdd(descoberta));
+  }
+
+  // --- discoveries_update (spec §23) ---
+  if (Array.isArray(raiz.discoveries_update)) {
+    for (const descoberta of raiz.discoveries_update) mudancas.push(interpretarDescobertaUpdate(descoberta));
+  }
+
+  // --- codex_add (spec §26) ---
+  if (Array.isArray(raiz.codex_add)) {
+    for (const entrada of raiz.codex_add) mudancas.push(interpretarCodexAdd(entrada));
+  }
+
+  // --- locations_add (spec §24) ---
+  if (Array.isArray(raiz.locations_add)) {
+    for (const local of raiz.locations_add) mudancas.push(interpretarLocalAdd(local));
+  }
+
+  // --- locations_update (spec §24) ---
+  if (Array.isArray(raiz.locations_update)) {
+    for (const local of raiz.locations_update) mudancas.push(interpretarLocalUpdate(local));
+  }
+
+  // --- bestiary_add (spec §25) ---
+  if (Array.isArray(raiz.bestiary_add)) {
+    for (const criatura of raiz.bestiary_add) mudancas.push(interpretarCriaturaAdd(criatura));
+  }
+
+  // --- journal (spec §27) ---
+  if (typeof raiz.journal === "object" && raiz.journal !== null) {
+    const journal = raiz.journal as Record<string, unknown>;
+    if (journal.add !== undefined) mudancas.push(interpretarDiarioAdd(journal.add));
+  }
+
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
 
   if (mudancas.length === 0) {
@@ -403,7 +543,7 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
       erro:
         camposDesconhecidos.length > 0
           ? `Nenhuma operação reconhecida nesta fatia do Hub (só campo(s) desconhecido(s): ${camposDesconhecidos.join(", ")}).`
-          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment, currency, missions_add, missions_update, npcs_add, npcs_update ou relationships).",
+          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment, currency, missions_add, missions_update, npcs_add, npcs_update, relationships, notes_update, notes_remove, discoveries_add, discoveries_update, codex_add, locations_add, locations_update, bestiary_add ou journal).",
     };
   }
 
@@ -848,6 +988,184 @@ function interpretarRelacao(bruto: unknown): MudancaRelacao {
     stat: stat ?? "(sem stat)",
     valor: valor ?? 0,
     motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarNotaUpdate(bruto: unknown): MudancaNotaUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em notes_update sem 'title'." });
+  const acrescimo = typeof objeto.append === "string" ? objeto.append : null;
+  if (!acrescimo) alertas.push({ nivel: "error", mensagem: `notes_update para "${titulo ?? "?"}" sem 'append'.` });
+
+  return {
+    id: proximoId(),
+    tipo: "nota_update",
+    titulo: titulo ?? "(sem título)",
+    acrescimo: acrescimo ?? "",
+    alertas,
+  };
+}
+
+function interpretarNotaRemove(bruto: unknown): MudancaNotaRemove {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  // O protocolo usa 'id' (ex: "note-001"), mas quem cria a colinha é o Hub — o ChatGPT
+  // não conhece esse id. Na prática ele referencia pelo 'title' que ele mesmo deu.
+  const titulo = typeof objeto.title === "string" ? objeto.title : undefined;
+  const idNota = typeof objeto.id === "string" ? objeto.id : undefined;
+  if (!titulo && !idNota) {
+    alertas.push({ nivel: "error", mensagem: "Item em notes_remove sem 'title' nem 'id'." });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "nota_remove",
+    titulo,
+    idNota,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarDescobertaAdd(bruto: unknown): MudancaDescobertaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em discoveries_add sem 'title'." });
+
+  const statusBruto = typeof objeto.status === "string" ? objeto.status : "theory";
+  const status = STATUS_DESCOBERTA_MAP[statusBruto];
+  if (!status) alertas.push({ nivel: "error", mensagem: `Status de descoberta desconhecido: "${statusBruto}".` });
+
+  return {
+    id: proximoId(),
+    tipo: "descoberta_add",
+    titulo: titulo ?? "(sem título)",
+    categoria: typeof objeto.category === "string" ? objeto.category : undefined,
+    status: status ?? "teoria",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    evidencias: Array.isArray(objeto.evidence) ? objeto.evidence.filter((e): e is string => typeof e === "string") : [],
+    alertas,
+  };
+}
+
+function interpretarDescobertaUpdate(bruto: unknown): MudancaDescobertaUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em discoveries_update sem 'title'." });
+
+  let status: StatusDescoberta | undefined;
+  if (objeto.status !== undefined) {
+    const statusBruto = typeof objeto.status === "string" ? objeto.status : "";
+    status = STATUS_DESCOBERTA_MAP[statusBruto];
+    if (!status) alertas.push({ nivel: "error", mensagem: `Status de descoberta desconhecido: "${statusBruto}".` });
+  }
+
+  const evidenciasNovas = Array.isArray(objeto.evidence_add)
+    ? objeto.evidence_add.filter((e): e is string => typeof e === "string")
+    : [];
+
+  return {
+    id: proximoId(),
+    tipo: "descoberta_update",
+    titulo: titulo ?? "(sem título)",
+    status,
+    evidenciasNovas,
+    alertas,
+  };
+}
+
+function interpretarCodexAdd(bruto: unknown): MudancaCodexAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em codex_add sem 'title'." });
+  const texto = typeof objeto.text === "string" ? objeto.text : null;
+  if (!texto) alertas.push({ nivel: "error", mensagem: `codex_add "${titulo ?? "?"}" sem 'text'.` });
+
+  return {
+    id: proximoId(),
+    tipo: "codex_add",
+    titulo: titulo ?? "(sem título)",
+    categoria: typeof objeto.category === "string" ? objeto.category : undefined,
+    texto: texto ?? "",
+    alertas,
+  };
+}
+
+function interpretarLocalAdd(bruto: unknown): MudancaLocalAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em locations_add sem 'name'." });
+
+  return {
+    id: proximoId(),
+    tipo: "local_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    descoberto: objeto.discovered !== false,
+    alertas,
+  };
+}
+
+function interpretarLocalUpdate(bruto: unknown): MudancaLocalUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em locations_update sem 'name'." });
+
+  const conhecimentoNovo = Array.isArray(objeto.known_information_add)
+    ? objeto.known_information_add.filter((t): t is string => typeof t === "string")
+    : [];
+  if (conhecimentoNovo.length === 0) {
+    alertas.push({ nivel: "error", mensagem: `locations_update para "${nome ?? "?"}" não tem 'known_information_add'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "local_update",
+    nome: nome ?? "(sem nome)",
+    conhecimentoNovo,
+    alertas,
+  };
+}
+
+function interpretarCriaturaAdd(bruto: unknown): MudancaCriaturaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em bestiary_add sem 'name'." });
+
+  return {
+    id: proximoId(),
+    tipo: "criatura_add",
+    nome: nome ?? "(sem nome)",
+    categoria: typeof objeto.category === "string" ? objeto.category : undefined,
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    tracosConhecidos: Array.isArray(objeto.known_traits)
+      ? objeto.known_traits.filter((t): t is string => typeof t === "string")
+      : [],
+    alertas,
+  };
+}
+
+function interpretarDiarioAdd(bruto: unknown): MudancaDiarioAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "journal.add sem 'title'." });
+
+  return {
+    id: proximoId(),
+    tipo: "diario_add",
+    titulo: titulo ?? "(sem título)",
+    resumo: typeof objeto.summary === "string" ? objeto.summary : undefined,
+    eventos: Array.isArray(objeto.events) ? objeto.events.filter((e): e is string => typeof e === "string") : [],
     alertas,
   };
 }

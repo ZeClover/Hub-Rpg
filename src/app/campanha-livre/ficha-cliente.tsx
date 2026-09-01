@@ -7,9 +7,15 @@ import { useEffect, useRef, useState } from "react";
 import { aplicarMudancas } from "@/lib/campanha-livre/aplicar.ts";
 import {
   normalizarPersonagemLivre,
+  type CodexLivre,
+  type CriaturaLivre,
+  type DescobertaLivre,
+  type EntradaDiario,
+  type LocalLivre,
   type MissaoLivre,
   type NpcLivre,
   type PersonagemLivre,
+  type StatusDescoberta,
   type StatusMissao,
   type StatusObjetivo,
 } from "@/lib/campanha-livre/tipos.ts";
@@ -158,6 +164,11 @@ export function FichaCampanhaLivre() {
       <Inventario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Missoes dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Npcs dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Descobertas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Locais dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Bestiario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Codex dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Diario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} />
     </main>
@@ -982,6 +993,422 @@ function RelacaoNova({ onAdicionar }: { onAdicionar: (stat: string) => void }) {
         + Relação
       </button>
     </div>
+  );
+}
+
+const STATUS_DESCOBERTA_OPCOES: { valor: StatusDescoberta; rotulo: string }[] = [
+  { valor: "desconhecido", rotulo: "Desconhecido" },
+  { valor: "suspeita", rotulo: "Suspeita" },
+  { valor: "teoria", rotulo: "Teoria" },
+  { valor: "testando", rotulo: "Testando" },
+  { valor: "parcial", rotulo: "Parcial" },
+  { valor: "confirmada", rotulo: "Confirmada" },
+  { valor: "refutada", rotulo: "Refutada" },
+];
+
+/* ---------- Descobertas ---------- */
+function Descobertas({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [tituloNovo, setTituloNovo] = useState("");
+
+  function atualizar(id: string, parcial: Partial<DescobertaLivre>) {
+    onSalvar({ ...dados, descobertas: dados.descobertas.map((d) => (d.id === id ? { ...d, ...parcial } : d)) });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, descobertas: dados.descobertas.filter((d) => d.id !== id) });
+  }
+
+  function adicionar() {
+    if (!tituloNovo.trim()) return;
+    const nova: DescobertaLivre = {
+      id: `descoberta-${Date.now().toString(36)}`,
+      titulo: tituloNovo.trim(),
+      status: "teoria",
+      evidencias: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, descobertas: [...dados.descobertas, nova] });
+    setTituloNovo("");
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Descobertas</h2>
+      {dados.descobertas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma descoberta ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.descobertas.map((d) => (
+          <li key={d.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">{d.titulo}</p>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => remover(d.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </div>
+            {d.descricao && <p className="mt-1 text-sm text-texto-suave">{d.descricao}</p>}
+            <select
+              value={d.status}
+              disabled={somenteLeitura}
+              onChange={(e) => atualizar(d.id, { status: e.target.value as StatusDescoberta })}
+              className="mt-2 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto disabled:opacity-60"
+            >
+              {STATUS_DESCOBERTA_OPCOES.map((o) => (
+                <option key={o.valor} value={o.valor}>
+                  {o.rotulo}
+                </option>
+              ))}
+            </select>
+            {d.evidencias.length > 0 && (
+              <ul className="mt-2 list-inside list-disc text-xs text-texto-suave">
+                {d.evidencias.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={tituloNovo}
+            onChange={(e) => setTituloNovo(e.target.value)}
+            placeholder="título da descoberta"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Descoberta
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Locais ---------- */
+function Locais({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNovo, setNomeNovo] = useState("");
+
+  function atualizar(id: string, parcial: Partial<LocalLivre>) {
+    onSalvar({ ...dados, locais: dados.locais.map((l) => (l.id === id ? { ...l, ...parcial } : l)) });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, locais: dados.locais.filter((l) => l.id !== id) });
+  }
+
+  function adicionar() {
+    if (!nomeNovo.trim()) return;
+    const novo: LocalLivre = {
+      id: `local-${Date.now().toString(36)}`,
+      nome: nomeNovo.trim(),
+      descoberto: true,
+      conhecimento: [],
+      criadoEm: Date.now(),
+    };
+    onSalvar({ ...dados, locais: [...dados.locais, novo] });
+    setNomeNovo("");
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Locais</h2>
+      {dados.locais.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum local ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.locais.map((l) => (
+          <li key={l.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">
+                {l.nome}
+                {!l.descoberto && <span className="ml-2 text-xs font-normal text-texto-suave">(não visitado)</span>}
+              </p>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => remover(l.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </div>
+            {l.descricao && <p className="mt-1 text-sm text-texto-suave">{l.descricao}</p>}
+            {!somenteLeitura && (
+              <label className="mt-2 flex items-center gap-1 text-xs text-texto-suave">
+                <input type="checkbox" checked={l.descoberto} onChange={(e) => atualizar(l.id, { descoberto: e.target.checked })} />
+                Descoberto
+              </label>
+            )}
+            {l.conhecimento.length > 0 && (
+              <ul className="mt-2 list-inside list-disc text-xs text-texto-suave">
+                {l.conhecimento.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            )}
+            {!somenteLeitura && (
+              <ConhecimentoNovo onAdicionar={(texto) => atualizar(l.id, { conhecimento: [...l.conhecimento, texto] })} />
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNovo}
+            onChange={(e) => setNomeNovo(e.target.value)}
+            placeholder="nome do local"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Local
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Bestiário ---------- */
+function Bestiario({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNovo, setNomeNovo] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, criaturas: dados.criaturas.filter((c) => c.id !== id) });
+  }
+
+  function adicionar() {
+    if (!nomeNovo.trim()) return;
+    const nova: CriaturaLivre = {
+      id: `criatura-${Date.now().toString(36)}`,
+      nome: nomeNovo.trim(),
+      tracosConhecidos: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, criaturas: [...dados.criaturas, nova] });
+    setNomeNovo("");
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Bestiário</h2>
+      {dados.criaturas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma criatura catalogada ainda.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.criaturas.map((c) => (
+          <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="text-texto">
+                {c.nome}
+                {c.categoria && <span className="ml-2 text-xs text-texto-suave">· {c.categoria}</span>}
+              </p>
+              {c.descricao && <p className="mt-1 text-xs text-texto-suave">{c.descricao}</p>}
+              {c.tracosConhecidos.length > 0 && (
+                <p className="mt-1 flex flex-wrap gap-1">
+                  {c.tracosConhecidos.map((t) => (
+                    <span key={t} className="rounded-full border border-borda px-2 py-0.5 text-[11px] text-texto-suave">
+                      {t}
+                    </span>
+                  ))}
+                </p>
+              )}
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(c.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNovo}
+            onChange={(e) => setNomeNovo(e.target.value)}
+            placeholder="nome da criatura"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Criatura
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Codex ---------- */
+function Codex({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [titulo, setTitulo] = useState("");
+  const [texto, setTexto] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, codex: dados.codex.filter((c) => c.id !== id) });
+  }
+
+  function adicionar() {
+    if (!titulo.trim() || !texto.trim()) return;
+    const nova: CodexLivre = { id: `codex-${Date.now().toString(36)}`, titulo: titulo.trim(), texto: texto.trim(), criadoEm: Date.now() };
+    onSalvar({ ...dados, codex: [...dados.codex, nova] });
+    setTitulo("");
+    setTexto("");
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Codex</h2>
+      <p className="mt-1 text-sm text-texto-suave">Lore de referência — teorias, conceitos, o que a campanha for explicando.</p>
+      {dados.codex.length === 0 && <p className="mt-2 text-sm text-texto-suave">Vazio por enquanto.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.codex.map((c) => (
+          <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="font-titulo text-sm text-texto">
+                {c.titulo} {c.categoria && <span className="text-xs font-normal text-texto-suave">· {c.categoria}</span>}
+              </p>
+              <p className="mt-1 text-sm text-texto-suave">{c.texto}</p>
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(c.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 space-y-2 rounded-lg border border-borda bg-superficie p-4">
+          <input
+            type="text"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            placeholder="Título"
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <textarea
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            placeholder="Texto"
+            rows={3}
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Codex
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ---------- Diário ---------- */
+function Diario({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [titulo, setTitulo] = useState("");
+  const [resumo, setResumo] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, diario: dados.diario.filter((e) => e.id !== id) });
+  }
+
+  function adicionar() {
+    if (!titulo.trim()) return;
+    const nova: EntradaDiario = { id: `diario-${Date.now().toString(36)}`, titulo: titulo.trim(), resumo: resumo.trim() || undefined, eventos: [], criadaEm: Date.now() };
+    onSalvar({ ...dados, diario: [nova, ...dados.diario] });
+    setTitulo("");
+    setResumo("");
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-titulo text-xl">Diário</h2>
+      {dados.diario.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma entrada ainda.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.diario.map((e) => (
+          <li key={e.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="font-titulo text-sm text-texto">
+                {e.titulo}
+                <span className="ml-2 text-xs font-normal text-texto-suave">{new Date(e.criadaEm).toLocaleDateString("pt-BR")}</span>
+              </p>
+              {e.resumo && <p className="mt-1 text-sm text-texto-suave">{e.resumo}</p>}
+              {e.eventos.length > 0 && (
+                <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+                  {e.eventos.map((ev, i) => (
+                    <li key={i}>{ev}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(e.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 space-y-2 rounded-lg border border-borda bg-superficie p-4">
+          <input
+            type="text"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            placeholder="Título da entrada"
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <textarea
+            value={resumo}
+            onChange={(e) => setResumo(e.target.value)}
+            placeholder="O que aconteceu…"
+            rows={3}
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Entrada
+          </button>
+        </div>
+      )}
+    </section>
   );
 }
 

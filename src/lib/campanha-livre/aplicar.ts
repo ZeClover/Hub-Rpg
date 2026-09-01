@@ -32,6 +32,11 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
     notas: [...atual.notas],
     missoes: atual.missoes.map((m) => ({ ...m, objetivos: m.objetivos.map((o) => ({ ...o })), recompensas: [...m.recompensas], anotacoes: [...m.anotacoes] })),
     npcs: atual.npcs.map((n) => ({ ...n, conhecimento: [...n.conhecimento], relacoes: { ...n.relacoes } })),
+    descobertas: atual.descobertas.map((d) => ({ ...d, evidencias: [...d.evidencias] })),
+    codex: [...atual.codex],
+    locais: atual.locais.map((l) => ({ ...l, conhecimento: [...l.conhecimento] })),
+    criaturas: atual.criaturas.map((c) => ({ ...c, tracosConhecidos: [...c.tracosConhecidos] })),
+    diario: atual.diario.map((e) => ({ ...e, eventos: [...e.eventos] })),
   };
   const resumos: string[] = [];
 
@@ -236,6 +241,114 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[])
       const depois = antes + mudanca.valor;
       npc.relacoes[mudanca.stat] = depois;
       resumos.push(`${mudanca.npc}.${mudanca.stat}: ${antes} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "nota_update") {
+      const nota = dados.notas.find((n) => n.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (!nota) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      nota.texto = `${nota.texto}\n${mudanca.acrescimo}`;
+      resumos.push(`Colinha "${mudanca.titulo}" atualizada`);
+      continue;
+    }
+
+    if (mudanca.tipo === "nota_remove") {
+      const antes = dados.notas.length;
+      dados.notas = dados.notas.filter((n) => {
+        if (mudanca.idNota && n.id === mudanca.idNota) return false;
+        if (mudanca.titulo && n.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase()) return false;
+        return true;
+      });
+      if (dados.notas.length < antes) resumos.push(`Colinha removida${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "descoberta_add") {
+      const existente = dados.descobertas.find((d) => d.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Descoberta "${mudanca.titulo}" já existia — ignorada`);
+        continue;
+      }
+      dados.descobertas.push({
+        id: gerarId(),
+        titulo: mudanca.titulo,
+        categoria: mudanca.categoria,
+        status: mudanca.status,
+        descricao: mudanca.descricao,
+        evidencias: mudanca.evidencias,
+        criadaEm: Date.now(),
+      });
+      resumos.push(`Nova descoberta: ${mudanca.titulo} (${mudanca.status})`);
+      continue;
+    }
+
+    if (mudanca.tipo === "descoberta_update") {
+      const descoberta = dados.descobertas.find((d) => d.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (!descoberta) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      if (mudanca.status) descoberta.status = mudanca.status;
+      if (mudanca.evidenciasNovas.length > 0) descoberta.evidencias.push(...mudanca.evidenciasNovas);
+      resumos.push(`Descoberta "${mudanca.titulo}" atualizada${mudanca.status ? ` → ${mudanca.status}` : ""}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "codex_add") {
+      const existente = dados.codex.find((c) => c.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Codex "${mudanca.titulo}" já existia — ignorado`);
+        continue;
+      }
+      dados.codex.push({ id: gerarId(), titulo: mudanca.titulo, categoria: mudanca.categoria, texto: mudanca.texto, criadoEm: Date.now() });
+      resumos.push(`Novo codex: ${mudanca.titulo}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "local_add") {
+      const existente = dados.locais.find((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Local "${mudanca.nome}" já existia — ignorado`);
+        continue;
+      }
+      dados.locais.push({
+        id: gerarId(),
+        nome: mudanca.nome,
+        descricao: mudanca.descricao,
+        descoberto: mudanca.descoberto,
+        conhecimento: [],
+        criadoEm: Date.now(),
+      });
+      resumos.push(`Novo local: ${mudanca.nome}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "local_update") {
+      const local = dados.locais.find((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!local) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      local.conhecimento.push(...mudanca.conhecimentoNovo);
+      resumos.push(`${mudanca.nome}: +${mudanca.conhecimentoNovo.length} informação(ões)`);
+      continue;
+    }
+
+    if (mudanca.tipo === "criatura_add") {
+      const existente = dados.criaturas.find((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Criatura "${mudanca.nome}" já existia — ignorada`);
+        continue;
+      }
+      dados.criaturas.push({
+        id: gerarId(),
+        nome: mudanca.nome,
+        categoria: mudanca.categoria,
+        descricao: mudanca.descricao,
+        tracosConhecidos: mudanca.tracosConhecidos,
+        criadaEm: Date.now(),
+      });
+      resumos.push(`Nova criatura no bestiário: ${mudanca.nome}`);
+      continue;
+    }
+
+    if (mudanca.tipo === "diario_add") {
+      dados.diario.push({ id: gerarId(), titulo: mudanca.titulo, resumo: mudanca.resumo, eventos: mudanca.eventos, criadaEm: Date.now() });
+      resumos.push(`Novo diário: ${mudanca.titulo}`);
       continue;
     }
   }

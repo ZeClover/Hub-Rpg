@@ -73,6 +73,52 @@ export type NpcLivre = {
   criadoEm: number;
 };
 
+export type StatusDescoberta = "desconhecido" | "suspeita" | "teoria" | "testando" | "parcial" | "confirmada" | "refutada";
+
+export type DescobertaLivre = {
+  id: string;
+  titulo: string;
+  categoria?: string;
+  status: StatusDescoberta;
+  descricao?: string;
+  evidencias: string[];
+  criadaEm: number;
+};
+
+export type CodexLivre = {
+  id: string;
+  titulo: string;
+  categoria?: string;
+  texto: string;
+  criadoEm: number;
+};
+
+export type LocalLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  descoberto: boolean;
+  conhecimento: string[];
+  criadoEm: number;
+};
+
+export type CriaturaLivre = {
+  id: string;
+  nome: string;
+  categoria?: string;
+  descricao?: string;
+  tracosConhecidos: string[];
+  criadaEm: number;
+};
+
+export type EntradaDiario = {
+  id: string;
+  titulo: string;
+  resumo?: string;
+  eventos: string[];
+  criadaEm: number;
+};
+
 /*
   Registro mínimo de importações já aplicadas — só o suficiente pra avisar
   "isso já foi importado antes" (regra #7 do protocolo). Um event log de
@@ -98,6 +144,11 @@ export type PersonagemLivre = {
   notas: NotaLivre[];
   missoes: MissaoLivre[];
   npcs: NpcLivre[];
+  descobertas: DescobertaLivre[];
+  codex: CodexLivre[];
+  locais: LocalLivre[];
+  criaturas: CriaturaLivre[];
+  diario: EntradaDiario[];
   historicoImportacoes: ImportacaoAplicada[];
 };
 
@@ -113,6 +164,11 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     notas: [],
     missoes: [],
     npcs: [],
+    descobertas: [],
+    codex: [],
+    locais: [],
+    criaturas: [],
+    diario: [],
     historicoImportacoes: [],
   };
 }
@@ -135,6 +191,11 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     notas: Array.isArray(d.notas) ? d.notas : [],
     missoes: Array.isArray(d.missoes) ? d.missoes : [],
     npcs: Array.isArray(d.npcs) ? d.npcs : [],
+    descobertas: Array.isArray(d.descobertas) ? d.descobertas : [],
+    codex: Array.isArray(d.codex) ? d.codex : [],
+    locais: Array.isArray(d.locais) ? d.locais : [],
+    criaturas: Array.isArray(d.criaturas) ? d.criaturas : [],
+    diario: Array.isArray(d.diario) ? d.diario : [],
     historicoImportacoes: Array.isArray(d.historicoImportacoes) ? d.historicoImportacoes : [],
   };
 }
