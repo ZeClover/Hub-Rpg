@@ -1803,6 +1803,32 @@ regras de segurança do pacote original (v1), construído em cinco fatias
 ao longo do dia (decisões #47 a #51), cada uma no ar e usável antes da
 próxima começar (decisão #26).
 
+## 52. Campanha Livre — Missões/NPCs/Descobertas/Locais/Bestiário/Codex/Diário/Colinhas em abas (01/09/2026)
+
+Ajuste de interface pedido pelo Zé depois que o protocolo HUB_UPDATE
+ficou completo: a página estava crescendo muito na vertical com oito
+seções empilhadas (cada uma podendo ter várias entradas). Viraram abas
+— só uma seção visível por vez, trocando com um clique — dentro de um
+único bloco na ficha, sem mexer em Recursos/Atributos/Moedas/Inventário
+(que continuam sempre visíveis, por serem consultados com mais
+frequência durante a sessão).
+
+Puramente visual: nenhuma lógica de dados mudou, só como a página
+organiza o que já existia. Cada seção perdeu seu próprio `<h2>` (o nome
+da aba já cumpre esse papel) e virou o conteúdo interno de uma aba;
+trocar de aba não perde nada do que foi digitado nas outras — é só
+`useState` escolhendo qual seção renderizar, os dados continuam vindo
+do mesmo objeto `dados` de sempre.
+
+Testado: os 142 testes automáticos (inalterados, já que nenhuma lógica
+mudou) continuam passando. Um teste de Playwright novo confirma que as
+8 abas aparecem, que só a primeira mostra conteúdo por padrão, que
+clicar em cada uma mostra a entidade certa, e que trocar de aba não
+apaga o que foi criado manualmente em outra. Os 6 testes de Playwright
+das fatias anteriores precisaram de pequenos ajustes (clicar na aba
+certa antes de preencher um campo que só existe nela) e continuam
+passando. `tsc --noEmit`, `npm run build` e `npm run lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

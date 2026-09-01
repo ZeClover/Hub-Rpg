@@ -431,6 +431,15 @@ passando.
   - **Protocolo HUB_UPDATE completo** — cinco fatias (decisões #47 a
     #51), cada uma no ar antes da próxima começar (decisão #26)
 
+- [x] **Campanha Livre — Missões/NPCs/Descobertas/Locais/Bestiário/
+      Codex/Diário/Colinhas em abas** (01/09/2026) — decisão #52.
+      Ajuste visual: essas 8 seções, que estavam empilhadas na
+      vertical, viraram abas (uma visível por vez). Recursos/
+      Atributos/Moedas/Inventário continuam sempre visíveis. Nenhuma
+      lógica de dados mudou — testado com os 142 testes automáticos
+      (inalterados) e 1 teste de Playwright novo pra confirmar troca
+      de aba sem perda de dado.
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

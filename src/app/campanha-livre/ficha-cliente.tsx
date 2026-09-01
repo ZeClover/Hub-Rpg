@@ -163,14 +163,7 @@ export function FichaCampanhaLivre() {
       <Atributos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Moedas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Inventario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Missoes dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Npcs dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Descobertas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Locais dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Bestiario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Codex dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Diario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <AbasMundo dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
     </main>
   );
@@ -620,6 +613,61 @@ function Inventario({
   );
 }
 
+/* ---------- Abas: Missões, NPCs, Descobertas, Locais, Bestiário, Codex, Diário, Colinhas ---------- */
+const ABAS_MUNDO = [
+  { id: "missoes", rotulo: "Missões" },
+  { id: "npcs", rotulo: "NPCs" },
+  { id: "descobertas", rotulo: "Descobertas" },
+  { id: "locais", rotulo: "Locais" },
+  { id: "bestiario", rotulo: "Bestiário" },
+  { id: "codex", rotulo: "Codex" },
+  { id: "diario", rotulo: "Diário" },
+  { id: "colinhas", rotulo: "Colinhas" },
+] as const;
+
+type AbaMundo = (typeof ABAS_MUNDO)[number]["id"];
+
+function AbasMundo({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [aba, setAba] = useState<AbaMundo>("missoes");
+
+  return (
+    <section className="mt-8">
+      <div className="flex flex-wrap gap-1 border-b border-borda">
+        {ABAS_MUNDO.map((a) => (
+          <button
+            key={a.id}
+            type="button"
+            onClick={() => setAba(a.id)}
+            className={`-mb-px border-b-2 px-3 py-2 text-sm font-titulo ${
+              aba === a.id ? "border-ambar-forte text-ambar-forte" : "border-transparent text-texto-suave hover:text-texto"
+            }`}
+          >
+            {a.rotulo}
+          </button>
+        ))}
+      </div>
+      <div className="mt-4">
+        {aba === "missoes" && <Missoes dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "npcs" && <Npcs dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "descobertas" && <Descobertas dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "locais" && <Locais dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "bestiario" && <Bestiario dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "codex" && <Codex dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "diario" && <Diario dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "colinhas" && <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+      </div>
+    </section>
+  );
+}
+
 const STATUS_MISSAO_OPCOES: { valor: StatusMissao; rotulo: string }[] = [
   { valor: "disponivel", rotulo: "Disponível" },
   { valor: "ativa", rotulo: "Ativa" },
@@ -684,8 +732,7 @@ function Missoes({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Missões</h2>
+    <div>
       {dados.missoes.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma missão ainda.</p>}
       <ul className="mt-3 space-y-3">
         {dados.missoes.map((missao) => (
@@ -779,7 +826,7 @@ function Missoes({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -857,8 +904,7 @@ function Npcs({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">NPCs</h2>
+    <div>
       {dados.npcs.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum NPC ainda.</p>}
       <ul className="mt-3 space-y-3">
         {dados.npcs.map((npc) => (
@@ -941,7 +987,7 @@ function Npcs({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1041,8 +1087,7 @@ function Descobertas({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Descobertas</h2>
+    <div>
       {dados.descobertas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma descoberta ainda.</p>}
       <ul className="mt-3 space-y-3">
         {dados.descobertas.map((d) => (
@@ -1092,7 +1137,7 @@ function Descobertas({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1130,8 +1175,7 @@ function Locais({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Locais</h2>
+    <div>
       {dados.locais.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum local ainda.</p>}
       <ul className="mt-3 space-y-3">
         {dados.locais.map((l) => (
@@ -1181,7 +1225,7 @@ function Locais({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1214,8 +1258,7 @@ function Bestiario({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Bestiário</h2>
+    <div>
       {dados.criaturas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma criatura catalogada ainda.</p>}
       <ul className="mt-3 space-y-2">
         {dados.criaturas.map((c) => (
@@ -1258,7 +1301,7 @@ function Bestiario({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1288,9 +1331,8 @@ function Codex({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Codex</h2>
-      <p className="mt-1 text-sm text-texto-suave">Lore de referência — teorias, conceitos, o que a campanha for explicando.</p>
+    <div>
+      <p className="text-sm text-texto-suave">Lore de referência — teorias, conceitos, o que a campanha for explicando.</p>
       {dados.codex.length === 0 && <p className="mt-2 text-sm text-texto-suave">Vazio por enquanto.</p>}
       <ul className="mt-3 space-y-2">
         {dados.codex.map((c) => (
@@ -1330,7 +1372,7 @@ function Codex({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1360,8 +1402,7 @@ function Diario({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Diário</h2>
+    <div>
       {dados.diario.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma entrada ainda.</p>}
       <ul className="mt-3 space-y-2">
         {dados.diario.map((e) => (
@@ -1409,7 +1450,7 @@ function Diario({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -1455,14 +1496,13 @@ function Colinhas({
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="font-titulo text-xl">Colinhas</h2>
+    <div>
       <input
         type="text"
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
         placeholder="Buscar colinha…"
-        className="mt-2 w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+        className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
       />
       {filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
@@ -1511,7 +1551,7 @@ function Colinhas({
           </button>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
