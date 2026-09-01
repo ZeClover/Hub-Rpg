@@ -1900,6 +1900,97 @@ revertendo tudo. Os 7 testes de Playwright das fatias anteriores
 continuam passando sem regressão. `tsc --noEmit`, `npm run build` e
 `npm run lint` limpos.
 
+## 54. Campanha Livre — fecha o HUB_UPDATE v1.0 (01/09/2026)
+
+Última rodada do protocolo: as 11 operações que faltavam pra fechar a
+especificação v1.0. Todas seguem exatamente o mesmo fluxo das 24 já
+existentes (parse → validação → resolução de referências → estado
+projetado → preview → checkbox/edit → confirmação → gravação → event
+log → histórico → undo) — nenhum atalho novo por módulo.
+
+**`temporary_modifiers`** (add/remove) — nome, alvo livre, valor e
+duração obrigatória (`rounds`/`turns`/`scenes`/`sessions`/`until_rest`/
+`until_removed`/`custom`). **`conditions`** (add/remove/update) — igual,
+mas duração é opcional (uma condição pode não ter prazo definido).
+Ambos ficam numa seção "Condições e modificadores" **sempre visível**,
+fora de qualquer aba — é informação relevante durante a sessão, esconder
+atrás de um clique atrapalharia.
+
+**`spells_add`/`spells_update`/`spell_discoveries`** — magia com custo
+genérico (`Record<string, number>`, nunca assumindo "mana"), afinidade e
+tags livres. `spells_update.discoveries_add` (texto solto) e
+`spell_discoveries` (título/descrição/status: teoria/testando/parcial/
+confirmada) guardam em dois campos separados da mesma magia
+(`descobertasSimples` vs `descobertas`) — são coisas diferentes na
+especificação, mesmo com nome parecido.
+
+**`research_add`/`research_update`** — status como texto livre (a
+especificação não fecha uma lista, diferente de missão), progresso,
+objetivos/evidências/notas acumulados por `_add`. **`achievements_add`**
+— conquista simples, com proteção contra duplicação pelo nome.
+**`reputation`** — alvo livre (facção, NPC, cidade, o que a mesa usar),
+modelado como mapa `Record<string, number>` igual `moedas` — mesmo
+mecanismo de undo, sem precisar de estrutura nova.
+
+**`image_requests`** — operação própria, diferente do
+`generate_image: true` de item (decisão #53): vira uma fila
+(`filaImagens`) vinculada à entidade, nunca gera nada sozinha, nunca
+bloqueia a importação. Tem sua própria aba, com botão pra marcar como
+atendida manualmente — preparado pra uma futura integração de geração de
+imagem, mas essa integração em si está fora de escopo (decisão #23 veta
+IA dentro do app).
+
+**`school`** — pedido explícito do Zé, fora da especificação, porque vai
+usar em campanhas escolares. Implementado só `lessons_add` (matéria,
+tópico, notas), porque foi o único formato que ele deu um exemplo
+concreto — presença, trabalhos, provas e calendário ficaram de fora por
+não terem forma definida ainda (nada foi inventado). Estrutura genérica
+(`materia`/`topico`/`notas`), não hardcoded pra "Academia Mágica".
+
+**Estado projetado generalizado.** A resolução de dependências dentro do
+mesmo import (decisão #53) agora cobre as novas criações: `spell
+_discoveries` pra uma magia criada no mesmo bloco, `research_update`
+pra uma pesquisa criada no mesmo bloco, `conditions.update` pra uma
+condição criada no mesmo bloco — tudo reage ao checkbox exatamente como
+`npcs_add` + `relationships` já reagia.
+
+**Snapshots** — cópia da ficha inteira num momento (`criarSnapshot`/
+`restaurarSnapshot` em `aplicar.ts`), fora do pipeline de Mudanca:
+não é uma operação de HUB_UPDATE, é um botão manual na ficha. Restaurar
+nunca é destrutivo em silêncio — sempre mostra preview com XP/nível/
+inventário do snapshot antes de confirmar, e tira um backup automático
+do estado atual antes de trocar, pra não perder nada se a pessoa se
+arrepender. Só o gatilho manual foi implementado — os gatilhos
+automáticos que a especificação sugere (início/fim de sessão, antes de
+importação grande) não têm o que os disparar, porque o Hub não tem
+conceito de "sessão" como evento de sistema; ficam documentados como não
+implementados, não inventados.
+
+**Simplificações documentadas** (a especificação permite marcar como
+opcional quando não há forma definida): relações de pesquisa com magia/
+NPC/local/item não ganharam sistema de referência íntegra — o campo não
+foi implementado, porque a especificação não definiu o formato; os
+gatilhos automáticos de snapshot (acima); e `school` restrito a
+`lessons_add` (acima).
+
+Testado: 50 testes automáticos novos (208 no total do projeto) cobrindo
+parse/validação/aplicação/desfazer/duplicação/referência-ausente/
+dependência-mesmo-import de cada uma das 11 operações, mais um teste
+unitário combinando 8 delas (condition + temporary_modifier + spell +
+spell_discovery + research + achievement + reputation + image_request)
+no mesmo bloco HUB_UPDATE, aplicando e desfazendo a importação inteira
+de uma vez. Dois testes de Playwright novos: um reproduz o bloco
+combinado de ponta a ponta na interface (preview, reatividade do
+checkbox de `research_update` dependendo de `research_add` no mesmo
+lote, confirmação, as 6 abas novas, desfazer individual e desfazer
+importação inteira) e outro cobre o fluxo de snapshot manual (criar,
+restaurar com preview, backup automático). `tsc --noEmit`, `npm run
+build` e `npm run lint` limpos.
+
+Com esta decisão, o HUB_UPDATE v1.0 está completo: as 24 operações
+anteriores mais estas 11 cobrem toda a especificação, com as três
+simplificações acima documentadas em vez de inventadas.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

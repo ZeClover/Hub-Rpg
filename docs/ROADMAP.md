@@ -461,6 +461,36 @@ passando.
     ponta; os 7 testes de Playwright das fatias anteriores sem
     regressão. `tsc`, `next build` e lint limpos
 
+- [x] **Campanha Livre — fecha o HUB_UPDATE v1.0** (01/09/2026) —
+      decisão #54. As 11 operações que faltavam: `temporary_modifiers`,
+      `conditions`, `spells_add`/`spells_update`/`spell_discoveries`,
+      `research_add`/`research_update`, `achievements_add`,
+      `reputation`, `image_requests` (própria, distinta do
+      `generate_image` de item), e `school.lessons_add` (fora da
+      especificação, pedido explícito do Zé pra campanhas escolares).
+  - Mesmo fluxo das 24 operações anteriores em todas — sem atalho por
+    módulo; estado projetado (decisão #53) generalizado pra cobrir as
+    novas dependências dentro do mesmo bloco (`spell_discoveries` de
+    uma magia criada no mesmo import, `research_update` de uma pesquisa
+    criada no mesmo import, etc.)
+  - Condições e modificadores temporários ganharam seção própria
+    **sempre visível** (fora de aba); Magias/Pesquisas/Conquistas/
+    Reputação/Imagens/Escola viraram 6 abas novas em `AbasMundo`
+  - Snapshots (`criarSnapshot`/`restaurarSnapshot`) — cópia manual da
+    ficha inteira, fora do pipeline de Mudanca; restaurar sempre mostra
+    preview e tira backup automático antes, nunca destrutivo em silêncio
+  - Simplificações documentadas (não inventadas): relações de pesquisa
+    com magia/NPC/local/item ficaram de fora (especificação não definiu
+    formato); gatilhos automáticos de snapshot não implementados (Hub
+    não tem conceito de "sessão" como evento de sistema); `school`
+    restrito a `lessons_add` (único formato com exemplo concreto)
+  - Testado: 50 testes automáticos novos (208 no total), incluindo um
+    teste unitário combinando 8 das novas operações no mesmo bloco
+    HUB_UPDATE; 2 testes de Playwright novos (fluxo combinado de ponta
+    a ponta na interface, e snapshot manual com preview/backup). `tsc`,
+    `next build` e lint limpos
+  - **HUB_UPDATE v1.0 completo** — decisões #47 a #54
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

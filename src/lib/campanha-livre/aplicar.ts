@@ -16,7 +16,7 @@
 */
 import { temErro } from "./validar.ts";
 import type { Mudanca } from "./parser.ts";
-import type { AlvoEvento, EventoAplicado, PersonagemLivre } from "./tipos.ts";
+import type { AlvoEvento, EventoAplicado, OrigemSnapshot, PersonagemLivre, SnapshotLivre } from "./tipos.ts";
 
 /** Mesma "célula" de dado (campo raiz, chave de mapa, ou entidade de lista) — usado por `eventosConflitantes`. */
 function mesmoAlvo(a: AlvoEvento, b: AlvoEvento): boolean {
@@ -59,6 +59,27 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     locais: atual.locais.map((l) => ({ ...l, conhecimento: [...l.conhecimento] })),
     criaturas: atual.criaturas.map((c) => ({ ...c, tracosConhecidos: [...c.tracosConhecidos] })),
     diario: atual.diario.map((e) => ({ ...e, eventos: [...e.eventos] })),
+    modificadoresTemporarios: atual.modificadoresTemporarios.map((m) => ({ ...m, duracao: { ...m.duracao } })),
+    condicoes: atual.condicoes.map((c) => ({ ...c, duracao: c.duracao ? { ...c.duracao } : undefined })),
+    magias: atual.magias.map((m) => ({
+      ...m,
+      custo: m.custo ? { ...m.custo } : undefined,
+      tags: m.tags ? [...m.tags] : undefined,
+      descobertasSimples: [...m.descobertasSimples],
+      descobertas: m.descobertas.map((d) => ({ ...d })),
+    })),
+    pesquisas: atual.pesquisas.map((p) => ({
+      ...p,
+      objetivos: [...p.objetivos],
+      evidencias: [...p.evidencias],
+      notas: [...p.notas],
+      tags: p.tags ? [...p.tags] : undefined,
+    })),
+    conquistas: [...atual.conquistas],
+    reputacao: { ...atual.reputacao },
+    filaImagens: [...atual.filaImagens],
+    escola: atual.escola.map((e) => ({ ...e, notas: [...e.notas] })),
+    snapshots: [...atual.snapshots],
     eventos: [...atual.eventos],
   };
   const resumos: string[] = [];
@@ -469,6 +490,220 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       registrar(mudanca.tipo, `Novo diário: ${mudanca.titulo}`, { forma: "lista", lista: "diario", identificador: nova.id, antes: null });
       continue;
     }
+
+    if (mudanca.tipo === "modificador_add") {
+      const existente = dados.modificadoresTemporarios.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Modificador "${mudanca.nome}" já existia — ignorado`);
+        continue;
+      }
+      const novo = { id: gerarId(), nome: mudanca.nome, alvo: mudanca.alvo, valor: mudanca.valor, duracao: mudanca.duracao, criadoEm: Date.now() };
+      dados.modificadoresTemporarios.push(novo);
+      registrar(mudanca.tipo, `Novo modificador: ${mudanca.nome} (${mudanca.alvo} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor})`, {
+        forma: "lista",
+        lista: "modificadoresTemporarios",
+        identificador: novo.nome,
+        antes: null,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "modificador_remove") {
+      const existente = dados.modificadoresTemporarios.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existente) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(existente);
+      dados.modificadoresTemporarios = dados.modificadoresTemporarios.filter((m) => m.id !== existente.id);
+      registrar(mudanca.tipo, `Modificador removido: ${mudanca.nome}`, {
+        forma: "lista",
+        lista: "modificadoresTemporarios",
+        identificador: antes.nome,
+        antes,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "condicao_add") {
+      const existente = dados.condicoes.find((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Condição "${mudanca.nome}" já existia — ignorada`);
+        continue;
+      }
+      const nova = { id: gerarId(), nome: mudanca.nome, descricao: mudanca.descricao, duracao: mudanca.duracao, criadaEm: Date.now() };
+      dados.condicoes.push(nova);
+      registrar(mudanca.tipo, `Nova condição: ${mudanca.nome}`, { forma: "lista", lista: "condicoes", identificador: nova.nome, antes: null });
+      continue;
+    }
+
+    if (mudanca.tipo === "condicao_remove") {
+      const existente = dados.condicoes.find((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existente) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(existente);
+      dados.condicoes = dados.condicoes.filter((c) => c.id !== existente.id);
+      registrar(mudanca.tipo, `Condição removida: ${mudanca.nome}`, { forma: "lista", lista: "condicoes", identificador: antes.nome, antes });
+      continue;
+    }
+
+    if (mudanca.tipo === "condicao_update") {
+      const existente = dados.condicoes.find((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existente) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(existente);
+      if (mudanca.descricao !== undefined) existente.descricao = mudanca.descricao;
+      if (mudanca.duracao !== undefined) existente.duracao = mudanca.duracao;
+      registrar(mudanca.tipo, `Condição "${mudanca.nome}" atualizada`, { forma: "lista", lista: "condicoes", identificador: antes.nome, antes });
+      continue;
+    }
+
+    if (mudanca.tipo === "magia_add") {
+      const existente = dados.magias.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Magia "${mudanca.nome}" já existia — ignorada`);
+        continue;
+      }
+      const nova = {
+        id: gerarId(),
+        nome: mudanca.nome,
+        descricao: mudanca.descricao,
+        afinidade: mudanca.afinidade,
+        custo: mudanca.custo,
+        statusConhecimento: mudanca.statusConhecimento,
+        progressoConhecimento: mudanca.progressoConhecimento,
+        tags: mudanca.tags,
+        descobertasSimples: [],
+        descobertas: [],
+        criadaEm: Date.now(),
+      };
+      dados.magias.push(nova);
+      registrar(mudanca.tipo, `Nova magia: ${mudanca.nome}`, { forma: "lista", lista: "magias", identificador: nova.nome, antes: null });
+      continue;
+    }
+
+    if (mudanca.tipo === "magia_update") {
+      const magia = dados.magias.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!magia) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(magia);
+      if (mudanca.descobertasSimplesNovas.length > 0) magia.descobertasSimples.push(...mudanca.descobertasSimplesNovas);
+      if (mudanca.progressoConhecimentoDelta !== undefined) {
+        magia.progressoConhecimento = (magia.progressoConhecimento ?? 0) + mudanca.progressoConhecimentoDelta;
+      }
+      registrar(mudanca.tipo, `Magia "${mudanca.nome}" atualizada`, { forma: "lista", lista: "magias", identificador: antes.nome, antes });
+      continue;
+    }
+
+    if (mudanca.tipo === "magia_descoberta") {
+      const magia = dados.magias.find((m) => m.nome.trim().toLowerCase() === mudanca.magia.trim().toLowerCase());
+      if (!magia) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(magia);
+      magia.descobertas.push({ id: gerarId(), titulo: mudanca.titulo, descricao: mudanca.descricao, status: mudanca.status, criadaEm: Date.now() });
+      registrar(mudanca.tipo, `${mudanca.magia}: nova descoberta "${mudanca.titulo}" (${mudanca.status})`, {
+        forma: "lista",
+        lista: "magias",
+        identificador: antes.nome,
+        antes,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "pesquisa_add") {
+      const existente = dados.pesquisas.find((p) => p.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Pesquisa "${mudanca.titulo}" já existia — ignorada`);
+        continue;
+      }
+      const nova = {
+        id: gerarId(),
+        titulo: mudanca.titulo,
+        status: mudanca.status,
+        progresso: mudanca.progresso,
+        objetivos: mudanca.objetivos,
+        evidencias: [],
+        notas: [],
+        criadaEm: Date.now(),
+      };
+      dados.pesquisas.push(nova);
+      registrar(mudanca.tipo, `Nova pesquisa: ${mudanca.titulo}`, { forma: "lista", lista: "pesquisas", identificador: nova.titulo, antes: null });
+      continue;
+    }
+
+    if (mudanca.tipo === "pesquisa_update") {
+      const pesquisa = dados.pesquisas.find((p) => p.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (!pesquisa) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(pesquisa);
+      if (mudanca.status !== undefined) pesquisa.status = mudanca.status;
+      if (mudanca.progressoDelta !== undefined) pesquisa.progresso += mudanca.progressoDelta;
+      if (mudanca.evidenciasNovas.length > 0) pesquisa.evidencias.push(...mudanca.evidenciasNovas);
+      if (mudanca.objetivosNovos.length > 0) pesquisa.objetivos.push(...mudanca.objetivosNovos);
+      if (mudanca.notasNovas.length > 0) pesquisa.notas.push(...mudanca.notasNovas);
+      registrar(mudanca.tipo, `Pesquisa "${mudanca.titulo}" atualizada`, { forma: "lista", lista: "pesquisas", identificador: antes.titulo, antes });
+      continue;
+    }
+
+    if (mudanca.tipo === "conquista_add") {
+      const existente = dados.conquistas.find((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (existente) {
+        resumos.push(`Conquista "${mudanca.nome}" já existia — ignorada`);
+        continue;
+      }
+      const nova = { id: gerarId(), nome: mudanca.nome, descricao: mudanca.descricao, criadaEm: Date.now() };
+      dados.conquistas.push(nova);
+      registrar(mudanca.tipo, `Nova conquista: ${mudanca.nome}`, { forma: "lista", lista: "conquistas", identificador: nova.nome, antes: null });
+      continue;
+    }
+
+    if (mudanca.tipo === "reputacao") {
+      const existiaAntes = dados.reputacao[mudanca.alvo] !== undefined;
+      const antesValor = dados.reputacao[mudanca.alvo] ?? 0;
+      const depois = mudanca.operacao === "set" ? mudanca.valor : antesValor + mudanca.valor;
+      dados.reputacao[mudanca.alvo] = depois;
+      registrar(mudanca.tipo, `${mudanca.alvo}: ${antesValor} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`, {
+        forma: "mapa",
+        mapa: "reputacao",
+        chave: mudanca.alvo,
+        antes: existiaAntes ? antesValor : null,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "imagem_pedido") {
+      const existente = dados.filaImagens.find(
+        (s) =>
+          !s.atendida &&
+          s.tipoEntidade.trim().toLowerCase() === mudanca.tipoEntidade.trim().toLowerCase() &&
+          s.nomeEntidade.trim().toLowerCase() === mudanca.nomeEntidade.trim().toLowerCase(),
+      );
+      if (existente) {
+        resumos.push(`Pedido de imagem pra "${mudanca.nomeEntidade}" já estava pendente — ignorado`);
+        continue;
+      }
+      const novo = {
+        id: gerarId(),
+        tipoEntidade: mudanca.tipoEntidade,
+        nomeEntidade: mudanca.nomeEntidade,
+        promptSugerido: mudanca.promptSugerido,
+        prioridade: mudanca.prioridade,
+        atendida: false,
+        criadaEm: Date.now(),
+      };
+      dados.filaImagens.push(novo);
+      registrar(mudanca.tipo, `Imagem pedida: ${mudanca.tipoEntidade} "${mudanca.nomeEntidade}" — pendente`, {
+        forma: "lista",
+        lista: "filaImagens",
+        identificador: novo.id,
+        antes: null,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "escola_add") {
+      const nova = { id: gerarId(), materia: mudanca.materia, topico: mudanca.topico, notas: mudanca.notas, criadaEm: Date.now() };
+      dados.escola.push(nova);
+      registrar(mudanca.tipo, `Nova aula: ${mudanca.materia}${mudanca.topico ? ` — ${mudanca.topico}` : ""}`, {
+        forma: "lista",
+        lista: "escola",
+        identificador: nova.id,
+        antes: null,
+      });
+      continue;
+    }
   }
 
   return { dados, resumos };
@@ -502,7 +737,8 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     else mapa[alvo.chave] = alvo.antes;
     if (alvo.mapa === "recursos") dados.recursos = mapa as PersonagemLivre["recursos"];
     else if (alvo.mapa === "atributos") dados.atributos = mapa as PersonagemLivre["atributos"];
-    else dados.moedas = mapa as PersonagemLivre["moedas"];
+    else if (alvo.mapa === "moedas") dados.moedas = mapa as PersonagemLivre["moedas"];
+    else dados.reputacao = mapa as PersonagemLivre["reputacao"];
     return dados;
   }
 
@@ -573,8 +809,8 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.criaturas = lista;
-  } else {
-    // diario — identidade é o próprio id gerado, não um nome/título de campanha
+  } else if (alvo.lista === "diario") {
+    // identidade é o próprio id gerado, não um nome/título de campanha
     const lista = [...dados.diario];
     const idx = lista.findIndex((e) => e.id === alvo.identificador);
     if (alvo.antes === null) {
@@ -582,6 +818,64 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.diario = lista;
+  } else if (alvo.lista === "modificadoresTemporarios") {
+    const lista = [...dados.modificadoresTemporarios];
+    const idx = lista.findIndex((m) => m.nome.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.modificadoresTemporarios = lista;
+  } else if (alvo.lista === "condicoes") {
+    const lista = [...dados.condicoes];
+    const idx = lista.findIndex((c) => c.nome.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.condicoes = lista;
+  } else if (alvo.lista === "magias") {
+    const lista = [...dados.magias];
+    const idx = lista.findIndex((m) => m.nome.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.magias = lista;
+  } else if (alvo.lista === "pesquisas") {
+    const lista = [...dados.pesquisas];
+    const idx = lista.findIndex((p) => p.titulo.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.pesquisas = lista;
+  } else if (alvo.lista === "conquistas") {
+    const lista = [...dados.conquistas];
+    const idx = lista.findIndex((c) => c.nome.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.conquistas = lista;
+  } else if (alvo.lista === "filaImagens") {
+    // identidade é o próprio id gerado
+    const lista = [...dados.filaImagens];
+    const idx = lista.findIndex((s) => s.id === alvo.identificador);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.filaImagens = lista;
+  } else {
+    // escola — identidade é o próprio id gerado (duas aulas podem ter a mesma matéria/tópico)
+    const lista = [...dados.escola];
+    const idx = lista.findIndex((e) => e.id === alvo.identificador);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.escola = lista;
   }
 
   return dados;
@@ -629,4 +923,37 @@ export function eventosConflitantes(dados: PersonagemLivre, importId: string): E
         mesmoAlvo(evento.alvo, outro.alvo),
     );
   });
+}
+
+/*
+  Snapshots (regra #45 do protocolo) — cópia da ficha inteira num momento,
+  fora do pipeline de Mudanca/evento/desfazer (não é um HUB_UPDATE, é um
+  botão manual). Fica de fora do próprio `estado` capturado para não crescer
+  sem limite (snapshot guardando snapshot guardando snapshot...).
+*/
+export function criarSnapshot(atual: PersonagemLivre, titulo: string, origem: OrigemSnapshot): PersonagemLivre {
+  const estado = copiar(atual) as Partial<PersonagemLivre>;
+  delete estado.snapshots;
+  const novo: SnapshotLivre = {
+    id: gerarId(),
+    titulo,
+    criadoEm: Date.now(),
+    origem,
+    estado: estado as Omit<PersonagemLivre, "snapshots">,
+  };
+  return { ...atual, snapshots: [novo, ...atual.snapshots] };
+}
+
+/*
+  Restaurar NUNCA é destrutivo em silêncio: antes de trocar o estado, tira
+  um snapshot automático do que estava na tela — se a pessoa se arrepender
+  da restauração, o "antes" continua ali pra restaurar de volta. A tela
+  ainda pede confirmação explícita antes de chamar isto (ver `Snapshots` em
+  ficha-cliente.tsx) — esta função assume que a confirmação já aconteceu.
+*/
+export function restaurarSnapshot(atual: PersonagemLivre, snapshotId: string): PersonagemLivre {
+  const snapshot = atual.snapshots.find((s) => s.id === snapshotId);
+  if (!snapshot) return atual;
+  const comBackup = criarSnapshot(atual, `Antes de restaurar "${snapshot.titulo}"`, "manual");
+  return { ...copiar(snapshot.estado), snapshots: comBackup.snapshots };
 }

@@ -33,6 +33,10 @@ const TIPOS_CRIACAO = new Set<Mudanca["tipo"]>([
   "criatura_add",
   "codex_add",
   "diario_add",
+  "modificador_add",
+  "condicao_add",
+  "magia_add",
+  "pesquisa_add",
 ]);
 
 type Props = {
@@ -109,11 +113,15 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
           m.tipo === "nivel" ||
           m.tipo === "atributo" ||
           m.tipo === "moeda" ||
-          m.tipo === "relacao"
+          m.tipo === "relacao" ||
+          m.tipo === "reputacao" ||
+          m.tipo === "modificador_add"
         ) {
           return { ...m, valor: novoValor };
         }
         if (m.tipo === "item_add" || m.tipo === "item_remove") return { ...m, quantidade: novoValor };
+        if (m.tipo === "magia_update") return { ...m, progressoConhecimentoDelta: novoValor };
+        if (m.tipo === "pesquisa_update") return { ...m, progressoDelta: novoValor };
         return m;
       }),
     );
@@ -634,16 +642,248 @@ function DescricaoMudanca({
       </div>
     );
   }
-  // diario_add
+  if (mudanca.tipo === "diario_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo diário: <strong>{mudanca.titulo}</strong>
+        </p>
+        {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "modificador_add") {
+    return (
+      <p className="text-sm text-texto">
+        Novo modificador: <strong>{mudanca.nome}</strong> — {mudanca.alvo}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">({descreverDuracao(mudanca.duracao)})</span>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "modificador_remove") {
+    return (
+      <p className="text-sm text-texto">
+        Remover modificador: <strong>{mudanca.nome}</strong>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "condicao_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova condição: <strong>{mudanca.nome}</strong>
+          {mudanca.duracao && <span className="text-xs text-texto-suave"> · {descreverDuracao(mudanca.duracao)}</span>}
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "condicao_remove") {
+    return (
+      <p className="text-sm text-texto">
+        Remover condição: <strong>{mudanca.nome}</strong>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "condicao_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Atualizar condição: <strong>{mudanca.nome}</strong>
+          {mudanca.duracao && <span className="text-xs text-texto-suave"> · {descreverDuracao(mudanca.duracao)}</span>}
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "magia_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova magia: <strong>{mudanca.nome}</strong>
+          {mudanca.afinidade && <span className="text-xs text-texto-suave"> · {mudanca.afinidade}</span>}
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+        {mudanca.custo && (
+          <p className="mt-1 text-xs text-texto-suave">
+            Custo: {Object.entries(mudanca.custo).map(([k, v]) => `${k} ${v}`).join(", ")}
+          </p>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "magia_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Magia <strong>{mudanca.nome}</strong>
+          {mudanca.progressoConhecimentoDelta !== undefined && (
+            <>
+              : progresso{" "}
+              <input
+                type="number"
+                value={mudanca.progressoConhecimentoDelta}
+                onChange={(e) => onEditar(Number(e.target.value) || 0)}
+                className="ml-1 w-16 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+              />
+            </>
+          )}
+        </p>
+        {mudanca.descobertasSimplesNovas.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.descobertasSimplesNovas.map((d, i) => (
+              <li key={i}>{d}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "magia_descoberta") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          {mudanca.magia}: nova descoberta <strong>{mudanca.titulo}</strong>{" "}
+          <span className="text-xs text-texto-suave">({STATUS_DESCOBERTA_MAGIA_LABEL[mudanca.status]})</span>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "pesquisa_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova pesquisa: <strong>{mudanca.titulo}</strong> <span className="text-xs text-texto-suave">({mudanca.status})</span>
+        </p>
+        {mudanca.objetivos.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.objetivos.map((o, i) => (
+              <li key={i}>{o}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "pesquisa_update") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Pesquisa <strong>{mudanca.titulo}</strong>
+          {mudanca.status && <>: status → {mudanca.status}</>}
+          {mudanca.progressoDelta !== undefined && (
+            <>
+              {" "}
+              progresso{" "}
+              <input
+                type="number"
+                value={mudanca.progressoDelta}
+                onChange={(e) => onEditar(Number(e.target.value) || 0)}
+                className="ml-1 w-16 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+              />
+            </>
+          )}
+        </p>
+        {[...mudanca.objetivosNovos, ...mudanca.evidenciasNovas, ...mudanca.notasNovas].length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.objetivosNovos.map((o, i) => (
+              <li key={`obj-${i}`}>{o}</li>
+            ))}
+            {mudanca.evidenciasNovas.map((e, i) => (
+              <li key={`ev-${i}`}>{e}</li>
+            ))}
+            {mudanca.notasNovas.map((n, i) => (
+              <li key={`nota-${i}`}>{n}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "conquista_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova conquista: <strong>{mudanca.nome}</strong>
+        </p>
+        {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "reputacao") {
+    const antes = dados.reputacao[mudanca.alvo] ?? 0;
+    const depois = mudanca.operacao === "set" ? mudanca.valor : antes + mudanca.valor;
+    return (
+      <p className="text-sm text-texto">
+        Reputação — {mudanca.alvo}: {antes} → {depois}{" "}
+        <input
+          type="number"
+          value={mudanca.valor}
+          onChange={(e) => onEditar(Number(e.target.value) || 0)}
+          className="ml-2 w-20 rounded border border-borda bg-superficie px-2 py-0.5 text-xs"
+        />{" "}
+        <span className="text-xs text-texto-suave">({mudanca.operacao}{mudanca.motivo ? ` — ${mudanca.motivo}` : ""})</span>
+      </p>
+    );
+  }
+  if (mudanca.tipo === "imagem_pedido") {
+    return (
+      <p className="text-sm text-texto">
+        Pedido de imagem: <strong>{mudanca.nomeEntidade}</strong>{" "}
+        <span className="text-xs text-texto-suave">
+          ({mudanca.tipoEntidade}
+          {mudanca.prioridade ? `, prioridade ${mudanca.prioridade}` : ""}) — pendente
+        </span>
+        {mudanca.promptSugerido && <span className="block text-xs text-texto-suave">{mudanca.promptSugerido}</span>}
+      </p>
+    );
+  }
+  // escola_add
   return (
     <div className="text-sm text-texto">
       <p>
-        Novo diário: <strong>{mudanca.titulo}</strong>
+        Nova aula: <strong>{mudanca.materia}</strong>
+        {mudanca.topico && <span className="text-xs text-texto-suave"> · {mudanca.topico}</span>}
       </p>
-      {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
+      {mudanca.notas.length > 0 && (
+        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+          {mudanca.notas.map((n, i) => (
+            <li key={i}>{n}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
+
+function descreverDuracao(duracao: { tipo: string; valor?: number; descricao?: string }): string {
+  if (duracao.descricao) return duracao.descricao;
+  const rotulos: Record<string, string> = {
+    rounds: "rodadas",
+    turns: "turnos",
+    scenes: "cenas",
+    sessions: "sessões",
+    until_rest: "até descansar",
+    until_removed: "até ser removido",
+    custom: "duração customizada",
+  };
+  const rotulo = rotulos[duracao.tipo] ?? duracao.tipo;
+  return duracao.valor !== undefined ? `${duracao.valor} ${rotulo}` : rotulo;
+}
+
+const STATUS_DESCOBERTA_MAGIA_LABEL: Record<string, string> = {
+  teoria: "teoria",
+  testando: "testando",
+  parcial: "parcial",
+  confirmada: "confirmada",
+};
 
 const STATUS_DESCOBERTA_LABEL: Record<string, string> = {
   desconhecido: "desconhecido",

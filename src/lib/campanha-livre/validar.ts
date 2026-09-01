@@ -244,6 +244,76 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "modificador_remove") {
+      const existe = projetado.modificadoresTemporarios.some((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Modificador "${mudanca.nome}" não existe.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "condicao_remove" || mudanca.tipo === "condicao_update") {
+      const existe = projetado.condicoes.some((c) => c.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Condição "${mudanca.nome}" não existe — crie com conditions.add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "magia_update" || mudanca.tipo === "magia_descoberta") {
+      const nomeMagia = mudanca.tipo === "magia_update" ? mudanca.nome : mudanca.magia;
+      const existe = projetado.magias.some((m) => m.nome.trim().toLowerCase() === nomeMagia.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Magia "${nomeMagia}" não existe — crie com spells_add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "pesquisa_update") {
+      const existe = projetado.pesquisas.some((p) => p.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Pesquisa "${mudanca.titulo}" não existe — crie com research_add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "reputacao" && mudanca.operacao === "change") {
+      const antes = atual.reputacao[mudanca.alvo] ?? 0;
+      const depois = antes + mudanca.valor;
+      if (depois < 0) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "warning" as const,
+              mensagem: `Vai ficar negativa: ${antes} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor} = ${depois}.`,
+            },
+          ],
+        };
+      }
+    }
+
     return mudanca;
   });
 }

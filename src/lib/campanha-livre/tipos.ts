@@ -124,6 +124,117 @@ export type EntradaDiario = {
   criadaEm: number;
 };
 
+export type TipoDuracao = "rounds" | "turns" | "scenes" | "sessions" | "until_rest" | "until_removed" | "custom";
+
+export type DuracaoEfeito = {
+  tipo: TipoDuracao;
+  /** Só faz sentido pra rounds/turns/scenes/sessions; custom usa `descricao` em vez de número. */
+  valor?: number;
+  descricao?: string;
+};
+
+export type ModificadorTemporario = {
+  id: string;
+  nome: string;
+  /** Nome livre do que é afetado — atributo, recurso, o que a campanha usar. */
+  alvo: string;
+  valor: number;
+  duracao: DuracaoEfeito;
+  criadoEm: number;
+};
+
+export type CondicaoLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  duracao?: DuracaoEfeito;
+  criadaEm: number;
+};
+
+export type StatusDescobertaMagia = "teoria" | "testando" | "parcial" | "confirmada";
+
+export type DescobertaMagia = {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  status: StatusDescobertaMagia;
+  criadaEm: number;
+};
+
+export type MagiaLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  afinidade?: string;
+  /** Custo livre — mana, estamina, o que a campanha usar (regra: "não assumir que toda campanha usa mana"). */
+  custo?: Record<string, number>;
+  statusConhecimento?: string;
+  progressoConhecimento?: number;
+  tags?: string[];
+  /** `spells_update.discoveries_add` — anotações simples, texto corrido. */
+  descobertasSimples: string[];
+  /** `spell_discoveries` — descobertas com título/descrição/status própria. */
+  descobertas: DescobertaMagia[];
+  criadaEm: number;
+};
+
+export type PesquisaLivre = {
+  id: string;
+  titulo: string;
+  /** Livre (a especificação não fecha uma lista de valores pra pesquisa, diferente de missão/descoberta). */
+  status: string;
+  progresso: number;
+  objetivos: string[];
+  evidencias: string[];
+  notas: string[];
+  tags?: string[];
+  criadaEm: number;
+};
+
+export type ConquistaLivre = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  criadaEm: number;
+};
+
+export type SolicitacaoImagem = {
+  id: string;
+  /** Livre — item, npc, local, criatura, o que a campanha pedir (regra: "não hardcode categorias"). */
+  tipoEntidade: string;
+  nomeEntidade: string;
+  promptSugerido?: string;
+  prioridade?: string;
+  atendida: boolean;
+  criadaEm: number;
+};
+
+export type EntradaEscola = {
+  id: string;
+  materia: string;
+  topico?: string;
+  notas: string[];
+  criadaEm: number;
+};
+
+/*
+  Snapshot — regra #45 do protocolo. Guarda o estado inteiro da ficha num
+  momento, exceto os próprios snapshots (senão cada snapshot cresceria
+  incluindo todos os anteriores, sem limite). Não é gerado por HUB_UPDATE —
+  é um botão manual na ficha, então não passa pelo sistema de Mudanca/
+  evento; `restaurarSnapshot` troca o estado inteiro, mas isso só acontece
+  depois de a pessoa confirmar num preview na tela (nunca sozinho).
+*/
+export type OrigemSnapshot = "manual" | "inicio_sessao" | "fim_sessao" | "antes_importacao";
+
+export type SnapshotLivre = {
+  id: string;
+  titulo: string;
+  criadoEm: number;
+  origem: OrigemSnapshot;
+  estado: Omit<PersonagemLivre, "snapshots">;
+};
+
 export type ImportacaoAplicada = {
   id: string;
   hash: string;
@@ -148,12 +259,28 @@ export type AlvoEventoRaiz = { forma: "raiz"; campo: "xp" | "nivel"; antes: numb
 
 export type AlvoEventoMapa = {
   forma: "mapa";
-  mapa: "recursos" | "atributos" | "moedas";
+  mapa: "recursos" | "atributos" | "moedas" | "reputacao";
   chave: string;
   antes: RecursoLivre | number | null;
 };
 
-export type NomeLista = "inventario" | "notas" | "missoes" | "npcs" | "descobertas" | "codex" | "locais" | "criaturas" | "diario";
+export type NomeLista =
+  | "inventario"
+  | "notas"
+  | "missoes"
+  | "npcs"
+  | "descobertas"
+  | "codex"
+  | "locais"
+  | "criaturas"
+  | "diario"
+  | "modificadoresTemporarios"
+  | "condicoes"
+  | "magias"
+  | "pesquisas"
+  | "conquistas"
+  | "filaImagens"
+  | "escola";
 
 export type AlvoEventoLista =
   | { forma: "lista"; lista: "inventario"; identificador: string; antes: ItemLivre | null }
@@ -164,7 +291,14 @@ export type AlvoEventoLista =
   | { forma: "lista"; lista: "codex"; identificador: string; antes: CodexLivre | null }
   | { forma: "lista"; lista: "locais"; identificador: string; antes: LocalLivre | null }
   | { forma: "lista"; lista: "criaturas"; identificador: string; antes: CriaturaLivre | null }
-  | { forma: "lista"; lista: "diario"; identificador: string; antes: EntradaDiario | null };
+  | { forma: "lista"; lista: "diario"; identificador: string; antes: EntradaDiario | null }
+  | { forma: "lista"; lista: "modificadoresTemporarios"; identificador: string; antes: ModificadorTemporario | null }
+  | { forma: "lista"; lista: "condicoes"; identificador: string; antes: CondicaoLivre | null }
+  | { forma: "lista"; lista: "magias"; identificador: string; antes: MagiaLivre | null }
+  | { forma: "lista"; lista: "pesquisas"; identificador: string; antes: PesquisaLivre | null }
+  | { forma: "lista"; lista: "conquistas"; identificador: string; antes: ConquistaLivre | null }
+  | { forma: "lista"; lista: "filaImagens"; identificador: string; antes: SolicitacaoImagem | null }
+  | { forma: "lista"; lista: "escola"; identificador: string; antes: EntradaEscola | null };
 
 export type AlvoEvento = AlvoEventoRaiz | AlvoEventoMapa | AlvoEventoLista;
 
@@ -197,6 +331,16 @@ export type PersonagemLivre = {
   locais: LocalLivre[];
   criaturas: CriaturaLivre[];
   diario: EntradaDiario[];
+  modificadoresTemporarios: ModificadorTemporario[];
+  condicoes: CondicaoLivre[];
+  magias: MagiaLivre[];
+  pesquisas: PesquisaLivre[];
+  conquistas: ConquistaLivre[];
+  /** Reputação com facções, cidades, casas, NPCs — qualquer alvo nomeado pela campanha. */
+  reputacao: Record<string, number>;
+  filaImagens: SolicitacaoImagem[];
+  escola: EntradaEscola[];
+  snapshots: SnapshotLivre[];
   historicoImportacoes: ImportacaoAplicada[];
   eventos: EventoAplicado[];
 };
@@ -218,6 +362,15 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     locais: [],
     criaturas: [],
     diario: [],
+    modificadoresTemporarios: [],
+    condicoes: [],
+    magias: [],
+    pesquisas: [],
+    conquistas: [],
+    reputacao: {},
+    filaImagens: [],
+    escola: [],
+    snapshots: [],
     historicoImportacoes: [],
     eventos: [],
   };
@@ -246,6 +399,15 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     locais: Array.isArray(d.locais) ? d.locais : [],
     criaturas: Array.isArray(d.criaturas) ? d.criaturas : [],
     diario: Array.isArray(d.diario) ? d.diario : [],
+    modificadoresTemporarios: Array.isArray(d.modificadoresTemporarios) ? d.modificadoresTemporarios : [],
+    condicoes: Array.isArray(d.condicoes) ? d.condicoes : [],
+    magias: Array.isArray(d.magias) ? d.magias : [],
+    pesquisas: Array.isArray(d.pesquisas) ? d.pesquisas : [],
+    conquistas: Array.isArray(d.conquistas) ? d.conquistas : [],
+    reputacao: d.reputacao && typeof d.reputacao === "object" ? d.reputacao : {},
+    filaImagens: Array.isArray(d.filaImagens) ? d.filaImagens : [],
+    escola: Array.isArray(d.escola) ? d.escola : [],
+    snapshots: Array.isArray(d.snapshots) ? d.snapshots : [],
     // Fichas de antes desta fatia guardam importações sem `id` (regra #12/#41
     // do protocolo vieram só nesta fatia) — completa com um id sintético pra
     // não quebrar a tela de histórico.

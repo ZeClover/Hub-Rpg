@@ -4,22 +4,37 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { aplicarMudancas, desfazerEvento, desfazerImportacao, eventosConflitantes } from "@/lib/campanha-livre/aplicar.ts";
+import {
+  aplicarMudancas,
+  criarSnapshot,
+  desfazerEvento,
+  desfazerImportacao,
+  eventosConflitantes,
+  restaurarSnapshot,
+} from "@/lib/campanha-livre/aplicar.ts";
 import {
   normalizarPersonagemLivre,
   type CodexLivre,
+  type CondicaoLivre,
+  type ConquistaLivre,
   type CriaturaLivre,
   type DescobertaLivre,
+  type DuracaoEfeito,
   type EntradaDiario,
+  type EntradaEscola,
   type EventoAplicado,
   type LocalLivre,
+  type MagiaLivre,
   type MissaoLivre,
+  type ModificadorTemporario,
   type NomeLista,
   type NpcLivre,
   type PersonagemLivre,
+  type PesquisaLivre,
   type StatusDescoberta,
   type StatusMissao,
   type StatusObjetivo,
+  type TipoDuracao,
 } from "@/lib/campanha-livre/tipos.ts";
 
 import { ImportarDoChat } from "./importar-do-chat";
@@ -164,8 +179,10 @@ export function FichaCampanhaLivre() {
       <Recursos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Atributos dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Moedas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Condicoes dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Inventario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <AbasMundo dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Snapshots dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
     </main>
   );
@@ -498,6 +515,226 @@ function Moedas({
   );
 }
 
+const OPCOES_DURACAO: { valor: TipoDuracao; rotulo: string }[] = [
+  { valor: "rounds", rotulo: "rodadas" },
+  { valor: "turns", rotulo: "turnos" },
+  { valor: "scenes", rotulo: "cenas" },
+  { valor: "sessions", rotulo: "sessões" },
+  { valor: "until_rest", rotulo: "até descansar" },
+  { valor: "until_removed", rotulo: "até ser removido" },
+  { valor: "custom", rotulo: "outro" },
+];
+
+function rotuloDuracao(duracao?: DuracaoEfeito): string | null {
+  if (!duracao) return null;
+  if (duracao.descricao) return duracao.descricao;
+  const opcao = OPCOES_DURACAO.find((o) => o.valor === duracao.tipo);
+  const rotulo = opcao?.rotulo ?? duracao.tipo;
+  return duracao.valor !== undefined ? `${duracao.valor} ${rotulo}` : rotulo;
+}
+
+/** Formulário compartilhado pra escolher duração — usado ao criar condição/modificador manualmente. */
+function SeletorDuracao({ onEscolher }: { onEscolher: (duracao: DuracaoEfeito) => void }) {
+  const [tipo, setTipo] = useState<TipoDuracao>("scenes");
+  const [valor, setValor] = useState(1);
+  const [descricao, setDescricao] = useState("");
+
+  useEffect(() => {
+    if (tipo === "custom") onEscolher({ tipo, descricao: descricao.trim() || undefined });
+    else if (tipo === "until_rest" || tipo === "until_removed") onEscolher({ tipo });
+    else onEscolher({ tipo, valor });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tipo, valor, descricao]);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <select
+        value={tipo}
+        onChange={(e) => setTipo(e.target.value as TipoDuracao)}
+        className="rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto"
+      >
+        {OPCOES_DURACAO.map((o) => (
+          <option key={o.valor} value={o.valor}>
+            {o.rotulo}
+          </option>
+        ))}
+      </select>
+      {tipo !== "until_rest" && tipo !== "until_removed" && tipo !== "custom" && (
+        <input
+          type="number"
+          min={1}
+          value={valor}
+          onChange={(e) => setValor(Number(e.target.value) || 1)}
+          className="w-16 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto"
+        />
+      )}
+      {tipo === "custom" && (
+        <input
+          type="text"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+          placeholder="descreva a duração"
+          className="rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+        />
+      )}
+    </div>
+  );
+}
+
+/* ---------- Condições e modificadores temporários: sempre visível (relevante em qualquer sessão) ---------- */
+function Condicoes({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeCondicao, setNomeCondicao] = useState("");
+  const [duracaoCondicao, setDuracaoCondicao] = useState<DuracaoEfeito>({ tipo: "scenes", valor: 1 });
+  const [nomeModificador, setNomeModificador] = useState("");
+  const [alvoModificador, setAlvoModificador] = useState("");
+  const [valorModificador, setValorModificador] = useState(0);
+  const [duracaoModificador, setDuracaoModificador] = useState<DuracaoEfeito>({ tipo: "scenes", valor: 1 });
+
+  function removerCondicao(id: string) {
+    onSalvar({ ...dados, condicoes: dados.condicoes.filter((c) => c.id !== id) });
+  }
+
+  function adicionarCondicao() {
+    if (!nomeCondicao.trim()) return;
+    const nova: CondicaoLivre = {
+      id: `condicao-${Date.now().toString(36)}`,
+      nome: nomeCondicao.trim(),
+      duracao: duracaoCondicao,
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, condicoes: [...dados.condicoes, nova] });
+    setNomeCondicao("");
+  }
+
+  function removerModificador(id: string) {
+    onSalvar({ ...dados, modificadoresTemporarios: dados.modificadoresTemporarios.filter((m) => m.id !== id) });
+  }
+
+  function adicionarModificador() {
+    if (!nomeModificador.trim() || !alvoModificador.trim()) return;
+    const novo: ModificadorTemporario = {
+      id: `modificador-${Date.now().toString(36)}`,
+      nome: nomeModificador.trim(),
+      alvo: alvoModificador.trim(),
+      valor: valorModificador,
+      duracao: duracaoModificador,
+      criadoEm: Date.now(),
+    };
+    onSalvar({ ...dados, modificadoresTemporarios: [...dados.modificadoresTemporarios, novo] });
+    setNomeModificador("");
+    setAlvoModificador("");
+    setValorModificador(0);
+  }
+
+  if (dados.condicoes.length === 0 && dados.modificadoresTemporarios.length === 0 && somenteLeitura) return null;
+
+  return (
+    <section className="mt-8 rounded-lg border border-borda bg-superficie p-6">
+      <h2 className="font-titulo text-xl">Condições e modificadores</h2>
+      <p className="mt-1 text-sm text-texto-suave">O que está afetando o personagem agora — sempre visível, útil em sessão.</p>
+
+      <div className="mt-4">
+        <h3 className="text-sm font-titulo text-texto">Condições</h3>
+        {dados.condicoes.length === 0 && <p className="mt-1 text-sm text-texto-suave">Nenhuma condição ativa.</p>}
+        <ul className="mt-2 space-y-2">
+          {dados.condicoes.map((c) => (
+            <li key={c.id} className="flex items-start justify-between gap-3 rounded border border-borda bg-fundo p-3">
+              <div>
+                <p className="text-sm text-texto">
+                  {c.nome}
+                  {rotuloDuracao(c.duracao) && <span className="ml-2 text-xs text-texto-suave">· {rotuloDuracao(c.duracao)}</span>}
+                </p>
+                {c.descricao && <p className="mt-1 text-xs text-texto-suave">{c.descricao}</p>}
+              </div>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => removerCondicao(c.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {!somenteLeitura && (
+          <div className="mt-2 space-y-2 rounded border border-borda bg-fundo p-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={nomeCondicao}
+                onChange={(e) => setNomeCondicao(e.target.value)}
+                placeholder="nome da condição"
+                className="flex-1 rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+              />
+              <button type="button" onClick={adicionarCondicao} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1 text-xs text-ambar-forte hover:bg-ambar/20">
+                + Condição
+              </button>
+            </div>
+            <SeletorDuracao onEscolher={setDuracaoCondicao} />
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-sm font-titulo text-texto">Modificadores temporários</h3>
+        {dados.modificadoresTemporarios.length === 0 && <p className="mt-1 text-sm text-texto-suave">Nenhum modificador ativo.</p>}
+        <ul className="mt-2 space-y-2">
+          {dados.modificadoresTemporarios.map((m) => (
+            <li key={m.id} className="flex items-start justify-between gap-3 rounded border border-borda bg-fundo p-3">
+              <p className="text-sm text-texto">
+                {m.nome} — {m.alvo} {m.valor >= 0 ? "+" : ""}
+                {m.valor}
+                {rotuloDuracao(m.duracao) && <span className="ml-2 text-xs text-texto-suave">· {rotuloDuracao(m.duracao)}</span>}
+              </p>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => removerModificador(m.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {!somenteLeitura && (
+          <div className="mt-2 space-y-2 rounded border border-borda bg-fundo p-3">
+            <div className="flex flex-wrap gap-2">
+              <input
+                type="text"
+                value={nomeModificador}
+                onChange={(e) => setNomeModificador(e.target.value)}
+                placeholder="nome"
+                className="rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+              />
+              <input
+                type="text"
+                value={alvoModificador}
+                onChange={(e) => setAlvoModificador(e.target.value)}
+                placeholder="alvo (ex: força)"
+                className="rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+              />
+              <input
+                type="number"
+                value={valorModificador}
+                onChange={(e) => setValorModificador(Number(e.target.value) || 0)}
+                className="w-16 rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto"
+              />
+              <button type="button" onClick={adicionarModificador} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1 text-xs text-ambar-forte hover:bg-ambar/20">
+                + Modificador
+              </button>
+            </div>
+            <SeletorDuracao onEscolher={setDuracaoModificador} />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /* ---------- Inventário ---------- */
 function Inventario({
   dados,
@@ -637,6 +874,12 @@ const ABAS_MUNDO = [
   { id: "codex", rotulo: "Codex" },
   { id: "diario", rotulo: "Diário" },
   { id: "colinhas", rotulo: "Colinhas" },
+  { id: "magias", rotulo: "Magias" },
+  { id: "pesquisas", rotulo: "Pesquisas" },
+  { id: "conquistas", rotulo: "Conquistas" },
+  { id: "reputacao", rotulo: "Reputação" },
+  { id: "imagens", rotulo: "Imagens" },
+  { id: "escola", rotulo: "Escola" },
 ] as const;
 
 type AbaMundo = (typeof ABAS_MUNDO)[number]["id"];
@@ -677,6 +920,12 @@ function AbasMundo({
         {aba === "codex" && <Codex dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "diario" && <Diario dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "colinhas" && <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "magias" && <Magias dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "pesquisas" && <Pesquisas dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "conquistas" && <Conquistas dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "reputacao" && <Reputacao dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "imagens" && <Imagens dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "escola" && <Escola dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
       </div>
     </section>
   );
@@ -1569,6 +1818,568 @@ function Colinhas({
   );
 }
 
+/* ---------- Magias ---------- */
+function Magias({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNova, setNomeNova] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, magias: dados.magias.filter((m) => m.id !== id) });
+  }
+
+  function adicionar() {
+    if (!nomeNova.trim()) return;
+    const nova: MagiaLivre = {
+      id: `magia-${Date.now().toString(36)}`,
+      nome: nomeNova.trim(),
+      descobertasSimples: [],
+      descobertas: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, magias: [...dados.magias, nova] });
+    setNomeNova("");
+  }
+
+  return (
+    <div>
+      {dados.magias.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma magia conhecida ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.magias.map((m) => (
+          <li key={m.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">
+                {m.nome}
+                {m.afinidade && <span className="ml-2 text-xs font-normal text-texto-suave">· {m.afinidade}</span>}
+              </p>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => remover(m.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </div>
+            {m.descricao && <p className="mt-1 text-sm text-texto-suave">{m.descricao}</p>}
+            {m.custo && (
+              <p className="mt-1 text-xs text-texto-suave">
+                Custo: {Object.entries(m.custo).map(([k, v]) => `${k} ${v}`).join(", ")}
+              </p>
+            )}
+            {(m.statusConhecimento || m.progressoConhecimento !== undefined) && (
+              <p className="mt-1 text-xs text-texto-suave">
+                {m.statusConhecimento}
+                {m.progressoConhecimento !== undefined && ` · progresso ${m.progressoConhecimento}`}
+              </p>
+            )}
+            {m.descobertasSimples.length > 0 && (
+              <ul className="mt-2 list-inside list-disc text-xs text-texto-suave">
+                {m.descobertasSimples.map((d, i) => (
+                  <li key={i}>{d}</li>
+                ))}
+              </ul>
+            )}
+            {m.descobertas.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs text-texto-suave">
+                {m.descobertas.map((d) => (
+                  <li key={d.id}>
+                    <strong className="text-texto">{d.titulo}</strong> ({d.status}){d.descricao ? ` — ${d.descricao}` : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNova}
+            onChange={(e) => setNomeNova(e.target.value)}
+            placeholder="nome da magia"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Magia
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Pesquisas ---------- */
+function Pesquisas({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [tituloNovo, setTituloNovo] = useState("");
+
+  function atualizar(id: string, parcial: Partial<PesquisaLivre>) {
+    onSalvar({ ...dados, pesquisas: dados.pesquisas.map((p) => (p.id === id ? { ...p, ...parcial } : p)) });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, pesquisas: dados.pesquisas.filter((p) => p.id !== id) });
+  }
+
+  function adicionar() {
+    if (!tituloNovo.trim()) return;
+    const nova: PesquisaLivre = {
+      id: `pesquisa-${Date.now().toString(36)}`,
+      titulo: tituloNovo.trim(),
+      status: "active",
+      progresso: 0,
+      objetivos: [],
+      evidencias: [],
+      notas: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, pesquisas: [...dados.pesquisas, nova] });
+    setTituloNovo("");
+  }
+
+  return (
+    <div>
+      {dados.pesquisas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma pesquisa ainda.</p>}
+      <ul className="mt-3 space-y-3">
+        {dados.pesquisas.map((p) => (
+          <li key={p.id} className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-titulo text-texto">{p.titulo}</p>
+              {!somenteLeitura && (
+                <button type="button" onClick={() => remover(p.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              )}
+            </div>
+            <div className="mt-2 flex items-center gap-3 text-xs text-texto-suave">
+              <input
+                type="text"
+                value={p.status}
+                disabled={somenteLeitura}
+                onChange={(e) => atualizar(p.id, { status: e.target.value })}
+                className="w-28 rounded border border-borda bg-fundo px-2 py-1 text-texto disabled:opacity-60"
+              />
+              <span>
+                progresso{" "}
+                <input
+                  type="number"
+                  value={p.progresso}
+                  disabled={somenteLeitura}
+                  onChange={(e) => atualizar(p.id, { progresso: Number(e.target.value) || 0 })}
+                  className="w-16 rounded border border-borda bg-fundo px-2 py-1 text-texto disabled:opacity-60"
+                />
+              </span>
+            </div>
+            {p.objetivos.length > 0 && (
+              <p className="mt-2 text-xs text-texto-suave">Objetivos: {p.objetivos.join(", ")}</p>
+            )}
+            {p.evidencias.length > 0 && (
+              <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+                {p.evidencias.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            )}
+            {p.notas.length > 0 && (
+              <p className="mt-1 text-xs text-texto-suave">Notas: {p.notas.join(" · ")}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={tituloNovo}
+            onChange={(e) => setTituloNovo(e.target.value)}
+            placeholder="título da pesquisa"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Pesquisa
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Conquistas ---------- */
+function Conquistas({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [nomeNova, setNomeNova] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, conquistas: dados.conquistas.filter((c) => c.id !== id) });
+  }
+
+  function adicionar() {
+    if (!nomeNova.trim()) return;
+    const nova: ConquistaLivre = { id: `conquista-${Date.now().toString(36)}`, nome: nomeNova.trim(), criadaEm: Date.now() };
+    onSalvar({ ...dados, conquistas: [...dados.conquistas, nova] });
+    setNomeNova("");
+  }
+
+  return (
+    <div>
+      {dados.conquistas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma conquista ainda.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.conquistas.map((c) => (
+          <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="text-texto">{c.nome}</p>
+              {c.descricao && <p className="mt-1 text-xs text-texto-suave">{c.descricao}</p>}
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(c.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={nomeNova}
+            onChange={(e) => setNomeNova(e.target.value)}
+            placeholder="nome da conquista"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Conquista
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Reputação: alvo livre (facção, NPC, cidade...) → número, igual moedas ---------- */
+function Reputacao({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [alvoNovo, setAlvoNovo] = useState("");
+  const alvos = Object.keys(dados.reputacao);
+
+  function adicionar() {
+    const chave = alvoNovo.trim();
+    if (!chave || dados.reputacao[chave] !== undefined) return;
+    onSalvar({ ...dados, reputacao: { ...dados.reputacao, [chave]: 0 } });
+    setAlvoNovo("");
+  }
+
+  function remover(alvo: string) {
+    const resto = { ...dados.reputacao };
+    delete resto[alvo];
+    onSalvar({ ...dados, reputacao: resto });
+  }
+
+  function atualizar(alvo: string, valor: number) {
+    onSalvar({ ...dados, reputacao: { ...dados.reputacao, [alvo]: valor } });
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-texto-suave">Facção, grupo, cidade, NPC — qualquer entidade que a campanha usar.</p>
+      {alvos.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma reputação registrada ainda.</p>}
+      <div className="mt-3 flex flex-wrap gap-3">
+        {alvos.map((alvo) => (
+          <div key={alvo} className="flex items-center gap-2 rounded-lg border border-borda bg-superficie px-3 py-2">
+            <span className="font-titulo text-sm text-texto">{alvo}</span>
+            <input
+              type="number"
+              value={dados.reputacao[alvo]}
+              disabled={somenteLeitura}
+              onChange={(e) => atualizar(alvo, Number(e.target.value) || 0)}
+              className="w-20 rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto disabled:opacity-60"
+            />
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(alvo)} className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                ×
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={alvoNovo}
+            onChange={(e) => setAlvoNovo(e.target.value)}
+            placeholder="alvo (ex: Guilda dos Ferreiros)"
+            className="rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Reputação
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Imagens: fila de pedidos — nunca gera sozinho, só marca pendência (regra #32/#45) ---------- */
+function Imagens({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  function alternarAtendida(id: string) {
+    onSalvar({
+      ...dados,
+      filaImagens: dados.filaImagens.map((s) => (s.id === id ? { ...s, atendida: !s.atendida } : s)),
+    });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, filaImagens: dados.filaImagens.filter((s) => s.id !== id) });
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-texto-suave">
+        Pedidos de imagem — o Hub nunca gera sozinho, só guarda a fila para quando você (ou uma futura integração) for gerar.
+      </p>
+      {dados.filaImagens.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum pedido pendente.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.filaImagens.map((s) => (
+          <li key={s.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className={`text-texto ${s.atendida ? "text-texto-suave line-through" : ""}`}>
+                {s.nomeEntidade} <span className="text-xs text-texto-suave">({s.tipoEntidade})</span>
+              </p>
+              {s.promptSugerido && <p className="mt-1 text-xs text-texto-suave">{s.promptSugerido}</p>}
+            </div>
+            {!somenteLeitura && (
+              <div className="flex shrink-0 gap-2 text-xs">
+                <button type="button" onClick={() => alternarAtendida(s.id)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto">
+                  {s.atendida ? "Marcar pendente" : "Marcar atendida"}
+                </button>
+                <button type="button" onClick={() => remover(s.id)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ---------- Escola: módulo genérico — aulas, matérias, conteúdos (regra: não hardcode Academia Mágica) ---------- */
+function Escola({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [materia, setMateria] = useState("");
+  const [topico, setTopico] = useState("");
+
+  function remover(id: string) {
+    onSalvar({ ...dados, escola: dados.escola.filter((e) => e.id !== id) });
+  }
+
+  function adicionar() {
+    if (!materia.trim()) return;
+    const nova: EntradaEscola = {
+      id: `escola-${Date.now().toString(36)}`,
+      materia: materia.trim(),
+      topico: topico.trim() || undefined,
+      notas: [],
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, escola: [nova, ...dados.escola] });
+    setMateria("");
+    setTopico("");
+  }
+
+  return (
+    <div>
+      {dados.escola.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma aula registrada ainda.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.escola.map((e) => (
+          <li key={e.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="font-titulo text-sm text-texto">
+                {e.materia} {e.topico && <span className="text-xs font-normal text-texto-suave">· {e.topico}</span>}
+                <span className="ml-2 text-xs font-normal text-texto-suave">{new Date(e.criadaEm).toLocaleDateString("pt-BR")}</span>
+              </p>
+              {e.notas.length > 0 && (
+                <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+                  {e.notas.map((n, i) => (
+                    <li key={i}>{n}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(e.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={materia}
+            onChange={(e) => setMateria(e.target.value)}
+            placeholder="matéria"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <input
+            type="text"
+            value={topico}
+            onChange={(e) => setTopico(e.target.value)}
+            placeholder="tópico (opcional)"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Aula
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Snapshots: estado inteiro num momento — nunca restaura sem preview/confirmação (regra #45) ---------- */
+function Snapshots({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [titulo, setTitulo] = useState("");
+  const [previewId, setPreviewId] = useState<string | null>(null);
+
+  if (somenteLeitura && dados.snapshots.length === 0) return null;
+
+  function criar() {
+    if (!titulo.trim()) return;
+    onSalvar(criarSnapshot(dados, titulo.trim(), "manual"));
+    setTitulo("");
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, snapshots: dados.snapshots.filter((s) => s.id !== id) });
+  }
+
+  function confirmarRestaurar(id: string) {
+    onSalvar(restaurarSnapshot(dados, id));
+    setPreviewId(null);
+  }
+
+  return (
+    <section className="mt-8 rounded-lg border border-borda bg-superficie p-6">
+      <h2 className="font-titulo text-xl">Snapshots</h2>
+      <p className="mt-1 text-sm text-texto-suave">
+        Uma cópia da ficha inteira num momento — útil antes de uma importação grande. Restaurar sempre pede confirmação.
+      </p>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            placeholder="título do snapshot"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={criar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Snapshot
+          </button>
+        </div>
+      )}
+      {dados.snapshots.length === 0 && <p className="mt-3 text-sm text-texto-suave">Nenhum snapshot ainda.</p>}
+      <ul className="mt-3 space-y-2">
+        {dados.snapshots.map((s) => (
+          <li key={s.id} className="rounded-lg border border-borda bg-fundo p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-sm text-texto">
+                {s.titulo} <span className="text-xs text-texto-suave">· {new Date(s.criadoEm).toLocaleString("pt-BR")} · {s.origem}</span>
+              </p>
+              {!somenteLeitura && (
+                <div className="flex shrink-0 gap-2 text-xs">
+                  <button type="button" onClick={() => setPreviewId(previewId === s.id ? null : s.id)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto">
+                    Restaurar
+                  </button>
+                  <button type="button" onClick={() => remover(s.id)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                    Remover
+                  </button>
+                </div>
+              )}
+            </div>
+            {previewId === s.id && (
+              <div className="mt-2 rounded border border-segredo/40 bg-segredo/5 p-3 text-xs text-texto">
+                <p>
+                  Isso vai substituir a ficha atual pelo estado salvo em{" "}
+                  <strong>{new Date(s.criadoEm).toLocaleString("pt-BR")}</strong> — XP {s.estado.xp}, Nível {s.estado.nivel},{" "}
+                  {s.estado.inventario.length} item(ns) no inventário. A ficha atual antes de restaurar também vira um snapshot
+                  automático, pra não perder nada.
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => confirmarRestaurar(s.id)}
+                    className="rounded border border-segredo/50 bg-segredo/10 px-3 py-1.5 text-xs text-segredo hover:bg-segredo/20"
+                  >
+                    Confirmar restauração
+                  </button>
+                  <button type="button" onClick={() => setPreviewId(null)} className="rounded border border-borda px-3 py-1.5 text-xs text-texto-suave hover:text-texto">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /* ---------- Histórico de importações ---------- */
 const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
   inventario: "item",
@@ -1580,6 +2391,13 @@ const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
   locais: "local",
   criaturas: "criatura",
   diario: "entrada de diário",
+  modificadoresTemporarios: "modificador",
+  condicoes: "condição",
+  magias: "magia",
+  pesquisas: "pesquisa",
+  conquistas: "conquista",
+  filaImagens: "pedido de imagem",
+  escola: "aula",
 };
 
 /** Descreve o que "Desfazer" vai fazer a este evento específico — antes → depois na direção do desfazer, não da mudança original. */

@@ -3,13 +3,15 @@ import { test } from "node:test";
 
 import {
   aplicarMudancas as aplicarMudancasComImportId,
+  criarSnapshot,
   desfazerEvento,
   desfazerImportacao,
   eventosConflitantes,
+  restaurarSnapshot,
 } from "./aplicar.ts";
 import { interpretarHubUpdate, type Mudanca } from "./parser.ts";
 import { novoPersonagemLivre, type PersonagemLivre } from "./tipos.ts";
-import { validarContraPersonagem } from "./validar.ts";
+import { temErro, validarContraPersonagem } from "./validar.ts";
 
 /** Testes não se importam com o importId — usa um fixo. */
 function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[]) {
@@ -480,4 +482,282 @@ test("eventosConflitantes não acusa nada quando não há mudança posterior na 
 
   const conflitos = eventosConflitantes(segundo.dados, "import-1");
   assert.equal(conflitos.length, 0);
+});
+
+/* ---------- novas operações (fecha o v1.0): aplicar, duplicar, desfazer ---------- */
+
+test("aplica temporary_modifiers.add e ignora duplicata pelo nome", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const bloco1 = "temporary_modifiers:\n  add:\n    - name: Bênção\n      target: força\n      value: 2\n      duration:\n        type: scenes\n        value: 1";
+  const primeiro = aplicarMudancas(ficha, mudancasDe(bloco1));
+  assert.equal(primeiro.dados.modificadoresTemporarios.length, 1);
+  assert.equal(primeiro.dados.modificadoresTemporarios[0].alvo, "força");
+
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe(bloco1));
+  assert.equal(segundo.dados.modificadoresTemporarios.length, 1, "duplicata pelo nome deveria ser ignorada");
+  assert.match(segundo.resumos[0], /já existia/);
+});
+
+test("aplica temporary_modifiers.remove e desfaz devolvendo o modificador removido", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criado = aplicarMudancas(
+    ficha,
+    mudancasDe("temporary_modifiers:\n  add:\n    - name: Bênção\n      target: força\n      value: 2\n      duration:\n        type: scenes\n        value: 1"),
+  );
+  const removido = aplicarMudancas(criado.dados, mudancasDe("temporary_modifiers:\n  remove:\n    - name: Bênção"));
+  assert.equal(removido.dados.modificadoresTemporarios.length, 0);
+
+  const eventoRemove = removido.dados.eventos.find((e) => e.tipo === "modificador_remove")!;
+  const desfeito = desfazerEvento(removido.dados, eventoRemove.id);
+  assert.equal(desfeito.modificadoresTemporarios.length, 1);
+  assert.equal(desfeito.modificadoresTemporarios[0].nome, "Bênção");
+});
+
+test("desfazer temporary_modifiers.add (criação) remove o modificador inteiro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(
+    ficha,
+    mudancasDe("temporary_modifiers:\n  add:\n    - name: Bênção\n      target: força\n      value: 2\n      duration:\n        type: scenes\n        value: 1"),
+  );
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.modificadoresTemporarios.length, 0);
+});
+
+test("aplica conditions.add/update/remove e desfaz cada um", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criada = aplicarMudancas(ficha, mudancasDe("conditions:\n  add:\n    - name: Envenenado\n      description: Perde vida."));
+  assert.equal(criada.dados.condicoes.length, 1);
+
+  const atualizada = aplicarMudancas(criada.dados, mudancasDe("conditions:\n  update:\n    - name: Envenenado\n      description: Piorou."));
+  assert.equal(atualizada.dados.condicoes[0].descricao, "Piorou.");
+  const eventoUpdate = atualizada.dados.eventos.find((e) => e.tipo === "condicao_update")!;
+  const desfeitoUpdate = desfazerEvento(atualizada.dados, eventoUpdate.id);
+  assert.equal(desfeitoUpdate.condicoes[0].descricao, "Perde vida.");
+
+  const removida = aplicarMudancas(atualizada.dados, mudancasDe("conditions:\n  remove:\n    - name: Envenenado"));
+  assert.equal(removida.dados.condicoes.length, 0);
+  const eventoRemove = removida.dados.eventos.find((e) => e.tipo === "condicao_remove")!;
+  const desfeitoRemove = desfazerEvento(removida.dados, eventoRemove.id);
+  assert.equal(desfeitoRemove.condicoes.length, 1);
+});
+
+test("aplica spells_add e ignora duplicata pelo nome", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const bloco1 = "spells_add:\n  - name: Bola de Fogo\n    affinity: fogo";
+  const primeiro = aplicarMudancas(ficha, mudancasDe(bloco1));
+  assert.equal(primeiro.dados.magias.length, 1);
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe(bloco1));
+  assert.equal(segundo.dados.magias.length, 1, "magia duplicada pelo nome deveria ser ignorada");
+});
+
+test("aplica spells_update (discoveries_add e knowledge.change) e desfaz restaurando a magia inteira", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criada = aplicarMudancas(ficha, mudancasDe("spells_add:\n  - name: Bola de Fogo"));
+  const atualizada = aplicarMudancas(
+    criada.dados,
+    mudancasDe("spells_update:\n  - name: Bola de Fogo\n    discoveries_add:\n      - Funciona na água.\n    knowledge:\n      change: 20"),
+  );
+  assert.deepEqual(atualizada.dados.magias[0].descobertasSimples, ["Funciona na água."]);
+  assert.equal(atualizada.dados.magias[0].progressoConhecimento, 20);
+
+  const eventoUpdate = atualizada.dados.eventos.find((e) => e.tipo === "magia_update")!;
+  const desfeito = desfazerEvento(atualizada.dados, eventoUpdate.id);
+  assert.deepEqual(desfeito.magias[0].descobertasSimples, []);
+  assert.equal(desfeito.magias[0].progressoConhecimento, undefined);
+});
+
+test("aplica spell_discoveries dentro da magia correspondente e desfaz", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criada = aplicarMudancas(ficha, mudancasDe("spells_add:\n  - name: Bola de Fogo"));
+  const comDescoberta = aplicarMudancas(
+    criada.dados,
+    mudancasDe("spell_discoveries:\n  - spell: Bola de Fogo\n    title: Reação com água\n    status: confirmed"),
+  );
+  assert.equal(comDescoberta.dados.magias[0].descobertas.length, 1);
+  assert.equal(comDescoberta.dados.magias[0].descobertas[0].status, "confirmada");
+
+  const evento = comDescoberta.dados.eventos.find((e) => e.tipo === "magia_descoberta")!;
+  const desfeito = desfazerEvento(comDescoberta.dados, evento.id);
+  assert.equal(desfeito.magias[0].descobertas.length, 0);
+});
+
+test("aplica research_add e research_update, desfazendo o update sem apagar a pesquisa", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criada = aplicarMudancas(ficha, mudancasDe("research_add:\n  - title: Origem do Véu\n    progress: 0"));
+  const atualizada = aplicarMudancas(
+    criada.dados,
+    mudancasDe("research_update:\n  - title: Origem do Véu\n    progress_change: 10\n    evidence_add:\n      - Pergaminho"),
+  );
+  assert.equal(atualizada.dados.pesquisas[0].progresso, 10);
+  assert.deepEqual(atualizada.dados.pesquisas[0].evidencias, ["Pergaminho"]);
+
+  const eventoUpdate = atualizada.dados.eventos.find((e) => e.tipo === "pesquisa_update")!;
+  const desfeito = desfazerEvento(atualizada.dados, eventoUpdate.id);
+  assert.equal(desfeito.pesquisas.length, 1, "desfazer o update não deveria remover a pesquisa");
+  assert.equal(desfeito.pesquisas[0].progresso, 0);
+});
+
+test("aplica achievements_add e ignora duplicata pelo nome", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const bloco1 = "achievements_add:\n  - name: Primeira Invocação";
+  const primeiro = aplicarMudancas(ficha, mudancasDe(bloco1));
+  assert.equal(primeiro.dados.conquistas.length, 1);
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe(bloco1));
+  assert.equal(segundo.dados.conquistas.length, 1, "conquista duplicada pelo nome deveria ser ignorada, sem duplicação silenciosa");
+});
+
+test("desfazer achievements_add remove a conquista", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("achievements_add:\n  - name: Primeira Invocação"));
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.conquistas.length, 0);
+});
+
+test("aplica reputation (mapa, igual moedas) criando e ajustando, e desfaz", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const criada = aplicarMudancas(ficha, mudancasDe("reputation:\n  - target: Guilda dos Ferreiros\n    change: 5"));
+  assert.equal(criada.dados.reputacao["Guilda dos Ferreiros"], 5);
+
+  const ajustada = aplicarMudancas(criada.dados, mudancasDe("reputation:\n  - target: Guilda dos Ferreiros\n    change: 3"));
+  assert.equal(ajustada.dados.reputacao["Guilda dos Ferreiros"], 8);
+
+  const eventoAjuste = ajustada.dados.eventos.filter((e) => e.tipo === "reputacao").at(-1)!;
+  const desfeito = desfazerEvento(ajustada.dados, eventoAjuste.id);
+  assert.equal(desfeito.reputacao["Guilda dos Ferreiros"], 5);
+});
+
+test("desfazer reputation (mapa) que não existia antes remove a chave", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("reputation:\n  - target: Casa Verde\n    set: 10"));
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.reputacao["Casa Verde"], undefined);
+});
+
+test("aplica image_requests, marca fila pendente (nunca gera sozinho) e ignora duplicata pendente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const bloco1 = "image_requests:\n  - entity_type: npc\n    entity_name: Mira\n    prompt_hint: Cabelos prateados.";
+  const primeiro = aplicarMudancas(ficha, mudancasDe(bloco1));
+  assert.equal(primeiro.dados.filaImagens.length, 1);
+  assert.equal(primeiro.dados.filaImagens[0].atendida, false);
+
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe(bloco1));
+  assert.equal(segundo.dados.filaImagens.length, 1, "pedido pendente igual deveria ser ignorado");
+});
+
+test("desfazer image_requests (criação) remove o pedido da fila", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("image_requests:\n  - entity_type: npc\n    entity_name: Mira"));
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.filaImagens.length, 0);
+});
+
+test("aplica school.lessons_add e desfaz removendo a aula", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("school:\n  lessons_add:\n    - subject: Runas\n      topic: Proteção"));
+  assert.equal(dados.escola.length, 1);
+  assert.equal(dados.escola[0].materia, "Runas");
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.escola.length, 0);
+});
+
+/* ---------- teste combinado grande: as 8 novas operações citadas explicitamente no mesmo bloco HUB_UPDATE ---------- */
+test("bloco HUB_UPDATE combinando condition + temporary_modifier + spell + spell_discovery + research + achievement + reputation + image_request", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const combinado = mudancasDe(
+    [
+      "conditions:",
+      "  add:",
+      "    - name: Envenenado",
+      "      description: Perde 1 de vida por turno.",
+      "      duration:",
+      "        type: turns",
+      "        value: 3",
+      "temporary_modifiers:",
+      "  add:",
+      "    - name: Bênção",
+      "      target: força",
+      "      value: 2",
+      "      duration:",
+      "        type: scenes",
+      "        value: 1",
+      "spells_add:",
+      "  - name: Bola de Fogo",
+      "    affinity: fogo",
+      "spell_discoveries:",
+      "  - spell: Bola de Fogo",
+      "    title: Reação com água",
+      "    status: confirmed",
+      "research_add:",
+      "  - title: Origem do Véu",
+      "achievements_add:",
+      "  - name: Primeira Invocação",
+      "reputation:",
+      "  - target: Guilda dos Ferreiros",
+      "    change: 5",
+      "image_requests:",
+      "  - entity_type: npc",
+      "    entity_name: Mira",
+    ].join("\n"),
+  );
+
+  // A descoberta da magia depende da própria magia, criada no mesmo bloco — sem projeção ela erraria.
+  const magiaAdd = combinado.find((m) => m.tipo === "magia_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [magiaAdd]);
+  const validadas = validarContraPersonagem(combinado, ficha, projetado);
+  assert.ok(validadas.every((m) => !temErro(m)), "nenhuma das 8 mudanças combinadas deveria ter erro de validação");
+
+  const { dados } = aplicarMudancasComImportId(ficha, validadas, "import-combo");
+  assert.equal(dados.condicoes.length, 1);
+  assert.equal(dados.modificadoresTemporarios.length, 1);
+  assert.equal(dados.magias.length, 1);
+  assert.equal(dados.magias[0].descobertas.length, 1);
+  assert.equal(dados.pesquisas.length, 1);
+  assert.equal(dados.conquistas.length, 1);
+  assert.equal(dados.reputacao["Guilda dos Ferreiros"], 5);
+  assert.equal(dados.filaImagens.length, 1);
+  assert.equal(dados.eventos.length, 8);
+
+  // Desfazer a importação inteira reverte as 8 de uma vez, sem apagar o log.
+  const desfeito = desfazerImportacao(dados, "import-combo");
+  assert.equal(desfeito.condicoes.length, 0);
+  assert.equal(desfeito.modificadoresTemporarios.length, 0);
+  assert.equal(desfeito.magias.length, 0);
+  assert.equal(desfeito.pesquisas.length, 0);
+  assert.equal(desfeito.conquistas.length, 0);
+  assert.equal(desfeito.reputacao["Guilda dos Ferreiros"], undefined);
+  assert.equal(desfeito.filaImagens.length, 0);
+  assert.equal(desfeito.eventos.length, 8, "desfazer a importação não apaga nenhum evento");
+  assert.ok(desfeito.eventos.every((e) => e.revertido));
+});
+
+/* ---------- snapshots: fora do pipeline de Mudanca, nunca restaura destrutivamente em silêncio ---------- */
+test("criarSnapshot guarda uma cópia do estado atual sem incluir os próprios snapshots", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 42;
+  ficha.inventario.push({ id: "i1", nome: "Cristal", quantidade: 1 });
+  const comSnapshot = criarSnapshot(ficha, "Antes da masmorra", "manual");
+  assert.equal(comSnapshot.snapshots.length, 1);
+  assert.equal(comSnapshot.snapshots[0].titulo, "Antes da masmorra");
+  assert.equal(comSnapshot.snapshots[0].origem, "manual");
+  assert.equal(comSnapshot.snapshots[0].estado.xp, 42);
+  assert.equal((comSnapshot.snapshots[0].estado as Partial<PersonagemLivre>).snapshots, undefined);
+});
+
+test("restaurarSnapshot volta ao estado salvo mas nunca é destrutivo: cria um backup automático do estado atual antes", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const comSnapshot = criarSnapshot(ficha, "Início da sessão", "inicio_sessao");
+  const depoisDeXp = { ...comSnapshot, xp: 99 };
+
+  const restaurado = restaurarSnapshot(depoisDeXp, comSnapshot.snapshots[0].id);
+  assert.equal(restaurado.xp, 10, "deveria voltar ao xp salvo no snapshot");
+  assert.equal(restaurado.snapshots.length, 2, "o snapshot original deveria continuar existindo, mais um novo backup automático");
+  assert.equal(restaurado.snapshots[0].estado.xp, 99, "o backup automático deveria ter guardado o xp de antes de restaurar (99)");
+});
+
+test("restaurarSnapshot com id inexistente não muda nada", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const resultado = restaurarSnapshot(ficha, "id-que-nao-existe");
+  assert.equal(resultado, ficha);
 });

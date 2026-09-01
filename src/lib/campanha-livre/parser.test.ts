@@ -591,3 +591,278 @@ test("journal sem 'add' não gera mudança", () => {
   assert.equal(r.ok, true);
   if (r.ok) assert.equal(r.mudancas.length, 1);
 });
+
+/* ---------- temporary_modifiers (fecha o v1.0) ---------- */
+test("temporary_modifiers.add válido", () => {
+  const r = interpretarHubUpdate(
+    bloco("temporary_modifiers:\n  add:\n    - name: Bênção\n      target: força\n      value: 2\n      duration:\n        type: scenes\n        value: 1"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "modificador_add");
+  if (m.tipo === "modificador_add") {
+    assert.equal(m.nome, "Bênção");
+    assert.equal(m.alvo, "força");
+    assert.equal(m.valor, 2);
+    assert.deepEqual(m.duracao, { tipo: "scenes", valor: 1, descricao: undefined });
+    assert.equal(m.alertas.length, 0);
+  }
+});
+
+test("temporary_modifiers.add sem duration vira error", () => {
+  const r = interpretarHubUpdate(bloco("temporary_modifiers:\n  add:\n    - name: Bênção\n      target: força\n      value: 2"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("temporary_modifiers.remove válido", () => {
+  const r = interpretarHubUpdate(bloco("temporary_modifiers:\n  remove:\n    - name: Bênção"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "modificador_remove");
+  if (m.tipo === "modificador_remove") assert.equal(m.nome, "Bênção");
+});
+
+/* ---------- conditions ---------- */
+test("conditions.add com e sem duration (duration é opcional aqui, diferente de temporary_modifiers)", () => {
+  const r = interpretarHubUpdate(
+    bloco("conditions:\n  add:\n    - name: Envenenado\n      description: Perde 1 de vida por turno.\n      duration:\n        type: turns\n        value: 3"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "condicao_add");
+  if (m.tipo === "condicao_add") {
+    assert.equal(m.nome, "Envenenado");
+    assert.equal(m.descricao, "Perde 1 de vida por turno.");
+    assert.deepEqual(m.duracao, { tipo: "turns", valor: 3, descricao: undefined });
+    assert.equal(m.alertas.length, 0);
+  }
+});
+
+test("conditions.add sem name vira error", () => {
+  const r = interpretarHubUpdate(bloco("conditions:\n  add:\n    - description: sem nome"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("conditions.remove e conditions.update", () => {
+  const r = interpretarHubUpdate(
+    bloco("conditions:\n  remove:\n    - name: Cego\n  update:\n    - name: Envenenado\n      description: Piorou."),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.equal(r.mudancas.length, 2);
+  const remove = r.mudancas.find((m) => m.tipo === "condicao_remove")!;
+  const update = r.mudancas.find((m) => m.tipo === "condicao_update")!;
+  if (remove.tipo === "condicao_remove") assert.equal(remove.nome, "Cego");
+  if (update.tipo === "condicao_update") assert.equal(update.descricao, "Piorou.");
+});
+
+/* ---------- spells_add / spells_update / spell_discoveries ---------- */
+test("spells_add com custo genérico (não assume mana) e knowledge", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "spells_add:\n  - name: Bola de Fogo\n    affinity: fogo\n    cost:\n      estamina: 3\n    knowledge:\n      status: aprendida\n      progress: 100\n    tags:\n      - ofensiva",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "magia_add");
+  if (m.tipo === "magia_add") {
+    assert.equal(m.nome, "Bola de Fogo");
+    assert.deepEqual(m.custo, { estamina: 3 });
+    assert.equal(m.statusConhecimento, "aprendida");
+    assert.equal(m.progressoConhecimento, 100);
+    assert.deepEqual(m.tags, ["ofensiva"]);
+    assert.equal(m.alertas.length, 0);
+  }
+});
+
+test("spells_update com discoveries_add (texto simples)", () => {
+  const r = interpretarHubUpdate(bloco("spells_update:\n  - name: Bola de Fogo\n    discoveries_add:\n      - Funciona debaixo d'água."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "magia_update");
+  if (m.tipo === "magia_update") assert.deepEqual(m.descobertasSimplesNovas, ["Funciona debaixo d'água."]);
+});
+
+test("spells_update com knowledge.change (delta de progresso)", () => {
+  const r = interpretarHubUpdate(bloco("spells_update:\n  - name: Bola de Fogo\n    knowledge:\n      change: 10"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "magia_update") assert.equal(m.progressoConhecimentoDelta, 10);
+});
+
+test("spells_update sem discoveries_add nem knowledge.change vira error", () => {
+  const r = interpretarHubUpdate(bloco("spells_update:\n  - name: Bola de Fogo"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("spell_discoveries: status theory/testing/partial/confirmed mapeado pro português", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "spell_discoveries:\n  - spell: Bola de Fogo\n    title: Reação com água\n    status: confirmed\n    description: Vira vapor.",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "magia_descoberta");
+  if (m.tipo === "magia_descoberta") {
+    assert.equal(m.magia, "Bola de Fogo");
+    assert.equal(m.titulo, "Reação com água");
+    assert.equal(m.status, "confirmada");
+    assert.equal(m.alertas.length, 0);
+  }
+});
+
+test("spell_discoveries sem spell ou title vira error", () => {
+  const r = interpretarHubUpdate(bloco("spell_discoveries:\n  - title: Sem magia"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- research_add / research_update ---------- */
+test("research_add com status livre (não é enum fechado)", () => {
+  const r = interpretarHubUpdate(
+    bloco("research_add:\n  - title: Origem do Véu\n    status: active\n    progress: 10\n    objectives:\n      - Encontrar o arquivo perdido"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "pesquisa_add");
+  if (m.tipo === "pesquisa_add") {
+    assert.equal(m.titulo, "Origem do Véu");
+    assert.equal(m.status, "active");
+    assert.equal(m.progresso, 10);
+    assert.deepEqual(m.objetivos, ["Encontrar o arquivo perdido"]);
+  }
+});
+
+test("research_update acrescenta evidências/objetivos/notas e muda status/progresso", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "research_update:\n  - title: Origem do Véu\n    status: stalled\n    progress_change: 5\n    evidence_add:\n      - Fragmento de pergaminho\n    objectives_add:\n      - Falar com o bibliotecário\n    notes_add:\n      - Pode estar ligado à Academia",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "pesquisa_update");
+  if (m.tipo === "pesquisa_update") {
+    assert.equal(m.status, "stalled");
+    assert.equal(m.progressoDelta, 5);
+    assert.deepEqual(m.evidenciasNovas, ["Fragmento de pergaminho"]);
+    assert.deepEqual(m.objetivosNovos, ["Falar com o bibliotecário"]);
+    assert.deepEqual(m.notasNovas, ["Pode estar ligado à Academia"]);
+  }
+});
+
+test("research_update sem nenhuma mudança reconhecida vira error", () => {
+  const r = interpretarHubUpdate(bloco("research_update:\n  - title: Origem do Véu"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- achievements_add ---------- */
+test("achievements_add válido", () => {
+  const r = interpretarHubUpdate(bloco("achievements_add:\n  - name: Primeira Invocação\n    description: Invocou um familiar pela primeira vez."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "conquista_add");
+  if (m.tipo === "conquista_add") assert.equal(m.nome, "Primeira Invocação");
+});
+
+/* ---------- reputation ---------- */
+test("reputation com change e com set, alvo genérico (não hardcoded)", () => {
+  const r = interpretarHubUpdate(
+    bloco("reputation:\n  - target: Guilda dos Ferreiros\n    change: 5\n    reason: Ajudou na forja\n  - target: Casa Verde\n    set: 10"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.equal(r.mudancas.length, 2);
+  const [mudar, definir] = r.mudancas;
+  if (mudar.tipo === "reputacao") {
+    assert.equal(mudar.alvo, "Guilda dos Ferreiros");
+    assert.equal(mudar.operacao, "change");
+    assert.equal(mudar.valor, 5);
+    assert.equal(mudar.motivo, "Ajudou na forja");
+  }
+  if (definir.tipo === "reputacao") {
+    assert.equal(definir.alvo, "Casa Verde");
+    assert.equal(definir.operacao, "set");
+    assert.equal(definir.valor, 10);
+  }
+});
+
+test("reputation com change e set ao mesmo tempo vira error", () => {
+  const r = interpretarHubUpdate(bloco("reputation:\n  - target: Casa Verde\n    change: 5\n    set: 10"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("reputation sem change nem set vira error", () => {
+  const r = interpretarHubUpdate(bloco("reputation:\n  - target: Casa Verde"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- image_requests (operação própria, distinta de items_add.generate_image) ---------- */
+test("image_requests válido, com prompt_hint e priority", () => {
+  const r = interpretarHubUpdate(
+    bloco("image_requests:\n  - entity_type: npc\n    entity_name: Mira\n    prompt_hint: Cabelos prateados, olhos verdes.\n    priority: alta"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "imagem_pedido");
+  if (m.tipo === "imagem_pedido") {
+    assert.equal(m.tipoEntidade, "npc");
+    assert.equal(m.nomeEntidade, "Mira");
+    assert.equal(m.promptSugerido, "Cabelos prateados, olhos verdes.");
+    assert.equal(m.prioridade, "alta");
+  }
+});
+
+test("image_requests sem entity_type ou entity_name vira error", () => {
+  const r = interpretarHubUpdate(bloco("image_requests:\n  - entity_name: Mira"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- school (só lessons_add tem formato definido) ---------- */
+test("school.lessons_add válido", () => {
+  const r = interpretarHubUpdate(bloco("school:\n  lessons_add:\n    - subject: Runas\n      topic: Runas de proteção\n      notes:\n        - Precisa de giz especial"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "escola_add");
+  if (m.tipo === "escola_add") {
+    assert.equal(m.materia, "Runas");
+    assert.equal(m.topico, "Runas de proteção");
+    assert.deepEqual(m.notas, ["Precisa de giz especial"]);
+  }
+});
+
+test("school.lessons_add sem subject vira error", () => {
+  const r = interpretarHubUpdate(bloco("school:\n  lessons_add:\n    - topic: sem matéria"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});

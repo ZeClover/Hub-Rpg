@@ -2,16 +2,21 @@
   Parser do protocolo HUB_UPDATE (ver pacote de especificação entregue pelo
   Zé — 02_HUB_UPDATE_SPEC_v1.md é a fonte de verdade).
 
-  Quarta fatia: notes_update, notes_remove, discoveries_add,
-  discoveries_update, codex_add, locations_add, locations_update,
-  bestiary_add, journal — além das 15 anteriores (xp, resources,
-  items_add, items_remove, notes_add, level, attributes, items_update,
-  equipment, currency, missions_add, missions_update, npcs_add,
-  npcs_update, relationships). O resto do protocolo (undo, snapshots,
-  event log em tabela própria...) fica pra uma fatia futura (decisão
-  #26) — mas o formato do bloco e as regras de segurança abaixo já
-  seguem a especificação inteira, pra não ter que reescrever quando essa
-  fatia chegar.
+  Fecha o v1.0 do protocolo: temporary_modifiers, conditions, spells_add,
+  spells_update, spell_discoveries, research_add, research_update,
+  achievements_add, reputation, image_requests, school — além das 24
+  operações anteriores (xp, resources, items_add, items_remove,
+  notes_add, level, attributes, items_update, equipment, currency,
+  missions_add, missions_update, npcs_add, npcs_update, relationships,
+  notes_update, notes_remove, discoveries_add, discoveries_update,
+  codex_add, locations_add, locations_update, bestiary_add, journal).
+  Snapshots (regra #45) não são uma operação de HUB_UPDATE — são um botão
+  manual na ficha (ver `criarSnapshot`/`restaurarSnapshot` em
+  aplicar.ts), por isso não aparecem aqui.
+
+  Regra central do protocolo: o parser só entende o texto colado. Nada é
+  salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
+  revisão decidir o que aplicar (regras #1 e #2 da especificação).
 
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
@@ -19,7 +24,7 @@
 */
 import { parse as parseYaml } from "yaml";
 
-import type { ObjetivoMissao, StatusDescoberta, StatusMissao } from "./tipos.ts";
+import type { ObjetivoMissao, StatusDescoberta, StatusDescobertaMagia, StatusMissao, TipoDuracao } from "./tipos.ts";
 
 export type NivelAlerta = "info" | "warning" | "error";
 export type Alerta = { nivel: NivelAlerta; mensagem: string };
@@ -231,6 +236,113 @@ export type MudancaDiarioAdd = Base & {
   eventos: string[];
 };
 
+export type DuracaoBruta = { tipo: TipoDuracao; valor?: number; descricao?: string };
+
+export type MudancaModificadorAdd = Base & {
+  tipo: "modificador_add";
+  nome: string;
+  alvo: string;
+  valor: number;
+  duracao: DuracaoBruta;
+};
+
+export type MudancaModificadorRemove = Base & {
+  tipo: "modificador_remove";
+  nome: string;
+};
+
+export type MudancaCondicaoAdd = Base & {
+  tipo: "condicao_add";
+  nome: string;
+  descricao?: string;
+  duracao?: DuracaoBruta;
+};
+
+export type MudancaCondicaoRemove = Base & {
+  tipo: "condicao_remove";
+  nome: string;
+};
+
+export type MudancaCondicaoUpdate = Base & {
+  tipo: "condicao_update";
+  nome: string;
+  descricao?: string;
+  duracao?: DuracaoBruta;
+};
+
+export type MudancaMagiaAdd = Base & {
+  tipo: "magia_add";
+  nome: string;
+  descricao?: string;
+  afinidade?: string;
+  custo?: Record<string, number>;
+  statusConhecimento?: string;
+  progressoConhecimento?: number;
+  tags?: string[];
+};
+
+export type MudancaMagiaUpdate = Base & {
+  tipo: "magia_update";
+  nome: string;
+  descobertasSimplesNovas: string[];
+  progressoConhecimentoDelta?: number;
+};
+
+export type MudancaMagiaDescoberta = Base & {
+  tipo: "magia_descoberta";
+  magia: string;
+  titulo: string;
+  descricao?: string;
+  status: StatusDescobertaMagia;
+};
+
+export type MudancaPesquisaAdd = Base & {
+  tipo: "pesquisa_add";
+  titulo: string;
+  status: string;
+  progresso: number;
+  objetivos: string[];
+};
+
+export type MudancaPesquisaUpdate = Base & {
+  tipo: "pesquisa_update";
+  titulo: string;
+  status?: string;
+  progressoDelta?: number;
+  evidenciasNovas: string[];
+  objetivosNovos: string[];
+  notasNovas: string[];
+};
+
+export type MudancaConquistaAdd = Base & {
+  tipo: "conquista_add";
+  nome: string;
+  descricao?: string;
+};
+
+export type MudancaReputacao = Base & {
+  tipo: "reputacao";
+  alvo: string;
+  operacao: "change" | "set";
+  valor: number;
+  motivo?: string;
+};
+
+export type MudancaImagemPedido = Base & {
+  tipo: "imagem_pedido";
+  tipoEntidade: string;
+  nomeEntidade: string;
+  promptSugerido?: string;
+  prioridade?: string;
+};
+
+export type MudancaEscolaAdd = Base & {
+  tipo: "escola_add";
+  materia: string;
+  topico?: string;
+  notas: string[];
+};
+
 export type Mudanca =
   | MudancaXp
   | MudancaRecurso
@@ -255,7 +367,21 @@ export type Mudanca =
   | MudancaLocalAdd
   | MudancaLocalUpdate
   | MudancaCriaturaAdd
-  | MudancaDiarioAdd;
+  | MudancaDiarioAdd
+  | MudancaModificadorAdd
+  | MudancaModificadorRemove
+  | MudancaCondicaoAdd
+  | MudancaCondicaoRemove
+  | MudancaCondicaoUpdate
+  | MudancaMagiaAdd
+  | MudancaMagiaUpdate
+  | MudancaMagiaDescoberta
+  | MudancaPesquisaAdd
+  | MudancaPesquisaUpdate
+  | MudancaConquistaAdd
+  | MudancaReputacao
+  | MudancaImagemPedido
+  | MudancaEscolaAdd;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -329,7 +455,27 @@ const CAMPOS_CONHECIDOS = new Set([
   "locations_update",
   "bestiary_add",
   "journal",
+  "temporary_modifiers",
+  "conditions",
+  "spells_add",
+  "spells_update",
+  "spell_discoveries",
+  "research_add",
+  "research_update",
+  "achievements_add",
+  "reputation",
+  "image_requests",
+  "school",
 ]);
+
+const TIPOS_DURACAO = new Set<TipoDuracao>(["rounds", "turns", "scenes", "sessions", "until_rest", "until_removed", "custom"]);
+
+const STATUS_DESCOBERTA_MAGIA_MAP: Record<string, StatusDescobertaMagia> = {
+  theory: "teoria",
+  testing: "testando",
+  partial: "parcial",
+  confirmed: "confirmada",
+};
 
 const STATUS_DESCOBERTA_MAP: Record<string, StatusDescoberta> = {
   unknown: "desconhecido",
@@ -538,6 +684,79 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
     if (journal.add !== undefined) mudancas.push(interpretarDiarioAdd(journal.add));
   }
 
+  // --- temporary_modifiers (spec §11) ---
+  if (typeof raiz.temporary_modifiers === "object" && raiz.temporary_modifiers !== null) {
+    const mods = raiz.temporary_modifiers as Record<string, unknown>;
+    if (Array.isArray(mods.add)) {
+      for (const m of mods.add) mudancas.push(interpretarModificadorAdd(m));
+    }
+    if (Array.isArray(mods.remove)) {
+      for (const m of mods.remove) mudancas.push(interpretarModificadorRemove(m));
+    }
+  }
+
+  // --- conditions (spec §12) ---
+  if (typeof raiz.conditions === "object" && raiz.conditions !== null) {
+    const conds = raiz.conditions as Record<string, unknown>;
+    if (Array.isArray(conds.add)) {
+      for (const c of conds.add) mudancas.push(interpretarCondicaoAdd(c));
+    }
+    if (Array.isArray(conds.remove)) {
+      for (const c of conds.remove) mudancas.push(interpretarCondicaoRemove(c));
+    }
+    if (Array.isArray(conds.update)) {
+      for (const c of conds.update) mudancas.push(interpretarCondicaoUpdate(c));
+    }
+  }
+
+  // --- spells_add (spec §19) ---
+  if (Array.isArray(raiz.spells_add)) {
+    for (const magia of raiz.spells_add) mudancas.push(interpretarMagiaAdd(magia));
+  }
+
+  // --- spells_update (spec §19) ---
+  if (Array.isArray(raiz.spells_update)) {
+    for (const magia of raiz.spells_update) mudancas.push(interpretarMagiaUpdate(magia));
+  }
+
+  // --- spell_discoveries (spec §19) ---
+  if (Array.isArray(raiz.spell_discoveries)) {
+    for (const descoberta of raiz.spell_discoveries) mudancas.push(interpretarMagiaDescoberta(descoberta));
+  }
+
+  // --- research_add (spec §30) ---
+  if (Array.isArray(raiz.research_add)) {
+    for (const pesquisa of raiz.research_add) mudancas.push(interpretarPesquisaAdd(pesquisa));
+  }
+
+  // --- research_update (spec §30) ---
+  if (Array.isArray(raiz.research_update)) {
+    for (const pesquisa of raiz.research_update) mudancas.push(interpretarPesquisaUpdate(pesquisa));
+  }
+
+  // --- achievements_add (spec §29) ---
+  if (Array.isArray(raiz.achievements_add)) {
+    for (const conquista of raiz.achievements_add) mudancas.push(interpretarConquistaAdd(conquista));
+  }
+
+  // --- reputation (spec §28) ---
+  if (Array.isArray(raiz.reputation)) {
+    for (const rep of raiz.reputation) mudancas.push(interpretarReputacao(rep));
+  }
+
+  // --- image_requests (spec §32) ---
+  if (Array.isArray(raiz.image_requests)) {
+    for (const pedido of raiz.image_requests) mudancas.push(interpretarImagemPedido(pedido));
+  }
+
+  // --- school (opcional na spec, implementado a pedido do Zé — só lessons_add tem formato definido) ---
+  if (typeof raiz.school === "object" && raiz.school !== null) {
+    const school = raiz.school as Record<string, unknown>;
+    if (Array.isArray(school.lessons_add)) {
+      for (const aula of school.lessons_add) mudancas.push(interpretarEscolaAdd(aula));
+    }
+  }
+
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
 
   if (mudancas.length === 0) {
@@ -546,7 +765,7 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
       erro:
         camposDesconhecidos.length > 0
           ? `Nenhuma operação reconhecida nesta fatia do Hub (só campo(s) desconhecido(s): ${camposDesconhecidos.join(", ")}).`
-          : "O bloco não contém nenhuma operação reconhecida (xp, resources, items_add, items_remove, notes_add, level, attributes, items_update, equipment, currency, missions_add, missions_update, npcs_add, npcs_update, relationships, notes_update, notes_remove, discoveries_add, discoveries_update, codex_add, locations_add, locations_update, bestiary_add ou journal).",
+          : "O bloco não contém nenhuma operação reconhecida.",
     };
   }
 
@@ -1171,6 +1390,310 @@ function interpretarDiarioAdd(bruto: unknown): MudancaDiarioAdd {
     titulo: titulo ?? "(sem título)",
     resumo: typeof objeto.summary === "string" ? objeto.summary : undefined,
     eventos: Array.isArray(objeto.events) ? objeto.events.filter((e): e is string => typeof e === "string") : [],
+    alertas,
+  };
+}
+
+/** Compartilhado por temporary_modifiers e conditions — mesmo formato de `duration` nos dois. */
+function interpretarDuracao(bruto: unknown, contexto: string): { duracao: DuracaoBruta | undefined; alertas: Alerta[] } {
+  const alertas: Alerta[] = [];
+  if (bruto === undefined) return { duracao: undefined, alertas };
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const tipoBruto = typeof objeto.type === "string" ? objeto.type : null;
+  const tipo = tipoBruto && TIPOS_DURACAO.has(tipoBruto as TipoDuracao) ? (tipoBruto as TipoDuracao) : null;
+  if (!tipo) {
+    alertas.push({ nivel: "error", mensagem: `${contexto}: tipo de duração desconhecido ("${String(tipoBruto)}").` });
+    return { duracao: undefined, alertas };
+  }
+  const valor = paraNumero(objeto.value);
+  return {
+    duracao: { tipo, valor: valor ?? undefined, descricao: typeof objeto.description === "string" ? objeto.description : undefined },
+    alertas,
+  };
+}
+
+function interpretarModificadorAdd(bruto: unknown): MudancaModificadorAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em temporary_modifiers.add sem 'name'." });
+  const alvo = typeof objeto.target === "string" ? objeto.target : null;
+  if (!alvo) alertas.push({ nivel: "error", mensagem: `temporary_modifiers.add "${nome ?? "?"}" sem 'target'.` });
+  const valor = paraNumero(objeto.value);
+  if (valor === null) alertas.push({ nivel: "error", mensagem: `temporary_modifiers.add "${nome ?? "?"}" precisa de 'value' numérico.` });
+
+  const { duracao, alertas: alertasDuracao } = interpretarDuracao(objeto.duration, `temporary_modifiers.add "${nome ?? "?"}"`);
+  alertas.push(...alertasDuracao);
+  if (objeto.duration === undefined) {
+    alertas.push({ nivel: "error", mensagem: `temporary_modifiers.add "${nome ?? "?"}" precisa de 'duration'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "modificador_add",
+    nome: nome ?? "(sem nome)",
+    alvo: alvo ?? "(sem alvo)",
+    valor: valor ?? 0,
+    duracao: duracao ?? { tipo: "until_removed" },
+    alertas,
+  };
+}
+
+function interpretarModificadorRemove(bruto: unknown): MudancaModificadorRemove {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em temporary_modifiers.remove sem 'name'." });
+  return { id: proximoId(), tipo: "modificador_remove", nome: nome ?? "(sem nome)", alertas };
+}
+
+function interpretarCondicaoAdd(bruto: unknown): MudancaCondicaoAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em conditions.add sem 'name'." });
+  const { duracao, alertas: alertasDuracao } = interpretarDuracao(objeto.duration, `conditions.add "${nome ?? "?"}"`);
+  alertas.push(...alertasDuracao);
+
+  return {
+    id: proximoId(),
+    tipo: "condicao_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    duracao,
+    alertas,
+  };
+}
+
+function interpretarCondicaoRemove(bruto: unknown): MudancaCondicaoRemove {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em conditions.remove sem 'name'." });
+  return { id: proximoId(), tipo: "condicao_remove", nome: nome ?? "(sem nome)", alertas };
+}
+
+function interpretarCondicaoUpdate(bruto: unknown): MudancaCondicaoUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em conditions.update sem 'name'." });
+  const { duracao, alertas: alertasDuracao } = interpretarDuracao(objeto.duration, `conditions.update "${nome ?? "?"}"`);
+  alertas.push(...alertasDuracao);
+
+  return {
+    id: proximoId(),
+    tipo: "condicao_update",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    duracao,
+    alertas,
+  };
+}
+
+function interpretarMagiaAdd(bruto: unknown): MudancaMagiaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em spells_add sem 'name'." });
+
+  let custo: Record<string, number> | undefined;
+  if (typeof objeto.cost === "object" && objeto.cost !== null) {
+    custo = {};
+    for (const [chave, valorBruto] of Object.entries(objeto.cost as Record<string, unknown>)) {
+      const numero = paraNumero(valorBruto);
+      if (numero !== null) custo[chave] = numero;
+    }
+  }
+
+  const knowledge = typeof objeto.knowledge === "object" && objeto.knowledge !== null ? (objeto.knowledge as Record<string, unknown>) : {};
+
+  return {
+    id: proximoId(),
+    tipo: "magia_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    afinidade: typeof objeto.affinity === "string" ? objeto.affinity : undefined,
+    custo,
+    statusConhecimento: typeof knowledge.status === "string" ? knowledge.status : undefined,
+    progressoConhecimento: paraNumero(knowledge.progress) ?? undefined,
+    tags: Array.isArray(objeto.tags) ? objeto.tags.filter((t): t is string => typeof t === "string") : undefined,
+    alertas,
+  };
+}
+
+function interpretarMagiaUpdate(bruto: unknown): MudancaMagiaUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em spells_update sem 'name'." });
+
+  const descobertasSimplesNovas = Array.isArray(objeto.discoveries_add)
+    ? objeto.discoveries_add.filter((t): t is string => typeof t === "string")
+    : [];
+
+  const knowledge = typeof objeto.knowledge === "object" && objeto.knowledge !== null ? (objeto.knowledge as Record<string, unknown>) : {};
+  const progressoConhecimentoDelta = paraNumero(knowledge.change) ?? undefined;
+
+  if (descobertasSimplesNovas.length === 0 && progressoConhecimentoDelta === undefined) {
+    alertas.push({ nivel: "error", mensagem: `spells_update "${nome ?? "?"}" não tem 'discoveries_add' nem 'knowledge.change'.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "magia_update",
+    nome: nome ?? "(sem nome)",
+    descobertasSimplesNovas,
+    progressoConhecimentoDelta,
+    alertas,
+  };
+}
+
+function interpretarMagiaDescoberta(bruto: unknown): MudancaMagiaDescoberta {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const magia = typeof objeto.spell === "string" ? objeto.spell : null;
+  if (!magia) alertas.push({ nivel: "error", mensagem: "Item em spell_discoveries sem 'spell'." });
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: `spell_discoveries de "${magia ?? "?"}" sem 'title'.` });
+
+  const statusBruto = typeof objeto.status === "string" ? objeto.status : "theory";
+  const status = STATUS_DESCOBERTA_MAGIA_MAP[statusBruto];
+  if (!status) alertas.push({ nivel: "error", mensagem: `Status de descoberta de magia desconhecido: "${statusBruto}".` });
+
+  return {
+    id: proximoId(),
+    tipo: "magia_descoberta",
+    magia: magia ?? "(sem nome)",
+    titulo: titulo ?? "(sem título)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    status: status ?? "teoria",
+    alertas,
+  };
+}
+
+function interpretarPesquisaAdd(bruto: unknown): MudancaPesquisaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em research_add sem 'title'." });
+
+  return {
+    id: proximoId(),
+    tipo: "pesquisa_add",
+    titulo: titulo ?? "(sem título)",
+    status: typeof objeto.status === "string" ? objeto.status : "active",
+    progresso: paraNumero(objeto.progress) ?? 0,
+    objetivos: Array.isArray(objeto.objectives) ? objeto.objectives.filter((o): o is string => typeof o === "string") : [],
+    alertas,
+  };
+}
+
+function interpretarPesquisaUpdate(bruto: unknown): MudancaPesquisaUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em research_update sem 'title'." });
+
+  const progressoDelta = paraNumero(objeto.progress_change) ?? undefined;
+  const evidenciasNovas = Array.isArray(objeto.evidence_add) ? objeto.evidence_add.filter((e): e is string => typeof e === "string") : [];
+  const objetivosNovos = Array.isArray(objeto.objectives_add) ? objeto.objectives_add.filter((o): o is string => typeof o === "string") : [];
+  const notasNovas = Array.isArray(objeto.notes_add) ? objeto.notes_add.filter((n): n is string => typeof n === "string") : [];
+  const status = typeof objeto.status === "string" ? objeto.status : undefined;
+
+  if (!status && progressoDelta === undefined && evidenciasNovas.length === 0 && objetivosNovos.length === 0 && notasNovas.length === 0) {
+    alertas.push({ nivel: "error", mensagem: `research_update "${titulo ?? "?"}" não tem nenhuma mudança reconhecida.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "pesquisa_update",
+    titulo: titulo ?? "(sem título)",
+    status,
+    progressoDelta,
+    evidenciasNovas,
+    objetivosNovos,
+    notasNovas,
+    alertas,
+  };
+}
+
+function interpretarConquistaAdd(bruto: unknown): MudancaConquistaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const nome = typeof objeto.name === "string" ? objeto.name : null;
+  if (!nome) alertas.push({ nivel: "error", mensagem: "Item em achievements_add sem 'name'." });
+  return {
+    id: proximoId(),
+    tipo: "conquista_add",
+    nome: nome ?? "(sem nome)",
+    descricao: typeof objeto.description === "string" ? objeto.description : undefined,
+    alertas,
+  };
+}
+
+function interpretarReputacao(bruto: unknown): MudancaReputacao {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const alvo = typeof objeto.target === "string" ? objeto.target : null;
+  if (!alvo) alertas.push({ nivel: "error", mensagem: "Item em reputation sem 'target'." });
+
+  const temChange = objeto.change !== undefined;
+  const temSet = objeto.set !== undefined;
+  if (!temChange && !temSet) {
+    alertas.push({ nivel: "error", mensagem: `reputation "${alvo ?? "?"}" precisa de 'change' ou 'set'.` });
+  } else if (temChange && temSet) {
+    alertas.push({ nivel: "error", mensagem: `reputation "${alvo ?? "?"}" usa 'change' e 'set' ao mesmo tempo — escolha só um.` });
+  }
+  const operacao: "change" | "set" = temSet ? "set" : "change";
+  const valorBruto = objeto[operacao];
+  const valor = paraNumero(valorBruto);
+  if ((temChange || temSet) && valor === null) {
+    alertas.push({ nivel: "error", mensagem: `reputation.${operacao} precisa ser numérico.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "reputacao",
+    alvo: alvo ?? "(sem alvo)",
+    operacao,
+    valor: valor ?? 0,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
+    alertas,
+  };
+}
+
+function interpretarImagemPedido(bruto: unknown): MudancaImagemPedido {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const tipoEntidade = typeof objeto.entity_type === "string" ? objeto.entity_type : null;
+  if (!tipoEntidade) alertas.push({ nivel: "error", mensagem: "Item em image_requests sem 'entity_type'." });
+  const nomeEntidade = typeof objeto.entity_name === "string" ? objeto.entity_name : null;
+  if (!nomeEntidade) alertas.push({ nivel: "error", mensagem: "Item em image_requests sem 'entity_name'." });
+
+  return {
+    id: proximoId(),
+    tipo: "imagem_pedido",
+    tipoEntidade: tipoEntidade ?? "(desconhecido)",
+    nomeEntidade: nomeEntidade ?? "(sem nome)",
+    promptSugerido: typeof objeto.prompt_hint === "string" ? objeto.prompt_hint : undefined,
+    prioridade: typeof objeto.priority === "string" ? objeto.priority : undefined,
+    alertas,
+  };
+}
+
+function interpretarEscolaAdd(bruto: unknown): MudancaEscolaAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const materia = typeof objeto.subject === "string" ? objeto.subject : null;
+  if (!materia) alertas.push({ nivel: "error", mensagem: "Item em school.lessons_add sem 'subject'." });
+
+  return {
+    id: proximoId(),
+    tipo: "escola_add",
+    materia: materia ?? "(sem matéria)",
+    topico: typeof objeto.topic === "string" ? objeto.topic : undefined,
+    notas: Array.isArray(objeto.notes) ? objeto.notes.filter((n): n is string => typeof n === "string") : [],
     alertas,
   };
 }

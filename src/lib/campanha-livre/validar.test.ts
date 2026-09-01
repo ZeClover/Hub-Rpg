@@ -282,3 +282,103 @@ test("projetado resolve dependência: items_update pra um item criado no mesmo l
   const update = validadas.find((m) => m.tipo === "item_update")!;
   assert.equal(temErro(update), false);
 });
+
+/* ---------- referência ausente: novas operações que dependem de algo já existir ---------- */
+test("modificador_remove pra um modificador que não existe vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("temporary_modifiers:\n  remove:\n    - name: Bênção"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("condicao_remove/condicao_update pra uma condição que não existe vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("conditions:\n  remove:\n    - name: Envenenado\n  update:\n    - name: Cego\n      description: x"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas.every((m) => temErro(m)));
+});
+
+test("magia_update/magia_descoberta pra uma magia que não existe vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(
+    bloco("spells_update:\n  - name: Bola de Fogo\n    knowledge:\n      change: 5\n\nspell_discoveries:\n  - spell: Bola de Fogo\n    title: X"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas.every((m) => temErro(m)));
+});
+
+test("pesquisa_update pra uma pesquisa que não existe vira error", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("research_update:\n  - title: Origem do Véu\n    progress_change: 5"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("reputation.change que resultaria em negativo vira warning, não bloqueia", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.reputacao["Guilda dos Ferreiros"] = 2;
+  const r = interpretarHubUpdate(bloco("reputation:\n  - target: Guilda dos Ferreiros\n    change: -5"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas[0].alertas.some((a) => a.nivel === "warning"));
+  assert.equal(temErro(validadas[0]), false);
+});
+
+/* ---------- projetado resolve dependências dentro do MESMO import, pras novas operações ---------- */
+test("projetado: spell_discoveries pra uma magia criada no mesmo lote não gera erro, e some se a criação for desmarcada", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(
+    bloco("spells_add:\n  - name: Bola de Fogo\n\nspell_discoveries:\n  - spell: Bola de Fogo\n    title: Reação com água\n    status: confirmed"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  // desmarcado (sem projeção): a descoberta erra, porque a magia só existe depois do spells_add
+  const semProjecao = validarContraPersonagem(r.mudancas, ficha);
+  const descobertaSemProjecao = semProjecao.find((m) => m.tipo === "magia_descoberta")!;
+  assert.equal(temErro(descobertaSemProjecao), true);
+
+  // marcado (com projeção incluindo o spells_add selecionado): passa a ser válida
+  const magiaAdd = r.mudancas.find((m) => m.tipo === "magia_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [magiaAdd], "preview");
+  const comProjecao = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const descobertaComProjecao = comProjecao.find((m) => m.tipo === "magia_descoberta")!;
+  assert.equal(temErro(descobertaComProjecao), false);
+});
+
+test("projetado: research_update pra uma pesquisa criada no mesmo lote não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(
+    bloco("research_add:\n  - title: Origem do Véu\n\nresearch_update:\n  - title: Origem do Véu\n    progress_change: 10"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  const pesquisaAdd = r.mudancas.find((m) => m.tipo === "pesquisa_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [pesquisaAdd], "preview");
+  const validadas = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const update = validadas.find((m) => m.tipo === "pesquisa_update")!;
+  assert.equal(temErro(update), false);
+});
+
+test("projetado: condicao_update pra uma condição criada no mesmo lote não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("conditions:\n  add:\n    - name: Envenenado\n  update:\n    - name: Envenenado\n      description: Piorou."));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  const condicaoAdd = r.mudancas.find((m) => m.tipo === "condicao_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [condicaoAdd], "preview");
+  const validadas = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const update = validadas.find((m) => m.tipo === "condicao_update")!;
+  assert.equal(temErro(update), false);
+});
