@@ -1744,6 +1744,65 @@ manual de descoberta e local; os 4 testes de Playwright das fatias
 anteriores continuam passando sem regressão. `tsc --noEmit`, `npm run
 build` e `npm run lint` limpos.
 
+## 51. Campanha Livre — quinta e última fatia: Desfazer e histórico (01/09/2026)
+
+Última fatia do protocolo HUB_UPDATE. Não adiciona operação nova —
+implementa as regras #12/#41/#44/#45 que ficaram de fora desde a fatia
+mínima: desfazer por mudança individual (não só "desfazer a importação
+inteira") e um log de eventos que registra o que cada mudança fez.
+
+**Como o desfazer funciona, tecnicamente.** Em vez de guardar "que
+operação foi essa e como inverter matematicamente" (o que pediria um
+caso especial pra cada uma das 24 operações), cada evento guarda como a
+entidade inteira estava **antes** daquela mudança específica — ou
+`null` se a entidade não existia (ou seja, a mudança criou ela).
+Desfazer é sempre a mesma lógica, não importa o tipo de mudança:
+- Campo do personagem (XP, Nível): volta pro número de antes
+- Mapa de nome livre (recursos, atributos, moedas): restaura o valor
+  antigo, ou remove a chave se ela não existia antes
+- Entidade com identidade própria (item, colinha, missão, NPC,
+  descoberta, local, criatura, codex, diário): substitui a entidade
+  inteira pela versão de antes, ou remove ela se não existia
+
+Essa generalização significa que desfazer um `missions_update` (que
+mexeu só num objetivo, por exemplo) restaura a missão inteira de uma
+vez — sem precisar saber qual dos 8 tipos de ação (`complete_objective`,
+`set_status`, etc.) gerou aquele evento.
+
+**Desfazer nunca apaga o evento original** (regra #12/#44) — só marca
+`revertido: true`. A linha continua na tela do Histórico, riscada, com
+"(desfeito)" no lugar do botão.
+
+**Escopo:** o event log e o desfazer valem só pra mudanças vindas de
+uma importação do ChatGPT — edições manuais na ficha (Recursos,
+Inventário, etc.) continuam sem undo dedicado, porque são diretamente
+editáveis pela própria pessoa a qualquer momento; não fazia sentido
+duplicar esse controle. Isso bate com o próprio modelo do protocolo
+(§41), que é especificamente sobre eventos de importação.
+
+**Migração de dados:** fichas já existentes (das quatro fatias
+anteriores) têm `historicoImportacoes` sem `id` — `normalizarPersonagemLivre`
+completa com um id sintético (`import-legado-N`) na leitura, então o
+Histórico continua funcionando pra importações antigas, só sem a lista
+de eventos individuais pra desfazer (mostra o resumo em texto puro,
+como era antes).
+
+Testado: 9 testes automáticos novos (142 no total do projeto) cobrindo
+geração de evento por mudança, desfazer em cada uma das três formas
+(campo raiz, mapa, lista — criação e atualização), imutabilidade do
+desfazer e proteção contra desfazer duas vezes o mesmo evento. Um teste
+de Playwright novo: importa um bloco com 3 mudanças, desfaz só o XP
+(confere que mana e item não são afetados), confere que a tela mostra
+"(desfeito)" e que o botão some pra esse evento, desfaz também a
+criação de um item (some do inventário sem afetar os outros). Os 5
+testes de Playwright das fatias anteriores continuam passando sem
+regressão. `tsc --noEmit`, `npm run build` e `npm run lint` limpos.
+
+**O protocolo HUB_UPDATE está completo** nas suas ~24 operações e nas
+regras de segurança do pacote original (v1), construído em cinco fatias
+ao longo do dia (decisões #47 a #51), cada uma no ar e usável antes da
+próxima começar (decisão #26).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -119,16 +119,59 @@ export type EntradaDiario = {
   criadaEm: number;
 };
 
-/*
-  Registro mínimo de importações já aplicadas — só o suficiente pra avisar
-  "isso já foi importado antes" (regra #7 do protocolo). Um event log de
-  verdade, com undo por evento, fica pra uma fatia futura (decisão #26).
-*/
 export type ImportacaoAplicada = {
+  id: string;
   hash: string;
   updateId: string | null;
   aplicadoEm: number;
   resumo: string[];
+};
+
+/*
+  Event log por mudança (regras #12/#41/#44/#45 do protocolo): cada mudança
+  aplicada de uma importação vira um evento com o que a entidade era
+  ANTES daquela mudança específica — nunca um diff de campo a campo. Isso
+  cobre toda mudança de tipos hoje suportados sem precisar de um caso
+  especial por operação: "raiz" pra XP/Nível, "mapa" pra recursos/
+  atributos/moedas (chave = nome), "lista" pra tudo que é uma entidade com
+  identidade própria (item, colinha, missão, NPC, descoberta, local,
+  criatura, codex, diário). `antes: null` significa "não existia" — desfazer
+  vira remover a entidade. Desfazer nunca apaga o evento original (regra
+  #12), só marca `revertido: true`.
+*/
+export type AlvoEventoRaiz = { forma: "raiz"; campo: "xp" | "nivel"; antes: number };
+
+export type AlvoEventoMapa = {
+  forma: "mapa";
+  mapa: "recursos" | "atributos" | "moedas";
+  chave: string;
+  antes: RecursoLivre | number | null;
+};
+
+export type NomeLista = "inventario" | "notas" | "missoes" | "npcs" | "descobertas" | "codex" | "locais" | "criaturas" | "diario";
+
+export type AlvoEventoLista =
+  | { forma: "lista"; lista: "inventario"; identificador: string; antes: ItemLivre | null }
+  | { forma: "lista"; lista: "notas"; identificador: string; antes: NotaLivre | null }
+  | { forma: "lista"; lista: "missoes"; identificador: string; antes: MissaoLivre | null }
+  | { forma: "lista"; lista: "npcs"; identificador: string; antes: NpcLivre | null }
+  | { forma: "lista"; lista: "descobertas"; identificador: string; antes: DescobertaLivre | null }
+  | { forma: "lista"; lista: "codex"; identificador: string; antes: CodexLivre | null }
+  | { forma: "lista"; lista: "locais"; identificador: string; antes: LocalLivre | null }
+  | { forma: "lista"; lista: "criaturas"; identificador: string; antes: CriaturaLivre | null }
+  | { forma: "lista"; lista: "diario"; identificador: string; antes: EntradaDiario | null };
+
+export type AlvoEvento = AlvoEventoRaiz | AlvoEventoMapa | AlvoEventoLista;
+
+export type EventoAplicado = {
+  id: string;
+  importId: string;
+  /** Reaproveita o `tipo` da Mudanca que gerou o evento — só pra exibição, não pra lógica de desfazer. */
+  tipo: string;
+  resumo: string;
+  criadoEm: number;
+  revertido: boolean;
+  alvo: AlvoEvento;
 };
 
 export type PersonagemLivre = {
@@ -150,6 +193,7 @@ export type PersonagemLivre = {
   criaturas: CriaturaLivre[];
   diario: EntradaDiario[];
   historicoImportacoes: ImportacaoAplicada[];
+  eventos: EventoAplicado[];
 };
 
 export function novoPersonagemLivre(nome: string): PersonagemLivre {
@@ -170,6 +214,7 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     criaturas: [],
     diario: [],
     historicoImportacoes: [],
+    eventos: [],
   };
 }
 
@@ -196,6 +241,12 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     locais: Array.isArray(d.locais) ? d.locais : [],
     criaturas: Array.isArray(d.criaturas) ? d.criaturas : [],
     diario: Array.isArray(d.diario) ? d.diario : [],
-    historicoImportacoes: Array.isArray(d.historicoImportacoes) ? d.historicoImportacoes : [],
+    // Fichas de antes desta fatia guardam importações sem `id` (regra #12/#41
+    // do protocolo vieram só nesta fatia) — completa com um id sintético pra
+    // não quebrar a tela de histórico.
+    historicoImportacoes: Array.isArray(d.historicoImportacoes)
+      ? d.historicoImportacoes.map((h, i) => ({ ...h, id: h.id ?? `import-legado-${i}` }))
+      : [],
+    eventos: Array.isArray(d.eventos) ? d.eventos : [],
   };
 }

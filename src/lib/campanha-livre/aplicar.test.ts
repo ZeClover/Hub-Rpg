@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { aplicarMudancas } from "./aplicar.ts";
+import { aplicarMudancas as aplicarMudancasComImportId, desfazerEvento } from "./aplicar.ts";
 import { interpretarHubUpdate, type Mudanca } from "./parser.ts";
-import { novoPersonagemLivre } from "./tipos.ts";
+import { novoPersonagemLivre, type PersonagemLivre } from "./tipos.ts";
 import { validarContraPersonagem } from "./validar.ts";
+
+/** Testes não se importam com o importId — usa um fixo. */
+function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[]) {
+  return aplicarMudancasComImportId(atual, selecionadas, "import-teste");
+}
 
 function bloco(corpo: string): string {
   return `[HUB_UPDATE]\nversion: 1\n\n${corpo}\n[/HUB_UPDATE]`;
@@ -269,4 +274,90 @@ test("aplica journal.add", () => {
   assert.equal(dados.diario.length, 1);
   assert.equal(dados.diario[0].titulo, "Aula de Fundamentos");
   assert.match(resumos[0], /Novo diário/);
+});
+
+test("toda mudança aplicada gera um evento no log", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancas(ficha, mudancasDe("xp:\n  add: 25"));
+  assert.equal(dados.eventos.length, 1);
+  assert.equal(dados.eventos[0].tipo, "xp");
+  assert.equal(dados.eventos[0].revertido, false);
+  assert.equal(dados.eventos[0].importId, "import-teste");
+});
+
+test("desfazer xp (campo raiz) restaura o valor de antes e marca revertido", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancas(ficha, mudancasDe("xp:\n  add: 25"));
+  assert.equal(dados.xp, 35);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.xp, 10);
+  assert.equal(desfeito.eventos[0].revertido, true);
+  assert.equal(desfeito.eventos.length, 1, "desfazer nunca apaga o evento original");
+});
+
+test("desfazer recurso (mapa) que não existia antes remove a chave", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: 10"));
+  assert.deepEqual(dados.recursos.mana, { atual: 10, maximo: null });
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.recursos.mana, undefined);
+});
+
+test("desfazer recurso (mapa) que já existia restaura o valor antigo, preservando o máximo", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.recursos.mana = { atual: 35, maximo: 40 };
+  const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: -5"));
+  assert.equal(dados.recursos.mana.atual, 30);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.deepEqual(desfeito.recursos.mana, { atual: 35, maximo: 40 });
+});
+
+test("desfazer item_add (lista, criação) remove o item inteiro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 1"));
+  assert.equal(dados.inventario.length, 1);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.inventario.length, 0);
+});
+
+test("desfazer item_add (lista, empilhado) restaura a quantidade anterior sem remover o item", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.inventario.push({ id: "i1", nome: "Cristal", quantidade: 1 });
+  const { dados } = aplicarMudancas(ficha, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 2"));
+  assert.equal(dados.inventario[0].quantidade, 3);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.inventario.length, 1);
+  assert.equal(desfeito.inventario[0].quantidade, 1);
+});
+
+test("desfazer missao_update restaura a missão inteira (objetivos, status, anotações)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("missions_add:\n  - name: Pesquisa\n    objectives:\n      - text: Testar coesão"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("missions_update:\n  - name: Pesquisa\n    action: complete_objective\n    objective: Testar coesão"));
+  assert.equal(segundo.dados.missoes[0].objetivos[0].status, "concluido");
+
+  const eventoUpdate = segundo.dados.eventos.find((e) => e.tipo === "missao_update")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoUpdate.id);
+  assert.equal(desfeito.missoes[0].objetivos[0].status, "pendente");
+  assert.equal(desfeito.missoes.length, 1, "desfazer o update não deveria remover a missão");
+});
+
+test("desfazer não afeta o objeto original nem outros eventos", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancas(ficha, mudancasDe("xp:\n  add: 25"));
+  const antesDoDesfazer = JSON.parse(JSON.stringify(dados));
+  desfazerEvento(dados, dados.eventos[0].id);
+  assert.deepEqual(dados, antesDoDesfazer);
+});
+
+test("desfazer um evento já revertido não faz nada", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancas(ficha, mudancasDe("xp:\n  add: 25"));
+  const primeiraVez = desfazerEvento(dados, dados.eventos[0].id);
+  const segundaVez = desfazerEvento(primeiraVez, primeiraVez.eventos[0].id);
+  assert.equal(segundaVez.xp, primeiraVez.xp);
 });

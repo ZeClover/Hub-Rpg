@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { aplicarMudancas } from "@/lib/campanha-livre/aplicar.ts";
+import { aplicarMudancas, desfazerEvento } from "@/lib/campanha-livre/aplicar.ts";
 import {
   normalizarPersonagemLivre,
   type CodexLivre,
@@ -148,9 +148,10 @@ export function FichaCampanhaLivre() {
         <ImportarDoChat
           dados={dados}
           onConfirmar={(mudancasSelecionadas, hash, updateId) => {
-            const { dados: novosDados, resumos } = aplicarMudancas(dados, mudancasSelecionadas);
+            const importId = `import-${Date.now().toString(36)}`;
+            const { dados: novosDados, resumos } = aplicarMudancas(dados, mudancasSelecionadas, importId);
             novosDados.historicoImportacoes = [
-              { hash, updateId, aplicadoEm: Date.now(), resumo: resumos },
+              { id: importId, hash, updateId, aplicadoEm: Date.now(), resumo: resumos },
               ...novosDados.historicoImportacoes,
             ].slice(0, 50);
             salvar(novosDados);
@@ -170,7 +171,7 @@ export function FichaCampanhaLivre() {
       <Codex dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Diario dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Colinhas dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
-      <Historico dados={dados} />
+      <Historico dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
     </main>
   );
 }
@@ -1515,29 +1516,61 @@ function Colinhas({
 }
 
 /* ---------- Histórico de importações ---------- */
-function Historico({ dados }: { dados: PersonagemLivre }) {
+function Historico({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
   if (dados.historicoImportacoes.length === 0) return null;
+
+  function desfazer(eventoId: string) {
+    onSalvar(desfazerEvento(dados, eventoId));
+  }
+
   return (
     <section className="mt-8">
       <h2 className="font-titulo text-xl">Histórico de importações</h2>
       <p className="mt-1 text-sm text-texto-suave">
-        Um event log completo com desfazer por mudança é fatia futura — por enquanto, isto é só o registro de quando
-        cada importação foi aplicada.
+        Cada linha pode ser desfeita individualmente — desfazer nunca some com o registro, só marca que foi revertido.
       </p>
       <ul className="mt-3 space-y-2">
-        {dados.historicoImportacoes.map((h, i) => (
-          <li key={`${h.hash}-${i}`} className="rounded-lg border border-borda bg-superficie p-4 text-sm">
-            <p className="text-texto-suave">
-              {new Date(h.aplicadoEm).toLocaleString("pt-BR")}
-              {h.updateId && <span> · {h.updateId}</span>}
-            </p>
-            <ul className="mt-1 list-inside list-disc text-texto">
-              {h.resumo.map((linha, j) => (
-                <li key={j}>{linha}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
+        {dados.historicoImportacoes.map((h) => {
+          const eventosDoImport = dados.eventos.filter((e) => e.importId === h.id);
+          return (
+            <li key={h.id} className="rounded-lg border border-borda bg-superficie p-4 text-sm">
+              <p className="text-texto-suave">
+                {new Date(h.aplicadoEm).toLocaleString("pt-BR")}
+                {h.updateId && <span> · {h.updateId}</span>}
+              </p>
+              <ul className="mt-1 space-y-1 text-texto">
+                {(eventosDoImport.length > 0 ? eventosDoImport : null)?.map((evento) => (
+                  <li key={evento.id} className="flex items-center justify-between gap-2">
+                    <span className={evento.revertido ? "text-texto-suave line-through" : ""}>{evento.resumo}</span>
+                    {!somenteLeitura && !evento.revertido && (
+                      <button
+                        type="button"
+                        onClick={() => desfazer(evento.id)}
+                        className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                      >
+                        Desfazer
+                      </button>
+                    )}
+                    {evento.revertido && <span className="shrink-0 text-xs text-texto-suave">(desfeito)</span>}
+                  </li>
+                )) ??
+                  h.resumo.map((linha, j) => (
+                    <li key={j} className="list-inside list-disc">
+                      {linha}
+                    </li>
+                  ))}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

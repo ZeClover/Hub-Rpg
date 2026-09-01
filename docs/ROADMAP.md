@@ -414,6 +414,23 @@ passando.
     os 4 testes de Playwright das fatias anteriores sem regressão.
     `tsc`, `next build` e lint limpos
 
+- [x] **Campanha Livre — quinta e última fatia: Desfazer e histórico**
+      (01/09/2026) — decisão #51. Sem operação nova: desfazer por
+      mudança individual + log de eventos (regras #12/#41/#44/#45).
+  - Cada evento guarda a entidade inteira como estava antes daquela
+    mudança específica (ou `null` = não existia) — mesma lógica de
+    desfazer pros 24 tipos de operação, sem caso especial por tipo
+  - Desfazer nunca apaga o evento original, só marca `revertido: true`
+    — a linha fica riscada no Histórico com "(desfeito)"
+  - Escopo: só mudanças de importação têm undo; edição manual na ficha
+    continua sem, já que é diretamente editável a qualquer momento
+  - Testado: 9 testes automáticos novos (142 no total), 1 teste de
+    Playwright novo (desfaz XP sem afetar mana/item, desfaz criação de
+    item); os 5 testes de Playwright das fatias anteriores sem
+    regressão. `tsc`, `next build` e lint limpos
+  - **Protocolo HUB_UPDATE completo** — cinco fatias (decisões #47 a
+    #51), cada uma no ar antes da próxima começar (decisão #26)
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La
