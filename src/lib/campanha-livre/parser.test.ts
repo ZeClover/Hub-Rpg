@@ -120,6 +120,30 @@ test("items_add: com quantidade", () => {
   }
 });
 
+test("items_add: generate_image e image_prompt", () => {
+  const r = interpretarHubUpdate(
+    bloco("items_add:\n  - name: Fragmento Azul\n    generate_image: true\n    image_prompt: Um fragmento azul brilhante."),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "item_add");
+    if (m.tipo === "item_add") {
+      assert.equal(m.imagemSolicitada, true);
+      assert.equal(m.promptImagem, "Um fragmento azul brilhante.");
+    }
+  }
+});
+
+test("items_add: sem generate_image não marca imagem solicitada", () => {
+  const r = interpretarHubUpdate(bloco("items_add:\n  - name: Poção Comum"));
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    if (m.tipo === "item_add") assert.equal(m.imagemSolicitada, false);
+  }
+});
+
 test("items_add: sem name nem id gera error", () => {
   const r = interpretarHubUpdate(bloco("items_add:\n  - quantity: 2"));
   assert.equal(r.ok, true);

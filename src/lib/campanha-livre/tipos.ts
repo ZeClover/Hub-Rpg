@@ -14,6 +14,8 @@ export type RecursoLivre = {
   atual: number;
   /** null = a campanha ainda não definiu um teto pra este recurso. */
   maximo: number | null;
+  /** null = a campanha ainda não definiu um piso pra este recurso (o Hub ainda avisa se ficar negativo, mas não bloqueia). */
+  minimo: number | null;
 };
 
 export type ItemLivre = {
@@ -29,6 +31,9 @@ export type ItemLivre = {
   equipado?: boolean;
   /** Onde está equipado (ex: "mão", "cabeça") — só faz sentido se `equipado` for true. */
   slot?: string;
+  /** `generate_image: true` no HUB_UPDATE (regra #32 do protocolo) — só marca a fila, nunca gera a imagem sozinho. */
+  imagemPendente?: boolean;
+  promptImagem?: string;
 };
 
 export type NotaLivre = {

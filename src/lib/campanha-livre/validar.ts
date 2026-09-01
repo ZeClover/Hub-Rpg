@@ -7,14 +7,26 @@
   error e não é aplicado).
 
   Não muta as mudanças recebidas — devolve uma cópia com alertas extras.
+
+  `projetado` (opcional, default = `atual`): resolve dependências dentro do
+  MESMO bloco HUB_UPDATE — ex. `npcs_add: Mira` seguido de
+  `relationships: npc: Mira` no mesmo import. Quem chama monta esse estado
+  projetado aplicando (via `aplicarMudancas`) só as mudanças atualmente
+  selecionadas no preview; como isso é reativo ao que está marcado, marcar/
+  desmarcar o "Novo NPC: Mira" muda `projetado` e portanto revalida a
+  dependência automaticamente — ver `ImportarDoChat` em
+  `src/app/campanha-livre/importar-do-chat.tsx`. Checagens de existência
+  usam `projetado`; checagens numéricas (recurso indo negativo, etc.) usam
+  `atual`, porque são sobre o efeito da PRÓPRIA mudança, não sobre o que
+  outras mudanças do lote criaram.
 */
 import type { Mudanca } from "./parser.ts";
 import type { PersonagemLivre } from "./tipos.ts";
 
-export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLivre): Mudanca[] {
+export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLivre, projetado: PersonagemLivre = atual): Mudanca[] {
   return mudancas.map((mudanca) => {
     if (mudanca.tipo === "item_remove") {
-      const existente = atual.inventario.find(
+      const existente = projetado.inventario.find(
         (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
       );
       if (!existente) {
@@ -42,37 +54,51 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
 
     if (mudanca.tipo === "recurso" && mudanca.operacao === "change") {
       const existente = atual.recursos[mudanca.nome];
-      if (existente) {
-        const depois = existente.atual + mudanca.valor;
-        if (depois < 0) {
-          return {
-            ...mudanca,
-            alertas: [
-              ...mudanca.alertas,
-              {
-                nivel: "warning" as const,
-                mensagem: `Vai ficar negativo: ${existente.atual} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor} = ${depois}.`,
-              },
-            ],
-          };
-        }
-        if (existente.maximo != null && depois > existente.maximo) {
-          return {
-            ...mudanca,
-            alertas: [
-              ...mudanca.alertas,
-              {
-                nivel: "warning" as const,
-                mensagem: `Passa do máximo (${existente.maximo}): ficaria em ${depois}.`,
-              },
-            ],
-          };
-        }
+      const antes = existente?.atual ?? 0;
+      const depois = antes + mudanca.valor;
+      const minimo = existente?.minimo ?? null;
+      const maximo = existente?.maximo ?? null;
+      // Sem mínimo configurado pela campanha, o Hub ainda avisa se ficar negativo — só não bloqueia.
+      if (minimo != null && depois < minimo) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "warning" as const,
+              mensagem: `Abaixo do mínimo (${minimo}): ${antes} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor} = ${depois}.`,
+            },
+          ],
+        };
+      }
+      if (minimo == null && depois < 0) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "warning" as const,
+              mensagem: `Vai ficar negativo: ${antes} ${mudanca.valor >= 0 ? "+" : ""}${mudanca.valor} = ${depois}.`,
+            },
+          ],
+        };
+      }
+      if (maximo != null && depois > maximo) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "warning" as const,
+              mensagem: `Passa do máximo (${maximo}): ficaria em ${depois}.`,
+            },
+          ],
+        };
       }
     }
 
     if (mudanca.tipo === "item_update") {
-      const existente = atual.inventario.find(
+      const existente = projetado.inventario.find(
         (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
       );
       if (!existente) {
@@ -87,7 +113,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "equipamento") {
-      const existente = atual.inventario.find(
+      const existente = projetado.inventario.find(
         (item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase(),
       );
       if (!existente) {
@@ -105,7 +131,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "missao_update") {
-      const missao = atual.missoes.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      const missao = projetado.missoes.find((m) => m.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
       if (!missao) {
         return {
           ...mudanca,
@@ -131,7 +157,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "npc_update") {
-      const existe = atual.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      const existe = projetado.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
       if (!existe) {
         return {
           ...mudanca,
@@ -144,7 +170,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "relacao") {
-      const existe = atual.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
+      const existe = projetado.npcs.some((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
       if (!existe) {
         return {
           ...mudanca,
@@ -160,9 +186,9 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       const titulo = mudanca.titulo;
       const idNota = mudanca.tipo === "nota_remove" ? mudanca.idNota : undefined;
       const existente = titulo
-        ? atual.notas.find((n) => n.titulo.trim().toLowerCase() === titulo.trim().toLowerCase())
+        ? projetado.notas.find((n) => n.titulo.trim().toLowerCase() === titulo.trim().toLowerCase())
         : idNota
-          ? atual.notas.find((n) => n.id === idNota)
+          ? projetado.notas.find((n) => n.id === idNota)
           : undefined;
       if (!existente) {
         return {
@@ -176,7 +202,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "descoberta_update") {
-      const existe = atual.descobertas.some((d) => d.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
+      const existe = projetado.descobertas.some((d) => d.titulo.trim().toLowerCase() === mudanca.titulo.trim().toLowerCase());
       if (!existe) {
         return {
           ...mudanca,
@@ -189,7 +215,7 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
     }
 
     if (mudanca.tipo === "local_update") {
-      const existe = atual.locais.some((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      const existe = projetado.locais.some((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
       if (!existe) {
         return {
           ...mudanca,

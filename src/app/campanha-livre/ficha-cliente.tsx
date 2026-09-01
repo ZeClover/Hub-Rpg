@@ -4,15 +4,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { aplicarMudancas, desfazerEvento } from "@/lib/campanha-livre/aplicar.ts";
+import { aplicarMudancas, desfazerEvento, desfazerImportacao, eventosConflitantes } from "@/lib/campanha-livre/aplicar.ts";
 import {
   normalizarPersonagemLivre,
   type CodexLivre,
   type CriaturaLivre,
   type DescobertaLivre,
   type EntradaDiario,
+  type EventoAplicado,
   type LocalLivre,
   type MissaoLivre,
+  type NomeLista,
   type NpcLivre,
   type PersonagemLivre,
   type StatusDescoberta,
@@ -242,7 +244,7 @@ function Recursos({
   function adicionar() {
     const chave = nomeNovo.trim();
     if (!chave || dados.recursos[chave]) return;
-    onSalvar({ ...dados, recursos: { ...dados.recursos, [chave]: { atual: 0, maximo: null } } });
+    onSalvar({ ...dados, recursos: { ...dados.recursos, [chave]: { atual: 0, maximo: null, minimo: null } } });
     setNomeNovo("");
   }
 
@@ -252,7 +254,7 @@ function Recursos({
     onSalvar({ ...dados, recursos: resto });
   }
 
-  function atualizar(nome: string, campo: "atual" | "maximo", valor: number | null) {
+  function atualizar(nome: string, campo: "atual" | "maximo" | "minimo", valor: number | null) {
     onSalvar({ ...dados, recursos: { ...dados.recursos, [nome]: { ...dados.recursos[nome], [campo]: valor } } });
   }
 
@@ -261,7 +263,9 @@ function Recursos({
       <h2 className="font-titulo text-xl">Recursos</h2>
       <p className="mt-1 text-sm text-texto-suave">
         Mana, HP, sanidade, o que a sua campanha usar — cada um é criado sozinho na primeira vez que um{" "}
-        <code>resources.NOME</code> aparece num HUB_UPDATE, ou você cria um aqui à mão.
+        <code>resources.NOME</code> aparece num HUB_UPDATE, ou você cria um aqui à mão. Mínimo e máximo em branco
+        significam &ldquo;sem limite configurado&rdquo; — o Hub ainda avisa se ficar negativo, mas nunca corrige
+        sozinho.
       </p>
       {nomes.length === 0 && <p className="mt-3 text-sm text-texto-suave">Nenhum recurso ainda.</p>}
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -282,6 +286,15 @@ function Recursos({
                 )}
               </div>
               <div className="mt-2 flex items-center gap-2 text-sm">
+                <input
+                  type="number"
+                  value={r.minimo ?? ""}
+                  placeholder="sem piso"
+                  disabled={somenteLeitura}
+                  onChange={(e) => atualizar(nome, "minimo", e.target.value === "" ? null : Number(e.target.value))}
+                  className="w-20 rounded border border-borda bg-fundo px-2 py-1 text-texto placeholder:text-texto-suave disabled:opacity-60"
+                />
+                <span className="text-texto-suave">≤</span>
                 <input
                   type="number"
                   value={r.atual}
@@ -537,6 +550,7 @@ function Inventario({
               <p className="text-texto">
                 {item.nome} <span className="text-texto-suave">×{item.quantidade}</span>
                 {item.equipado && <span className="ml-2 text-xs text-ambar-forte">equipado{item.slot ? ` · ${item.slot}` : ""}</span>}
+                {item.imagemPendente && <span className="ml-2 text-xs text-ambar-forte">imagem pendente</span>}
               </p>
               {(item.categoria || item.descricao) && (
                 <p className="mt-1 text-xs text-texto-suave">
@@ -1556,6 +1570,38 @@ function Colinhas({
 }
 
 /* ---------- Histórico de importações ---------- */
+const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
+  inventario: "item",
+  notas: "colinha",
+  missoes: "missão",
+  npcs: "NPC",
+  descobertas: "descoberta",
+  codex: "codex",
+  locais: "local",
+  criaturas: "criatura",
+  diario: "entrada de diário",
+};
+
+/** Descreve o que "Desfazer" vai fazer a este evento específico — antes → depois na direção do desfazer, não da mudança original. */
+function descreverDesfazer(dados: PersonagemLivre, evento: EventoAplicado): string {
+  const alvo = evento.alvo;
+  if (alvo.forma === "raiz") {
+    const atual = dados[alvo.campo];
+    return `${alvo.campo === "xp" ? "XP" : "Nível"} ${atual} → ${alvo.antes}`;
+  }
+  if (alvo.forma === "mapa") {
+    const valorAtual = dados[alvo.mapa][alvo.chave];
+    const atualTexto = valorAtual && typeof valorAtual === "object" ? valorAtual.atual : (valorAtual ?? 0);
+    const antesTexto =
+      alvo.antes === null ? "(removido)" : typeof alvo.antes === "object" ? alvo.antes.atual : alvo.antes;
+    return `${alvo.chave} ${atualTexto} → ${antesTexto}`;
+  }
+  // lista
+  const tipo = NOME_LISTA_SINGULAR[alvo.lista];
+  if (alvo.antes === null) return `remover ${tipo} "${alvo.identificador}"`;
+  return `reverter ${tipo} "${alvo.identificador}"`;
+}
+
 function Historico({
   dados,
   somenteLeitura,
@@ -1565,27 +1611,85 @@ function Historico({
   somenteLeitura: boolean;
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
+  const [previewImportId, setPreviewImportId] = useState<string | null>(null);
+
   if (dados.historicoImportacoes.length === 0) return null;
 
   function desfazer(eventoId: string) {
     onSalvar(desfazerEvento(dados, eventoId));
   }
 
+  function confirmarDesfazerImportacao(importId: string) {
+    onSalvar(desfazerImportacao(dados, importId));
+    setPreviewImportId(null);
+  }
+
   return (
     <section className="mt-8">
       <h2 className="font-titulo text-xl">Histórico de importações</h2>
       <p className="mt-1 text-sm text-texto-suave">
-        Cada linha pode ser desfeita individualmente — desfazer nunca some com o registro, só marca que foi revertido.
+        Cada linha pode ser desfeita individualmente, ou a importação inteira de uma vez — desfazer nunca some com o
+        registro, só marca que foi revertido.
       </p>
       <ul className="mt-3 space-y-2">
         {dados.historicoImportacoes.map((h) => {
           const eventosDoImport = dados.eventos.filter((e) => e.importId === h.id);
+          const pendentes = eventosDoImport.filter((e) => !e.revertido);
+          const conflitantes = new Set(eventosConflitantes(dados, h.id).map((e) => e.id));
           return (
             <li key={h.id} className="rounded-lg border border-borda bg-superficie p-4 text-sm">
-              <p className="text-texto-suave">
-                {new Date(h.aplicadoEm).toLocaleString("pt-BR")}
-                {h.updateId && <span> · {h.updateId}</span>}
-              </p>
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-texto-suave">
+                  {new Date(h.aplicadoEm).toLocaleString("pt-BR")}
+                  {h.updateId && <span> · {h.updateId}</span>}
+                </p>
+                {!somenteLeitura && pendentes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImportId(previewImportId === h.id ? null : h.id)}
+                    className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                  >
+                    Desfazer importação inteira
+                  </button>
+                )}
+              </div>
+
+              {previewImportId === h.id && (
+                <div className="mt-2 rounded border border-segredo/40 bg-segredo/5 p-3">
+                  <p className="text-texto">
+                    Serão revertidas {pendentes.length} alteraç{pendentes.length === 1 ? "ão" : "ões"}:
+                  </p>
+                  <ul className="mt-1 list-inside list-disc text-texto">
+                    {pendentes.map((evento) => (
+                      <li key={evento.id}>
+                        {descreverDesfazer(dados, evento)}
+                        {conflitantes.has(evento.id) && (
+                          <span className="ml-1 text-xs text-ambar-forte">
+                            (outra importação mexeu nisso depois — o resultado pode não ser o esperado)
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => confirmarDesfazerImportacao(h.id)}
+                      className="rounded border border-segredo/50 bg-segredo/10 px-3 py-1.5 text-xs text-segredo hover:bg-segredo/20"
+                    >
+                      Confirmar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewImportId(null)}
+                      className="rounded border border-borda px-3 py-1.5 text-xs text-texto-suave hover:text-texto"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <ul className="mt-1 space-y-1 text-texto">
                 {(eventosDoImport.length > 0 ? eventosDoImport : null)?.map((evento) => (
                   <li key={evento.id} className="flex items-center justify-between gap-2">

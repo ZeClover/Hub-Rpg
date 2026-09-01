@@ -440,6 +440,27 @@ passando.
       (inalterados) e 1 teste de Playwright novo pra confirmar troca
       de aba sem perda de dado.
 
+- [x] **Campanha Livre — Desfazer importação inteira + 3 correções do
+      núcleo** (01/09/2026) — decisão #53.
+  - Botão "Desfazer importação inteira" por import no Histórico, com
+    preview ("Serão revertidas N alterações") antes de confirmar;
+    reverte na ordem certa (mais recente primeiro), pula eventos já
+    desfeitos individualmente, avisa se outra importação mexeu na
+    mesma coisa depois (`eventosConflitantes`)
+  - Corrigido: dependência dentro do mesmo bloco HUB_UPDATE (ex:
+    `npcs_add` + `relationships` pro mesmo NPC) agora resolve via
+    estado projetado, recalculado a cada mudança de seleção no preview
+  - Corrigido: recurso indo negativo não avisava quando ainda não
+    existia na ficha; aproveitado pra dar mínimo configurável
+    (`RecursoLivre.minimo`, mesmo modelo do máximo)
+  - Corrigido: `generate_image: true` em `items_add` não aparecia em
+    lugar nenhum — agora mostra "Imagem solicitada — pendente" no
+    preview e fica marcado no item salvo, sem gerar nada de verdade
+  - Testado: 16 testes automáticos novos (158 no total), 1 teste de
+    Playwright novo reproduzindo o cenário relatado pelo Zé de ponta a
+    ponta; os 7 testes de Playwright das fatias anteriores sem
+    regressão. `tsc`, `next build` e lint limpos
+
 ### Outros sistemas
 - [x] **Sistema SAO — chassi** (28/08/2026) — homebrew original (decisão
       #64), inspirado em Sword Art Online, Overgeared e Shangri-La

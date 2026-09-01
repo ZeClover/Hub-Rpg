@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { aplicarMudancas as aplicarMudancasComImportId, desfazerEvento } from "./aplicar.ts";
+import {
+  aplicarMudancas as aplicarMudancasComImportId,
+  desfazerEvento,
+  desfazerImportacao,
+  eventosConflitantes,
+} from "./aplicar.ts";
 import { interpretarHubUpdate, type Mudanca } from "./parser.ts";
 import { novoPersonagemLivre, type PersonagemLivre } from "./tipos.ts";
 import { validarContraPersonagem } from "./validar.ts";
@@ -39,14 +44,14 @@ test("aplica xp remove e set", () => {
 test("aplica recurso change criando o recurso se não existir", () => {
   const ficha = novoPersonagemLivre("Zé");
   const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: 10"));
-  assert.deepEqual(dados.recursos.mana, { atual: 10, maximo: null });
+  assert.deepEqual(dados.recursos.mana, { atual: 10, maximo: null, minimo: null });
 });
 
-test("aplica recurso change num recurso existente, preservando o máximo", () => {
+test("aplica recurso change num recurso existente, preservando o máximo e o mínimo", () => {
   const ficha = novoPersonagemLivre("Zé");
-  ficha.recursos.mana = { atual: 35, maximo: 40 };
+  ficha.recursos.mana = { atual: 35, maximo: 40, minimo: 0 };
   const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: -5"));
-  assert.deepEqual(dados.recursos.mana, { atual: 30, maximo: 40 });
+  assert.deepEqual(dados.recursos.mana, { atual: 30, maximo: 40, minimo: 0 });
 });
 
 test("aplica item_add novo e empilha em item existente", () => {
@@ -58,6 +63,23 @@ test("aplica item_add novo e empilha em item existente", () => {
   const segundo = aplicarMudancas(primeiro.dados, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 2"));
   assert.equal(segundo.dados.inventario.length, 1);
   assert.equal(segundo.dados.inventario[0].quantidade, 3);
+});
+
+test("aplica item_add com generate_image marca imagemPendente no item novo", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados, resumos } = aplicarMudancas(
+    ficha,
+    mudancasDe("items_add:\n  - name: Fragmento Azul\n    generate_image: true\n    image_prompt: Um fragmento azul brilhante."),
+  );
+  assert.equal(dados.inventario[0].imagemPendente, true);
+  assert.equal(dados.inventario[0].promptImagem, "Um fragmento azul brilhante.");
+  assert.match(resumos[0], /imagem pendente/);
+});
+
+test("aplica item_add sem generate_image não marca imagemPendente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("items_add:\n  - name: Poção Comum"));
+  assert.equal(dados.inventario[0].imagemPendente, undefined);
 });
 
 test("aplica item_remove reduzindo e removendo do inventário ao zerar", () => {
@@ -300,18 +322,18 @@ test("desfazer xp (campo raiz) restaura o valor de antes e marca revertido", () 
 test("desfazer recurso (mapa) que não existia antes remove a chave", () => {
   const ficha = novoPersonagemLivre("Zé");
   const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: 10"));
-  assert.deepEqual(dados.recursos.mana, { atual: 10, maximo: null });
+  assert.deepEqual(dados.recursos.mana, { atual: 10, maximo: null, minimo: null });
   const desfeito = desfazerEvento(dados, dados.eventos[0].id);
   assert.equal(desfeito.recursos.mana, undefined);
 });
 
-test("desfazer recurso (mapa) que já existia restaura o valor antigo, preservando o máximo", () => {
+test("desfazer recurso (mapa) que já existia restaura o valor antigo, preservando máximo e mínimo", () => {
   const ficha = novoPersonagemLivre("Zé");
-  ficha.recursos.mana = { atual: 35, maximo: 40 };
+  ficha.recursos.mana = { atual: 35, maximo: 40, minimo: 0 };
   const { dados } = aplicarMudancas(ficha, mudancasDe("resources:\n  mana:\n    change: -5"));
   assert.equal(dados.recursos.mana.atual, 30);
   const desfeito = desfazerEvento(dados, dados.eventos[0].id);
-  assert.deepEqual(desfeito.recursos.mana, { atual: 35, maximo: 40 });
+  assert.deepEqual(desfeito.recursos.mana, { atual: 35, maximo: 40, minimo: 0 });
 });
 
 test("desfazer item_add (lista, criação) remove o item inteiro", () => {
@@ -360,4 +382,102 @@ test("desfazer um evento já revertido não faz nada", () => {
   const primeiraVez = desfazerEvento(dados, dados.eventos[0].id);
   const segundaVez = desfazerEvento(primeiraVez, primeiraVez.eventos[0].id);
   assert.equal(segundaVez.xp, primeiraVez.xp);
+});
+
+test("desfazerImportacao reverte todas as mudanças ativas de uma importação", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancasComImportId(
+    ficha,
+    mudancasDe("xp:\n  add: 25\n\nresources:\n  mana:\n    change: 10\n\nitems_add:\n  - name: Cristal\n    quantity: 1"),
+    "import-1",
+  );
+  assert.equal(dados.xp, 35);
+  assert.equal(dados.recursos.mana.atual, 10);
+  assert.equal(dados.inventario.length, 1);
+
+  const desfeito = desfazerImportacao(dados, "import-1");
+  assert.equal(desfeito.xp, 10);
+  assert.equal(desfeito.recursos.mana, undefined);
+  assert.equal(desfeito.inventario.length, 0);
+  assert.ok(desfeito.eventos.every((e) => e.revertido), "todos os eventos da importação devem ficar marcados como revertidos");
+  assert.equal(desfeito.eventos.length, 3, "desfazer a importação não apaga nenhum evento");
+});
+
+test("desfazerImportacao reverte na ordem certa quando dois eventos mexem na mesma entidade", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancasComImportId(
+    ficha,
+    mudancasDe("items_add:\n  - name: Luva\n    quantity: 1\n\nitems_update:\n  - name: Luva\n    changes:\n      equipped: true"),
+    "import-1",
+  );
+  assert.equal(dados.inventario.length, 1);
+  assert.equal(dados.inventario[0].equipado, true);
+
+  const desfeito = desfazerImportacao(dados, "import-1");
+  assert.equal(desfeito.inventario.length, 0, "desfazer os dois eventos (na ordem certa) deveria remover o item que a importação criou");
+});
+
+test("desfazerImportacao pula eventos já desfeitos individualmente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const { dados } = aplicarMudancasComImportId(
+    ficha,
+    mudancasDe("xp:\n  add: 25\n\nresources:\n  mana:\n    change: 10"),
+    "import-1",
+  );
+  const eventoXp = dados.eventos.find((e) => e.tipo === "xp")!;
+  const parcialmenteDesfeito = desfazerEvento(dados, eventoXp.id);
+  assert.equal(parcialmenteDesfeito.xp, 10);
+  assert.equal(parcialmenteDesfeito.recursos.mana.atual, 10);
+
+  const desfeitoCompleto = desfazerImportacao(parcialmenteDesfeito, "import-1");
+  assert.equal(desfeitoCompleto.xp, 10, "xp já tinha sido desfeito, não deveria mudar de novo");
+  assert.equal(desfeitoCompleto.recursos.mana, undefined, "mana ainda estava ativo, deveria ser desfeito agora");
+});
+
+test("desfazerImportacao não mexe em entidades independentes de outra importação", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const primeiro = aplicarMudancasComImportId(ficha, mudancasDe("xp:\n  add: 25"), "import-1");
+  const segundo = aplicarMudancasComImportId(primeiro.dados, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 1"), "import-2");
+  assert.equal(segundo.dados.inventario.length, 1);
+
+  const desfeito = desfazerImportacao(segundo.dados, "import-1");
+  assert.equal(desfeito.xp, 10, "import-1 deveria ter sido desfeito");
+  assert.equal(desfeito.inventario.length, 1, "desfazer import-1 não deveria mexer no item criado por import-2");
+  assert.ok(!desfeito.eventos.find((e) => e.importId === "import-2")!.revertido, "evento de import-2 não deveria ser marcado como revertido");
+});
+
+test("desfazerImportacao numa entidade que outra importação também tocou depois segue o alvo.antes registrado (por isso eventosConflitantes existe para avisar)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.xp = 10;
+  const primeiro = aplicarMudancasComImportId(ficha, mudancasDe("xp:\n  add: 25"), "import-1");
+  const segundo = aplicarMudancasComImportId(primeiro.dados, mudancasDe("xp:\n  add: 5"), "import-2");
+  assert.equal(segundo.dados.xp, 40);
+
+  const conflitos = eventosConflitantes(segundo.dados, "import-1");
+  assert.equal(conflitos.length, 1, "o evento de xp de import-1 deveria ser sinalizado como conflitante");
+
+  const desfeito = desfazerImportacao(segundo.dados, "import-1");
+  assert.equal(desfeito.xp, 10, "sem merge automático: desfazer restaura o valor de antes de import-1, ignorando o +5 de import-2");
+});
+
+test("eventosConflitantes detecta quando uma importação posterior mexeu na mesma entidade", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancasComImportId(ficha, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 1"), "import-1");
+  const segundo = aplicarMudancasComImportId(primeiro.dados, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 2"), "import-2");
+
+  const conflitos = eventosConflitantes(segundo.dados, "import-1");
+  assert.equal(conflitos.length, 1);
+  assert.equal(conflitos[0].tipo, "item_add");
+});
+
+test("eventosConflitantes não acusa nada quando não há mudança posterior na mesma entidade", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancasComImportId(ficha, mudancasDe("xp:\n  add: 25"), "import-1");
+  const segundo = aplicarMudancasComImportId(primeiro.dados, mudancasDe("items_add:\n  - name: Cristal\n    quantity: 1"), "import-2");
+
+  const conflitos = eventosConflitantes(segundo.dados, "import-1");
+  assert.equal(conflitos.length, 0);
 });

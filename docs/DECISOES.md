@@ -1829,6 +1829,77 @@ das fatias anteriores precisaram de pequenos ajustes (clicar na aba
 certa antes de preencher um campo que só existe nela) e continuam
 passando. `tsc --noEmit`, `npm run build` e `npm run lint` limpos.
 
+## 53. Campanha Livre — desfazer importação inteira e três correções do teste pesado (01/09/2026)
+
+Duas rodadas do Zé no mesmo dia. Primeiro ele pediu "desfazer importação
+inteira" além do desfazer individual (já existente desde a decisão
+#51); testando essa fatia, ele achou três problemas reais no núcleo do
+protocolo que vinham desde as fatias mais antigas.
+
+**Desfazer importação inteira.** Cada import no Histórico ganhou um
+botão que abre um preview — "Serão revertidas N alterações:" com uma
+linha por mudança ainda ativa, no sentido do desfazer (`XP 5 → 0`,
+`remover item "X"`, `reverter colinha "Y"`) — e só desfaz de verdade ao
+clicar Confirmar. Tecnicamente, reverte na ordem inversa de aplicação
+(mais recente primeiro): se duas mudanças da mesma importação mexeram
+na mesma entidade (ex: `items_add` seguido de `items_update` no mesmo
+item), desfazer fora de ordem reintroduziria um estado intermediário
+que nunca existiu de verdade. Só mexe em eventos ainda `revertido:
+false` — se parte da importação já foi desfeita individualmente antes,
+esses eventos são pulados. Nova função `eventosConflitantes` detecta
+quando uma OUTRA importação, depois desta, mexeu na mesma célula de
+dado, e mostra um aviso no preview — sem bloquear nem tentar mesclar
+automaticamente (isso pediria um sistema de merge que o protocolo não
+descreve); quem decide se desfaz mesmo assim é a pessoa.
+
+**Bug 1 — dependência dentro do mesmo bloco não era resolvida.**
+`npcs_add: Mira Teste` seguido de `relationships: npc: Mira Teste` no
+MESMO HUB_UPDATE fazia a relação ser rejeitada, porque a validação só
+olhava pro estado já salvo (`atual`), nunca pro que as outras mudanças
+do mesmo lote iam criar. Corrigido com um terceiro parâmetro opcional
+em `validarContraPersonagem`: um estado **projetado** — a ficha atual
+com as criações atualmente marcadas no preview já aplicadas por cima,
+só em memória (a função `aplicarMudancas` de sempre, chamada com um
+importId descartável). Checagens de existência (item, NPC, missão,
+colinha, descoberta, local) passaram a usar esse projetado; checagens
+numéricas (recurso indo negativo) continuam usando o estado real, já
+que são sobre o efeito da própria mudança, não sobre dependências.
+Como o projetado é recalculado a cada mudança de seleção, marcar/
+desmarcar o checkbox de "Novo NPC" revalida a relação na hora — sem
+salvar nada, o preview continua 100% local até o Confirmar.
+
+**Bug 2 — recurso indo negativo sem aviso quando ainda não existia.**
+`mana: 0 → -3` não gerava warning porque o código só checava limites
+"se o recurso já existir" — um recurso sendo criado agora (primeira
+referência no HUB_UPDATE) pulava a checagem inteira. Corrigido removendo
+essa guarda. Aproveitado pra também dar à campanha um **mínimo
+configurável** (`RecursoLivre.minimo`, mesmo modelo do `maximo` que já
+existia) — sem mínimo configurado, o Hub ainda avisa se ficar negativo
+(comportamento de sempre), mas quem quiser um piso diferente (ou nenhum
+piso, permitindo negativo de propósito) configura na ficha. Nunca
+bloqueia — regra do protocolo é avisar, não corrigir sozinho.
+
+**Bug 3 — `generate_image: true` não aparecia em lugar nenhum.**
+`items_add` já aceitava o campo (regra §32 do protocolo) mas o preview
+não mostrava nada e o item salvo não guardava a informação. Agora o
+preview mostra "Imagem solicitada — pendente" e o item criado guarda
+`imagemPendente: true` e `promptImagem` (visível também na ficha depois
+de salvo). A geração em si nunca acontece — fica só marcado, pendente,
+sem gerar imagem nem bloquear a importação, exatamente como o Zé pediu.
+
+Testado: 16 testes automáticos novos (158 no total do projeto) cobrindo
+desfazer importação inteira (ordem certa, pula eventos já desfeitos,
+não mexe em outra importação), `eventosConflitantes`, o bug do recurso
+recém-criado, o mínimo configurável, a resolução de dependência via
+projetado (com e sem ela, pra provar a diferença) e `generate_image`.
+Um teste de Playwright novo reproduz o cenário exato relatado pelo Zé
+de ponta a ponta: aviso de mínimo, dependência resolvida E reativa
+(desmarcar o NPC invalida a relação, remarcar revalida), imagem
+pendente no preview e na ficha salva, e desfazer a importação inteira
+revertendo tudo. Os 7 testes de Playwright das fatias anteriores
+continuam passando sem regressão. `tsc --noEmit`, `npm run build` e
+`npm run lint` limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { aplicarMudancas } from "./aplicar.ts";
 import { interpretarHubUpdate } from "./parser.ts";
 import { novoPersonagemLivre } from "./tipos.ts";
 import { temErro, validarContraPersonagem } from "./validar.ts";
@@ -11,7 +12,7 @@ function bloco(corpo: string): string {
 
 test("mana insuficiente vira warning, não bloqueia", () => {
   const ficha = novoPersonagemLivre("Zé");
-  ficha.recursos.mana = { atual: 3, maximo: 30 };
+  ficha.recursos.mana = { atual: 3, maximo: 30, minimo: 0 };
   const r = interpretarHubUpdate(bloco("resources:\n  mana:\n    change: -10"));
   assert.equal(r.ok, true);
   if (!r.ok) return;
@@ -42,7 +43,7 @@ test("remover mais do que existe vira warning (zera, não deixa negativo)", () =
 
 test("recurso passando do máximo vira warning", () => {
   const ficha = novoPersonagemLivre("Zé");
-  ficha.recursos.mana = { atual: 28, maximo: 30 };
+  ficha.recursos.mana = { atual: 28, maximo: 30, minimo: null };
   const r = interpretarHubUpdate(bloco("resources:\n  mana:\n    change: 8"));
   assert.equal(r.ok, true);
   if (!r.ok) return;
@@ -216,4 +217,68 @@ test("locations_update em local inexistente vira error", () => {
   if (!r.ok) return;
   const validadas = validarContraPersonagem(r.mudancas, ficha);
   assert.equal(temErro(validadas[0]), true);
+});
+
+test("recurso indo negativo AVISA mesmo quando ainda não existe na ficha (bug relatado: mana 0 → -3 sem warning)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("resources:\n  mana:\n    change: -3"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas[0].alertas.some((a) => a.nivel === "warning"), "deveria avisar que mana vai ficar negativa");
+  assert.equal(temErro(validadas[0]), false);
+});
+
+test("recurso com mínimo configurado abaixo do mínimo gera warning específico", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.recursos.mana = { atual: 2, maximo: 30, minimo: 0 };
+  const r = interpretarHubUpdate(bloco("resources:\n  mana:\n    change: -5"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.ok(validadas[0].alertas.some((a) => a.nivel === "warning" && a.mensagem.includes("mínimo")));
+});
+
+test("recurso sem mínimo configurado não avisa se ficar negativo mas dentro de um mínimo customizado negativo", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.recursos.corrupcao = { atual: 2, maximo: null, minimo: -10 };
+  const r = interpretarHubUpdate(bloco("resources:\n  corrupcao:\n    change: -5"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(validadas[0].alertas.length, 0, "-3 está acima do mínimo -10 configurado, não deveria avisar");
+});
+
+test("projetado resolve dependência: relationships pra um NPC criado no mesmo lote não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco("npcs_add:\n  - name: Mira Teste\n\nrelationships:\n  - npc: Mira Teste\n    stat: trust\n    change: 1"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  // sem projetado (comportamento antigo): a relação erra, porque Mira Teste só existe depois do npcs_add
+  const semProjecao = validarContraPersonagem(r.mudancas, ficha);
+  const relacaoSemProjecao = semProjecao.find((m) => m.tipo === "relacao")!;
+  assert.equal(temErro(relacaoSemProjecao), true);
+
+  // com projetado incluindo o npcs_add selecionado: a relação passa a ser válida
+  const npcAdd = r.mudancas.find((m) => m.tipo === "npc_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [npcAdd], "preview");
+  const comProjecao = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const relacaoComProjecao = comProjecao.find((m) => m.tipo === "relacao")!;
+  assert.equal(temErro(relacaoComProjecao), false);
+});
+
+test("projetado resolve dependência: items_update pra um item criado no mesmo lote não gera erro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(
+    bloco("items_add:\n  - name: Fragmento Azul\n    quantity: 1\n\nitems_update:\n  - name: Fragmento Azul\n    changes:\n      equipped: true"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  const itemAdd = r.mudancas.find((m) => m.tipo === "item_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [itemAdd], "preview");
+  const validadas = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const update = validadas.find((m) => m.tipo === "item_update")!;
+  assert.equal(temErro(update), false);
 });

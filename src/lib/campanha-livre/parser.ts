@@ -50,6 +50,9 @@ export type MudancaItemAdd = Base & {
   raridade?: string;
   origem?: string;
   tags?: string[];
+  /** `generate_image: true` (spec §32/§13) — só marca a fila, a geração em si nunca acontece durante a importação. */
+  imagemSolicitada?: boolean;
+  promptImagem?: string;
 };
 
 export type MudancaItemRemove = Base & {
@@ -654,6 +657,8 @@ function interpretarItemAdd(bruto: unknown): MudancaItemAdd {
     raridade: typeof objeto.rarity === "string" ? objeto.rarity : undefined,
     origem: typeof objeto.origin === "string" ? objeto.origin : undefined,
     tags: Array.isArray(objeto.tags) ? objeto.tags.filter((t): t is string => typeof t === "string") : undefined,
+    imagemSolicitada: objeto.generate_image === true,
+    promptImagem: typeof objeto.image_prompt === "string" ? objeto.image_prompt : undefined,
     alertas,
   };
 }

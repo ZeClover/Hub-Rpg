@@ -18,6 +18,17 @@ import { temErro } from "./validar.ts";
 import type { Mudanca } from "./parser.ts";
 import type { AlvoEvento, EventoAplicado, PersonagemLivre } from "./tipos.ts";
 
+/** Mesma "célula" de dado (campo raiz, chave de mapa, ou entidade de lista) — usado por `eventosConflitantes`. */
+function mesmoAlvo(a: AlvoEvento, b: AlvoEvento): boolean {
+  if (a.forma !== b.forma) return false;
+  if (a.forma === "raiz" && b.forma === "raiz") return a.campo === b.campo;
+  if (a.forma === "mapa" && b.forma === "mapa") return a.mapa === b.mapa && a.chave === b.chave;
+  if (a.forma === "lista" && b.forma === "lista") {
+    return a.lista === b.lista && a.identificador.trim().toLowerCase() === b.identificador.trim().toLowerCase();
+  }
+  return false;
+}
+
 function gerarId(): string {
   return `item-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -79,7 +90,7 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
 
     if (mudanca.tipo === "recurso") {
       const antes = dados.recursos[mudanca.nome] ?? null;
-      const base = antes ?? { atual: 0, maximo: null };
+      const base = antes ?? { atual: 0, maximo: null, minimo: null };
       const depois = mudanca.operacao === "set" ? mudanca.valor : base.atual + mudanca.valor;
       dados.recursos[mudanca.nome] = { ...base, atual: depois };
       registrar(mudanca.tipo, `${mudanca.nome}: ${base.atual} → ${depois}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`, {
@@ -121,10 +132,15 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
 
     if (mudanca.tipo === "item_add") {
       const existente = dados.inventario.find((item) => item.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+      const sufixoImagem = mudanca.imagemSolicitada ? " — imagem pendente" : "";
       if (existente) {
         const antes = copiar(existente);
         existente.quantidade += mudanca.quantidade;
-        registrar(mudanca.tipo, `+${mudanca.quantidade} ${mudanca.nome} (agora ${existente.quantidade})`, {
+        if (mudanca.imagemSolicitada) {
+          existente.imagemPendente = true;
+          if (mudanca.promptImagem) existente.promptImagem = mudanca.promptImagem;
+        }
+        registrar(mudanca.tipo, `+${mudanca.quantidade} ${mudanca.nome} (agora ${existente.quantidade})${sufixoImagem}`, {
           forma: "lista",
           lista: "inventario",
           identificador: existente.nome,
@@ -140,9 +156,11 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
           raridade: mudanca.raridade,
           origem: mudanca.origem,
           tags: mudanca.tags,
+          imagemPendente: mudanca.imagemSolicitada || undefined,
+          promptImagem: mudanca.promptImagem,
         };
         dados.inventario.push(novoItem);
-        registrar(mudanca.tipo, `+${mudanca.quantidade} ${mudanca.nome} (novo item)`, {
+        registrar(mudanca.tipo, `+${mudanca.quantidade} ${mudanca.nome} (novo item)${sufixoImagem}`, {
           forma: "lista",
           lista: "inventario",
           identificador: novoItem.nome,
@@ -567,4 +585,48 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
   }
 
   return dados;
+}
+
+/*
+  Desfaz todas as mudanças ainda ativas de uma importação de uma vez
+  (pedido do Zé além do desfazer individual). Reverte na ordem inversa
+  de aplicação — do evento mais recente pro mais antigo — porque, se dois
+  eventos da mesma importação mexeram na mesma entidade (ex: items_add
+  seguido de items_update no mesmo item), desfazer fora de ordem
+  reintroduziria um estado intermediário que nunca existiu de verdade.
+
+  Só mexe em eventos com `revertido: false` — se parte da importação já
+  foi desfeita individualmente antes, esses eventos são pulados (já
+  estão revertidos, `desfazerEvento` não faz nada com eles).
+*/
+export function desfazerImportacao(atual: PersonagemLivre, importId: string): PersonagemLivre {
+  let dados = atual;
+  const pendentes = atual.eventos.filter((e) => e.importId === importId && !e.revertido);
+  for (let i = pendentes.length - 1; i >= 0; i--) {
+    dados = desfazerEvento(dados, pendentes[i].id);
+  }
+  return dados;
+}
+
+/*
+  Entre os eventos ainda ativos de uma importação, quais têm uma mudança
+  mais recente — de OUTRA importação — mexendo na mesma célula de dado.
+  Serve só de aviso pro preview do desfazer completo (regra pedida pelo
+  Zé): desfazer esses aqui pode não voltar pro estado que a pessoa
+  espera, porque algo aconteceu depois. Não bloqueia nada, só avisa —
+  quem decide é quem está olhando o preview.
+*/
+export function eventosConflitantes(dados: PersonagemLivre, importId: string): EventoAplicado[] {
+  const posicao = new Map(dados.eventos.map((e, i) => [e.id, i] as const));
+  const pendentes = dados.eventos.filter((e) => e.importId === importId && !e.revertido);
+  return pendentes.filter((evento) => {
+    const posEvento = posicao.get(evento.id) ?? -1;
+    return dados.eventos.some(
+      (outro) =>
+        outro.importId !== importId &&
+        !outro.revertido &&
+        (posicao.get(outro.id) ?? -1) > posEvento &&
+        mesmoAlvo(evento.alvo, outro.alvo),
+    );
+  });
 }

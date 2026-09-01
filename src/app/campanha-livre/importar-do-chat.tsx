@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import { aplicarMudancas } from "@/lib/campanha-livre/aplicar.ts";
 import { interpretarHubUpdate, type Alerta, type Mudanca } from "@/lib/campanha-livre/parser.ts";
 import type { PersonagemLivre } from "@/lib/campanha-livre/tipos.ts";
 import { temErro, validarContraPersonagem } from "@/lib/campanha-livre/validar.ts";
@@ -11,7 +12,28 @@ import { temErro, validarContraPersonagem } from "@/lib/campanha-livre/validar.t
   interpreta → revisa → confirma. Nada é salvo antes do clique em
   "Confirmar selecionadas" (regra #1 da especificação) — até lá isto é só
   estado local do componente.
+
+  `mudancasBase` guarda só os erros do PARSER (parser.ts nunca olha o estado
+  da ficha). A validação que depende de estado (validar.ts) é recalculada a
+  cada render via `useMemo`, contra um estado PROJETADO — a ficha atual com
+  as criações atualmente marcadas já "aplicadas" por cima (só em memória,
+  nunca salvo). Isso resolve dependências dentro do mesmo bloco (ex:
+  `npcs_add: Mira` + `relationships: npc: Mira` no mesmo HUB_UPDATE) e reage
+  sozinho quando a pessoa marca/desmarca um checkbox, porque o projetado —
+  e portanto os alertas — são recalculados a cada mudança de seleção.
 */
+
+const TIPOS_CRIACAO = new Set<Mudanca["tipo"]>([
+  "item_add",
+  "nota_add",
+  "missao_add",
+  "npc_add",
+  "descoberta_add",
+  "local_add",
+  "criatura_add",
+  "codex_add",
+  "diario_add",
+]);
 
 type Props = {
   dados: PersonagemLivre;
@@ -22,7 +44,7 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
   const [aberto, setAberto] = useState(false);
   const [texto, setTexto] = useState("");
   const [erroParse, setErroParse] = useState<string | null>(null);
-  const [mudancas, setMudancas] = useState<Mudanca[] | null>(null);
+  const [mudancasBase, setMudancasBase] = useState<Mudanca[] | null>(null);
   const [hash, setHash] = useState<string | null>(null);
   const [updateId, setUpdateId] = useState<string | null>(null);
   const [camposDesconhecidos, setCamposDesconhecidos] = useState<string[]>([]);
@@ -33,24 +55,39 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
     ? dados.historicoImportacoes.find((h) => h.hash === hash || (updateId && h.updateId === updateId))
     : null;
 
+  // Só as criações marcadas e sem erro de parser entram no "e se" — não faz
+  // sentido projetar uma entidade que o próprio parser já rejeitou.
+  const projetado = useMemo(() => {
+    if (!mudancasBase) return dados;
+    const criacoesSelecionadas = mudancasBase.filter(
+      (m) => selecionados.has(m.id) && TIPOS_CRIACAO.has(m.tipo) && !temErro(m),
+    );
+    if (criacoesSelecionadas.length === 0) return dados;
+    return aplicarMudancas(dados, criacoesSelecionadas, "preview-local").dados;
+  }, [mudancasBase, selecionados, dados]);
+
+  const mudancas = useMemo(() => {
+    if (!mudancasBase) return null;
+    return validarContraPersonagem(mudancasBase, dados, projetado);
+  }, [mudancasBase, dados, projetado]);
+
   function interpretar() {
     setErroParse(null);
     const resultado = interpretarHubUpdate(texto);
     if (!resultado.ok) {
       setErroParse(resultado.erro);
-      setMudancas(null);
+      setMudancasBase(null);
       return;
     }
-    const validadas = validarContraPersonagem(resultado.mudancas, dados);
-    setMudancas(validadas);
+    setMudancasBase(resultado.mudancas);
     setHash(resultado.hash);
     setUpdateId(resultado.cabecalho.updateId);
     setCamposDesconhecidos(resultado.camposDesconhecidos);
     setDuplicadoConfirmado(false);
-    // Marca tudo que não tem erro, por padrão — a pessoa desmarca o que não quer.
+    // Marca tudo que não tem erro de parser, por padrão — a pessoa desmarca o que não quer.
     // Exceção: remover uma colinha é destrutivo (regra #40 do protocolo) — fica
     // sempre desmarcado, a pessoa decide ativamente se quer mesmo apagar.
-    setSelecionados(new Set(validadas.filter((m) => !temErro(m) && m.tipo !== "nota_remove").map((m) => m.id)));
+    setSelecionados(new Set(resultado.mudancas.filter((m) => !temErro(m) && m.tipo !== "nota_remove").map((m) => m.id)));
   }
 
   function alternar(id: string) {
@@ -63,7 +100,7 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
   }
 
   function editarValor(id: string, novoValor: number) {
-    setMudancas((atual) =>
+    setMudancasBase((atual) =>
       (atual ?? []).map((m) => {
         if (m.id !== id) return m;
         if (
@@ -84,7 +121,7 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
 
   function limpar() {
     setTexto("");
-    setMudancas(null);
+    setMudancasBase(null);
     setErroParse(null);
     setHash(null);
     setUpdateId(null);
@@ -318,6 +355,9 @@ function DescricaoMudanca({
         />
         {mudanca.categoria && <span className="text-xs text-texto-suave"> · {mudanca.categoria}</span>}
         {mudanca.descricao && <span className="block text-xs text-texto-suave">{mudanca.descricao}</span>}
+        {mudanca.imagemSolicitada && (
+          <span className="block text-xs text-ambar-forte">Imagem solicitada — pendente</span>
+        )}
       </p>
     );
   }
