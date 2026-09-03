@@ -67,6 +67,9 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
+.resumo-nivel{border:1px solid rgba(224,162,52,.5); background:rgba(224,162,52,.1);
+  border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
+.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--ambar-forte); font-family:Georgia,serif}
 .condicoes{display:flex; flex-wrap:wrap; gap:8px}
 .condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
   letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
@@ -2716,6 +2719,31 @@ function peGastoTotal(p){
 }
 function peDisponivel(p){ return peGanho(p) - peGastoTotal(p); }
 
+// Fotografia dos números que mudam só por causa do Nível — usada pra montar
+// o resumo do botão "Subir de Nível" (antes/depois), sem duplicar as
+// fórmulas em outro lugar.
+function snapshotNivel(p){
+  return {
+    nivel: p.nivel,
+    vidaMaxima: vidaMaxima(p),
+    peGanho: peGanho(p),
+    peDisponivel: peDisponivel(p),
+    categoria: categoria(p),
+    ciclo: ciclo(p),
+    nivelNoCiclo: nivelNoCiclo(p),
+    marcosRecebidos: marcosRecebidos(p),
+    ascensoesConcluidas: ascensoesConcluidas(p),
+  };
+}
+// Sobe 1 Nível e guarda o resumo em estado.nivelUpResumo. Nível não tem
+// teto (diferente do NC do Kaizoku) — o personagem sempre pode subir.
+function subirDeNivel(p, zerarProgresso){
+  const antes = snapshotNivel(p);
+  p.nivel += 1;
+  if(zerarProgresso) p.progressaoEscolar.progressoNivel = 0;
+  estado.nivelUpResumo = {antes, depois: snapshotNivel(p)};
+}
+
 // Quantas técnicas/poderes "gratuitos" (Fórmulas + Poderes Livres, nessa
 // ordem de criação) o personagem já tem — usado pra decidir se a próxima
 // Fórmula/Poder salvo ainda cai no pacote inicial ou já cobra PE.
@@ -2859,6 +2887,10 @@ const estado = {
   // caminhoSelecionado: qual Caminho Pronto está marcado no seletor da aba
   // Status — só o rascunho da escolha, "Aplicar" é que grava no personagem.
   caminhoSelecionado: CAMINHOS_PRONTOS[0].id,
+  // nivelUpResumo: resumo transitório do último "Subir de Nível" (antes/
+  // depois) — só de exibição, não é salvo na ficha; some ao fechar ou ao
+  // trocar de personagem. Mesmo padrão do botão de Level Up do Kaizoku no Sho.
+  nivelUpResumo: null,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -3550,10 +3582,35 @@ function painelProgressoNivel(p){
       <div class="trilha">
         ${[0,1,2].map(n => `<button data-progresso-nivel="${n}" class="${pe.progressoNivel>=n && n>0?'cheio':''}">${n}</button>`).join('')}
       </div>
-      <button id="btSubirNivelPadrao" style="margin-top:10px" ${pe.progressoNivel<2?'disabled':''}>Subir de Nível (zera Progresso)</button>
+      <button id="btSubirNivelPadrao" class="destaque" style="margin-top:10px" ${pe.progressoNivel<2?'disabled':''}>⭐ Subir para Nível ${p.nivel+1} (zera Progresso)</button>
     ` : `
-      <button id="btSubirNivelDireto" style="margin-top:10px">Concluiu ${pe.ritmo==='acelerado'?'a sessão':'o Semestre'} → Subir de Nível</button>
+      <button id="btSubirNivelDireto" class="destaque" style="margin-top:10px">⭐ Concluiu ${pe.ritmo==='acelerado'?'a sessão':'o Semestre'} → Subir para Nível ${p.nivel+1}</button>
     `}
+    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}
+  </div>`;
+}
+
+function painelResumoNivel(resumo){
+  const {antes, depois} = resumo;
+  const linha = (rotulo, chave) => {
+    const a = antes[chave], d = depois[chave];
+    if(a === d) return '';
+    return `<p class="mini" style="margin:4px 0"><strong>${rotulo}:</strong> ${a} → <span style="color:var(--ambar-forte)">${d}</span></p>`;
+  };
+  const novosMarcos = depois.marcosRecebidos - antes.marcosRecebidos;
+  const novasAscensoes = depois.ascensoesConcluidas - antes.ascensoesConcluidas;
+  return `<div class="resumo-nivel">
+    <h3>⭐ Subiu de Nível! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível ${antes.nivel} → ${depois.nivel}</span></h3>
+    <p class="mini" style="margin-bottom:8px">O que mudou só por causa do Nível novo — já vale nas outras abas, é só ir gastar.</p>
+    ${linha('Vida Máxima', 'vidaMaxima')}
+    ${linha('PE ganho (total)', 'peGanho')}
+    ${linha('PE disponível', 'peDisponivel')}
+    ${linha('Categoria', 'categoria')}
+    ${linha('Ciclo', 'ciclo')}
+    ${linha('Nível no Ciclo', 'nivelNoCiclo')}
+    ${novosMarcos > 0 ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🎁 +${novosMarcos} Marco${novosMarcos>1?'s':''} da Área liberado${novosMarcos>1?'s':''} — escolha mais acima, em "Marcos da Área".</p>` : ''}
+    ${novasAscensoes > 0 ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🌟 Ascensão liberada — escolha um eixo de escala mais acima, em "Ascensões".</p>` : ''}
+    <button id="btFecharResumoNivel" style="margin-top:8px">Fechar</button>
   </div>`;
 }
 
@@ -5294,11 +5351,12 @@ function ligarEventos(){
   const btSubirNivelPadrao = document.getElementById('btSubirNivelPadrao');
   if(btSubirNivelPadrao) btSubirNivelPadrao.onclick = () => mudar(p => {
     if(p.progressaoEscolar.progressoNivel < 2) return;
-    p.nivel += 1;
-    p.progressaoEscolar.progressoNivel = 0;
+    subirDeNivel(p, true);
   });
   const btSubirNivelDireto = document.getElementById('btSubirNivelDireto');
-  if(btSubirNivelDireto) btSubirNivelDireto.onclick = () => mudar(p => { p.nivel += 1; });
+  if(btSubirNivelDireto) btSubirNivelDireto.onclick = () => mudar(p => { subirDeNivel(p, false); });
+  const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
 
   app.querySelectorAll('[data-portfolio]').forEach(el =>
     el.onchange = () => mudar(p => { p.progressaoEscolar.portfolio[el.dataset.portfolio] = el.checked; }));
@@ -5496,7 +5554,9 @@ document.getElementById('chkCompartilhar').onchange = e => {
 };
 
 document.getElementById('seletor').onchange = e => {
-  estado.atualId = e.target.value; render();
+  estado.atualId = e.target.value;
+  estado.nivelUpResumo = null;
+  render();
 };
 
 document.getElementById('btNovo').onclick = () => {
@@ -5504,6 +5564,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.fichas.push(p);
   estado.atualId = p.id;
   estado.aba = 'status';
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -5512,6 +5573,7 @@ document.getElementById('btExcluir').onclick = () => {
   if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -5544,6 +5606,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.fichas.push(lido);
         estado.atualId = lido.id;
       }
+      estado.nivelUpResumo = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

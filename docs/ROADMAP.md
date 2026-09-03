@@ -1088,6 +1088,16 @@ passando.
       em linguagem simples) nas três seções mais densas. Testado com
       Playwright (sumário íntegro, caixas novas no DOM, sem erro de JS);
       `tsc`, lint e os testes automáticos continuam limpos
+- [x] **Thrylikí Chelóna — botão de Subir de Nível com resumo**
+      (03/09/2026) — decisão #60. Mesmo padrão do Level Up do Kaizoku no
+      Sho: clicar mostra um painel comparando antes/depois — Vida
+      Máxima, PE ganho/disponível, Categoria, Ciclo, Nível no Ciclo — e
+      avisa quando um Marco da Área ou uma Ascensão foi liberado.
+      Diferença do Kaizoku: Nível não tem teto, então o botão nunca
+      trava. Testado com Playwright (resumo aparece com os deltas
+      certos, sobrevive a trocar de aba, some ao Fechar, Nível sobe de
+      verdade, sem travar num segundo Level Up); `tsc`, lint e os 208
+      testes automáticos continuam limpos
 - [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
       Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion

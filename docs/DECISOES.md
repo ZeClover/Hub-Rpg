@@ -2200,6 +2200,43 @@ aparecem no texto renderizado, sem erro de JS/console. `tsc --noEmit`,
 `npm run lint` e a suíte de testes automáticos continuam limpos (mudança
 é só HTML/CSS estático, sem tocar em código TypeScript).
 
+## 60. Thrylikí Chelóna — botão de Subir de Nível com resumo (03/09/2026)
+
+Pedido do Zé: fazer pro Thrylikí Chelóna o mesmo botão de Level Up já
+existente no Kaizoku no Sho (decisão anterior, sem número nesta lista
+por ter sido feita fora deste bloco de decisões — commit "Adiciona botão
+de Level Up na ficha do Kaizoku no Sho"). A ficha já tinha botões que
+subiam o Nível em 1 (`btSubirNivelPadrao`/`btSubirNivelDireto`, aba
+Progressão), mas sem mostrar o que isso desbloqueava.
+
+Mesmo padrão do Kaizoku, adaptado à diferença de sistema: lá o "Level
+Up" sobe o NC (trava em 20); aqui **Nível não tem teto**, então o botão
+nunca desabilita — só muda o rótulo pro próximo Nível (`⭐ Subir para
+Nível N`).
+
+Ao clicar, `subirDeNivel(p, zerarProgresso)` tira uma fotografia
+(`snapshotNivel`) antes e depois de incrementar o Nível — Vida Máxima,
+PE ganho, PE disponível, Categoria, Ciclo, Nível no Ciclo, Marcos da
+Área recebidos e Ascensões concluídas — e guarda o par em
+`estado.nivelUpResumo` (rascunho de tela, não é salvo na ficha). O
+painel de resumo (`.resumo-nivel`, CSS novo) mostra só as linhas que
+mudaram (`antes → depois`, delta em âmbar) e, quando o Nível cruza uma
+posição de Marco (1/5/9/13/17 do ciclo) ou completa 20 Níveis
+(Ascensão), avisa onde ir escolher — aponta pros cards "Marcos da Área"
+e "Ascensões" que já existem mais acima na mesma aba. O resumo continua
+visível ao trocar de aba (só some ao clicar "Fechar" ou ao trocar de
+personagem/importar/criar novo/excluir, onde é limpo por segurança pra
+não vazar de um personagem pro outro).
+
+Testado com Playwright: personagem novo com Caminho Pronto de Robótica
+e Engenharia, ritmo Acelerado — clicar "Subir para Nível 2" mostra o
+resumo com Vida Máxima e PE ganho corretos, o resumo sobrevive a trocar
+de aba (Status → Progressão) e some ao clicar "Fechar"; o Nível real
+mudou de 1 para 2 na aba Status; um segundo clique sobe de 2 para 3 sem
+travar (confirma que não há teto, ao contrário do NC do Kaizoku); sem
+erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/JS estático da ficha).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
