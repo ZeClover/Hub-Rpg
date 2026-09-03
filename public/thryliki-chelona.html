@@ -3051,12 +3051,14 @@ function render(){
 
   app.innerHTML = estado.modoGuiado
     ? alerta + telaGuiada(p)
-    : alerta
-      + `<div class="abas">` + ABAS.map(a =>
-          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-        ).join('') + `</div>`
-      + painelDerivados(p)
-      + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
+    : estado.nivelUpResumo
+      ? alerta + telaResumoNivel(p, estado.nivelUpResumo)
+      : alerta
+        + `<div class="abas">` + ABAS.map(a =>
+            `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+          ).join('') + `</div>`
+        + painelDerivados(p)
+        + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -3068,7 +3070,7 @@ function render(){
 
 function desenharBarra(){
   const btModoGuiado = document.getElementById('btModoGuiado');
-  btModoGuiado.hidden = !atual();
+  btModoGuiado.hidden = !atual() || !!estado.nivelUpResumo;
   btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
   btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
 
@@ -3618,9 +3620,6 @@ function abaProgressao(p){
   const ascensoes = p.ascensoes || [];
   const marcosMax = marcosRecebidos(p);
   const ascensoesMax = ascensoesConcluidas(p);
-  // Enquanto o resumo do Level Up estiver aberto e tiver PE pra gastar, o
-  // form de compra mora só lá (embutido) — evita ids duplicados na página.
-  const compraNoResumo = estado.nivelUpResumo && peDisponivel(p) > 0;
 
   return `<div class="cartao">
     <h2 style="font-size:18px">Pontos de Evolução</h2>
@@ -3650,9 +3649,7 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(c.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhum Talento comprado ainda)</p>'}
-    ${compraNoResumo
-      ? `<p class="mini" style="margin-top:10px">Escolha no resumo do Level Up, logo abaixo.</p>`
-      : blocoFormTalento(p)}
+    ${blocoFormTalento(p)}
   </div>
 
   <div class="cartao">
@@ -3664,9 +3661,7 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(c.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhuma compra ainda)</p>'}
-    ${compraNoResumo
-      ? `<p class="mini" style="margin-top:10px">Escolha no resumo do Level Up, logo abaixo.</p>`
-      : blocoFormRecurso(p)}
+    ${blocoFormRecurso(p)}
   </div>
 
   <div class="cartao">
@@ -3684,9 +3679,7 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(m.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhum Marco registrado ainda)</p>'}
-    ${estado.nivelUpResumo && estado.nivelUpResumo.depois.marcosRecebidos > estado.nivelUpResumo.antes.marcosRecebidos
-      ? `<p class="mini">Escolha no resumo do Level Up, logo abaixo.</p>`
-      : blocoFormMarco(p)}
+    ${blocoFormMarco(p)}
   </div>
 
   <div class="cartao">
@@ -3703,9 +3696,7 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(a.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhuma Ascensão registrada ainda)</p>'}
-    ${estado.nivelUpResumo && estado.nivelUpResumo.depois.ascensoesConcluidas > estado.nivelUpResumo.antes.ascensoesConcluidas
-      ? `<p class="mini">Escolha no resumo do Level Up, logo abaixo.</p>`
-      : blocoFormAscensao(p)}
+    ${blocoFormAscensao(p)}
   </div>
 
   ${painelProgressoNivel(p)}
@@ -3761,7 +3752,6 @@ function painelProgressoNivel(p){
     ` : `
       <button id="btSubirNivelDireto" class="destaque" style="margin-top:10px">⭐ Concluiu ${pe.ritmo==='acelerado'?'a sessão':'o Semestre'} → Subir para Nível ${p.nivel+1}</button>
     `}
-    ${estado.nivelUpResumo ? painelResumoNivel(p, estado.nivelUpResumo) : ''}
   </div>`;
 }
 
@@ -3818,8 +3808,20 @@ function painelResumoNivel(p, resumo){
         </details>
       </div>` : ''}
 
-    <button id="btFecharResumoNivel" style="margin-top:12px">Fechar</button>
+    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>
   </div>`;
+}
+
+// Tela cheia do Level Up guiado (mesmo esquema do Modo Guiado de criação:
+// substitui TODO o conteúdo de #app, sem misturar com as abas normais) —
+// pedido do Zé porque o resumo embutido no meio dos cards da aba
+// Progressão ficava com cara de bagunça.
+function telaResumoNivel(p, resumo){
+  return `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Level Up guiado</p>
+    </div>
+    ${painelResumoNivel(p, resumo)}`;
 }
 
 function painelPortfolio(p){

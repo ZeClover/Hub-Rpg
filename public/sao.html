@@ -912,12 +912,14 @@ function render(){
 
   app.innerHTML = estado.modoGuiado
     ? alerta + telaGuiada(p)
-    : alerta
-      + `<div class="abas">` + ABAS.map(a =>
-          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-        ).join('') + `</div>`
-      + painelDerivados(p)
-      + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+    : estado.nivelUpResumo
+      ? alerta + telaResumoNivel(p, estado.nivelUpResumo)
+      : alerta
+        + `<div class="abas">` + ABAS.map(a =>
+            `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+          ).join('') + `</div>`
+        + painelDerivados(p)
+        + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -931,7 +933,7 @@ function render(){
 
 function desenharBarra(){
   const btModoGuiado = document.getElementById('btModoGuiado');
-  btModoGuiado.hidden = !atual();
+  btModoGuiado.hidden = !atual() || !!estado.nivelUpResumo;
   btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
   btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
 
@@ -1309,8 +1311,20 @@ function painelResumoNivel(p, resumo){
       <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Escolha o Poder novo de ${esc(nomeClasse)} agora:</p>
       ${blocoPoderesClasse(p, classeId)}
     </div>
-    <button id="btFecharResumoNivel" style="margin-top:12px">Fechar</button>
+    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>
   </div>`;
+}
+
+// Tela cheia do Level Up guiado (mesmo esquema do Modo Guiado de criação:
+// substitui TODO o conteúdo de #app, sem misturar com as abas normais) —
+// pedido do Zé porque o resumo embutido no meio dos cards da aba Classes
+// ficava com cara de bagunça.
+function telaResumoNivel(p, resumo){
+  return `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Level Up guiado</p>
+    </div>
+    ${painelResumoNivel(p, resumo)}`;
 }
 
 function abaClasses(p){
@@ -1324,7 +1338,6 @@ function abaClasses(p){
     </p>
     ${p.classes.map((c,i) => linhaClasse(p, i)).join('')}
     <button id="btAddClasse">+ Outra classe</button>
-    ${estado.nivelUpResumo ? painelResumoNivel(p, estado.nivelUpResumo) : ''}
   </div>`;
 }
 

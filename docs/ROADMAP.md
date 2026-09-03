@@ -1178,6 +1178,17 @@ passando.
       Ultima reauditado e mantido sem mudança (nada mais fica pendente
       fora do resumo). Testado com Playwright nos quatro sistemas; `tsc`,
       lint e os 208 testes automáticos continuam limpos
+- [x] **Resumo do Level Up guiado vira página separada** (03/09/2026) —
+      decisão #68. O resumo do Level Up (que ficava misturado no meio
+      dos cards da aba normal, deixando a tela "esquisita") passa a
+      substituir a ficha inteira por uma tela própria, igual o Modo
+      Guiado de criação já faz — nas quatro fichas. Kaizoku no Sho
+      precisou de um ajuste extra em `renderPanel()` pra continuar
+      reusando os binds de Atributos/Perícias/Nível do Poder fora de
+      qualquer aba, e ganhou de brinde o reset de `levelUpResumo` ao
+      trocar/criar/apagar/importar personagem (buraco que tinha ficado
+      da decisão #66). Testado com Playwright nos quatro sistemas; `tsc`,
+      lint e os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

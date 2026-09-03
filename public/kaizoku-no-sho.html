@@ -4728,7 +4728,7 @@ function renderRosterBarHub(){
 function atualizarBotaoModoGuiado(){
   const btn = document.getElementById('btnModoGuiado');
   if(!btn) return;
-  btn.hidden = !personagemAtual();
+  btn.hidden = !personagemAtual() || !!state.levelUpResumo;
   btn.textContent = state.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
   btn.className = state.modoGuiado ? 'btn primary' : 'btn';
 }
@@ -4761,6 +4761,7 @@ function renderRosterBar(){
     state.personagemId = e.target.value || null;
     state.confirmandoApagar = false;
     state.modoGuiado = false;
+    state.levelUpResumo = null;
     renderAll();
   });
   document.getElementById('btnNovo').addEventListener('click', ()=>{
@@ -4775,6 +4776,7 @@ function renderRosterBar(){
     // com um clique em "Ver ficha completa" (botão no cabeçalho).
     state.modoGuiado = true;
     state.passoGuiado = 1;
+    state.levelUpResumo = null;
     salvarRoster(state.roster);
     renderAll();
   });
@@ -4801,6 +4803,7 @@ function renderRosterBar(){
     state.personagemId = state.roster.length ? state.roster[0].id : null;
     state.confirmandoApagar = false;
     state.modoGuiado = false;
+    state.levelUpResumo = null;
     salvarRoster(state.roster);
     renderAll();
   });
@@ -4833,6 +4836,7 @@ function renderRosterBar(){
         state.roster.push(obj);
         state.personagemId = obj.id;
         state.modoGuiado = false;
+        state.levelUpResumo = null;
         salvarRoster(state.roster);
         renderAll();
       }catch(err){
@@ -5016,6 +5020,21 @@ function renderAll(){
     return;
   }
 
+  // Level Up guiado: tela cheia própria, igual o Modo Guiado de criação —
+  // pedido do Zé porque o resumo embutido dentro da aba Perfil ficava com
+  // cara de bagunça, misturado com os campos normais do personagem.
+  if(state.levelUpResumo){
+    root.innerHTML = `
+      ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
+      ${telaResumoLevelUp(p, state.levelUpResumo)}
+    `;
+    bindResumoLevelUp(p);
+    if(somenteLeitura){
+      root.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
+    }
+    return;
+  }
+
   root.innerHTML = `
     ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
     ${somenteLeitura ? `<div class="info-box leitura">Modo leitura — você está vendo a ficha de <strong>${escapeHtml(p.perfil.nome)}</strong>. Só quem é dono edita.</div>` : ''}
@@ -5046,6 +5065,10 @@ function renderTabs(){
 
 function renderPanel(){
   const host = document.getElementById('panelHost');
+  // bindAtributos/bindPericias/bindNivelPoder são reusados dentro da tela
+  // cheia do Level Up guiado (telaResumoLevelUp), onde #panelHost não
+  // existe — nesse caso o redesenho certo é a tela inteira de novo.
+  if(!host){ renderAll(); return; }
   const p = personagemAtual();
   switch(state.tab){
     case 'perfil': host.innerHTML = panelPerfil(p); bindPerfil(p); break;
@@ -5126,7 +5149,6 @@ function panelPerfil(p){
           ? `<button type="button" class="btn" disabled>NC máximo (20) atingido</button>`
           : `<button type="button" class="btn primary" id="btnLevelUp">⭐ Level Up — subir para NC ${p.nc + 1}</button>`}
       </div>
-      ${state.levelUpResumo ? panelResumoLevelUp(p, state.levelUpResumo) : ''}
       <div class="field-row">
         <div class="field"><label>Sexualidade</label><input type="text" id="f_sexualidade" value="${escapeHtml(p.perfil.sexualidade)}"></div>
         <div class="field"><label>Gênero</label><input type="text" id="f_genero" value="${escapeHtml(p.perfil.genero)}"></div>
@@ -5257,21 +5279,6 @@ function bindPerfil(p){
   });
   const btnLevelUp = document.getElementById('btnLevelUp');
   if(btnLevelUp) btnLevelUp.addEventListener('click', ()=>{ subirDeNivel(p); });
-  const btnFecharResumoLevelUp = document.getElementById('btnFecharResumoLevelUp');
-  if(btnFecharResumoLevelUp) btnFecharResumoLevelUp.addEventListener('click', ()=>{
-    state.levelUpResumo = null;
-    renderPanel();
-  });
-  // Atributos/Perícias/Nível do Poder embutidos no resumo do Level Up (só
-  // existem no DOM quando o resumo está aberto) — bindAtributos/
-  // bindPericias/bindNivelPoder chamam renderPanel(), que aqui recai em
-  // panelPerfil de novo (state.tab continua 'perfil'), então funcionam
-  // sem adaptação.
-  if(state.levelUpResumo){
-    bindAtributos(p);
-    bindPericias(p);
-    bindNivelPoder(p);
-  }
 }
 
 // Fotografia dos números que mudam só por causa do NC — usada pra montar o
@@ -5296,7 +5303,7 @@ function subirDeNivel(p){
   const depois = snapshotNC(p);
   state.levelUpResumo = {antes, depois};
   onFieldChange();
-  renderPanel();
+  renderAll();
 }
 // Modo Guiado de Evolução: além dos deltas, já embute os painéis de
 // Atributos e Perícias (autocontidos, com seus próprios bindAtributos/
@@ -5312,27 +5319,56 @@ function panelResumoLevelUp(p, resumo){
     return `<div class="stat-line"><span class="k">${rotulo}</span><span class="v">${a} → ${d} <span style="color:var(--brass-bright);">(+${delta})</span></span></div>`;
   };
   return `
-    <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
-    <p class="panel-note">Resumo do que ficou disponível — Atributos, Perícias e o Nível do Poder já estão logo abaixo pra gastar agora; o resto de Poderes (Budô/Akuma no Mi/Haki) fica na aba própria.</p>
-    <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
-      ${linha('Vitalidade Máxima', 'vitalidade')}
-      ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
-      ${linha('Pontos de Perícias (total)', 'pontosPericias')}
-      ${linha('Pontos de Poder (total)', 'pontosPoder')}
-      ${linha('Limite por Atributo', 'limiteAtributo')}
-      ${linha('Limite por Perícia', 'limitePericia')}
-      ${linha('Limite de Nível do Poder', 'limiteNivelPoder')}
-      ${linha('Mínimo obrigatório por atributo', 'atributoMinimo')}
+    <div class="panel">
+      <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
+      <p class="panel-note">Resumo do que ficou disponível — Atributos, Perícias e o Nível do Poder já estão logo abaixo pra gastar agora; o resto de Poderes (Budô/Akuma no Mi/Haki) fica na aba própria.</p>
+      <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
+        ${linha('Vitalidade Máxima', 'vitalidade')}
+        ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
+        ${linha('Pontos de Perícias (total)', 'pontosPericias')}
+        ${linha('Pontos de Poder (total)', 'pontosPoder')}
+        ${linha('Limite por Atributo', 'limiteAtributo')}
+        ${linha('Limite por Perícia', 'limitePericia')}
+        ${linha('Limite de Nível do Poder', 'limiteNivelPoder')}
+        ${linha('Mínimo obrigatório por atributo', 'atributoMinimo')}
+      </div>
+      ${depois.nc === 20 ? `<div class="info-box">NC 20 é o topo da tabela (Yonkou/Almirante) — o salto de Pontos de Poder acima já inclui o bônus extra de +6 dessa faixa.</div>` : ''}
+      <button type="button" class="btn primary" id="btnFecharResumoLevelUp" style="margin-top:16px;">Concluir — voltar pra ficha</button>
     </div>
-    ${depois.nc === 20 ? `<div class="info-box">NC 20 é o topo da tabela (Yonkou/Almirante) — o salto de Pontos de Poder acima já inclui o bônus extra de +6 dessa faixa.</div>` : ''}
-    <button type="button" class="btn" id="btnFecharResumoLevelUp" style="margin-top:10px;">Fechar</button>
-    <div id="resumoLevelUpAtributos" style="margin-top:16px">${panelAtributos(p)}</div>
-    <div id="resumoLevelUpPericias" style="margin-top:16px">${panelPericias(p)}</div>
-    <div id="resumoLevelUpPoder" class="panel" style="margin-top:16px">
+    <div id="resumoLevelUpAtributos">${panelAtributos(p)}</div>
+    <div id="resumoLevelUpPericias">${panelPericias(p)}</div>
+    <div id="resumoLevelUpPoder" class="panel">
       <h2>Poder</h2>
       ${blocoNivelPoder(p)}
     </div>
   `;
+}
+
+// Tela cheia do Level Up guiado (mesmo esquema do Modo Guiado de criação:
+// substitui TODO o conteúdo de #appRoot, sem misturar com a aba Perfil) —
+// pedido do Zé porque o resumo embutido no meio dos campos normais do
+// personagem ficava com cara de bagunça.
+function telaResumoLevelUp(p, resumo){
+  return `
+    <div class="panel" style="text-align:center;">
+      <p class="panel-note" style="text-transform:uppercase; letter-spacing:.1em;">Level Up guiado</p>
+    </div>
+    ${panelResumoLevelUp(p, resumo)}
+  `;
+}
+// bindAtributos/bindPericias/bindNivelPoder chamam renderPanel() por baixo
+// dos panos — como #panelHost não existe nesta tela, o fallback em
+// renderPanel() redireciona pra renderAll(), que redesenha esta mesma tela
+// de novo (state.levelUpResumo continua setado). Funcionam sem adaptação.
+function bindResumoLevelUp(p){
+  const btnFecharResumoLevelUp = document.getElementById('btnFecharResumoLevelUp');
+  if(btnFecharResumoLevelUp) btnFecharResumoLevelUp.addEventListener('click', ()=>{
+    state.levelUpResumo = null;
+    renderAll();
+  });
+  bindAtributos(p);
+  bindPericias(p);
+  bindNivelPoder(p);
 }
 
 /* ---------- Atributos ---------- */

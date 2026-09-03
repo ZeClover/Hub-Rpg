@@ -2575,6 +2575,65 @@ Thrylikí/Fabula Ultima/Kaizoku (decisão #66) pra confirmar que nada
 quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/JS estático das quatro fichas).
 
+## 68. Resumo do Level Up guiado vira página separada (03/09/2026)
+
+Pedido do Zé: "faça se modo guiado, ser literalmente uma pagina a parte,
+que atualize a ficha automatico com suas escolhas, assim fica mt
+esquisito" — reclamação do visual das decisões #66/#67: o resumo do
+Level Up (`.resumo-nivel`) aparecia MISTURADO no meio dos cards normais
+da aba (Progressão, Atributos, Classes ou Perfil, dependendo do
+sistema), ficando com cara de bagunça.
+
+Solução: aplicado às quatro fichas o mesmo tratamento que o Modo Guiado
+de criação (decisões #62/#65) já usa — quando o Level Up está com um
+resumo pendente, a função de desenho principal (`render()`/`renderAll()`)
+substitui TODO o conteúdo da área da ficha por uma tela própria
+(`telaResumoNivel`/`telaResumoLevelUp`), escondendo as abas normais por
+completo, igual ao Modo Guiado já faz com `telaGuiada`. O botão "Fechar"
+virou "Concluir — voltar pra ficha" pra deixar claro que é uma tela de
+passagem, e o botão "🧭 Modo Guiado" some da barra do topo enquanto essa
+tela está ativa (evita a confusão de trocar de modo com um Level Up pela
+metade). As escolhas continuam se aplicando direto no personagem em
+tempo real, como já funcionava — só o encaixe visual mudou.
+
+Como a tela do resumo e as abas normais nunca aparecem mais ao mesmo
+tempo, os "guardas contra id duplicado" que a decisão #66/#67 tinha
+colocado nos cards de Marco/Ascensão/Talento/Recurso (Thrylikí Chelóna)
+ficaram desnecessários e foram removidos — esses cards voltam a mostrar
+sempre o formulário completo quando a ficha normal está visível.
+
+**Kaizoku no Sho foi o caso mais delicado**: como o sistema usa
+`renderPanel()` (redesenha só a `#panelHost` da aba ativa) em vez de um
+`render()` único, os embeds de Atributos/Perícias/Nível do Poder dentro
+do resumo dependiam de `renderPanel()` cair de volta em `panelPerfil()`.
+Isso só funcionava porque o resumo vivia dentro da aba Perfil; numa tela
+separada sem `#panelHost`, esse redesenho quebraria. Corrigido com uma
+guarda simples em `renderPanel()`: se `#panelHost` não existe, ela cai
+pra `renderAll()` — que redesenha a tela do resumo de novo, já que
+`state.levelUpResumo` continua setado. Com isso, `bindAtributos`/
+`bindPericias`/`bindNivelPoder` continuam funcionando sem nenhuma
+adaptação, apesar de agora rodarem fora de qualquer aba. De brinde,
+aproveitei pra registrar um buraco que a decisão #66 tinha deixado
+passar no Kaizoku: `state.levelUpResumo` nunca era resetado ao trocar de
+personagem, criar um novo, apagar ou importar — corrigido junto,
+igual já era feito nos outros três sistemas.
+
+Testado com Playwright nos quatro sistemas: abas normais somem por
+completo enquanto o resumo está aberto; o botão Modo Guiado também some;
+a barra do topo (seletor de personagem) continua visível; escolher um
+Poder/Grau/Talento/Marco/Atributo/Nível do Poder direto da tela do
+resumo aplica no personagem sem sair da tela; "Concluir" volta pras abas
+normais com tudo persistido de verdade (conferido lendo o estado, não só
+a tela). Fiz também um ciclo completo de Fabula Ultima subindo uma
+classe do Nível 1 ao 10 em 10 rodadas de tela separada (fechando e
+reabrindo a cada Nível), confirmando que Habilidade Heroica ainda
+aparece corretamente ao dominar a classe, e um ciclo do Thrylikí Chelóna
+até o Nível 5 confirmando que o Marco da Área aparece e registra
+corretamente dentro da nova tela. Reexecutei os testes de Modo Guiado de
+criação dos quatro sistemas (decisões #62/#65) pra confirmar que nada
+quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/JS estático das quatro fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
