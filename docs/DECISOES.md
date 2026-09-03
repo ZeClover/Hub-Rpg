@@ -2453,6 +2453,62 @@ dados preenchidos ainda lá; o botão de alternar funciona nos dois
 sentidos. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/JS estático das três fichas).
 
+## 66. Modo Guiado de Evolução no botão de Level Up (03/09/2026)
+
+Pedido do Zé: "faça agora o modo guiado para evolução... pARA LEVEL UP" —
+a ideia registrada no ROADMAP na decisão #65 ("integrar o Modo Guiado ao
+Level Up"), agora implementada: em vez de só mostrar os números que
+mudaram, o resumo do Level Up passa a **embutir as escolhas liberadas
+naquele degrau, prontas pra aplicar ali mesmo**, sem navegar pra outra
+aba. Feito nos três sistemas com botão de Level Up (Thrylikí Chelóna,
+Fabula Ultima, Kaizoku no Sho); Sistema SAO ainda não tem botão de Level
+Up, então fica de fora.
+
+**Thrylikí Chelóna**: `blocoFormMarco(p)`/`blocoFormAscensao(p)`
+extraídos dos cards "Marcos da Área"/"Ascensões" — o mesmo formulário
+(select + descrição + botão "Registrar") passa a aparecer dentro do
+resumo quando aquele Nível libera um Marco ou uma Ascensão. Quando PE
+disponível > 0, o resumo também embute `blocoAtributos` (grid de +1
+Grau) e, num `<details>` recolhido, `blocoTreinamentos` — os mesmos
+componentes já usados no Modo Guiado de criação (decisão #62). Como o
+card principal de Marcos/Ascensões vive na MESMA aba (Progressão) que o
+resumo, evitei duplicar `id`s (ex: `#c-marco-opcao` duas vezes na
+página): quando o resumo já mostra o formulário daquele Marco/Ascensão
+específico, o card principal exibe só "Escolha no resumo do Level Up,
+logo abaixo" em vez de repetir o formulário.
+
+**Fabula Ultima**: `blocoPoderesClasse(p, c)` extraído do `.map()` de
+`abaPoderes` — o resumo do "+1 Nível" de uma classe já mostra os 5
+Poderes dela com os botões +/- de sempre, pra escolher o Poder novo sem
+sair da aba Atributos. Se a classe acabou de ser dominada (Nível 10),
+`blocoHeroicasParaClasse(p, classeId)` filtra as ~30 Habilidades
+Heroicas pras que são abertas a todos ou específicas daquela classe, e
+mostra só essas com checkbox. Sem risco de `id` duplicado — Poderes e
+Heroico são abas diferentes de onde o resumo vive (Atributos), nunca
+renderizadas ao mesmo tempo.
+
+**Kaizoku no Sho**: o resumo do Level Up (na aba Perfil) já embute
+`panelAtributos(p)` e `panelPericias(p)` inteiros, com bind. Poderes
+ficou de fora — aquele painel (Budô/Akuma no Mi/Haki) tem mais de 500
+linhas e é grande/stateful demais pra reusar com segurança num resumo.
+Diferente da criação guiada (decisão #65, que precisou de bind próprio
+pra fugir de `renderPanel()`), aqui `bindAtributos`/`bindPericias`
+originais funcionam sem adaptação: o Level Up só aparece na aba Perfil
+mesmo (`state.tab` já é `'perfil'`), então `renderPanel()` recai
+corretamente em `panelPerfil` de novo.
+
+Testado com Playwright nos três: Thrylikí Chelóna sobe até o Nível 5
+(posição de Marco), registra o Marco pelo formulário do resumo (sem
+duplicar `id`) e compra um Grau de Atributo pelo mesmo resumo; Fabula
+Ultima sobe uma classe até o Nível 10, escolhe um Poder novo e marca uma
+Habilidade Heroica, ambos pelo resumo; Kaizoku no Sho sobe de NC e ajusta
+Atributos/Perícias pelo resumo embutido — em todos os três os dados
+realmente gravam no personagem (conferido lendo o estado, não só a
+tela), e o resumo sobrevive até "Fechar". Reexecutei também os testes de
+criação guiada dos quatro sistemas (decisões #62/#65) pra confirmar que
+nada quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/JS estático das três fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

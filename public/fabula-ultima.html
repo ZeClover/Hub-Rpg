@@ -2142,7 +2142,10 @@ function abaPerfil(p){
   </div>`;
 }
 
-function painelResumoNivel(resumo){
+// Modo Guiado de Evolução: em vez de só listar os deltas e mandar a
+// pessoa pra outra aba, já embute o Poder novo pra escolher (a mesma
+// classe que subiu) e, se dominou a classe, as Habilidades Heroicas dela.
+function painelResumoNivel(p, resumo){
   const {classeId, nivelClasse, antes, depois} = resumo;
   const nomeClasse = CLASSES.find(x => x.id === classeId)?.nome || classeId;
   const linha = (rotulo, chave) => {
@@ -2151,15 +2154,27 @@ function painelResumoNivel(resumo){
     return `<p class="mini" style="margin:4px 0"><strong>${rotulo}:</strong> ${a} → <span style="color:var(--ambar-forte)">${d}</span></p>`;
   };
   const dominouAgora = depois.dominadas.includes(classeId) && !antes.dominadas.includes(classeId);
+  const classeAtual = p.classes.find(c => c.classeId === classeId);
   return `<div class="resumo-nivel">
     <h3>⭐ ${esc(nomeClasse)} subiu para Nível ${nivelClasse}! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível total ${antes.nivelTotal} → ${depois.nivelTotal}</span></h3>
-    <p class="mini" style="margin-bottom:8px">Já tem 1 Poder novo pra escolher dessa classe — veja na aba Poderes.</p>
     ${linha('Pontos de Vida máximos', 'pv')}
     ${linha('Pontos de Mana máximos', 'pm')}
     ${linha('Pontos de Inventário máximos', 'pi')}
     ${linha('Entra em Crise com PV em', 'crise')}
-    ${dominouAgora ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🎖️ Classe dominada (Nível 10)! Escolha uma Habilidade Heroica dela, na aba Heroico.</p>` : ''}
-    <button id="btFecharResumoNivel" style="margin-top:8px">Fechar</button>
+
+    ${classeAtual ? `
+      <div style="margin-top:12px">
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Escolha o Poder novo de ${esc(nomeClasse)} agora:</p>
+        ${blocoPoderesClasse(p, classeAtual)}
+      </div>` : ''}
+
+    ${dominouAgora ? `
+      <div class="cartao" style="margin-top:12px">
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🎖️ Classe dominada (Nível 10)! Escolha uma Habilidade Heroica dela agora:</p>
+        ${blocoHeroicasParaClasse(p, classeId)}
+      </div>` : ''}
+
+    <button id="btFecharResumoNivel" style="margin-top:12px">Fechar</button>
   </div>`;
 }
 
@@ -2230,7 +2245,7 @@ function blocoClassesFU(p){
          ${usadas===1?'classe':'classes'}. Um personagem novo começa com
          <strong>${NIVEL_INICIAL} níveis</strong> em <strong>2 ou 3 classes</strong>.
          Se este é um personagem avançado, pode ignorar.</div>`}
-    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}`;
+    ${estado.nivelUpResumo ? painelResumoNivel(p, estado.nivelUpResumo) : ''}`;
 }
 
 function abaAtributos(p){
@@ -2467,6 +2482,65 @@ function poderesUsadosNaClasse(p, classeId){
   return Object.values(mapa).reduce((soma, n) => soma + n, 0);
 }
 
+// Extraído de abaPoderes pra dar pra reusar no resumo do botão "+1 Nível"
+// (painelResumoNivel) — a MESMA classe que acabou de subir, sem duplicar
+// o card inteiro de abaPoderes.
+function blocoPoderesClasse(p, c){
+  const def = PODERES_CLASSE[c.classeId];
+  const nomeClasse = CLASSES.find(x => x.id === c.classeId)?.nome || c.classeId;
+
+  if(!def){
+    // Não deveria acontecer — as 15 classes do Livro Básico têm poderes
+    // cadastrados. Se aparecer, é uma classe nova sem entrada em
+    // PODERES_CLASSE.
+    return `<div class="cartao">
+      <h2 style="font-size:18px">${nomeClasse}</h2>
+      <div class="aviso">Esta classe ainda não tem os poderes cadastrados
+      na ficha. Anote-os nas <strong>Anotações</strong>, na aba Perfil.</div>
+    </div>`;
+  }
+
+  const usados = poderesUsadosNaClasse(p, c.classeId);
+  const restam = c.nivel - usados;
+
+  return `<div class="cartao" data-classe-poderes="${c.classeId}">
+    <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="font-size:18px">${nomeClasse}</h2>
+      <span class="mini">${usados} de ${c.nivel} ${c.nivel===1?'poder escolhido':'poderes escolhidos'}</span>
+    </div>
+
+    ${restam !== 0 ? `<div class="aviso">
+        ${restam > 0
+          ? `Faltam ${restam} ${restam===1?'poder':'poderes'} para escolher — cada nível dá um.`
+          : `${Math.abs(restam)} ${Math.abs(restam)===1?'poder a mais do que':'poderes a mais do que'} o nível permite.`}
+      </div>` : `<p class="ok">Todos os poderes desta classe já foram escolhidos.</p>`}
+
+    ${def.map(poder => {
+      const np = npDoPoder(p, c.classeId, poder.id);
+      return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <p class="mini" style="color:var(--texto);font-size:14px">
+            <strong>${poder.nome}</strong>${poder.max > 1 ? ` <span style="color:var(--suave)">(até ${poder.max}×)</span>` : ''}
+          </p>
+          <div class="linha" style="width:auto">
+            <button data-poder-menos="${c.classeId}|${poder.id}" ${np<=0?'disabled':''} aria-label="Diminuir">−</button>
+            <span style="min-width:2ch;text-align:center">${np}</span>
+            <button data-poder-mais="${c.classeId}|${poder.id}" ${np>=poder.max?'disabled':''} aria-label="Aumentar">+</button>
+          </div>
+        </div>
+        <p class="mini" style="margin-top:4px">${poder.descricao}</p>
+
+        ${poder.id === 'vincular-invocar' && np > 0 ? blocoArcano(p) : ''}
+        ${LISTAS_DE_FEITICO[c.classeId]?.poderId === poder.id && np > 0 ? blocoFeiticos(p, c.classeId, np) : ''}
+        ${poder.id === 'imitacao-magica' && np > 0 ? `<p class="mini" style="margin-top:8px;padding:8px;border:1px solid var(--borda);border-radius:8px">
+          Sem lista fixa: os feitiços de Quimerista vêm de observar criaturas fera, monstro ou planta em jogo. Anote nas <strong>Anotações</strong> quais você já aprendeu (limite de ${np + 2}).
+        </p>` : ''}
+        ${poder.id === 'invocacao' && np > 0 ? blocoManaciais() : ''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function abaPoderes(p){
   const classesComNivel = p.classes.filter(c => c.classeId && c.nivel > 0);
 
@@ -2476,61 +2550,7 @@ function abaPoderes(p){
       Classes</strong> para ver os poderes dela aqui.</p></div>`;
   }
 
-  return classesComNivel.map(c => {
-    const def = PODERES_CLASSE[c.classeId];
-    const nomeClasse = CLASSES.find(x => x.id === c.classeId)?.nome || c.classeId;
-
-    if(!def){
-      // Não deveria acontecer — as 15 classes do Livro Básico têm poderes
-      // cadastrados. Se aparecer, é uma classe nova sem entrada em
-      // PODERES_CLASSE.
-      return `<div class="cartao">
-        <h2 style="font-size:18px">${nomeClasse}</h2>
-        <div class="aviso">Esta classe ainda não tem os poderes cadastrados
-        na ficha. Anote-os nas <strong>Anotações</strong>, na aba Perfil.</div>
-      </div>`;
-    }
-
-    const usados = poderesUsadosNaClasse(p, c.classeId);
-    const restam = c.nivel - usados;
-
-    return `<div class="cartao" data-classe-poderes="${c.classeId}">
-      <div class="flex" style="display:flex;justify-content:space-between;align-items:baseline">
-        <h2 style="font-size:18px">${nomeClasse}</h2>
-        <span class="mini">${usados} de ${c.nivel} ${c.nivel===1?'poder escolhido':'poderes escolhidos'}</span>
-      </div>
-
-      ${restam !== 0 ? `<div class="aviso">
-          ${restam > 0
-            ? `Faltam ${restam} ${restam===1?'poder':'poderes'} para escolher — cada nível dá um.`
-            : `${Math.abs(restam)} ${Math.abs(restam)===1?'poder a mais do que':'poderes a mais do que'} o nível permite.`}
-        </div>` : `<p class="ok">Todos os poderes desta classe já foram escolhidos.</p>`}
-
-      ${def.map(poder => {
-        const np = npDoPoder(p, c.classeId, poder.id);
-        return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--borda)">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-            <p class="mini" style="color:var(--texto);font-size:14px">
-              <strong>${poder.nome}</strong>${poder.max > 1 ? ` <span style="color:var(--suave)">(até ${poder.max}×)</span>` : ''}
-            </p>
-            <div class="linha" style="width:auto">
-              <button data-poder-menos="${c.classeId}|${poder.id}" ${np<=0?'disabled':''} aria-label="Diminuir">−</button>
-              <span style="min-width:2ch;text-align:center">${np}</span>
-              <button data-poder-mais="${c.classeId}|${poder.id}" ${np>=poder.max?'disabled':''} aria-label="Aumentar">+</button>
-            </div>
-          </div>
-          <p class="mini" style="margin-top:4px">${poder.descricao}</p>
-
-          ${poder.id === 'vincular-invocar' && np > 0 ? blocoArcano(p) : ''}
-          ${LISTAS_DE_FEITICO[c.classeId]?.poderId === poder.id && np > 0 ? blocoFeiticos(p, c.classeId, np) : ''}
-          ${poder.id === 'imitacao-magica' && np > 0 ? `<p class="mini" style="margin-top:8px;padding:8px;border:1px solid var(--borda);border-radius:8px">
-            Sem lista fixa: os feitiços de Quimerista vêm de observar criaturas fera, monstro ou planta em jogo. Anote nas <strong>Anotações</strong> quais você já aprendeu (limite de ${np + 2}).
-          </p>` : ''}
-          ${poder.id === 'invocacao' && np > 0 ? blocoManaciais() : ''}
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('') + blocoRituais(p) + blocoProjeto(p);
+  return classesComNivel.map(c => blocoPoderesClasse(p, c)).join('') + blocoRituais(p) + blocoProjeto(p);
 }
 
 function blocoArcano(p){
@@ -2713,6 +2733,31 @@ function blocoProjeto(p){
       · <strong>Proteção:</strong> ${pot.protecao}
     </p>
   </div>`;
+}
+
+// Filtro compacto de abaHeroico pra reusar no resumo do "+1 Nível" quando
+// uma classe acaba de ser dominada — só as Heroicas abertas a todo mundo
+// (h.classes === null) ou específicas dessa classe, não a lista de 30+
+// inteira. Mesmo atributo `data-heroica` das checkboxes de abaHeroico —
+// como as duas abas nunca renderizam ao mesmo tempo, não colide.
+function blocoHeroicasParaClasse(p, classeId){
+  const dominadas = classesDominadas(p);
+  const escolhidas = p.heroicas || [];
+  const maximo = dominadas.length;
+  const relevantes = HABILIDADES_HEROICAS.filter(h => !h.classes || h.classes.includes(classeId));
+  return relevantes.map(h => {
+    const disponivel = heroicaDisponivel(p, h);
+    const marcada = escolhidas.includes(h.id);
+    const travada = !disponivel && !marcada;
+    const cheio = escolhidas.length >= maximo && !marcada;
+    return `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--borda)">
+      <label style="display:flex;align-items:baseline;gap:8px;text-transform:none;letter-spacing:normal;font-size:14px;color:var(--texto)">
+        <input type="checkbox" style="width:auto" data-heroica="${h.id}" ${marcada?'checked':''} ${(travada||cheio)?'disabled':''}>
+        <span><strong>${h.nome}</strong>${travada?' 🔒':''}</span>
+      </label>
+      <p class="mini" style="margin:4px 0 0 26px">${h.texto}</p>
+    </div>`;
+  }).join('');
 }
 
 function abaHeroico(p){

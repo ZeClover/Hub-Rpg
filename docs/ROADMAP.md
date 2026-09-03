@@ -1157,11 +1157,16 @@ passando.
       sobrepunha o botão de Concluir fora da grade original). Testado
       com Playwright nos três; `tsc`, lint e os 208 testes automáticos
       continuam limpos
-- [ ] **Ideia do Zé pra depois:** integrar o Modo Guiado ao botão de
-      Level Up — ao subir de Nível/NC, entrar no Modo Guiado pra
-      escolher as opções daquele degrau (Grau, Talento, Poder, etc.) e
-      aplicar automaticamente, em vez de só mostrar o resumo do que
-      mudou e deixar o jogador achar o campo certo sozinho nas abas
+- [x] **Modo Guiado de Evolução no botão de Level Up** (03/09/2026) —
+      decisão #66. O resumo do Level Up passa a embutir as escolhas
+      liberadas naquele degrau, prontas pra aplicar ali mesmo: Thrylikí
+      Chelóna (formulário de Marco/Ascensão + compra de Grau/
+      Treinamento), Fabula Ultima (Poder novo da classe + Habilidade
+      Heroica ao dominar), Kaizoku no Sho (Atributos/Perícias
+      embutidos). SAO fica de fora — ainda não tem botão de Level Up.
+      Testado com Playwright nos três (dados realmente gravam no
+      personagem, sem duplicar formulário/id); `tsc`, lint e os 208
+      testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

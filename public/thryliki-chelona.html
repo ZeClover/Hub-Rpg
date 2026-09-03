@@ -3534,6 +3534,43 @@ const ASCENSAO_EIXOS = [
   {id:'profundidade-conceitual', nome:'Profundidade Conceitual',   desc:'abstração ou camada de realidade alcançada; exige 5º Ano', anoMinimo:5},
 ];
 
+// Extraído do card "Marcos da Área" pra reusar dentro do resumo do botão
+// de Subir de Nível (painelResumoNivel) — mesmo formulário, sem duplicar.
+function blocoFormMarco(p){
+  const marcos = p.marcos || [];
+  const marcosMax = marcosRecebidos(p);
+  if(marcos.length >= marcosMax) return `<p class="mini">Todos os Marcos recebidos já estão registrados.</p>`;
+  return `
+      <div class="grade g3" style="margin-top:10px">
+        <div><label for="c-marco-opcao">Opção</label>
+          <select id="c-marco-opcao">
+            ${MARCO_OPCOES.map(o => `<option value="${o.id}" ${o.id===estado.marcoRascunho.opcao?'selected':''}>${o.nome}</option>`).join('')}
+          </select></div>
+        <div style="grid-column:span 2"><label for="c-marco-desc">Descrição</label>
+          <input id="c-marco-desc" value="${esc(estado.marcoRascunho.descricao)}" placeholder="ex: aprendeu a técnica Rompimento Coordenado do próprio Ramo"></div>
+      </div>
+      <p class="mini" style="margin-top:6px">${esc((MARCO_OPCOES.find(o=>o.id===estado.marcoRascunho.opcao)||{}).desc || '')}</p>
+      <button id="btRegistrarMarco" style="margin-top:8px">+ Registrar Marco</button>`;
+}
+
+// Mesma ideia pro card "Ascensões".
+function blocoFormAscensao(p){
+  const ascensoes = p.ascensoes || [];
+  const ascensoesMax = ascensoesConcluidas(p);
+  if(ascensoes.length >= ascensoesMax) return `<p class="mini">Todas as Ascensões concluídas já estão registradas.</p>`;
+  return `
+      <div class="grade g3" style="margin-top:10px">
+        <div><label for="c-ascensao-eixo">Eixo</label>
+          <select id="c-ascensao-eixo">
+            ${ASCENSAO_EIXOS.map(e => `<option value="${e.id}" ${e.id===estado.ascensaoRascunho.eixo?'selected':''} ${e.anoMinimo && p.ano<e.anoMinimo?'disabled':''}>${e.nome}${e.anoMinimo?` (exige ${e.anoMinimo}º Ano)`:''}</option>`).join('')}
+          </select></div>
+        <div style="grid-column:span 2"><label for="c-ascensao-desc">Descrição</label>
+          <input id="c-ascensao-desc" value="${esc(estado.ascensaoRascunho.descricao)}" placeholder="ex: o alcance da Fórmula dobra — de curto pra médio, permanentemente"></div>
+      </div>
+      <p class="mini" style="margin-top:6px">${esc((ASCENSAO_EIXOS.find(e=>e.id===estado.ascensaoRascunho.eixo)||{}).desc || '')}</p>
+      <button id="btRegistrarAscensao" style="margin-top:8px">+ Registrar Ascensão</button>`;
+}
+
 function abaProgressao(p){
   const compras = p.compras || [];
   const talentos = compras.filter(c => c.tipo === 'talento');
@@ -3627,18 +3664,9 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(m.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhum Marco registrado ainda)</p>'}
-    ${marcos.length < marcosMax ? `
-      <div class="grade g3" style="margin-top:10px">
-        <div><label for="c-marco-opcao">Opção</label>
-          <select id="c-marco-opcao">
-            ${MARCO_OPCOES.map(o => `<option value="${o.id}" ${o.id===estado.marcoRascunho.opcao?'selected':''}>${o.nome}</option>`).join('')}
-          </select></div>
-        <div style="grid-column:span 2"><label for="c-marco-desc">Descrição</label>
-          <input id="c-marco-desc" value="${esc(estado.marcoRascunho.descricao)}" placeholder="ex: aprendeu a técnica Rompimento Coordenado do próprio Ramo"></div>
-      </div>
-      <p class="mini" style="margin-top:6px">${esc((MARCO_OPCOES.find(o=>o.id===estado.marcoRascunho.opcao)||{}).desc || '')}</p>
-      <button id="btRegistrarMarco" style="margin-top:8px">+ Registrar Marco</button>
-    ` : `<p class="mini">Todos os Marcos recebidos já estão registrados.</p>`}
+    ${estado.nivelUpResumo && estado.nivelUpResumo.depois.marcosRecebidos > estado.nivelUpResumo.antes.marcosRecebidos
+      ? `<p class="mini">Escolha no resumo do Level Up, logo abaixo.</p>`
+      : blocoFormMarco(p)}
   </div>
 
   <div class="cartao">
@@ -3655,18 +3683,9 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(a.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhuma Ascensão registrada ainda)</p>'}
-    ${ascensoes.length < ascensoesMax ? `
-      <div class="grade g3" style="margin-top:10px">
-        <div><label for="c-ascensao-eixo">Eixo</label>
-          <select id="c-ascensao-eixo">
-            ${ASCENSAO_EIXOS.map(e => `<option value="${e.id}" ${e.id===estado.ascensaoRascunho.eixo?'selected':''} ${e.anoMinimo && p.ano<e.anoMinimo?'disabled':''}>${e.nome}${e.anoMinimo?` (exige ${e.anoMinimo}º Ano)`:''}</option>`).join('')}
-          </select></div>
-        <div style="grid-column:span 2"><label for="c-ascensao-desc">Descrição</label>
-          <input id="c-ascensao-desc" value="${esc(estado.ascensaoRascunho.descricao)}" placeholder="ex: o alcance da Fórmula dobra — de curto pra médio, permanentemente"></div>
-      </div>
-      <p class="mini" style="margin-top:6px">${esc((ASCENSAO_EIXOS.find(e=>e.id===estado.ascensaoRascunho.eixo)||{}).desc || '')}</p>
-      <button id="btRegistrarAscensao" style="margin-top:8px">+ Registrar Ascensão</button>
-    ` : `<p class="mini">Todas as Ascensões concluídas já estão registradas.</p>`}
+    ${estado.nivelUpResumo && estado.nivelUpResumo.depois.ascensoesConcluidas > estado.nivelUpResumo.antes.ascensoesConcluidas
+      ? `<p class="mini">Escolha no resumo do Level Up, logo abaixo.</p>`
+      : blocoFormAscensao(p)}
   </div>
 
   ${painelProgressoNivel(p)}
@@ -3722,11 +3741,15 @@ function painelProgressoNivel(p){
     ` : `
       <button id="btSubirNivelDireto" class="destaque" style="margin-top:10px">⭐ Concluiu ${pe.ritmo==='acelerado'?'a sessão':'o Semestre'} → Subir para Nível ${p.nivel+1}</button>
     `}
-    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}
+    ${estado.nivelUpResumo ? painelResumoNivel(p, estado.nivelUpResumo) : ''}
   </div>`;
 }
 
-function painelResumoNivel(resumo){
+// Modo Guiado de Evolução: o resumo do Level Up não só mostra os deltas —
+// já embute os formulários de Marco/Ascensão (quando liberados) e um
+// "gastar PE agora" com os mesmos botões da aba Atributos, pra escolher e
+// aplicar sem precisar navegar até outra aba.
+function painelResumoNivel(p, resumo){
   const {antes, depois} = resumo;
   const linha = (rotulo, chave) => {
     const a = antes[chave], d = depois[chave];
@@ -3737,16 +3760,37 @@ function painelResumoNivel(resumo){
   const novasAscensoes = depois.ascensoesConcluidas - antes.ascensoesConcluidas;
   return `<div class="resumo-nivel">
     <h3>⭐ Subiu de Nível! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível ${antes.nivel} → ${depois.nivel}</span></h3>
-    <p class="mini" style="margin-bottom:8px">O que mudou só por causa do Nível novo — já vale nas outras abas, é só ir gastar.</p>
+    <p class="mini" style="margin-bottom:8px">O que mudou só por causa do Nível novo.</p>
     ${linha('Vida Máxima', 'vidaMaxima')}
     ${linha('PE ganho (total)', 'peGanho')}
     ${linha('PE disponível', 'peDisponivel')}
     ${linha('Categoria', 'categoria')}
     ${linha('Ciclo', 'ciclo')}
     ${linha('Nível no Ciclo', 'nivelNoCiclo')}
-    ${novosMarcos > 0 ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🎁 +${novosMarcos} Marco${novosMarcos>1?'s':''} da Área liberado${novosMarcos>1?'s':''} — escolha mais acima, em "Marcos da Área".</p>` : ''}
-    ${novasAscensoes > 0 ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🌟 Ascensão liberada — escolha um eixo de escala mais acima, em "Ascensões".</p>` : ''}
-    <button id="btFecharResumoNivel" style="margin-top:8px">Fechar</button>
+
+    ${novosMarcos > 0 ? `
+      <div class="cartao" style="margin-top:12px">
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🎁 +${novosMarcos} Marco${novosMarcos>1?'s':''} da Área liberado${novosMarcos>1?'s':''} — escolha agora:</p>
+        ${blocoFormMarco(p)}
+      </div>` : ''}
+
+    ${novasAscensoes > 0 ? `
+      <div class="cartao" style="margin-top:12px">
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🌟 Ascensão liberada — escolha um eixo de escala agora:</p>
+        ${blocoFormAscensao(p)}
+      </div>` : ''}
+
+    ${peDisponivel(p) > 0 ? `
+      <div class="cartao" style="margin-top:12px">
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">💰 ${peDisponivel(p)} PE disponível — comprar um Grau agora:</p>
+        <div class="grade g5">${blocoAtributos(p)}</div>
+        <details style="margin-top:10px">
+          <summary class="mini" style="cursor:pointer">Ou subir um Treinamento</summary>
+          <div style="margin-top:10px">${blocoTreinamentos(p)}</div>
+        </details>
+      </div>` : ''}
+
+    <button id="btFecharResumoNivel" style="margin-top:12px">Fechar</button>
   </div>`;
 }
 

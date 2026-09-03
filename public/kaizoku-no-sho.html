@@ -5126,7 +5126,7 @@ function panelPerfil(p){
           ? `<button type="button" class="btn" disabled>NC máximo (20) atingido</button>`
           : `<button type="button" class="btn primary" id="btnLevelUp">⭐ Level Up — subir para NC ${p.nc + 1}</button>`}
       </div>
-      ${state.levelUpResumo ? panelResumoLevelUp(state.levelUpResumo) : ''}
+      ${state.levelUpResumo ? panelResumoLevelUp(p, state.levelUpResumo) : ''}
       <div class="field-row">
         <div class="field"><label>Sexualidade</label><input type="text" id="f_sexualidade" value="${escapeHtml(p.perfil.sexualidade)}"></div>
         <div class="field"><label>Gênero</label><input type="text" id="f_genero" value="${escapeHtml(p.perfil.genero)}"></div>
@@ -5262,6 +5262,14 @@ function bindPerfil(p){
     state.levelUpResumo = null;
     renderPanel();
   });
+  // Atributos/Perícias embutidos no resumo do Level Up (só existem no DOM
+  // quando o resumo está aberto) — bindAtributos/bindPericias chamam
+  // renderPanel(), que aqui recai em panelPerfil de novo (state.tab
+  // continua 'perfil'), então funcionam sem adaptação.
+  if(state.levelUpResumo){
+    bindAtributos(p);
+    bindPericias(p);
+  }
 }
 
 // Fotografia dos números que mudam só por causa do NC — usada pra montar o
@@ -5288,7 +5296,12 @@ function subirDeNivel(p){
   onFieldChange();
   renderPanel();
 }
-function panelResumoLevelUp(resumo){
+// Modo Guiado de Evolução: além dos deltas, já embute os painéis de
+// Atributos e Perícias (autocontidos, com seus próprios bindAtributos/
+// bindPericias) pra gastar os pontos novos sem sair da tela. Poderes fica
+// de fora — o painel de lá (Budô/Akuma no Mi/Haki) é grande demais e
+// stateful demais pra reusar num resumo.
+function panelResumoLevelUp(p, resumo){
   const {antes, depois} = resumo;
   const linha = (rotulo, chave) => {
     const a = antes[chave], d = depois[chave], delta = d - a;
@@ -5297,7 +5310,7 @@ function panelResumoLevelUp(resumo){
   };
   return `
     <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
-    <p class="panel-note">Resumo do que ficou disponível — os pontos e limites novos já valem nas abas Atributos, Perícias e Poderes, é só ir lá gastar.</p>
+    <p class="panel-note">Resumo do que ficou disponível — Atributos e Perícias já estão logo abaixo pra gastar agora; Poderes fica na aba própria.</p>
     <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
       ${linha('Vitalidade Máxima', 'vitalidade')}
       ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
@@ -5310,6 +5323,8 @@ function panelResumoLevelUp(resumo){
     </div>
     ${depois.nc === 20 ? `<div class="info-box">NC 20 é o topo da tabela (Yonkou/Almirante) — o salto de Pontos de Poder acima já inclui o bônus extra de +6 dessa faixa.</div>` : ''}
     <button type="button" class="btn" id="btnFecharResumoLevelUp" style="margin-top:10px;">Fechar</button>
+    <div id="resumoLevelUpAtributos" style="margin-top:16px">${panelAtributos(p)}</div>
+    <div id="resumoLevelUpPericias" style="margin-top:16px">${panelPericias(p)}</div>
   `;
 }
 
