@@ -5262,13 +5262,15 @@ function bindPerfil(p){
     state.levelUpResumo = null;
     renderPanel();
   });
-  // Atributos/Perícias embutidos no resumo do Level Up (só existem no DOM
-  // quando o resumo está aberto) — bindAtributos/bindPericias chamam
-  // renderPanel(), que aqui recai em panelPerfil de novo (state.tab
-  // continua 'perfil'), então funcionam sem adaptação.
+  // Atributos/Perícias/Nível do Poder embutidos no resumo do Level Up (só
+  // existem no DOM quando o resumo está aberto) — bindAtributos/
+  // bindPericias/bindNivelPoder chamam renderPanel(), que aqui recai em
+  // panelPerfil de novo (state.tab continua 'perfil'), então funcionam
+  // sem adaptação.
   if(state.levelUpResumo){
     bindAtributos(p);
     bindPericias(p);
+    bindNivelPoder(p);
   }
 }
 
@@ -5298,9 +5300,10 @@ function subirDeNivel(p){
 }
 // Modo Guiado de Evolução: além dos deltas, já embute os painéis de
 // Atributos e Perícias (autocontidos, com seus próprios bindAtributos/
-// bindPericias) pra gastar os pontos novos sem sair da tela. Poderes fica
-// de fora — o painel de lá (Budô/Akuma no Mi/Haki) é grande demais e
-// stateful demais pra reusar num resumo.
+// bindPericias) e o widget de Nível do Poder (blocoNivelPoder/
+// bindNivelPoder) pra gastar os pontos novos sem sair da tela. O resto de
+// Poderes (Budô/Akuma no Mi/Haki) fica de fora — grande e stateful demais
+// pra reusar com segurança num resumo.
 function panelResumoLevelUp(p, resumo){
   const {antes, depois} = resumo;
   const linha = (rotulo, chave) => {
@@ -5310,7 +5313,7 @@ function panelResumoLevelUp(p, resumo){
   };
   return `
     <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
-    <p class="panel-note">Resumo do que ficou disponível — Atributos e Perícias já estão logo abaixo pra gastar agora; Poderes fica na aba própria.</p>
+    <p class="panel-note">Resumo do que ficou disponível — Atributos, Perícias e o Nível do Poder já estão logo abaixo pra gastar agora; o resto de Poderes (Budô/Akuma no Mi/Haki) fica na aba própria.</p>
     <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
       ${linha('Vitalidade Máxima', 'vitalidade')}
       ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
@@ -5325,6 +5328,10 @@ function panelResumoLevelUp(p, resumo){
     <button type="button" class="btn" id="btnFecharResumoLevelUp" style="margin-top:10px;">Fechar</button>
     <div id="resumoLevelUpAtributos" style="margin-top:16px">${panelAtributos(p)}</div>
     <div id="resumoLevelUpPericias" style="margin-top:16px">${panelPericias(p)}</div>
+    <div id="resumoLevelUpPoder" class="panel" style="margin-top:16px">
+      <h2>Poder</h2>
+      ${blocoNivelPoder(p)}
+    </div>
   `;
 }
 
@@ -5638,6 +5645,33 @@ function bindPeculiaridades(p){
 }
 
 /* ---------- Poderes (Fase 2) ---------- */
+// Só o widget de "Nível do Poder" (pontos investidos + total), separado do
+// resto de panelPoderes — pequeno e autocontido o bastante pra embutir no
+// resumo do Level Up sem arrastar o Budô/Akuma no Mi/Haki inteiro junto.
+function blocoNivelPoder(p){
+  const nivelTotal = totalNivelPoder(p);
+  const limite = limiteNivelPoder(p.nc);
+  return `
+    <h3>Nível do Poder</h3>
+    <div class="field-row">
+      <div class="field"><label>Pontos investidos</label><input type="number" id="pw_nivelPontos" min="0" value="${p.poder.nivel.pontos}"></div>
+      <div class="field"><label>Outro bônus</label><input type="number" id="pw_nivelOutro" value="${p.poder.nivel.outro}"></div>
+      <div class="field"><label>Nível do Poder total</label><input type="text" disabled value="${nivelTotal}"></div>
+    </div>
+    ${nivelTotal > limite ? `<div class="warn-box">Nível do Poder (${nivelTotal}) passou do limite de ${limite} pra NC ${p.nc}.</div>` : ''}`;
+}
+function bindNivelPoder(p){
+  const pontosEl = document.getElementById('pw_nivelPontos');
+  if(pontosEl) pontosEl.addEventListener('input', e=>{
+    p.poder.nivel.pontos = Math.max(0, Number(e.target.value)||0);
+    onFieldChange(); renderPanel();
+  });
+  const outroEl = document.getElementById('pw_nivelOutro');
+  if(outroEl) outroEl.addEventListener('input', e=>{
+    p.poder.nivel.outro = Number(e.target.value)||0;
+    onFieldChange(); renderPanel();
+  });
+}
 function panelPoderes(p){
   const nivelTotal = totalNivelPoder(p);
   const limite = limiteNivelPoder(p.nc);
@@ -5673,13 +5707,7 @@ function panelPoderes(p){
       </div>
       <p class="panel-note">${fontesInfo[p.poder.fonte]}</p>
 
-      <h3>Nível do Poder</h3>
-      <div class="field-row">
-        <div class="field"><label>Pontos investidos</label><input type="number" id="pw_nivelPontos" min="0" value="${p.poder.nivel.pontos}"></div>
-        <div class="field"><label>Outro bônus</label><input type="number" id="pw_nivelOutro" value="${p.poder.nivel.outro}"></div>
-        <div class="field"><label>Nível do Poder total</label><input type="text" disabled value="${nivelTotal}"></div>
-      </div>
-      ${nivelTotal > limite ? `<div class="warn-box">Nível do Poder (${nivelTotal}) passou do limite de ${limite} pra NC ${p.nc}.</div>` : ''}
+      ${blocoNivelPoder(p)}
 
       ${budo ? panelBudoDetalhe(p, budo, nivelTotal) : ''}
       ${p.poder.fonte==='akuma' ? panelAkumaDetalhe(p) : ''}
@@ -6234,14 +6262,7 @@ function bindPoderes(p){
       onFieldChange(); renderPanel();
     });
   }
-  document.getElementById('pw_nivelPontos').addEventListener('input', e=>{
-    p.poder.nivel.pontos = Math.max(0, Number(e.target.value)||0);
-    onFieldChange(); renderPanel();
-  });
-  document.getElementById('pw_nivelOutro').addEventListener('input', e=>{
-    p.poder.nivel.outro = Number(e.target.value)||0;
-    onFieldChange(); renderPanel();
-  });
+  bindNivelPoder(p);
   const budoAtualDetalhe = budoAtual(p);
   if(budoAtualDetalhe && budoAtualDetalhe.transcrito){
     renderBudoAptidoesLista(p, budoAtualDetalhe, '');

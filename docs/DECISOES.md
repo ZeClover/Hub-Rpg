@@ -2509,6 +2509,72 @@ criação guiada dos quatro sistemas (decisões #62/#65) pra confirmar que
 nada quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/JS estático das três fichas).
 
+## 67. Level Up no Sistema SAO e resumo "mostra tudo" nos outros três (03/09/2026)
+
+Pedido do Zé: "faz o mesmo pro sistema SAO também" (o Level Up guiado da
+decisão #66, que tinha ficado de fora do SAO por falta de botão) "alem
+disso, no LEVEL UP o modo guiado MOSTRA TUDO que ganha para n precisar
+fazer NENHUMA ALTERAÇÃO EXTRA NA FICHA". Duas partes.
+
+**Sistema SAO ganhou o botão "+1 Nível"**: cada linha de classe (`p.classes`
+é a mesma estrutura `{classeId, nivel}` de multiclasse sem limite do FU,
+só sem teto de Nível 10) ganhou um botão igual ao das outras fichas.
+`subirNivelClasseSAO`/`snapshotNivelSAO`/`painelResumoNivel` seguem o
+molde de Fabula Ultima: o resumo mostra Nível geral/PV/PM antes→depois e
+já embute `blocoPoderesClasse(p, classeId)` (extraído do `.map()` de
+`abaPoderes`, mesmo truque da decisão #66) pra escolher o Poder novo da
+classe ali mesmo. Sem risco de `id` duplicado — Poderes é outra aba.
+
+**Auditoria do "mostra tudo" nas fichas que já tinham Level Up guiado**:
+reli os quatro resumos perguntando "o que essa Ficha deixa o jogador
+ganhar num Level Up que ainda obriga a sair da tela pra gastar?".
+Achei dois buracos reais:
+
+- **Thrylikí Chelóna**: Talentos e Recursos/Eletivas (comprados com PE,
+  igual Grau de Atributo/Treinamento) não apareciam no resumo — só a
+  compra de Atributo estava lá. Extraí `blocoFormTalento(p)`/
+  `blocoFormRecurso(p)` dos cards "Talentos"/"Recursos e Eletivas" (mesma
+  ideia de `blocoFormMarco`/`blocoFormAscensao`) e embuti os dois em
+  `<details>` dentro do bloco "PE disponível" do resumo. Como esses cards
+  vivem na MESMA aba (Progressão) que o resumo, apliquei a mesma proteção
+  contra `id` duplicado: enquanto o resumo estiver aberto E houver PE pra
+  gastar, o card principal mostra "Escolha no resumo do Level Up, logo
+  abaixo" em vez do formulário.
+- **Kaizoku no Sho**: o "Nível do Poder" (pontos investidos, comprado com
+  os Pontos de Poder que o resumo já mostrava como delta) ficava de fora
+  porque vive dentro do painel de Poderes de 500+ linhas, documentado na
+  decisão #66 como grande/stateful demais pra reusar inteiro. Mas esse
+  campo específico é pequeno e autocontido — separei só ele em
+  `blocoNivelPoder(p)`/`bindNivelPoder(p)` (o resto de Poderes, Budô/Akuma
+  no Mi/Haki, continua de fora, por ser realmente grande e amarrado a
+  escolhas anteriores como a Fonte de Poder). Embutido no resumo do Level
+  Up (aba Perfil), que é uma aba diferente de Poderes — sem duplicar
+  `id`.
+
+**Fabula Ultima**: reauditado e mantido como estava — o único outro
+número que muda com Nível de classe é a escolha "PV ou PM" de algumas
+classes (Dançarino/Floralista/Invocador), mas essa escolha já tem um
+padrão automático (PV) que nunca trava o personagem, é editável a
+qualquer momento (não é "liberada" só naquele Nível) e já fica visível
+na mesma aba (Atributos), logo abaixo do card de Classes onde o resumo
+aparece — não precisa ser embutida dentro do resumo pra não exigir
+navegação extra.
+
+Testado com Playwright: SAO sobe uma classe de Nível, o resumo aparece
+com o Poder novo pra comprar, a compra reflete no botão "-" do próprio
+resumo, persiste na aba Poderes depois de Fechar, e reseta ao criar
+personagem novo. Thrylikí sobe de Nível com PE disponível, confirma
+exatamente 1 `#c-talento-tipo`/`#c-recurso-tipo` na página (sem
+duplicar), compra um Talento pelo resumo, vê refletido na lista
+"Talentos (1)" e o form volta pro card principal depois de Fechar.
+Kaizoku sobe de NC, edita "Pontos investidos" do Nível do Poder dentro
+do resumo, confirma que persiste na aba Poderes de verdade, e que o
+resto da aba Poderes (seletor de Fonte, catálogos) continua funcionando
+normalmente. Reexecutei os testes de Level Up guiado já existentes de
+Thrylikí/Fabula Ultima/Kaizoku (decisão #66) pra confirmar que nada
+quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/JS estático das quatro fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

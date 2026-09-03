@@ -3553,6 +3553,45 @@ function blocoFormMarco(p){
       <button id="btRegistrarMarco" style="margin-top:8px">+ Registrar Marco</button>`;
 }
 
+// Mesma ideia pro form de Talento — extraído pra dar pra embutir também no
+// resumo do Level Up (painelResumoNivel), sem duplicar o card inteiro.
+function blocoFormTalento(p){
+  const ct = estado.compraTalento;
+  const talentoInfo = CUSTO_TALENTOS.find(t => t.id === ct.subtipo);
+  return `
+    <div class="grade g3" style="margin-top:10px">
+      <div><label for="c-talento-tipo">Tipo</label>
+        <select id="c-talento-tipo">
+          ${CUSTO_TALENTOS.map(t => `<option value="${t.id}" ${t.id===ct.subtipo?'selected':''}>${t.nome} (${t.custo} PE)</option>`).join('')}
+        </select></div>
+      <div style="grid-column:span 2"><label for="c-talento-desc">Descrição (ligado ao motor da Área)</label>
+        <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ex: Golpe Fundamental também aplica Exposto no alvo, além do dano normal"></div>
+    </div>
+    <p class="mini" style="margin-top:6px">${esc(talentoInfo.funcao)}</p>
+    <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button><br>
+    ${linkGrim('progressao', 'Ver os 3 tipos de Talento e o custo de cada um')}`;
+}
+
+// Mesma ideia pro form de Recurso/Eletiva.
+function blocoFormRecurso(p){
+  const cr = estado.compraRecurso;
+  const recursoInfo = CUSTO_RECURSOS_ELETIVAS.find(r => r.id === cr.subtipo);
+  const recursoBloqueado = recursoInfo.anoMinimo && p.ano < recursoInfo.anoMinimo;
+  return `
+    <div class="grade g3" style="margin-top:10px">
+      <div><label for="c-recurso-tipo">Tipo</label>
+        <select id="c-recurso-tipo">
+          ${CUSTO_RECURSOS_ELETIVAS.map(r => `<option value="${r.id}" ${r.id===cr.subtipo?'selected':''}>${r.nome} (${r.custo} PE)</option>`).join('')}
+        </select></div>
+      <div style="grid-column:span 2"><label for="c-recurso-desc">Descrição (qual recurso, opção ou Área)</label>
+        <input id="c-recurso-desc" value="${esc(cr.descricao)}" placeholder="ex: +1 Esforço máximo (Corpo e Cinética, de 5 para 6)"></div>
+    </div>
+    <p class="mini" style="margin-top:6px">${esc(recursoInfo.limite)}</p>
+    ${recursoBloqueado ? `<p class="mini">Exige ${recursoInfo.anoMinimo}º Ano — personagem está no ${p.ano}º.</p>` : ''}
+    <button id="btComprarRecurso" style="margin-top:8px" ${recursoBloqueado || peDisponivel(p)<recursoInfo.custo?'disabled':''}>+ Comprar (${recursoInfo.custo} PE)</button><br>
+    ${linkGrim('progressao', 'Ver os 5 tipos de Recurso/Eletiva e o custo de cada um')}`;
+}
+
 // Mesma ideia pro card "Ascensões".
 function blocoFormAscensao(p){
   const ascensoes = p.ascensoes || [];
@@ -3579,11 +3618,9 @@ function abaProgressao(p){
   const ascensoes = p.ascensoes || [];
   const marcosMax = marcosRecebidos(p);
   const ascensoesMax = ascensoesConcluidas(p);
-  const ct = estado.compraTalento;
-  const cr = estado.compraRecurso;
-  const talentoInfo = CUSTO_TALENTOS.find(t => t.id === ct.subtipo);
-  const recursoInfo = CUSTO_RECURSOS_ELETIVAS.find(r => r.id === cr.subtipo);
-  const recursoBloqueado = recursoInfo.anoMinimo && p.ano < recursoInfo.anoMinimo;
+  // Enquanto o resumo do Level Up estiver aberto e tiver PE pra gastar, o
+  // form de compra mora só lá (embutido) — evita ids duplicados na página.
+  const compraNoResumo = estado.nivelUpResumo && peDisponivel(p) > 0;
 
   return `<div class="cartao">
     <h2 style="font-size:18px">Pontos de Evolução</h2>
@@ -3613,17 +3650,9 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(c.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhum Talento comprado ainda)</p>'}
-    <div class="grade g3" style="margin-top:10px">
-      <div><label for="c-talento-tipo">Tipo</label>
-        <select id="c-talento-tipo">
-          ${CUSTO_TALENTOS.map(t => `<option value="${t.id}" ${t.id===ct.subtipo?'selected':''}>${t.nome} (${t.custo} PE)</option>`).join('')}
-        </select></div>
-      <div style="grid-column:span 2"><label for="c-talento-desc">Descrição (ligado ao motor da Área)</label>
-        <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ex: Golpe Fundamental também aplica Exposto no alvo, além do dano normal"></div>
-    </div>
-    <p class="mini" style="margin-top:6px">${esc(talentoInfo.funcao)}</p>
-    <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button><br>
-    ${linkGrim('progressao', 'Ver os 3 tipos de Talento e o custo de cada um')}
+    ${compraNoResumo
+      ? `<p class="mini" style="margin-top:10px">Escolha no resumo do Level Up, logo abaixo.</p>`
+      : blocoFormTalento(p)}
   </div>
 
   <div class="cartao">
@@ -3635,18 +3664,9 @@ function abaProgressao(p){
       </div>
       <p class="mini">${esc(c.descricao)}</p>
     </div>`).join('') || '<p class="mini">(nenhuma compra ainda)</p>'}
-    <div class="grade g3" style="margin-top:10px">
-      <div><label for="c-recurso-tipo">Tipo</label>
-        <select id="c-recurso-tipo">
-          ${CUSTO_RECURSOS_ELETIVAS.map(r => `<option value="${r.id}" ${r.id===cr.subtipo?'selected':''}>${r.nome} (${r.custo} PE)</option>`).join('')}
-        </select></div>
-      <div style="grid-column:span 2"><label for="c-recurso-desc">Descrição (qual recurso, opção ou Área)</label>
-        <input id="c-recurso-desc" value="${esc(cr.descricao)}" placeholder="ex: +1 Esforço máximo (Corpo e Cinética, de 5 para 6)"></div>
-    </div>
-    <p class="mini" style="margin-top:6px">${esc(recursoInfo.limite)}</p>
-    ${recursoBloqueado ? `<p class="mini">Exige ${recursoInfo.anoMinimo}º Ano — personagem está no ${p.ano}º.</p>` : ''}
-    <button id="btComprarRecurso" style="margin-top:8px" ${recursoBloqueado || peDisponivel(p)<recursoInfo.custo?'disabled':''}>+ Comprar (${recursoInfo.custo} PE)</button><br>
-    ${linkGrim('progressao', 'Ver os 5 tipos de Recurso/Eletiva e o custo de cada um')}
+    ${compraNoResumo
+      ? `<p class="mini" style="margin-top:10px">Escolha no resumo do Level Up, logo abaixo.</p>`
+      : blocoFormRecurso(p)}
   </div>
 
   <div class="cartao">
@@ -3787,6 +3807,14 @@ function painelResumoNivel(p, resumo){
         <details style="margin-top:10px">
           <summary class="mini" style="cursor:pointer">Ou subir um Treinamento</summary>
           <div style="margin-top:10px">${blocoTreinamentos(p)}</div>
+        </details>
+        <details style="margin-top:10px">
+          <summary class="mini" style="cursor:pointer">Ou comprar um Talento</summary>
+          <div style="margin-top:10px">${blocoFormTalento(p)}</div>
+        </details>
+        <details style="margin-top:10px">
+          <summary class="mini" style="cursor:pointer">Ou comprar um Recurso/Eletiva</summary>
+          <div style="margin-top:10px">${blocoFormRecurso(p)}</div>
         </details>
       </div>` : ''}
 

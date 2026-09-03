@@ -1167,6 +1167,17 @@ passando.
       Testado com Playwright nos três (dados realmente gravam no
       personagem, sem duplicar formulário/id); `tsc`, lint e os 208
       testes automáticos continuam limpos
+- [x] **Level Up no Sistema SAO + resumo "mostra tudo" nos outros três**
+      (03/09/2026) — decisão #67. SAO ganhou o botão "+1 Nível" por
+      classe com o mesmo resumo guiado dos outros sistemas (Poder novo
+      embutido). Auditoria completa: Thrylikí Chelóna passou a embutir
+      também Talentos e Recursos/Eletivas no resumo (antes só Grau de
+      Atributo); Kaizoku no Sho passou a embutir o "Nível do Poder"
+      (antes só Atributos/Perícias) — o resto de Poderes (Budô/Akuma no
+      Mi/Haki) continua de fora por ser grande e stateful demais. Fabula
+      Ultima reauditado e mantido sem mudança (nada mais fica pendente
+      fora do resumo). Testado com Playwright nos quatro sistemas; `tsc`,
+      lint e os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

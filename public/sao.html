@@ -68,6 +68,9 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
+.resumo-nivel{border:1px solid rgba(224,162,52,.5); background:rgba(224,162,52,.1);
+  border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
+.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--ambar-forte); font-family:Georgia,serif}
 .condicoes{display:flex; flex-wrap:wrap; gap:8px}
 .condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
   letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
@@ -782,6 +785,10 @@ const estado = {
   // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
   modoGuiado: false,
   passoGuiado: 1,
+  // nivelUpResumo: resumo transitório do último "+1 Nível" numa classe
+  // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
+  // ou ao trocar de personagem.
+  nivelUpResumo: null,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1258,7 +1265,51 @@ function linhaClasse(p, i){
       <label for="c-nv-${i}">Nível</label>
       <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" value="${c.nivel||0}">
     </div>
+    <button data-subir-nivel="${i}" class="destaque" ${!c.classeId?'disabled':''} title="Sobe 1 Nível nesta classe e mostra o que mudou">⭐ +1 Nível</button>
     <button data-remover-classe="${i}" ${p.classes.length<=1?'disabled':''}>Tirar</button>
+  </div>`;
+}
+
+// Fotografia dos números que mudam só por causa do Nível de uma classe —
+// usada pra montar o resumo do botão "+1 Nível".
+function snapshotNivelSAO(p){
+  return {
+    nivelGeral: nivelGeral(p),
+    pv: pvMaximo(p),
+    pm: pmMaximo(p),
+  };
+}
+// Sobe 1 Nível numa classe específica (índice em p.classes) e guarda o
+// resumo em estado.nivelUpResumo. Sem teto — o mestre decide o ritmo.
+function subirNivelClasseSAO(p, indice){
+  const c = p.classes[indice];
+  if(!c || !c.classeId) return;
+  const antes = snapshotNivelSAO(p);
+  const classeId = c.classeId;
+  c.nivel = (c.nivel||0) + 1;
+  const depois = snapshotNivelSAO(p);
+  estado.nivelUpResumo = {classeId, nivelClasse: c.nivel, antes, depois};
+}
+
+// Modo Guiado de Evolução: o resumo já embute os Poderes da classe que
+// subiu (o "+1 ponto de poder" fica pronto pra gastar ali mesmo).
+function painelResumoNivel(p, resumo){
+  const {classeId, nivelClasse, antes, depois} = resumo;
+  const nomeClasse = CLASSES.find(x => x.id === classeId)?.nome || classeId;
+  const linha = (rotulo, chave) => {
+    const a = antes[chave], d = depois[chave];
+    if(a === d) return '';
+    return `<p class="mini" style="margin:4px 0"><strong>${rotulo}:</strong> ${a} → <span style="color:var(--ambar-forte)">${d}</span></p>`;
+  };
+  return `<div class="resumo-nivel">
+    <h3>⭐ ${esc(nomeClasse)} subiu para Nível ${nivelClasse}! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível geral ${antes.nivelGeral} → ${depois.nivelGeral}</span></h3>
+    ${linha('Pontos de Vida máximos', 'pv')}
+    ${linha('Pontos de Mana máximos', 'pm')}
+    <div style="margin-top:12px">
+      <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Escolha o Poder novo de ${esc(nomeClasse)} agora:</p>
+      ${blocoPoderesClasse(p, classeId)}
+    </div>
+    <button id="btFecharResumoNivel" style="margin-top:12px">Fechar</button>
   </div>`;
 }
 
@@ -1273,6 +1324,41 @@ function abaClasses(p){
     </p>
     ${p.classes.map((c,i) => linhaClasse(p, i)).join('')}
     <button id="btAddClasse">+ Outra classe</button>
+    ${estado.nivelUpResumo ? painelResumoNivel(p, estado.nivelUpResumo) : ''}
+  </div>`;
+}
+
+// Extraído de abaPoderes pra dar pra reusar no resumo do botão "+1 Nível"
+// (painelResumoNivel) — a MESMA classe que acabou de subir.
+function blocoPoderesClasse(p, classeId){
+  const classe = CLASSES.find(x => x.id === classeId);
+  const poderes = PODERES_CLASSE[classeId] || [];
+  const nivel = nivelDeClasse(p, classeId);
+  const usados = pontosUsadosClasse(p, classeId);
+  const escolhas = p.poder.escolhas[classeId] || {};
+  return `<div class="cartao">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 style="font-size:18px">${classe.nome}</h2>
+      <span class="mini">${usados}/${nivel} pontos de poder usados</span>
+    </div>
+    ${usados > nivel
+      ? `<div class="aviso">Comprou mais poderes do que o nível desta classe permite — devolva algum ou suba o nível dela.</div>`
+      : ''}
+    ${poderes.map(poder => {
+      const n = escolhas[poder.id] || 0;
+      const podeComprar = usados < nivel && n < poder.max;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <strong>${poder.nome}${poder.max>1 ? ` (+${poder.max})` : ''}</strong>
+          <span class="mini">${n}/${poder.max}</span>
+        </div>
+        <p class="mini" style="margin-bottom:10px">${poder.texto}</p>
+        <div class="linha">
+          <button data-poder-menos="${classeId}|${poder.id}" ${n<=0?'disabled':''}>-</button>
+          <button data-poder-mais="${classeId}|${poder.id}" ${podeComprar?'':'disabled'}>+ Comprar</button>
+        </div>
+      </div>`;
+    }).join('')}
   </div>`;
 }
 
@@ -1284,37 +1370,7 @@ function abaPoderes(p){
       <p class="mini">Escolha uma classe e dê ao menos 1 nível a ela na aba
       Classes — os poderes dela aparecem aqui.</p></div>`;
   }
-  return investidas.map(classeId => {
-    const classe = CLASSES.find(x => x.id === classeId);
-    const poderes = PODERES_CLASSE[classeId] || [];
-    const nivel = nivelDeClasse(p, classeId);
-    const usados = pontosUsadosClasse(p, classeId);
-    const escolhas = p.poder.escolhas[classeId] || {};
-    return `<div class="cartao">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-        <h2 style="font-size:18px">${classe.nome}</h2>
-        <span class="mini">${usados}/${nivel} pontos de poder usados</span>
-      </div>
-      ${usados > nivel
-        ? `<div class="aviso">Comprou mais poderes do que o nível desta classe permite — devolva algum ou suba o nível dela.</div>`
-        : ''}
-      ${poderes.map(poder => {
-        const n = escolhas[poder.id] || 0;
-        const podeComprar = usados < nivel && n < poder.max;
-        return `<div class="linha-lista">
-          <div class="topo">
-            <strong>${poder.nome}${poder.max>1 ? ` (+${poder.max})` : ''}</strong>
-            <span class="mini">${n}/${poder.max}</span>
-          </div>
-          <p class="mini" style="margin-bottom:10px">${poder.texto}</p>
-          <div class="linha">
-            <button data-poder-menos="${classeId}|${poder.id}" ${n<=0?'disabled':''}>-</button>
-            <button data-poder-mais="${classeId}|${poder.id}" ${podeComprar?'':'disabled'}>+ Comprar</button>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('');
+  return investidas.map(classeId => blocoPoderesClasse(p, classeId)).join('');
 }
 
 function abaCombate(p){
@@ -1852,6 +1908,11 @@ function ligarEventos(){
   const addClasse = document.getElementById('btAddClasse');
   if(addClasse) addClasse.onclick = () => mudar(p => p.classes.push({classeId:'', nivel:0}));
 
+  app.querySelectorAll('[data-subir-nivel]').forEach(b =>
+    b.onclick = () => mudar(p => subirNivelClasseSAO(p, Number(b.dataset.subirNivel))));
+  const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+
   // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
   // "|", porque um botão só aceita um valor — mesmo truque do Fabula Ultima.
   app.querySelectorAll('[data-poder-mais]').forEach(b =>
@@ -2125,6 +2186,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.modoGuiado = false;
+  estado.nivelUpResumo = null;
   render();
 };
 
@@ -2137,6 +2199,7 @@ document.getElementById('btNovo').onclick = () => {
   // com um clique em "Ver ficha completa" (barra do topo).
   estado.modoGuiado = true;
   estado.passoGuiado = 1;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -2152,6 +2215,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.modoGuiado = false;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -2188,6 +2252,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.modoGuiado = false;
+      estado.nivelUpResumo = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
