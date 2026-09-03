@@ -58,6 +58,21 @@ section h4{font-size:14px; color:var(--ambar); text-transform:uppercase; letter-
 .dica{border:1px solid rgba(224,162,52,.4); background:rgba(224,162,52,.08); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
 .fonte{font-size:11.5px; color:var(--suave); font-style:italic}
 
+/* Exemplo jogado — visualmente diferente de regra (cartao) e de aviso/dica,
+   pra ficar óbvio "isto é uma cena imaginária ilustrando a regra acima". */
+.exemplo{border:1px solid rgba(92,138,106,.5); background:rgba(92,138,106,.1); border-radius:10px; padding:14px 16px; margin:16px 0}
+.exemplo .rotulo{display:flex; align-items:center; gap:7px; font-family:Georgia,serif; font-size:12.5px;
+  color:var(--verde); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px}
+.exemplo p{margin-bottom:8px}
+.exemplo p:last-child{margin-bottom:0}
+.exemplo .conta{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:13px; color:var(--ambar-forte);
+  background:var(--superficie-alta); border-radius:6px; padding:2px 7px; display:inline-block; margin:2px 0}
+
+/* Resumo em 1 frase antes de uma tabela densa — a "TL;DR" da mecânica. */
+.resumo{font-size:15px; color:var(--texto); background:var(--superficie-alta); border-left:3px solid var(--ambar);
+  border-radius:0 8px 8px 0; padding:10px 14px; margin:14px 0 18px}
+.resumo strong{color:var(--ambar-forte)}
+
 table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px}
 th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--borda); vertical-align:top}
 th{color:var(--ambar); font-family:Georgia,serif; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em}
@@ -108,33 +123,33 @@ li{margin-bottom:5px}
   <nav class="toc" aria-label="Sumário">
     <h2>Sumário</h2>
     <ol>
-      <li><a href="#conceito">1. O que é Thrylikí Chelóna</a></li>
-      <li><a href="#aprender">2. Como aprender o sistema</a></li>
-      <li><a href="#atributos">3. Atributos e Perícias</a></li>
-      <li><a href="#teste">4. Teste, dificuldade e turno</a></li>
-      <li><a href="#origens">5. Origens</a></li>
-      <li><a href="#areas">6. Áreas de Estudo e Ramos</a></li>
-      <li><a href="#originais">7. Combate das 6 Áreas originais</a></li>
-      <li><a href="#novas">8. Combate das 10 Áreas novas</a></li>
-      <li><a href="#formula">9. Construtor de Fórmula (Simbologia)</a></li>
-      <li><a href="#poder-livre">10. Construtor Livre de Poder</a></li>
-      <li><a href="#tecnicas">11. Técnicas de Ramo e Kit do 1º Ano</a></li>
-      <li><a href="#social">12. Interação Social</a></li>
-      <li><a href="#inventario">13. Inventário</a></li>
-      <li><a href="#projetos">14. Projetos: criar, melhorar, reparar</a></li>
-      <li><a href="#progressao">15. PE, Marcos, Ascensões e Categoria</a></li>
-      <li><a href="#doencas">16. Doenças, Demi-humanos e Místicos</a></li>
-      <li><a href="#nivel">17. Nível, Portfólio e Recesso</a></li>
-      <li><a href="#vida">18. Vida, dano e Recuperação</a></li>
-      <li><a href="#chassi">19. Chassi, Núcleo e Módulos</a></li>
-      <li><a href="#bestiario">20. Bestiário de Zoologia</a></li>
-      <li><a href="#metassimbolo">21. Metassímbolo (5º Ano)</a></li>
-      <li><a href="#mestre">22. Para o Mestre</a></li>
+      <li><a href="#conceito">🐢 1. O que é Thrylikí Chelóna</a></li>
+      <li><a href="#aprender">🧭 2. Como aprender o sistema</a></li>
+      <li><a href="#atributos">🎲 3. Atributos e Perícias</a></li>
+      <li><a href="#teste">⚔️ 4. Teste, dificuldade e turno</a></li>
+      <li><a href="#origens">🎭 5. Origens</a></li>
+      <li><a href="#areas">📚 6. Áreas de Estudo e Ramos</a></li>
+      <li><a href="#originais">🔥 7. Combate das 6 Áreas originais</a></li>
+      <li><a href="#novas">✨ 8. Combate das 10 Áreas novas</a></li>
+      <li><a href="#formula">🔮 9. Construtor de Fórmula (Simbologia)</a></li>
+      <li><a href="#poder-livre">💥 10. Construtor Livre de Poder</a></li>
+      <li><a href="#tecnicas">🥋 11. Técnicas de Ramo e Kit do 1º Ano</a></li>
+      <li><a href="#social">💬 12. Interação Social</a></li>
+      <li><a href="#inventario">🎒 13. Inventário</a></li>
+      <li><a href="#projetos">🛠️ 14. Projetos: criar, melhorar, reparar</a></li>
+      <li><a href="#progressao">📈 15. PE, Marcos, Ascensões e Categoria</a></li>
+      <li><a href="#doencas">🧬 16. Doenças, Demi-humanos e Místicos</a></li>
+      <li><a href="#nivel">🎓 17. Nível, Portfólio e Recesso</a></li>
+      <li><a href="#vida">❤️ 18. Vida, dano e Recuperação</a></li>
+      <li><a href="#chassi">🤖 19. Chassi, Núcleo e Módulos</a></li>
+      <li><a href="#bestiario">🐾 20. Bestiário de Zoologia</a></li>
+      <li><a href="#metassimbolo">🌀 21. Metassímbolo (5º Ano)</a></li>
+      <li><a href="#mestre">🛡️ 22. Para o Mestre</a></li>
     </ol>
   </nav>
 
   <section id="conceito">
-    <h2>1. O que é Thrylikí Chelóna</h2>
+    <h2>🐢 1. O que é Thrylikí Chelóna</h2>
     <p>Thrylikí Chelóna é <strong>uma escola de heróis</strong>. O personagem estuda numa instituição organizada em cinco Anos, e a ficha inteira segue essa moldura: currículo, marcos de progresso, recesso entre semestres, uma prova pra passar de Ano.</p>
     <p>O que diferencia esse sistema de outros na mesma pegada é como ele separa dois eixos que normalmente andam juntos:</p>
     <div class="grade2">
@@ -153,7 +168,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="aprender">
-    <h2>2. Como aprender o sistema</h2>
+    <h2>🧭 2. Como aprender o sistema</h2>
     <p>Ordem sugerida pra quem nunca jogou — cada passo usa só o que já foi explicado no passo anterior:</p>
     <ol>
       <li><strong>Monte os cinco Atributos</strong> (seção 3) — distribua 5 pontos livres entre Força, Agilidade, Constituição, Inteligência e Presença, partindo de Grau 1 cada, sem passar de Grau 3 na criação.</li>
@@ -171,7 +186,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="atributos">
-    <h2>3. Atributos e Perícias</h2>
+    <h2>🎲 3. Atributos e Perícias</h2>
     <h3>Cinco Atributos, Grau 0–5</h3>
     <table>
       <tr><th>Grau</th><th>Leitura</th></tr>
@@ -238,7 +253,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="teste">
-    <h2>4. Teste, dificuldade e turno</h2>
+    <h2>⚔️ 4. Teste, dificuldade e turno</h2>
     <div class="cartao" style="text-align:center">
       <p style="font-family:Georgia,serif;font-size:20px;color:var(--ambar-forte);margin:0">
         1d20 + Grau do Atributo + Treinamento + situação (−5 / 0 / +5)
@@ -256,6 +271,13 @@ li{margin-bottom:5px}
       <tr><td class="num">10 ou mais</td><td>Sucesso extremo</td></tr>
     </table>
     <p class="mini"><code>1</code> natural = Falha extrema. <code>20</code> natural = Sucesso extremo. Empate em teste oposto vira impasse ou consequência mútua.</p>
+
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p><strong>Maya tenta desviar de uma armadilha de flechas.</strong> Ela tem Grau 3 em Agilidade e é Treinada em Reflexos (+5). O Mestre pede um teste "treinado" — dificuldade 15.</p>
+      <p>Ela rola o d20 e tira <span class="conta">12</span>. Teste = 12 + 3 (Grau) + 5 (Treinamento) = <span class="conta">20</span>.</p>
+      <p>Margem = 20 − 15 = <span class="conta">5</span> → <strong>Sucesso</strong> (tabela de graus, acima). Maya desvia limpo, sem custo extra. Se tivesse tirado só 15 no dado, o teste daria 23 e a margem 8 — ainda Sucesso, só um pouco mais folgado; nada muda de categoria de resultado até passar de 10 de margem (Sucesso extremo).</p>
+    </div>
 
     <h3>Turno</h3>
     <p>Cada personagem tem, por rodada: <strong>1 Ação Principal, 1 Ação de Movimento, 1 Ação Parcial e 1 Reação.</strong> Armas, Cultivos, companheiros e Obras usam as ações do próprio personagem — nada tem turno independente.</p>
@@ -282,6 +304,13 @@ li{margin-bottom:5px}
     </table>
     <p class="mini">Diferença de −3 ou menor não alcança o alvo diretamente sem uma permissão específica de ficção.</p>
 
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p><strong>Kaito (Categoria II) acerta um Golpe Fundamental (1 Impacto) num inimigo Padrão, também Categoria II.</strong> Diferença de Categoria = 0 → multiplicador <span class="conta">×1</span>. O inimigo tem Vida máxima 60.</p>
+      <p>Conversão: <span class="conta">1 × 0,22 × 60 ≈ 13</span> pontos de Vida perdidos.</p>
+      <p>Agora imagine o mesmo golpe acertando um Capanga de Categoria I — um degrau abaixo de Kaito. Diferença de Categoria = +1 → multiplicador <span class="conta">×1,5</span>. O mesmo 1 Impacto vira 1,5, e o dano sobe pra <span class="conta">1,5 × 0,22 × 60 ≈ 20</span> — o mesmo golpe rende quase o dobro contra um alvo mais fraco. É assim que o sistema mostra "isso é fácil pra você" sem precisar rolar de novo.</p>
+    </div>
+
     <h3>Condições</h3>
     <p>No máximo uma condição por eixo — reaplicar a mesma renova, uma mais forte substitui, uma mais fraca não acumula.</p>
     <table>
@@ -298,7 +327,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="origens">
-    <h2>5. Origens</h2>
+    <h2>🎭 5. Origens</h2>
     <p>26 Origens. Cada uma dá <strong>2 Treinamentos fixos</strong> (algumas deixam a escolha com o Mestre) e uma <strong>Permissão narrativa</strong> — algo que o personagem sabe fazer fora do combate, sem gastar recurso.</p>
     <details>
       <summary>Ver as 26 Origens completas</summary>
@@ -335,7 +364,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="areas">
-    <h2>6. Áreas de Estudo e Ramos</h2>
+    <h2>📚 6. Áreas de Estudo e Ramos</h2>
     <p>16 Áreas de Estudo — o antigo "Caminho" ou classe. Cada verbo-guia (ex.: Tensionar → Encadear → Romper) resume a lógica de jogo daquela Área.</p>
     <table>
       <tr><th>Área</th><th>Verbos-guia</th><th>Recurso / painel</th></tr>
@@ -380,7 +409,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="originais">
-    <h2>7. Combate das 6 Áreas originais</h2>
+    <h2>🔥 7. Combate das 6 Áreas originais</h2>
 
     <h3>Corpo e Cinética — Esforço 0–5 e Rastro</h3>
     <p><strong>Esforço</strong> começa em 2 ao entrar num conflito relevante e sobe 1 por ação física sob risco (ou +1 extra usando "Forçar o Corpo", que também aplica Exposto). <strong>Rastro</strong>: até duas marcas visíveis acumuladas — Impulso, Guarda, Golpe, Controle, Alteração — antes de <strong>Romper</strong>.</p>
@@ -390,9 +419,19 @@ li{margin-bottom:5px}
       <tr><td>Técnica forte</td><td class="num">2 Esforços</td><td>normalmente até 1,5 Impacto</td></tr>
       <tr><td>Ápice telegrafado</td><td class="num">3 Esforços e Rastro cheio</td><td>até 2,5 Impactos, exige preparação legível</td></tr>
     </table>
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p><strong>Kaito começa uma luta com 2 Esforços</strong> (o inicial). Rodada 1: ele avança e golpeia — ação física sob risco, ganha +1 Esforço (agora 3) e registra "Impulso" no Rastro. Rodada 2: golpeia de novo, +1 Esforço (4), registra "Golpe" — o Rastro já tem 2 marcas, o máximo.</p>
+      <p>Com Rastro cheio e 4 Esforços guardados, ele Rompe: gasta 3 Esforços por uma "Ápice telegrafado" (até 2,5 Impactos) — mas precisa anunciar a preparação antes, porque é um golpe grande e óbvio. O Rastro esvazia e ele fica com 1 Esforço sobrando pra rodada seguinte.</p>
+    </div>
 
     <h3>Simbologia Arcana — Mana</h3>
     <p><code>Mana máxima = 6 + 2×Grau de Inteligência + 2×grau de Treinamento em Simbologia + Reservatório (0–4)</code>. Botão <strong>Concentrar</strong>: Ação Principal, +2 Mana, 1×/cena, libera de novo com "Nova cena". Descanso completo recupera tudo. A gramática de criação de Fórmula está na seção 9.</p>
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p><strong>Aurora tem Grau 3 em Inteligência e é Perita em Simbologia</strong> (grau de treinamento 2, na escala 0–3 que essa fórmula usa) e ainda não comprou Reservatório.</p>
+      <p>Mana máxima = <span class="conta">6 + 2×3 + 2×2 + 0 = 16</span>. Ela gasta 2 Mana num Projétil Elemental (sobra 14), depois mais 4 numa Fórmula Potente (sobra 10). Sem Mana suficiente pra outra Ápice (que custaria 7), ela usa Concentrar — Ação Principal, +2 Mana — e sobe pra 12.</p>
+    </div>
 
     <h3>Robótica e Engenharia — três recursos que não se misturam</h3>
     <table>
@@ -421,9 +460,16 @@ li{margin-bottom:5px}
   </section>
 
   <section id="novas">
-    <h2>8. Combate das 10 Áreas novas</h2>
+    <h2>✨ 8. Combate das 10 Áreas novas</h2>
     <p>Todas compartilham a mesma <strong>forma</strong> de recurso: 0 a 3, ganha 1 com uma regra específica da Área (no máximo 1×/rodada), e uma ação forte gasta 2 pra produzir cerca de 1,5 Impacto. Cada Área tem nome próprio pro recurso, regra de geração, limite, forma de recuperar e contrajogo.</p>
     <div class="aviso"><strong>Exceção — Alquimia e Química:</strong> não segue "ganha 1, gasta 2". A ação forte (Reação Volátil) <strong>gera +3 de Instabilidade</strong> em vez de custar pontos guardados; uma ação separada (Estabilização de Emergência) reduz 2. É economia de <em>acúmulo de risco</em>, não de gasto de reserva.</div>
+
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — Psicologia e Noética</div>
+      <p><strong>Diane</strong> (Perita em Psicologia e Noética) está negociando com um refém sequestrador nervoso. No turno 1 ela usa <em>Enquadrar Estado</em> (Impacto 0) e nomeia o Estado "medo de ser preso" — ganha <span class="conta">Insight 1</span>. No turno 2, o sequestrador hesita ao ouvir sirenes lá fora: isso confirma o Estado orientando uma decisão visível, então Diane ganha mais <span class="conta">Insight 2</span> de graça (a regra da Área, não uma ação dela).</p>
+      <p>No turno 3, com <span class="conta">Insight 2</span> guardado, ela gasta os 2 numa <em>Intervenção Profunda</em> (Impacto 1,5): "Você não precisa ser preso hoje — solte a arma e converse comigo." O mestre permite resistência (o sequestrador pode se agarrar ao medo em vez de ceder), mas o Impacto de 1,5 já está definido — cabe ao alvo decidir <em>como</em> reage, não <em>se</em> o Enquadramento tem efeito.</p>
+      <p>Depois da cena, um Respiro zera o Insight de Diane e encerra o Enquadramento — se ela quiser reabrir esse mesmo Estado depois, precisa Enquadrar de novo.</p>
+    </div>
 
     <details>
       <summary>Alquimia e Química — Instabilidade</summary>
@@ -528,7 +574,8 @@ li{margin-bottom:5px}
   </section>
 
   <section id="formula">
-    <h2>9. Construtor de Fórmula (Simbologia Arcana)</h2>
+    <h2>🔮 9. Construtor de Fórmula (Simbologia Arcana)</h2>
+    <p class="resumo">Em resumo: é montar uma magia escolhendo peças de um <strong>cardápio</strong> — cada peça custa um pouco de Mana e um pouco de espaço na Matriz de Tomo. Some tudo, veja se cabe, salve e use.</p>
     <p>Uma Fórmula é <strong>Verbo + Potência + Essência + Moldura (Alcance + Alvo + Duração) + Cláusulas</strong> — cada peça tem custo em Mana e em Tomos (capacidade da Matriz).</p>
     <h3>Verbos (só sabor, sem custo)</h3>
     <p>Ferir, Proteger, Mover, Restaurar, Alterar, Criar, Perceber, Vincular, Selar.</p>
@@ -585,10 +632,19 @@ li{margin-bottom:5px}
       <tr><td>5º</td><td class="num">20 + 1 Metassímbolo (à parte)</td><td class="num">6</td></tr>
     </table>
     <p>Some tudo (Potência + Alcance + Alvo + Essência + Duração + Cláusulas) — se os Tomos passarem da Matriz, a Fórmula não salva. Cada Fórmula salva tem nome editável e um botão "Manifestar" que desconta a Mana do pool.</p>
+
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado — montando "Lança de Fogo Curta"</div>
+      <p>Aurora (2º Ano, Matriz de 8 Tomos) quer uma Fórmula ofensiva simples. Ela escolhe:</p>
+      <p>Verbo <strong>Ferir</strong> (sem custo) · Potência <strong>Básica</strong> (1 Impacto, 2 Mana) · Alcance <strong>curto</strong> (1 Tomo, 0 Mana) · Alvo <strong>um</strong> (1 Tomo, 0 Mana) · Essência <strong>básica — Fogo</strong> (1 Tomo, 0 Mana) · Duração <strong>até o próximo turno</strong> (1 Tomo, 1 Mana). Sem Cláusulas.</p>
+      <p>Somando: Tomos = <span class="conta">1+1+1+1 = 4</span> (cabe fácil nos 8 disponíveis) · Mana = <span class="conta">2+0+0+0+1 = 3</span> · Impacto = <span class="conta">1</span>.</p>
+      <p>Ela salva como "Lança de Fogo Curta". Na hora de usar, aperta Manifestar e desconta 3 Mana do pool — sem precisar refazer a conta toda vez.</p>
+    </div>
   </section>
 
   <section id="poder-livre">
-    <h2>10. Construtor Livre de Poder</h2>
+    <h2>💥 10. Construtor Livre de Poder</h2>
+    <p class="resumo">Em resumo: escolha uma <strong>Potência</strong> (isso define um orçamento de Impacto), "gaste" esse orçamento em <strong>resultados</strong> (dano, cura, marca, controle...), descreva o poder em palavras, e veja quanto ele custa na sua Área. Nada de fórmula matemática complicada — é preencher um cartão.</p>
     <p>A gramática genérica pras <strong>quinze Áreas sem gramática própria</strong> (todas menos Simbologia Arcana, que usa a Fórmula da seção 9). O Ano libera o que você pode fazer:</p>
     <table>
       <tr><th>Ano</th><th>Modo</th><th class="num">Alterações</th><th>Observação</th></tr>
@@ -625,6 +681,15 @@ li{margin-bottom:5px}
       <tr><td>Incapacitar por uma rodada</td><td class="num">2</td></tr>
     </table>
 
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado — criando "Investida da Alcateia"</div>
+      <p>Um estudante de Zoologia e Etologia (3º Ano, já libera Criação Livre) quer um poder de investida física. Ele preenche o cartão assim:</p>
+      <p><strong>Nome:</strong> Investida da Alcateia · <strong>Intenção:</strong> empurrar e derrubar um alvo próximo · <strong>Acesso:</strong> Perfil Ativo de predador em alcateia · <strong>Âncora:</strong> os dentes e garras do personagem · <strong>Forma:</strong> avanço físico com mordida e garra.</p>
+      <p><strong>Potência: Forte</strong> (orçamento de 1,5 Impacto). Resultados escolhidos: <em>Dano de referência</em> (1) + <em>Marca ou Deslocamento curto</em> (0,25) = <span class="conta">1,25 / 1,5</span> — dentro do orçamento, com um pouco de folga sobrando.</p>
+      <p><strong>Custo na Área:</strong> a tabela da seção anterior diz que Zoologia e Etologia cobra "2 Dados de Campo" pra uma Potência Forte. <strong>Teste ou Resistência:</strong> Reflexos do alvo pra não cair. <strong>Contrajogo:</strong> terreno instável, se afastar antes do avanço, armadura no ponto de mordida. <strong>Resíduo:</strong> arranhões visíveis e fôlego ofegante por uma cena.</p>
+      <p class="mini">Repare que não existe um botão único de "Manifestar" aqui — na hora de usar o poder, o jogador só gasta 2 Dados de Campo no painel normal da Área, como faria com qualquer outra ação.</p>
+    </div>
+
     <h3>Quanto custa em cada Área</h3>
     <p class="mini">Sem botão de "Manifestar" único — o custo aqui é texto, não um número fixo; o poder salvo é registro de referência, e você gasta o recurso de verdade no painel da própria Área.</p>
     <details>
@@ -652,7 +717,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="tecnicas">
-    <h2>11. Técnicas de Ramo e Kit de Combate do 1º Ano</h2>
+    <h2>🥋 11. Técnicas de Ramo e Kit de Combate do 1º Ano</h2>
     <h3>Técnicas prontas dos Ramos</h3>
     <p>351 técnicas prontas (117 Ramos × 3), cada uma com uma <strong>Função</strong> — Pressão, Sobrevivência ou Tática — mais nome e efeito. Aparecem no card do seu Ramo a partir do 2º Ano, jogáveis como Ação Principal de até 1 Impacto, usando o recurso normal da sua Área. Dão conteúdo jogável nomeado antes de a criação livre existir (que só chega no 3º Ano).</p>
 
@@ -723,7 +788,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="social">
-    <h2>12. Interação Social</h2>
+    <h2>💬 12. Interação Social</h2>
     <p>Cada figura social tem um painel simples: <strong>Desejo</strong> (o que quer agora), <strong>Objeção</strong> (o que impede o acordo), <strong>Limite</strong> (o que não aceita sem transformação real — precisa aparecer por sinais antes de ser testado), <strong>Posição</strong> (−2 a +2) e uma ou duas resistências fixas.</p>
     <table>
       <tr><th class="num">Posição</th><th>Nome</th><th>O que dá pra pedir</th></tr>
@@ -738,7 +803,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="inventario">
-    <h2>13. Inventário</h2>
+    <h2>🎒 13. Inventário</h2>
     <p><strong>Carga Pronta = 6 + Grau de Força.</strong> Só itens marcados <strong>Pronto</strong> contam nessa carga; item guardado fora exige Ação Principal + acesso ao recipiente pra recuperar.</p>
     <h3>Cartão de item (8 campos)</h3>
     <table>
@@ -756,17 +821,24 @@ li{margin-bottom:5px}
   </section>
 
   <section id="projetos">
-    <h2>14. Projetos: criar, melhorar, reparar</h2>
+    <h2>🛠️ 14. Projetos: criar, melhorar, reparar</h2>
     <p><strong>Reparar</strong> um item existente aparece como botão só quando o Estado não é Íntegro, e volta direto pra Íntegro.</p>
     <h3>Projeto (criação do zero)</h3>
     <p>7 campos: Intenção, Base (Perfil universal), Traços, Fonte e Âncora, Materiais e oficina, Falha interessante, e <strong>Escala</strong> (Improviso / Fabricação / Projeto).</p>
     <p>Quatro Categorias escolhidas separadamente — Projeto, Criador, Material, Oficina (todas I–V) — e a <strong>Categoria Operacional é sempre a menor das quatro</strong>. Capacidade de Traços por Categoria: I=1, II=2, III=3, IV=4, V=5.</p>
     <p>Quando a Escala é "Projeto", existe uma <strong>Fase</strong> (limitada pela Categoria Operacional): Conceito (I), Protótipo, Integração, Validação, Tese e Ruptura (só Categoria V libera as cinco).</p>
     <p>Botão <strong>"Concluir Projeto"</strong> (desabilitado se os Traços excederem a capacidade) cria um item novo no Inventário e trava — não dá pra duplicar. Cada fase usa a mesma <strong>Cena de Desafio</strong> da Interação Social.</p>
+
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — montando um projeto</div>
+      <p><strong>Kaito</strong> (Robótica e Engenharia) quer construir um braço mecânico reforçado. Ele escolhe Categoria III pro Projeto, Criador e Oficina, mas só tem Material de Categoria II disponível na cidade — a <strong>Categoria Operacional fica II</strong> (a menor das quatro), então ele só pode escolher até <span class="conta">2 Traços</span> mesmo tendo Categorias maiores em outros campos.</p>
+      <p>Ele preenche: Intenção ("um braço que aguenta impacto e ergue peso"), Base ("Perfil universal de suporte físico"), Traços (Reforçado + Ergue Peso), Fonte e Âncora ("liga metálica recuperada de uma sucata, moldada na Oficina da guilda"), Materiais e oficina, e Falha interessante ("trava se ficar molhado"). Como escolheu Escala "Projeto", existe uma Fase: em Categoria Operacional II ele só acessa Conceito e Protótipo — precisa passar pelas duas Cenas de Desafio antes do botão "Concluir Projeto" liberar.</p>
+    </div>
   </section>
 
   <section id="progressao">
-    <h2>15. PE, Marcos, Ascensões e Categoria</h2>
+    <h2>📈 15. PE, Marcos, Ascensões e Categoria</h2>
+    <p class="resumo">Em resumo: <strong>PE é a moeda</strong> que compra Atributo, Treinamento, Talento e magia extra — 1 por Nível, guardada até você decidir gastar. <strong>Marcos</strong> e <strong>Ascensões</strong> são presentes automáticos que chegam sozinhos em certos Níveis, sem custar PE — você só escolhe o que fazer com eles.</p>
     <p><strong>Ponto de Evolução (PE): 1 por Nível, acumula se não gasto.</strong> A filosofia do sistema é "mostrar a origem de cada bônus" — todo PE gasto vem de um livro-razão de compras.</p>
     <h3>Custo de compra</h3>
     <table>
@@ -789,6 +861,15 @@ li{margin-bottom:5px}
       <tr><td>Eletiva de outra Área</td><td class="num">4 PE</td><td>não concede o motor completo da outra Área</td></tr>
     </table>
     <p>Cada Par de Doença além dos 2 primeiros gratuitos custa <strong>2 PE</strong> (seção 16).</p>
+
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p>Kaito está no Nível 6 — já ganhou <span class="conta">6 PE</span> no total (1 por Nível) e ainda não gastou nenhum. Ele decide:</p>
+      <p>1) Comprar Grau 4 de Força (estava em Grau 3) — custa 4 PE. Sobram <span class="conta">2 PE</span>.<br>
+      2) Comprar um Talento Refinamento (1 PE) — sobra <span class="conta">1 PE</span>.<br>
+      3) Quer comprar Treinado em Atletismo (2 PE), mas só tem 1 — a compra fica bloqueada até ganhar mais PE subindo de Nível.</p>
+      <p>No histórico de compras da ficha, cada linha mostra exatamente isso — "Força: Grau 3 → 4 (4 PE)", "Talento Refinamento (1 PE)" — nunca um número solto sem explicação.</p>
+    </div>
 
     <h3>Marcos da Área</h3>
     <p>Recebidos nas posições <strong>1, 5, 9, 13, 17</strong> de cada ciclo de 20 Níveis — 5 por ciclo completo. <strong>Não gastam PE</strong>, só registram uma escolha entre 5 opções:</p>
@@ -825,7 +906,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="doencas">
-    <h2>16. Doenças, Demi-humanos e Místicos</h2>
+    <h2>🧬 16. Doenças, Demi-humanos e Místicos</h2>
     <p class="dica">Sistema <strong>opcional</strong> — a mesa decide se ele entra na campanha. Nenhum jogador precisa aceitar uma manifestação corporal que não queira interpretar.</p>
     <p>Catálogo de 23 combinações <strong>Pró / Contra / Âncora</strong>, cobrindo 9 criaturas em três classificações:</p>
     <table>
@@ -843,7 +924,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="nivel">
-    <h2>17. Nível, Portfólio e Recesso</h2>
+    <h2>🎓 17. Nível, Portfólio e Recesso</h2>
     <h3>Ritmo de Nível (escolhido na sessão zero)</h3>
     <table>
       <tr><th>Ritmo</th><th>Regra</th></tr>
@@ -872,10 +953,18 @@ li{margin-bottom:5px}
   </section>
 
   <section id="vida">
-    <h2>18. Vida, dano e Recuperação</h2>
+    <h2>❤️ 18. Vida, dano e Recuperação</h2>
     <p><code>Vida = 35 + Constituição×5 + piso(Nível/2)</code></p>
     <p><strong>Conversão Impacto → Vida</strong>: <code>impacto × 0,22 × Vida máxima</code>, arredondado normal. A Guarda gasta reduz o Impacto bruto em 0,25 por ponto antes de converter.</p>
     <p><strong>Primeiros Socorros</strong>: 0,5 Impacto de cura, 1×/cena, libera de novo com Respiro.</p>
+
+    <div class="exemplo">
+      <div class="rotulo">🎲 exemplo jogado</div>
+      <p>Maya tem Constituição Grau 2 e está no Nível 6: Vida máxima = <span class="conta">35 + 2×5 + piso(6/2) = 48</span>.</p>
+      <p>Ela sofre um golpe de 1,5 Impacto, mas tem uma Proteção equipada com 1 ponto de Guarda disponível. Gastando essa Guarda: Impacto efetivo = <span class="conta">1,5 − 0,25 = 1,25</span>. Dano = <span class="conta">1,25 × 0,22 × 48 ≈ 13</span> de Vida — ela vai de 48 para 35.</p>
+      <p>No próximo Intervalo (~10 min de descanso), ela recupera <span class="conta">25% de 48 = 12</span> de Vida, voltando pra 47.</p>
+    </div>
+
     <h3>Quatro escalas de Recuperação</h3>
     <table>
       <tr><th>Escala</th><th>Duração aproximada</th><th>Efeito</th></tr>
@@ -888,7 +977,7 @@ li{margin-bottom:5px}
   </section>
 
   <section id="chassi">
-    <h2>19. Chassi, Núcleo de Consciência e Módulos</h2>
+    <h2>🤖 19. Chassi, Núcleo de Consciência e Módulos</h2>
     <p>Peça de Robótica e Engenharia pra construir <strong>equipamento robótico complexo</strong> — armadura, drone, veículo, arma, autômato. Não é um sistema de "personagem robô" à parte.</p>
     <h3>8 tipos de Chassi</h3>
     <table>
@@ -926,18 +1015,18 @@ li{margin-bottom:5px}
   </section>
 
   <section id="bestiario">
-    <h2>20. Bestiário de Zoologia</h2>
+    <h2>🐾 20. Bestiário de Zoologia</h2>
     <p class="mini">Esse "Bestiário" é do <strong>personagem jogador de Zoologia e Etologia</strong> — não é uma ficha de criatura de mestre (essa está na seção 22).</p>
     <p>Até <strong>3 Perfis preparados</strong>, cada um com nome e até <strong>3 Traços</strong>. Cada Traço escolhe uma Família (Sentido, Locomoção, Defesa, Ataque, Camuflagem, Cooperação, Contramedida) mais uma descrição livre. Um rádio marca qual Perfil está <strong>Ativo</strong> — remover o Perfil ativo só desmarca, sem quebrar referência. O campo de texto livre original virou "Nota rápida" — resumo opcional de mesa.</p>
   </section>
 
   <section id="metassimbolo">
-    <h2>21. Metassímbolo (5º Ano)</h2>
+    <h2>🌀 21. Metassímbolo (5º Ano)</h2>
     <p>Não tem fórmula numérica — a capacidade <strong>não aumenta dano, Mana ou d20</strong>. É um campo de texto livre, visível só no 5º Ano, pra registrar a exceção autoral do estudante de Simbologia Arcana (mesmo tratamento que a Tese recebe em qualquer Ramo). Não entra na conta da Matriz de Tomo — o 5º Ano tem 20 Tomos + 1 Metassímbolo, à parte.</p>
   </section>
 
   <section id="mestre">
-    <h2>22. Para o Mestre</h2>
+    <h2>🛡️ 22. Para o Mestre</h2>
     <h3>Ficha de Inimigo</h3>
     <p>Modela só o "cartão de mesa": nome, Categoria, função, Defesa por canal, Vida, deslocamento, ação característica, Reação, condição atual, comportamento. <strong>Inimigo não tem Ramo nem Treinamento por Perícia</strong> — é número direto e texto livre.</p>
     <p><code>Defesa por canal = 8 + Grau + Treinamento</code>. Referência de Defesa-base por Categoria:</p>

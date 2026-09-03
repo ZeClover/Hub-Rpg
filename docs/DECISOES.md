@@ -2162,6 +2162,44 @@ aparecem quando aquela Área está selecionada), todos com âncora válida e
 `target="_blank"`, sem erro de JS. `tsc --noEmit`, `npm run lint` e os
 208 testes automáticos continuam limpos (mudança é só HTML estático).
 
+## 59. Thrylikí Chelóna — Grimório mais bonito e fácil de entender (03/09/2026)
+
+Pedido do Zé: melhorar os exemplos do Grimório e deixar a explicação
+"mais bonitinha e bem fácil de entender". Três mudanças, todas só
+visuais/de conteúdo — nenhuma mecânica do sistema mudou:
+
+**Emoji em cada seção.** Os 22 itens do sumário e os 22 títulos `<h2>`
+ganharam um emoji temático (🎲 atributos, ⚔️ teste, 📚 áreas, 🔮 fórmula,
+❤️ vida, etc.) — ajuda a "escanear" o sumário visualmente em vez de ler
+22 títulos parecidos.
+
+**Caixa `.exemplo` nova.** Componente visual (borda e fundo verdes,
+número calculado destacado em `.conta`) diferente da `.dica` (âmbar) e
+do `.aviso` (vermelho) que já existiam — sinaliza "isto é uma cena
+jogada ilustrando a regra acima", não mais uma regra. Adicionadas 10
+caixas com exemplos nomeados (Maya, Kaito, Aurora, Diane) cobrindo: teste
+básico e Patamares/Categoria (seção Teste), Esforço/Romper de Corpo e
+Cinética e Mana de Simbologia Arcana (seção Áreas originais), fórmula
+completa "Lança de Fogo Curta" (Construtor de Fórmula), poder completo
+"Investida da Alcateia" — usando de propósito o mesmo texto que já
+preenche os placeholders do Construtor de Poder na ficha, pra ligar os
+dois (Construtor Livre de Poder), compra de PE até travar num
+Treinamento (Progressão), dano e recuperação de Vida (Vida), ciclo
+ganho→gasto de Insight em Psicologia e Noética (Áreas novas) e um
+Projeto de Categoria Operacional travada pelo Material (Projetos).
+
+**Caixa `.resumo` nova.** Uma frase em linguagem simples antes da parte
+mais densa das três seções mais técnicas — Construtor de Fórmula,
+Construtor Livre de Poder e economia de PE — pra quem só quer o "TL;DR"
+antes de mergulhar na tabela.
+
+Testado com Playwright: as 22 âncoras do sumário resolvem pra uma seção
+`id` existente, 10 caixas `.exemplo` e 3 `.resumo` presentes no DOM, os
+novos exemplos (Diane em Psicologia, Kaito no Projeto do braço mecânico)
+aparecem no texto renderizado, sem erro de JS/console. `tsc --noEmit`,
+`npm run lint` e a suíte de testes automáticos continuam limpos (mudança
+é só HTML/CSS estático, sem tocar em código TypeScript).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

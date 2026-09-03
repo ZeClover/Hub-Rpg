@@ -1077,6 +1077,17 @@ passando.
       do Grimório, sempre em nova aba. Testado com Playwright (âncoras
       conferidas contra os ids reais do Grimório, sem link quebrado);
       `tsc`, lint e os 208 testes automáticos continuam limpos
+- [x] **Thrylikí Chelóna — Grimório mais bonito e fácil de entender**
+      (03/09/2026) — decisão #59. Emoji temático nas 22 seções do
+      sumário e dos títulos; caixa `.exemplo` nova (verde, com números
+      calculados em destaque) com 10 cenas jogadas (Maya, Kaito, Aurora,
+      Diane) cobrindo teste/Patamares, Corpo e Cinética, Simbologia
+      Arcana, Construtor de Fórmula, Construtor Livre de Poder (mesmo
+      texto dos placeholders da ficha), PE, Vida, uma Área nova
+      (Psicologia e Noética) e Projetos; caixa `.resumo` nova (uma frase
+      em linguagem simples) nas três seções mais densas. Testado com
+      Playwright (sumário íntegro, caixas novas no DOM, sem erro de JS);
+      `tsc`, lint e os testes automáticos continuam limpos
 - [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
       Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion
