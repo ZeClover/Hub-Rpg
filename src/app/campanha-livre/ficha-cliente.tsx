@@ -39,6 +39,33 @@ import {
 
 import { ImportarDoChat } from "./importar-do-chat";
 
+/** Filtro de busca usado em cada aba — case-insensitive, ignora campos vazios. */
+function corresponde(busca: string, ...campos: (string | undefined)[]): boolean {
+  const alvo = busca.trim().toLowerCase();
+  if (!alvo) return true;
+  return campos.some((c) => c?.toLowerCase().includes(alvo));
+}
+
+function BarraBusca({
+  valor,
+  onMudar,
+  placeholder,
+}: {
+  valor: string;
+  onMudar: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <input
+      type="text"
+      value={valor}
+      onChange={(e) => onMudar(e.target.value)}
+      placeholder={placeholder}
+      className="mb-3 w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+    />
+  );
+}
+
 /*
   Ficha do sistema Campanha Livre — o único dos cinco sistemas do Hub que
   não é um arquivo HTML estático em /public. Precisa de estado de servidor
@@ -957,6 +984,8 @@ function Missoes({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNova, setNomeNova] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.missoes.filter((m) => corresponde(busca, m.nome, m.descricao));
 
   function atualizarMissao(id: string, parcial: Partial<MissaoLivre>) {
     onSalvar({ ...dados, missoes: dados.missoes.map((m) => (m.id === id ? { ...m, ...parcial } : m)) });
@@ -996,9 +1025,11 @@ function Missoes({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar missão…" />
       {dados.missoes.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma missão ainda.</p>}
+      {dados.missoes.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.missoes.map((missao) => (
+        {filtradas.map((missao) => (
           <li key={missao.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">{missao.nome}</p>
@@ -1130,6 +1161,8 @@ function Npcs({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNovo, setNomeNovo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.npcs.filter((n) => corresponde(busca, n.nome, n.descricao));
 
   function atualizarNpc(id: string, parcial: Partial<NpcLivre>) {
     onSalvar({ ...dados, npcs: dados.npcs.map((n) => (n.id === id ? { ...n, ...parcial } : n)) });
@@ -1168,9 +1201,11 @@ function Npcs({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar NPC…" />
       {dados.npcs.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum NPC ainda.</p>}
+      {dados.npcs.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.npcs.map((npc) => (
+        {filtrados.map((npc) => (
           <li key={npc.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">
@@ -1327,6 +1362,8 @@ function Descobertas({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [tituloNovo, setTituloNovo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.descobertas.filter((d) => corresponde(busca, d.titulo, d.descricao, d.categoria));
 
   function atualizar(id: string, parcial: Partial<DescobertaLivre>) {
     onSalvar({ ...dados, descobertas: dados.descobertas.map((d) => (d.id === id ? { ...d, ...parcial } : d)) });
@@ -1351,9 +1388,11 @@ function Descobertas({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar descoberta…" />
       {dados.descobertas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma descoberta ainda.</p>}
+      {dados.descobertas.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.descobertas.map((d) => (
+        {filtradas.map((d) => (
           <li key={d.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">{d.titulo}</p>
@@ -1415,6 +1454,8 @@ function Locais({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNovo, setNomeNovo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.locais.filter((l) => corresponde(busca, l.nome, l.descricao));
 
   function atualizar(id: string, parcial: Partial<LocalLivre>) {
     onSalvar({ ...dados, locais: dados.locais.map((l) => (l.id === id ? { ...l, ...parcial } : l)) });
@@ -1439,9 +1480,11 @@ function Locais({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar local…" />
       {dados.locais.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum local ainda.</p>}
+      {dados.locais.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.locais.map((l) => (
+        {filtrados.map((l) => (
           <li key={l.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">
@@ -1503,6 +1546,8 @@ function Bestiario({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNovo, setNomeNovo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.criaturas.filter((c) => corresponde(busca, c.nome, c.categoria, c.descricao));
 
   function remover(id: string) {
     onSalvar({ ...dados, criaturas: dados.criaturas.filter((c) => c.id !== id) });
@@ -1522,9 +1567,11 @@ function Bestiario({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar criatura…" />
       {dados.criaturas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma criatura catalogada ainda.</p>}
+      {dados.criaturas.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.criaturas.map((c) => (
+        {filtradas.map((c) => (
           <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className="text-texto">
@@ -1580,6 +1627,8 @@ function Codex({
 }) {
   const [titulo, setTitulo] = useState("");
   const [texto, setTexto] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.codex.filter((c) => corresponde(busca, c.titulo, c.categoria, c.texto));
 
   function remover(id: string) {
     onSalvar({ ...dados, codex: dados.codex.filter((c) => c.id !== id) });
@@ -1596,9 +1645,11 @@ function Codex({
   return (
     <div>
       <p className="text-sm text-texto-suave">Lore de referência — teorias, conceitos, o que a campanha for explicando.</p>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar no codex…" />
       {dados.codex.length === 0 && <p className="mt-2 text-sm text-texto-suave">Vazio por enquanto.</p>}
+      {dados.codex.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.codex.map((c) => (
+        {filtrados.map((c) => (
           <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className="font-titulo text-sm text-texto">
@@ -1651,6 +1702,8 @@ function Diario({
 }) {
   const [titulo, setTitulo] = useState("");
   const [resumo, setResumo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.diario.filter((e) => corresponde(busca, e.titulo, e.resumo));
 
   function remover(id: string) {
     onSalvar({ ...dados, diario: dados.diario.filter((e) => e.id !== id) });
@@ -1666,9 +1719,11 @@ function Diario({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar no diário…" />
       {dados.diario.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma entrada ainda.</p>}
+      {dados.diario.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.diario.map((e) => (
+        {filtradas.map((e) => (
           <li key={e.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className="font-titulo text-sm text-texto">
@@ -1829,6 +1884,8 @@ function Magias({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNova, setNomeNova] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.magias.filter((m) => corresponde(busca, m.nome, m.afinidade, m.descricao));
 
   function remover(id: string) {
     onSalvar({ ...dados, magias: dados.magias.filter((m) => m.id !== id) });
@@ -1849,9 +1906,11 @@ function Magias({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar magia…" />
       {dados.magias.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma magia conhecida ainda.</p>}
+      {dados.magias.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.magias.map((m) => (
+        {filtradas.map((m) => (
           <li key={m.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">
@@ -1924,6 +1983,8 @@ function Pesquisas({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [tituloNovo, setTituloNovo] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.pesquisas.filter((p) => corresponde(busca, p.titulo, p.status));
 
   function atualizar(id: string, parcial: Partial<PesquisaLivre>) {
     onSalvar({ ...dados, pesquisas: dados.pesquisas.map((p) => (p.id === id ? { ...p, ...parcial } : p)) });
@@ -1951,9 +2012,11 @@ function Pesquisas({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar pesquisa…" />
       {dados.pesquisas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma pesquisa ainda.</p>}
+      {dados.pesquisas.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-3">
-        {dados.pesquisas.map((p) => (
+        {filtradas.map((p) => (
           <li key={p.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">{p.titulo}</p>
@@ -2027,6 +2090,8 @@ function Conquistas({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [nomeNova, setNomeNova] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.conquistas.filter((c) => corresponde(busca, c.nome, c.descricao));
 
   function remover(id: string) {
     onSalvar({ ...dados, conquistas: dados.conquistas.filter((c) => c.id !== id) });
@@ -2041,9 +2106,11 @@ function Conquistas({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar conquista…" />
       {dados.conquistas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma conquista ainda.</p>}
+      {dados.conquistas.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.conquistas.map((c) => (
+        {filtradas.map((c) => (
           <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className="text-texto">{c.nome}</p>
@@ -2086,7 +2153,8 @@ function Reputacao({
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
   const [alvoNovo, setAlvoNovo] = useState("");
-  const alvos = Object.keys(dados.reputacao);
+  const [busca, setBusca] = useState("");
+  const alvos = Object.keys(dados.reputacao).filter((alvo) => corresponde(busca, alvo));
 
   function adicionar() {
     const chave = alvoNovo.trim();
@@ -2108,7 +2176,9 @@ function Reputacao({
   return (
     <div>
       <p className="text-sm text-texto-suave">Facção, grupo, cidade, NPC — qualquer entidade que a campanha usar.</p>
-      {alvos.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma reputação registrada ainda.</p>}
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar reputação…" />
+      {Object.keys(dados.reputacao).length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma reputação registrada ainda.</p>}
+      {Object.keys(dados.reputacao).length > 0 && alvos.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <div className="mt-3 flex flex-wrap gap-3">
         {alvos.map((alvo) => (
           <div key={alvo} className="flex items-center gap-2 rounded-lg border border-borda bg-superficie px-3 py-2">
@@ -2156,6 +2226,9 @@ function Imagens({
   somenteLeitura: boolean;
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.filaImagens.filter((s) => corresponde(busca, s.nomeEntidade, s.tipoEntidade, s.promptSugerido));
+
   function alternarAtendida(id: string) {
     onSalvar({
       ...dados,
@@ -2172,9 +2245,11 @@ function Imagens({
       <p className="text-sm text-texto-suave">
         Pedidos de imagem — o Hub nunca gera sozinho, só guarda a fila para quando você (ou uma futura integração) for gerar.
       </p>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar pedido de imagem…" />
       {dados.filaImagens.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum pedido pendente.</p>}
+      {dados.filaImagens.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.filaImagens.map((s) => (
+        {filtrados.map((s) => (
           <li key={s.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className={`text-texto ${s.atendida ? "text-texto-suave line-through" : ""}`}>
@@ -2211,6 +2286,8 @@ function Escola({
 }) {
   const [materia, setMateria] = useState("");
   const [topico, setTopico] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtradas = dados.escola.filter((e) => corresponde(busca, e.materia, e.topico));
 
   function remover(id: string) {
     onSalvar({ ...dados, escola: dados.escola.filter((e) => e.id !== id) });
@@ -2232,9 +2309,11 @@ function Escola({
 
   return (
     <div>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar aula…" />
       {dados.escola.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma aula registrada ainda.</p>}
+      {dados.escola.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {dados.escola.map((e) => (
+        {filtradas.map((e) => (
           <li key={e.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
             <div>
               <p className="font-titulo text-sm text-texto">
