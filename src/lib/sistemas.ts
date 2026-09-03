@@ -75,7 +75,7 @@ export const SISTEMAS: Sistema[] = [
     descricao:
       "TTJRPG inspirado em JRPGs. Livro Básico e os três Atlas.",
     ficha: "/fabula-ultima.html",
-    situacao: "em-construcao",
+    situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: "/fabula-ultima-inimigo.html",
     escudoMestre: "/fabula-ultima-escudo-mestre.html",
@@ -88,7 +88,7 @@ export const SISTEMAS: Sistema[] = [
     descricao:
       "Homebrew original inspirado em Sword Art Online, Overgeared e Shangri-La Frontier — o personagem sabe que está num jogo.",
     ficha: "/sao.html",
-    situacao: "em-construcao",
+    situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: "/sao-inimigo.html",
     escudoMestre: "/sao-escudo-mestre.html",
@@ -114,7 +114,7 @@ export const SISTEMAS: Sistema[] = [
     descricao:
       "Homebrew do Zé sobre uma escola de heróis — atributos por Grau, Ano e Nível como progressões separadas, dezesseis Áreas de Estudo.",
     ficha: "/thryliki-chelona.html",
-    situacao: "em-construcao",
+    situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: "/thryliki-chelona-inimigo.html",
     escudoMestre: "/thryliki-chelona-escudo-mestre.html",

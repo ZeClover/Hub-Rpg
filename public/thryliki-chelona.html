@@ -91,6 +91,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
   <span class="marca">Thrylikí Chelóna</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
   <a href="/thryliki-chelona-grimorio.html" target="_blank" style="color:var(--ambar);text-decoration:none;font-size:13px">📖 Grimório</a>
+  <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
     <input type="checkbox" id="chkCompartilhar" style="width:auto">
     Compartilhar (link de leitura)
@@ -2891,6 +2892,11 @@ const estado = {
   // depois) — só de exibição, não é salvo na ficha; some ao fechar ou ao
   // trocar de personagem. Mesmo padrão do botão de Level Up do Kaizoku no Sho.
   nivelUpResumo: null,
+  // modoGuiado/passoGuiado: tela alternativa de criação passo a passo, pra
+  // quem tá vendo o sistema pela primeira vez — não é dado do personagem,
+  // só um jeito diferente de mostrar os mesmos campos da ficha normal.
+  modoGuiado: false,
+  passoGuiado: 1,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -3043,12 +3049,14 @@ function render(){
            Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
            perder o que você preencheu.</div>`) : '';
 
-  app.innerHTML = alerta
-    + `<div class="abas">` + ABAS.map(a =>
-        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-      ).join('') + `</div>`
-    + painelDerivados(p)
-    + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
+  app.innerHTML = estado.modoGuiado
+    ? alerta + telaGuiada(p)
+    : alerta
+      + `<div class="abas">` + ABAS.map(a =>
+          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+        ).join('') + `</div>`
+      + painelDerivados(p)
+      + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -3059,6 +3067,11 @@ function render(){
 }
 
 function desenharBarra(){
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.hidden = !atual();
+  btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
+
   if(MODO_HUB){
     document.getElementById('seletor').hidden = true;
     document.getElementById('btNovo').hidden = true;
@@ -3079,32 +3092,146 @@ function desenharBarra(){
     : `<option>— sem personagens —</option>`;
 }
 
+// "❓" com explicação curta no hover/toque — ajuda sem precisar sair da
+// ficha pra ler o Grimório. Usa o atributo nativo `title`, sem JS extra.
+function ajuda(texto){
+  return `<span title="${esc(texto)}" style="cursor:help;color:var(--suave);font-size:11px;border:1px solid var(--borda);border-radius:50%;padding:0 5px;margin-left:4px">?</span>`;
+}
+
 // Painel sempre visível — os números que se consulta o tempo todo na mesa.
 function painelDerivados(p){
   const pv = vidaAtual(p);
   const emRisco = pv <= Math.floor(vidaMaxima(p)/2);
   return `<div class="grade g4" style="margin-bottom:14px">
     <div class="derivado ${emRisco?'risco':''}">
-      <div class="rot">Vida</div>
+      <div class="rot">Vida ${ajuda('Quanto dano você aguenta antes de ficar Debilitado. Some com Recuperação (Respiro/Intervalo/Repouso/Descanso completo).')}</div>
       <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${vidaMaxima(p)}</span></div>
       <div class="obs">35 + Const×5 + piso(Nível/2)</div>
     </div>
     <div class="derivado">
-      <div class="rot">Categoria</div>
+      <div class="rot">Categoria ${ajuda('Sua faixa de poder atual (I a V), calculada pelo Nível dentro do Ciclo de 20. Comparar Categorias entre você e um alvo muda o Impacto de ataques — ver Patamares no Grimório.')}</div>
       <div class="val">${categoria(p)}</div>
       <div class="obs">Ciclo ${ciclo(p)} · posição ${nivelNoCiclo(p)}/20</div>
     </div>
     <div class="derivado">
-      <div class="rot">Deslocamento</div>
+      <div class="rot">Deslocamento ${ajuda('Quantos metros você anda numa ação de movimento em combate.')}</div>
       <div class="val">${deslocamento(p)}</div>
       <div class="obs">Carga Pronta ${cargaPronta(p)}</div>
     </div>
     <div class="derivado">
-      <div class="rot">PE disponível</div>
+      <div class="rot">PE disponível ${ajuda('Pontos de Evolução: a moeda pra comprar Grau de Atributo, Treinamento, Talento e novas Fórmulas/Poderes. Ganha 1 por Nível, acumula se não gastar.')}</div>
       <div class="val">${peDisponivel(p)}</div>
       <div class="obs">${peGanho(p)} ganhos, ${peGastoTotal(p)} gastos</div>
     </div>
   </div>`;
+}
+
+// --- Modo Guiado: criação passo a passo, pra quem tá vendo o sistema pela
+// primeira vez. Reusa os mesmos campos/ids da ficha normal (Caminho Pronto,
+// Origem, Área, blocoAtributos/blocoTreinamentos) — ligarEventos() liga tudo
+// de novo a cada render(), então nenhum binding novo é preciso pra eles.
+function telaGuiada(p){
+  const passo = estado.passoGuiado;
+  const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
+  const area = AREAS.find(a => a.id === p.perfil.areaId);
+  const caminho = CAMINHOS_PRONTOS.find(c => c.id === estado.caminhoSelecionado) || CAMINHOS_PRONTOS[0];
+  const totalPassos = 3;
+  const cabecalho = `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--ambar)':'var(--borda)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">1. Quem é seu personagem?</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        O jeito mais rápido de começar é escolher um <strong>Caminho Pronto</strong> —
+        ele preenche Origem, Atributos e Treinamentos de uma vez, prontos pro
+        1º Ano. Área, Ramo e o resto continuam livres pra escolher depois.
+      </p>
+      ${campo('Nome', 'nome', p.perfil.nome)}
+      <div style="margin-top:14px">
+        <label for="c-caminho">Caminho Pronto</label>
+        <select id="c-caminho">
+          ${CAMINHOS_PRONTOS.map(c => {
+            const a = AREAS.find(x => x.id === c.areaId);
+            return `<option value="${c.id}" ${c.id===caminho.id?'selected':''}>${c.nome} — ${a ? a.nome : ''}</option>`;
+          }).join('')}
+        </select>
+        <p class="mini" style="margin-top:8px">${esc(caminho.pitch)}<br><strong>Primeiro turno:</strong> ${esc(caminho.dica)}</p>
+        <button id="btAplicarCaminho" class="destaque" style="margin-top:8px">Aplicar este Caminho</button>
+      </div>
+      <details style="margin-top:16px">
+        <summary class="mini" style="cursor:pointer">Prefiro escolher Origem e Área manualmente</summary>
+        <div style="margin-top:12px">
+          <label for="c-origem">Origem</label>
+          <select id="c-origem" data-campo-raiz="perfil.origemId">
+            <option value="">— nenhuma —</option>
+            ${ORIGENS.map(o => `<option value="${o.id}" ${o.id===p.perfil.origemId?'selected':''}>${o.nome}</option>`).join('')}
+          </select>
+          ${origem ? `<p class="mini" style="margin-top:8px"><strong>Permissão:</strong> ${origem.permissao}</p>` : ''}
+        </div>
+        <div style="margin-top:12px">
+          <label for="c-area">Área de Estudo</label>
+          <select id="c-area" data-campo-raiz="perfil.areaId">
+            <option value="">— nenhuma —</option>
+            ${AREAS.map(a => `<option value="${a.id}" ${a.id===p.perfil.areaId?'selected':''}>${a.nome}</option>`).join('')}
+          </select>
+          ${area ? `<p class="mini" style="margin-top:8px">${area.painel}</p>` : ''}
+        </div>
+      </details>
+    </div>
+    <div class="linha" style="justify-content:flex-end">
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">2. Atributos e Perícias</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Se você aplicou um Caminho Pronto, isso já veio preenchido — dá pra
+        ajustar aqui. Teste = 1d20 + Grau do Atributo + Treinamento +
+        situação. ${ajuda('Grau vai de 0 a 5; Treinamento soma +0/+5/+10/+15 conforme Nada/Treinado/Perito/Expert.')}
+      </p>
+      <div class="grade g5">${blocoAtributos(p)}</div>
+    </div>
+    <div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">Treinamentos</h3>
+      ${blocoTreinamentos(p)}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 3: resumo + próximos passos
+  return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial pro 1º Ano.
+        O resto (Ramo a partir do 2º Ano, Fórmulas/Poderes, Inventário) você
+        preenche aos poucos, jogando.
+      </p>
+    </div>
+    ${painelDerivados(p)}
+    <div class="cartao">
+      <p class="mini"><strong>Origem:</strong> ${origem ? origem.nome : '(nenhuma)'}</p>
+      <p class="mini"><strong>Área de Estudo:</strong> ${area ? area.nome : '(nenhuma)'}</p>
+      ${linkGrim('aprender', 'Rever "Como aprender o sistema" no Grimório')}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
+    </div>`;
 }
 
 function campo(rotulo, chave, valor, tipo){
@@ -3326,6 +3453,44 @@ function painelTecnicasRamo(ramo){
     </div>`;
 }
 
+// Extraído de abaAtributos pra dar pra reusar no Modo Guiado (telaGuiada)
+// sem duplicar os selects/custos — uma única fonte de verdade pros Atributos.
+function blocoAtributos(p){
+  return ATRIBUTOS.map(a => {
+    const custo = custoProximoGrau(grauAtributo(p,a.id));
+    const pode = podeComprarGrau(p, a.id);
+    return `<div>
+    <label for="c-atr-${a.id}">${a.nome}</label>
+    <select id="c-atr-${a.id}" data-atributo="${a.id}">
+      ${GRAUS_ATRIBUTO.map(g => `<option value="${g}" ${g===grauAtributo(p,a.id)?'selected':''}>${g}</option>`).join('')}
+    </select>
+    <p class="mini" style="margin-top:6px">${LEITURA_GRAU[grauAtributo(p,a.id)]}</p>
+    ${custo ? `<button data-comprar-grau="${a.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>+1 Grau (${custo} PE)</button>` : ''}
+  </div>`;
+  }).join('');
+}
+
+// Mesma ideia: extraído pra reusar no Modo Guiado.
+function blocoTreinamentos(p){
+  return ATRIBUTOS.map(atr => `
+    <p class="mini" style="margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em">${atr.nome}</p>
+    <div class="grade g3">
+      ${PERICIAS.filter(per => per.atributo === atr.id).map(per => {
+        const proximo = proximoTreinamento(p.treinamentos[per.id] || 'nada');
+        const custo = proximo ? CUSTO_TREINAMENTO_DEGRAU[proximo.id] : null;
+        const pode = podeComprarTreinamento(p, per.id);
+        return `<div>
+        <label for="c-per-${per.id}">${per.nome}</label>
+        <select id="c-per-${per.id}" data-treinamento="${per.id}">
+          ${TREINAMENTOS.map(t => `<option value="${t.id}" ${(p.treinamentos[per.id]||'nada')===t.id?'selected':''}>${t.nome} (+${t.bonus})</option>`).join('')}
+        </select>
+        ${per.especialidade ? `<input data-especialidade="${per.id}" style="margin-top:6px" placeholder="especialidade" value="${esc(p.especialidades[per.id]||'')}">` : ''}
+        ${custo ? `<button data-comprar-treinamento="${per.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>${proximo.nome} (${custo} PE)</button>` : ''}
+      </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
 function abaAtributos(p){
   return `<div class="cartao">
     <h2 style="font-size:18px">Atributos</h2>
@@ -3335,20 +3500,7 @@ function abaAtributos(p){
       3,3,2,1,1). Grau nunca passa de 5 na progressão comum.
     </p>
     ${linkGrim('atributos', 'Ver Atributos, Perícias e a leitura de cada Grau')}
-    <div class="grade g5">
-      ${ATRIBUTOS.map(a => {
-        const custo = custoProximoGrau(grauAtributo(p,a.id));
-        const pode = podeComprarGrau(p, a.id);
-        return `<div>
-        <label for="c-atr-${a.id}">${a.nome}</label>
-        <select id="c-atr-${a.id}" data-atributo="${a.id}">
-          ${GRAUS_ATRIBUTO.map(g => `<option value="${g}" ${g===grauAtributo(p,a.id)?'selected':''}>${g}</option>`).join('')}
-        </select>
-        <p class="mini" style="margin-top:6px">${LEITURA_GRAU[grauAtributo(p,a.id)]}</p>
-        ${custo ? `<button data-comprar-grau="${a.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>+1 Grau (${custo} PE)</button>` : ''}
-      </div>`;
-      }).join('')}
-    </div>
+    <div class="grade g5">${blocoAtributos(p)}</div>
   </div>
 
   <div class="cartao">
@@ -3360,23 +3512,7 @@ function abaAtributos(p){
       (Treinado: I, Perito: II, Expert: III).
     </p>
     ${linkGrim('teste', 'Ver o Teste, dificuldade e graus de resultado')}
-    ${ATRIBUTOS.map(atr => `
-      <p class="mini" style="margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em">${atr.nome}</p>
-      <div class="grade g3">
-        ${PERICIAS.filter(per => per.atributo === atr.id).map(per => {
-          const proximo = proximoTreinamento(p.treinamentos[per.id] || 'nada');
-          const custo = proximo ? CUSTO_TREINAMENTO_DEGRAU[proximo.id] : null;
-          const pode = podeComprarTreinamento(p, per.id);
-          return `<div>
-          <label for="c-per-${per.id}">${per.nome}</label>
-          <select id="c-per-${per.id}" data-treinamento="${per.id}">
-            ${TREINAMENTOS.map(t => `<option value="${t.id}" ${(p.treinamentos[per.id]||'nada')===t.id?'selected':''}>${t.nome} (+${t.bonus})</option>`).join('')}
-          </select>
-          ${per.especialidade ? `<input data-especialidade="${per.id}" style="margin-top:6px" placeholder="especialidade" value="${esc(p.especialidades[per.id]||'')}">` : ''}
-          ${custo ? `<button data-comprar-treinamento="${per.id}" style="width:100%;margin-top:6px;font-size:12px;padding:4px 8px" ${pode?'':'disabled'}>${proximo.nome} (${custo} PE)</button>` : ''}
-        </div>`;
-        }).join('')}
-      </div>`).join('')}
+    ${blocoTreinamentos(p)}
   </div>`;
 }
 
@@ -4765,6 +4901,18 @@ function ligarEventos(){
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
 
+  // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
+  const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
+  if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
+  const btGuiadoAnterior = app.querySelector('#btGuiadoAnterior');
+  if(btGuiadoAnterior) btGuiadoAnterior.onclick = () => { estado.passoGuiado -= 1; render(); };
+  const btGuiadoConcluir = app.querySelector('#btGuiadoConcluir');
+  if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
+    estado.modoGuiado = false;
+    estado.aba = 'status';
+    render();
+  };
+
   app.querySelectorAll('[data-perfil]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => {
       if(el.dataset.campo) p[el.dataset.campo] = el.value;
@@ -5556,6 +5704,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.nivelUpResumo = null;
+  estado.modoGuiado = false;
   render();
 };
 
@@ -5565,7 +5714,17 @@ document.getElementById('btNovo').onclick = () => {
   estado.atualId = p.id;
   estado.aba = 'status';
   estado.nivelUpResumo = null;
+  // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
+  // com um clique em "Ver ficha completa" (barra do topo).
+  estado.modoGuiado = true;
+  estado.passoGuiado = 1;
   salvar(); render();
+};
+
+document.getElementById('btModoGuiado').onclick = () => {
+  estado.modoGuiado = !estado.modoGuiado;
+  estado.passoGuiado = 1;
+  render();
 };
 
 document.getElementById('btExcluir').onclick = () => {
@@ -5574,6 +5733,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.nivelUpResumo = null;
+  estado.modoGuiado = false;
   salvar(); render();
 };
 
@@ -5607,6 +5767,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.nivelUpResumo = null;
+      estado.modoGuiado = false;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

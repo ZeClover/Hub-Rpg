@@ -1112,6 +1112,22 @@ passando.
       (âncoras do Grimório íntegras, botão habilita só com classe
       escolhida, resumo com deltas corretos, trava em Nível 10); `tsc`,
       lint e os 208 testes automáticos continuam limpos
+- [x] **Thrylikí Chelóna — Modo Guiado, tooltips e trilha de aprendizado**
+      (03/09/2026) — decisão #62. Pedido do Zé pra facilitar o
+      aprendizado/uso sem simplificar a mecânica. Modo Guiado: criação em
+      3 passos (Nome+Caminho Pronto → Atributos/Treinamentos → resumo),
+      todo personagem novo entra nele direto, botão na barra alterna a
+      qualquer momento. Tooltips "?" nos 4 números sempre visíveis do
+      topo. Trilha de aprendizado nova no Grimório (5 Lições em ordem +
+      convite pro Modo Guiado), separada do Sumário de referência.
+      Testado com Playwright (fluxo completo do Modo Guiado, Caminho
+      preenche Atributos, resumo final, volta pra ficha completa com
+      dado persistido; trilha do Grimório sem âncora quebrada); `tsc`,
+      lint e os 208 testes automáticos continuam limpos
+- [x] **Fabula Ultima, Sistema SAO e Thrylikí Chelóna marcados como
+      prontos** (03/09/2026) — decisão #63. Badge "Pronta" em vez de "Em
+      construção" na página de Sistemas — só rótulo, junto do Kaizoku no
+      Sho que já estava assim. Campanha Livre continua "Em construção"
 - [ ] Grimório dos outros 3 sistemas (SAO, Kaizoku no Sho, Campanha
       Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion

@@ -2285,6 +2285,64 @@ aba, some ao "Fechar", sobe até Nível 10 sem passar do teto e avisa
 "Classe dominada" ao chegar lá. `tsc --noEmit`, `npm run lint` e os 208
 testes automáticos continuam limpos (mudança é só HTML/JS estático).
 
+## 62. Thrylikí Chelóna — Modo Guiado, tooltips e trilha de aprendizado (03/09/2026)
+
+Pedido do Zé: "tem como deixar mais fácil o sistema de Thrylikí Chelóna,
+gostei de ser difícil, mas torne mais fácil" — ou seja, não simplificar a
+*mecânica* (ele gosta da profundidade), e sim reduzir o atrito de
+aprender e usar. Perguntei o que pesava mais e ele escolheu três frentes:
+ficha mais guiada, mais ajuda dentro da ficha, e Grimório mais didático.
+
+**Modo Guiado** (`public/thryliki-chelona.html`): tela alternativa de
+criação em 3 passos — (1) Nome + Caminho Pronto (ou Origem/Área manuais
+num `<details>` escondido por padrão), (2) Atributos e Treinamentos
+pré-preenchidos pelo Caminho, revisáveis, (3) resumo (painelDerivados) +
+"Concluir — ver ficha completa". Todo personagem **novo** entra direto
+nela; um botão na barra do topo (`🧭 Modo Guiado` / `📋 Ver ficha
+completa`) alterna a qualquer momento, pra quem já conhece o sistema
+pular direto pra ficha inteira. `telaGuiada(p)` reusa os mesmos campos
+com os mesmos `id`/`data-*` da ficha normal (`blocoAtributos`/
+`blocoTreinamentos`, extraídos de `abaAtributos` pra virar uma única
+fonte de verdade) — `ligarEventos()` liga tudo de novo a cada `render()`,
+então nenhum binding duplicado foi necessário. `estado.modoGuiado` é só
+de tela (não é salvo no personagem) e é zerado ao trocar/excluir/
+importar ficha, pra nunca vazar de um personagem pro outro.
+
+**Mais ajuda dentro da ficha**: função `ajuda(texto)` — um "?" com
+`title` nativo do navegador, sem JS extra — nos quatro números sempre
+visíveis do topo (Vida, Categoria, Deslocamento, PE disponível),
+explicando em uma frase o que cada um significa e pra que serve.
+
+**Grimório mais didático**: bloco novo "🧭 Primeira vez aqui? Siga esta
+trilha" logo abaixo do cabeçalho do Grimório, antes do Sumário de
+referência — 5 Lições em ordem (conceito → como aprender → atributos e
+Teste → escolher uma Área → progressão) mais um passo final convidando a
+abrir a ficha e clicar no Modo Guiado novo, fechando o ciclo entre os
+dois documentos. Reusa o componente visual `.etapas`/`.etapa` que já
+existia no Grimório (nenhum CSS novo).
+
+Testado com Playwright: personagem novo entra direto no Passo 1 do Modo
+Guiado; aplicar um Caminho Pronto no Passo 1 preenche os Atributos
+visíveis no Passo 2; Voltar/Próximo navegam corretamente; Passo 3 mostra
+o resumo; Concluir volta pra ficha completa com o nome preenchido
+persistido; o botão da barra alterna label e volta a funcionar depois;
+tooltip de PE presente. No Grimório: a trilha aparece com pelo menos 6
+lições, nenhuma âncora quebrada, e menciona o Modo Guiado. `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos
+(mudança é só HTML/CSS/JS estático).
+
+## 63. Fabula Ultima, Sistema SAO e Thrylikí Chelóna marcados como prontos (03/09/2026)
+
+Pedido do Zé: marcar os três como "Pronta" na página de Sistemas do Hub
+(`src/lib/sistemas.ts`, campo `situacao`), junto com o Kaizoku no Sho que
+já estava. Só a Campanha Livre continua "Em construção". É uma mudança
+só de rótulo/selo visual (`ROTULO_SITUACAO`, badge em `/fichas` e na
+Home) — não altera nenhuma lógica: nenhum outro código do Hub decide
+comportamento a partir de `situacao`, só estilo do badge.
+
+Testado com `tsc --noEmit`, `npm run lint` e os 208 testes automáticos —
+sem impacto (mudança é três valores de enum num arquivo de dados).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
