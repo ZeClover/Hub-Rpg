@@ -87,6 +87,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
   <span class="marca">Fabula Ultima</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
   <a href="/fabula-ultima-grimorio.html" target="_blank" style="color:var(--ambar);text-decoration:none;font-size:13px">📖 Grimório</a>
+  <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
     <input type="checkbox" id="chkCompartilhar" style="width:auto">
     Compartilhar (link de leitura)
@@ -1850,6 +1851,10 @@ const estado = {
   // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
   // ou ao trocar de personagem.
   nivelUpResumo: null,
+  // modoGuiado/passoGuiado: tela alternativa de criação passo a passo — não
+  // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
+  modoGuiado: false,
+  passoGuiado: 1,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1954,12 +1959,14 @@ function render(){
            Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
            perder o que você preencheu.</div>`) : '';
 
-  app.innerHTML = alerta
-    + `<div class="abas">` + ABAS.map(a =>
-        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-      ).join('') + `</div>`
-    + painelDerivados(p)
-    + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, inventario:abaInventario, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
+  app.innerHTML = estado.modoGuiado
+    ? alerta + telaGuiada(p)
+    : alerta
+      + `<div class="abas">` + ABAS.map(a =>
+          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+        ).join('') + `</div>`
+      + painelDerivados(p)
+      + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, inventario:abaInventario, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
   ligarEventos();
 
@@ -1972,6 +1979,11 @@ function render(){
 }
 
 function desenharBarra(){
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.hidden = !atual();
+  btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
+
   // No Hub, /fichas já é a lista de personagens (decisão #42) — o seletor,
   // o "+ Novo" e o "Excluir" desta barra são só do modo local (arquivo
   // avulso, sem conta). "← Fichas" some no modo local pelo mesmo motivo.
@@ -2036,6 +2048,78 @@ function campo(rotulo, chave, valor, tipo){
     <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
 }
 
+// --- Modo Guiado: criação passo a passo. Reusa os mesmos campos/ids da
+// ficha normal (campo/blocoAtributosFU/blocoClassesFU) — ligarEventos() liga
+// tudo de novo a cada render(), então nenhum binding novo é preciso pra eles.
+function telaGuiada(p){
+  const passo = estado.passoGuiado;
+  const totalPassos = 3;
+  const cabecalho = `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--ambar)':'var(--borda)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">1. Quem é seu personagem?</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        O lado narrativo — Identidade, Tema e Origem descrevem quem o
+        personagem é, fora dos números.
+      </p>
+      <div class="grade g2">
+        ${campo('Nome','nome',p.perfil.nome)}
+        ${campo('Identidade','identidade',p.perfil.identidade)}
+        ${campo('Tema','tema',p.perfil.tema)}
+        ${campo('Origem','origem',p.perfil.origem)}
+      </div>
+    </div>
+    <div class="linha" style="justify-content:flex-end">
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">2. Atributos e Classes</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Escolha um Perfil de distribuição pros quatro Atributos, e distribua
+        <strong>5 níveis</strong> entre <strong>2 ou 3 classes</strong> — o
+        essencial pra começar a jogar.
+      </p>
+      ${blocoAtributosFU(p)}
+    </div>
+    <div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">Classes</h3>
+      ${blocoClassesFU(p)}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 3: resumo + próximos passos
+  return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Poderes,
+        Equipamento e o resto você preenche aos poucos, jogando.
+      </p>
+    </div>
+    ${painelDerivados(p)}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
+    </div>`;
+}
+
 function abaPerfil(p){
   return `<div class="cartao">
     <div class="grade g2">
@@ -2079,22 +2163,13 @@ function painelResumoNivel(resumo){
   </div>`;
 }
 
-function abaAtributos(p){
+// Extraído de abaAtributos pra dar pra reusar no Modo Guiado (telaGuiada).
+function blocoAtributosFU(p){
   const perfil = PERFIS.find(x => x.id === p.perfilAtributos);
   const escolhidos = ATRIBUTOS.map(a => p.atributos[a.id]).sort((a,b) => b-a);
   const esperados = perfil ? [...perfil.dados].sort((a,b) => b-a) : null;
   const perfilBate = esperados && escolhidos.every((v,i) => v === esperados[i]);
-
-  const total = nivelTotal(p);
-  const usadas = p.classes.filter(c => c.classeId).length;
-
-  return `<div class="cartao">
-    <h2 style="font-size:18px">Atributos</h2>
-    <p class="mini" style="margin:6px 0 16px">
-      O <strong>dado básico</strong> é o que você escolhe. O <strong>dado atual</strong>
-      já desconta as condições ativas, e é ele que vale para Defesa.
-    </p>
-
+  return `
     <div style="max-width:320px;margin-bottom:16px">
       <label for="c-perfilatr">Perfil de distribuição</label>
       <select id="c-perfilatr">
@@ -2123,15 +2198,14 @@ function abaAtributos(p){
       : `<div class="aviso">Os dados escolhidos não batem com o perfil
          <strong>${perfil ? perfil.nome : '—'}</strong>
          (${perfil ? perfil.dados.map(d=>'d'+d).join(', ') : ''}).
-         Troque o perfil ou ajuste os dados.</div>`}
-  </div>
+         Troque o perfil ou ajuste os dados.</div>`}`;
+}
 
-  <div class="cartao">
-    <h2 style="font-size:18px">Classes</h2>
-    <p class="mini" style="margin:6px 0 16px">
-      Na criação são <strong>duas ou três classes</strong> e <strong>cinco níveis</strong>
-      distribuídos entre elas.
-    </p>
+// Extraído de abaAtributos pra dar pra reusar no Modo Guiado (telaGuiada).
+function blocoClassesFU(p){
+  const total = nivelTotal(p);
+  const usadas = p.classes.filter(c => c.classeId).length;
+  return `
     ${p.classes.map((c,i) => `
       <div class="classe-linha">
         <div>
@@ -2156,7 +2230,26 @@ function abaAtributos(p){
          ${usadas===1?'classe':'classes'}. Um personagem novo começa com
          <strong>${NIVEL_INICIAL} níveis</strong> em <strong>2 ou 3 classes</strong>.
          Se este é um personagem avançado, pode ignorar.</div>`}
-    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}
+    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}`;
+}
+
+function abaAtributos(p){
+  return `<div class="cartao">
+    <h2 style="font-size:18px">Atributos</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      O <strong>dado básico</strong> é o que você escolhe. O <strong>dado atual</strong>
+      já desconta as condições ativas, e é ele que vale para Defesa.
+    </p>
+    ${blocoAtributosFU(p)}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Classes</h2>
+    <p class="mini" style="margin:6px 0 16px">
+      Na criação são <strong>duas ou três classes</strong> e <strong>cinco níveis</strong>
+      distribuídos entre elas.
+    </p>
+    ${blocoClassesFU(p)}
   </div>
 
   <div class="cartao">
@@ -3014,6 +3107,18 @@ function ligarEventos(){
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
 
+  // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
+  const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
+  if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
+  const btGuiadoAnterior = app.querySelector('#btGuiadoAnterior');
+  if(btGuiadoAnterior) btGuiadoAnterior.onclick = () => { estado.passoGuiado -= 1; render(); };
+  const btGuiadoConcluir = app.querySelector('#btGuiadoConcluir');
+  if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
+    estado.modoGuiado = false;
+    estado.aba = 'perfil';
+    render();
+  };
+
   app.querySelectorAll('[data-perfil]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => p.perfil[el.dataset.perfil] = el.value, el));
 
@@ -3339,6 +3444,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.nivelUpResumo = null;
+  estado.modoGuiado = false;
   render();
 };
 
@@ -3348,7 +3454,17 @@ document.getElementById('btNovo').onclick = () => {
   estado.atualId = p.id;
   estado.aba = 'perfil';
   estado.nivelUpResumo = null;
+  // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
+  // com um clique em "Ver ficha completa" (barra do topo).
+  estado.modoGuiado = true;
+  estado.passoGuiado = 1;
   salvar(); render();
+};
+
+document.getElementById('btModoGuiado').onclick = () => {
+  estado.modoGuiado = !estado.modoGuiado;
+  estado.passoGuiado = 1;
+  render();
 };
 
 document.getElementById('btExcluir').onclick = () => {
@@ -3357,6 +3473,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.nivelUpResumo = null;
+  estado.modoGuiado = false;
   salvar(); render();
 };
 
@@ -3393,6 +3510,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.nivelUpResumo = null;
+      estado.modoGuiado = false;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

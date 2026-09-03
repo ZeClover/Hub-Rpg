@@ -253,6 +253,7 @@
       <p class="hero-sub">Fase 1 — fundação, atributos, combate, perícias, recursos, danos e peculiaridades. Poderes, Inventário, Companheiro e Kugutsu chegam nas próximas fases.</p>
     </div>
     <a href="/kaizoku-no-sho-grimorio.html" target="_blank" style="font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--brass-bright); text-decoration:none; border:1px solid var(--line-strong); border-radius:var(--radius); padding:8px 14px;">📖 Grimório</a>
+    <button type="button" id="btnModoGuiado" class="btn" style="align-self:flex-end">🧭 Modo Guiado</button>
   </header>
 
   <div class="roster-bar" id="rosterBar"></div>
@@ -3831,6 +3832,10 @@ const state = {
   // Resumo transitório do último Level Up — só de exibição, não é salvo na
   // ficha (some ao trocar de aba ou ao fechar).
   levelUpResumo: null,
+  // modoGuiado/passoGuiado: tela alternativa de criação passo a passo — não
+  // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
+  modoGuiado: false,
+  passoGuiado: 1,
 };
 
 if(!MODO_HUB && state.roster.length && !state.personagemId){
@@ -4718,7 +4723,18 @@ function renderRosterBarHub(){
   });
 }
 
+// Atualiza o botão de Modo Guiado no cabeçalho estático — chamado de dentro
+// de renderRosterBar() (rodada normal e Hub) porque ele roda em todo render.
+function atualizarBotaoModoGuiado(){
+  const btn = document.getElementById('btnModoGuiado');
+  if(!btn) return;
+  btn.hidden = !personagemAtual();
+  btn.textContent = state.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btn.className = state.modoGuiado ? 'btn primary' : 'btn';
+}
+
 function renderRosterBar(){
+  atualizarBotaoModoGuiado();
   if(MODO_HUB){ renderRosterBarHub(); return; }
 
   const el = document.getElementById('rosterBar');
@@ -4744,6 +4760,7 @@ function renderRosterBar(){
   document.getElementById('selPersonagem').addEventListener('change', e=>{
     state.personagemId = e.target.value || null;
     state.confirmandoApagar = false;
+    state.modoGuiado = false;
     renderAll();
   });
   document.getElementById('btnNovo').addEventListener('click', ()=>{
@@ -4754,6 +4771,10 @@ function renderRosterBar(){
     state.roster.push(novo);
     state.personagemId = novo.id;
     state.tab = 'perfil';
+    // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
+    // com um clique em "Ver ficha completa" (botão no cabeçalho).
+    state.modoGuiado = true;
+    state.passoGuiado = 1;
     salvarRoster(state.roster);
     renderAll();
   });
@@ -4779,6 +4800,7 @@ function renderRosterBar(){
     state.roster = state.roster.filter(c=>c.id!==p.id);
     state.personagemId = state.roster.length ? state.roster[0].id : null;
     state.confirmandoApagar = false;
+    state.modoGuiado = false;
     salvarRoster(state.roster);
     renderAll();
   });
@@ -4810,6 +4832,7 @@ function renderRosterBar(){
         obj.atualizadoEm = Date.now();
         state.roster.push(obj);
         state.personagemId = obj.id;
+        state.modoGuiado = false;
         salvarRoster(state.roster);
         renderAll();
       }catch(err){
@@ -4863,6 +4886,101 @@ const TABS = [
   {id:'kugutsu', nome:'Kugutsu', stub:true},
 ];
 
+// --- Modo Guiado: criação passo a passo. Passo 2 reusa panelAtributos/
+// bindAtributos (já são auto-contidos, sem depender de outro campo da
+// tela) e o Passo 3 reusa renderFichaCard (já sabe se desenhar sozinha
+// num elemento #fichaCard) — só o Passo 1 tem campos/bind próprios, porque
+// panelPerfil/bindPerfil inteiros são grandes demais pra um primeiro passo.
+function telaGuiada(p){
+  const passo = state.passoGuiado;
+  const totalPassos = 3;
+  const cabecalho = `
+    <div class="panel" style="text-align:center">
+      <p class="panel-note" style="text-transform:uppercase;letter-spacing:.1em;margin:0">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--brass)':'var(--line-strong)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="panel">
+      <h2>1. Quem é seu personagem?</h2>
+      <p class="panel-note">Nome e Espécie bastam pra começar — Profissão, NC e o resto ficam na aba Perfil, quando você sair do Modo Guiado.</p>
+      <div class="field-row">
+        <div class="field"><label>Nome</label><input type="text" id="fg_nome" value="${escapeHtml(p.perfil.nome)}"></div>
+        <div class="field">
+          <label>Espécie</label>
+          <select id="fg_especie">
+            ${ESPECIES_TODAS.map(e=>`<option ${p.perfil.especie===e.nome?'selected':''}>${e.nome}</option>`).join('')}
+            <option ${p.perfil.especie==='Outra'?'selected':''}>Outra</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="field-row" style="justify-content:flex-end">
+      <button type="button" class="btn primary" id="btnGuiadoProximo">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + panelAtributos(p) + `
+    <div class="field-row" style="justify-content:space-between">
+      <button type="button" class="btn" id="btnGuiadoAnterior">← Voltar</button>
+      <button type="button" class="btn primary" id="btnGuiadoProximo">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 3: resumo + próximos passos
+  return cabecalho + `
+    <div class="panel">
+      <h2>3. Pronto pra jogar!</h2>
+      <p class="panel-note">${escapeHtml(p.perfil.nome || 'Seu personagem')} já tem o essencial. Combate, Perícias, Poderes e o resto você preenche aos poucos, jogando.</p>
+    </div>
+    <aside class="ficha" id="fichaCard" style="position:static; margin-bottom:14px"></aside>
+    <div class="field-row" style="justify-content:space-between">
+      <button type="button" class="btn" id="btnGuiadoAnterior">← Voltar</button>
+      <button type="button" class="btn primary" id="btnGuiadoConcluir">Concluir — ver ficha completa</button>
+    </div>`;
+}
+
+function bindGuiado(p){
+  const passo = state.passoGuiado;
+  if(passo === 1){
+    document.getElementById('fg_nome').addEventListener('input', e=>{
+      p.perfil.nome = e.target.value; onFieldChange();
+    });
+    document.getElementById('fg_especie').addEventListener('change', e=>{
+      p.perfil.especie = e.target.value; onFieldChange();
+    });
+  }
+  // Não reusa bindAtributos(p): ela chama renderPanel(), que depende de
+  // #panelHost (só existe na tela normal) e do state.tab (que continuaria
+  // 'perfil' aqui) — no Modo Guiado o próprio botão precisa re-render via
+  // renderAll(), que sabe lidar com state.modoGuiado corretamente.
+  if(passo === 2) document.querySelectorAll('[data-attr]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.attr, delta = Number(btn.dataset.delta);
+      p.atributos[id] = Math.max(0, (p.atributos[id]||0) + delta);
+      onFieldChange();
+      renderAll();
+    });
+  });
+  if(passo === 3) renderFichaCard();
+
+  const btnProximo = document.getElementById('btnGuiadoProximo');
+  if(btnProximo) btnProximo.addEventListener('click', ()=>{ state.passoGuiado += 1; renderAll(); });
+  const btnAnterior = document.getElementById('btnGuiadoAnterior');
+  if(btnAnterior) btnAnterior.addEventListener('click', ()=>{ state.passoGuiado -= 1; renderAll(); });
+  const btnConcluir = document.getElementById('btnGuiadoConcluir');
+  if(btnConcluir) btnConcluir.addEventListener('click', ()=>{
+    state.modoGuiado = false;
+    state.tab = 'perfil';
+    renderAll();
+  });
+}
+
 function renderAll(){
   renderRosterBar();
   const root = document.getElementById('appRoot');
@@ -4885,6 +5003,19 @@ function renderAll(){
   }
 
   const somenteLeitura = MODO_HUB && !state.ehDono;
+
+  if(state.modoGuiado){
+    root.innerHTML = `
+      ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
+      ${telaGuiada(p)}
+    `;
+    bindGuiado(p);
+    if(somenteLeitura){
+      root.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
+    }
+    return;
+  }
+
   root.innerHTML = `
     ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
     ${somenteLeitura ? `<div class="info-box leitura">Modo leitura — você está vendo a ficha de <strong>${escapeHtml(p.perfil.nome)}</strong>. Só quem é dono edita.</div>` : ''}
@@ -6724,6 +6855,12 @@ function renderFichaCard(){
     </div>
   `;
 }
+
+document.getElementById('btnModoGuiado').addEventListener('click', ()=>{
+  state.modoGuiado = !state.modoGuiado;
+  state.passoGuiado = 1;
+  renderAll();
+});
 
 /* =========================================================================
    INIT

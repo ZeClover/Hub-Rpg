@@ -92,6 +92,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 <div class="barra">
   <span class="marca">Sistema SAO</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
     <input type="checkbox" id="chkCompartilhar" style="width:auto">
     Compartilhar (link de leitura)
@@ -777,6 +778,10 @@ const estado = {
   // que nem carregou direito.
   ehDono: false,
   compartilhado: false,
+  // modoGuiado/passoGuiado: tela alternativa de criação passo a passo — não
+  // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
+  modoGuiado: false,
+  passoGuiado: 1,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -898,12 +903,14 @@ function render(){
            Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
            perder o que você preencheu.</div>`) : '';
 
-  app.innerHTML = alerta
-    + `<div class="abas">` + ABAS.map(a =>
-        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-      ).join('') + `</div>`
-    + painelDerivados(p)
-    + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
+  app.innerHTML = estado.modoGuiado
+    ? alerta + telaGuiada(p)
+    : alerta
+      + `<div class="abas">` + ABAS.map(a =>
+          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+        ).join('') + `</div>`
+      + painelDerivados(p)
+      + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
   ligarEventos();
 
@@ -916,6 +923,11 @@ function render(){
 }
 
 function desenharBarra(){
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.hidden = !atual();
+  btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
+
   // No Hub, /fichas já é a lista de personagens (decisão #42) — o seletor,
   // o "+ Novo" e o "Excluir" desta barra são só do modo local (arquivo
   // avulso, sem conta). "← Fichas" some no modo local pelo mesmo motivo.
@@ -980,6 +992,90 @@ function campo(rotulo, chave, valor, tipo){
     <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
 }
 
+// --- Modo Guiado: criação passo a passo. Reusa os mesmos campos/ids da
+// ficha normal (campo/blocoAtributosSAO/linhaClasse) — ligarEventos() liga
+// tudo de novo a cada render(), então nenhum binding novo é preciso pra eles.
+function telaGuiada(p){
+  const passo = estado.passoGuiado;
+  const totalPassos = 3;
+  const cabecalho = `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--ambar)':'var(--borda)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">1. Quem é seu jogador?</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        Este é o personagem que joga dentro do mundo virtual — nome de
+        verdade e apelido no jogo podem ser bem diferentes.
+      </p>
+      <div class="grade g2">
+        ${campo('Nome de verdade','nome',p.perfil.nome)}
+        ${campo('Apelido no jogo','apelido',p.perfil.apelido)}
+      </div>
+    </div>
+    <div class="cartao">
+      <h2 style="font-size:18px">Perfil de Atributos</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        Escolha um perfil de distribuição — ele já preenche os quatro
+        Atributos com um dado cada; dá pra ajustar no próximo passo.
+      </p>
+      <div style="max-width:320px">
+        <label for="c-perfilatr">Perfil de distribuição</label>
+        <select id="c-perfilatr">
+          ${PERFIS.map(x => `<option value="${x.id}" ${x.id===p.perfilAtributos?'selected':''}>
+            ${x.nome} — ${x.dados.map(d=>'d'+d).join(', ')}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="linha" style="justify-content:flex-end">
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">2. Atributos e primeira Classe</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Os Atributos já vieram do Perfil escolhido — dá pra ajustar aqui.
+        Escolha também sua primeira Classe (dá pra somar mais depois, na
+        aba Classes — multiclasse não tem limite).
+      </p>
+      ${blocoAtributosSAO(p)}
+    </div>
+    <div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">Primeira Classe</h3>
+      ${linhaClasse(p, 0)}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 3: resumo + próximos passos
+  return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Poderes,
+        Equipamento e o resto você preenche aos poucos, jogando.
+      </p>
+    </div>
+    ${painelDerivados(p)}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
+    </div>`;
+}
+
 function abaStatus(p){
   const cursor = CURSORES.find(c => c.id === p.cursor) || CURSORES[0];
   return `<div class="cartao">
@@ -1016,7 +1112,13 @@ function abaStatus(p){
       com a Dificuldade que o mestre define. Os dois dados no mesmo número e 6+:
       sucesso crítico. Os dois em 1: falha crítica.
     </p>
-    <div style="max-width:320px;margin-bottom:16px">
+    ${blocoAtributosSAO(p)}
+  </div>`;
+}
+
+// Extraído de abaStatus pra dar pra reusar no Modo Guiado (telaGuiada).
+function blocoAtributosSAO(p){
+  return `<div style="max-width:320px;margin-bottom:16px">
       <label for="c-perfilatr">Perfil de distribuição</label>
       <select id="c-perfilatr">
         ${PERFIS.map(x => `<option value="${x.id}" ${x.id===p.perfilAtributos?'selected':''}>
@@ -1031,8 +1133,7 @@ function abaStatus(p){
         </select>
         <p class="mini" style="margin-top:6px">${a.sobre}</p>
       </div>`).join('')}
-    </div>
-  </div>`;
+    </div>`;
 }
 
 function abaMundo(p){
@@ -1135,6 +1236,32 @@ function abaMundo(p){
   </div>`;
 }
 
+// Extraído de abaClasses pra dar pra reusar na 1ª classe do Modo Guiado
+// (telaGuiada) sem duplicar o select/nível — uma única fonte de verdade.
+function linhaClasse(p, i){
+  const c = p.classes[i];
+  const classe = CLASSES.find(x => x.id === c.classeId);
+  const categoria = classe && CATEGORIAS_CLASSE.find(x => x.id === classe.categoria);
+  return `<div class="classe-linha">
+    <div>
+      <label for="c-cl-${i}">${i+1}ª classe</label>
+      <select id="c-cl-${i}" data-classe="${i}">
+        <option value="">— nenhuma —</option>
+        ${CATEGORIAS_CLASSE.map(cat => `<optgroup label="${cat.nome}">
+          ${CLASSES.filter(x => x.categoria===cat.id).map(x =>
+            `<option value="${x.id}" ${x.id===c.classeId?'selected':''}>${x.nome}</option>`).join('')}
+        </optgroup>`).join('')}
+      </select>
+      ${categoria ? `<p class="mini" style="margin-top:6px">${categoria.nome} — ${categoria.sobre}</p>` : ''}
+    </div>
+    <div>
+      <label for="c-nv-${i}">Nível</label>
+      <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" value="${c.nivel||0}">
+    </div>
+    <button data-remover-classe="${i}" ${p.classes.length<=1?'disabled':''}>Tirar</button>
+  </div>`;
+}
+
 function abaClasses(p){
   return `<div class="cartao">
     <h2 style="font-size:18px">Classes</h2>
@@ -1144,28 +1271,7 @@ function abaClasses(p){
       XP aqui ainda: fica pro mestre decidir o ritmo). O Nível geral do
       personagem, lá em cima, é a soma de todos.
     </p>
-    ${p.classes.map((c,i) => {
-      const classe = CLASSES.find(x => x.id === c.classeId);
-      const categoria = classe && CATEGORIAS_CLASSE.find(x => x.id === classe.categoria);
-      return `<div class="classe-linha">
-        <div>
-          <label for="c-cl-${i}">${i+1}ª classe</label>
-          <select id="c-cl-${i}" data-classe="${i}">
-            <option value="">— nenhuma —</option>
-            ${CATEGORIAS_CLASSE.map(cat => `<optgroup label="${cat.nome}">
-              ${CLASSES.filter(x => x.categoria===cat.id).map(x =>
-                `<option value="${x.id}" ${x.id===c.classeId?'selected':''}>${x.nome}</option>`).join('')}
-            </optgroup>`).join('')}
-          </select>
-          ${categoria ? `<p class="mini" style="margin-top:6px">${categoria.nome} — ${categoria.sobre}</p>` : ''}
-        </div>
-        <div>
-          <label for="c-nv-${i}">Nível</label>
-          <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" value="${c.nivel||0}">
-        </div>
-        <button data-remover-classe="${i}" ${p.classes.length<=1?'disabled':''}>Tirar</button>
-      </div>`;
-    }).join('')}
+    ${p.classes.map((c,i) => linhaClasse(p, i)).join('')}
     <button id="btAddClasse">+ Outra classe</button>
   </div>`;
 }
@@ -1676,6 +1782,18 @@ function ligarEventos(){
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
 
+  // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
+  const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
+  if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
+  const btGuiadoAnterior = app.querySelector('#btGuiadoAnterior');
+  if(btGuiadoAnterior) btGuiadoAnterior.onclick = () => { estado.passoGuiado -= 1; render(); };
+  const btGuiadoConcluir = app.querySelector('#btGuiadoConcluir');
+  if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
+    estado.modoGuiado = false;
+    estado.aba = 'status';
+    render();
+  };
+
   app.querySelectorAll('[data-perfil]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => p.perfil[el.dataset.perfil] = el.value, el));
 
@@ -2005,7 +2123,9 @@ document.getElementById('chkCompartilhar').onchange = e => {
 };
 
 document.getElementById('seletor').onchange = e => {
-  estado.atualId = e.target.value; render();
+  estado.atualId = e.target.value;
+  estado.modoGuiado = false;
+  render();
 };
 
 document.getElementById('btNovo').onclick = () => {
@@ -2013,7 +2133,17 @@ document.getElementById('btNovo').onclick = () => {
   estado.fichas.push(p);
   estado.atualId = p.id;
   estado.aba = 'status';
+  // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
+  // com um clique em "Ver ficha completa" (barra do topo).
+  estado.modoGuiado = true;
+  estado.passoGuiado = 1;
   salvar(); render();
+};
+
+document.getElementById('btModoGuiado').onclick = () => {
+  estado.modoGuiado = !estado.modoGuiado;
+  estado.passoGuiado = 1;
+  render();
 };
 
 document.getElementById('btExcluir').onclick = () => {
@@ -2021,6 +2151,7 @@ document.getElementById('btExcluir').onclick = () => {
   if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  estado.modoGuiado = false;
   salvar(); render();
 };
 
@@ -2056,6 +2187,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.fichas.push(lido);
         estado.atualId = lido.id;
       }
+      estado.modoGuiado = false;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

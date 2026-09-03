@@ -2389,6 +2389,70 @@ Grimórios anteriores e não indicam bug). `tsc --noEmit`, `npm run lint`
 e os 208 testes automáticos continuam limpos (mudança é só HTML/CSS
 estático + um campo de dados em `sistemas.ts`).
 
+## 65. Modo Guiado em Sistema SAO, Fabula Ultima e Kaizoku no Sho (03/09/2026)
+
+Pedido do Zé: "faz todos os modos guiados" — levar o Modo Guiado criado
+pra Thrylikí Chelóna (decisão #62) pros outros três sistemas com ficha
+completa. Campanha Livre ficou de fora: não tem uma etapa de "criação
+de personagem" (é importada de uma conversa de ChatGPT), então o
+conceito não se aplica.
+
+Mesmo padrão nos três: personagem novo entra direto no Modo Guiado; um
+botão (barra do topo em SAO/Fabula Ultima, cabeçalho estático em
+Kaizoku) alterna a qualquer momento entre "🧭 Modo Guiado" e "📋 Ver
+ficha completa"; o fluxo tem 3 passos (identidade → atributos/classe →
+resumo) reusando os mesmos campos/ids da ficha normal, sem duplicar
+lógica de jogo; e o estado do assistente (`modoGuiado`/`passoGuiado`)
+é só de tela — nunca salvo no personagem, sempre zerado ao trocar/
+excluir/importar ficha.
+
+**Sistema SAO** (`public/sao.html`): Passo 1 — Nome/Apelido + Perfil de
+distribuição de Atributos. Passo 2 — reusa `blocoAtributosSAO` (extraído
+de `abaStatus`) e a 1ª linha de Classe via `linhaClasse` (extraído de
+`abaClasses`). Passo 3 — `painelDerivados`.
+
+**Fabula Ultima** (`public/fabula-ultima.html`): Passo 1 — Identidade/
+Tema/Origem. Passo 2 — reusa `blocoAtributosFU` e `blocoClassesFU`
+(ambos extraídos de `abaAtributos`, incluindo os botões "⭐ +1 Nível" já
+existentes desde a decisão #61). Passo 3 — `painelDerivados`.
+
+**Kaizoku no Sho** (`public/kaizoku-no-sho.html`): arquitetura diferente
+dos outros três (cada painel tem seu próprio par render+bind, chamado
+explicitamente, em vez de um `ligarEventos()` global) — por isso o
+Passo 1 tem campos e bind próprios (`panelPerfil`/`bindPerfil` inteiros
+são grandes demais pra um primeiro passo: têm biografia, mar de
+origem, sexualidade etc.), mas o Passo 2 reusa `panelAtributos` (é
+autocontido) e o Passo 3 reusa `renderFichaCard` (a mesma barra lateral
+sempre visível na ficha normal, chamada aqui num `<aside id="fichaCard">`
+avulso).
+
+Dois bugs pegos e corrigidos durante a validação com Playwright:
+
+1. Reusar `bindAtributos(p)` de Kaizoku no Passo 2 quebrava, porque ela
+   chama `renderPanel()` — uma função que depende de `#panelHost` (só
+   existe na tela normal) e do `state.tab` (que no Modo Guiado continua
+   `'perfil'`, então cairia no painel errado). Troquei por um bind
+   próprio que faz a mesma coisa (+/- no Atributo) mas chama `renderAll()`,
+   que sabe lidar com `state.modoGuiado`.
+2. O `<aside id="fichaCard">` reusado no Passo 3 de Kaizoku tem
+   `position:sticky` no CSS original (pensado pra ficar ao lado do
+   conteúdo, numa grade de duas colunas) — fora dessa grade, ficava
+   sobrepondo o botão "Concluir" (Playwright: "subtree intercepts
+   pointer events"). Corrigido com `position:static` inline nesse
+   contexto avulso.
+
+Também documentado como ideia pro futuro (não implementada agora,
+ver ROADMAP.md): integrar o Modo Guiado ao botão de Level Up, pra
+escolher e aplicar automaticamente as opções de cada novo Nível/NC/
+Grau, em vez de só mostrar o resumo do que mudou.
+
+Testado com Playwright nos três: personagem novo entra direto no
+Passo 1; Atributos/Classe preenchidos no Passo 2 persistem; Passo 3
+mostra o resumo correto; "Concluir" volta pra ficha completa com os
+dados preenchidos ainda lá; o botão de alternar funciona nos dois
+sentidos. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/JS estático das três fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

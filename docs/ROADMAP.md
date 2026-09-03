@@ -1145,12 +1145,23 @@ passando.
       208 testes automáticos continuam limpos
 - [ ] Grimório dos outros 2 sistemas (SAO, Campanha Livre) — uma fatia
       por vez, a pedido do Zé
-- [ ] **Ideia do Zé pra depois:** Modo Guiado em toda ficha do Hub (não
-      só Thrylikí Chelóna), e ligado também ao Level Up — ao subir de
-      Nível/NC, entrar no Modo Guiado pra escolher as opções daquele
-      degrau (Grau, Talento, Poder, etc.) e aplicar automaticamente, em
-      vez de só mostrar o resumo do que mudou e deixar o jogador achar o
-      campo certo sozinho nas abas
+- [x] **Modo Guiado em Sistema SAO, Fabula Ultima e Kaizoku no Sho**
+      (03/09/2026) — decisão #65. Mesmo padrão de 3 passos (identidade
+      → atributos/classe → resumo) já usado em Thrylikí Chelóna
+      (decisão #62), reusando os campos da ficha normal em cada
+      sistema — sem Campanha Livre, que não tem etapa de criação.
+      Personagem novo entra direto nele; botão pra alternar a qualquer
+      momento. Dois bugs de reuso de código corrigidos durante a
+      validação (Kaizoku: `bindAtributos` chamava uma função que
+      dependia da tela normal; `<aside>` reusado com `position:sticky`
+      sobrepunha o botão de Concluir fora da grade original). Testado
+      com Playwright nos três; `tsc`, lint e os 208 testes automáticos
+      continuam limpos
+- [ ] **Ideia do Zé pra depois:** integrar o Modo Guiado ao botão de
+      Level Up — ao subir de Nível/NC, entrar no Modo Guiado pra
+      escolher as opções daquele degrau (Grau, Talento, Poder, etc.) e
+      aplicar automaticamente, em vez de só mostrar o resumo do que
+      mudou e deixar o jogador achar o campo certo sozinho nas abas
 - [ ] Ometion
 
 ---
