@@ -1026,6 +1026,25 @@ passando.
 - [x] Levantamento de peças conscientemente deixadas de fora ao longo
       da sessão está fechado — nenhuma lacuna conhecida entre os
       documentos de design de Thrylikí Chelóna e a ficha
+- [x] **Grimório de Thrylikí Chelóna** (01/09/2026) — decisão #55.
+      Manual do jogador em página própria (`thryliki-chelona-grimorio.html`),
+      linkada da ficha, da ficha de inimigo e do Escudo do Mestre.
+  - 22 seções cobrindo o sistema inteiro: conceito, atributos/perícias,
+    teste, as 26 Origens, as 16 Áreas e os 117 Ramos, combate de cada
+    Área (6 originais + 10 novas), Construtor de Fórmula e Construtor
+    Livre de Poder, Técnicas de Ramo, Interação Social, Inventário,
+    Projetos, PE/Marcos/Ascensões, Doenças, Nível/Portfólio/Recesso,
+    Vida/dano/Recuperação, Chassi/Núcleo/Módulos, Bestiário de Zoologia,
+    Metassímbolo, e uma seção só pro Mestre
+  - Conteúdo levantado das decisões #20–#45 e do código-fonte antes de
+    escrever — nada inventado; listas fechadas (Origens, custo por
+    Área) conferidas direto no código
+  - Fabula Ultima fica de fora desta fatia — o Zé escreve o texto de
+    regras dessa ficha (é sistema comercial, o Hub só codifica mecânica)
+  - Testado com Playwright: sumário sem link quebrado, `<details>`
+    abrindo, sem erro de JS. `tsc` e lint (só HTML estático) sem impacto
+- [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
+      Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion
 
 ---

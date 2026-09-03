@@ -1991,6 +1991,69 @@ Com esta decisão, o HUB_UPDATE v1.0 está completo: as 24 operações
 anteriores mais estas 11 cobrem toda a especificação, com as três
 simplificações acima documentadas em vez de inventadas.
 
+## 55. Grimório de Thrylikí Chelóna (01/09/2026)
+
+Pedido do Zé: "grimórios nas fichas, que explicam explicitamente todo o
+conteúdo do sistema, como ele funciona e como aprender o sistema" — um
+manual do jogador por sistema. Como isso toca as 5 fichas do Hub e uma
+delas (Fabula Ultima) é comercial, a decisão de escopo/formato foi
+tomada em conversa antes de escrever:
+
+- **Por onde começar**: Thrylikí Chelóna primeiro — é homebrew original
+  do Zé, sem a restrição de direito autoral que trava Fabula Ultima.
+- **Fabula Ultima**: fica de fora desta fatia. O Hub só pode codificar
+  mecânica (regra já registrada nesta lista de decisões — nunca copiar
+  texto/descrição do livro, já que o Hub é aberto a qualquer conta
+  Google); pra um grimório de FU que "explica todo o conteúdo", o Zé
+  vai escrever o texto de regras ele mesmo e eu só formato.
+- **Formato**: página HTML nova (`public/thryliki-chelona-grimorio.html`),
+  linkada a partir da ficha, da ficha de inimigo e do Escudo do Mestre
+  (botão "📖 Grimório", abre em nova aba pra não perder o estado da
+  ficha) — não uma seção dentro da própria ficha.
+
+**Conteúdo**: 22 seções cobrindo tudo que o sistema faz — conceito geral
+(Ano ≠ Nível, Áreas como mini-sistemas de combate, Impacto como régua
+universal), Atributos e as 24 Perícias, o Teste (`1d20 + Grau +
+Treinamento`) com graus de resultado e Patamares, as 26 Origens
+completas, as 16 Áreas e a estrutura dos 117 Ramos, o combate específico
+de cada uma das 6 Áreas originais e das 10 novas (recurso, geração,
+limite, recuperação, contrajogo, ações), o Construtor de Fórmula de
+Simbologia Arcana e o Construtor Livre de Poder das outras 15 Áreas
+(com a tabela de custo por Área), Técnicas de Ramo e o Kit de Combate
+do 1º Ano das 6 Áreas originais, Interação Social, Inventário, Projetos
+de criação/melhoria/reparo, a economia de PE/Marcos/Ascensões/
+Categoria, Doenças/Demi-humanos/Místicos, Nível/Portfólio/Recesso,
+Vida/dano/Recuperação, Chassi/Núcleo de Consciência/Módulos, o
+Bestiário de Zoologia, o Metassímbolo do 5º Ano, e uma seção só pro
+Mestre (Ficha de Inimigo, Fases de Chefe, Orçamento de Encontro).
+
+Antes de escrever uma linha, um agente de pesquisa leu as decisões #20
+a #45 inteiras e o código-fonte das três fichas do sistema (ficha de
+jogador, de inimigo, Escudo do Mestre) pra extrair fórmulas exatas,
+listas fechadas e textos já escritos — nada no grimório foi inventado;
+onde uma decisão só resumia algo em prosa, o número exato ou a lista
+completa foi conferido direto no código antes de entrar no grimório
+(ex.: as 26 Origens com o texto integral de cada Permissão, a tabela de
+custo em Mana/Tomos de cada peça de Fórmula, a tabela `PODER_CUSTO_AREA`
+completa das 15 Áreas).
+
+Página estática, mesma paleta visual da ficha (fundo escuro, destaque
+âmbar) — sumário fixo com âncoras pras 22 seções, `<details>` pra listas
+longas (as 26 Origens, o detalhamento de cada uma das 10 Áreas novas, a
+tabela de custo por Área do Construtor Livre) ficarem fechadas por
+padrão sem obrigar rolagem gigante. Sem JavaScript — é conteúdo, não
+ferramenta interativa.
+
+Testado com Playwright: as 22 entradas do sumário apontam pra âncoras
+que existem, os `<details>` abrem ao clicar, sem erro de JS/console.
+`tsc --noEmit` e `npm run lint` continuam limpos (a mudança é só HTML
+estático em `public/`, não toca em código TypeScript).
+
+**Pendência explícita**: os outros 4 sistemas (Fabula Ultima, SAO,
+Kaizoku no Sho, Campanha Livre) ainda não têm grimório — decisão #26
+("uma fatia por vez") se aplica aqui também: cada um vira sua própria
+fatia quando o Zé pedir.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
