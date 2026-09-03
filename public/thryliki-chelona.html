@@ -3399,8 +3399,8 @@ function abaProgressao(p){
         <select id="c-talento-tipo">
           ${CUSTO_TALENTOS.map(t => `<option value="${t.id}" ${t.id===ct.subtipo?'selected':''}>${t.nome} (${t.custo} PE)</option>`).join('')}
         </select></div>
-      <div style="grid-column:span 2"><label for="c-talento-desc">Descrição</label>
-        <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ligado ao motor da Área"></div>
+      <div style="grid-column:span 2"><label for="c-talento-desc">Descrição (ligado ao motor da Área)</label>
+        <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ex: Golpe Fundamental também aplica Exposto no alvo, além do dano normal"></div>
     </div>
     <p class="mini" style="margin-top:6px">${esc(talentoInfo.funcao)}</p>
     <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button>
@@ -3420,8 +3420,8 @@ function abaProgressao(p){
         <select id="c-recurso-tipo">
           ${CUSTO_RECURSOS_ELETIVAS.map(r => `<option value="${r.id}" ${r.id===cr.subtipo?'selected':''}>${r.nome} (${r.custo} PE)</option>`).join('')}
         </select></div>
-      <div style="grid-column:span 2"><label for="c-recurso-desc">Descrição</label>
-        <input id="c-recurso-desc" value="${esc(cr.descricao)}" placeholder="qual recurso, opção ou Área"></div>
+      <div style="grid-column:span 2"><label for="c-recurso-desc">Descrição (qual recurso, opção ou Área)</label>
+        <input id="c-recurso-desc" value="${esc(cr.descricao)}" placeholder="ex: +1 Esforço máximo (Corpo e Cinética, de 5 para 6)"></div>
     </div>
     <p class="mini" style="margin-top:6px">${esc(recursoInfo.limite)}</p>
     ${recursoBloqueado ? `<p class="mini">Exige ${recursoInfo.anoMinimo}º Ano — personagem está no ${p.ano}º.</p>` : ''}
@@ -3449,7 +3449,7 @@ function abaProgressao(p){
             ${MARCO_OPCOES.map(o => `<option value="${o.id}" ${o.id===estado.marcoRascunho.opcao?'selected':''}>${o.nome}</option>`).join('')}
           </select></div>
         <div style="grid-column:span 2"><label for="c-marco-desc">Descrição</label>
-          <input id="c-marco-desc" value="${esc(estado.marcoRascunho.descricao)}"></div>
+          <input id="c-marco-desc" value="${esc(estado.marcoRascunho.descricao)}" placeholder="ex: aprendeu a técnica Rompimento Coordenado do próprio Ramo"></div>
       </div>
       <p class="mini" style="margin-top:6px">${esc((MARCO_OPCOES.find(o=>o.id===estado.marcoRascunho.opcao)||{}).desc || '')}</p>
       <button id="btRegistrarMarco" style="margin-top:8px">+ Registrar Marco</button>
@@ -3476,7 +3476,7 @@ function abaProgressao(p){
             ${ASCENSAO_EIXOS.map(e => `<option value="${e.id}" ${e.id===estado.ascensaoRascunho.eixo?'selected':''} ${e.anoMinimo && p.ano<e.anoMinimo?'disabled':''}>${e.nome}${e.anoMinimo?` (exige ${e.anoMinimo}º Ano)`:''}</option>`).join('')}
           </select></div>
         <div style="grid-column:span 2"><label for="c-ascensao-desc">Descrição</label>
-          <input id="c-ascensao-desc" value="${esc(estado.ascensaoRascunho.descricao)}"></div>
+          <input id="c-ascensao-desc" value="${esc(estado.ascensaoRascunho.descricao)}" placeholder="ex: o alcance da Fórmula dobra — de curto pra médio, permanentemente"></div>
       </div>
       <p class="mini" style="margin-top:6px">${esc((ASCENSAO_EIXOS.find(e=>e.id===estado.ascensaoRascunho.eixo)||{}).desc || '')}</p>
       <button id="btRegistrarAscensao" style="margin-top:8px">+ Registrar Ascensão</button>
@@ -3557,7 +3557,7 @@ function painelPortfolio(p){
     ${completo ? `<p class="mini" style="margin-top:10px">Portfólio completo — pronto pra Prova de Passagem com o Mestre.</p>` : ''}
     <div style="margin-top:12px">
       <label for="c-recuperacao">Recuperação (se a Prova apontar uma lacuna)</label>
-      <input id="c-recuperacao" value="${esc(pe.recuperacao)}" placeholder="tarefa curta que aborda a lacuna observada">
+      <input id="c-recuperacao" value="${esc(pe.recuperacao)}" placeholder="ex: revisar a gramática do Construtor de Fórmula com um tutor">
     </div>
     <button id="btNovoPortfolio" style="margin-top:10px">Novo Ano (limpa o Portfólio)</button>
   </div>`;
@@ -3579,7 +3579,7 @@ function painelRecesso(p){
     </div>
     <div style="margin-top:12px">
       <label for="c-recesso-anotacoes">Anotações</label>
-      <textarea id="c-recesso-anotacoes" rows="3">${esc(recesso.anotacoes)}</textarea>
+      <textarea id="c-recesso-anotacoes" rows="3" placeholder="ex: passou o recesso treinando com o mestre de armas da escola e ajudando na oficina de Robótica">${esc(recesso.anotacoes)}</textarea>
     </div>
     <button id="btNovoRecesso" style="margin-top:10px">Novo Recesso (limpa)</button>
   </div>`;

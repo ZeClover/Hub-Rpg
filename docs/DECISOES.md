@@ -2103,6 +2103,25 @@ sem erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos (inalterados — mudança é HTML estático + um campo opcional
 em `Sistema`) continuam limpos.
 
+## 57. Thrylikí Chelóna — exemplos na aba Progressão (01/09/2026)
+
+Continuação direta do pedido de exemplos da decisão #56, agora cobrindo
+a aba inteira de Progressão: os 6 campos de texto livre que ainda não
+tinham `placeholder` de exemplo concreto ganharam um — Talento (Descrição,
+antes só repetia a regra "ligado ao motor da Área", agora com um exemplo
+de verdade), Recursos e Eletivas (Descrição), Marco (Descrição), Ascensão
+(Descrição), Recuperação do Portfólio, e Anotações do Recesso.
+
+Mesmo padrão das decisões #55/#56: exemplos são só `placeholder`, somem
+ao digitar, não são valores pré-preenchidos nem inventam mecânica nova —
+cada exemplo referencia algo que já existe no próprio sistema (a técnica
+Golpe Fundamental, o recurso Esforço de Corpo e Cinética, etc.).
+
+Testado com Playwright: personagem no 5º Ano/Nível 20 (pra ter Marco e
+Ascensão disponíveis), os 6 campos confirmados com o placeholder certo,
+sem erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos continuam limpos (mudança é só HTML estático).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

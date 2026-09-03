@@ -1060,6 +1060,13 @@ passando.
   - Testado com Playwright: 16 opções, prévia reativa, aplicação correta,
     confirmação ao sobrescrever, placeholders no lugar certo, sem erro de
     JS. `tsc`, lint e os 208 testes automáticos continuam limpos
+- [x] **Thrylikí Chelóna — exemplos na aba Progressão** (01/09/2026) —
+      decisão #57. Os 6 campos de texto livre que faltavam (Descrição de
+      Talento, de Recurso/Eletiva, de Marco, de Ascensão, Recuperação do
+      Portfólio, Anotações do Recesso) ganharam `placeholder` de exemplo
+      concreto, mesmo padrão da decisão #56. Testado com Playwright
+      (personagem 5º Ano/Nível 20 pra ter Marco e Ascensão disponíveis);
+      `tsc`, lint e os 208 testes automáticos continuam limpos
 - [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
       Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion
