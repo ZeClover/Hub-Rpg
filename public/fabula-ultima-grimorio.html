@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimório — Fabula Ultima</title>
+<style>
+/* Mesma paleta do Hub RPG usada na ficha — fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746; --verde:#5c8a6a;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark; scroll-behavior:smooth}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3,h4{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 0 10px; color:var(--ambar-forte)}
+a{color:var(--ambar-forte)}
+p{margin:0 0 12px}
+.mini{font-size:12.5px; color:var(--suave)}
+.barra{
+  position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+.barra a.voltar{color:var(--ambar); text-decoration:none; font-size:13px}
+
+main{max-width:900px; margin:0 auto; padding:24px 16px 90px}
+
+.hero{border-bottom:1px solid var(--borda); padding-bottom:22px; margin-bottom:26px}
+.hero h1{font-size:32px}
+.hero .sub{color:var(--suave); font-size:16px; margin-top:6px}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.badge{border:1px solid var(--borda); border-radius:999px; padding:5px 12px; font-size:12px; color:var(--suave)}
+
+.aviso-legal{border:1px solid rgba(224,162,52,.35); background:rgba(224,162,52,.06); border-radius:10px;
+  padding:12px 16px; margin-top:18px; font-size:13px; color:var(--suave)}
+.aviso-legal strong{color:var(--ambar)}
+
+nav.toc{background:var(--superficie); border:1px solid var(--borda); border-radius:12px;
+  padding:16px 18px; margin-bottom:30px}
+nav.toc h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--suave); margin-bottom:10px}
+nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:24px}
+nav.toc li{margin-bottom:6px; font-size:13.5px; break-inside:avoid}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media(max-width:640px){ nav.toc ol{columns:1} }
+
+section{margin-bottom:40px; scroll-margin-top:64px}
+section h2{font-size:22px; border-bottom:1px solid var(--borda); padding-bottom:10px; margin-bottom:14px}
+section h3{font-size:17px; margin-top:22px; color:var(--texto)}
+section h4{font-size:14px; color:var(--ambar); text-transform:uppercase; letter-spacing:.06em; margin-top:16px}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda); border-radius:12px; padding:16px 18px; margin:14px 0}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.dica{border:1px solid rgba(224,162,52,.4); background:rgba(224,162,52,.08); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.fonte{font-size:11.5px; color:var(--suave); font-style:italic}
+
+/* Exemplo jogado — visualmente diferente de regra (cartao) e de aviso/dica,
+   pra ficar óbvio "isto é uma cena imaginária ilustrando a regra acima". */
+.exemplo{border:1px solid rgba(92,138,106,.5); background:rgba(92,138,106,.1); border-radius:10px; padding:14px 16px; margin:16px 0}
+.exemplo .rotulo{display:flex; align-items:center; gap:7px; font-family:Georgia,serif; font-size:12.5px;
+  color:var(--verde); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px}
+.exemplo p{margin-bottom:8px}
+.exemplo p:last-child{margin-bottom:0}
+.exemplo .conta{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:13px; color:var(--ambar-forte);
+  background:var(--superficie-alta); border-radius:6px; padding:2px 7px; display:inline-block; margin:2px 0}
+
+/* Resumo em 1 frase antes de uma mecânica densa — a "TL;DR". */
+.resumo{font-size:15px; color:var(--texto); background:var(--superficie-alta); border-left:3px solid var(--ambar);
+  border-radius:0 8px 8px 0; padding:10px 14px; margin:14px 0 18px}
+.resumo strong{color:var(--ambar-forte)}
+
+table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px}
+th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--ambar); font-family:Georgia,serif; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:center; white-space:nowrap}
+
+.grade2{display:grid; gap:12px}
+@media(min-width:640px){ .grade2{grid-template-columns:1fr 1fr} }
+.grade3{display:grid; gap:12px}
+@media(min-width:640px){ .grade3{grid-template-columns:repeat(3,1fr)} }
+
+details{background:var(--superficie); border:1px solid var(--borda); border-radius:10px; padding:10px 14px; margin:10px 0}
+details > summary{cursor:pointer; font-family:Georgia,serif; color:var(--ambar-forte); font-size:14.5px; list-style:revert}
+details[open] > summary{margin-bottom:10px}
+
+ul,ol{padding-left:22px}
+li{margin-bottom:5px}
+
+.top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
+  border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Fabula Ultima</span>
+  <span class="mini">Grimório — manual do jogador</span>
+  <span class="cresce"></span>
+  <a class="voltar" href="/fabula-ultima.html">Ir para a ficha →</a>
+</div>
+
+<main id="topo">
+  <div class="hero">
+    <h1>Grimório de Fabula Ultima</h1>
+    <p class="sub">Como o sistema funciona, peça por peça, e como aprender a jogar — da criação do personagem até dominar uma classe.</p>
+    <div class="badges">
+      <span class="badge">Sistema comercial — Need Games / Rooster Games / Jambô</span>
+      <span class="badge">4 Atributos</span>
+      <span class="badge">25 Classes</span>
+      <span class="badge">Nível de classe ≠ Nível total</span>
+    </div>
+    <div class="aviso-legal">
+      <strong>Aviso.</strong> Fabula Ultima é um sistema comercial (© Need Games e Rooster Games; edição
+      brasileira © Jambô) — este Grimório, assim como a ficha, <strong>codifica mecânica</strong>: fórmulas,
+      escala de dados, o que cada número faz. Ele não reproduz o texto, a arte nem as descrições do livro
+      — para o texto de poderes, feitiços e habilidades específicas, consulte o seu exemplar. Os nomes
+      de personagem usados nos exemplos abaixo (Rowan, Yuki, Bram) são inventados só para ilustrar as
+      contas, não vêm do livro.
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#conceito">🎭 1. O que é Fabula Ultima</a></li>
+      <li><a href="#aprender">🧭 2. Como montar um personagem</a></li>
+      <li><a href="#atributos">🎲 3. Atributos e Perfis de criação</a></li>
+      <li><a href="#teste">⚔️ 4. Como fazer um Teste</a></li>
+      <li><a href="#classes">🏛️ 5. Classes, Multiclasse e Benefícios</a></li>
+      <li><a href="#poderes">✨ 6. Poderes e NP</a></li>
+      <li><a href="#vitalidade">❤️ 7. PV, PM, PI e Crise</a></li>
+      <li><a href="#defesa">🛡️ 8. Defesa, Defesa Mágica e Iniciativa</a></li>
+      <li><a href="#equipamento">🗡️ 9. Equipamento</a></li>
+      <li><a href="#condicoes">💫 10. Condições e Afinidades</a></li>
+      <li><a href="#fabula">🌟 11. Pontos de Fabula</a></li>
+      <li><a href="#zenit">💰 12. Zenit</a></li>
+      <li><a href="#rituais">🔯 13. Rituais</a></li>
+      <li><a href="#projetos">🛠️ 14. Projetos</a></li>
+      <li><a href="#heroico">🎖️ 15. Habilidades Heroicas</a></li>
+      <li><a href="#lacos">💞 16. Laços</a></li>
+      <li><a href="#subsistemas">🧩 17. Subsistemas por Atlas</a></li>
+      <li><a href="#levelup">⭐ 18. O botão de Subir de Nível</a></li>
+      <li><a href="#mestre">🛡️ 19. Para o Mestre</a></li>
+    </ol>
+  </nav>
+
+  <section id="conceito">
+    <h2>🎭 1. O que é Fabula Ultima</h2>
+    <p>Fabula Ultima é um sistema de RPG inspirado em JRPGs clássicos — pense em Final Fantasy, Chrono
+    Trigger, Dragon Quest. Personagens têm uma <strong>Identidade</strong>, um <strong>Tema</strong> e uma
+    <strong>Origem</strong> que descrevem quem eles são narrativamente, e mecânicas construídas em cima
+    de <strong>Classes</strong> combináveis — um personagem quase sempre soma níveis em duas ou três
+    classes diferentes, não escolhe uma só.</p>
+    <p>Combate acontece em cenas chamadas de <strong>conflitos</strong>, com iniciativa e turnos; fora de
+    combate, cenas de <strong>exploração</strong> e <strong>interação social</strong> usam os mesmos
+    Atributos e o mesmo tipo de Teste. Um recurso central chamado <strong>Pontos de Fabula</strong>
+    (seção 11) deixa o jogador influenciar a narrativa diretamente — não é só sobre rolar dados, é sobre
+    gastar essa moeda pra fazer a história dobrar na direção que o personagem quer.</p>
+    <div class="dica">Esta ficha do Hub cobre o <strong>Livro Básico</strong> completo mais partes dos
+    Atlas High Fantasy, Techno Fantasy e Natural Fantasy (10 classes extras, marcadas como "Atlas" na
+    aba Classes). Regras de Vilão, PNJs e criaturas ficam no <a href="/fabula-ultima-escudo-mestre.html">Escudo do Mestre</a>
+    e na <a href="/fabula-ultima-inimigo.html">ficha de Inimigo</a> — ver seção 19.</div>
+  </section>
+
+  <section id="aprender">
+    <h2>🧭 2. Como montar um personagem</h2>
+    <p>A ficha tem sete abas, e a ordem delas já é a ordem recomendada pra preencher um personagem novo:</p>
+    <table>
+      <tr><th>Aba</th><th>O que decidir ali</th></tr>
+      <tr><td>Perfil</td><td>Nome, Identidade, Tema, Origem, aparência — o lado narrativo.</td></tr>
+      <tr><td>Atributos e Classes</td><td>Escolher um Perfil de dados (seção 3), distribuir 2 ou 3 classes somando 5 níveis (seção 5), equipar arma/armadura.</td></tr>
+      <tr><td>Poderes</td><td>Pra cada nível investido numa classe, escolher 1 Poder dela (seção 6).</td></tr>
+      <tr><td>Heroico</td><td>Fica vazia até dominar uma classe (Nível 10) — ver seção 15.</td></tr>
+      <tr><td>Inventário</td><td>Acessórios comprados com Zenit (seção 12).</td></tr>
+      <tr><td>Recursos</td><td>Rituais, Projetos e os subsistemas por Atlas, se a classe der acesso (seções 13, 14 e 17).</td></tr>
+      <tr><td>Laços</td><td>Até 6 relações importantes do personagem (seção 16).</td></tr>
+    </table>
+    <p>Os números do topo (Pontos de Vida, Mana, Defesa, Nível) recalculam sozinhos conforme a ficha é
+    preenchida — não precisa somar nada à mão.</p>
+  </section>
+
+  <section id="atributos">
+    <h2>🎲 3. Atributos e Perfis de criação</h2>
+    <p>Quatro Atributos, cada um com um <strong>dado</strong> de d6 a d12 — quanto maior o dado, melhor o
+    Atributo. Não existe "Atributo 14" como número puro: é sempre um tamanho de dado.</p>
+    <table>
+      <tr><th>Atributo</th><th>Sobre</th></tr>
+      <tr><td><strong>Destreza (DES)</strong></td><td>precisão, coordenação, finesse e reflexos</td></tr>
+      <tr><td><strong>Vigor (VIG)</strong></td><td>capacidade física e robustez</td></tr>
+      <tr><td><strong>Astúcia (AST)</strong></td><td>observação, compreensão e raciocínio</td></tr>
+      <tr><td><strong>Vontade (VON)</strong></td><td>determinação, carisma e influência</td></tr>
+    </table>
+    <p>Na criação, escolha um dos três Perfis abaixo e distribua os quatro dados dele entre os quatro
+    Atributos, na ordem que quiser:</p>
+    <table>
+      <tr><th>Perfil</th><th>Dados</th><th>Estilo</th></tr>
+      <tr><td>Especializado</td><td class="num">d10, d10, d6, d6</td><td>ótimo em duas coisas, fraco em duas</td></tr>
+      <tr><td>Mediano</td><td class="num">d10, d8, d8, d6</td><td>um destaque, o resto equilibrado</td></tr>
+      <tr><td>Pau pra toda obra</td><td class="num">d8, d8, d8, d8</td><td>sem pico, sem buraco</td></tr>
+    </table>
+    <div class="dica">O dado que a ficha usa pra calcular tudo é o <strong>dado atual</strong>, não o
+    básico — uma Condição ativa (seção 10) baixa um Atributo um degrau na escala d6→d8→d10→d12, sem
+    nunca passar de d6 pra baixo. Ele volta ao básico assim que a Condição é removida.</div>
+  </section>
+
+  <section id="teste">
+    <h2>⚔️ 4. Como fazer um Teste</h2>
+    <p class="resumo">Em resumo: role os <strong>dois dados</strong> que a ação pedir, some os dois
+    resultados, compare com a Dificuldade que o mestre define. Dados iguais = sucesso crítico (a não ser
+    que os dois sejam o menor valor possível, aí é falha crítica).</p>
+    <p>Todo Teste em Fabula Ultima usa dois dados de Atributo — às vezes o mesmo Atributo duas vezes
+    (como Vigor + Vigor num machado pesado), às vezes dois diferentes (como Destreza + Astúcia numa
+    adaga). Qual par usar depende da ação: cada arma já define o par de <strong>Precisão</strong> dela
+    (seção 9), cada disciplina mágica define o par de <strong>Magia</strong> dela, e o mestre decide o
+    par certo pra qualquer outra ação.</p>
+    <ul>
+      <li><strong>Sucesso:</strong> a soma dos dois dados (mais bônus) iguala ou supera a Dificuldade.</li>
+      <li><strong>Sucesso crítico:</strong> os dois dados mostram o <em>mesmo número</em> — não importa
+      se o Teste também bateria a Dificuldade sozinho.</li>
+      <li><strong>Falha crítica:</strong> os dois dados caem no menor resultado possível dos dois — conta
+      como falha, mesmo que a soma bateria a Dificuldade.</li>
+      <li><strong>Teste aberto:</strong> feito sem uma Dificuldade fixa pra comparar — só importa o valor
+      bruto (usado por alguns Poderes que dão bônus "em teste aberto").</li>
+      <li><strong>Teste oposto:</strong> em vez de comparar com uma Dificuldade fixa, compara-se com o
+      resultado do Teste de outra criatura.</li>
+    </ul>
+    <p>Ataques funcionam assim: o Teste de <strong>Precisão</strong> da arma decide se acerta; se
+    acertar, o dano é a <strong>Rolagem Alta</strong> (RA) — o maior dos dois dados que você rolou pra
+    Precisão, não a soma — mais o dano base da arma.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — um ataque</div>
+      <p><strong>Rowan</strong> (Destreza d8, Vigor d10) ataca com uma <em>Espada de Bronze</em> — o Teste
+      de Precisão dela usa 【DES + VIG】 mais um bônus +1 fixo da arma. Rowan rola d8=5 e d10=8: soma
+      <span class="conta">5 + 8 + 1 = 14</span>. O mestre tinha fixado Dificuldade 12 pro golpe — 14
+      supera, então acerta.</p>
+      <p>Dano: a Rolagem Alta foi o maior dos dois dados rolados, <span class="conta">8</span>, mais o
+      dano base da Espada de Bronze (6) = <span class="conta">14 de dano físico</span>, antes de qualquer
+      Afinidade do alvo (seção 10).</p>
+      <p>Se os dois dados tivessem caído iguais (ex: d8=6, d10=6 — sim, dados de tamanhos diferentes
+      também podem empatar no valor mostrado), seria sucesso crítico automaticamente, mesmo que a soma
+      fosse baixa.</p>
+    </div>
+  </section>
+
+  <section id="classes">
+    <h2>🏛️ 5. Classes, Multiclasse e Benefícios</h2>
+    <p>Um personagem quase sempre tem <strong>duas ou três classes</strong> ao mesmo tempo, cada uma com
+    seu próprio Nível de <strong>0 a 10</strong>. Na criação, distribua <strong>5 níveis</strong> entre
+    2 ou 3 classes — o resto vem jogando. O <strong>Nível total</strong> do personagem (o que aparece no
+    topo da ficha) é sempre a soma dos níveis de todas as classes, não um contador separado.</p>
+    <div class="dica">Levar uma classe até o Nível 10 é <strong>dominá-la</strong> — isso libera a escolha
+    de uma Habilidade Heroica (seção 15) e é um marco de personagem importante, mesmo fora do combate.</div>
+    <h3>As 25 classes</h3>
+    <p>15 vêm do Livro Básico; as outras 10 são de três Atlas (High Fantasy, Techno Fantasy e Natural
+    Fantasy) — a ficha marca as do Atlas separadamente na aba Classes.</p>
+    <div class="grade2">
+      <div>
+        <h4>Livro Básico</h4>
+        <p class="mini">Andarilho, Arcanista, Atirador, Elementalista, Entropista, Erudito, Espiritualista,
+        Furioso, Guardião, Guerreiro Sombrio, Inventor, Ladino, Mestre de Armas, Orador, Quimerista.</p>
+      </div>
+      <div>
+        <h4>Atlas</h4>
+        <p class="mini"><strong>High Fantasy:</strong> Comandante, Dançarino, Simbolista, Virtuoso.
+        <strong>Techno Fantasy:</strong> Esper, Mutante, Piloto.
+        <strong>Natural Fantasy:</strong> Floralista, Gourmet, Invocador, Mercador.</p>
+      </div>
+    </div>
+    <h3>Benefícios iniciais</h3>
+    <p>Ter pelo menos 1 nível numa classe já dá, de graça e pra sempre, um <strong>benefício fixo</strong>
+    dela — normalmente +5 PV máximos, +5 PM máximos, ou +2 PI máximos, às vezes também a permissão de
+    equipar itens marciais de um tipo. Diferente dos Poderes (seção 6), o benefício <strong>não</strong>
+    é escolhido nível a nível: ele vale uma vez só, e duas classes que dão o mesmo tipo de benefício
+    <strong>somam</strong> — duas classes com +5 PM cada uma dão +10 PM juntas.</p>
+    <p class="mini">Três classes (Dançarino, Floralista, Invocador) dão "PV ou PM, à sua escolha" em vez
+    de um valor fixo — a ficha pede pra escolher assim que a classe é adicionada.</p>
+  </section>
+
+  <section id="poderes">
+    <h2>✨ 6. Poderes e NP</h2>
+    <p class="resumo">Em resumo: cada classe tem <strong>cinco Poderes</strong>. A cada Nível investido
+    nela, escolha <strong>um</strong> — não é automático. Poderes com "(+N)" podem ser escolhidos de novo,
+    ficando mais fortes; o <strong>NP</strong> (nível de poder) é quantas vezes você já escolheu aquele.</p>
+    <p>Um Poder sem "+" só pode ser escolhido uma vez (NP máximo 1). Um Poder "(+4)" pode ser escolhido
+    até 4 vezes — cada vez conta como "gastar" 1 dos Níveis daquela classe, então uma classe no Nível 10
+    tem, no total, 10 escolhas de Poder pra distribuir entre os cinco disponíveis (repetindo os que têm
+    "+").</p>
+    <p>A ficha mostra, pra cada classe com nível, quantos Poderes já foram escolhidos e quantos ainda
+    faltam — não deixa esquecer nem passar do total permitido.</p>
+    <div class="dica">O texto completo de cada um dos Poderes das 25 classes (o que cada um faz de
+    verdade) mora na própria ficha, aba Poderes — este Grimório não repete: é onde a ficha calcula os
+    números automaticamente (como NP × algo) que interessa entender aqui.</div>
+  </section>
+
+  <section id="vitalidade">
+    <h2>❤️ 7. PV, PM, PI e Crise</h2>
+    <p>Três reservas numéricas, todas recalculadas sozinhas pela ficha a partir do Nível, dos Atributos
+    e das classes:</p>
+    <table>
+      <tr><th>Reserva</th><th>Fórmula</th><th>Pra que serve</th></tr>
+      <tr><td><strong>Pontos de Vida (PV)</strong></td><td class="num">Nível total + 5 × dado atual de Vigor + benefícios de classe</td><td>vida — zerar não mata, ver "Crise" abaixo</td></tr>
+      <tr><td><strong>Pontos de Mana (PM)</strong></td><td class="num">Nível total + 5 × dado atual de Vontade + benefícios de classe</td><td>combustível de feitiços e Poderes mágicos</td></tr>
+      <tr><td><strong>Pontos de Inventário (PI)</strong></td><td class="num">6 (fixo) + benefícios de classe</td><td>itens especiais carregáveis por cena</td></tr>
+    </table>
+    <p><strong>Crise</strong> é a metade dos PV máximos, arredondada pra baixo — não é uma quarta reserva,
+    é um <em>limiar</em>: ao entrar em Crise (PV atuais nessa marca ou abaixo), o personagem sofre
+    penalidades importantes de mesa (a critério do mestre/regras de Crise do livro), então é o número que
+    mais vale acompanhar em combate.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — calculando PV, PM e PI</div>
+      <p><strong>Rowan</strong> tem Nível total 5 (2 em Furioso, 3 em Guardião — ambas dão +5 PV cada,
+      nenhuma dá PM ou PI), Vigor d10 e Vontade d6.</p>
+      <p>PV máximos: <span class="conta">5 + 5×10 + 10 = 65</span>. Crise em <span class="conta">32</span>
+      (metade de 65, arredondado pra baixo). PM máximos: <span class="conta">5 + 5×6 + 0 = 35</span>. PI
+      máximos: <span class="conta">6 + 0 = 6</span> (nem Furioso nem Guardião dão PI).</p>
+    </div>
+  </section>
+
+  <section id="defesa">
+    <h2>🛡️ 8. Defesa, Defesa Mágica e Iniciativa</h2>
+    <p>Diferente de PV/PM, estes três <strong>não</strong> crescem com o Nível — vêm só do Atributo e do
+    equipamento:</p>
+    <ul>
+      <li><strong>Defesa:</strong> dado atual de Destreza (ou um valor fixo, se a armadura for "pesada"/marcial) + bônus de escudo + outros bônus.</li>
+      <li><strong>Defesa Mágica:</strong> dado atual de Astúcia + bônus de armadura/escudo + outros bônus.</li>
+      <li><strong>Iniciativa:</strong> soma de bônus/penalidades de armadura e escudo + outros bônus (não tem base de Atributo).</li>
+    </ul>
+    <p class="mini">Armadura "leve" (sem marcial) mantém a Defesa ligada ao dado de Destreza — trocar de
+    Atributo com uma Condição também derruba a Defesa junto, então uma criatura Lenta (Destreza reduzida)
+    fica mais fácil de acertar, não só mais lenta pra agir.</p>
+  </section>
+
+  <section id="equipamento">
+    <h2>🗡️ 9. Equipamento</h2>
+    <p>Toda arma tem um <strong>par de Atributos de Precisão</strong> fixo (às vezes com um bônus "+1"
+    extra se for marcial), um <strong>dano base</strong> e um <strong>tipo de dano</strong> — a maioria é
+    física, mas armas arcanas (cajado, tomo) também existem. Armas <strong>marciais</strong> só valem a
+    pena equipar se alguma classe do personagem liberar aquele tipo (ver "Pode equipar" na aba Classes) —
+    sem isso, a ficha mostra um cadeado 🔒 e o item não pode ser usado.</p>
+    <p>Armadura e escudo entram direto nas fórmulas de Defesa/Defesa Mágica/Iniciativa (seção 8). Uma
+    arma de duas mãos ocupa a mão secundária inteira — não dá pra usar escudo nem segunda arma junto.</p>
+    <div class="dica">Todo equipamento tem um custo em Zenit (seção 12) — a ficha não impõe limite de
+    compras, é o mestre e a economia da mesa que decidem o que está disponível.</div>
+  </section>
+
+  <section id="condicoes">
+    <h2>💫 10. Condições e Afinidades</h2>
+    <h3>Condições</h3>
+    <p>Uma Condição reduz um ou dois Atributos em <strong>um degrau de dado</strong> (nunca abaixo de
+    d6), e Condições diferentes acumulam:</p>
+    <table>
+      <tr><th>Condição</th><th>Reduz</th></tr>
+      <tr><td>Abalado</td><td>Vontade</td></tr>
+      <tr><td>Atordoado</td><td>Astúcia</td></tr>
+      <tr><td>Enfurecido</td><td>Destreza e Astúcia</td></tr>
+      <tr><td>Envenenado</td><td>Vigor e Vontade</td></tr>
+      <tr><td>Fraco</td><td>Vigor</td></tr>
+      <tr><td>Lento</td><td>Destreza</td></tr>
+    </table>
+    <h3>Afinidades</h3>
+    <p>Cada criatura pode ter uma Afinidade diferente pra cada um dos nove tipos de dano (Físico, Ar,
+    Fogo, Gelo, Luz, Raio, Terra, Trevas, Veneno):</p>
+    <table>
+      <tr><th>Afinidade</th><th>Efeito no dano recebido</th></tr>
+      <tr><td>Normal</td><td>dano cheio</td></tr>
+      <tr><td>Vulnerável</td><td>dobro do dano</td></tr>
+      <tr><td>Resistente</td><td>metade do dano (arredondado pra baixo)</td></tr>
+      <tr><td>Imune</td><td>zero — Imunidade sempre vence Resistência/Vulnerabilidade</td></tr>
+      <tr><td>Absorve</td><td>vira <strong>cura</strong> — recupera PV em vez de perder; Absorção vence todas as outras</td></tr>
+    </table>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — dano contra uma Afinidade</div>
+      <p>Um golem <strong>Resistente</strong> a Fogo sofre 20 de dano de fogo de um feitiço da
+      <strong>Yuki</strong>. Dano final: <span class="conta">floor(20 × 0,5) = 10 PV</span>. Se o mesmo
+      golem fosse <strong>Imune</strong> a Fogo, seria 0 PV — e se fosse capaz de <strong>Absorver</strong>
+      Fogo, ele recuperaria 20 PV em vez de perder.</p>
+    </div>
+  </section>
+
+  <section id="fabula">
+    <h2>🌟 11. Pontos de Fabula</h2>
+    <p>É a moeda de protagonismo do jogo — o que separa "um personagem que só rola dados" de "o
+    protagonista de uma história". Cada jogador começa com alguns no início de uma sessão e gasta pra
+    puxar a narrativa a seu favor: invocar um Traço ou Laço a favor de um Teste, forçar uma re-rolagem, ou
+    o benefício extra que alguns Poderes dão ao gastar um (recuperar PV/PM, se livrar de uma Condição).
+    Vários Poderes de classe também <em>dão de volta</em> Pontos de Fabula em situações específicas — a
+    aba Poderes lista onde isso acontece pra cada classe.</p>
+    <p class="mini">A ficha guarda o total atual no campo "Pontos de Fabula", na aba Perfil — é um número
+    livre, sem fórmula, porque sobe e desce o tempo inteiro na mesa.</p>
+  </section>
+
+  <section id="zenit">
+    <h2>💰 12. Zenit</h2>
+    <p>A moeda do mundo. Um personagem novo começa com <strong>500 Zenites</strong>; armas, armaduras,
+    escudos e acessórios têm cada um seu próprio custo fixo (visível ao escolher o item na ficha). Não há
+    fórmula de "renda por sessão" — cabe ao mestre decidir recompensas em Zenit ao longo da campanha.</p>
+  </section>
+
+  <section id="rituais">
+    <h2>🔯 13. Rituais</h2>
+    <p class="resumo">Em resumo: ritual não é uma lista de feitiços prontos — é uma <strong>calculadora</strong>.
+    Escolha uma Potência e uma Área, o resto (custo em PM e Dificuldade do Teste) sai de tabela.</p>
+    <p>Diferente dos feitiços fixos de cada classe (catalogados na aba Poderes), um Ritual nunca causa
+    dano direto, Condições, nem ganho/perda de PV/PM/PI/Pontos de Fabula — e nunca replica um Poder ou
+    feitiço que já existe. Falhar no Teste distorce o efeito de forma prejudicial, então é sempre um
+    risco calculado, não uma segunda opção segura de fazer a mesma coisa que um feitiço já faz.</p>
+    <table>
+      <tr><th>Potência</th><th class="num">PM base</th><th class="num">Dificuldade</th></tr>
+      <tr><td>Menor</td><td class="num">20</td><td class="num">7</td></tr>
+      <tr><td>Média</td><td class="num">30</td><td class="num">10</td></tr>
+      <tr><td>Maior</td><td class="num">40</td><td class="num">13</td></tr>
+      <tr><td>Extrema</td><td class="num">50</td><td class="num">16</td></tr>
+    </table>
+    <p>A Área multiplica o custo em PM: Individual ×1, Pequena ×2, Grande ×3, Enorme ×4. O Teste de
+    Magia usa o par de Atributos da disciplina de ritual que o personagem tem acesso (normalmente
+    Astúcia + Vontade) — só quem tem o Poder de classe certo (um por disciplina: Arcanismo, Elementalismo,
+    Entropismo, Espiritualismo, Quimerismo, Ritualismo) pode conjurar Rituais daquele tipo.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — um Ritual Médio</div>
+      <p>O grupo de <strong>Yuki</strong> precisa de luz mágica permanente numa área Pequena. Potência
+      Média (30 PM base) × Área Pequena (×2) = <span class="conta">60 PM</span>, Dificuldade
+      <span class="conta">10</span> no Teste de Magia. Se Yuki tem Astúcia d8 e Vontade d10 e rola
+      6+7=13, o Ritual funciona — 13 supera a Dificuldade 10.</p>
+    </div>
+  </section>
+
+  <section id="projetos">
+    <h2>🛠️ 14. Projetos</h2>
+    <p class="resumo">Em resumo: igual Rituais, mas pra <strong>criar itens</strong> — Potência × Área ×
+    Uso define o custo em Zenit; qualquer personagem com nível em Inventor pode começar um Projeto, sem
+    precisar de um Poder específico.</p>
+    <table>
+      <tr><th>Potência</th><th class="num">Custo base</th><th>Dano possível</th><th>Proteção possível</th></tr>
+      <tr><td>Menor</td><td class="num">100z</td><td>não disponível</td><td>uma Resistência</td></tr>
+      <tr><td>Média</td><td class="num">200z</td><td>Menor</td><td>duas Resistências</td></tr>
+      <tr><td>Maior</td><td class="num">400z</td><td>Maior</td><td>uma Imunidade ou duas Resistências</td></tr>
+      <tr><td>Extrema</td><td class="num">800z</td><td>Massivo</td><td>duas Imunidades ou três Resistências</td></tr>
+    </table>
+    <p>Área multiplica por ×1 (Individual) a ×4 (Enorme); Uso multiplica por ×1 (Consumível, um uso só) ou
+    ×5 (Permanente). Quanto o dano/cura "Menor/Maior/Massivo" realmente vale em número sobe com o Nível
+    total do Inventor — fica mais forte com o personagem, sem precisar reconstruir o Projeto do zero.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — um Projeto de bomba</div>
+      <p><strong>Bram</strong> (Inventor, Nível total 8) monta uma bomba de área: Potência Média (200z) ×
+      Área Individual (×1) × Uso Consumível (×1) = <span class="conta">200 Zenites</span> e algum tempo
+      de progresso. No Nível 8 dele (abaixo do primeiro salto em Nível 20), "Menor" vale 10 de dano —
+      então essa bomba causa 10 de dano ao explodir.</p>
+    </div>
+  </section>
+
+  <section id="heroico">
+    <h2>🎖️ 15. Habilidades Heroicas</h2>
+    <p>Ao <strong>dominar uma classe</strong> (levá-la ao Nível 10), o personagem ganha o direito de
+    escolher uma Habilidade Heroica — o total de escolhas permitidas é sempre "quantas classes dominadas",
+    não um número fixo. Cinco Habilidades Heroicas são abertas a qualquer classe dominada; o resto exige
+    ter dominado uma classe específica (algumas também pedem um Poder daquela classe já escolhido).</p>
+    <p>Três delas a ficha já soma sozinha nos totais do topo, sem precisar fazer conta:</p>
+    <table>
+      <tr><th>Heroica</th><th>Efeito automático</th></tr>
+      <tr><td>PV Extra</td><td>+10 PV máximos (+20 a partir do Nível total 40)</td></tr>
+      <tr><td>PM Extra</td><td>+10 PM máximos (+20 a partir do Nível total 40)</td></tr>
+      <tr><td>PI Extra</td><td>+4 PI máximos</td></tr>
+    </table>
+    <p class="mini">As outras Habilidades Heroicas (texto específico de cada uma) ficam na aba Heroico da
+    ficha, junto com o aviso de quais já estão disponíveis pras classes que o personagem já dominou.</p>
+  </section>
+
+  <section id="lacos">
+    <h2>💞 16. Laços</h2>
+    <p>Até <strong>seis Laços</strong>, cada um com um "com quem" e uma lista de emoções — o
+    <strong>nível do Laço</strong> é simplesmente quantas emoções diferentes ele tem anotadas. Vários
+    Poderes e Habilidades Heroicas de classes sociais (Orador, Guerreiro Sombrio, Espiritualista) usam a
+    força de um Laço específico como multiplicador de efeito — quanto mais emoções anotadas com aquele
+    personagem, mais forte o efeito.</p>
+  </section>
+
+  <section id="subsistemas">
+    <h2>🧩 17. Subsistemas por Atlas</h2>
+    <p>Algumas classes trazem uma mecânica só delas, ativada assim que o personagem tem nível ali — a
+    ficha mostra o painel certo automaticamente na aba Recursos:</p>
+    <table>
+      <tr><th>Subsistema</th><th>Classe</th><th>Ideia central</th></tr>
+      <tr><td>Alquimia, Infusões e Tecnomagia (Engenhocas)</td><td>Inventor</td><td>gasta níveis de um Poder pra distribuir entre três tipos de engenhoca — básico, avançado, superior.</td></tr>
+      <tr><td>Culinária</td><td>Gourmet (Atlas Natural Fantasy)</td><td>ingredientes têm um sabor cada; combine 2 ou 3 pra descobrir o efeito da receita.</td></tr>
+      <tr><td>Veículo Pessoal</td><td>Piloto (Atlas Techno Fantasy)</td><td>estrutura fixa escolhida uma vez + módulos comprados depois, cada um ativável ou não.</td></tr>
+      <tr><td>Magisferas</td><td>Tecnomagia superior (Inventor)</td><td>protótipo reutilizável de um feitiço à escolha — gasta uma vaga pra replicar de graça (ainda paga PM e faz o Teste normal).</td></tr>
+    </table>
+    <p class="mini">O texto completo de cada opção dentro desses subsistemas mora na própria ficha — este
+    Grimório só explica a lógica de cada calculadora, não substitui o livro do Atlas correspondente.</p>
+  </section>
+
+  <section id="levelup">
+    <h2>⭐ 18. O botão de Subir de Nível</h2>
+    <p>Na aba <strong>Atributos e Classes</strong>, cada linha de classe tem um botão <strong>⭐ +1
+    Nível</strong> — ele sobe o Nível daquela classe específica em 1 (até o teto de 10) e mostra um
+    resumo comparando antes/depois: quanto os Pontos de Vida, Mana e Inventário máximos mudaram, onde a
+    Crise passou a ficar, e se você acabou de <strong>dominar</strong> aquela classe (Nível 10 — libera
+    uma Habilidade Heroica, seção 15).</p>
+    <p>O resumo fica na tela até você clicar em "Fechar", mesmo trocando de aba — dá tempo de ir na aba
+    Poderes escolher o Poder novo que aquele Nível liberou (seção 6) antes de perder de vista o que
+    mudou. Diferente do Nível de uma classe (que trava em 10), o <strong>Nível total</strong> do
+    personagem não tem teto — ele é sempre a soma de todas as classes.</p>
+  </section>
+
+  <section id="mestre">
+    <h2>🛡️ 19. Para o Mestre</h2>
+    <p>Duas ferramentas separadas da ficha de jogador:</p>
+    <ul>
+      <li><strong><a href="/fabula-ultima-inimigo.html">Ficha de Inimigo</a></strong> — monta soldados,
+      elites, campeões e vilões com o mesmo tipo de números (PV, Defesa, Afinidades) que um personagem,
+      mas em formato rápido de preencher numa mesa.</li>
+      <li><strong><a href="/fabula-ultima-escudo-mestre.html">Escudo do Mestre</a></strong> — referência
+      rápida de mesa, sem precisar abrir o livro no meio da cena.</li>
+    </ul>
+    <p class="mini">Como o resto desta ficha, as duas também só codificam mecânica — a criatividade das
+    cenas, NPCs e vilões é sempre do Zé.</p>
+  </section>
+
+  <p class="mini" style="text-align:center;margin-top:40px">
+    Grimório escrito a partir do código-fonte da ficha de Fabula Ultima do Hub — as fórmulas aqui são
+    as mesmas que a ficha usa pra calcular os números sozinha.
+    <br>Fabula Ultima © Need Games e Rooster Games. Edição brasileira © Jambô.
+    <br><a href="/fabula-ultima.html">← Voltar pra ficha</a> · <a href="/fabula-ultima-inimigo.html">Ficha de Inimigo</a> · <a href="/fabula-ultima-escudo-mestre.html">Escudo do Mestre</a>
+  </p>
+</main>
+
+<a class="top" href="#topo">↑ topo</a>
+</body>
+</html>

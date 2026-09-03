@@ -67,6 +67,9 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
+.resumo-nivel{border:1px solid rgba(224,162,52,.5); background:rgba(224,162,52,.1);
+  border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
+.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--ambar-forte); font-family:Georgia,serif}
 .condicoes{display:flex; flex-wrap:wrap; gap:8px}
 .condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
   letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
@@ -76,13 +79,14 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
 .vazio{color:var(--suave); text-align:center; padding:50px 20px}
 .mini{font-size:12px; color:var(--suave)}
-.classe-linha{display:grid; grid-template-columns:1fr 90px auto; gap:10px; align-items:end; margin-bottom:10px}
+.classe-linha{display:grid; grid-template-columns:1fr 90px auto auto; gap:10px; align-items:end; margin-bottom:10px}
 </style>
 </head>
 <body>
 <div class="barra">
   <span class="marca">Fabula Ultima</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <a href="/fabula-ultima-grimorio.html" target="_blank" style="color:var(--ambar);text-decoration:none;font-size:13px">📖 Grimório</a>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
     <input type="checkbox" id="chkCompartilhar" style="width:auto">
     Compartilhar (link de leitura)
@@ -868,6 +872,33 @@ function beneficioHeroico(p, tipo){
   if(tipo === 'pm' && heroicas.includes('pm-extra')) return nivel >= 40 ? 20 : 10;
   if(tipo === 'pi' && heroicas.includes('pi-extra')) return 4;
   return 0;
+}
+
+// Fotografia dos números que mudam só por causa do Nível — usada pra montar
+// o resumo do botão "+1 Nível" de uma classe (antes/depois), sem duplicar
+// as fórmulas em outro lugar.
+function snapshotNivel(p){
+  return {
+    nivelTotal: nivelTotal(p),
+    pv: pvMaximo(p),
+    pm: pmMaximo(p),
+    pi: piMaximo(p),
+    crise: crise(p),
+    dominadas: classesDominadas(p),
+  };
+}
+// Sobe 1 Nível numa classe específica (índice em p.classes) e guarda o
+// resumo em estado.nivelUpResumo. Nível de classe tem teto 10 (pág. 176) —
+// o botão desabilita nesse ponto; nível TOTAL do personagem soma todas as
+// classes e não tem teto fixo na ficha.
+function subirNivelClasse(p, indice){
+  const c = p.classes[indice];
+  if(!c || !c.classeId || (c.nivel||0) >= 10) return;
+  const antes = snapshotNivel(p);
+  const classeId = c.classeId;
+  c.nivel = (c.nivel||0) + 1;
+  const depois = snapshotNivel(p);
+  estado.nivelUpResumo = {classeId, nivelClasse: c.nivel, antes, depois};
 }
 
 /* ===========================================================================
@@ -1815,6 +1846,10 @@ const estado = {
   // que nem carregou direito.
   ehDono: false,
   compartilhado: false,
+  // nivelUpResumo: resumo transitório do último "+1 Nível" numa classe
+  // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
+  // ou ao trocar de personagem.
+  nivelUpResumo: null,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -2023,6 +2058,27 @@ function abaPerfil(p){
   </div>`;
 }
 
+function painelResumoNivel(resumo){
+  const {classeId, nivelClasse, antes, depois} = resumo;
+  const nomeClasse = CLASSES.find(x => x.id === classeId)?.nome || classeId;
+  const linha = (rotulo, chave) => {
+    const a = antes[chave], d = depois[chave];
+    if(a === d) return '';
+    return `<p class="mini" style="margin:4px 0"><strong>${rotulo}:</strong> ${a} → <span style="color:var(--ambar-forte)">${d}</span></p>`;
+  };
+  const dominouAgora = depois.dominadas.includes(classeId) && !antes.dominadas.includes(classeId);
+  return `<div class="resumo-nivel">
+    <h3>⭐ ${esc(nomeClasse)} subiu para Nível ${nivelClasse}! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível total ${antes.nivelTotal} → ${depois.nivelTotal}</span></h3>
+    <p class="mini" style="margin-bottom:8px">Já tem 1 Poder novo pra escolher dessa classe — veja na aba Poderes.</p>
+    ${linha('Pontos de Vida máximos', 'pv')}
+    ${linha('Pontos de Mana máximos', 'pm')}
+    ${linha('Pontos de Inventário máximos', 'pi')}
+    ${linha('Entra em Crise com PV em', 'crise')}
+    ${dominouAgora ? `<p class="mini" style="margin:6px 0;color:var(--ambar-forte)">🎖️ Classe dominada (Nível 10)! Escolha uma Habilidade Heroica dela, na aba Heroico.</p>` : ''}
+    <button id="btFecharResumoNivel" style="margin-top:8px">Fechar</button>
+  </div>`;
+}
+
 function abaAtributos(p){
   const perfil = PERFIS.find(x => x.id === p.perfilAtributos);
   const escolhidos = ATRIBUTOS.map(a => p.atributos[a.id]).sort((a,b) => b-a);
@@ -2089,6 +2145,7 @@ function abaAtributos(p){
           <label for="c-nv-${i}">Nível</label>
           <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" max="10" value="${c.nivel||0}">
         </div>
+        <button data-subir-nivel="${i}" class="destaque" ${!c.classeId || (c.nivel||0)>=10 ? 'disabled':''} title="Sobe 1 Nível nesta classe e mostra o que mudou">⭐ +1 Nível</button>
         <button data-remover-classe="${i}" ${p.classes.length<=2?'disabled':''}>Tirar</button>
       </div>`).join('')}
     <button id="btAddClasse" ${p.classes.length>=7?'disabled':''}>+ Outra classe</button>
@@ -2099,6 +2156,7 @@ function abaAtributos(p){
          ${usadas===1?'classe':'classes'}. Um personagem novo começa com
          <strong>${NIVEL_INICIAL} níveis</strong> em <strong>2 ou 3 classes</strong>.
          Se este é um personagem avançado, pode ignorar.</div>`}
+    ${estado.nivelUpResumo ? painelResumoNivel(estado.nivelUpResumo) : ''}
   </div>
 
   <div class="cartao">
@@ -2982,6 +3040,11 @@ function ligarEventos(){
   app.querySelectorAll('[data-nivel]').forEach(el =>
     el.onchange = () => mudar(p => p.classes[Number(el.dataset.nivel)].nivel = Number(el.value) || 0));
 
+  app.querySelectorAll('[data-subir-nivel]').forEach(b =>
+    b.onclick = () => mudar(p => subirNivelClasse(p, Number(b.dataset.subirNivel))));
+  const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+
   app.querySelectorAll('[data-remover-classe]').forEach(b =>
     b.onclick = () => mudar(p => p.classes.splice(Number(b.dataset.removerClasse), 1)));
 
@@ -3274,7 +3337,9 @@ document.getElementById('chkCompartilhar').onchange = e => {
 };
 
 document.getElementById('seletor').onchange = e => {
-  estado.atualId = e.target.value; render();
+  estado.atualId = e.target.value;
+  estado.nivelUpResumo = null;
+  render();
 };
 
 document.getElementById('btNovo').onclick = () => {
@@ -3282,6 +3347,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.fichas.push(p);
   estado.atualId = p.id;
   estado.aba = 'perfil';
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -3290,6 +3356,7 @@ document.getElementById('btExcluir').onclick = () => {
   if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -3325,6 +3392,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.fichas.push(lido);
         estado.atualId = lido.id;
       }
+      estado.nivelUpResumo = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

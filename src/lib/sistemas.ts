@@ -80,7 +80,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/fabula-ultima-inimigo.html",
     escudoMestre: "/fabula-ultima-escudo-mestre.html",
     campoVidaInimigo: ["pvAtual"],
-    grimorio: null,
+    grimorio: "/fabula-ultima-grimorio.html",
   },
   {
     chave: "sao",
