@@ -50,6 +50,7 @@ export default async function PaginaCampanha({
   const ficha = sistemaDef?.ficha ?? null;
   const fichaInimigo = sistemaDef?.fichaInimigo ?? null;
   const escudoMestre = sistemaDef?.escudoMestre ?? null;
+  const grimorio = sistemaDef?.grimorio ?? null;
 
   const [participacoes, personagensDaCampanha] = await Promise.all([
     banco.participacao.findMany({
@@ -116,6 +117,7 @@ export default async function PaginaCampanha({
           idDoMestre={usuario.id}
           manualMestre={manualMestre}
           escudoMestre={escudoMestre}
+          grimorio={grimorio}
         />
       ) : (
         <VisaoDoJogador
@@ -129,6 +131,7 @@ export default async function PaginaCampanha({
             select: { id: true, nome: true },
             orderBy: { atualizadoEm: "desc" },
           })}
+          grimorio={grimorio}
         />
       )}
     </main>
@@ -146,6 +149,7 @@ function VisaoDoMestre({
   idDoMestre,
   manualMestre,
   escudoMestre,
+  grimorio,
 }: {
   campanhaId: string;
   nome: string;
@@ -157,6 +161,7 @@ function VisaoDoMestre({
   idDoMestre: string;
   manualMestre: string;
   escudoMestre: string | null;
+  grimorio: string | null;
 }) {
   const inimigos = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
 
@@ -181,6 +186,16 @@ function VisaoDoMestre({
             className="mt-3 inline-block text-sm text-ambar-forte underline underline-offset-2"
           >
             Abrir Escudo do Mestre (referência rápida de regras)
+          </a>
+        )}
+        {grimorio && (
+          <a
+            href={grimorio}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
+          >
+            📖 Abrir Grimório (manual do jogador e do mestre)
           </a>
         )}
         <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
@@ -279,6 +294,7 @@ function VisaoDoJogador({
   meuUsuarioId,
   meuPersonagem,
   minhasFichasDoSistema,
+  grimorio,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -286,6 +302,7 @@ function VisaoDoJogador({
   meuUsuarioId: string;
   meuPersonagem: { id: string; nome: string } | null;
   minhasFichasDoSistema: { id: string; nome: string }[];
+  grimorio: string | null;
 }) {
   return (
     <section className="mt-10 rounded-lg border border-borda bg-superficie p-6">
@@ -303,6 +320,16 @@ function VisaoDoJogador({
         <p className="mt-3 text-sm text-texto-suave">
           O sistema desta campanha ainda não tem ficha própria no Hub.
         </p>
+      )}
+      {grimorio && (
+        <a
+          href={grimorio}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
+        >
+          📖 Abrir Grimório (aprenda o sistema)
+        </a>
       )}
       {!convidado && <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />}
     </section>

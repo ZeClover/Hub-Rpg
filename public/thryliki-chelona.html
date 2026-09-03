@@ -2204,6 +2204,82 @@ const RECURSOS_NOVAS_AREAS = {
   },
 };
 
+/*
+  Caminhos prontos: um atalho de criação por Área — pedido pra facilitar
+  quem trava na folha em branco. Cada um escolhe uma Origem com Treinamento
+  coerente, distribui os mesmos 5 pontos livres da criação normal (base
+  Grau 1 em tudo, teto Grau 3) e sugere a primeira ação do Kit/ações comuns
+  daquela Área. "Aplicar" só preenche Perfil/Atributos/Treinamentos — não
+  cria uma ficha nova nem mexe em Ano, Nível, Inventário ou qualquer outra
+  aba; a pessoa continua livre pra mudar tudo depois.
+*/
+const CAMINHOS_PRONTOS = [
+  {id:'duelista', areaId:'corpo-cinetica', origemId:'lutador-origem', nome:'Duelista',
+    pitch:'Resolve tudo no corpo a corpo: tensiona, encadeia e rompe.',
+    atributos:{forca:3, agilidade:2, constituicao:2, presenca:2, inteligencia:1},
+    dica:'Comece com Golpe Fundamental (Principal, 1 Impacto) e guarde o Rompimento Didático pra quando o Rastro tiver 2 marcas.'},
+  {id:'feiticeiro-elemental', areaId:'simbologia-arcana', origemId:'estudante-simbologia', nome:'Feiticeiro Elemental',
+    pitch:'Já entra com quatro Fórmulas prontas de Fogo, Água, Vento e Terra.',
+    atributos:{inteligencia:3, agilidade:2, constituicao:2, presenca:2, forca:1},
+    dica:'Abra com Projétil Elemental (2 Mana, 1 Impacto) e use Concentrar (Ação Principal, +2 Mana) se a Mana acabar.'},
+  {id:'engenheiro-combate', areaId:'robotica-engenharia', origemId:'engenharia-robotica', nome:'Engenheiro de Combate',
+    pitch:'Sistema Principal configurado e dois Módulos ativos desde o primeiro turno.',
+    atributos:{inteligencia:3, forca:2, agilidade:2, constituicao:2, presenca:1},
+    dica:'Ferramenta Ofensiva (1 Carga, 1 Impacto) resolve a maioria dos turnos; guarde Pontos de Comando pra delegar ação a um Sistema.'},
+  {id:'cultivador-campo', areaId:'botanica-biomancia', origemId:'sobrevivente', nome:'Cultivador de Campo',
+    pitch:'Cresce e colhe Cultivos em pleno combate — nenhuma opção exige vegetação já no cenário.',
+    atributos:{presenca:3, agilidade:2, constituicao:2, inteligencia:2, forca:1},
+    dica:'Semente de Estalo resolve emergências sem gastar Seiva; deixe a Mandíbula Solar crescer até Floração antes de Colher.'},
+  {id:'naturalista-campo', areaId:'zoologia-etologia', origemId:'cacador', nome:'Naturalista de Campo',
+    pitch:'Três Perfis preparados, trocados em pleno combate conforme a ameaça muda.',
+    atributos:{presenca:3, agilidade:2, constituicao:2, forca:2, inteligencia:1},
+    dica:'Instinto Predador ataca sem gastar nada; observe um comportamento novo por rodada pra acumular Dados de Campo.'},
+  {id:'artista-guerra', areaId:'arte-expressao', origemId:'artista', nome:'Artista de Guerra',
+    pitch:'Obra Principal e três Motivos já preparados — a apresentação em si é a arma.',
+    atributos:{presenca:3, agilidade:2, inteligencia:2, forca:2, constituicao:1},
+    dica:'Manifestação Incisiva resolve a maioria das cenas; guarde o Clímax Preparado pra quando a Ressonância chegar em 3.'},
+  {id:'quimico-campo', areaId:'alquimia-quimica', origemId:'operario', nome:'Químico de Campo',
+    pitch:'Fórmulas estáveis primeiro, Reação Volátil só quando a cena pede risco.',
+    atributos:{inteligencia:3, forca:2, agilidade:2, constituicao:2, presenca:1},
+    dica:'Comece com Fórmula Estável (1 Impacto, sem gerar Instabilidade); Estabilização de Emergência reduz o risco antes que ele exploda.'},
+  {id:'navegador-astros', areaId:'astronomia-cosmologia', origemId:'marinheiro', nome:'Navegador dos Astros',
+    pitch:'Lê o céu como bússola e arma — mapeia Pontos e converte Janelas cumpridas em poder.',
+    atributos:{inteligencia:3, agilidade:2, constituicao:2, presenca:2, forca:1},
+    dica:'Mapear Ponto custa 0 e prepara a cena; Efeito Orbital converte isso em luz, proteção ou movimento.'},
+  {id:'estrategista-numerico', areaId:'matematica-probabilidade', origemId:'estudante', nome:'Estrategista Numérico',
+    pitch:'Declara uma Hipótese verificável e usa o Modelo pra prever o resultado antes de agir.',
+    atributos:{inteligencia:3, agilidade:2, constituicao:2, presenca:2, forca:1},
+    dica:'Declarar Hipótese custa 0; Aplicar Modelo já resolve a maioria das cenas com 1 Impacto.'},
+  {id:'leitor-pessoas', areaId:'psicologia-noetica', origemId:'atendente-bar', nome:'Leitor de Pessoas',
+    pitch:'Enquadra o Estado de quem está por perto — medo, foco, dúvida — e usa isso a favor do grupo.',
+    atributos:{presenca:3, agilidade:2, constituicao:2, inteligencia:2, forca:1},
+    dica:'Enquadrar Estado não custa nada; Intervenção Breve já redireciona a cena sem controlar ninguém.'},
+  {id:'medico-campo', areaId:'medicina-anatomia', origemId:'saude', nome:'Médico de Campo',
+    pitch:'Diagnostica antes de agir — cada intervenção usa um Diagnóstico já confirmado.',
+    atributos:{inteligencia:3, forca:2, agilidade:2, constituicao:2, presenca:1},
+    dica:'Diagnóstico de Campo custa 0 Foco Clínico; Intervenção Clínica cura, protege ou contém.'},
+  {id:'prospector-cristais', areaId:'geologia-cristalografia', origemId:'estudante-ocultos', nome:'Prospector de Cristais',
+    pitch:'Planta cristais-semente e pressuriza Estruturas até liberar uma Fratura.',
+    atributos:{constituicao:3, forca:2, agilidade:2, inteligencia:2, presenca:1},
+    dica:'Prospectar Estrutura custa 0; Pressurizar já causa dano ou cria terreno enquanto acumula Tensão.'},
+  {id:'investigador-passado', areaId:'historia-arqueologia', origemId:'detetive', nome:'Investigador do Passado',
+    pitch:'Liga toda evidência a uma função histórica antes de Reencenar o que ela permite.',
+    atributos:{inteligencia:3, agilidade:2, constituicao:2, presenca:2, forca:1},
+    dica:'Contextualizar Fonte não custa nada; Reencenação já resolve técnica, formação, proteção ou rota.'},
+  {id:'guardiao-ecos', areaId:'tanatologia', origemId:'amnesico', nome:'Guardião de Ecos',
+    pitch:'Escuta ausências e vincula Ecos — vozes e memórias que agem por ele.',
+    atributos:{presenca:3, agilidade:2, constituicao:2, inteligencia:2, forca:1},
+    dica:'Escutar e Vincular custa 0; a Diretriz do Eco informa, protege ou assombra usando a Âncora dele.'},
+  {id:'negociador-pactos', areaId:'direito-contratologia', origemId:'executivo', nome:'Negociador de Pactos',
+    pitch:'Declara Cláusulas públicas e faz até quem se opõe respeitar o próprio acordo.',
+    atributos:{presenca:3, agilidade:2, inteligencia:2, forca:2, constituicao:1},
+    dica:'Declarar Cláusula custa 0; Execução Menor já protege um direito ou cobra uma violação.'},
+  {id:'filosofo-campo', areaId:'filosofia-metafisica', origemId:'escravo', nome:'Filósofo em Campo',
+    pitch:'Sustenta uma Premissa até o fim, mesmo quando isso custa caro.',
+    atributos:{inteligencia:3, agilidade:2, constituicao:2, presenca:2, forca:1},
+    dica:'Definir Premissa custa 0; Sustentar Consequência já aplica Pressão, Sobrevivência ou Tática compatível com ela.'},
+];
+
 /* --- Personagem ------------------------------------------------------------ */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -2302,6 +2378,20 @@ function novoPersonagem(nome){
     },
     anotacoes: '',
   };
+}
+
+// Aplica um Caminho Pronto sobre o personagem ATUAL — não cria ficha nova,
+// só preenche Origem/Área/Atributos/Treinamentos, exatamente como alguém
+// faria na mão seguindo esse Caminho. Mistura com o que já estiver
+// preenchido nas outras abas (Inventário, Progressão etc.) fica intacto.
+function aplicarCaminhoPronto(p, caminhoId){
+  const c = CAMINHOS_PRONTOS.find(x => x.id === caminhoId);
+  if(!c) return;
+  const origem = ORIGENS.find(o => o.id === c.origemId);
+  p.perfil.origemId = c.origemId;
+  p.perfil.areaId = c.areaId;
+  p.atributos = {...c.atributos};
+  if(origem) for(const t of origem.treinamentos) p.treinamentos[t] = 'treinado';
 }
 
 function novoItem(){
@@ -2766,6 +2856,9 @@ const estado = {
   doencaRascunho: {classificacao:'Comum', id:'lobo__ouvido-canino'},
   // moduloRascunho: rascunho de Módulo de Robótica e Engenharia.
   moduloRascunho: {nome:'', familia:'Locomoção', categoria:'I', acao:'', custo:'', impacto:1, ancora:'', contrajogo:''},
+  // caminhoSelecionado: qual Caminho Pronto está marcado no seletor da aba
+  // Status — só o rascunho da escolha, "Aplicar" é que grava no personagem.
+  caminhoSelecionado: CAMINHOS_PRONTOS[0].id,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -3014,7 +3107,25 @@ function abaStatus(p){
   const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
   const area = AREAS.find(a => a.id === p.perfil.areaId);
   const ano = ANOS.find(a => a.id === p.ano);
+  const caminho = CAMINHOS_PRONTOS.find(c => c.id === estado.caminhoSelecionado) || CAMINHOS_PRONTOS[0];
   return `<div class="cartao">
+    <h2 style="font-size:18px">Caminho pronto</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Não sabe por onde começar? Um Caminho preenche Origem, Atributos e
+      Treinamentos de uma vez, prontos pra jogar o 1º Ano — Área, Ramo (a
+      partir do 2º Ano) e tudo o resto continuam livres pra escolher depois.
+    </p>
+    <select id="c-caminho">
+      ${CAMINHOS_PRONTOS.map(c => {
+        const a = AREAS.find(x => x.id === c.areaId);
+        return `<option value="${c.id}" ${c.id===caminho.id?'selected':''}>${c.nome} — ${a ? a.nome : ''}</option>`;
+      }).join('')}
+    </select>
+    <p class="mini" style="margin-top:10px">${esc(caminho.pitch)}<br><strong>Primeiro turno:</strong> ${esc(caminho.dica)}</p>
+    <button id="btAplicarCaminho" style="margin-top:6px">Aplicar este Caminho</button>
+  </div>
+
+  <div class="cartao">
     <p class="mini" style="margin-bottom:14px">
       <strong>Ano</strong> mede o currículo que o personagem já aprendeu.
       <strong>Nível</strong> mede a força dele. Os dois avançam separados —
@@ -3032,7 +3143,7 @@ function abaStatus(p){
     ${ano ? `<p class="mini" style="margin-top:8px">${ano.sobre}</p>` : ''}
     <div style="margin-top:14px">
       <label for="c-aparencia">Aparência</label>
-      <textarea id="c-aparencia" data-perfil="aparencia" rows="3">${esc(p.perfil.aparencia)}</textarea>
+      <textarea id="c-aparencia" data-perfil="aparencia" rows="3" placeholder="ex: cicatriz na sobrancelha esquerda, sempre com um caderno de anotações no bolso">${esc(p.perfil.aparencia)}</textarea>
     </div>
   </div>
 
@@ -4109,13 +4220,13 @@ function painelConstrutorPoder(p){
 
     <div class="grade g2" style="margin-top:12px">
       <div><label for="cp-intencao">Intenção (o que muda na cena, numa frase)</label>
-        <input id="cp-intencao" value="${esc(cp.intencao)}"></div>
+        <input id="cp-intencao" value="${esc(cp.intencao)}" placeholder="ex: empurrar e derrubar um alvo próximo"></div>
       <div><label for="cp-acesso">Acesso (como este personagem chega à Área)</label>
-        <input id="cp-acesso" value="${esc(cp.acesso)}"></div>
+        <input id="cp-acesso" value="${esc(cp.acesso)}" placeholder="ex: Perfil Ativo de predador em alcateia"></div>
       <div><label for="cp-ancora">Âncora (perceptível e interferível)</label>
-        <input id="cp-ancora" value="${esc(cp.ancora)}"></div>
+        <input id="cp-ancora" value="${esc(cp.ancora)}" placeholder="ex: os dentes e garras do personagem"></div>
       <div><label for="cp-forma">Forma (como o poder se manifesta)</label>
-        <input id="cp-forma" value="${esc(cp.forma)}"></div>
+        <input id="cp-forma" value="${esc(cp.forma)}" placeholder="ex: avanço físico com mordida e garra"></div>
     </div>
 
     <p class="mini" style="margin:14px 0 6px">Resultados (dividem o Impacto — some até o orçamento da Potência)</p>
@@ -4138,13 +4249,13 @@ function painelConstrutorPoder(p){
 
     <div class="grade g2" style="margin-top:12px">
       <div><label for="cp-teste">Teste ou Resistência</label>
-        <input id="cp-teste" value="${esc(cp.testeResistencia)}"></div>
+        <input id="cp-teste" value="${esc(cp.testeResistencia)}" placeholder="ex: Reflexos do alvo pra não cair"></div>
       <div><label for="cp-contrajogo">Contrajogo</label>
-        <input id="cp-contrajogo" value="${esc(cp.contrajogo)}"></div>
+        <input id="cp-contrajogo" value="${esc(cp.contrajogo)}" placeholder="ex: terreno instável, se afastar antes do avanço, armadura no ponto de mordida"></div>
     </div>
     <div style="margin-top:10px">
       <label for="cp-residuo">Resíduo (toda transformação deixa perda, evidência ou vulnerabilidade)</label>
-      <input id="cp-residuo" value="${esc(cp.residuo)}">
+      <input id="cp-residuo" value="${esc(cp.residuo)}" placeholder="ex: arranhões visíveis e fôlego ofegante por uma cena">
     </div>
 
     <p class="mini" style="margin-top:10px">${custoPE ? `Custa ${custoPE} PE pra salvar.` : 'Grátis — ainda dentro do pacote inicial (duas primeiras técnicas/poderes).'}</p>
@@ -4401,13 +4512,13 @@ function painelProjeto(proj, i){
     </div>
     <div class="grade g2" style="margin-top:8px">
       <div><label for="projeto-${i}-intencao">Intenção (qual problema resolve)</label>
-        <input id="projeto-${i}-intencao" data-projeto-campo="${i}|intencao" value="${esc(proj.intencao)}"></div>
+        <input id="projeto-${i}-intencao" data-projeto-campo="${i}|intencao" value="${esc(proj.intencao)}" placeholder="ex: abrir uma fechadura sem chave"></div>
       <div><label for="projeto-${i}-base">Base (Perfil universal)</label>
-        <input id="projeto-${i}-base" data-projeto-campo="${i}|base" value="${esc(proj.base)}"></div>
+        <input id="projeto-${i}-base" data-projeto-campo="${i}|base" value="${esc(proj.base)}" placeholder="ex: chave mestra improvisada"></div>
       <div><label for="projeto-${i}-fonte">Fonte e Âncora</label>
         <input id="projeto-${i}-fonte" data-projeto-campo="${i}|fonteAncora" value="${esc(proj.fonteAncora)}" placeholder="como funciona e como pode falhar"></div>
       <div><label for="projeto-${i}-materiais">Materiais e oficina</label>
-        <input id="projeto-${i}-materiais" data-projeto-campo="${i}|materiaisOficina" value="${esc(proj.materiaisOficina)}"></div>
+        <input id="projeto-${i}-materiais" data-projeto-campo="${i}|materiaisOficina" value="${esc(proj.materiaisOficina)}" placeholder="ex: kit de gazuas e uma bancada básica"></div>
     </div>
     <div style="margin-top:8px">
       <label for="projeto-${i}-tracos">Traços (separados por vírgula)</label>
@@ -4416,7 +4527,7 @@ function painelProjeto(proj, i){
     </div>
     <div style="margin-top:8px">
       <label for="projeto-${i}-falha">Falha interessante (Virada de Pressão)</label>
-      <input id="projeto-${i}-falha" data-projeto-campo="${i}|falhaInteressante" value="${esc(proj.falhaInteressante)}">
+      <input id="projeto-${i}-falha" data-projeto-campo="${i}|falhaInteressante" value="${esc(proj.falhaInteressante)}" placeholder="ex: quebra dentro da fechadura e trava de vez">
     </div>
 
     <p class="mini" style="margin:14px 0 6px">Categoria Operacional = menor entre Projeto, Criador, Material e Oficina</p>
@@ -4495,7 +4606,7 @@ function painelItem(item, i){
     </div>
     <div class="grade g2" style="margin-top:8px">
       <div><label for="item-${i}-perfil">Perfil (função básica)</label>
-        <input id="item-${i}-perfil" data-item-campo="${i}|perfil" value="${esc(item.perfil)}"></div>
+        <input id="item-${i}-perfil" data-item-campo="${i}|perfil" value="${esc(item.perfil)}" placeholder="ex: corta perto, gera luz, resiste a impacto"></div>
       <div><label for="item-${i}-tracos">Traços</label>
         <input id="item-${i}-tracos" data-item-campo="${i}|tracos" value="${esc(item.tracos)}" placeholder="escolhas que diferenciam o item"></div>
       <div><label for="item-${i}-ancora">Âncora e fonte</label>
@@ -4576,6 +4687,17 @@ function ligarEventos(){
       const [raiz, chave] = el.dataset.campoRaiz.split('.');
       p[raiz][chave] = el.value;
     }));
+
+  const selCaminho = app.querySelector('#c-caminho');
+  if(selCaminho) selCaminho.onchange = () => { estado.caminhoSelecionado = selCaminho.value; render(); };
+  const btAplicarCaminho = app.querySelector('#btAplicarCaminho');
+  if(btAplicarCaminho) btAplicarCaminho.onclick = () => {
+    const p = atual(); if(!p) return;
+    const c = CAMINHOS_PRONTOS.find(x => x.id === estado.caminhoSelecionado) || CAMINHOS_PRONTOS[0];
+    const jaEscolheu = p.perfil.origemId || p.perfil.areaId;
+    if(jaEscolheu && !confirm(`Aplicar "${c.nome}" substitui a Origem, os Atributos e os Treinamentos atuais. Continuar?`)) return;
+    mudar(p => aplicarCaminhoPronto(p, c.id));
+  };
 
   app.querySelectorAll('[data-atributo]').forEach(el =>
     el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Number(el.value)));

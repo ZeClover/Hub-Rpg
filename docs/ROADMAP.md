@@ -1043,6 +1043,23 @@ passando.
     regras dessa ficha (é sistema comercial, o Hub só codifica mecânica)
   - Testado com Playwright: sumário sem link quebrado, `<details>`
     abrindo, sem erro de JS. `tsc` e lint (só HTML estático) sem impacto
+- [x] **Thrylikí Chelóna — grimório conectado ao Hub, exemplos e
+      Caminhos Prontos** (01/09/2026) — decisão #56.
+  - Campo `grimorio` novo em `Sistema` (`src/lib/sistemas.ts`), preenchido
+    só pro Thrylikí Chelóna; link "📖 Abrir Grimório" na página da
+    campanha, pro mestre e pro jogador (mesmo padrão do Escudo do Mestre)
+  - Exemplos (`placeholder`) nos campos mais abertos da ficha: os 7 campos
+    do Construtor Livre de Poder (um poder de exemplo coerente inteiro,
+    "Investida da Alcateia"), 4 campos de Projeto, Perfil de item,
+    Aparência do personagem
+  - **Caminhos Prontos**: 16 arquétipos prontos, um por Área de Estudo,
+    cada um com Origem + distribuição de Atributos + dica da primeira
+    ação — card na aba Status, "Aplicar" preenche Origem/Atributos/
+    Treinamentos do personagem atual (com confirmação se já tinha algo
+    escolhido), sem criar ficha nova nem mexer em outra aba
+  - Testado com Playwright: 16 opções, prévia reativa, aplicação correta,
+    confirmação ao sobrescrever, placeholders no lugar certo, sem erro de
+    JS. `tsc`, lint e os 208 testes automáticos continuam limpos
 - [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
       Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion

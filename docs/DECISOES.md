@@ -2054,6 +2054,55 @@ Kaizoku no Sho, Campanha Livre) ainda não têm grimório — decisão #26
 ("uma fatia por vez") se aplica aqui também: cada um vira sua própria
 fatia quando o Zé pedir.
 
+## 56. Thrylikí Chelóna — grimório conectado ao Hub, exemplos e Caminhos Prontos (01/09/2026)
+
+Três pedidos do Zé na sequência da decisão #55.
+
+**Grimório conectado ao Hub.** A pergunta "mas tá conectado ao hub?"
+revelou que o grimório só era alcançável pelos links manuais colados nas
+próprias páginas HTML — não aparecia em lugar nenhum do Next.js. Corrigido
+do mesmo jeito que o Escudo do Mestre já funciona: novo campo `grimorio`
+em `Sistema` (`src/lib/sistemas.ts`), preenchido só pro Thrylikí Chelóna
+(`null` nos outros 4, mesma lógica de "uma fatia por vez"). A página da
+campanha (`/campanhas/[id]`) agora mostra um link "📖 Abrir Grimório"
+tanto pro mestre (ao lado do Escudo do Mestre) quanto pro jogador (perto
+de escolher a ficha) — o jogador precisa aprender o sistema tanto quanto
+o mestre, então o link não ficou só do lado do mestre.
+
+**Exemplos na ficha.** Os campos de texto mais abertos da ficha — onde
+"a folha em branco" mais trava um jogador novo — ganharam `placeholder`
+com exemplo concreto: os 7 campos do Construtor Livre de Poder (Intenção,
+Acesso, Âncora, Forma, Teste/Resistência, Contrajogo, Resíduo, todos
+coerentes entre si — um único poder de exemplo, "Investida da Alcateia"),
+4 campos de Projeto (Intenção, Base, Materiais e oficina, Falha
+interessante), Perfil de item, e Aparência do personagem. Só
+`placeholder` — não são valores pré-preenchidos, somem ao digitar.
+
+**Caminhos Prontos.** Um atalho de criação por Área — 16 arquétipos
+(`CAMINHOS_PRONTOS` em `thryliki-chelona.html`), um por Área de Estudo,
+cada um com uma Origem cujos Treinamentos fixos fazem sentido pra Área,
+a mesma distribuição de 5 pontos livres da criação normal (base Grau 1,
+teto Grau 3), e uma dica citando a primeira ação do Kit/ações comuns
+daquela Área pro primeiro turno. Card novo "Caminho pronto" no topo da
+aba Status: escolher no seletor atualiza a prévia (pitch + dica) sem
+salvar nada; "Aplicar este Caminho" preenche Origem/Atributos/
+Treinamentos do personagem atual de uma vez (pede confirmação se Origem
+ou Área já estiverem escolhidas, pra não sobrescrever em silêncio) — não
+cria ficha nova nem mexe em Ano, Nível, Inventário ou qualquer outra aba.
+
+Os pares Área↔Origem foram escolhidos pela sobreposição real de
+Treinamento com a Perícia mais usada por aquela Área (ex.: Simbologia
+Arcana com a Origem "Estudante de Simbologia", que já treina Simbologia
+e Conhecimentos) — não são arbitrários.
+
+Testado com Playwright: as 16 opções do seletor aparecem, trocar a opção
+atualiza a prévia sem gravar, "Aplicar" preenche Origem/Área/Atributos/
+Treinamentos corretamente, reaplicar por cima de uma escolha já feita
+pede confirmação, e os placeholders novos aparecem nos campos certos —
+sem erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos (inalterados — mudança é HTML estático + um campo opcional
+em `Sistema`) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

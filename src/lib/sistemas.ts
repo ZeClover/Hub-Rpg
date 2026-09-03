@@ -45,6 +45,14 @@ export type Sistema = {
     dois lugares. null pra sistema sem ficha de inimigo própria.
   */
   campoVidaInimigo: string[] | null;
+  /*
+    Grimório — manual do jogador explicando o sistema inteiro (o que cada
+    peça faz, como funciona, como aprender). Mesmo conteúdo pra qualquer
+    campanha do sistema, por isso é estático como o Escudo do Mestre.
+    null pra sistema que ainda não tem grimório (decisão #26: uma fatia
+    por vez — cada sistema ganha o dele quando for a vez dele).
+  */
+  grimorio: string | null;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -59,6 +67,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
+    grimorio: null,
   },
   {
     chave: "fabula-ultima",
@@ -71,6 +80,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/fabula-ultima-inimigo.html",
     escudoMestre: "/fabula-ultima-escudo-mestre.html",
     campoVidaInimigo: ["pvAtual"],
+    grimorio: null,
   },
   {
     chave: "sao",
@@ -83,6 +93,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/sao-inimigo.html",
     escudoMestre: "/sao-escudo-mestre.html",
     campoVidaInimigo: ["atual", "pv"],
+    grimorio: null,
   },
   {
     chave: "campanha-livre",
@@ -95,6 +106,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
+    grimorio: null,
   },
   {
     chave: "thryliki-chelona",
@@ -107,6 +119,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/thryliki-chelona-inimigo.html",
     escudoMestre: "/thryliki-chelona-escudo-mestre.html",
     campoVidaInimigo: ["atual", "pv"],
+    grimorio: "/thryliki-chelona-grimorio.html",
   },
 ];
 
