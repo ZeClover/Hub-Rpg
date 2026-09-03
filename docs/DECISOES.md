@@ -2122,6 +2122,46 @@ Ascensão disponíveis), os 6 campos confirmados com o placeholder certo,
 sem erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos continuam limpos (mudança é só HTML estático).
 
+## 58. Thrylikí Chelóna — links da ficha pro Grimório (01/09/2026)
+
+Pedido do Zé: além do exemplo em cada campo, um link direto pra seção do
+Grimório que explica aquele pedaço específico da mecânica — não só um
+link genérico no topo da página (que já existia desde a decisão #55/#56).
+
+Função `linkGrim(ancora, texto)` nova em `thryliki-chelona.html`: gera um
+link `📖 <texto>` pra `/thryliki-chelona-grimorio.html#<ancora>`, sempre
+em nova aba (nunca perde o que está sendo preenchido). Espalhado em
+**26 pontos** por toda a ficha, cobrindo praticamente todo painel que
+tem uma seção correspondente no Grimório:
+
+- **Status**: Caminho pronto → `#aprender`; Origem → `#origens`; Área de
+  Estudo → `#areas`; Ramo → `#tecnicas`; Doenças → `#doencas`
+- **Atributos**: Atributos → `#atributos`; Perícias/Treinamentos →
+  `#teste`
+- **Progressão**: Pontos de Evolução, Talentos, Recursos/Eletivas, Marcos
+  e Ascensões → `#progressao` (5 links, um por card, mesma âncora — a
+  seção do Grimório cobre a tabela de custo inteira); Progresso de
+  Nível, Portfólio e Recesso → `#nivel` (3 links)
+- **Combate**: cada painel de Área original (Corpo e Cinética, Simbologia
+  Arcana, Robótica, Botânica, Arte, Zoologia) → `#originais`; Metassímbolo
+  → `#metassimbolo`; Construtor de Fórmula → `#formula`; painel das Áreas
+  novas → `#novas`; Construtor Livre de Poder → `#poder-livre`; Kit de
+  Combate do 1º Ano → `#tecnicas`; Bestiário de Zoologia → `#bestiario`;
+  Vida → `#vida`
+- **Inventário**: Carga Pronta/Itens → `#inventario`; Projetos →
+  `#projetos`
+
+Cada âncora foi conferida contra os `id` reais do Grimório antes de
+entrar na ficha — nenhum link quebrado.
+
+Testado com Playwright: personagem com Caminho Pronto de Robótica e
+Engenharia aplicado (pra exercitar os painéis específicos dessa Área) e
+5º Ano — 22 links do Grimório visíveis nas 5 abas nesse cenário (o total
+varia por Área, já que cada painel de Área original e o Metassímbolo só
+aparecem quando aquela Área está selecionada), todos com âncora válida e
+`target="_blank"`, sem erro de JS. `tsc --noEmit`, `npm run lint` e os
+208 testes automáticos continuam limpos (mudança é só HTML estático).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

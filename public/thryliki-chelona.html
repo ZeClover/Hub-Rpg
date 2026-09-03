@@ -2921,6 +2921,12 @@ function mudarSemRedesenhar(mudanca, elemento){
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+// Link pra seção exata do grimório que explica aquele pedaço da ficha —
+// abre em nova aba (nunca perde o que está sendo preenchido).
+function linkGrim(ancora, texto){
+  return `<a href="/thryliki-chelona-grimorio.html#${ancora}" target="_blank" style="display:inline-block;margin-top:6px;font-size:12px;color:var(--ambar)">📖 ${esc(texto || 'Ver explicação completa no Grimório')}</a>`;
+}
+
 const ABAS = [
   {id:'status',      nome:'Status'},
   {id:'atributos',   nome:'Atributos e Perícias'},
@@ -3122,7 +3128,8 @@ function abaStatus(p){
       }).join('')}
     </select>
     <p class="mini" style="margin-top:10px">${esc(caminho.pitch)}<br><strong>Primeiro turno:</strong> ${esc(caminho.dica)}</p>
-    <button id="btAplicarCaminho" style="margin-top:6px">Aplicar este Caminho</button>
+    <button id="btAplicarCaminho" style="margin-top:6px">Aplicar este Caminho</button><br>
+    ${linkGrim('aprender', 'Como aprender o sistema, passo a passo')}
   </div>
 
   <div class="cartao">
@@ -3157,6 +3164,7 @@ function abaStatus(p){
     ${origem ? `<p class="mini" style="margin-top:10px">
       <strong>Treinamentos:</strong> ${origem.treinamentos.length ? origem.treinamentos.map(t => PERICIAS.find(x=>x.id===t)?.nome || t).join(', ') : '(escolhidos com o Mestre)'}<br>
       <strong>Permissão:</strong> ${origem.permissao}</p>` : ''}
+    ${linkGrim('origens', 'Ver as 26 Origens completas')}
   </div>
 
   <div class="cartao">
@@ -3167,6 +3175,7 @@ function abaStatus(p){
       Comando...) são fatia futura; por enquanto isso marca a Área e o
       Ramo escolhido, com o texto de referência de cada etapa.
     </p>
+    ${linkGrim('areas', 'Ver as 16 Áreas e a estrutura dos Ramos')}
     <select id="c-area" data-campo-raiz="perfil.areaId">
       <option value="">— nenhuma —</option>
       ${AREAS.map(a => `<option value="${a.id}" ${a.id===p.perfil.areaId?'selected':''}>${a.nome}</option>`).join('')}
@@ -3196,7 +3205,8 @@ function painelDoencas(p){
       uma pessoa. Começa com até dois Pares gratuitos; do terceiro em
       diante, cada Par novo custa 2 PE. Limite recomendado: seis.
     </p>
-    <p class="mini" style="margin:6px 0"><strong>Pares ativos (${pares.length}/6)${custoProximo?` — próximo custa ${custoProximo} PE`:' — os próximos são grátis'}</strong></p>
+    ${linkGrim('doencas', 'Ver o catálogo completo e as regras de Doenças')}
+    <p class="mini" style="margin:14px 0 6px"><strong>Pares ativos (${pares.length}/6)${custoProximo?` — próximo custa ${custoProximo} PE`:' — os próximos são grátis'}</strong></p>
     ${pares.length ? pares.map((id,i) => {
       const d = DOENCAS_CATALOGO.find(x => x.id === id);
       if(!d) return '';
@@ -3253,6 +3263,7 @@ function painelRamo(p, area){
   return `<div class="cartao">
     <h2 style="font-size:18px">Ramo</h2>
     <p class="mini" style="margin:6px 0 14px">A subclasse dentro da Área — só mostra as etapas que o Ano do personagem já libera.</p>
+    ${linkGrim('tecnicas', 'Ver Técnicas de Ramo e o Kit de Combate do 1º Ano')}
     <select id="c-ramo" data-campo-raiz="perfil.ramoId">
       <option value="">— nenhum —</option>
       ${ramos.map(r => `<option value="${r.id}" ${r.id===p.perfil.ramoId?'selected':''}>${esc(r.nome)}</option>`).join('')}
@@ -3291,6 +3302,7 @@ function abaAtributos(p){
       adicionais, com máximo de Grau 3 na criação (ex: 3,2,2,2,1 ou
       3,3,2,1,1). Grau nunca passa de 5 na progressão comum.
     </p>
+    ${linkGrim('atributos', 'Ver Atributos, Perícias e a leitura de cada Grau')}
     <div class="grade g5">
       ${ATRIBUTOS.map(a => {
         const custo = custoProximoGrau(grauAtributo(p,a.id));
@@ -3315,6 +3327,7 @@ function abaAtributos(p){
       degrau depois da criação custa PE e exige a Categoria mínima
       (Treinado: I, Perito: II, Expert: III).
     </p>
+    ${linkGrim('teste', 'Ver o Teste, dificuldade e graus de resultado')}
     ${ATRIBUTOS.map(atr => `
       <p class="mini" style="margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em">${atr.nome}</p>
       <div class="grade g3">
@@ -3374,6 +3387,7 @@ function abaProgressao(p){
       Treinamento (na aba Atributos), Talentos, Recursos/Eletivas, e
       Fórmulas/Poderes além dos dois primeiros gratuitos do pacote inicial.
     </p>
+    ${linkGrim('progressao', 'Ver a tabela completa de custo em PE')}
     <div class="grade g3">
       <div class="derivado"><div class="rot">Ganho</div><div class="val">${peGanho(p)}</div></div>
       <div class="derivado"><div class="rot">Gasto</div><div class="val">${peGastoTotal(p)}</div></div>
@@ -3403,7 +3417,8 @@ function abaProgressao(p){
         <input id="c-talento-desc" value="${esc(ct.descricao)}" placeholder="ex: Golpe Fundamental também aplica Exposto no alvo, além do dano normal"></div>
     </div>
     <p class="mini" style="margin-top:6px">${esc(talentoInfo.funcao)}</p>
-    <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button>
+    <button id="btComprarTalento" style="margin-top:8px" ${peDisponivel(p)<talentoInfo.custo?'disabled':''}>+ Comprar Talento (${talentoInfo.custo} PE)</button><br>
+    ${linkGrim('progressao', 'Ver os 3 tipos de Talento e o custo de cada um')}
   </div>
 
   <div class="cartao">
@@ -3425,7 +3440,8 @@ function abaProgressao(p){
     </div>
     <p class="mini" style="margin-top:6px">${esc(recursoInfo.limite)}</p>
     ${recursoBloqueado ? `<p class="mini">Exige ${recursoInfo.anoMinimo}º Ano — personagem está no ${p.ano}º.</p>` : ''}
-    <button id="btComprarRecurso" style="margin-top:8px" ${recursoBloqueado || peDisponivel(p)<recursoInfo.custo?'disabled':''}>+ Comprar (${recursoInfo.custo} PE)</button>
+    <button id="btComprarRecurso" style="margin-top:8px" ${recursoBloqueado || peDisponivel(p)<recursoInfo.custo?'disabled':''}>+ Comprar (${recursoInfo.custo} PE)</button><br>
+    ${linkGrim('progressao', 'Ver os 5 tipos de Recurso/Eletiva e o custo de cada um')}
   </div>
 
   <div class="cartao">
@@ -3435,6 +3451,7 @@ function abaProgressao(p){
       gasta PE, não pode virar PE, só escolhe conteúdo do Currículo já
       liberado pelo Ano atual.
     </p>
+    ${linkGrim('progressao', 'Ver as 5 opções de Marco explicadas')}
     ${marcos.map((m,i) => `<div class="linha-lista">
       <div class="topo">
         <strong>${esc((MARCO_OPCOES.find(o=>o.id===m.opcao)||{}).nome || m.opcao)}</strong>
@@ -3462,6 +3479,7 @@ function abaProgressao(p){
       Uma a cada 20 Níveis — 4 degraus de escala num único eixo. Não
       concede bônus no d20, Impacto gratuito, ação extra nem Categoria VI.
     </p>
+    ${linkGrim('progressao', 'Ver os 5 eixos de Ascensão explicados')}
     ${ascensoes.map((a,i) => `<div class="linha-lista">
       <div class="topo">
         <strong>${esc((ASCENSAO_EIXOS.find(e=>e.id===a.eixo)||{}).nome || a.eixo)}</strong>
@@ -3521,6 +3539,7 @@ function painelProgressoNivel(p){
       por matar criaturas individualmente — resolver, contornar,
       convencer ou compreender uma ameaça vale tanto quanto derrotá-la.
     </p>
+    ${linkGrim('nivel', 'Ver os 3 Ritmos de Nível explicados')}
     <label for="c-ritmo-nivel">Ritmo</label>
     <select id="c-ritmo-nivel">
       ${RITMOS_NIVEL.map(r => `<option value="${r.id}" ${r.id===pe.ritmo?'selected':''}>${r.nome}</option>`).join('')}
@@ -3549,6 +3568,7 @@ function painelPortfolio(p){
       Aplicação, Reflexão) com o Mestre. Falhar não remove nada: vira
       uma Recuperação e uma nova tentativa.
     </p>
+    ${linkGrim('nivel', 'Ver o Portfólio de Prova de Passagem explicado')}
     <div class="condicoes">
       ${PORTFOLIO_ITENS.map(i => `<label title="${esc(i.desc)}">
         <input type="checkbox" data-portfolio="${i.id}" ${pe.portfolio[i.id]?'checked':''}>
@@ -3572,6 +3592,7 @@ function painelRecesso(p){
       Entre Semestres, cada personagem realiza <strong>duas Atividades de
       Recesso</strong>. Só exige teste quando há risco, oposição ou prazo.
     </p>
+    ${linkGrim('nivel', 'Ver as 6 Atividades de Recesso explicadas')}
     <div class="condicoes">
       ${ATIVIDADES_RECESSO.map(a => `<label title="${esc(a.desc)}">
         <input type="checkbox" data-recesso-atividade="${a.id}" ${atividades.includes(a.id)?'checked':''} ${!atividades.includes(a.id) && atividades.length>=2?'disabled':''}>
@@ -3597,6 +3618,7 @@ function painelCorpoCinetica(p){
       compatíveis formam um Rastro de até duas marcas. <strong>Romper:</strong>
       encerra o Rastro e converte Esforço acumulado em efeito.
     </p>
+    ${linkGrim('originais', 'Ver Esforço, Rastro e Romper explicados')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">Esforço</div>
@@ -3649,6 +3671,7 @@ function painelSimbologiaArcana(p){
       6 + 2×Grau de Inteligência + 2×Grau de Treinamento em Simbologia +
       Reservatório.
     </p>
+    ${linkGrim('originais', 'Ver a Mana explicada')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">Mana</div>
@@ -3677,6 +3700,7 @@ function painelSimbologiaArcana(p){
       única e nomeada às regras normais de composição, registrada aqui
       por escrito.
     </p>
+    ${linkGrim('metassimbolo', 'Ver o Metassímbolo explicado')}
     <label for="c-sa-metassimbolo">Metassímbolo</label>
     <textarea id="c-sa-metassimbolo" rows="3" placeholder="nome e a exceção precisa que ele abre — o que ele quebra e o que isso custa">${esc(sa.metassimbolo||'')}</textarea>
   </div>` : ''}
@@ -3701,6 +3725,7 @@ function painelConstrutorFormula(p){
       Tomo do ${p.ano}º Ano (${matriz} Tomos${p.ano>=5?' + 1 Metassímbolo, à parte desta conta':''}).
       ${custoPE ? `Custa ${custoPE} PE pra salvar.` : 'Grátis — ainda dentro do pacote inicial (duas primeiras técnicas/poderes).'}
     </p>
+    ${linkGrim('formula', 'Ver a tabela de custo de cada componente da Fórmula')}
     <div class="grade g3">
       <div><label for="cf-verbo">Verbo</label>
         <select id="cf-verbo">
@@ -3783,6 +3808,7 @@ function painelRoboticaEngenharia(p){
       não são intercambiáveis. Chassi, Núcleo de Consciência e Módulos
       logo abaixo.
     </p>
+    ${linkGrim('originais', 'Ver Comando, Carga e Vitalícia explicados')}
     <div class="grade g3">
       <div class="derivado">
         <div class="rot">Comando (PC)</div>
@@ -3846,6 +3872,7 @@ function painelChassiRobotico(p){
   const dr = estado.moduloRascunho;
   return `<div class="cartao">
     <h2 style="font-size:18px">Chassi e Núcleo de Consciência</h2>
+    ${linkGrim('chassi', 'Ver os 8 tipos de Chassi e os 5 Núcleos explicados')}
     <div class="grade g3">
       <div><label for="c-re-chassi">Chassi</label>
         <select id="c-re-chassi">
@@ -3932,6 +3959,7 @@ function painelBotanicaBiomancia(p){
       segundo crescer. <strong>Colher:</strong> consome o Cultivo e resolve
       o efeito do estágio atual.
     </p>
+    ${linkGrim('originais', 'Ver Seiva e os 3 estágios de Cultivo explicados')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">Seiva</div>
@@ -3996,6 +4024,7 @@ function painelArteExpressao(p){
       acontecimentos, emoções, imagens ou ideias viram Motivos registrados.
       <strong>Apresentar:</strong> gasta Ressonância acumulada em efeito.
     </p>
+    ${linkGrim('originais', 'Ver Ressonância e Motivos explicados')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">Ressonância</div>
@@ -4055,6 +4084,7 @@ function painelZoologiaEtologia(p){
       partida. Observar um comportamento novo e relevante (sem interromper
       o turno) rende 1 Dado, no máximo 1 por rodada.
     </p>
+    ${linkGrim('originais', 'Ver Dados de Campo explicados')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">Dados de Campo</div>
@@ -4102,6 +4132,7 @@ function painelPerfisZoologia(p, ze){
       Camuflagem/Cooperação/Contramedida). No 1º Ano só uma Adaptação
       fica ativa; no 4º, duas compatíveis podem coexistir.
     </p>
+    ${linkGrim('bestiario', 'Ver Perfis e Traços de Zoologia explicados')}
     ${perfis.map((perfil,i) => `<div class="linha-lista">
       <div class="topo">
         <input data-perfil-campo="${i}|nome" value="${esc(perfil.nome)}" placeholder="Nome do Perfil (ex: Predador)" style="font-family:Georgia,serif;font-size:16px">
@@ -4138,6 +4169,7 @@ function painelNovaArea(p){
       <strong>Geração:</strong> ${esc(cfg.geracao)}<br>
       <strong>Limite:</strong> ${esc(cfg.limite)}
     </p>
+    ${linkGrim('novas', 'Ver o recurso e as ações comuns de todas as 10 Áreas novas')}
     <div class="grade g2">
       <div class="derivado">
         <div class="rot">${esc(cfg.nome)}</div>
@@ -4207,6 +4239,7 @@ function painelConstrutorPoder(p){
       vários resultados <strong>divide</strong> o Impacto entre eles, não
       soma um resultado cheio mais efeitos de graça.
     </p>
+    ${linkGrim('poder-livre', 'Ver os Átomos de Impacto e o custo por Área')}
 
     <div class="grade g2">
       <div><label for="cp-nome">Nome do poder</label>
@@ -4298,6 +4331,7 @@ function painelKitCombateAno1(p){
       Conteúdo pronto desde o 1º Ano, sem depender de criação livre nem
       de Ramo escolhido. <strong>Entrada pronta:</strong> ${esc(kit.entrada)}
     </p>
+    ${linkGrim('tecnicas', 'Ver o Kit de Combate das 6 Áreas originais')}
     <div class="grade g2">
       ${kit.opcoes.map(o => `<div>
         <p class="mini" style="margin:0"><strong>${esc(o.nome)}</strong> — ${esc(o.acao)}${o.custo ? ` (${esc(o.custo)})` : ''} · ${esc(o.impacto)} Impacto</p>
@@ -4320,6 +4354,7 @@ function painelVida(p){
     .reduce((soma,i) => soma + Math.max(0, Math.min(i.guardaMax||0, i.guardaAtual ?? i.guardaMax ?? 0)), 0);
   return `<div class="cartao">
     <h2 style="font-size:18px">Vida</h2>
+    ${linkGrim('vida', 'Ver a conversão de Impacto e as 4 escalas de Recuperação')}
     <div class="grade g2">
       <div class="derivado ${atual<=Math.floor(max/2)?'risco':''}">
         <div class="rot">Vida</div>
@@ -4457,6 +4492,7 @@ function abaInventario(p){
       conta aqui. Item guardado fora da Carga Pronta existe, mas recuperá-lo
       em cena exige Ação Principal e acesso ao recipiente.
     </p>
+    ${linkGrim('inventario', 'Ver o cartão universal de item explicado')}
     <div class="grade g2">
       <div class="derivado ${sobrecarregado?'risco':''}">
         <div class="rot">Carga usada</div>
@@ -4480,6 +4516,7 @@ function abaInventario(p){
       esqueleto." Categoria Operacional é sempre a menor entre Projeto,
       Criador, Material e Oficina.
     </p>
+    ${linkGrim('projetos', 'Ver as Fases de Projeto e a Categoria Operacional explicadas')}
     ${(p.inventario.projetos||[]).map((proj,i) => painelProjeto(proj, i)).join('') || '<p class="mini">(nenhum projeto ainda)</p>'}
     <button id="btAddProjeto">+ Novo Projeto</button>
   </div>`;

@@ -1067,6 +1067,16 @@ passando.
       concreto, mesmo padrão da decisão #56. Testado com Playwright
       (personagem 5º Ano/Nível 20 pra ter Marco e Ascensão disponíveis);
       `tsc`, lint e os 208 testes automáticos continuam limpos
+- [x] **Thrylikí Chelóna — links da ficha pro Grimório** (01/09/2026) —
+      decisão #58. Função `linkGrim(ancora, texto)` espalhada em 26
+      pontos da ficha — cada card/painel (Origem, Área, Ramo, Doenças,
+      Atributos, Teste, PE/Talentos/Recursos/Marcos/Ascensões, Progresso
+      de Nível/Portfólio/Recesso, cada Área de combate original, as Áreas
+      novas, os dois Construtores, Kit de Combate, Bestiário, Vida,
+      Inventário, Projetos) linka pra âncora exata da seção correspondente
+      do Grimório, sempre em nova aba. Testado com Playwright (âncoras
+      conferidas contra os ids reais do Grimório, sem link quebrado);
+      `tsc`, lint e os 208 testes automáticos continuam limpos
 - [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
       Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion
