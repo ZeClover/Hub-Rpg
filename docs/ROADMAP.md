@@ -1128,8 +1128,29 @@ passando.
       prontos** (03/09/2026) — decisão #63. Badge "Pronta" em vez de "Em
       construção" na página de Sistemas — só rótulo, junto do Kaizoku no
       Sho que já estava assim. Campanha Livre continua "Em construção"
-- [ ] Grimório dos outros 3 sistemas (SAO, Kaizoku no Sho, Campanha
-      Livre) — uma fatia por vez, a pedido do Zé
+- [x] **Grimório de Kaizoku no Sho** (03/09/2026) — decisão #64. 14
+      seções, paleta própria (navy/latão/pergaminho, igual a ficha):
+      conceito, ordem de preenchimento das 13 abas, Atributos e pontos
+      por NC, Teste/Ataque (2d8 + Combate vs Esquiva, Grau de Dano ×1 a
+      ×4 pelo bruto dos mesmos dados), Perícias, Vitalidade/Estamina,
+      Espécies, Profissões (graduações por nível de Perícia
+      Profissional), as duas Fontes de Poder (Budô e o construtor por
+      orçamento de Akuma no Mi), Haki, Qualidades/Defeitos e
+      Equipamento, fechando com o botão de Level Up que já existia.
+      Sem aviso de IP comercial (é homebrew do Zé, não um livro de
+      terceiros) e sem seção "Para o Mestre" (o sistema ainda não tem
+      Escudo do Mestre nem ficha de Inimigo). Conectado ao Hub via
+      `sistemas.ts` e linkado no cabeçalho da ficha. Testado com
+      Playwright (sumário íntegro, sem erro de JS); `tsc`, lint e os
+      208 testes automáticos continuam limpos
+- [ ] Grimório dos outros 2 sistemas (SAO, Campanha Livre) — uma fatia
+      por vez, a pedido do Zé
+- [ ] **Ideia do Zé pra depois:** Modo Guiado em toda ficha do Hub (não
+      só Thrylikí Chelóna), e ligado também ao Level Up — ao subir de
+      Nível/NC, entrar no Modo Guiado pra escolher as opções daquele
+      degrau (Grau, Talento, Poder, etc.) e aplicar automaticamente, em
+      vez de só mostrar o resumo do que mudou e deixar o jogador achar o
+      campo certo sozinho nas abas
 - [ ] Ometion
 
 ---

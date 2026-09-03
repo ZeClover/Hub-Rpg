@@ -2343,6 +2343,52 @@ comportamento a partir de `situacao`, só estilo do badge.
 Testado com `tsc --noEmit`, `npm run lint` e os 208 testes automáticos —
 sem impacto (mudança é três valores de enum num arquivo de dados).
 
+## 64. Grimório de Kaizoku no Sho (03/09/2026)
+
+Pedido do Zé: "faz o grimório de Kaizoku no Sho" — terceiro sistema a
+ganhar um, depois de Thrylikí Chelóna (#55) e Fabula Ultima (#61).
+
+**Grimório novo** (`public/kaizoku-no-sho-grimorio.html`, 14 seções,
+paleta própria em navy/latão/pergaminho — a mesma da ficha, não a
+paleta âmbar/escura dos outros dois Grimórios): conceito geral, ordem
+sugerida de preenchimento das 13 abas, os 7 Atributos e as fórmulas de
+pontos por NC (Nível de Campanha, teto 20), como funciona um Teste/
+Ataque (2d8 + Combate contra a Reação de Esquiva do alvo; o valor bruto
+dos mesmos 2d8 define o Grau de Dano, de Falha Crítica a Grau 4/×4 —
+descoberto lendo `GRAU_DANO_TABELA`, `danoPorGrau` e o texto da
+graduação Especialista de Profissão, que cita "2d8" explicitamente),
+Perícias, Vitalidade/Estamina/derivados, Espécies, Profissões (as 4
+graduações Amador/Profissional/Especialista/Mestre por nível de Perícia
+Profissional), as duas Fontes de Poder — Budô (estilo de luta) e Akuma
+no Mi (construtor por orçamento: soma zero, positivos ≤10) — Haki (um
+poder só, liberado a partir de NC 10), Qualidades/Defeitos (orçamento
+equilibrado: mesmo total nos dois lados) e Equipamento (Kairoseki,
+Dials, Meitou, Den Den Mushi), fechando com uma seção explicando o
+botão de Level Up que já existia (fora deste bloco de decisões,
+commit "Adiciona botão de Level Up na ficha do Kaizoku no Sho").
+
+Diferença de escopo em relação a Fabula Ultima: Kaizoku no Sho não é um
+livro comercial de terceiros — é homebrew do Zé (adaptação do sistema
+"Shinobi no Sho"), inspirado em *One Piece* — então não carrega o mesmo
+aviso de restrição de IP comercial; o aviso no topo do Grimório só
+esclarece que é uma adaptação de fã, sem reproduzir texto de nenhum
+dos dois. Como o sistema ainda não tem Escudo do Mestre nem ficha de
+Inimigo próprios, não há seção "Para o Mestre" (diferente dos outros
+dois Grimórios) — só é adicionada quando essas peças existirem.
+
+Conectado ao Hub via campo `grimorio` em `src/lib/sistemas.ts` e
+linkado direto no cabeçalho da ficha (`header.hero`, que é estático —
+diferente do resto da barra da ficha, montada via JS a cada render).
+
+Testado com Playwright: as 14 âncoras do sumário resolvem pra uma
+seção existente, caixas `.exemplo`/`.resumo` presentes no DOM, ficha
+linka pro Grimório, sem erro de JS (as duas mensagens que aparecem no
+console — 404 de favicon e falha ao carregar a fonte do Google por
+falta de rede no ambiente de teste — já são conhecidas de todos os
+Grimórios anteriores e não indicam bug). `tsc --noEmit`, `npm run lint`
+e os 208 testes automáticos continuam limpos (mudança é só HTML/CSS
+estático + um campo de dados em `sistemas.ts`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

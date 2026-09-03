@@ -67,7 +67,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
-    grimorio: null,
+    grimorio: "/kaizoku-no-sho-grimorio.html",
   },
   {
     chave: "fabula-ultima",

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimório — Kaizoku no Sho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-deep:#0F2136; --navy-mid:#16304C;
+  --parchment:#EDE3CB; --parchment-dim:#DDD0AE;
+  --ink:#1C1A14; --brass:#C08A45; --brass-bright:#DDA75F;
+  --verdigris:#4C7A73; --verdigris-bright:#6FA79D;
+  --line:rgba(237,227,203,0.16); --line-strong:rgba(237,227,203,0.32);
+  --danger:#C05B4C; --radius:2px;
+  --disp:'Fraunces', serif; --body:'Space Grotesk', sans-serif; --mono:'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--navy-deep);
+  background-image:linear-gradient(180deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+  color:var(--parchment); font-family:var(--body); line-height:1.6;
+}
+h1,h2,h3,h4{font-family:var(--disp); font-weight:600; margin:0 0 10px; color:var(--parchment)}
+a{color:var(--brass-bright)}
+p{margin:0 0 12px}
+.mini{font-size:12.5px; color:var(--parchment-dim)}
+.barra{
+  position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  padding:10px 16px; background:var(--navy-mid); border-bottom:1px solid var(--line-strong);
+}
+.marca{font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--brass)}
+.cresce{flex:1}
+.barra a.voltar{color:var(--brass-bright); text-decoration:none; font-size:13px}
+
+main{max-width:900px; margin:0 auto; padding:24px 16px 90px}
+.hero{border-bottom:1px solid var(--line-strong); padding-bottom:22px; margin-bottom:26px}
+.hero h1{font-size:clamp(28px,4.4vw,38px)}
+.hero .sub{color:var(--parchment-dim); font-size:16px; margin-top:6px}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.badge{border:1px solid var(--line-strong); border-radius:999px; padding:5px 12px; font-size:12px; color:var(--parchment-dim)}
+
+.aviso-legal{border:1px solid rgba(192,138,69,.35); background:rgba(192,138,69,.08); border-radius:var(--radius);
+  padding:12px 16px; margin-top:18px; font-size:13px; color:var(--parchment-dim)}
+.aviso-legal strong{color:var(--brass-bright)}
+
+nav.toc{background:var(--navy-mid); border:1px solid var(--line-strong); border-radius:var(--radius); padding:16px 18px; margin-bottom:30px}
+nav.toc h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--parchment-dim); margin-bottom:10px}
+nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:24px}
+nav.toc li{margin-bottom:6px; font-size:13.5px; break-inside:avoid}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media(max-width:640px){ nav.toc ol{columns:1} }
+
+section{margin-bottom:40px; scroll-margin-top:64px}
+section h2{font-size:22px; border-bottom:1px solid var(--line-strong); padding-bottom:10px; margin-bottom:14px}
+section h3{font-size:17px; margin-top:22px; color:var(--parchment)}
+section h4{font-size:14px; color:var(--brass); text-transform:uppercase; letter-spacing:.06em; margin-top:16px}
+
+.cartao{background:var(--navy-mid); border:1px solid var(--line-strong); border-radius:var(--radius); padding:16px 18px; margin:14px 0}
+.aviso{border:1px solid rgba(192,91,76,.5); background:rgba(192,91,76,.12); border-radius:var(--radius); padding:10px 14px; font-size:13.5px; margin:14px 0}
+.dica{border:1px solid rgba(192,138,69,.4); background:rgba(192,138,69,.08); border-radius:var(--radius); padding:10px 14px; font-size:13.5px; margin:14px 0}
+
+.exemplo{border:1px solid rgba(76,122,115,.5); background:rgba(76,122,115,.12); border-radius:var(--radius); padding:14px 16px; margin:16px 0}
+.exemplo .rotulo{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:12px;
+  color:var(--verdigris-bright); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px}
+.exemplo p{margin-bottom:8px}
+.exemplo p:last-child{margin-bottom:0}
+.exemplo .conta{font-family:var(--mono); font-size:13px; color:var(--brass-bright);
+  background:var(--navy-deep); border-radius:4px; padding:2px 7px; display:inline-block; margin:2px 0}
+
+.resumo{font-size:15px; color:var(--parchment); background:var(--navy-deep); border-left:3px solid var(--brass);
+  border-radius:0 var(--radius) var(--radius) 0; padding:10px 14px; margin:14px 0 18px}
+.resumo strong{color:var(--brass-bright)}
+
+table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px}
+th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+th{color:var(--brass); font-family:var(--mono); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:center; white-space:nowrap}
+
+.grade2{display:grid; gap:12px}
+@media(min-width:640px){ .grade2{grid-template-columns:1fr 1fr} }
+.grade3{display:grid; gap:12px}
+@media(min-width:640px){ .grade3{grid-template-columns:repeat(3,1fr)} }
+
+ul,ol{padding-left:22px}
+li{margin-bottom:5px}
+
+.top{position:fixed; right:18px; bottom:18px; background:var(--navy-mid); border:1px solid var(--line-strong);
+  border-radius:999px; padding:8px 14px; font-size:12px; color:var(--parchment-dim); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Kaizoku no Sho</span>
+  <span class="mini">Grimório — manual do jogador</span>
+  <span class="cresce"></span>
+  <a class="voltar" href="/kaizoku-no-sho.html">Ir para a ficha →</a>
+</div>
+
+<main id="topo">
+  <div class="hero">
+    <h1>Grimório de Kaizoku no Sho</h1>
+    <p class="sub">Como o sistema funciona, peça por peça — da criação do personagem até seu primeiro Ataque Pronto na mesa.</p>
+    <div class="badges">
+      <span class="badge">Homebrew do Zé, adaptação do Shinobi no Sho</span>
+      <span class="badge">7 Atributos</span>
+      <span class="badge">NC de 4 a 20</span>
+      <span class="badge">Teste = 2d8</span>
+    </div>
+    <div class="aviso-legal">
+      <strong>Aviso.</strong> Kaizoku no Sho é uma adaptação homebrew, inspirada no
+      universo de <em>One Piece</em> e num sistema-base de terceiros (o
+      <em>Shinobi no Sho</em>) — não é um produto oficial de nenhum dos dois. Este
+      Grimório resume as mecânicas já implementadas na ficha (fórmulas, tabelas,
+      pontos); para o texto completo de cada estilo de luta, espécie e poder de
+      Akuma no Mi, veja as abas correspondentes da própria ficha.
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#conceito">🏴‍☠️ 1. O que é Kaizoku no Sho</a></li>
+      <li><a href="#aprender">🧭 2. Como montar um personagem</a></li>
+      <li><a href="#atributos">🎲 3. Atributos e Nível de Campanha</a></li>
+      <li><a href="#teste">⚔️ 4. Teste, Ataque e Grau de Dano</a></li>
+      <li><a href="#pericias">🎯 5. Perícias</a></li>
+      <li><a href="#vitalidade">❤️ 6. Vitalidade, Estamina e outros derivados</a></li>
+      <li><a href="#especies">🧬 7. Espécies</a></li>
+      <li><a href="#profissoes">⚓ 8. Profissões</a></li>
+      <li><a href="#budo">🥋 9. Fonte de Poder: Budô</a></li>
+      <li><a href="#akuma">🍈 10. Fonte de Poder: Akuma no Mi</a></li>
+      <li><a href="#haki">🌊 11. Haki</a></li>
+      <li><a href="#peculiaridades">⚖️ 12. Qualidades e Defeitos</a></li>
+      <li><a href="#equipamento">🎒 13. Equipamento</a></li>
+      <li><a href="#levelup">⭐ 14. O botão de Level Up</a></li>
+    </ol>
+  </nav>
+
+  <section id="conceito">
+    <h2>🏴‍☠️ 1. O que é Kaizoku no Sho</h2>
+    <p>Kaizoku no Sho é um sistema homebrew de aventura pirata — o jogador monta um
+    personagem que navega, luta e cresce num mundo de mares, tripulações e poderes
+    sobrenaturais. A progressão gira em torno de um único número, o
+    <strong>Nível de Campanha (NC)</strong>: ele define quantos pontos você tem pra
+    gastar em Atributos, Perícias e Poder, e até onde cada um deles pode chegar.</p>
+    <p>Todo personagem escolhe uma <strong>Espécie</strong> (raça), uma
+    <strong>Profissão</strong> (papel na tripulação) e uma <strong>Fonte de Poder</strong>
+    — Budô (um estilo de luta) ou Akuma no Mi (um poder sobrenatural único,
+    construído por orçamento de pontos). Haki é uma camada à parte, disponível
+    pra qualquer um a partir de NC 10, não importa a Fonte de Poder escolhida.</p>
+  </section>
+
+  <section id="aprender">
+    <h2>🧭 2. Como montar um personagem</h2>
+    <p>A ficha tem 13 abas; a ordem abaixo evita ping-pong entre elas na criação:</p>
+    <table>
+      <tr><th>Aba</th><th>O que decidir ali</th></tr>
+      <tr><td>Perfil</td><td>Nome, Espécie, Profissão, mar de origem, tendência — o lado narrativo.</td></tr>
+      <tr><td>Atributos</td><td>Distribuir os pontos de Atributo do seu NC (seção 3).</td></tr>
+      <tr><td>Combate</td><td>Bases de Combate Corporal/à Distância/Esquiva/Ler Movimento.</td></tr>
+      <tr><td>Perícias</td><td>Distribuir os pontos de Perícia do seu NC (seção 5).</td></tr>
+      <tr><td>Recursos</td><td>Vitalidade, Estamina e outros números derivados — calculados sozinhos (seção 6).</td></tr>
+      <tr><td>Danos</td><td>Dano base de arma corporal/à distância/poder.</td></tr>
+      <tr><td>Peculiaridades</td><td>Qualidades e Defeitos, dentro de um orçamento equilibrado (seção 12).</td></tr>
+      <tr><td>Aptidões</td><td>As 3 gratuitas do capítulo geral + as que sua Espécie/Profissão liberam.</td></tr>
+      <tr><td>Poderes</td><td>Budô ou Akuma no Mi (seções 9-10), e Haki a partir de NC 10 (seção 11).</td></tr>
+      <tr><td>Inventário</td><td>Armas, armaduras e outros itens (seção 13).</td></tr>
+      <tr><td>Ataques</td><td>Ataques Prontos — golpes salvos com acerto/dano já calculados, pra não refazer conta toda hora na mesa.</td></tr>
+    </table>
+    <p class="mini">Companheiro e Kugutsu ainda são só um esboço (stub) na ficha — chegam numa fatia futura.</p>
+  </section>
+
+  <section id="atributos">
+    <h2>🎲 3. Atributos e Nível de Campanha</h2>
+    <p>Sete Atributos, cada um comprado em pontos (sem escala de dado — é um
+    número puro, de 0 pra cima):</p>
+    <table>
+      <tr><th>Atributo</th><th>Abreviação</th></tr>
+      <tr><td>Força</td><td class="num">FOR</td></tr>
+      <tr><td>Destreza</td><td class="num">DES</td></tr>
+      <tr><td>Agilidade</td><td class="num">AGI</td></tr>
+      <tr><td>Percepção</td><td class="num">PER</td></tr>
+      <tr><td>Inteligência</td><td class="num">INT</td></tr>
+      <tr><td>Vigor</td><td class="num">VIG</td></tr>
+      <tr><td>Vontade</td><td class="num">VON</td></tr>
+    </table>
+    <p class="resumo">Em resumo: quase tudo na ficha — pontos de Atributo, de
+    Perícia, de Poder, e os tetos de cada um — é uma conta que só depende do
+    <strong>NC</strong>. Suba o NC (com o botão de Level Up, seção 14) e a ficha
+    recalcula tudo sozinha.</p>
+    <table>
+      <tr><th>O que</th><th>Fórmula</th></tr>
+      <tr><td>Pontos de Atributo</td><td class="num">(NC − 2) × 6</td></tr>
+      <tr><td>Pontos de Perícia</td><td class="num">(NC − 2) × 6</td></tr>
+      <tr><td>Pontos de Poder</td><td class="num">3 × NC − 6 <span class="mini">(+6 extra a partir de NC 20)</span></td></tr>
+      <tr><td>Mínimo por Atributo</td><td class="num">teto(  (NC − 4) / 2  )</td></tr>
+      <tr><td>Limite por Perícia</td><td class="num">piso( NC / 2 )</td></tr>
+      <tr><td>Limite por Atributo</td><td class="num">NC</td></tr>
+      <tr><td>Limite de Nível do Poder</td><td class="num">piso( NC / 2 )</td></tr>
+    </table>
+    <p>Personagem novo começa em <strong>NC 4</strong>; o teto do sistema é
+    <strong>NC 20</strong> (o patamar de Yonkou/Almirante) — o botão de Level Up
+    trava exatamente aí (seção 14).</p>
+  </section>
+
+  <section id="teste">
+    <h2>⚔️ 4. Teste, Ataque e Grau de Dano</h2>
+    <p class="resumo">Em resumo: toda ação rola <strong>2d8</strong>. Some seu bônus
+    de Perícia ou Combate pra ver se passou da Dificuldade; o valor <em>bruto</em>
+    dos dois dados (sem bônus) também diz o <strong>Grau de Dano</strong> — as duas
+    coisas saem da mesma rolagem.</p>
+    <p>Um Ataque compara <strong>2d8 + seu total de Combate</strong> (Corporal ou à
+    Distância) contra a <strong>Reação de Esquiva</strong> do alvo. Se acertar, o
+    valor puro dos 2d8 (o que saiu nos dados, sem somar nada) define o Grau:</p>
+    <table>
+      <tr><th>2d8 (bruto)</th><th>Grau</th><th class="num">Multiplicador de dano</th></tr>
+      <tr><td>2 – 3</td><td>Falha Crítica</td><td class="num">—</td></tr>
+      <tr><td>4 – 8</td><td>Grau 1</td><td class="num">×1</td></tr>
+      <tr><td>9 – 11</td><td>Grau 2</td><td class="num">×2</td></tr>
+      <tr><td>12 – 14</td><td>Grau 3</td><td class="num">×3</td></tr>
+      <tr><td>15 – 16</td><td>Grau 4 (Crítico)</td><td class="num">×4</td></tr>
+    </table>
+    <p><strong>Dano Final = Dano Base × Grau.</strong> Dano Base depende do tipo de ataque:</p>
+    <ul>
+      <li><strong>Corporal:</strong> metade da Força + dano da arma (ou desarmado).</li>
+      <li><strong>À Distância:</strong> metade da Destreza + dano da arma.</li>
+      <li><strong>Poder:</strong> metade da Vontade + Nível do Poder usado.</li>
+    </ul>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — um golpe corporal</div>
+      <p><strong>Sable</strong> ataca com uma espada (dano de arma 6, Combate Corporal
+      total 8). Rola 2d8: sai <span class="conta">5 e 6 = 11 no bruto</span>, mais o
+      total de Combate: <span class="conta">11 + 8 = 19</span> contra a Reação de
+      Esquiva 14 do alvo — acerta.</p>
+      <p>Grau: 11 no bruto cai na faixa 9-11 → <strong>Grau 2 (×2)</strong>. Dano Base
+      (Força 10, metade = 5, + arma 6) = <span class="conta">11</span>. Dano Final:
+      <span class="conta">11 × 2 = 22</span>.</p>
+    </div>
+    <div class="dica">A aba <strong>Ataques</strong> da ficha já monta isso pronto —
+    salve seus golpes mais usados lá (acerto e as 4 faixas de dano por Grau já
+    calculadas) e não precise abrir Combate/Danos toda vez na mesa.</div>
+  </section>
+
+  <section id="pericias">
+    <h2>🎯 5. Perícias</h2>
+    <p>Cada Perícia tem um Atributo regente (algumas, um segundo Atributo
+    alternativo à escolha). O total de uma Perícia:</p>
+    <p class="resumo"><strong>Perícia Total = teto(Atributo ÷ 2) + pontos investidos + Perito (+2, se marcado)</strong></p>
+    <p>Combate funciona parecido, mas usando o Atributo inteiro: <strong>Combate
+    Total = Atributo + base (3 de início) + outros bônus</strong> — as quatro
+    "Perícias" de Combate (Corporal, à Distância, Esquiva, Ler Movimento) ficam
+    numa aba própria por entrarem direto nas contas de Ataque (seção 4).</p>
+    <p class="mini">Algumas Perícias exigem estar "Treinada" pra sequer testar sem
+    penalidade (ex: Ocultismo, Medicina, Mecanismos) — a ficha marca isso, mas
+    quem decide se um teste é possível sem treino é o Mestre.</p>
+  </section>
+
+  <section id="vitalidade">
+    <h2>❤️ 6. Vitalidade, Estamina e outros derivados</h2>
+    <table>
+      <tr><th>Derivado</th><th>Fórmula</th></tr>
+      <tr><td>Vitalidade Máxima</td><td class="num">(modificador da Espécie × NC) + 5×Vigor + 5×NC</td></tr>
+      <tr><td>Estamina Máxima</td><td class="num">teto(10 + 3×Vontade)</td></tr>
+      <tr><td>Iniciativa</td><td class="num">Agilidade + Perícia Prontidão</td></tr>
+      <tr><td>Reação de Esquiva</td><td class="num">9 + Combate Esquiva</td></tr>
+      <tr><td>Deslocamento</td><td class="num">máx(10, teto(10 + Agilidade÷2) − 3×sobrecarga)</td></tr>
+      <tr><td>Compartimentos (carga)</td><td class="num">3 + piso(Força÷2)</td></tr>
+    </table>
+    <p class="mini">Vitalidade zerada não é morte automática — é o ponto em que
+    o Mestre decide as consequências da cena (cair, se render, etc.), igual
+    qualquer sistema que separe "sem vida" de "eliminado".</p>
+  </section>
+
+  <section id="especies">
+    <h2>🧬 7. Espécies</h2>
+    <p>A Espécie dá bônus fixos (o modificador de Vitalidade da tabela acima é
+    um deles) e Traços próprios — algumas, como o Gigante, também trazem uma
+    desvantagem automática (equipamento custa o dobro, no caso dele). A ficha
+    já tem um bom catálogo, incluindo Humano, Gigante, Homem-Peixe, Tritão,
+    Tontatta, Mink, Lunariano e Povo do Céu, entre outras — cada uma com seus
+    próprios Traços na aba <strong>Perfil</strong>.</p>
+  </section>
+
+  <section id="profissoes">
+    <h2>⚓ 8. Profissões</h2>
+    <p>A Profissão é o papel do personagem na tripulação (Navegador, Médico,
+    Carpinteiro, Arqueólogo, Atirador, etc.) — ela define uma
+    <strong>Perícia Profissional</strong>, que rende <strong>o dobro dos pontos
+    investidos</strong> (sem somar o Atributo) quando usada pra exercer a
+    profissão. Ela evolui sozinha conforme o nível da Perícia Profissional sobe:</p>
+    <table>
+      <tr><th>Graduação</th><th class="num">Nível da Perícia</th><th>O que muda</th></tr>
+      <tr><td>Amador</td><td class="num">4</td><td>benefícios básicos da Profissão</td></tr>
+      <tr><td>Profissional</td><td class="num">8</td><td>Perícia inata reconhecida em testes da área</td></tr>
+      <tr><td>Especialista</td><td class="num">12</td><td>trata um 2d8 de 7 ou menos como 8, em testes de Profissão</td></tr>
+      <tr><td>Mestre</td><td class="num">16</td><td>1×/dia, pode trocar uma falha num Teste de Profissão por sucesso</td></tr>
+    </table>
+    <p class="mini">Quem prefere não ter Profissão vira "Vagabundo": abre mão dos
+    benefícios em troca de +10 pontos de Qualidade (seção 12), mas leva −4 em
+    qualquer teste que dependeria de uma Profissão.</p>
+  </section>
+
+  <section id="budo">
+    <h2>🥋 9. Fonte de Poder: Budô</h2>
+    <p>Budô é um estilo de luta nomeado (Espadachim, Seis Caminhos/Rokushiki,
+    Golpe dos 8 Impactos/Hassoken, e muitos outros — mais de 30 catalogados
+    entre o Livro Base e a Expansão). Escolher um dá acesso a Aptidões próprias
+    do estilo e a um "Poder" nomeado, cujas técnicas ("Efeitos") se destravam
+    conforme o <strong>Nível do Poder</strong> sobe — comprado em pontos (1
+    ponto = 1 nível), até o Limite de Nível do Poder do seu NC (seção 3).</p>
+    <p class="mini">O texto completo de cada estilo (o que cada técnica faz)
+    mora na aba <strong>Poderes</strong> da ficha.</p>
+  </section>
+
+  <section id="akuma">
+    <h2>🍈 10. Fonte de Poder: Akuma no Mi</h2>
+    <p class="resumo">Em resumo: em vez de escolher de um catálogo fechado, você
+    <strong>monta</strong> seu Akuma no Mi — escolhe um Tipo e depois
+    características (Alcance, Efeitos Permitidos, Tamanho, Dano/Cura, Dureza
+    etc.), cada uma com um custo em pontos, positivo ou negativo.</p>
+    <p><strong>Regra do orçamento:</strong> a soma de TODOS os pontos (Tipo +
+    características) precisa fechar em <strong>exatamente zero</strong>; a soma
+    só das características positivas não pode passar de <strong>10</strong>.</p>
+    <table>
+      <tr><th>Tipo</th><th class="num">Custo</th><th>Ideia</th></tr>
+      <tr><td>Paramécia</td><td class="num">0</td><td>lista de efeitos definida por "Efeitos Permitidos"</td></tr>
+      <tr><td>Zoan Comum</td><td class="num">0</td><td>só efeitos exclusivos de Zoan, sem as categorias gerais</td></tr>
+      <tr><td>Paramécia Especial</td><td class="num">1</td><td>Paramécia + 1 efeito de Zoan ou Intangibilidade de Logia</td></tr>
+      <tr><td>Zoan Ancestral</td><td class="num">1</td><td>Zoan Comum + Imprevisibilidade Histórica e Resistência Aprimorada</td></tr>
+      <tr><td>Logia</td><td class="num">2</td><td>Intangibilidade + Pontos Logia + 1 benefício elemental grátis</td></tr>
+      <tr><td>Zoan Mitológica</td><td class="num">2</td><td>efeitos exclusivos de Zoan + Efeitos Permitidos</td></tr>
+    </table>
+    <p class="mini">As categorias de característica (Alcance, Tamanho, Dureza,
+    Dano/Cura e outras) e seus custos estão na aba <strong>Poderes</strong>,
+    junto com o construtor de verdade — aqui é só o mapa de como ele funciona.</p>
+  </section>
+
+  <section id="haki">
+    <h2>🌊 11. Haki</h2>
+    <p>Haki é um poder latente em toda criatura, dividido em três frentes —
+    <strong>Armamento</strong> (reveste corpo/arma, fere quem seria imune),
+    <strong>Observação</strong> (percepção além dos sentidos normais) e
+    <strong>Conquistador</strong> (vontade que subjuga) — mas contado como
+    <strong>um único poder</strong> pra fins de regra. Só pode ser comprado a
+    partir de <strong>NC 10</strong>, não importa Budô ou Akuma no Mi.</p>
+    <p class="mini">Diferente de Budô/Akuma no Mi, as técnicas de Haki não têm
+    "Nível X" — destravam em cadeia (uma técnica exige a anterior já comprada,
+    ex: Imbuir → Endurecer → Revestir). Toda técnica de Haki também pode ser
+    usada como reação, exceto Visão Futura.</p>
+  </section>
+
+  <section id="peculiaridades">
+    <h2>⚖️ 12. Qualidades e Defeitos</h2>
+    <p>Na criação, escolha um <strong>orçamento</strong> de 0 a 10 pontos — e
+    gaste <em>exatamente</em> esse total em Qualidades (vantagens) e o
+    <em>mesmo</em> total em Defeitos (desvantagens). Não dá pra ficar só com o
+    lado bom: quanto mais Qualidades você quer, mais Defeitos precisa aceitar
+    junto.</p>
+  </section>
+
+  <section id="equipamento">
+    <h2>🎒 13. Equipamento</h2>
+    <p>Além de Armas e Armaduras comuns (a Armadura usa <strong>Absorção</strong>
+    — funciona como uma "vitalidade" própria dela, que se gasta ao apanhar, e
+    não some no total do personagem), o mundo de Kaizoku no Sho tem itens
+    próprios:</p>
+    <table>
+      <tr><th>Item</th><th>Ideia</th></tr>
+      <tr><td>Kairoseki</td><td>"pedra do mar" — anula temporariamente os poderes de quem consumiu um Akuma no Mi</td></tr>
+      <tr><td>Dials</td><td>conchas que armazenam um fenômeno natural (som, ar, chama...) pra liberar depois</td></tr>
+      <tr><td>Meitou</td><td>espadas famosas, com categorias de qualidade (Wazamono e acima)</td></tr>
+      <tr><td>Den Den Mushi</td><td>caracóis usados como rádio/telefone à distância</td></tr>
+    </table>
+  </section>
+
+  <section id="levelup">
+    <h2>⭐ 14. O botão de Level Up</h2>
+    <p>Na aba <strong>Perfil</strong>, ao lado do campo de NC, um botão
+    <strong>"⭐ Level Up — subir para NC N+1"</strong> sobe o Nível de Campanha em
+    1 e mostra um resumo comparando antes/depois: Vitalidade Máxima, pontos de
+    Atributos/Perícias/Poder, os limites por Atributo/Perícia/Nível do Poder, e
+    o mínimo obrigatório por Atributo — com o delta de cada um. O resumo fica
+    visível até ser fechado, mesmo trocando de aba, pra dar tempo de ir gastar
+    os pontos novos antes de perder de vista o que mudou.</p>
+    <p>Trava em <strong>NC 20</strong> — o teto do sistema (patamar de
+    Yonkou/Almirante). Nesse NC, o salto de Pontos de Poder já vem com o bônus
+    extra de +6 dessa faixa incluído no resumo.</p>
+  </section>
+
+  <p class="mini" style="text-align:center;margin-top:40px">
+    Grimório escrito a partir do código-fonte da ficha de Kaizoku no Sho do
+    Hub — as fórmulas aqui são as mesmas que a ficha usa pra calcular os
+    números sozinha.
+    <br><a href="/kaizoku-no-sho.html">← Voltar pra ficha</a>
+  </p>
+</main>
+
+<a class="top" href="#topo">↑ topo</a>
+</body>
+</html>
