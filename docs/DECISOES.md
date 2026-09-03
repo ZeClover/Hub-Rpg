@@ -2237,6 +2237,54 @@ travar (confirma que não há teto, ao contrário do NC do Kaizoku); sem
 erro de JS. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/JS estático da ficha).
 
+## 61. Grimório de Fabula Ultima e botão de Subir de Nível (03/09/2026)
+
+Pedido do Zé: "faz o grimório do Fabula Ultima e o botão de level up" —
+mesmo tratamento que Thrylikí Chelóna (decisão #55) e o mesmo botão que
+Kaizoku no Sho e Thrylikí Chelóna já tinham (decisão #60), agora pro
+segundo sistema homebrew/comercial da lista de fatias do roadmap.
+
+**Grimório novo** (`public/fabula-ultima-grimorio.html`, 19 seções,
+mesmo layout/paleta dos outros Grimórios): Atributos e Perfis de
+criação, como fazer um Teste (par de dados, sucesso crítico, Rolagem
+Alta), Classes/Multiclasse/Benefícios, Poderes e NP, PV/PM/PI/Crise,
+Defesa/Defesa Mágica/Iniciativa, Equipamento, Condições e Afinidades,
+Pontos de Fabula, Zenit, Rituais, Projetos, Habilidades Heroicas, Laços,
+um panorama curto dos subsistemas por Atlas (Culinária, Veículo,
+Engenhocas, Magisferas) e uma seção explicando o botão de Level Up novo.
+Diferença importante da decisão #55: Fabula Ultima é um sistema
+**comercial** (© Need Games/Rooster Games, edição brasileira © Jambô),
+então este Grimório é deliberadamente mais enxuto que o de Thrylikí
+Chelóna — só a mecânica universal (fórmulas, escala de dados, o que
+cada número faz), nunca o texto de Poderes/feitiços/Habilidades
+específicas de cada uma das 25 classes, que já mora só na ficha (que
+sempre codificou mecânica sem citar o livro, ver decisão registrada em
+"Restrições registradas" abaixo). Um aviso no topo da página deixa isso
+explícito, e os personagens de exemplo (Rowan, Yuki, Bram) são
+inventados, não vêm do livro. Conectado ao Hub via campo `grimorio` em
+`src/lib/sistemas.ts` (mesmo mecanismo da decisão #56) e linkado direto
+na barra da ficha.
+
+**Botão de Subir de Nível** (`public/fabula-ultima.html`): como Fabula
+Ultima usa multiclasse (várias classes, cada uma com Nível 0-10, e o
+Nível total é a soma), o botão não é um único "Level Up" como no
+Kaizoku/Thrylikí — é um "⭐ +1 Nível" em cada linha de classe da aba
+Atributos e Classes, desabilitado sem classe escolhida ou já no teto 10.
+`snapshotNivel`/`subirNivelClasse` tiram uma fotografia antes/depois
+(PV/PM/PI máximos, Crise, Nível total, lista de classes dominadas) e o
+resumo (`estado.nivelUpResumo`, mesmo padrão transitório das decisões
+#56/#60) mostra os deltas e avisa quando a classe acabou de ser
+**dominada** (Nível 10 — libera Habilidade Heroica).
+
+Testado com Playwright: (1) Grimório — as 19 âncoras do sumário resolvem
+pra uma seção existente, 5 caixas `.exemplo` e 4 `.resumo` no DOM, sem
+erro de JS; ficha linka pro Grimório na barra do topo. (2) Botão de
+Nível — desabilitado sem classe escolhida, habilita ao escolher Furioso,
+mostra o resumo com delta de PV correto, resumo sobrevive a trocar de
+aba, some ao "Fechar", sobe até Nível 10 sem passar do teto e avisa
+"Classe dominada" ao chegar lá. `tsc --noEmit`, `npm run lint` e os 208
+testes automáticos continuam limpos (mudança é só HTML/JS estático).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

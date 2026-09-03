@@ -1098,8 +1098,22 @@ passando.
       certos, sobrevive a trocar de aba, some ao Fechar, Nível sobe de
       verdade, sem travar num segundo Level Up); `tsc`, lint e os 208
       testes automáticos continuam limpos
-- [ ] Grimório dos outros 4 sistemas (Fabula Ultima, SAO, Kaizoku no
-      Sho, Campanha Livre) — uma fatia por vez, a pedido do Zé
+- [x] **Grimório de Fabula Ultima e botão de Subir de Nível** (03/09/2026)
+      — decisão #61. Grimório novo (19 seções) só de mecânica universal
+      (Atributos/Perfis, Teste, Classes/Multiclasse, Poderes e NP,
+      PV/PM/PI/Crise, Defesa, Equipamento, Condições/Afinidades, Pontos
+      de Fabula, Zenit, Rituais, Projetos, Habilidades Heroicas, Laços,
+      panorama dos subsistemas por Atlas) — mais enxuto que o de
+      Thrylikí Chelóna de propósito, por ser sistema comercial (aviso
+      no topo da página). Conectado ao Hub via `sistemas.ts` e linkado
+      na ficha. Botão "⭐ +1 Nível" por linha de classe (multiclasse, sem
+      um Nível único de personagem pra subir) com resumo antes/depois e
+      aviso de "classe dominada" no Nível 10. Testado com Playwright
+      (âncoras do Grimório íntegras, botão habilita só com classe
+      escolhida, resumo com deltas corretos, trava em Nível 10); `tsc`,
+      lint e os 208 testes automáticos continuam limpos
+- [ ] Grimório dos outros 3 sistemas (SAO, Kaizoku no Sho, Campanha
+      Livre) — uma fatia por vez, a pedido do Zé
 - [ ] Ometion
 
 ---
