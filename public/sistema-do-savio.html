@@ -268,6 +268,26 @@ const TABELA_HABILIDADE = [
 // ajustar caso a Habilidade seja aprimorada com desvantagens, fatia futura).
 const CUSTO_PE_HABILIDADE = {1:2, 2:5, 3:8, 4:12, 5:20};
 
+// Efeitos que uma Habilidade pode combinar — cada um lê uma coluna
+// diferente de TABELA_HABILIDADE. Escolher mais de um ao mesmo tempo
+// reduz o Nível efetivo (o Nível usado pra calcular o bônus) em 1 pra
+// todos os efeitos escolhidos, regra do documento — em vez de deixar a
+// mesa cruzar a tabela na mão, a ficha já calcula e mostra o número certo.
+const EFEITOS_HABILIDADE = [
+  {chave:'danoCuraMovRD', rotulo:'Dano / Cura / Movimento / RD', coluna:'danoCuraMovRD'},
+  {chave:'alcance',       rotulo:'Alcance',                      coluna:'alcance'},
+  {chave:'duracao',       rotulo:'Duração de efeito',            coluna:'duracao'},
+  {chave:'vantagem',      rotulo:'Vantagem/Desvantagem',         coluna:'vantagem'},
+];
+function habilidadeEfeitosEscolhidos(h){
+  return EFEITOS_HABILIDADE.filter(e => h.efeitos && h.efeitos[e.chave]);
+}
+// Nível efetivo: cai 1 se a Habilidade combina mais de um efeito.
+function habilidadeNivelEfetivo(h){
+  const n = habilidadeEfeitosEscolhidos(h).length;
+  return Math.max(1, h.nivel - (n > 1 ? 1 : 0));
+}
+
 // Passivas usam uma versão mais fraca da mesma tabela — um único valor fixo,
 // sem crescer por cópia. Podem ser aprimoradas com o mesmo truque de
 // desvantagens autoimpostas das Habilidades (Nível interno 0 → 1 → 2, nunca
@@ -441,6 +461,20 @@ function atributoEfetivo(p, id){
 // Teto normal de Atributo: 10, sobe pra 15 depois da Segunda Ascensão.
 function atributoCap(p){ return p.ascensao.segunda ? 15 : 10; }
 
+// Pontos de Atributo disponíveis pra distribuir: começa em 6 e sobe +2 a
+// cada 2 Níveis (Nível 1 = 6, Nível 2-3 = 8, Nível 4-5 = 10, ...), até um
+// teto de 40. Não conta o bônus fixo de Atributo dos Arquétipos
+// Esforçado/Estudioso (esse é "fora do teto", nem entra nem sai do pool).
+function pontosAtributosBase(nivel){
+  return Math.min(40, 2*Math.ceil(Math.max(0, nivel-1)/2)) + 6;
+}
+function pontosAtributosGastos(p){
+  return ATRIBUTOS.reduce((t,a) => t + (p.atributos[a.id]||0), 0);
+}
+function pontosAtributosDisponiveis(p){
+  return pontosAtributosBase(p.nivel) - pontosAtributosGastos(p);
+}
+
 function maiorAtributo(p){
   return Math.max(0, ...ATRIBUTOS.map(a => atributoEfetivo(p, a.id)));
 }
@@ -545,6 +579,31 @@ function elementalSanidade(p){
 // não o do Elemental (regra do documento).
 function ajudaElementalPorCena(p){ return Math.floor(p.nivel/2); }
 
+// Fotografia dos números que mudam só por causa do Nível do personagem —
+// usada pra montar o resumo do botão "⭐ Subir de Nível".
+function snapshotNivelSavio(p){
+  const sanidade = SANIDADE_POR_NIVEL.find(s => s.nivel === p.nivel);
+  return {
+    nivel: p.nivel,
+    pv: pvMaximo(p),
+    pe: peMaximo(p),
+    reacoes: reacoesPorRound(p),
+    habilidadesEsperadas: habilidadesEsperadas(p),
+    passivasEsperadas: passivasEsperadas(p),
+    nivelHabLiberado: nivelHabilidadeLiberado(p),
+    sanidadeDano: sanidade ? sanidade.dado : null,
+    pontosAtributos: pontosAtributosBase(p.nivel),
+  };
+}
+// Sobe 1 Nível e guarda o resumo em estado.nivelUpResumo — sem teto (o
+// mestre decide o ritmo, igual os outros três sistemas fazem).
+function subirNivel(p){
+  const antes = snapshotNivelSavio(p);
+  p.nivel += 1;
+  const depois = snapshotNivelSavio(p);
+  estado.nivelUpResumo = {antes, depois};
+}
+
 /* --- Armazenamento ---------------------------------------------------------
 
    Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
@@ -607,6 +666,10 @@ const estado = {
   compartilhado: false,
   modoGuiado: false,
   passoGuiado: 1,
+  // nivelUpResumo: resumo transitório do último "Subir de Nível" — só de
+  // exibição, não é salvo na ficha; some ao fechar ou ao trocar de
+  // personagem (mesmo mecanismo dos outros três sistemas).
+  nivelUpResumo: null,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -727,14 +790,16 @@ function render(){
 
   app.innerHTML = estado.modoGuiado
     ? alerta + telaGuiada(p)
-    : alerta
-      + `<div class="abas">` + ABAS.map(a =>
-          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-        ).join('') + `</div>`
-      + painelDerivados(p)
-      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
+    : estado.nivelUpResumo
+      ? alerta + telaResumoNivel(p, estado.nivelUpResumo)
+      : alerta
+        + `<div class="abas">` + ABAS.map(a =>
+            `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+          ).join('') + `</div>`
+        + painelDerivados(p)
+        + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
-  const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
+  const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : estado.nivelUpResumo ? 'levelup' : `aba:${estado.aba}`;
   app.classList.remove('entra');
   if(chaveTela !== ultimaChaveTela){
     void app.offsetWidth;
@@ -752,7 +817,7 @@ function render(){
 
 function desenharBarra(){
   const btModoGuiado = document.getElementById('btModoGuiado');
-  btModoGuiado.hidden = !atual();
+  btModoGuiado.hidden = !atual() || !!estado.nivelUpResumo;
   btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
   btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
 
@@ -813,7 +878,15 @@ function campo(rotulo, chave, valor, tipo){
 
 function blocoAtributos(p){
   const cap = atributoCap(p);
-  return `<div class="grade g3">
+  const gastos = pontosAtributosGastos(p);
+  const base = pontosAtributosBase(p.nivel);
+  const restantes = base - gastos;
+  return `<div class="derivado" style="margin-bottom:14px;max-width:260px">
+    <div class="rot">Pontos de Atributo</div>
+    <div class="val" style="${restantes<0?'color:var(--alerta)':''}">${gastos}<span style="font-size:14px;color:var(--suave)">/${base}</span></div>
+    <div class="obs">${restantes<0 ? `${-restantes} acima do disponível` : `${restantes} restantes pra gastar`}</div>
+  </div>
+  <div class="grade g3">
     ${ATRIBUTOS.map(a => {
       const efetivo = atributoEfetivo(p, a.id);
       const bonusAsc = efetivo - (p.atributos[a.id]||0);
@@ -826,7 +899,8 @@ function blocoAtributos(p){
     </div>`;
     }).join('')}
   </div>
-  <p class="mini" style="margin-top:10px">Teto normal: ${cap}${cap===10 ? ' (sobe pra 15 depois da Segunda Ascensão)' : ''}.</p>`;
+  <p class="mini" style="margin-top:10px">Teto normal: ${cap}${cap===10 ? ' (sobe pra 15 depois da Segunda Ascensão)' : ''}.
+    Pontos de Atributo começam em 6 e sobem +2 a cada 2 Níveis.</p>`;
 }
 
 /* --- Modo Guiado: criação passo a passo ---------------------------------- */
@@ -896,6 +970,45 @@ function telaGuiada(p){
     </div>`;
 }
 
+// Tela cheia do Level Up guiado (mesmo esquema do Modo Guiado de criação:
+// substitui TODO o conteúdo de #app) — mostra o que mudou automaticamente
+// com o Nível e, quando abre uma vaga nova de Habilidade/Passiva, já deixa
+// registrar ali mesmo (reaproveita habilidadeLinha/passivaLinha — os
+// bindings de ligarEventos() não são presos a nenhuma aba específica).
+function telaResumoNivel(p, resumo){
+  const {antes, depois} = resumo;
+  const linha = (rotulo, a, d, sufixo) => a === d ? '' :
+    `<p class="mini" style="margin:4px 0"><strong>${rotulo}:</strong> ${a}${sufixo||''} → <span style="color:var(--roxo-forte)">${d}${sufixo||''}</span></p>`;
+  const ganhouHabilidade = depois.habilidadesEsperadas > antes.habilidadesEsperadas;
+  const ganhouPassiva = depois.passivasEsperadas > antes.passivasEsperadas;
+  const liberouNivelHab = depois.nivelHabLiberado > antes.nivelHabLiberado;
+
+  return `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Level Up guiado</p>
+    </div>
+    <div class="resumo-nivel">
+      <h3>⭐ Subiu para o Nível ${depois.nivel}!</h3>
+      ${linha('Pontos de Vida máximos', antes.pv, depois.pv)}
+      ${linha('Pontos de Energia máximos', antes.pe, depois.pe)}
+      ${linha('Reações por round', antes.reacoes, depois.reacoes)}
+      ${linha('Pontos de Atributo disponíveis', antes.pontosAtributos, depois.pontosAtributos)}
+      ${depois.sanidadeDano ? linha('Dano de Sanidade das Habilidades', antes.sanidadeDano || '—', depois.sanidadeDano) : ''}
+      ${liberouNivelHab ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">✨ Agora você pode ter Habilidades de Nível ${depois.nivelHabLiberado}!</p>` : ''}
+    </div>
+    ${ganhouHabilidade ? `<div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">✨ Nova Habilidade disponível! (${p.habilidades.length}/${depois.habilidadesEsperadas})</h3>
+      ${p.habilidades.map((h,i) => habilidadeLinha(h,i,p)).join('')}
+      <button id="btAddHabilidade" class="destaque">+ Nova Habilidade</button>
+    </div>` : ''}
+    ${ganhouPassiva ? `<div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">✨ Nova Passiva disponível! (${p.passivas.length}/${depois.passivasEsperadas})</h3>
+      ${p.passivas.map((h,i) => passivaLinha(h,i)).join('')}
+      <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>
+    </div>` : ''}
+    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>`;
+}
+
 function seletorEspecializacao(p){
   return `<div class="grade g2">
     ${ESPECIALIZACOES.map(e => `<label class="linha-lista" style="cursor:pointer;display:block;margin-bottom:0">
@@ -919,6 +1032,7 @@ function abaPerfil(p){
       <div><label for="c-nivel">Nível</label>
         <input id="c-nivel" data-num="nivel" type="number" min="1" value="${p.nivel}"></div>
     </div>
+    <button id="btnLevelUp" class="destaque" style="margin-top:14px" title="Sobe 1 Nível: recalcula PV/PE, Reações, Habilidades/Passivas esperadas e o que cada Nível de Habilidade libera">⭐ Subir de Nível</button>
   </div>
   <div class="cartao">
     <label for="c-aliados">Aliados ou Entes Queridos</label>
@@ -941,8 +1055,8 @@ function abaPerfil(p){
 function abaAtributos(p){
   return `<div class="cartao">
     <p class="mini" style="margin-bottom:10px">
-      Cada Atributo vai de 0 a 10 (15 depois da Ascensão — fatia futura).
-      Atingir 5 ou 10 num Atributo liga um bônus fixo, mostrado abaixo dele.
+      Cada Atributo vai de 0 a ${atributoCap(p)}. Atingir 5 ou 10 num
+      Atributo liga um bônus fixo, mostrado abaixo dele.
     </p>
     ${blocoAtributos(p)}
   </div>`;
@@ -997,6 +1111,9 @@ function habilidadeLinha(h, i, p){
   const custoBase = CUSTO_PE_HABILIDADE[h.nivel] ?? null;
   const meiaCusto = p.ascensao.segunda && h.nivel <= 3; // bônus universal da Segunda Ascensão
   const custoFinal = custoBase !== null && meiaCusto ? Math.ceil(custoBase/2) : custoBase;
+  const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
+  const nivelEfetivo = habilidadeNivelEfetivo(h);
+  const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
   return `<div class="linha-lista">
     <div class="topo">
       <input data-hab-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Habilidade" style="flex:1">
@@ -1014,7 +1131,22 @@ function habilidadeLinha(h, i, p){
     </div>
     <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${custoFinal ?? '—'} PE${meiaCusto ? ' (já com a metade da Segunda Ascensão)' : ''}</p>
     <p class="mini" style="margin:8px 0">${(TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).sobre}</p>
-    <label>Efeito (o que ela faz)</label>
+    <div style="margin-top:10px">
+      <label>O que ela faz (marque um ou mais)</label>
+      <div class="grade g2">
+        ${EFEITOS_HABILIDADE.map(e => `<label class="checagem" style="padding:4px 0">
+          <input type="checkbox" data-hab-efeito="${i}|${e.chave}" ${h.efeitos&&h.efeitos[e.chave]?'checked':''}> ${e.rotulo}
+        </label>`).join('')}
+      </div>
+      ${efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${efeitosEscolhidos.length} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
+      ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
+        ${efeitosEscolhidos.map(e => `<div class="derivado">
+          <div class="rot">${e.rotulo}</div>
+          <div class="val" style="font-size:18px">${linhaTabela[e.coluna]}</div>
+        </div>`).join('')}
+      </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
+    </div>
+    <label style="margin-top:10px">Descrição livre (opcional — narrativa, condição aplicada etc.)</label>
     <textarea data-hab-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
     <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
       <label class="checagem">
@@ -1429,6 +1561,17 @@ function ligarEventos(){
     render();
   };
 
+  const btnLevelUp = document.getElementById('btnLevelUp');
+  if(btnLevelUp) btnLevelUp.onclick = () => {
+    const p = atual(); if(!p) return;
+    if(MODO_HUB && !estado.ehDono) return;
+    subirNivel(p);
+    p.atualizadoEm = Date.now();
+    salvar(); render();
+  };
+  const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+
   app.querySelectorAll('[data-perfil]').forEach(el =>
     (el.tagName==='TEXTAREA' ? el.oninput = () => mudarSemRedesenhar(p => p.perfil ? p.perfil[el.dataset.perfil]!==undefined ? (p.perfil[el.dataset.perfil]=el.value) : (p[el.dataset.perfil]=el.value) : null, el)
       : el.oninput = () => mudarSemRedesenhar(p => {
@@ -1515,10 +1658,19 @@ function ligarEventos(){
       const [i, chave] = el.dataset.habFlag.split('|');
       p.habilidades[Number(i)][chave] = el.checked;
     }));
+  // Efeitos usam onchange (redesenha a tela) porque o bônus calculado
+  // logo abaixo depende de quais estão marcados agora.
+  app.querySelectorAll('[data-hab-efeito]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.habEfeito.split('|');
+      const h = p.habilidades[Number(i)];
+      if(!h.efeitos) h.efeitos = {};
+      h.efeitos[chave] = el.checked;
+    }));
   app.querySelectorAll('[data-hab-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
   const addHab = document.getElementById('btAddHabilidade');
-  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', ascendida:false, habilidadeMaxima:false}));
+  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, ascendida:false, habilidadeMaxima:false}));
 
   // Invocações
   app.querySelectorAll('[data-inv-campo]').forEach(el =>
@@ -1601,6 +1753,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.modoGuiado = false;
+  estado.nivelUpResumo = null;
   render();
 };
 
@@ -1611,6 +1764,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.aba = 'perfil';
   estado.modoGuiado = true;
   estado.passoGuiado = 1;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -1626,6 +1780,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.modoGuiado = false;
+  estado.nivelUpResumo = null;
   salvar(); render();
 };
 
@@ -1659,6 +1814,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.modoGuiado = false;
+      estado.nivelUpResumo = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

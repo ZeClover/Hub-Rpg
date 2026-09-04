@@ -2986,6 +2986,62 @@ rodar mais de uma vez). Como esta sessão não tem acesso ao banco
 arquivo no painel do Supabase, em **Storage → Query**, pra "+ Criar
 ficha" funcionar pra este sistema.
 
+## 76. Sistema do Sávio — Level Up guiado, Pontos de Atributo e Habilidades automáticas (04/09/2026)
+
+O Zé perguntou se faltava alguma fatia e pediu pra "tornar essa ficha
+bem automática, com botão de nível e modo guiado". Comparando com os
+outros três sistemas prontos, faltava mesmo o botão de Level Up — o
+Sistema do Sávio só tinha o Modo Guiado de criação (decisão #71), sem
+nenhum jeito guiado de subir de Nível depois. No mesmo pedido, o Zé
+também notou que a aba Atributos não mostrava quantos pontos há pra
+gastar — e a planilha original tinha essa conta o tempo todo (campo
+"Atributos Disponíveis"), que eu tinha deixado de fora sem perceber.
+
+**Botão "⭐ Subir de Nível"** (aba Perfil, do lado do campo Nível): sobe 1
+Nível e abre uma tela cheia de resumo (mesmo esquema do Modo Guiado —
+substitui `#app` inteiro), mostrando o que mudou automaticamente: PV, PE,
+Reações por round, Pontos de Atributo disponíveis, dano de Sanidade das
+Habilidades (se o Nível for ≤7) e um aviso quando o Nível libera um novo
+Nível de Habilidade (1/5/10/14/18). Como o Sávio não tem "compra" nenhuma
+amarrada ao Nível (diferente de Fabula/SAO/Kaizoku/Thrylikí, que gastam
+PE/Pontos de Poder ao subir), não virou um wizard em passos como a
+decisão #70 fez pros outros — é uma tela só, porque não há nada pra
+escolher em sequência. Quando o Nível abre uma vaga nova de Habilidade
+(todo Nível) ou Passiva (a cada 5), a tela já embute a lista de
+Habilidades/Passivas com o botão "+ Nova" ali mesmo, pra registrar sem
+precisar trocar de aba.
+
+**Pontos de Atributo**: a planilha (`Atributos e Contagens!V8`) tinha uma
+fórmula que eu não tinha portado — começa em 6 no Nível 1 e sobe +2 a
+cada 2 Níveis (teto 40). Virou um card "Pontos de Atributo: gasto/total"
+no topo da aba Atributos, com aviso em vermelho se passar do total —
+igual o padrão que Perícias e as Invocações já usavam pra mostrar
+orçamento. O bônus fixo de Atributo dos Arquétipos Esforçado/Estudioso
+(decisão #72) continua fora dessa conta, como o documento manda.
+
+**Habilidades mais automáticas**: antes, a única forma de saber o bônus
+de uma Habilidade era abrir a tabela de referência e cruzar à mão com o
+Nível dela. Agora cada Habilidade tem quatro caixas de marcar (Dano/Cura/
+Movimento/RD, Alcance, Duração, Vantagem/Desvantagem) — a ficha calcula
+e mostra o número certo pra cada uma marcada, e se marcar mais de um
+efeito já reduz o Nível efetivo em 1 sozinha (regra do documento), com
+aviso explicando o porquê. `habilidadeNivelEfetivo()` faz essa conta;
+`habilidadeEfeitosEscolhidos()` lê o novo campo `h.efeitos` (objeto de
+booleanos). O custo de PE continua ligado ao Nível nominal da
+Habilidade, não ao efetivo (são coisas diferentes no documento).
+
+Testado com Playwright: gasta 4 pontos de Atributo em Força e confere
+que "2 restantes" aparece; sobe de Nível e confirma que a tela de resumo
+anuncia "Nível 2", avisa de nova Habilidade disponível, cria uma
+Habilidade ali mesmo marcando o efeito Dano/Cura/Movimento/RD e confere
+que mostra "+1d12 ou +6" (Nível 1); marca um segundo efeito na mesma
+Habilidade (agora Nível 3) e confirma que o aviso de Nível efetivo cai
+pra 2 aparece; recarrega a página e confirma que Nível, Atributo e a
+Habilidade nova (com os dois efeitos) persistiram. Reexecutei as quatro
+baterias de teste anteriores (chassi, Ascensão, Invocações, Elemental)
+sem regressão. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

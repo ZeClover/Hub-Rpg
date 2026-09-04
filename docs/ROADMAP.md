@@ -1265,6 +1265,20 @@ passando.
       Elemental, Categoria Mítico com aviso, PV calculado, Ajuda Elemental
       calculada, persistência); `tsc`, lint e os 208 testes automáticos
       continuam limpos
+- [x] **Sistema do Sávio — Level Up guiado, Pontos de Atributo e
+      Habilidades automáticas** (04/09/2026) — decisão #76. Botão "⭐ Subir
+      de Nível" na aba Perfil, com tela de resumo mostrando PV/PE/Reações/
+      Pontos de Atributo/dano de Sanidade antes→depois e a vaga nova de
+      Habilidade (todo Nível) ou Passiva (a cada 5) já pronta pra
+      preencher ali. Aba Atributos ganhou o card "Pontos de Atributo"
+      (começa em 6, +2 a cada 2 Níveis) que faltava. Cada Habilidade agora
+      tem caixas de marcar pros efeitos (Dano/Cura/Movimento/RD, Alcance,
+      Duração, Vantagem) — a ficha calcula o bônus certo pro Nível sozinha,
+      em vez de precisar cruzar a tabela de referência à mão, e já avisa
+      quando combinar mais de um efeito reduz o Nível efetivo. Testado com
+      Playwright (Pontos de Atributo, Level Up completo, cálculo de bônus
+      por efeito, redução de Nível efetivo, persistência); `tsc`, lint e
+      os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---
