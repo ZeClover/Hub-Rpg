@@ -97,6 +97,7 @@
     padding:9px 14px; cursor:pointer; transition:all .15s ease; white-space:nowrap;
   }
   .btn:hover{border-color:var(--brass-bright); color:var(--parchment);}
+  .btn:not(:disabled):active{transform:scale(.95);}
   .btn.primary{background:var(--brass); border-color:var(--brass); color:var(--navy-deep); font-weight:600;}
   .btn.primary:hover{background:var(--brass-bright); border-color:var(--brass-bright);}
   .btn.danger{color:#F0BDB4; border-color:var(--danger);}
@@ -122,11 +123,24 @@
   .panel{
     border:1px solid var(--line); border-radius:var(--radius);
     background:rgba(15,33,54,0.4); padding:18px 18px 14px; margin-bottom:16px;
+    transition:box-shadow .18s ease, transform .18s ease;
   }
+  .panel:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px);}
   .panel h2{font-family:var(--disp); font-weight:600; font-size:17px; margin:0 0 4px; color:var(--parchment);}
   .panel h3{font-family:var(--disp); font-weight:600; font-size:14px; margin:16px 0 8px; color:var(--brass-bright);}
   .panel-note{font-size:12px; color:var(--parchment-dim); margin:0 0 14px;}
   .stub-msg{font-size:13px; color:var(--parchment-dim); padding:20px 4px;}
+
+  /* Animação de entrada ao trocar de tela (aba, Modo Guiado, Level Up) — a
+     classe "entra" só é aplicada por renderAll() quando a tela muda de
+     verdade, nunca a cada tecla digitada. Fica em #appRoot (nunca recriado)
+     em vez de numa div nova, de propósito — uma div extra mudou o tempo de
+     remoção do DOM o suficiente pra expor uma race rara do Chromium com
+     blur+innerHTML em testes automatizados. */
+  @keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+  #appRoot.entra{animation:fadeSlideIn .32s ease-out;}
+  @keyframes brilhoNivel{0%{text-shadow:0 0 0 transparent} 35%{text-shadow:0 0 14px var(--brass-bright)} 100%{text-shadow:0 0 0 transparent}}
+  #appRoot.entra .resumo-titulo{animation:brilhoNivel 1.2s ease-out;}
 
   .pill-row{display:flex; gap:6px; flex-wrap:wrap;}
   .pill{
@@ -4985,6 +4999,13 @@ function bindGuiado(p){
   });
 }
 
+// Guarda qual "tela" estava visível no render anterior, pra só tocar a
+// animação de entrada quando ela muda de verdade (troca de aba, entra/sai
+// do Modo Guiado ou do Level Up) — nunca a cada tecla digitada. Como
+// renderPanel() (cliques dentro de um painel) não mexe nesse wrapper,
+// isso já sai de graça pra tudo que só chama renderPanel().
+let ultimaChaveTela = null;
+
 function renderAll(){
   renderRosterBar();
   const root = document.getElementById('appRoot');
@@ -5008,11 +5029,30 @@ function renderAll(){
 
   const somenteLeitura = MODO_HUB && !state.ehDono;
 
+  // Anima a troca de tela sem acrescentar nenhuma div nova dentro do HTML
+  // (uma div extra mudou o tempo de remoção do DOM o suficiente pra expor
+  // uma race rara do Chromium com blur+innerHTML em testes automatizados) —
+  // #appRoot em si nunca é recriado, só o conteúdo dentro dele, então basta
+  // tirar e recolocar a classe pra reiniciar a animação.
+  const chaveTela = state.modoGuiado ? `guiado:${state.passoGuiado}`
+    : state.levelUpResumo ? 'levelup'
+    : `aba:${state.tab}`;
+  const trocouDeTela = chaveTela !== ultimaChaveTela;
+  ultimaChaveTela = chaveTela;
+  const animarTroca = () => {
+    root.classList.remove('entra');
+    if(trocouDeTela){
+      void root.offsetWidth; // força reflow pra CSS "esquecer" o estado anterior
+      root.classList.add('entra');
+    }
+  };
+
   if(state.modoGuiado){
     root.innerHTML = `
       ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
       ${telaGuiada(p)}
     `;
+    animarTroca();
     bindGuiado(p);
     if(somenteLeitura){
       root.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
@@ -5028,6 +5068,7 @@ function renderAll(){
       ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
       ${telaResumoLevelUp(p, state.levelUpResumo)}
     `;
+    animarTroca();
     bindResumoLevelUp(p);
     if(somenteLeitura){
       root.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
@@ -5044,6 +5085,7 @@ function renderAll(){
       <aside class="ficha" id="fichaCard"></aside>
     </div>
   `;
+  animarTroca();
   renderTabs();
   renderPanel();
   renderFichaCard();
@@ -5320,7 +5362,7 @@ function panelResumoLevelUp(p, resumo){
   };
   return `
     <div class="panel">
-      <h3>⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
+      <h3 class="resumo-titulo">⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
       <p class="panel-note">Resumo do que ficou disponível — Atributos, Perícias e o Nível do Poder já estão logo abaixo pra gastar agora; o resto de Poderes (Budô/Akuma no Mi/Haki) fica na aba própria.</p>
       <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
         ${linha('Vitalidade Máxima', 'vitalidade')}

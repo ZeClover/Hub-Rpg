@@ -2634,6 +2634,72 @@ criação dos quatro sistemas (decisões #62/#65) pra confirmar que nada
 quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/JS estático das quatro fichas).
 
+## 69. Animações leves nas quatro fichas (03/09/2026)
+
+Pedido do Zé: "consegue fazer algumas animações? ... queria tornar mais
+bonitinho e dinâmico" — depois de esclarecer que era sobre "ideias de
+animação e tals" em geral, mostrei um cardápio (transição de tela,
+feedback de clique, hover em cards) e ele respondeu "isso" (topou tudo).
+Aplicado nas quatro fichas (Thrylikí Chelóna, Fabula Ultima, Sistema
+SAO, Kaizoku no Sho); customização visual (tema/cor, reordenar abas)
+fica registrada como ideia futura no ROADMAP, não implementada agora —
+"uma fatia por vez" (decisão #26).
+
+**O que entrou:**
+- Botões "afundam" um pouco ao clicar (`transform:scale(.95)` no
+  `:active`).
+- Cards (`.cartao`/`.panel`) ganham uma leve sombra e sobem 2px no hover.
+- Troca de tela (aba, entrar/sair do Modo Guiado, abrir/fechar o Level
+  Up guiado) entra com um fade + leve deslize de baixo pra cima. O
+  título "⭐ Subiu de Nível!"/"Subiu para Nível X!" do Level Up ganha um
+  brilho breve quando a tela abre.
+
+**Cuidado central: nunca animar a cada tecla digitada.** Como as quatro
+fichas redesenham a tela inteira a cada mudança de estado (sem
+diff — troca o HTML inteiro de uma vez), animar toda vez que o usuário
+digita ou clica qualquer coisa faria a tela "piscar" sem parar. Guardei
+qual "tela" (aba/Modo Guiado/Level Up) estava visível no redesenho
+anterior; a animação de entrada só toca quando essa chave muda de
+verdade — cliques dentro da mesma tela (comprar um Poder, digitar,
+marcar uma perícia) nunca reativam.
+
+**Bug real encontrado e corrigido durante o teste**: a primeira versão
+envolvia o conteúdo redesenhado numa `<div class="tela-conteudo">` nova,
+só pra ter onde pendurar a classe da animação. Reproduzi com Playwright
+um erro real do Chromium (`NotFoundError: Failed to set the 'innerHTML'
+property... Perhaps it was moved in a 'blur' event handler`) que só
+aparecia com essa div extra — confirmado isolando a mudança com
+`git stash` (sem a div, zero erros; com ela, erro reproduzível
+selecionando duas classes em sequência no Modo Guiado do Fabula Ultima).
+A causa: quando um campo perde o foco (e dispara `change`) exatamente
+no instante em que outro elemento também está sendo trocado, uma
+camada extra de aninhamento no HTML muda o tempo o suficiente pra
+expor essa race do navegador. Corrigido evitando a div nova: a classe
+de animação agora fica direto no contêiner que **já existe e nunca é
+recriado** (`#app` nas três fichas com `render()` único; `#appRoot` no
+Kaizoku, que usa `renderAll()`/`renderPanel()`) — tirando e recolocando
+a classe via `classList` (com um reflow forçado no meio pra CSS
+"esquecer" a animação anterior) em vez de mexer no HTML. Reproduzi o
+erro original e confirmei que sumiu depois da correção.
+
+**Kaizoku no Sho** precisou de atenção extra: `renderPanel()` (clique
+dentro de um painel, ex: +1 em Atributo) só redesenha `#panelHost` e
+nunca toca `#appRoot` — então a animação nem tenta rodar de novo nesses
+cliques, de graça. Dentro do resumo do Level Up (onde `#panelHost` não
+existe), o fallback da decisão #68 em `renderPanel()` cai pra
+`renderAll()`, que recalcula a mesma chave de tela (`levelup`) e
+corretamente não reanima.
+
+Testado com Playwright nas quatro fichas: animação toca ao trocar de
+aba/Modo Guiado/Level Up e não toca num redesenho comum dentro da mesma
+tela (incluindo o caso do Kaizoku com `renderPanel()` caindo pra
+`renderAll()` dentro do resumo); o script que reproduzia o bug do
+Chromium (`bisect-fu-error.mjs`) roda limpo. Reexecutei toda a bateria
+de testes das decisões #65 a #68 (Modo Guiado de criação, Level Up
+guiado como página separada, "mostra tudo") nos quatro sistemas — nada
+quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é só HTML/CSS/JS estático das quatro fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

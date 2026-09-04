@@ -32,9 +32,10 @@ a{color:var(--ambar-forte)}
 button,select,input,textarea{font:inherit; color:var(--texto)}
 button{
   background:transparent; border:1px solid var(--borda); border-radius:8px;
-  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s,transform .12s;
 }
 button:hover{border-color:var(--suave)}
+button:not(:disabled):active{transform:scale(.95)}
 button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
 button.destaque:hover{background:rgba(224,162,52,.2)}
 button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
@@ -52,7 +53,9 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
 
 .cartao{background:var(--superficie); border:1px solid var(--borda);
-  border-radius:12px; padding:18px; margin-bottom:14px}
+  border-radius:12px; padding:18px; margin-bottom:14px;
+  transition:box-shadow .18s ease, transform .18s ease}
+.cartao:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px)}
 .grade{display:grid; gap:14px}
 @media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
 
@@ -70,6 +73,15 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .resumo-nivel{border:1px solid rgba(224,162,52,.5); background:rgba(224,162,52,.1);
   border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
 .resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--ambar-forte); font-family:Georgia,serif}
+
+/* Animação de entrada ao trocar de tela (aba, Modo Guiado, Level Up) — a
+   classe "entra" só é aplicada pelo render() quando a tela muda de verdade,
+   nunca a cada tecla digitada (senão o conteúdo "piscaria" toda hora). Fica
+   em #app (nunca recriado) em vez de numa div nova, de propósito. */
+@keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+#app.entra{animation:fadeSlideIn .32s ease-out}
+@keyframes brilhoNivel{0%{text-shadow:0 0 0 transparent} 35%{text-shadow:0 0 14px var(--ambar)} 100%{text-shadow:0 0 0 transparent}}
+#app.entra .resumo-nivel h3{animation:brilhoNivel 1.2s ease-out}
 .condicoes{display:flex; flex-wrap:wrap; gap:8px}
 .condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
   letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
@@ -1919,6 +1931,11 @@ const ABAS = [
   {id:'lacos',       nome:'Laços'},
 ];
 
+// Guarda qual "tela" estava visível no render anterior, pra só tocar a
+// animação de entrada quando ela muda de verdade (troca de aba, entra/sai
+// do Modo Guiado ou do Level Up) — nunca a cada tecla digitada.
+let ultimaChaveTela = null;
+
 function render(){
   desenharBarra();
   const app = document.getElementById('app');
@@ -1969,6 +1986,21 @@ function render(){
           ).join('') + `</div>`
         + painelDerivados(p)
         + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, inventario:abaInventario, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
+
+  // Anima a troca de tela sem acrescentar nenhuma div nova dentro do HTML
+  // (uma div extra mudou o tempo de remoção do DOM o suficiente pra expor
+  // uma race rara do Chromium com blur+innerHTML em testes automatizados) —
+  // #app em si nunca é recriado, só o conteúdo dentro dele, então basta
+  // tirar e recolocar a classe pra reiniciar a animação.
+  const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}`
+    : estado.nivelUpResumo ? 'levelup'
+    : `aba:${estado.aba}`;
+  app.classList.remove('entra');
+  if(chaveTela !== ultimaChaveTela){
+    void app.offsetWidth; // força reflow pra CSS "esquecer" o estado anterior
+    app.classList.add('entra');
+  }
+  ultimaChaveTela = chaveTela;
 
   ligarEventos();
 

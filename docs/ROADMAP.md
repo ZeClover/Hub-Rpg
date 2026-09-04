@@ -1189,6 +1189,20 @@ passando.
       trocar/criar/apagar/importar personagem (buraco que tinha ficado
       da decisão #66). Testado com Playwright nos quatro sistemas; `tsc`,
       lint e os 208 testes automáticos continuam limpos
+- [x] **Animações leves nas quatro fichas** (03/09/2026) — decisão #69.
+      Botões com feedback de clique, cards com hover, e transição de
+      fade+deslize ao trocar de tela (aba, Modo Guiado, Level Up) — sem
+      animar a cada tecla digitada, só em troca de tela de verdade. No
+      caminho, achei e corrigi uma race real do Chromium
+      (`NotFoundError` de `innerHTML`+blur) que uma div extra tinha
+      exposto — resolvido animando o contêiner que já existe (`#app`/
+      `#appRoot`) em vez de criar um novo. Testado com Playwright nos
+      quatro sistemas, mais o script que reproduzia o bug do Chromium;
+      `tsc`, lint e os 208 testes automáticos continuam limpos
+- [ ] **Customização visual** (ideia registrada, não implementada) — tema/
+      cor por sistema, fonte do título, reordenar ou esconder abas,
+      layout compacto vs. espaçoso. Fica pra quando o Zé quiser puxar
+      essa fatia
 - [ ] Ometion
 
 ---
