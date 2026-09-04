@@ -3042,6 +3042,26 @@ baterias de teste anteriores (chassi, Ascensão, Invocações, Elemental)
 sem regressão. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos continuam limpos.
 
+## 77. Kaizoku no Sho — legibilidade dos campos numéricos de Perícias (04/09/2026)
+
+O Zé mandou um print da aba Perícias do Kaizoku no Sho: "tá meio ruim de
+enxergar os números" — os campos de Pontos/Outro apareciam com números
+pequenos e sem peso, enquanto a coluna Total ao lado (que usa fonte
+monoespaçada em negrito) ficava bem mais legível.
+
+Causa: a classe `.cell-input` (usada nesses campos, e também em
+Combate/Inventário) só definia largura e padding, então o campo herdava
+a fonte genérica do site inteiro (`var(--body)`, 14px, peso normal) em
+vez de repetir o estilo da coluna Total. Adicionei
+`font-family:var(--mono); font-weight:600; font-size:15px;` direto na
+classe `.cell-input` — mesmo visual da coluna Total, aplicado
+automaticamente em toda tabela que já usa essa classe (Combate,
+Inventário, não só Perícias).
+
+Conferido com Playwright (screenshot da tabela antes/depois). `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos
+(mudança é só CSS).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
