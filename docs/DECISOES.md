@@ -2889,6 +2889,44 @@ já veio pela metade (8 → 4 PE); recarrega a página e confirma que Ascensão
 e Imersão persistiram. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos continuam limpos.
 
+## 73. Sistema do Sávio — Invocações (04/09/2026)
+
+Terceira fatia do Sistema do Sávio, continuando "vá para as próximas
+fatias" (decisões #71-72). Invocações — trazer um aliado (criatura, cópia
+ou morto-vivo) ao combate gastando uma Habilidade, cujo Nível decide o
+tier da invocação.
+
+Nova aba **Invocações** em `public/sistema-do-savio.html`. Cada tier
+(Nível 1 a 5) definido em `INVOCACAO_NIVEIS` tem seu próprio pool de
+pontos de Atributo (6/10/14/18/22), fórmula de PV (2×CON+10 até
+6×CON+200), dado de dano/cura padrão (1d4 até 4d12) e quantas
+Passivas/Habilidades a invocação pode ter (1+3 até 5+15) — a planilha
+listava um 6º valor de dano ("6d12") sem tier correspondente nos cinco
+blocos de nível que ela mesma define, tratado como resíduo e descartado,
+igual a decisão #71 já tinha feito com um valor solto parecido na tabela
+de Sanidade.
+
+Cada Invocação registrada guarda nome, Nível (select), cópias de Enxame
+(múltiplas invocações do mesmo Nível somam as rolagens, custam mais PE
+pra invocar, resistem a ataque de alvo único mas são vulneráveis a área —
+mostrado como aviso quando `enxameCopias > 1`), os seis Atributos com
+contador de pontos gastos contra o pool do tier, PV calculado, uma lista
+livre de Perícias escolhidas (cada uma soma o bônus do tier: +5 nos
+Níveis 1-2, +8 do Nível 3 em diante) e notas. Ação com a invocação custa
+Ação Bônus ou Completa; reagir com ela usa a reação DELA, não a do
+personagem — texto de referência, sem campo próprio (a ficha não rastreia
+reações de terceiros). Invocações não têm PE — só os ataques padrão do
+tier.
+
+Testado com Playwright: cria uma Invocação Nível 3, confere que a
+referência do tier (dano 2d6) aparece, distribui 5 pontos em
+Constituição e confirma o PV calculado (4×5+40=60) e o contador de
+pontos (5/14), liga Enxame com 3 cópias e confere o aviso, adiciona uma
+Perícia e recarrega a página pra confirmar que tudo persistiu — nome,
+Nível, Enxame e Perícia. Reexecutei os testes de Ascensão (decisão #72) e
+do chassi (decisão #71) sem regressão. `tsc --noEmit`, `npm run lint` e
+os 208 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

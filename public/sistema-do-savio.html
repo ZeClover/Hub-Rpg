@@ -338,6 +338,20 @@ const BONUS_IMERSAO = [
   {id:'efeitos', nome:'Efeitos', texto:'Causa um efeito constante de Nível 1.'},
 ];
 
+// Invocações: gastam uma Habilidade (o Nível dela decide o tier abaixo).
+// Cada tier tem seu próprio pool de pontos de Atributo, fórmula de PV,
+// dado de dano/cura padrão e quantas Passivas/Habilidades a invocação pode
+// ter — a mesa desenha o conteúdo delas com esse orçamento, igual o resto
+// do sistema é "livre com tabela de referência" em vez de catálogo fechado.
+const INVOCACAO_NIVEIS = [
+  {nivel:1, poolAtributos:6,  pvFormula:'2×CON + 10',  pvCalc:con=>2*con+10,   dano:'1d4',  bonus:'+1d6 ou +3',  periciaBonus:5, passivas:1, habilidades:3},
+  {nivel:2, poolAtributos:10, pvFormula:'3×CON + 20',  pvCalc:con=>3*con+20,   dano:'1d8',  bonus:'+2d6 ou +6',  periciaBonus:5, passivas:2, habilidades:6},
+  {nivel:3, poolAtributos:14, pvFormula:'4×CON + 40',  pvCalc:con=>4*con+40,   dano:'2d6',  bonus:'+3d6 ou +9',  periciaBonus:8, passivas:3, habilidades:9},
+  {nivel:4, poolAtributos:18, pvFormula:'5×CON + 80',  pvCalc:con=>5*con+80,   dano:'3d10', bonus:'+4d6 ou +12', periciaBonus:8, passivas:4, habilidades:12},
+  {nivel:5, poolAtributos:22, pvFormula:'6×CON + 200', pvCalc:con=>6*con+200,  dano:'4d12', bonus:'+6d6 ou +18', periciaBonus:8, passivas:5, habilidades:15},
+];
+function invocacaoNivelInfo(nivel){ return INVOCACAO_NIVEIS.find(n => n.nivel === nivel) || INVOCACAO_NIVEIS[0]; }
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -367,6 +381,10 @@ function novoPersonagem(nome){
     // habilidades/passivas: lista livre — o Hub só ajuda a lembrar a
     // fórmula de bônus do Nível escolhido, quem inventa o efeito é a mesa.
     habilidades: [],
+    // invocacoes: consome uma Habilidade daquele Nível pra trazer um
+    // aliado ao combate — atributos e perícias próprios, com o orçamento
+    // que INVOCACAO_NIVEIS define pra cada Nível.
+    invocacoes: [],
     passivas: [],
     ascensao: {
       primeira: false,
@@ -468,6 +486,14 @@ function nivelHabilidadeLiberado(p){
   let liberado = 0;
   LIBERACAO_HABILIDADE.forEach(l => { if(p.nivel >= l.nivelPersonagem) liberado = l.nivelHabilidade; });
   return liberado;
+}
+
+// Pontos de Atributo já gastos numa Invocação, contra o pool do Nível dela.
+function invocacaoPontosGastos(inv){
+  return ATRIBUTOS.reduce((t,a) => t + (inv.atributos[a.id]||0), 0);
+}
+function invocacaoPV(inv){
+  return invocacaoNivelInfo(inv.nivel).pvCalc(inv.atributos.constituicao||0);
 }
 
 /* --- Armazenamento ---------------------------------------------------------
@@ -600,6 +626,7 @@ const ABAS = [
   {id:'pericias',    nome:'Perícias'},
   {id:'classe',      nome:'Especialização'},
   {id:'habilidades', nome:'Habilidades'},
+  {id:'invocacoes',  nome:'Invocações'},
   {id:'passivas',    nome:'Passivas'},
   {id:'combate',     nome:'Combate'},
   {id:'ascensao',    nome:'Ascensão'},
@@ -655,7 +682,7 @@ function render(){
           `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
         ).join('') + `</div>`
       + painelDerivados(p)
-      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
+      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -966,6 +993,74 @@ function abaHabilidades(p){
   </div>
   ${p.habilidades.map((h,i) => habilidadeLinha(h,i,p)).join('')}
   <button id="btAddHabilidade" class="destaque">+ Nova Habilidade</button>`;
+}
+
+function periciaInvocacaoLinha(inv, invIndex, per, perIndex){
+  return `<div class="linha" style="margin-bottom:6px">
+    <input data-invper-campo="${invIndex}|${perIndex}" value="${esc(per.nome)}" placeholder="Nome da perícia" style="flex:1">
+    <button data-invper-remover="${invIndex}|${perIndex}" class="perigo">Remover</button>
+  </div>`;
+}
+
+function invocacaoLinha(inv, i){
+  const info = invocacaoNivelInfo(inv.nivel);
+  const gastos = invocacaoPontosGastos(inv);
+  const restantes = info.poolAtributos - gastos;
+  return `<div class="linha-lista">
+    <div class="topo">
+      <input data-inv-campo="${i}|nome" value="${esc(inv.nome)}" placeholder="Nome da Invocação" style="flex:1">
+      <button data-inv-remover="${i}" class="perigo">Remover</button>
+    </div>
+    <div class="grade g2">
+      <div><label>Nível (1–5, vem da Habilidade usada)</label>
+        <select data-inv-nivel="${i}">
+          ${INVOCACAO_NIVEIS.map(n => `<option value="${n.nivel}" ${n.nivel===inv.nivel?'selected':''}>Nível ${n.nivel}</option>`).join('')}
+        </select></div>
+      <div><label>Cópias no Enxame (1 = sozinha)</label>
+        <input type="number" min="1" data-inv-num="${i}|enxameCopias" value="${inv.enxameCopias}"></div>
+    </div>
+    <p class="mini" style="margin:8px 0">Dano/cura padrão: ${info.dano} · bônus (Vantagem/Passiva): ${info.bonus} ·
+      pode ter ${info.passivas} Passiva(s) e ${info.habilidades} Habilidade(s) próprias ·
+      perícia escolhida soma +${info.periciaBonus}.</p>
+    ${inv.enxameCopias > 1 ? `<p class="mini" style="color:var(--roxo-forte)">Enxame de ${inv.enxameCopias}: soma a rolagem de todas as cópias, custa bem mais PE pra invocar, resiste a ataque de alvo único mas é vulnerável a ataques em área.</p>` : ''}
+    <p class="mini" style="margin:6px 0">Atributos: ${gastos}/${info.poolAtributos} pontos usados
+      ${restantes < 0 ? `<span style="color:var(--alerta)">(${-restantes} acima do limite!)</span>` : `(${restantes} restantes)`}</p>
+    <div class="grade g3">
+      ${ATRIBUTOS.map(a => `<div>
+        <label style="font-size:10px">${a.abrev}</label>
+        <input type="number" min="0" data-inv-atributo="${i}|${a.id}" value="${inv.atributos[a.id]}">
+      </div>`).join('')}
+    </div>
+    <p class="mini" style="margin-top:6px">PV: ${invocacaoPV(inv)} (${info.pvFormula.replace('CON', String(inv.atributos.constituicao||0))})</p>
+    <div style="margin-top:10px">
+      <label>Perícias escolhidas (cada uma soma +${info.periciaBonus})</label>
+      ${inv.periciasTreinadas.map((per,pi) => periciaInvocacaoLinha(inv, i, per, pi)).join('')}
+      <button data-invper-add="${i}" style="margin-top:4px">+ Perícia</button>
+    </div>
+    <label style="margin-top:10px">Notas</label>
+    <textarea data-inv-campo="${i}|notas" rows="2">${esc(inv.notas)}</textarea>
+  </div>`;
+}
+
+function abaInvocacoes(p){
+  return `<div class="cartao">
+    <p class="mini">Invocar consome uma das suas Habilidades — o Nível dela
+      decide o tier abaixo. Ação bônus ou completa pra agir com a
+      invocação; reagir com ela usa a reação DELA, não a sua. Invocações
+      não têm PE — só ataques padrão com o dano do Nível.</p>
+    <table class="tabela-ref">
+      <tr><th>Nível</th><th>Pool de Atributo</th><th>PV</th><th>Dano/Cura</th><th>Bônus</th><th>Passivas/Habilidades</th></tr>
+      ${INVOCACAO_NIVEIS.map(n => `<tr><td>${n.nivel}</td><td>${n.poolAtributos}</td><td>${n.pvFormula}</td><td>${n.dano}</td><td>${n.bonus}</td><td>${n.passivas}/${n.habilidades}</td></tr>`).join('')}
+    </table>
+    <p class="mini" style="margin-top:8px">Múltiplas invocações do mesmo
+      Nível ao mesmo tempo formam um <strong>Enxame</strong> — some as
+      rolagens de todas, gastando bem mais PE pra invocar; um Enxame
+      resiste a ataques de alvo único, mas é vulnerável a ataques em área.
+      Pode misturar duas Habilidades numa só pra fortalecer uma invocação
+      futura, subindo pro próximo degrau de dano ou vantagem.</p>
+  </div>
+  ${p.invocacoes.map((inv,i) => invocacaoLinha(inv,i)).join('')}
+  <button id="btAddInvocacao" class="destaque">+ Nova Invocação</button>`;
 }
 
 function passivaLinha(h, i){
@@ -1280,6 +1375,47 @@ function ligarEventos(){
     b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
   const addHab = document.getElementById('btAddHabilidade');
   if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', ascendida:false, habilidadeMaxima:false}));
+
+  // Invocações
+  app.querySelectorAll('[data-inv-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.invCampo.split('|');
+      p.invocacoes[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-inv-nivel]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.invocacoes[Number(el.dataset.invNivel)].nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
+    }));
+  app.querySelectorAll('[data-inv-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.invNum.split('|');
+      p.invocacoes[Number(i)][chave] = Math.max(1, Number(el.value) || 1);
+    }));
+  app.querySelectorAll('[data-inv-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, atrId] = el.dataset.invAtributo.split('|');
+      p.invocacoes[Number(i)].atributos[atrId] = Math.max(0, Number(el.value) || 0);
+    }));
+  app.querySelectorAll('[data-inv-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.invocacoes.splice(Number(b.dataset.invRemover), 1)));
+  const addInv = document.getElementById('btAddInvocacao');
+  if(addInv) addInv.onclick = () => mudar(p => p.invocacoes.push({
+    id: uid(), nome:'', nivel:1, enxameCopias:1,
+    atributos:{forca:0,destreza:0,constituicao:0,inteligencia:0,sabedoria:0,carisma:0},
+    periciasTreinadas: [], notas:'',
+  }));
+  app.querySelectorAll('[data-invper-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [invIndex, perIndex] = el.dataset.invperCampo.split('|');
+      p.invocacoes[Number(invIndex)].periciasTreinadas[Number(perIndex)].nome = el.value;
+    }, el));
+  app.querySelectorAll('[data-invper-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [invIndex, perIndex] = b.dataset.invperRemover.split('|');
+      p.invocacoes[Number(invIndex)].periciasTreinadas.splice(Number(perIndex), 1);
+    }));
+  app.querySelectorAll('[data-invper-add]').forEach(b =>
+    b.onclick = () => mudar(p => p.invocacoes[Number(b.dataset.invperAdd)].periciasTreinadas.push({nome:''})));
 
   // Passivas
   app.querySelectorAll('[data-pas-campo]').forEach(el =>

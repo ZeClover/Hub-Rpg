@@ -1243,6 +1243,15 @@ passando.
       dinâmico, bônus de Arquétipo aplicado nos Atributos, Imersão criada
       e persistida, custo de PE de Habilidade pela metade); `tsc`, lint e
       os 208 testes automáticos continuam limpos
+- [x] **Sistema do Sávio — Invocações** (04/09/2026) — decisão #73. Nova
+      aba Invocações: gasta uma Habilidade (o Nível dela decide o tier,
+      1-5) pra trazer um aliado ao combate, com pool próprio de pontos de
+      Atributo, PV calculado, dado de dano/cura e Perícias escolhidas por
+      tier. Enxame (múltiplas invocações do mesmo Nível somando rolagens)
+      mostrado como aviso. Elementais ficam para fatia futura. Testado com
+      Playwright (referência do tier, cálculo de PV e pool de Atributo,
+      Enxame, Perícia da invocação e persistência); `tsc`, lint e os 208
+      testes automáticos continuam limpos
 - [ ] Ometion
 
 ---
