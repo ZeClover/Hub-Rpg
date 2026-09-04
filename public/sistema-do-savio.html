@@ -288,12 +288,19 @@ function habilidadeNivelEfetivo(h){
   return Math.max(1, h.nivel - (n > 1 ? 1 : 0));
 }
 
-// Passivas usam uma versão mais fraca da mesma tabela — um único valor fixo,
-// sem crescer por cópia. Podem ser aprimoradas com o mesmo truque de
-// desvantagens autoimpostas das Habilidades (Nível interno 0 → 1 → 2, nunca
-// chegando ao efeito de uma Habilidade Nível 3) — mecânica de aprimoramento
-// completa fica pra fatia futura, aqui só o registro do Nível interno atual.
-const TABELA_PASSIVA = {danoCuraMovRDVant:'+3 ou 1d6', alcance:'+3m'};
+// Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
+// truque de desvantagens autoimpostas das Habilidades). O Nível interno 0
+// é um valor próprio, mais fraco que qualquer Habilidade; os Níveis 1 e 2
+// são exatamente as linhas 1 e 2 de TABELA_HABILIDADE (1d12 e 2d12) — a
+// Passiva nunca chega ao efeito de uma Habilidade Nível 3, por isso para aí.
+const TABELA_PASSIVA_EVOLUCAO = [
+  {nivelInterno:0, danoCuraMovRDVant:'+3 ou 1d6', alcance:'+3m'},
+  {nivelInterno:1, danoCuraMovRDVant:TABELA_HABILIDADE[0].danoCuraMovRD, alcance:TABELA_HABILIDADE[0].alcance},
+  {nivelInterno:2, danoCuraMovRDVant:TABELA_HABILIDADE[1].danoCuraMovRD, alcance:TABELA_HABILIDADE[1].alcance},
+];
+function passivaEvolucaoInfo(h){
+  return TABELA_PASSIVA_EVOLUCAO[Math.max(0, Math.min(2, h.nivelInterno||0))];
+}
 
 // Efeitos que uma Passiva pode dar — mesma ideia dos efeitos de
 // Habilidade (marca a caixa, a ficha mostra o número certo sozinha), só
@@ -419,6 +426,10 @@ function novoPersonagem(nome){
     bonus: {pv:0, pe:0, sanidade:0}, // "outros bônus" que o mestre conceder
     arma: {nome:'', tamanho:'media', notas:''},
     exaustoes: 0,
+    // Reações usadas na rodada atual — zera sozinho a cada "⏭ Passar
+    // Round". Só Habilidades marcadas como "reação" podem alimentar o
+    // Contra-Atacar (regra do documento).
+    reacoesUsadasNaRodada: 0,
     morrendo: false,
     morreuDeVerdade: false,
     condicoes: [],
@@ -503,13 +514,30 @@ function periciasTreinadasLimite(p){ return 2 + atributoEfetivo(p,'inteligencia'
 function periciaAtributoId(p, per){
   return per.id === 'luta' ? p.lutaAtributo : per.atributo;
 }
+// Extrai só o número fixo de um texto "+3 ou 1d6" / "+1d12 ou +6" — o
+// "+N" que NÃO está colado num "d" de dado. É esse fixo que uma Passiva
+// aplicada a uma Perícia específica soma automaticamente no Total dela
+// (o valor em dado continua sendo escolha da mesa na hora de rolar).
+function bonusFixoDoTexto(texto){
+  const m = texto.match(/\+(\d+)(?!d)/);
+  return m ? Number(m[1]) : 0;
+}
+// Soma dos bônus fixos de todas as Passivas que o jogador apontou pra
+// essa Perícia específica (efeito Dano/Cura/Movimento/RD/Vantagem).
+function bonusPassivasPericia(p, periciaId){
+  return (p.passivas||[]).reduce((total, pas) => {
+    if(pas.periciaAlvo !== periciaId) return total;
+    if(!pas.efeitos || !pas.efeitos.danoCuraMovRDVant) return total;
+    return total + bonusFixoDoTexto(passivaEvolucaoInfo(pas).danoCuraMovRDVant);
+  }, 0);
+}
 // Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
-// (5 se for treinada, senão 0) — mesma fórmula do limite de treináveis,
-// só que aplicada perícia a perícia.
+// (5 se for treinada, senão 0) + bônus fixo de Passivas apontadas pra
+// ela — mesma fórmula do limite de treináveis, só que perícia a perícia.
 function periciaTotal(p, per){
   const atributo = atributoEfetivo(p, periciaAtributoId(p, per));
   const bonusTreino = p.pericias[per.id] ? 5 : 0;
-  return atributo + bonusTreino + Math.ceil(p.nivel/4);
+  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id);
 }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
@@ -538,6 +566,72 @@ function peMaximo(p){
 function sanidadeMaxima(p){
   return 100 + bonusNumericoLimiar(p,'carisma','Sanidade máxima') + (p.bonus.sanidade||0);
 }
+
+/* --- Ativação de Habilidades --------------------------------------------
+
+   Habilidade Imediata: usa e acabou, só desconta o PE. Duradoura: liga e
+   já sabe por quantos rounds fica ativa sozinha (tabela de Duração do
+   Nível efetivo). Sustentada: liga até o jogador desativar ou faltar PE —
+   "⏭ Passar Round" (aba Combate) cobra a metade do custo a cada round e
+   desativa quem não tiver mais PE, e também conta os rounds da Duradoura.
+--------------------------------------------------------------------------- */
+
+function peAtual(p){ return p.atual.pe ?? peMaximo(p); }
+// Desconta PE; se não tiver o suficiente, zera e avisa (pra quem chamou
+// desativar a Habilidade, já que ela não se sustenta sem PE).
+function gastarPe(p, quantidade){
+  const atual = peAtual(p);
+  if(atual < quantidade){ p.atual.pe = 0; return false; }
+  p.atual.pe = atual - quantidade;
+  return true;
+}
+// Marcar como "reação" gasta uma Reação da rodada (a única forma de
+// alimentar o "Contra-Atacar" — regra do documento) em vez de custar
+// Ação Comum/Bônus como o tipo normalmente custaria.
+function usarReacaoSeMarcada(p, h){
+  if(h.reacao) p.reacoesUsadasNaRodada = (p.reacoesUsadasNaRodada||0) + 1;
+}
+function ativarHabilidade(p, h){
+  if(h.tipo === 'imediata'){
+    gastarPe(p, h.custoPe||0);
+    usarReacaoSeMarcada(p, h);
+    return;
+  }
+  if(h.ativa){
+    h.ativa = false;
+    h.duracaoRestante = null;
+    return;
+  }
+  gastarPe(p, h.custoPe||0);
+  usarReacaoSeMarcada(p, h);
+  h.ativa = true;
+  if(h.tipo === 'duradoura'){
+    const info = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
+    const m = info.duracao.match(/\d+/);
+    h.duracaoRestante = m ? Number(m[0]) : null;
+  }else{
+    h.duracaoRestante = null;
+  }
+}
+// Avança 1 round: Duradouras contam pra baixo e desligam sozinhas ao
+// zerar; Sustentadas cobram metade do custo padrão e desligam sozinhas
+// se faltar PE (regra do documento: "até que se esgote o PE").
+function passarRound(p){
+  (p.habilidades||[]).forEach(h => {
+    if(!h.ativa) return;
+    if(h.tipo === 'duradoura'){
+      if(h.duracaoRestante != null){
+        h.duracaoRestante -= 1;
+        if(h.duracaoRestante <= 0){ h.ativa = false; h.duracaoRestante = null; }
+      }
+    }else if(h.tipo === 'sustentada'){
+      const teve = gastarPe(p, Math.ceil((h.custoPe||0)/2));
+      if(!teve) h.ativa = false;
+    }
+  });
+  p.reacoesUsadasNaRodada = 0;
+}
+function habilidadesAtivas(p){ return (p.habilidades||[]).filter(h => h.ativa); }
 
 // Reações: Nível/3 arredondado pra cima, mínimo 2 pra todo mundo.
 function reacoesPorRound(p){ return Math.max(2, Math.ceil(p.nivel/3)); }
@@ -1184,6 +1278,23 @@ function habilidadeLinha(h, i, p){
         </div>`).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
     </div>
+    <div class="linha" style="margin-top:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px">
+      <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
+        ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
+          : h.ativa
+            ? (h.tipo === 'duradoura'
+              ? `🟣 Ativa — ${h.duracaoRestante ?? '?'} round(s) restante(s)`
+              : `🟣 Ativa (sustentada) — gasta ${Math.ceil((h.custoPe||0)/2)} PE a cada "⏭ Passar Round"`)
+            : '⚪ Inativa'}
+      </span>
+      <button data-hab-ativar="${i}" class="${h.ativa?'perigo':'destaque'}">
+        ${(() => {
+          const sufixoReacao = h.reacao ? ' como Reação' : '';
+          if(h.tipo === 'imediata') return `Usar${sufixoReacao} (−${h.custoPe||0} PE)`;
+          return h.ativa ? 'Desativar' : `Ativar${sufixoReacao} (−${h.custoPe||0} PE)`;
+        })()}
+      </button>
+    </div>
     <label style="margin-top:10px">Descrição livre (opcional — narrativa, condição aplicada etc.)</label>
     <textarea data-hab-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
     <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
@@ -1192,6 +1303,9 @@ function habilidadeLinha(h, i, p){
       </label>
       <label class="checagem">
         <input type="checkbox" data-hab-flag="${i}|habilidadeMaxima" ${h.habilidadeMaxima?'checked':''}> É uma Habilidade Máxima
+      </label>
+      <label class="checagem">
+        <input type="checkbox" data-hab-flag="${i}|reacao" ${h.reacao?'checked':''}> É uma Habilidade de Reação (só ativa como reação/Contra-Atacar, nunca como ação comum)
       </label>
     </div>
   </div>`;
@@ -1379,13 +1493,14 @@ function abaElemental(p){
 
 function passivaLinha(h, i){
   const efeitosEscolhidos = passivaEfeitosEscolhidos(h);
+  const evolucao = passivaEvolucaoInfo(h);
   return `<div class="linha-lista">
     <div class="topo">
       <input data-pas-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Passiva" style="flex:1">
       <button data-pas-remover="${i}" class="perigo">Remover</button>
     </div>
-    <div><label>Cópias empilhadas (1–3)</label>
-      <input type="number" min="1" max="3" data-pas-num="${i}|copias" value="${h.copias}"></div>
+    <div><label>Nível interno (evolução: 0, 1 ou 2)</label>
+      <input type="number" min="0" max="2" data-pas-num="${i}|nivelInterno" value="${h.nivelInterno||0}"></div>
     <div style="margin-top:10px">
       <label>O que ela faz (marque um ou mais)</label>
       <div class="grade g2">
@@ -1396,9 +1511,17 @@ function passivaLinha(h, i){
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
-          <div class="val" style="font-size:18px">${TABELA_PASSIVA[e.chave]}</div>
+          <div class="val" style="font-size:18px">${evolucao[e.chave]}</div>
         </div>`).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
+      ${h.efeitos && h.efeitos.danoCuraMovRDVant ? `<div style="margin-top:8px">
+        <label>Soma automático em qual Perícia? (opcional — usa o valor fixo, ${bonusFixoDoTexto(evolucao.danoCuraMovRDVant)})</label>
+        <select data-pas-select="${i}|periciaAlvo">
+          <option value="">— nenhuma, é situacional —</option>
+          ${PERICIAS.filter(per=>!per.livre).map(per => `<option value="${per.id}" ${h.periciaAlvo===per.id?'selected':''}>${per.nome}</option>`).join('')}
+        </select>
+        ${h.periciaAlvo ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(evolucao.danoCuraMovRDVant)} já está somado no Total de ${PERICIAS.find(per=>per.id===h.periciaAlvo).nome}, na aba Perícias.</p>` : ''}
+      </div>` : ''}
     </div>
     <label style="margin-top:10px">Descrição livre (opcional)</label>
     <textarea data-pas-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
@@ -1409,11 +1532,17 @@ function abaPassivas(p){
   return `<div class="cartao">
     <p class="mini">Começa com 2 Passivas; ganha +1 a cada 5 Níveis (mais os
       bônus de Sabedoria 5/10). Você tem ${p.passivas.length} de
-      ${passivasEsperadas(p)} esperadas. Podem empilhar até 3 cópias.</p>
+      ${passivasEsperadas(p)} esperadas. Cada uma pode evoluir do Nível
+      interno 0 até o 2, com o mesmo truque de desvantagens autoimpostas
+      das Habilidades — o Nível 1 e o Nível 2 valem exatamente o que uma
+      Habilidade Nível 1 e Nível 2 valem.</p>
     <table class="tabela-ref">
-      <tr><th>Dano/Cura/Movimento/RD/Vantagem</th><th>Alcance</th></tr>
-      <tr><td>${TABELA_PASSIVA.danoCuraMovRDVant}</td><td>${TABELA_PASSIVA.alcance}</td></tr>
+      <tr><th>Nível interno</th><th>Dano/Cura/Movimento/RD/Vantagem</th><th>Alcance</th></tr>
+      ${TABELA_PASSIVA_EVOLUCAO.map(l => `<tr><td>${l.nivelInterno}</td><td>${l.danoCuraMovRDVant}</td><td>${l.alcance}</td></tr>`).join('')}
     </table>
+    <p class="mini" style="margin-top:8px">Marcando "Dano/Cura/Movimento/RD/
+      Vantagem", dá pra apontar a Passiva pra uma Perícia específica — o
+      valor fixo do bônus soma sozinho no Total dela, na aba Perícias.</p>
   </div>
   ${p.passivas.map((h,i) => passivaLinha(h,i)).join('')}
   <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>`;
@@ -1421,7 +1550,23 @@ function abaPassivas(p){
 
 function abaCombate(p){
   const tam = TAMANHOS_ARMA.find(t => t.id === p.arma.tamanho) || TAMANHOS_ARMA[1];
+  const ativas = habilidadesAtivas(p);
   return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Rodada</h3>
+    <p class="mini">"⏭ Passar Round" avança o tempo pras Habilidades
+      ativas: Duradouras contam 1 round a menos (desligam sozinhas ao
+      zerar) e Sustentadas cobram metade do custo de PE (desligam
+      sozinhas se faltar PE).</p>
+    <button id="btnPassarRound" class="destaque" style="margin-top:8px">⏭ Passar Round</button>
+    <p class="mini" style="margin-top:10px;${(p.reacoesUsadasNaRodada||0) > reacoesPorRound(p) ? 'color:var(--alerta)' : ''}">
+      Reações usadas nesta rodada: ${p.reacoesUsadasNaRodada||0} / ${reacoesPorRound(p)}
+      — só Habilidades marcadas "É uma Habilidade de Reação" alimentam o Contra-Atacar.
+    </p>
+    ${ativas.length ? `<div style="margin-top:10px">
+      ${ativas.map(h => `<p class="mini">🟣 <strong>${esc(h.nome)||'(sem nome)'}</strong> — ${h.tipo === 'duradoura' ? `${h.duracaoRestante ?? '?'} round(s) restante(s)` : 'sustentada'}${h.reacao?' · reação':''}</p>`).join('')}
+    </div>` : `<p class="mini" style="margin-top:8px">Nenhuma Habilidade ativa agora.</p>`}
+  </div>
+  <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Arma</h3>
     <div class="grade g2">
       ${campo('Nome da arma','arma-nome',p.arma.nome)}
@@ -1725,7 +1870,11 @@ function ligarEventos(){
   app.querySelectorAll('[data-hab-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
   const addHab = document.getElementById('btAddHabilidade');
-  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, ascendida:false, habilidadeMaxima:false}));
+  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null}));
+  app.querySelectorAll('[data-hab-ativar]').forEach(b =>
+    b.onclick = () => mudar(p => ativarHabilidade(p, p.habilidades[Number(b.dataset.habAtivar)])));
+  const btnPassarRound = document.getElementById('btnPassarRound');
+  if(btnPassarRound) btnPassarRound.onclick = () => mudar(p => passarRound(p));
 
   // Invocações
   app.querySelectorAll('[data-inv-campo]').forEach(el =>
@@ -1788,11 +1937,13 @@ function ligarEventos(){
       const [i, chave] = el.dataset.pasCampo.split('|');
       p.passivas[Number(i)][chave] = el.value;
     }, el));
+  // Nível interno usa onchange (redesenha a tela) — o bônus calculado
+  // logo abaixo depende dele, e mudarSemRedesenhar() não redesenha nada.
   app.querySelectorAll('[data-pas-num]').forEach(el =>
-    el.oninput = () => mudarSemRedesenhar(p => {
+    el.onchange = () => mudar(p => {
       const [i, chave] = el.dataset.pasNum.split('|');
-      p.passivas[Number(i)][chave] = Number(el.value) || 0;
-    }, el));
+      p.passivas[Number(i)][chave] = Math.max(0, Math.min(2, Number(el.value) || 0));
+    }));
   app.querySelectorAll('[data-pas-efeito]').forEach(el =>
     el.onchange = () => mudar(p => {
       const [i, chave] = el.dataset.pasEfeito.split('|');
@@ -1800,10 +1951,15 @@ function ligarEventos(){
       if(!h.efeitos) h.efeitos = {};
       h.efeitos[chave] = el.checked;
     }));
+  app.querySelectorAll('[data-pas-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.pasSelect.split('|');
+      p.passivas[Number(i)][chave] = el.value;
+    }));
   app.querySelectorAll('[data-pas-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.passivas.splice(Number(b.dataset.pasRemover), 1)));
   const addPas = document.getElementById('btAddPassiva');
-  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', copias:1, efeito:'', efeitos:{}}));
+  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', nivelInterno:0, efeito:'', efeitos:{}, periciaAlvo:''}));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */

@@ -3121,6 +3121,64 @@ Reexecutei as seis baterias de teste anteriores sem regressão. `tsc
 --noEmit`, `npm run lint` e os 208 testes automáticos continuam
 limpos.
 
+## 80. Sistema do Sávio — evolução de Passiva de verdade, Passiva aplicada direto na Perícia, e Habilidade ativável (04/09/2026)
+
+Sequência de três pedidos do Zé continuando a decisão #79.
+
+**Evolução de Passiva com número de verdade.** O Zé lembrou o que faltava:
+"evoluindo perícias [leia-se Passivas], vai de 0 que é 1d6 pra 1 que é
+1d12 e 2 que é 2d12". O campo "Nível interno" (decisão #71) só guardava
+um número solto, sem calcular nada. Virou `TABELA_PASSIVA_EVOLUCAO`: o
+Nível interno 0 é o valor próprio e mais fraco da Passiva (+3 ou 1d6);
+os Níveis 1 e 2 são exatamente as linhas 1 e 2 de `TABELA_HABILIDADE`
+(1d12 e 2d12) — regra do documento ("nunca chegando ao efeito de uma
+Habilidade Nível 3", então para no Nível 2). O campo que antes se
+chamava `copias` (1 a 3, mal nomeado) virou `nivelInterno` (0 a 2, o
+nome certo da mecânica).
+
+**Passiva aplicada direto na Perícia.** "eu queria automático, pra
+literalmente você seleciona a perícia e vai automático pra lá, aparece
+na perícia específica" — em vez de só mostrar o bônus calculado dentro
+do card da Passiva, ela ganhou um seletor de Perícia-alvo (só quando o
+efeito "Dano/Cura/Movimento/RD/Vantagem" está marcado). `bonusFixoDoTexto()`
+extrai o número fixo do texto ("+3 ou 1d6" → 3; a parte em dado continua
+sendo escolha da mesa na hora de rolar, não dá pra somar automaticamente
+"1d6" num Total fixo) e `bonusPassivasPericia()` soma esse fixo direto
+no `periciaTotal()` da Perícia escolhida — visível na aba Perícias sem
+precisar voltar na aba Passivas.
+
+**Habilidade vira algo que se ativa.** "sempre coloca Habilidade como
+algo que você clica e ativa e vai automático pro que ela deveria ativar,
+pelo tempo que deveria durar ou até o cara tirar" — cada Habilidade
+ganhou um botão de Ativar/Desativar (ou "Usar" pras Imediatas, que só
+descontam PE e não ficam "ativas"). Duradoura já nasce sabendo por
+quantos rounds fica ligada (lê a coluna Duração de `TABELA_HABILIDADE`
+no Nível efetivo); Sustentada fica ligada até desativar na mão ou faltar
+PE. Nova aba "Rodada" dentro de Combate com o botão "⏭ Passar Round":
+desconta 1 round de cada Duradoura ativa (desliga sozinha ao zerar) e
+cobra metade do custo de PE de cada Sustentada ativa a cada round
+(desliga sozinha se faltar PE) — `ativarHabilidade()`/`passarRound()`/
+`habilidadesAtivas()`.
+
+**Habilidade de Reação.** No mesmo fôlego, o Zé lembrou de poder marcar
+uma Habilidade "como reação ou contra-ataque" — regra do documento: só
+Habilidades marcadas com o efeito "reação" podem alimentar o
+"Contra-Atacar", nunca ação comum. Virou o flag `h.reacao` (checkbox,
+igual `ascendida`/`habilidadeMaxima`) — quando marcado, o botão de
+Ativar/Usar avisa "como Reação" e consome 1 do contador
+`p.reacoesUsadasNaRodada`, mostrado no card "Rodada" contra o limite de
+`reacoesPorRound(p)`. O contador zera sozinho a cada "⏭ Passar Round".
+
+Testado com Playwright: aponta uma Passiva pra Furtividade e confirma
+que o Total da Perícia já soma o bônus fixo (+3, depois +6 ao evoluir o
+Nível interno pra 1); ativa uma Habilidade Duradoura e confirma o
+desconto de PE, a duração contando 2→1→0 a cada "Passar Round" e o
+desligamento automático ao zerar; marca uma Habilidade como Reação,
+confirma que o botão avisa "como Reação", que o contador vai a 1/2 e
+volta a 0/2 depois de Passar Round. Reexecutei as oito baterias de
+teste anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os
+208 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
