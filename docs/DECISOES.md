@@ -2966,6 +2966,26 @@ original enviados pelo Zé: chassi, Habilidades/Passivas livres,
 Especializações, Ascensão (Arquétipos + Imersão Espiritual), Invocações
 e Elemental.
 
+## 75. Corrige "+ Criar ficha" do Sistema do Sávio (04/09/2026)
+
+O Zé tentou criar uma ficha do Sistema do Sávio pela conta ("+ Criar
+ficha") e recebeu "Não consegui criar a ficha agora. Tenta de novo." —
+mesmo bug que o Sistema SAO (migração 0007) e o Thrylikí Chelóna
+(migração 0008) já tiveram: `src/lib/sistemas.ts` é só uma lista do
+código, ela não cria a linha correspondente na tabela `sistemas` do
+banco. A rota `POST /api/personagens` busca essa linha por `chave`
+(`banco.sistema.findUnique`) antes de criar o personagem — sem ela,
+retorna 404 "sistema desconhecido", que a tela mostra como a mensagem
+genérica de erro. Eu tinha registrado o Sistema do Sávio em
+`sistemas.ts` (decisão #71) mas esqueci de repetir o passo da migração.
+
+Criada `prisma/migrations/0010_sistema_do_savio.sql`, mesmo padrão das
+duas anteriores (`INSERT ... ON CONFLICT ("chave") DO NOTHING`, seguro
+rodar mais de uma vez). Como esta sessão não tem acesso ao banco
+(decisão registrada em ARQUITETURA.md), o Zé precisa executar esse
+arquivo no painel do Supabase, em **Storage → Query**, pra "+ Criar
+ficha" funcionar pra este sistema.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
