@@ -160,7 +160,7 @@ function limiaresAtivos(valor, id){
 function bonusNumericoLimiar(p, id, tabelaFlat){
   // Soma só os limiares cujo texto é um número puro de PV/PE/Sanidade (os de
   // dado, como o de Força, ficam só como referência de texto na tela).
-  return limiaresAtivos(p.atributos[id], id).reduce((t,l) => {
+  return limiaresAtivos(atributoEfetivo(p, id), id).reduce((t,l) => {
     const m = l.txt.match(new RegExp('\\+(\\d+) ' + tabelaFlat));
     return t + (m ? Number(m[1]) : 0);
   }, 0);
@@ -295,6 +295,49 @@ const LIBERACAO_HABILIDADE = [
   {nivelHabilidade:5, nivelPersonagem:18},
 ];
 
+// Primeira Ascensão: escolha de um dos quatro Arquétipos — cada um dá um
+// bônus fixo (só alguns mexem em Atributo) e uma Passiva própria de uso
+// único por sessão (a ficha só marca "usada", quem julga é a mesa).
+const ARQUETIPOS = [
+  {id:'esforcado', nome:'Esforçado',
+    bonus:'+2 num Atributo físico e +1 em outro Atributo físico à escolha (Força, Destreza ou Constituição) — fora do teto normal.',
+    atributosElegiveis:['forca','destreza','constituicao'],
+    passivaNome:'Ainda não fui derrotado!',
+    passivaTexto:'Ao chegar a 0 PV, pode gastar metade do PE atual pra se reerguer com PV igual à quantidade de PE gasto. Uma vez por sessão.'},
+  {id:'prodigio', nome:'Prodígio',
+    bonus:'Multiplicador de PE máximo ×1,5.',
+    atributosElegiveis:[],
+    passivaNome:'Hora de ir com tudo!',
+    passivaTexto:'Uma vez por sessão, declare o uso ANTES de um ataque de Bênção: o acerto fica garantido, ou o dano vira crítico caso acerte.'},
+  {id:'estudioso', nome:'Estudioso',
+    bonus:'+2 num Atributo mental e +1 em outro Atributo mental à escolha (Carisma, Sabedoria ou Inteligência) — fora do teto normal.',
+    atributosElegiveis:['carisma','sabedoria','inteligencia'],
+    passivaNome:'Verá do que sou capaz!',
+    passivaTexto:'Uma vez por sessão, declare o uso ANTES de uma rolagem de Carisma/Inteligência/Sabedoria: o efeito fica maximizado, ou o acerto fica garantido.'},
+  {id:'inato', nome:'Inato',
+    bonus:'Pode criar 2 Passivas além do máximo normal.',
+    atributosElegiveis:[],
+    passivaNome:'Acho que era assim!',
+    passivaTexto:'Uma vez por sessão, use uma Habilidade de outro jogador ou NPC que já viu antes, adaptada pra sua Bênção, sem gastar PE.'},
+];
+
+// Segunda Ascensão: desbloqueia a Imersão Espiritual — uma transformação
+// narrativa em uma de cinco categorias, sempre com um exemplo concreto.
+const TIPOS_IMERSAO = [
+  {id:'efeito', nome:'Imersão de Efeito', exemplo:'Ex.: Imersão de Natura — acelera os Ciclos constantemente.'},
+  {id:'condicao', nome:'Imersão de Condição', exemplo:'Ex.: Imersão de Aizen — um duelo justo, sem poderes, só armas, ao meio-dia. Precisa ser criada com o Mestre.'},
+  {id:'fortalecimento', nome:'Imersão de Fortalecimento', exemplo:'Ex.: Imersão de Akira — aumenta a extensão de percepção e manipulação atômica.'},
+  {id:'fatal', nome:'Imersão Fatal', exemplo:'Ex.: Imersão de Hoshigake — cria uma zona morta onde pode atacar com o toque da morte em qualquer lugar.'},
+  {id:'manipulacao', nome:'Imersão de Manipulação', exemplo:'Ex.: Imersão de Takashi — ganha manipulação de Sangue como uma segunda Bênção. Precisa ser criada com o Mestre.'},
+];
+const BONUS_IMERSAO = [
+  {id:'dano-cura', nome:'Dano ou Cura', texto:'Usa uma Habilidade de Nível 1 como padrão, somando a perícia padrão de Habilidade.'},
+  {id:'rolagem', nome:'Rolagem', texto:'Soma o Nível em qualquer rolagem de perícia.'},
+  {id:'rd', nome:'RD', texto:'Soma o dobro do Nível na RD.'},
+  {id:'alcance', nome:'Alcance', texto:'Soma o Nível no Alcance.'},
+  {id:'efeitos', nome:'Efeitos', texto:'Causa um efeito constante de Nível 1.'},
+];
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -325,22 +368,51 @@ function novoPersonagem(nome){
     // fórmula de bônus do Nível escolhido, quem inventa o efeito é a mesa.
     habilidades: [],
     passivas: [],
+    ascensao: {
+      primeira: false,
+      segunda: false,
+      arquetipoId: '',
+      bonusAtributo1: '', // atributo escolhido pra receber +2 (Esforçado/Estudioso)
+      bonusAtributo2: '', // atributo escolhido pra receber +1
+      passivaUsadaSessao: false,
+      // Contagem simples de quantas vezes já "ascendeu" uma Habilidade
+      // pós-Nível 20 — a mesa decide qual Habilidade fica mais forte.
+      habilidadesAscendidas: 0,
+    },
+    imersao: {
+      ativa: false, nome: '', tipoId: '', descricao: '', bonusId: '',
+      tiers: 0, // -3..3: cada unidade muda o PE gasto por round em ±3 (base 10)
+    },
     anotacoes: '',
   };
 }
 
 /* --- Cálculos -------------------------------------------------------------- */
 
+// Valor "de verdade" de um Atributo pra qualquer cálculo — soma o bônus fixo
+// de Atributo que o Arquétipo Esforçado/Estudioso concede na Primeira
+// Ascensão (fora do teto normal) ao valor bruto que o jogador distribuiu.
+function atributoEfetivo(p, id){
+  let bonus = 0;
+  if(p.ascensao.bonusAtributo1 === id) bonus += 2;
+  if(p.ascensao.bonusAtributo2 === id) bonus += 1;
+  return (p.atributos[id]||0) + bonus;
+}
+
+// Teto normal de Atributo: 10, sobe pra 15 depois da Segunda Ascensão.
+function atributoCap(p){ return p.ascensao.segunda ? 15 : 10; }
+
 function maiorAtributo(p){
-  return Math.max(0, ...ATRIBUTOS.map(a => p.atributos[a.id]||0));
+  return Math.max(0, ...ATRIBUTOS.map(a => atributoEfetivo(p, a.id)));
 }
 
 function periciasTreinadasContagem(p){
   return PERICIAS.filter(per => p.pericias[per.id]).length;
 }
-function periciasTreinadasLimite(p){ return 2 + (p.atributos.inteligencia||0); }
+function periciasTreinadasLimite(p){ return 2 + atributoEfetivo(p,'inteligencia'); }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
+function arquetipo(p){ return p.ascensao.primeira ? ARQUETIPOS.find(a => a.id === p.ascensao.arquetipoId) || null : null; }
 
 // PV/PE máximos dependem inteiramente da Especialização escolhida — sem
 // classe ainda, usa só CON/INT + limiares, pra não deixar a ficha vazia
@@ -348,7 +420,7 @@ function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especial
 // obrigatório terminar, como os outros três sistemas já fazem).
 function pvMaximo(p){
   const esp = especializacao(p);
-  const con = p.atributos.constituicao||0;
+  const con = atributoEfetivo(p,'constituicao');
   const base = esp ? esp.pvInicial + con : 10 + con;
   const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
   return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0);
@@ -357,7 +429,10 @@ function peMaximo(p){
   const esp = especializacao(p);
   const base = esp ? esp.peInicial : 15;
   const porNivel = esp ? esp.pePorNivel : 5;
-  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'inteligencia','PE máximo') + (p.bonus.pe||0);
+  const total = base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'inteligencia','PE máximo') + (p.bonus.pe||0);
+  // Arquétipo Prodígio (Primeira Ascensão): multiplicador de PE máximo ×1,5.
+  const arq = arquetipo(p);
+  return arq && arq.id === 'prodigio' ? Math.round(total*1.5) : total;
 }
 function sanidadeMaxima(p){
   return 100 + bonusNumericoLimiar(p,'carisma','Sanidade máxima') + (p.bonus.sanidade||0);
@@ -370,12 +445,23 @@ function reacoesPorRound(p){ return Math.max(2, Math.ceil(p.nivel/3)); }
 // da progressão normal (2 iniciais, +1 Habilidade por Nível, +1 Passiva a
 // cada 5 Níveis).
 function passivasBonusSabedoria(p){
-  const m = limiaresAtivos(p.atributos.sabedoria,'sabedoria')
+  const m = limiaresAtivos(atributoEfetivo(p,'sabedoria'),'sabedoria')
     .reduce((t,l) => t + (l.txt.includes('+3') ? 3 : l.txt.includes('+1') ? 1 : 0), 0);
   return m;
 }
 function habilidadesEsperadas(p){ return 2 + Math.max(0, p.nivel-1); }
-function passivasEsperadas(p){ return 2 + Math.floor(Math.max(0, p.nivel-1)/5) + passivasBonusSabedoria(p); }
+function passivasEsperadas(p){
+  const arq = arquetipo(p);
+  // Arquétipo Inato (Primeira Ascensão): +2 Passivas além do máximo normal.
+  const bonusInato = arq && arq.id === 'inato' ? 2 : 0;
+  return 2 + Math.floor(Math.max(0, p.nivel-1)/5) + passivasBonusSabedoria(p) + bonusInato;
+}
+
+// PV da Imersão Espiritual (Segunda Ascensão): Nível × Sabedoria efetiva.
+function pvImersao(p){ return p.nivel * atributoEfetivo(p,'sabedoria'); }
+// PE gasto por round mantendo a Imersão ativa — base 10, ajustável em ±3
+// por "tier" (até 3 tiers pra cada lado, fortalecendo ou enfraquecendo).
+function peImersaoPorRound(p){ return 10 + (p.imersao.tiers||0)*3; }
 
 // Maior Nível de Habilidade já liberado no Nível atual do personagem.
 function nivelHabilidadeLiberado(p){
@@ -516,6 +602,7 @@ const ABAS = [
   {id:'habilidades', nome:'Habilidades'},
   {id:'passivas',    nome:'Passivas'},
   {id:'combate',     nome:'Combate'},
+  {id:'ascensao',    nome:'Ascensão'},
   {id:'notas',       nome:'Notas'},
 ];
 
@@ -568,7 +655,7 @@ function render(){
           `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
         ).join('') + `</div>`
       + painelDerivados(p)
-      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, passivas:abaPassivas, combate:abaCombate, notas:abaNotas}[estado.aba])(p);
+      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -648,15 +735,21 @@ function campo(rotulo, chave, valor, tipo){
 }
 
 function blocoAtributos(p){
+  const cap = atributoCap(p);
   return `<div class="grade g3">
-    ${ATRIBUTOS.map(a => `<div class="cartao" style="margin-bottom:0">
+    ${ATRIBUTOS.map(a => {
+      const efetivo = atributoEfetivo(p, a.id);
+      const bonusAsc = efetivo - (p.atributos[a.id]||0);
+      return `<div class="cartao" style="margin-bottom:0">
       <label for="c-attr-${a.id}">${a.nome} (${a.abrev})</label>
-      <input id="c-attr-${a.id}" data-atributo="${a.id}" type="number" min="0" max="10" value="${p.atributos[a.id]}">
+      <input id="c-attr-${a.id}" data-atributo="${a.id}" type="number" min="0" max="${cap}" value="${p.atributos[a.id]}">
       <p class="mini" style="margin-top:6px">${a.sobre}</p>
-      ${limiaresAtivos(p.atributos[a.id], a.id).map(l => `<p class="mini" style="color:var(--roxo-forte)">✓ ${l.txt}</p>`).join('')}
-    </div>`).join('')}
+      ${bonusAsc ? `<p class="mini" style="color:var(--roxo-forte)">Efetivo: ${efetivo} (+${bonusAsc} da Ascensão, fora do teto)</p>` : ''}
+      ${limiaresAtivos(efetivo, a.id).map(l => `<p class="mini" style="color:var(--roxo-forte)">✓ ${l.txt}</p>`).join('')}
+    </div>`;
+    }).join('')}
   </div>
-  <p class="mini" style="margin-top:10px">Teto normal: 10 (sobe pra 15 depois da Ascensão — fatia futura).</p>`;
+  <p class="mini" style="margin-top:10px">Teto normal: ${cap}${cap===10 ? ' (sobe pra 15 depois da Segunda Ascensão)' : ''}.</p>`;
 }
 
 /* --- Modo Guiado: criação passo a passo ---------------------------------- */
@@ -823,7 +916,10 @@ function abaClasse(p){
   </div>` : ''}`;
 }
 
-function habilidadeLinha(h, i, lista){
+function habilidadeLinha(h, i, p){
+  const custoBase = CUSTO_PE_HABILIDADE[h.nivel] ?? null;
+  const meiaCusto = p.ascensao.segunda && h.nivel <= 3; // bônus universal da Segunda Ascensão
+  const custoFinal = custoBase !== null && meiaCusto ? Math.ceil(custoBase/2) : custoBase;
   return `<div class="linha-lista">
     <div class="topo">
       <input data-hab-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Habilidade" style="flex:1">
@@ -839,10 +935,18 @@ function habilidadeLinha(h, i, lista){
       <div><label>Custo de PE</label>
         <input type="number" min="0" data-hab-num="${i}|custoPe" value="${h.custoPe}"></div>
     </div>
-    <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${CUSTO_PE_HABILIDADE[h.nivel] ?? '—'} PE</p>
+    <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${custoFinal ?? '—'} PE${meiaCusto ? ' (já com a metade da Segunda Ascensão)' : ''}</p>
     <p class="mini" style="margin:8px 0">${(TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).sobre}</p>
     <label>Efeito (o que ela faz)</label>
     <textarea data-hab-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
+    <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
+      <label class="checagem">
+        <input type="checkbox" data-hab-flag="${i}|ascendida" ${h.ascendida?'checked':''}> Ascendida (pós-Nível 20, +1 Nível sem custo extra)
+      </label>
+      <label class="checagem">
+        <input type="checkbox" data-hab-flag="${i}|habilidadeMaxima" ${h.habilidadeMaxima?'checked':''}> É uma Habilidade Máxima
+      </label>
+    </div>
   </div>`;
 }
 
@@ -860,7 +964,7 @@ function abaHabilidades(p){
     <p class="mini" style="margin-top:8px">Empilhar mais de um efeito na mesma
       Habilidade reduz o Nível efetivo em 1 pra todos os efeitos combinados.</p>
   </div>
-  ${p.habilidades.map((h,i) => habilidadeLinha(h,i)).join('')}
+  ${p.habilidades.map((h,i) => habilidadeLinha(h,i,p)).join('')}
   <button id="btAddHabilidade" class="destaque">+ Nova Habilidade</button>`;
 }
 
@@ -941,6 +1045,125 @@ function abaCombate(p){
   </div>`;
 }
 
+function abaAscensao(p){
+  const arq = arquetipo(p);
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Primeira Ascensão</h3>
+    <p class="mini">Um marco narrativo — fale com o Mestre sobre quando seu
+      personagem alcança. Libera um Arquétipo à escolha e os Embates de
+      Fluxo.</p>
+    <label class="checagem" style="margin-top:10px">
+      <input type="checkbox" data-asc-check="primeira" ${p.ascensao.primeira?'checked':''}> Já alcancei a Primeira Ascensão
+    </label>
+    ${p.ascensao.primeira ? `
+    <div style="margin-top:14px">
+      <p class="mini" style="margin-bottom:8px">Escolha um Arquétipo:</p>
+      <div class="grade g2">
+        ${ARQUETIPOS.map(a => `<label class="linha-lista" style="cursor:pointer;display:block;margin-bottom:0">
+          <div class="linha">
+            <input type="radio" name="arquetipo" data-asc-arquetipo="${a.id}" style="width:auto" ${p.ascensao.arquetipoId===a.id?'checked':''}>
+            <strong>${a.nome}</strong>
+          </div>
+          <p class="mini" style="margin:6px 0 0">${a.bonus}</p>
+          <p class="mini" style="margin-top:4px"><em>${a.passivaNome}:</em> ${a.passivaTexto}</p>
+        </label>`).join('')}
+      </div>
+    </div>
+    ${arq && arq.atributosElegiveis.length ? `<div class="grade g2" style="margin-top:12px">
+        <div><label for="c-asc-bonus1">Atributo que recebe +2</label>
+          <select id="c-asc-bonus1" data-asc-bonus="1">
+            <option value="">— escolha —</option>
+            ${arq.atributosElegiveis.map(id => {
+              const a = ATRIBUTOS.find(x=>x.id===id);
+              return `<option value="${id}" ${p.ascensao.bonusAtributo1===id?'selected':''}>${a.nome}</option>`;
+            }).join('')}
+          </select></div>
+        <div><label for="c-asc-bonus2">Atributo que recebe +1</label>
+          <select id="c-asc-bonus2" data-asc-bonus="2">
+            <option value="">— escolha —</option>
+            ${arq.atributosElegiveis.map(id => {
+              const a = ATRIBUTOS.find(x=>x.id===id);
+              return `<option value="${id}" ${p.ascensao.bonusAtributo2===id?'selected':''}>${a.nome}</option>`;
+            }).join('')}
+          </select></div>
+      </div>` : ''}
+    ${arq ? `<label class="checagem" style="margin-top:12px">
+        <input type="checkbox" data-asc-check="passivaUsadaSessao" ${p.ascensao.passivaUsadaSessao?'checked':''}>
+        "${arq.passivaNome}" já foi usada nesta sessão
+      </label>` : ''}
+    <div class="aviso" style="margin-top:12px;border-color:rgba(139,110,224,.5);background:rgba(139,110,224,.1)">
+      <strong>Embate de Fluxo:</strong> em vez de rolar uma perícia, role
+      Nível × maior Atributo (${p.nivel * maiorAtributo(p)}) + 1d100. Quem
+      perde — ou é nocauteado, se perder por metade da rolagem do
+      vencedor — recebe penalidades nas rolagens iguais à perícia de Fluxo
+      de quem venceu.
+    </div>` : ''}
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Segunda Ascensão</h3>
+    <p class="mini">Só disponível depois da Primeira Ascensão.</p>
+    <label class="checagem" style="margin-top:10px">
+      <input type="checkbox" data-asc-check="segunda" ${p.ascensao.segunda?'checked':''} ${p.ascensao.primeira?'':'disabled'}>
+      Já alcancei a Segunda Ascensão
+    </label>
+    ${p.ascensao.segunda ? `
+    <ul style="margin:12px 0 0;padding-left:20px">
+      <li style="margin-bottom:6px">Pode criar uma Imersão Espiritual (card abaixo).</li>
+      <li style="margin-bottom:6px">Habilidades de Nível 3 ou menor agora custam metade do PE.</li>
+      <li style="margin-bottom:6px">O teto de Atributo sobe de 10 pra 15.</li>
+      <li style="margin-bottom:6px">Pode evoluir além do Nível 20.</li>
+      <li style="margin-bottom:6px">A cada 3 Níveis depois do 20 (começando com um no próprio Nível 20),
+        escolha uma Habilidade pra "ascender": ela sobe 1 Nível sem gastar
+        PE extra. Ascender uma Habilidade Nível 5 já aprimorada pro Nível 7
+        faz ela virar uma <strong>Habilidade Máxima</strong> — usável 1x por
+        cena, custa 25 PE, dá bônus de acerto igual ao seu Nível, pode ser
+        reforçada com Fluxo, e pode ser usada mesmo a 0 PE (causa uma
+        Exaustão e deixa o personagem inconsciente).</li>
+    </ul>
+    <div style="margin-top:10px"><label for="c-asc-habascendidas">Habilidades já ascendidas</label>
+      <input id="c-asc-habascendidas" data-asc-habascendidas type="number" min="0" value="${p.ascensao.habilidadesAscendidas}"></div>
+    <p class="mini" style="margin-top:4px">Vagas disponíveis no seu Nível
+      atual: ${1 + Math.floor(Math.max(0, p.nivel-20)/3)} (a partir do
+      Nível 20, +1 a cada 3 Níveis).</p>` : ''}
+  </div>
+  ${p.ascensao.segunda ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Imersão Espiritual</h3>
+    <label class="checagem">
+      <input type="checkbox" data-ime-check="ativa" ${p.imersao.ativa?'checked':''}> Já criei uma Imersão Espiritual
+    </label>
+    ${p.imersao.ativa ? `
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="c-ime-nome">Nome da Imersão</label>
+        <input id="c-ime-nome" data-ime-campo="nome" value="${esc(p.imersao.nome)}"></div>
+      <div><label for="c-ime-tipo">Tipo</label>
+        <select id="c-ime-tipo" data-ime-select="tipoId">
+          <option value="">— escolha —</option>
+          ${TIPOS_IMERSAO.map(t => `<option value="${t.id}" ${p.imersao.tipoId===t.id?'selected':''}>${t.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    ${p.imersao.tipoId ? `<p class="mini" style="margin-top:6px">${TIPOS_IMERSAO.find(t=>t.id===p.imersao.tipoId).exemplo}</p>` : ''}
+    <label for="c-ime-descricao" style="margin-top:10px">O que ela faz</label>
+    <textarea id="c-ime-descricao" data-ime-campo="descricao" rows="2">${esc(p.imersao.descricao)}</textarea>
+    <div class="grade g2" style="margin-top:10px">
+      <div><label for="c-ime-bonus">Bônus contínuo</label>
+        <select id="c-ime-bonus" data-ime-select="bonusId">
+          <option value="">— escolha —</option>
+          ${BONUS_IMERSAO.map(b => `<option value="${b.id}" ${p.imersao.bonusId===b.id?'selected':''}>${b.nome}</option>`).join('')}
+        </select></div>
+      <div><label for="c-ime-tiers">Fortalecer/enfraquecer (-3 a +3)</label>
+        <input id="c-ime-tiers" data-ime-tiers type="number" min="-3" max="3" value="${p.imersao.tiers}"></div>
+    </div>
+    ${p.imersao.bonusId ? `<p class="mini" style="margin-top:6px">${BONUS_IMERSAO.find(b=>b.id===p.imersao.bonusId).texto}</p>` : ''}
+    <div class="grade g2" style="margin-top:10px">
+      <div class="derivado"><div class="rot">PV da Imersão</div><div class="val">${pvImersao(p)}</div><div class="obs">Nível × Sabedoria</div></div>
+      <div class="derivado"><div class="rot">PE por round</div><div class="val">${peImersaoPorRound(p)}</div><div class="obs">enquanto ativa</div></div>
+    </div>
+    <p class="mini" style="margin-top:8px">A Imersão acaba quando o PE se
+      esgota ou ela é destruída. Imersões de Condição e de Manipulação
+      precisam ser criadas junto com o Mestre.</p>` : ''}
+  </div>` : ''}`;
+}
+
 function abaNotas(p){
   return `<div class="cartao">
     <label for="c-anotacoes">Anotações livres</label>
@@ -978,7 +1201,7 @@ function ligarEventos(){
     el.oninput = () => mudarSemRedesenhar(p => p[el.dataset.num] = Number(el.value) || 0, el));
 
   app.querySelectorAll('[data-atributo]').forEach(el =>
-    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Math.max(0, Math.min(15, Number(el.value) || 0))));
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Math.max(0, Math.min(atributoCap(p), Number(el.value) || 0))));
 
   app.querySelectorAll('[data-especializacao]').forEach(el =>
     el.onchange = () => mudar(p => p.especializacaoId = el.dataset.especializacao));
@@ -999,6 +1222,37 @@ function ligarEventos(){
   app.querySelectorAll('[data-check]').forEach(el =>
     el.onchange = () => mudar(p => p[el.dataset.check] = el.checked));
 
+  // Ascensão
+  app.querySelectorAll('[data-asc-check]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.ascensao[el.dataset.ascCheck] = el.checked;
+      // Desligar a Primeira Ascensão sem querer não pode deixar a Segunda
+      // (e a Imersão que ela libera) num estado impossível.
+      if(el.dataset.ascCheck === 'primeira' && !el.checked) p.ascensao.segunda = false;
+    }));
+  app.querySelectorAll('[data-asc-arquetipo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.ascensao.arquetipoId = el.dataset.ascArquetipo;
+      p.ascensao.bonusAtributo1 = '';
+      p.ascensao.bonusAtributo2 = '';
+    }));
+  app.querySelectorAll('[data-asc-bonus]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.ascensao['bonusAtributo' + el.dataset.ascBonus] = el.value;
+    }));
+  const ascHabAscendidas = document.getElementById('c-asc-habascendidas');
+  if(ascHabAscendidas) ascHabAscendidas.onchange = () => mudar(p => p.ascensao.habilidadesAscendidas = Math.max(0, Number(ascHabAscendidas.value) || 0));
+
+  // Imersão Espiritual
+  app.querySelectorAll('[data-ime-check]').forEach(el =>
+    el.onchange = () => mudar(p => p.imersao[el.dataset.imeCheck] = el.checked));
+  app.querySelectorAll('[data-ime-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.imersao[el.dataset.imeCampo] = el.value, el));
+  app.querySelectorAll('[data-ime-select]').forEach(el =>
+    el.onchange = () => mudar(p => p.imersao[el.dataset.imeSelect] = el.value));
+  const imeTiers = document.getElementById('c-ime-tiers');
+  if(imeTiers) imeTiers.onchange = () => mudar(p => p.imersao.tiers = Math.max(-3, Math.min(3, Number(imeTiers.value) || 0)));
+
   // Habilidades
   app.querySelectorAll('[data-hab-campo]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => {
@@ -1017,10 +1271,15 @@ function ligarEventos(){
     el.onchange = () => mudar(p => {
       p.habilidades[Number(el.dataset.habNivel)].nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
     }));
+  app.querySelectorAll('[data-hab-flag]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.habFlag.split('|');
+      p.habilidades[Number(i)][chave] = el.checked;
+    }));
   app.querySelectorAll('[data-hab-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
   const addHab = document.getElementById('btAddHabilidade');
-  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:''}));
+  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', ascendida:false, habilidadeMaxima:false}));
 
   // Passivas
   app.querySelectorAll('[data-pas-campo]').forEach(el =>

@@ -1229,6 +1229,20 @@ passando.
       cálculo de PV por Especialização, limiares de Atributo, Perícias,
       Habilidades/Passivas, persistência); `tsc`, lint e os 208 testes
       automáticos continuam limpos
+- [x] **Sistema do Sávio — Ascensão e Imersão Espiritual** (04/09/2026) —
+      decisão #72. Nova aba Ascensão: Primeira Ascensão (escolha de um dos
+      4 Arquétipos — Esforçado, Prodígio, Estudioso, Inato — cada um com
+      bônus fixo e Passiva de uso único por sessão; Embate de Fluxo como
+      referência) e Segunda Ascensão (Imersão Espiritual liberada,
+      Habilidades Nível ≤3 custam metade do PE, teto de Atributo sobe de
+      10 pra 15, evolução além do Nível 20, "ascender" uma Habilidade a
+      cada 3 Níveis pós-20). Imersão Espiritual ganhou card próprio: nome,
+      um dos 5 Tipos com exemplo, Bônus contínuo e ajuste de força
+      -3/+3, com PV calculado (Nível × Sabedoria). Invocações e Elementais
+      ficam para fatias futuras. Testado com Playwright (teto de Atributo
+      dinâmico, bônus de Arquétipo aplicado nos Atributos, Imersão criada
+      e persistida, custo de PE de Habilidade pela metade); `tsc`, lint e
+      os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

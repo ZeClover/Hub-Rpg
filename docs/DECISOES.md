@@ -2838,6 +2838,57 @@ localStorage. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é a ficha nova em HTML/JS estático, mais uma
 entrada de dados em `sistemas.ts`).
 
+## 72. Sistema do Sávio — Ascensão e Imersão Espiritual (04/09/2026)
+
+Segunda fatia do Sistema do Sávio (decisão #71), seguindo "vá para as
+próximas fatias": Ascensão e Imersão Espiritual, que a planilha original
+documenta juntas como dois marcos sequenciais ("Primeira ascenção" e
+"Segunda ascenção") — por isso viraram uma fatia só, em vez de espalhar
+Invocações/Elementais/Ascensão em fatias soltas sem critério.
+
+Nova aba **Ascensão** em `public/sistema-do-savio.html`:
+
+- **Primeira Ascensão** — escolha de um dos quatro Arquétipos (Esforçado,
+  Prodígio, Estudioso, Inato), cada um com um bônus fixo e uma Passiva de
+  uso único por sessão (a ficha só marca "usada", quem julga é a mesa).
+  Esforçado e Estudioso pedem escolher em quais Atributos aplicar o
+  bônus (+2 num e +1 noutro, fora do teto normal) — criei
+  `atributoEfetivo(p, id)` pra centralizar esse bônus, usado agora em
+  todo cálculo que lê um Atributo (limiares, PV, PE, Sanidade, maior
+  Atributo, limite de Perícias treinadas), em vez de ler `p.atributos[id]`
+  direto feito antes. Prodígio multiplica o PE máximo por 1,5; Inato dá
+  +2 Passivas além do máximo. O Embate de Fluxo (Nível × maior Atributo +
+  1d100, no lugar de uma perícia) aparece como referência assim que a
+  Primeira Ascensão liga.
+- **Segunda Ascensão** (só disponível com a Primeira já ligada) — lista os
+  cinco bônus universais (Imersão Espiritual liberada, Habilidades Nível
+  ≤3 custam metade do PE, teto de Atributo sobe de 10 pra 15, pode evoluir
+  além do Nível 20, e a cada 3 Níveis pós-20 pode "ascender" uma
+  Habilidade). O teto de Atributo (`atributoCap(p)`) agora é dinâmico:
+  10 normalmente, 15 com a Segunda Ascensão — usado no `max` dos campos
+  de Atributo e no clamp do `onchange`. Cada Habilidade ganhou dois
+  marcadores informativos ("Ascendida" e "É uma Habilidade Máxima", com a
+  regra da Habilidade Máxima como texto de referência) e o "custo padrão
+  de PE" mostrado nela já reflete a metade quando a Segunda Ascensão está
+  ligada e o Nível é ≤3.
+- **Imersão Espiritual** (só aparece com a Segunda Ascensão ligada) — nome,
+  um dos cinco Tipos com exemplo (Efeito, Condição, Fortalecimento, Fatal,
+  Manipulação — os dois últimos marcados como "precisa criar com o
+  Mestre"), descrição livre, um dos cinco Bônus contínuos possíveis
+  (Dano/Cura, Rolagem, RD, Alcance, Efeitos) e um ajuste de -3 a +3 pra
+  fortalecer/enfraquecer (cada unidade muda o PE gasto por round em ±3,
+  base 10). PV da Imersão = Nível × Sabedoria, calculado e mostrado.
+
+Testado com Playwright: confirma que o teto de Atributo é 10 antes da
+Ascensão e vira 15 depois da Segunda; liga Primeira Ascensão com
+Arquétipo Esforçado, dá +2 Força e +1 Destreza, e confere que
+`atributoEfetivo()` aplicou os dois; liga Segunda Ascensão e cria uma
+Imersão Espiritual, conferindo que os campos e o PE-por-round calculado
+aparecem; cria uma Habilidade Nível 3 e confirma que o custo padrão exibido
+já veio pela metade (8 → 4 PE); recarrega a página e confirma que Ascensão
+e Imersão persistiram. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
