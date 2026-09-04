@@ -482,7 +482,7 @@ function maiorAtributo(p){
 function periciasTreinadasContagem(p){
   return PERICIAS.filter(per => p.pericias[per.id]).length;
 }
-function periciasTreinadasLimite(p){ return 2 + atributoEfetivo(p,'inteligencia'); }
+function periciasTreinadasLimite(p){ return 2 + atributoEfetivo(p,'inteligencia') + Math.ceil(p.nivel/4); }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
 function arquetipo(p){ return p.ascensao.primeira ? ARQUETIPOS.find(a => a.id === p.ascensao.arquetipoId) || null : null; }
@@ -593,6 +593,7 @@ function snapshotNivelSavio(p){
     nivelHabLiberado: nivelHabilidadeLiberado(p),
     sanidadeDano: sanidade ? sanidade.dado : null,
     pontosAtributos: pontosAtributosBase(p.nivel),
+    periciasTreinadasLimite: periciasTreinadasLimite(p),
   };
 }
 // Sobe 1 Nível e guarda o resumo em estado.nivelUpResumo — sem teto (o
@@ -993,6 +994,7 @@ function telaResumoNivel(p, resumo){
       ${linha('Pontos de Energia máximos', antes.pe, depois.pe)}
       ${linha('Reações por round', antes.reacoes, depois.reacoes)}
       ${linha('Pontos de Atributo disponíveis', antes.pontosAtributos, depois.pontosAtributos)}
+      ${linha('Perícias treináveis', antes.periciasTreinadasLimite, depois.periciasTreinadasLimite)}
       ${depois.sanidadeDano ? linha('Dano de Sanidade das Habilidades', antes.sanidadeDano || '—', depois.sanidadeDano) : ''}
       ${liberouNivelHab ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">✨ Agora você pode ter Habilidades de Nível ${depois.nivelHabLiberado}!</p>` : ''}
     </div>
@@ -1067,8 +1069,9 @@ function abaPericias(p){
   const limite = periciasTreinadasLimite(p);
   return `<div class="cartao">
     <p class="mini">
-      Você treina <strong>2 + Inteligência</strong> perícias. Treinada dá
-      <strong>+5</strong> no teste; sem treino fica em <strong>+0</strong>.
+      Você treina <strong>2 + Inteligência + (Nível ÷ 4, arredondado pra
+      cima)</strong> perícias. Treinada dá <strong>+5</strong> no teste;
+      sem treino fica em <strong>+0</strong>.
     </p>
     <p class="mini" style="margin-top:4px;${treinadas>limite?'color:var(--alerta)':''}">
       Treinadas: ${treinadas} / ${limite}${treinadas>limite ? ' — acima do limite, combine com o Mestre' : ''}

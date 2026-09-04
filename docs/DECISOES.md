@@ -3062,6 +3062,28 @@ Conferido com Playwright (screenshot da tabela antes/depois). `tsc
 --noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos
 (mudança é só CSS).
 
+## 78. Sistema do Sávio — corrige fórmula de Perícias treináveis (04/09/2026)
+
+O Zé lembrou de um detalhe que tinha ficado faltando: "pericias
+treinadas são (nivel/4) + inteligencia + 2". A decisão #71 já tinha
+implementado a parte "2 + Inteligência" (confirmada com o Zé depois que
+eu tinha lido errado a planilha na primeira tentativa), mas faltava
+mesmo o termo do Nível — a fórmula certa da planilha original
+(`Atributos e Contagens!O16`) é `2 + Inteligência +
+ROUNDUP(Nível/4, 0)`, e eu tinha deixado essa parte de fora.
+
+`periciasTreinadasLimite(p)` agora soma `Math.ceil(p.nivel/4)`. O texto
+da aba Perícias foi atualizado pra explicar a conta completa, e o
+resumo do "⭐ Subir de Nível" (decisão #76) ganhou uma linha mostrando
+quando o limite de Perícias treináveis sobe (a cada 4 Níveis).
+
+Testado com Playwright: confirma limite 6 no Nível 1 com Inteligência 3
+(2+3+ceil(1/4)=6) e limite 7 depois de subir pro Nível 5
+(2+3+ceil(5/4)=7). Reexecutei as cinco baterias de teste anteriores sem
+regressão (só ajustei a expectativa de um teste antigo que ainda
+esperava o número errado). `tsc --noEmit`, `npm run lint` e os 208
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
