@@ -2786,6 +2786,58 @@ baterias de teste das decisões #65-69 nos quatro sistemas. `tsc
 --noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos
 (mudança é só HTML/JS estático das quatro fichas).
 
+## 71. Sistema do Sávio — chassi e ficha jogável básica (04/09/2026)
+
+O Zé mandou um PDF ("SISTEMA_DO_SAVIO.pdf", 12 páginas) com o homebrew de um
+amigo dele — quinto sistema de regras do Hub — e pediu "Crie esse sistema no
+HUB RPG". No meio do trabalho, mandou também a planilha original
+("Cópia de Ficha Padrão The Celestials.xlsx", 11 abas), que serviu pra
+conferir alguns números que o PDF tinha registrado errado (a tabela de bônus
+de Habilidade de Nível 5 é **+6d12 ou +36**, não +5d12/+30 como o PDF
+sugeria — e a Duração de efeito começa em +2 rounds no Nível 1, não +1).
+
+Traço central do sistema: as Habilidades são **livres** — cada jogador
+desenha a própria (nome, o que ela faz), usando uma tabela de bônus por
+Nível (1 a 5) como referência de quanto ela pode fazer, em vez de escolher
+de um catálogo fechado como Fabula Ultima e o Sistema SAO fazem. Por isso a
+ficha guarda Habilidades e Passivas como uma lista de texto livre + campos
+numéricos (Nível, Tipo, Custo de PE), com a tabela de bônus sempre visível
+do lado pra consulta — o Hub não pode travar uma Habilidade que o mestre e
+o jogador inventaram juntos na mesa.
+
+Como o sistema completo é grande — Invocações, Elementais, Ascensão
+(Arquétipos) e Imersão Espiritual são subsistemas próprios, cada um do
+tamanho de uma fatia inteira — perguntei ao Zé o que entrava nesta primeira
+fatia (decisão #26, uma fatia por vez).
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| — | Escopo da fatia 1 | **Chassi + ficha jogável básica**: Perfil, Atributos (com os limiares de 5/10), Perícias, Especialização (as 4 classes com os traços fixos que vêm com cada uma), Habilidades/Passivas como lista livre com tabela de referência, Arma e Fluxo. Invocações, Elementais, Ascensão e Imersão Espiritual ficam para fatias futuras |
+| — | Grau de treino de Perícia | **Simples, como no PDF**: perícia treinada dá +5, sem treino fica +0. A planilha original tinha uma escala de 3 graus (Treinado/Amador/Profissional, +5/+8/+12) que eu tinha lido errado o efeito — o Zé preferiu manter a versão simples que já estava documentada |
+| — | Aprimoramento de Passivas | **Só registra o Nível interno (0-2)** como campo informativo — o cálculo de quanto cada nível de aprimoramento libera (via efeitos negativos autoimpostos) fica pra uma fatia própria futura, igual o aprimoramento de Habilidades |
+
+`public/sistema-do-savio.html` ficou pronto com essas respostas — mesma
+arquitetura das outras quatro fichas (`estado`/render()/ligarEventos(),
+Modo Guiado de 3 passos, localStorage + Modo Hub via `?id=`). Registrado em
+`src/lib/sistemas.ts` como `sistema-do-savio`, `situacao: "pronta"`,
+`salvaNoHub: true` — já aparece em "+ Criar ficha" e na criação de
+campanha. Sem Grimório, ficha de Inimigo ou Escudo do Mestre ainda
+(`null` nos três campos) — fatias futuras, como os outros sistemas
+tiveram.
+
+Testado com Playwright: cria personagem, entra no Modo Guiado, preenche
+Atributos e escolhe Especialização no passo 2, confirma que os dois
+persistem no personagem antes mesmo de "Concluir", confere o PV calculado
+(Combatente PV inicial 40+CON, mais o limiar de Constituição 5 → +20 PV
+temporário permanente = 65 com CON 5), confirma que o limiar aparece na
+aba Atributos, testa o contador de Perícias treinadas, os traços da
+Especialização aparecendo na aba Classe, adiciona uma Habilidade e uma
+Passiva e confere que o texto de "custo padrão de PE" reage ao Nível
+escolhido, e recarrega a página pra confirmar que tudo persistiu via
+localStorage. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos (mudança é a ficha nova em HTML/JS estático, mais uma
+entrada de dados em `sistemas.ts`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

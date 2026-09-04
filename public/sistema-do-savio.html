@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — Sistema do Sávio</title>
+<style>
+/* Mesma paleta-base do Hub RPG, com destaque em violeta pra diferenciar
+   visualmente este sistema dos outros três (âmbar). */
+:root{
+  --fundo:#0a0910; --superficie:#131022; --superficie-alta:#1c1830;
+  --borda:#2c2547; --texto:#f0eef8; --suave:#a099bd;
+  --roxo:#8b6ee0; --roxo-forte:#ac93f5; --alerta:#c4506b;
+  --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#c4506b;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--roxo-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--roxo)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s,transform .12s;
+}
+button:hover{border-color:var(--suave)}
+button:not(:disabled):active{transform:scale(.95)}
+button.destaque{border-color:rgba(139,110,224,.4); background:rgba(139,110,224,.12); color:var(--roxo-forte)}
+button.destaque:hover{background:rgba(139,110,224,.22)}
+button.perigo{border-color:rgba(196,80,107,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(139,110,224,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(139,110,224,.5); color:var(--roxo-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px;
+  transition:box-shadow .18s ease, transform .18s ease}
+.cartao:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g6{grid-template-columns:repeat(6,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:26px; color:var(--roxo-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+.derivado.risco .val{color:var(--alerta)}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(196,80,107,.5); background:rgba(196,80,107,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+.resumo-nivel{border:1px solid rgba(139,110,224,.5); background:rgba(139,110,224,.1);
+  border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
+.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--roxo-forte); font-family:Georgia,serif}
+
+@keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+#app.entra{animation:fadeSlideIn .32s ease-out}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.tabela-ref{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:8px}
+.tabela-ref th,.tabela-ref td{border:1px solid var(--borda); padding:6px 8px; text-align:center}
+.tabela-ref th{color:var(--suave); font-weight:600; background:var(--superficie-alta)}
+.selo{display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px;
+  border:1px solid var(--borda); color:var(--suave); margin-right:4px}
+.checagem{display:flex; align-items:center; gap:7px; font-size:13px; margin:0}
+.checagem input{width:auto}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Sistema do Sávio</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--roxo);text-decoration:none;font-size:13px">← Fichas</a>
+  <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE PERSONAGEM — SISTEMA DO SÁVIO (homebrew de um amigo do Zé)
+
+   Este é o CHASSI + ficha jogável básica do sistema (decisão #17 do Hub:
+   cada sistema de regras é um módulo próprio, respondendo as sete perguntas
+   de ARQUITETURA.md). O sistema original é bem maior que isto — Invocações,
+   Elementais, Ascensão (Arquétipos) e Imersão Espiritual ficam de fora desta
+   fatia (decisão #26: uma fatia por vez) e entram como fatias futuras,
+   quando esta estiver no ar e usável numa mesa de verdade.
+
+   Traço central do sistema: Habilidades são LIVRES — cada jogador desenha a
+   própria (nome, tipo, o que ela faz), usando uma tabela de bônus por Nível
+   (1 a 5) como referência de quanto ela pode fazer. Por isso a aba
+   Habilidades/Passivas aqui é uma FICHA + TABELA DE CONSULTA, não uma lista
+   fechada de poderes pra comprar (diferente do catálogo fixo que Fabula
+   Ultima e SAO usam) — o Hub não pode travar uma habilidade que o mestre e
+   o jogador inventaram juntos na mesa.
+
+   Os personagens ficam no navegador (localStorage) ou na conta (Modo Hub via
+   ?id=), igual os outros três sistemas — mesmo mecanismo de sempre.
+   =========================================================================== */
+
+/* --- Regras do sistema, em forma de dados -------------------------------- */
+
+const ATRIBUTOS = [
+  {id:'forca',        nome:'Força',        abrev:'FOR', sobre:'dano corpo a corpo, capacidade física'},
+  {id:'destreza',     nome:'Destreza',     abrev:'DEX', sobre:'iniciativa, esquiva, ações extras'},
+  {id:'constituicao', nome:'Constituição', abrev:'CON', sobre:'Pontos de Vida, resistência'},
+  {id:'inteligencia', nome:'Inteligência', abrev:'INT', sobre:'Pontos de Energia, perícias treinadas'},
+  {id:'sabedoria',    nome:'Sabedoria',    abrev:'SAB', sobre:'percepção, Passivas extras'},
+  {id:'carisma',      nome:'Carisma',      abrev:'CAR', sobre:'Sanidade, presença social'},
+];
+
+// Limiares de atributo (5 e 10) — bônus fixo que "liga" ao alcançar o
+// número, sem precisar de fórmula contínua. Cada sistema costuma ter o seu
+// (aqui não existe cálculo por grau, só esses dois degraus).
+const LIMIARES = {
+  destreza:     [{v:5, txt:'+1 Ação Bônus por turno'}, {v:10, txt:'+1 Ação Principal extra por turno'}],
+  constituicao: [{v:5, txt:'+20 PV temporário permanente'}, {v:10, txt:'+40 PV temporário permanente'}],
+  carisma:      [{v:5, txt:'+30 Sanidade máxima'}, {v:10, txt:'+60 Sanidade máxima'}],
+  forca:        [{v:5, txt:'+4d4 de dano em qualquer ataque'}, {v:10, txt:'+4d8 de dano em qualquer ataque'}],
+  inteligencia: [{v:5, txt:'+25 PE máximo'}, {v:10, txt:'+50 PE máximo'}],
+  sabedoria:    [{v:5, txt:'+1 Passiva extra'}, {v:10, txt:'+3 Passivas extras'}],
+};
+function limiaresAtivos(valor, id){
+  return (LIMIARES[id]||[]).filter(l => valor >= l.v);
+}
+function bonusNumericoLimiar(p, id, tabelaFlat){
+  // Soma só os limiares cujo texto é um número puro de PV/PE/Sanidade (os de
+  // dado, como o de Força, ficam só como referência de texto na tela).
+  return limiaresAtivos(p.atributos[id], id).reduce((t,l) => {
+    const m = l.txt.match(new RegExp('\\+(\\d+) ' + tabelaFlat));
+    return t + (m ? Number(m[1]) : 0);
+  }, 0);
+}
+
+// As duas tabelas de Perícia do documento original, cada uma ligada a um
+// Atributo. Treinar = marcar a caixa (+5); sem marcar fica em +0. O jogador
+// treina "2 + Inteligência" perícias — a ficha só avisa se passar disso,
+// não trava (o mestre decide se libera exceção).
+const PERICIAS = [
+  {id:'atletismo',      nome:'Atletismo',      atributo:'forca'},
+  {id:'luta',           nome:'Luta',           atributo:'forca', obs:'ou Destreza, desarmado ou com arma leve/marcial'},
+  {id:'acrobacia',      nome:'Acrobacia',      atributo:'destreza'},
+  {id:'furtividade',    nome:'Furtividade',    atributo:'destreza'},
+  {id:'pontaria',       nome:'Pontaria',       atributo:'destreza'},
+  {id:'prestidigitacao',nome:'Prestidigitação',atributo:'destreza'},
+  {id:'reflexos',       nome:'Reflexos',       atributo:'destreza'},
+  {id:'fortitude',      nome:'Fortitude',      atributo:'constituicao'},
+  {id:'integridade',    nome:'Integridade',    atributo:'constituicao'},
+  {id:'intuicao',       nome:'Intuição',       atributo:'sabedoria'},
+  {id:'medicina',       nome:'Medicina',       atributo:'sabedoria'},
+  {id:'percepcao',      nome:'Percepção',      atributo:'sabedoria'},
+  {id:'vontade',        nome:'Vontade',        atributo:'sabedoria'},
+  {id:'astucia',        nome:'Astúcia',        atributo:'inteligencia'},
+  {id:'fluxo',          nome:'Fluxo',          atributo:'inteligencia'},
+  {id:'investigacao',   nome:'Investigação',   atributo:'inteligencia'},
+  {id:'historia',       nome:'História',       atributo:'inteligencia'},
+  {id:'oficio1',        nome:'Ofício (1)',     atributo:'inteligencia', livre:true},
+  {id:'oficio2',        nome:'Ofício (2)',     atributo:'inteligencia', livre:true},
+  {id:'oficio3',        nome:'Ofício (3)',     atributo:'inteligencia', livre:true},
+  {id:'religiao',       nome:'Religião',       atributo:'inteligencia'},
+  {id:'tecnologia',     nome:'Tecnologia',     atributo:'inteligencia'},
+  {id:'persuasao',      nome:'Persuasão',      atributo:'carisma'},
+  {id:'enganacao',      nome:'Enganação',      atributo:'carisma'},
+  {id:'intimidacao',    nome:'Intimidação',    atributo:'carisma'},
+  {id:'performance',    nome:'Performance',    atributo:'carisma'},
+];
+
+// As quatro Especializações (classes) do documento — cada uma já vem com um
+// pacote fixo de traços (não é lista de poderes pra comprar aos poucos,
+// porque no livro do Sávio elas nascem prontas ao escolher a classe).
+const ESPECIALIZACOES = [
+  {id:'suporte', nome:'Suporte', pvInicial:20, pvPorNivel:'5 + CON', peInicial:20, pePorNivel:10,
+    resumo:'Cura e apoio — mantém o grupo de pé.',
+    tracos:[
+      'Ação bônus grátis: cura 1d6 + maior atributo num aliado, algumas vezes por sessão.',
+      'Pode estabilizar sozinho um aliado morrendo com Medicina (DT 25, +1 a cada 5 PV negativos).',
+      'Nível/4 vezes por cena: reduz à metade o custo de PE de uma Habilidade usada num aliado.',
+      '"Apoiar" vira ação bônus por 2 PE (normalmente é ação completa).',
+      'Toda Habilidade de cura/efeito ganha +2×Nível da Habilidade + maior atributo (a cura grátis acima não conta esse bônus).',
+      'Ao despertar (pós-Ascensão): a cura grátis vira ação livre, e o bônus de +2×Nível dobra.',
+    ]},
+  {id:'combatente', nome:'Combatente', pvInicial:40, pvPorNivel:'10 + CON', peInicial:20, pePorNivel:8,
+    resumo:'Luta corpo a corpo pura — golpe, resistência e adrenalina.',
+    tracos:[
+      'Ataques desarmados causam dano de arma pequena + xd4 (x = Nível/4) em qualquer dano.',
+      'Nível/2 (da maior entre Força/Constituição) vezes por cena: reduz à metade o custo de PE pra "aprimorar" uma Habilidade.',
+      'Escolhe Reflexos ou Fortitude pra somar xd4 (x = Nível/5, começando em 1d4) — pode transferir esse dado pra Luta por 2 PE no turno.',
+      'Ao despertar: a cada 10 de dano sofrido num round, ganha +1 dado de dano no próximo ataque.',
+    ]},
+  {id:'mestre-das-armas', nome:'Mestre das Armas', pvInicial:20, pvPorNivel:'5 + CON', peInicial:15, pePorNivel:8,
+    resumo:'Vive de equipamento — arma, engenhoca e Gadgets.',
+    tracos:[
+      'Pode disparar/atacar três vezes com o mesmo item numa única ação (os dois tiros extras com desvantagem).',
+      'Troca de arma como ação livre.',
+      'Soma o maior atributo a todo dano causado enquanto empunha uma arma; pode gastar 2 PE pra reforçar um teste de ataque/defesa com ela.',
+      'Único que pode ocupar TODOS os encaixes de arma/equipamento (o normal é 1 arma + 1 item especial).',
+      'Todo item que fabrica ganha Gadgets (mods, máx. 5 por item; começa com 2 no Nível 1, +1 por Nível). Cada Gadget usado dá +3 num teste, no máx. 4 Gadgets empilhados por rolagem.',
+      'Em tempo de descanso, fabrica/aprimora armas — item dado de presente ganha Gadgets = Nível/4.',
+      'Ao despertar: soma a perícia Fluxo em toda rolagem de efeito (dano, cura etc).',
+    ]},
+  {id:'guerreiro-magico', nome:'Guerreiro Mágico', pvInicial:25, pvPorNivel:'5 + CON', peInicial:20, pePorNivel:10,
+    resumo:'Equilíbrio entre Fluxo e Habilidades — versátil.',
+    tracos:[
+      'Nível/4 vezes por cena: reduz à metade o custo de PE de uma Habilidade.',
+      'Toda Habilidade de dano ou cura ganha +2×Nível da Habilidade + maior atributo.',
+      'Por 5 PE, pode rolar Fluxo no lugar de qualquer perícia que não seja Luta/Pontaria.',
+      'Ao despertar: Habilidades passam a custar Ação Bônus em vez de Ação Principal.',
+    ]},
+];
+
+// Tamanhos de arma — regra simples do documento (arma especial quebra a
+// regra e é combinada à parte com o mestre, por isso vira campo de texto).
+const TAMANHOS_ARMA = [
+  {id:'pequena',   nome:'Pequena',   dano:'1d6',  esquiva:'+1d6 pra esquivar'},
+  {id:'media',     nome:'Média',     dano:'2d6',  esquiva:'sem alteração'},
+  {id:'grande',    nome:'Grande',    dano:'4d6',  esquiva:'-1d6 pra esquivar'},
+  {id:'especial',  nome:'Especial (combinar com o Mestre)', dano:'—', esquiva:'—'},
+];
+
+// Tabela de bônus por Nível de Habilidade — o coração do sistema livre. O
+// jogador escolhe UM OU MAIS efeitos pra empilhar numa Habilidade; empilhar
+// mais de um reduz o Nível efetivo em 1 pra todos os efeitos combinados
+// (regra do documento, mostrada como aviso — não é travada em código porque
+// a combinação em si é livre).
+const TABELA_HABILIDADE = [
+  {nivel:1, danoCuraMovRD:'+1d12 ou +6', alcance:'+6m',  duracao:'+2 rounds', vantagem:'+1d12 ou +6'},
+  {nivel:2, danoCuraMovRD:'+2d12 ou +12',alcance:'+12m', duracao:'+3 rounds', vantagem:'+2d12 ou +12'},
+  {nivel:3, danoCuraMovRD:'+3d12 ou +18',alcance:'+18m', duracao:'+4 rounds', vantagem:'+3d12 ou +18'},
+  {nivel:4, danoCuraMovRD:'+4d12 ou +24',alcance:'+24m', duracao:'+5 rounds', vantagem:'+4d12 ou +24'},
+  {nivel:5, danoCuraMovRD:'+6d12 ou +36',alcance:'+36m', duracao:'+6 rounds', vantagem:'+6d12 ou +36'},
+];
+
+// Custo padrão de PE por Nível de Habilidade — referência (a mesa pode
+// ajustar caso a Habilidade seja aprimorada com desvantagens, fatia futura).
+const CUSTO_PE_HABILIDADE = {1:2, 2:5, 3:8, 4:12, 5:20};
+
+// Passivas usam uma versão mais fraca da mesma tabela — um único valor fixo,
+// sem crescer por cópia. Podem ser aprimoradas com o mesmo truque de
+// desvantagens autoimpostas das Habilidades (Nível interno 0 → 1 → 2, nunca
+// chegando ao efeito de uma Habilidade Nível 3) — mecânica de aprimoramento
+// completa fica pra fatia futura, aqui só o registro do Nível interno atual.
+const TABELA_PASSIVA = {danoCuraMovRDVant:'+3 ou 1d6', alcance:'+3m'};
+
+const TIPOS_HABILIDADE = [
+  {id:'sustentada', nome:'Sustentada', sobre:'custa metade do PE normal a cada turno seguinte até desativar ou faltar PE; começa 2 Níveis acima por já ter 2 desvantagens embutidas; só buff em si mesmo; custa Ação Bônus.'},
+  {id:'duradoura',  nome:'Duradoura',  sobre:'dura um número fixo de rounds (tabela de Duração do Nível 1); mais barata que Sustentada, mas mais fraca; custa Ação Bônus, exceto armadilhas de dano contínuo (ex: sangramento).'},
+  {id:'imediata',   nome:'Imediata',   sobre:'instantânea, um único efeito; se for um Buff de uso único conta como desvantagem embutida (não vale pra dano/debuff); custa Ação Comum, exceto se for buff em si mesmo.'},
+];
+
+// Escala de dano de Sanidade por Nível de personagem — referência fixa do
+// documento (1 a 7), citada nas Habilidades que causam esse tipo de dano.
+const SANIDADE_POR_NIVEL = [
+  {nivel:1, dado:'1d4'}, {nivel:2, dado:'2d4'}, {nivel:3, dado:'3d4'}, {nivel:4, dado:'4d4'},
+  {nivel:5, dado:'6d4'}, {nivel:6, dado:'7d4'}, {nivel:7, dado:'10d4'},
+];
+
+// Em que Nível do personagem cada Nível de Habilidade se libera.
+const LIBERACAO_HABILIDADE = [
+  {nivelHabilidade:1, nivelPersonagem:1}, {nivelHabilidade:2, nivelPersonagem:5},
+  {nivelHabilidade:3, nivelPersonagem:10}, {nivelHabilidade:4, nivelPersonagem:14},
+  {nivelHabilidade:5, nivelPersonagem:18},
+];
+
+/* --- Personagem ----------------------------------------------------------- */
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+function novoPersonagem(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    perfil: {
+      nome: nome || 'Novo Personagem',
+      idade: '', genero: '', altura: '',
+      aliados: '', objetivo: '', descricao: '', historia: '',
+    },
+    nivel: 1,
+    atributos: {forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0},
+    especializacaoId: '',
+    // pericias: {id: true/false} — treinada ou não. Ofício livre guarda o
+    // nome escolhido em `oficios`.
+    pericias: {},
+    oficios: {oficio1:'', oficio2:'', oficio3:''},
+    atual: {pv:null, pe:null, sanidade:null},
+    bonus: {pv:0, pe:0, sanidade:0}, // "outros bônus" que o mestre conceder
+    arma: {nome:'', tamanho:'media', notas:''},
+    exaustoes: 0,
+    morrendo: false,
+    morreuDeVerdade: false,
+    condicoes: [],
+    // habilidades/passivas: lista livre — o Hub só ajuda a lembrar a
+    // fórmula de bônus do Nível escolhido, quem inventa o efeito é a mesa.
+    habilidades: [],
+    passivas: [],
+    anotacoes: '',
+  };
+}
+
+/* --- Cálculos -------------------------------------------------------------- */
+
+function maiorAtributo(p){
+  return Math.max(0, ...ATRIBUTOS.map(a => p.atributos[a.id]||0));
+}
+
+function periciasTreinadasContagem(p){
+  return PERICIAS.filter(per => p.pericias[per.id]).length;
+}
+function periciasTreinadasLimite(p){ return 2 + (p.atributos.inteligencia||0); }
+
+function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
+
+// PV/PE máximos dependem inteiramente da Especialização escolhida — sem
+// classe ainda, usa só CON/INT + limiares, pra não deixar a ficha vazia
+// antes da escolha (decisão da conversa: nunca travar até um Wizard
+// obrigatório terminar, como os outros três sistemas já fazem).
+function pvMaximo(p){
+  const esp = especializacao(p);
+  const con = p.atributos.constituicao||0;
+  const base = esp ? esp.pvInicial + con : 10 + con;
+  const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
+  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0);
+}
+function peMaximo(p){
+  const esp = especializacao(p);
+  const base = esp ? esp.peInicial : 15;
+  const porNivel = esp ? esp.pePorNivel : 5;
+  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'inteligencia','PE máximo') + (p.bonus.pe||0);
+}
+function sanidadeMaxima(p){
+  return 100 + bonusNumericoLimiar(p,'carisma','Sanidade máxima') + (p.bonus.sanidade||0);
+}
+
+// Reações: Nível/3 arredondado pra cima, mínimo 2 pra todo mundo.
+function reacoesPorRound(p){ return Math.max(2, Math.ceil(p.nivel/3)); }
+
+// Passivas/Habilidades extras que os limiares de Sabedoria concedem, além
+// da progressão normal (2 iniciais, +1 Habilidade por Nível, +1 Passiva a
+// cada 5 Níveis).
+function passivasBonusSabedoria(p){
+  const m = limiaresAtivos(p.atributos.sabedoria,'sabedoria')
+    .reduce((t,l) => t + (l.txt.includes('+3') ? 3 : l.txt.includes('+1') ? 1 : 0), 0);
+  return m;
+}
+function habilidadesEsperadas(p){ return 2 + Math.max(0, p.nivel-1); }
+function passivasEsperadas(p){ return 2 + Math.floor(Math.max(0, p.nivel-1)/5) + passivasBonusSabedoria(p); }
+
+// Maior Nível de Habilidade já liberado no Nível atual do personagem.
+function nivelHabilidadeLiberado(p){
+  let liberado = 0;
+  LIBERACAO_HABILIDADE.forEach(l => { if(p.nivel >= l.nivelPersonagem) liberado = l.nivelHabilidade; });
+  return liberado;
+}
+
+/* --- Armazenamento ---------------------------------------------------------
+
+   Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+   navegador — mesmo mecanismo do Fabula Ultima, SAO e Kaizoku no Sho
+   (decisão #40 / #44).
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'savio_fichas';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{
+    const cru = localStorage.getItem(CHAVE);
+    return cru ? JSON.parse(cru) : [];
+  }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de PV deste
+    // sistema (decisão #46) — espelhado a cada salvamento.
+    p.resumoVida = {atual: Math.max(0, Math.min(pvMaximo(p), p.atual.pv ?? pvMaximo(p))), maxima: pvMaximo(p), rotulo: 'PV'};
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'perfil',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,
+  ehDono: false,
+  compartilhado: false,
+  modoGuiado: false,
+  passoGuiado: 1,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
+
+const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  salvar(); render();
+}
+
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.perfil === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho da tela --------------------------------------------------- */
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ABAS = [
+  {id:'perfil',      nome:'Perfil'},
+  {id:'atributos',   nome:'Atributos'},
+  {id:'pericias',    nome:'Perícias'},
+  {id:'classe',      nome:'Especialização'},
+  {id:'habilidades', nome:'Habilidades'},
+  {id:'passivas',    nome:'Passivas'},
+  {id:'combate',     nome:'Combate'},
+  {id:'notas',       nome:'Notas'},
+];
+
+let ultimaChaveTela = null;
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--roxo)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const p = atual();
+
+  if(!p){
+    app.innerHTML = `<div class="vazio">
+      <h2>Nenhum personagem ainda</h2>
+      <p class="mini">Clique em "+ Novo" para criar a primeira ficha,
+      ou importe um arquivo que você tenha exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = estado.modoGuiado
+    ? alerta + telaGuiada(p)
+    : alerta
+      + `<div class="abas">` + ABAS.map(a =>
+          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+        ).join('') + `</div>`
+      + painelDerivados(p)
+      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, passivas:abaPassivas, combate:abaCombate, notas:abaNotas}[estado.aba])(p);
+
+  const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
+  app.classList.remove('entra');
+  if(chaveTela !== ultimaChaveTela){
+    void app.offsetWidth;
+    app.classList.add('entra');
+  }
+  ultimaChaveTela = chaveTela;
+
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.hidden = !atual();
+  btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
+
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.fichas.length
+    ? estado.fichas.map(f =>
+        `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`
+      ).join('')
+    : `<option>— sem personagens —</option>`;
+}
+
+// Painel sempre visível: os números que se consulta o tempo todo numa mesa.
+function painelDerivados(p){
+  const pv = p.atual.pv ?? pvMaximo(p);
+  const pe = p.atual.pe ?? peMaximo(p);
+  const sanidade = p.atual.sanidade ?? sanidadeMaxima(p);
+  const emRisco = pv <= Math.floor(pvMaximo(p)/4);
+  return `<div class="grade g4" style="margin-bottom:14px">
+    <div class="derivado ${emRisco?'risco':''}">
+      <div class="rot">Pontos de Vida</div>
+      <div class="val">${pv}<span style="font-size:14px;color:var(--suave)">/${pvMaximo(p)}</span></div>
+      <div class="obs">${especializacao(p) ? especializacao(p).nome : 'sem Especialização'}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Pontos de Energia</div>
+      <div class="val">${pe}<span style="font-size:14px;color:var(--suave)">/${peMaximo(p)}</span></div>
+      <div class="obs">${p.exaustoes} exaustão(ões)</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Sanidade</div>
+      <div class="val">${sanidade}<span style="font-size:14px;color:var(--suave)">/${sanidadeMaxima(p)}</span></div>
+      <div class="obs">base 100</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Nível</div>
+      <div class="val">${p.nivel}</div>
+      <div class="obs">${reacoesPorRound(p)} reações/round</div>
+    </div>
+  </div>${p.morrendo ? `<div class="aviso">⚠️ Personagem <strong>morrendo</strong> — a próxima vez que isso acontecer de novo é morte permanente (regra das 3 exaustões).</div>` : ''}`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function blocoAtributos(p){
+  return `<div class="grade g3">
+    ${ATRIBUTOS.map(a => `<div class="cartao" style="margin-bottom:0">
+      <label for="c-attr-${a.id}">${a.nome} (${a.abrev})</label>
+      <input id="c-attr-${a.id}" data-atributo="${a.id}" type="number" min="0" max="10" value="${p.atributos[a.id]}">
+      <p class="mini" style="margin-top:6px">${a.sobre}</p>
+      ${limiaresAtivos(p.atributos[a.id], a.id).map(l => `<p class="mini" style="color:var(--roxo-forte)">✓ ${l.txt}</p>`).join('')}
+    </div>`).join('')}
+  </div>
+  <p class="mini" style="margin-top:10px">Teto normal: 10 (sobe pra 15 depois da Ascensão — fatia futura).</p>`;
+}
+
+/* --- Modo Guiado: criação passo a passo ---------------------------------- */
+
+function telaGuiada(p){
+  const passo = estado.passoGuiado;
+  const totalPassos = 3;
+  const cabecalho = `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--roxo)':'var(--borda)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">1. Quem é seu personagem?</h2>
+      <p class="mini" style="margin:6px 0 14px">Dados básicos — dá pra ajustar tudo depois na aba Perfil.</p>
+      <div class="grade g2">
+        ${campo('Nome','nome',p.perfil.nome)}
+        ${campo('Idade','idade',p.perfil.idade)}
+        ${campo('Gênero','genero',p.perfil.genero)}
+        ${campo('Altura','altura',p.perfil.altura)}
+      </div>
+    </div>
+    <div class="linha" style="justify-content:flex-end">
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">2. Atributos e Especialização</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Distribua os seis Atributos (0 a 10) e escolha uma Especialização —
+        ela define seus Pontos de Vida e de Energia de partida.
+      </p>
+      ${blocoAtributos(p)}
+    </div>
+    <div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">Especialização</h3>
+      ${seletorEspecializacao(p)}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Perícias,
+        Habilidades e Passivas você preenche aos poucos, jogando — o sistema
+        do Sávio é livre de propósito.
+      </p>
+    </div>
+    ${painelDerivados(p)}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
+    </div>`;
+}
+
+function seletorEspecializacao(p){
+  return `<div class="grade g2">
+    ${ESPECIALIZACOES.map(e => `<label class="linha-lista" style="cursor:pointer;display:block;margin-bottom:0">
+      <div class="linha">
+        <input type="radio" name="especializacao" data-especializacao="${e.id}" style="width:auto" ${p.especializacaoId===e.id?'checked':''}>
+        <strong>${e.nome}</strong>
+      </div>
+      <p class="mini" style="margin:6px 0 0">${e.resumo}</p>
+      <p class="mini">PV inicial ${e.pvInicial} (+${e.pvPorNivel}/nível) · PE inicial ${e.peInicial} (+${e.pePorNivel}/nível)</p>
+    </label>`).join('')}
+  </div>`;
+}
+
+function abaPerfil(p){
+  return `<div class="cartao">
+    <div class="grade g2">
+      ${campo('Nome','nome',p.perfil.nome)}
+      ${campo('Idade','idade',p.perfil.idade)}
+      ${campo('Gênero','genero',p.perfil.genero)}
+      ${campo('Altura','altura',p.perfil.altura)}
+      <div><label for="c-nivel">Nível</label>
+        <input id="c-nivel" data-num="nivel" type="number" min="1" value="${p.nivel}"></div>
+    </div>
+  </div>
+  <div class="cartao">
+    <label for="c-aliados">Aliados ou Entes Queridos</label>
+    <textarea id="c-aliados" data-perfil="aliados" rows="2">${esc(p.perfil.aliados)}</textarea>
+  </div>
+  <div class="cartao">
+    <label for="c-objetivo">Objetivo ou Sonho</label>
+    <textarea id="c-objetivo" data-perfil="objetivo" rows="2">${esc(p.perfil.objetivo)}</textarea>
+  </div>
+  <div class="cartao">
+    <label for="c-descricao">Descrição breve</label>
+    <textarea id="c-descricao" data-perfil="descricao" rows="2">${esc(p.perfil.descricao)}</textarea>
+  </div>
+  <div class="cartao">
+    <label for="c-historia">História do personagem</label>
+    <textarea id="c-historia" data-perfil="historia" rows="5">${esc(p.perfil.historia)}</textarea>
+  </div>`;
+}
+
+function abaAtributos(p){
+  return `<div class="cartao">
+    <p class="mini" style="margin-bottom:10px">
+      Cada Atributo vai de 0 a 10 (15 depois da Ascensão — fatia futura).
+      Atingir 5 ou 10 num Atributo liga um bônus fixo, mostrado abaixo dele.
+    </p>
+    ${blocoAtributos(p)}
+  </div>`;
+}
+
+function abaPericias(p){
+  const treinadas = periciasTreinadasContagem(p);
+  const limite = periciasTreinadasLimite(p);
+  return `<div class="cartao">
+    <p class="mini">
+      Você treina <strong>2 + Inteligência</strong> perícias. Treinada dá
+      <strong>+5</strong> no teste; sem treino fica em <strong>+0</strong>.
+    </p>
+    <p class="mini" style="margin-top:4px;${treinadas>limite?'color:var(--alerta)':''}">
+      Treinadas: ${treinadas} / ${limite}${treinadas>limite ? ' — acima do limite, combine com o Mestre' : ''}
+    </p>
+  </div>
+  <div class="cartao">
+    ${PERICIAS.map(per => {
+      const atr = ATRIBUTOS.find(a => a.id === per.atributo);
+      const nomeExibido = per.livre ? (p.oficios[per.id] || per.nome) : per.nome;
+      return `<div class="linha" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda)">
+        <label class="checagem" style="flex:1">
+          <input type="checkbox" data-pericia="${per.id}" ${p.pericias[per.id]?'checked':''}>
+          ${per.livre
+            ? `<input data-oficio="${per.id}" value="${esc(p.oficios[per.id])}" placeholder="${per.nome}" style="width:auto;flex:1">`
+            : `<span>${nomeExibido}</span>`}
+          <span class="selo">${atr.abrev}</span>
+        </label>
+        <span class="mini">${p.pericias[per.id] ? '+5' : '+0'}</span>
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}`;
+    }).join('')}
+  </div>`;
+}
+
+function abaClasse(p){
+  return `<div class="cartao">
+    <p class="mini">A Especialização define seus Pontos de Vida e de Energia
+      de partida, e traz um pacote fixo de traços — escolha uma vez, mude
+      aqui se a mesa combinar diferente.</p>
+    ${seletorEspecializacao(p)}
+  </div>
+  ${especializacao(p) ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Traços de ${esc(especializacao(p).nome)}</h3>
+    <ul style="margin:0;padding-left:20px">
+      ${especializacao(p).tracos.map(t => `<li style="margin-bottom:6px">${t}</li>`).join('')}
+    </ul>
+  </div>` : ''}`;
+}
+
+function habilidadeLinha(h, i, lista){
+  return `<div class="linha-lista">
+    <div class="topo">
+      <input data-hab-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Habilidade" style="flex:1">
+      <button data-hab-remover="${i}" class="perigo">Remover</button>
+    </div>
+    <div class="grade g3">
+      <div><label>Nível (1–5)</label>
+        <input type="number" min="1" max="5" data-hab-nivel="${i}" value="${h.nivel}"></div>
+      <div><label>Tipo</label>
+        <select data-hab-campo="${i}|tipo">
+          ${TIPOS_HABILIDADE.map(t => `<option value="${t.id}" ${t.id===h.tipo?'selected':''}>${t.nome}</option>`).join('')}
+        </select></div>
+      <div><label>Custo de PE</label>
+        <input type="number" min="0" data-hab-num="${i}|custoPe" value="${h.custoPe}"></div>
+    </div>
+    <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${CUSTO_PE_HABILIDADE[h.nivel] ?? '—'} PE</p>
+    <p class="mini" style="margin:8px 0">${(TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).sobre}</p>
+    <label>Efeito (o que ela faz)</label>
+    <textarea data-hab-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
+  </div>`;
+}
+
+function abaHabilidades(p){
+  const nivelLiberado = nivelHabilidadeLiberado(p);
+  return `<div class="cartao">
+    <p class="mini">Começa com 2 Habilidades; ganha +1 a cada Nível. No seu
+      Nível atual (${p.nivel}), o maior Nível de Habilidade liberado é
+      <strong>${nivelLiberado}</strong>. Você tem ${p.habilidades.length} de
+      ${habilidadesEsperadas(p)} esperadas.</p>
+    <table class="tabela-ref">
+      <tr><th>Nível</th><th>Dano/Cura/Movimento/RD</th><th>Alcance</th><th>Duração</th><th>Vantagem/Desvantagem</th></tr>
+      ${TABELA_HABILIDADE.map(l => `<tr><td>${l.nivel}</td><td>${l.danoCuraMovRD}</td><td>${l.alcance}</td><td>${l.duracao}</td><td>${l.vantagem}</td></tr>`).join('')}
+    </table>
+    <p class="mini" style="margin-top:8px">Empilhar mais de um efeito na mesma
+      Habilidade reduz o Nível efetivo em 1 pra todos os efeitos combinados.</p>
+  </div>
+  ${p.habilidades.map((h,i) => habilidadeLinha(h,i)).join('')}
+  <button id="btAddHabilidade" class="destaque">+ Nova Habilidade</button>`;
+}
+
+function passivaLinha(h, i){
+  return `<div class="linha-lista">
+    <div class="topo">
+      <input data-pas-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Passiva" style="flex:1">
+      <button data-pas-remover="${i}" class="perigo">Remover</button>
+    </div>
+    <div><label>Cópias empilhadas (1–3)</label>
+      <input type="number" min="1" max="3" data-pas-num="${i}|copias" value="${h.copias}"></div>
+    <label>Efeito</label>
+    <textarea data-pas-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
+  </div>`;
+}
+
+function abaPassivas(p){
+  return `<div class="cartao">
+    <p class="mini">Começa com 2 Passivas; ganha +1 a cada 5 Níveis (mais os
+      bônus de Sabedoria 5/10). Você tem ${p.passivas.length} de
+      ${passivasEsperadas(p)} esperadas. Podem empilhar até 3 cópias.</p>
+    <table class="tabela-ref">
+      <tr><th>Dano/Cura/Movimento/RD/Vantagem</th><th>Alcance</th></tr>
+      <tr><td>${TABELA_PASSIVA.danoCuraMovRDVant}</td><td>${TABELA_PASSIVA.alcance}</td></tr>
+    </table>
+  </div>
+  ${p.passivas.map((h,i) => passivaLinha(h,i)).join('')}
+  <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>`;
+}
+
+function abaCombate(p){
+  const tam = TAMANHOS_ARMA.find(t => t.id === p.arma.tamanho) || TAMANHOS_ARMA[1];
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Arma</h3>
+    <div class="grade g2">
+      ${campo('Nome da arma','arma-nome',p.arma.nome)}
+      <div><label for="c-arma-tamanho">Tamanho</label>
+        <select id="c-arma-tamanho" data-arma="tamanho">
+          ${TAMANHOS_ARMA.map(t => `<option value="${t.id}" ${t.id===p.arma.tamanho?'selected':''}>${t.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <p class="mini" style="margin-top:8px">Dano ${tam.dano} · esquiva: ${tam.esquiva}</p>
+    <label for="c-arma-notas" style="margin-top:8px">Notas</label>
+    <textarea id="c-arma-notas" data-arma="notas" rows="2">${esc(p.arma.notas)}</textarea>
+    <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
+      especial (exceto Mestre das Armas, que ocupa todos os encaixes).</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Fluxo</h3>
+    <p class="mini">Reforça um ataque básico (soco, chute, mordida, arma
+      branca): +1d6 de dano a cada 2 PE gastos, ou +6 de RD a cada 4 PE
+      gastos. Limite de PE usado de uma vez = seu maior Atributo
+      (${maiorAtributo(p)}); dobra pra usar como reação, e dobra de novo se
+      for a variante do Combatente.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Exaustão (0 PE)</h3>
+    <p class="mini">Ao chegar a 0 PE, pode aceitar uma Exaustão pra recuperar
+      6d12 PE na hora. 3 Exaustões = entra "morrendo" com uma falha
+      automática. Morrer de novo depois disso é permanente.</p>
+    <div class="linha">
+      <div style="flex:1"><label for="c-exaustoes">Exaustões</label>
+        <input id="c-exaustoes" data-num="exaustoes" type="number" min="0" max="3" value="${p.exaustoes}"></div>
+    </div>
+    <label class="checagem" style="margin-top:10px">
+      <input type="checkbox" data-check="morrendo" ${p.morrendo?'checked':''}> Morrendo agora
+    </label>
+    <label class="checagem" style="margin-top:6px">
+      <input type="checkbox" data-check="morreuDeVerdade" ${p.morreuDeVerdade?'checked':''}> Morreu de vez (permanente)
+    </label>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Dano de Sanidade por Nível (referência)</h3>
+    <table class="tabela-ref">
+      <tr>${SANIDADE_POR_NIVEL.map(s => `<th>Nível ${s.nivel}</th>`).join('')}</tr>
+      <tr>${SANIDADE_POR_NIVEL.map(s => `<td>${s.dado}</td>`).join('')}</tr>
+    </table>
+  </div>`;
+}
+
+function abaNotas(p){
+  return `<div class="cartao">
+    <label for="c-anotacoes">Anotações livres</label>
+    <textarea id="c-anotacoes" data-perfil="anotacoes" rows="10">${esc(p.anotacoes)}</textarea>
+  </div>`;
+}
+
+/* --- Eventos --------------------------------------------------------------- */
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b =>
+    b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
+  if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
+  const btGuiadoAnterior = app.querySelector('#btGuiadoAnterior');
+  if(btGuiadoAnterior) btGuiadoAnterior.onclick = () => { estado.passoGuiado -= 1; render(); };
+  const btGuiadoConcluir = app.querySelector('#btGuiadoConcluir');
+  if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
+    estado.modoGuiado = false;
+    estado.aba = 'perfil';
+    render();
+  };
+
+  app.querySelectorAll('[data-perfil]').forEach(el =>
+    (el.tagName==='TEXTAREA' ? el.oninput = () => mudarSemRedesenhar(p => p.perfil ? p.perfil[el.dataset.perfil]!==undefined ? (p.perfil[el.dataset.perfil]=el.value) : (p[el.dataset.perfil]=el.value) : null, el)
+      : el.oninput = () => mudarSemRedesenhar(p => {
+          if(el.dataset.perfil in p.perfil) p.perfil[el.dataset.perfil] = el.value;
+          else p[el.dataset.perfil] = el.value;
+        }, el)));
+
+  app.querySelectorAll('[data-num]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p[el.dataset.num] = Number(el.value) || 0, el));
+
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Math.max(0, Math.min(15, Number(el.value) || 0))));
+
+  app.querySelectorAll('[data-especializacao]').forEach(el =>
+    el.onchange = () => mudar(p => p.especializacaoId = el.dataset.especializacao));
+
+  app.querySelectorAll('[data-pericia]').forEach(el =>
+    el.onchange = () => mudar(p => p.pericias[el.dataset.pericia] = el.checked));
+  app.querySelectorAll('[data-oficio]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.oficios[el.dataset.oficio] = el.value, el));
+
+  app.querySelectorAll('[data-arma]').forEach(el =>
+    el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
+      const mutador = p => p.arma[el.dataset.arma] = el.value;
+      el.tagName==='SELECT' ? mudar(mutador) : mudarSemRedesenhar(mutador, el);
+    });
+  const armaNome = document.getElementById('c-arma-nome');
+  if(armaNome) armaNome.oninput = () => mudarSemRedesenhar(p => p.arma.nome = armaNome.value, armaNome);
+
+  app.querySelectorAll('[data-check]').forEach(el =>
+    el.onchange = () => mudar(p => p[el.dataset.check] = el.checked));
+
+  // Habilidades
+  app.querySelectorAll('[data-hab-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.habCampo.split('|');
+      p.habilidades[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-hab-num]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.habNum.split('|');
+      p.habilidades[Number(i)][chave] = Number(el.value) || 0;
+    }, el));
+  // Nível usa onchange (redesenha a tela inteira) e não oninput — o texto de
+  // "custo padrão" logo abaixo depende do Nível, e mudarSemRedesenhar() não
+  // redesenha nada (existe pra não perder o foco de campo de texto).
+  app.querySelectorAll('[data-hab-nivel]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      p.habilidades[Number(el.dataset.habNivel)].nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
+    }));
+  app.querySelectorAll('[data-hab-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
+  const addHab = document.getElementById('btAddHabilidade');
+  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:''}));
+
+  // Passivas
+  app.querySelectorAll('[data-pas-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.pasCampo.split('|');
+      p.passivas[Number(i)][chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-pas-num]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, chave] = el.dataset.pasNum.split('|');
+      p.passivas[Number(i)][chave] = Number(el.value) || 0;
+    }, el));
+  app.querySelectorAll('[data-pas-remover]').forEach(b =>
+    b.onclick = () => mudar(p => p.passivas.splice(Number(b.dataset.pasRemover), 1)));
+  const addPas = document.getElementById('btAddPassiva');
+  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', copias:1, efeito:''}));
+}
+
+/* --- Barra do topo ------------------------------------------------------ */
+
+document.getElementById('chkCompartilhar').onchange = e => {
+  alternarCompartilhado(e.target.checked);
+};
+
+document.getElementById('seletor').onchange = e => {
+  estado.atualId = e.target.value;
+  estado.modoGuiado = false;
+  render();
+};
+
+document.getElementById('btNovo').onclick = () => {
+  const p = novoPersonagem();
+  estado.fichas.push(p);
+  estado.atualId = p.id;
+  estado.aba = 'perfil';
+  estado.modoGuiado = true;
+  estado.passoGuiado = 1;
+  salvar(); render();
+};
+
+document.getElementById('btModoGuiado').onclick = () => {
+  estado.modoGuiado = !estado.modoGuiado;
+  estado.passoGuiado = 1;
+  render();
+};
+
+document.getElementById('btExcluir').onclick = () => {
+  const p = atual(); if(!p) return;
+  if(!confirm(`Excluir "${p.perfil.nome}"? Não dá para desfazer.`)) return;
+  estado.fichas = estado.fichas.filter(f => f.id !== p.id);
+  estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
+  estado.modoGuiado = false;
+  salvar(); render();
+};
+
+document.getElementById('btExportar').onclick = () => {
+  const p = atual(); if(!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (p.perfil.nome || 'personagem').replace(/[^\w\-]+/g,'-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('btImportar').onclick = () =>
+  document.getElementById('arquivo').click();
+
+document.getElementById('arquivo').onchange = e => {
+  const arquivo = e.target.files[0]; if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(!lido || !lido.perfil) throw new Error('formato desconhecido');
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
+      estado.modoGuiado = false;
+      salvar(); render();
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');
+    }
+    e.target.value = '';
+  };
+  leitor.readAsText(arquivo);
+};
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>

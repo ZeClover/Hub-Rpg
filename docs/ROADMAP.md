@@ -1213,6 +1213,22 @@ passando.
       cor por sistema, fonte do título, reordenar ou esconder abas,
       layout compacto vs. espaçoso. Fica pra quando o Zé quiser puxar
       essa fatia
+- [x] **Sistema do Sávio — chassi e ficha jogável básica** (04/09/2026) —
+      decisão #71. Quinto sistema do Hub, homebrew de um amigo do Zé (a
+      partir do PDF "SISTEMA_DO_SAVIO" e da planilha original). Traço
+      central: Habilidades são livres — o jogador desenha a própria,
+      usando a tabela de bônus por Nível (1-5) como referência, em vez de
+      escolher de um catálogo fechado. `public/sistema-do-savio.html`
+      ganhou Perfil, Atributos (com limiares de 5/10), Perícias,
+      Especialização (as 4 classes com traços fixos: Suporte, Combatente,
+      Mestre das Armas, Guerreiro Mágico), Habilidades/Passivas como
+      lista livre com tabela de referência, Arma e Fluxo. Registrado em
+      `sistemas.ts` como `sistema-do-savio`, `salvaNoHub: true`.
+      Invocações, Elementais, Ascensão (Arquétipos) e Imersão Espiritual
+      ficam para fatias futuras. Testado com Playwright (Modo Guiado,
+      cálculo de PV por Especialização, limiares de Atributo, Perícias,
+      Habilidades/Passivas, persistência); `tsc`, lint e os 208 testes
+      automáticos continuam limpos
 - [ ] Ometion
 
 ---

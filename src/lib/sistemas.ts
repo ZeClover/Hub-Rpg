@@ -109,6 +109,19 @@ export const SISTEMAS: Sistema[] = [
     grimorio: null,
   },
   {
+    chave: "sistema-do-savio",
+    nome: "Sistema do Sávio",
+    descricao:
+      "Homebrew de um amigo do Zé — Habilidades livres desenhadas pelo próprio jogador, com tabela de bônus por Nível como guia.",
+    ficha: "/sistema-do-savio.html",
+    situacao: "pronta",
+    salvaNoHub: true,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+    grimorio: null,
+  },
+  {
     chave: "thryliki-chelona",
     nome: "Thrylikí Chelóna",
     descricao:
