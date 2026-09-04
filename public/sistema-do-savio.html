@@ -352,6 +352,16 @@ const INVOCACAO_NIVEIS = [
 ];
 function invocacaoNivelInfo(nivel){ return INVOCACAO_NIVEIS.find(n => n.nivel === nivel) || INVOCACAO_NIVEIS[0]; }
 
+// Elemental: o companheiro do personagem — praticamente uma segunda ficha
+// pequena (Atributos, Especialização, Perícias, PV/PE/Sanidade), por isso
+// reaproveita ATRIBUTOS/ESPECIALIZACOES/PERICIAS em vez de duplicar listas.
+const CATEGORIAS_ELEMENTAL = [
+  {id:'primordial', nome:'Primordial', sobre:'Um dos elementos clássicos — fogo, vento, água, terra, relâmpago.'},
+  {id:'inato', nome:'Inato', sobre:'Nasce dentro de um hospedeiro humano — corruptivo ou benigno, nunca mítico. Pode tomar o corpo do hospedeiro ou só fortalecê-lo.'},
+  {id:'comum', nome:'Comum', sobre:'Qualquer coisa que não se encaixa nas outras três categorias.'},
+  {id:'mitico', nome:'Mítico', sobre:'Ser humanoide lendário — "filho de Celestial". Pode superar o Nível 20; sempre é uma grande ameaça, em qualquer situação.'},
+];
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -385,6 +395,17 @@ function novoPersonagem(nome){
     // aliado ao combate — atributos e perícias próprios, com o orçamento
     // que INVOCACAO_NIVEIS define pra cada Nível.
     invocacoes: [],
+    // elemental: o companheiro do personagem — praticamente uma segunda
+    // ficha pequena, com Atributos/Especialização/Perícias próprios.
+    elemental: {
+      tem: false,
+      nome: '', categoriaId: '', nivel: 1, especializacaoId: '',
+      atributos: {forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0},
+      pericias: {},
+      ajudaUsadaNaCena: 0,
+      trocaUsadaNaCena: false,
+      notas: '',
+    },
     passivas: [],
     ascensao: {
       primeira: false,
@@ -495,6 +516,34 @@ function invocacaoPontosGastos(inv){
 function invocacaoPV(inv){
   return invocacaoNivelInfo(inv.nivel).pvCalc(inv.atributos.constituicao||0);
 }
+
+// Elemental: mesma fórmula de PV/PE/Sanidade da Especialização do
+// personagem, só que aplicada aos Atributos e ao Nível do próprio Elemental
+// (ele é, na prática, um segundo personagem pequeno).
+function elementalEspecializacao(p){
+  return ESPECIALIZACOES.find(e => e.id === p.elemental.especializacaoId) || null;
+}
+function elementalPV(p){
+  const esp = elementalEspecializacao(p);
+  const con = p.elemental.atributos.constituicao||0;
+  const base = esp ? esp.pvInicial + con : 10 + con;
+  const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
+  return base + porNivel*Math.max(0, p.elemental.nivel-1);
+}
+function elementalPE(p){
+  const esp = elementalEspecializacao(p);
+  const base = esp ? esp.peInicial : 15;
+  const porNivel = esp ? esp.pePorNivel : 5;
+  return base + porNivel*Math.max(0, p.elemental.nivel-1);
+}
+function elementalSanidade(p){
+  const car = p.elemental.atributos.carisma||0;
+  return 100 + (car > 9 ? 60 : car > 4 ? 30 : 0);
+}
+// Ajuda Elemental: nível/2 (arredondado pra baixo) vezes por cena, o
+// personagem pode pedir energia ao Elemental — usa o Nível do PERSONAGEM,
+// não o do Elemental (regra do documento).
+function ajudaElementalPorCena(p){ return Math.floor(p.nivel/2); }
 
 /* --- Armazenamento ---------------------------------------------------------
 
@@ -627,6 +676,7 @@ const ABAS = [
   {id:'classe',      nome:'Especialização'},
   {id:'habilidades', nome:'Habilidades'},
   {id:'invocacoes',  nome:'Invocações'},
+  {id:'elemental',   nome:'Elemental'},
   {id:'passivas',    nome:'Passivas'},
   {id:'combate',     nome:'Combate'},
   {id:'ascensao',    nome:'Ascensão'},
@@ -682,7 +732,7 @@ function render(){
           `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
         ).join('') + `</div>`
       + painelDerivados(p)
-      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
+      + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -1063,6 +1113,100 @@ function abaInvocacoes(p){
   <button id="btAddInvocacao" class="destaque">+ Nova Invocação</button>`;
 }
 
+function abaElemental(p){
+  const el = p.elemental;
+  if(!el.tem){
+    return `<div class="cartao">
+      <p class="mini">Nem todo personagem tem um Elemental — é a fonte da
+        sua Bênção, um companheiro com ficha própria (Atributos,
+        Especialização e Perícias, igual um segundo personagem pequeno).</p>
+      <label class="checagem" style="margin-top:10px">
+        <input type="checkbox" data-ele-check="tem"> Meu personagem tem um Elemental
+      </label>
+    </div>`;
+  }
+  const cat = CATEGORIAS_ELEMENTAL.find(c => c.id === el.categoriaId);
+  const esp = elementalEspecializacao(p);
+  const cap = 10; // teto do Elemental não muda com a Ascensão do dono
+  return `<div class="cartao">
+    <label class="checagem">
+      <input type="checkbox" data-ele-check="tem" checked> Meu personagem tem um Elemental
+    </label>
+    <div class="grade g2" style="margin-top:12px">
+      <div><label for="c-ele-nome">Nome do Elemental</label>
+        <input id="c-ele-nome" data-ele-campo="nome" value="${esc(el.nome)}"></div>
+      <div><label for="c-ele-categoria">Categoria</label>
+        <select id="c-ele-categoria" data-ele-select="categoriaId">
+          <option value="">— escolha —</option>
+          ${CATEGORIAS_ELEMENTAL.map(c => `<option value="${c.id}" ${el.categoriaId===c.id?'selected':''}>${c.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    ${cat ? `<p class="mini" style="margin-top:6px">${cat.sobre}</p>` : ''}
+    ${el.categoriaId==='mitico' ? `<p class="mini" style="color:var(--alerta)">Lembrete: um Elemental é "filho de Celestial" — pode superar o Nível 20 e é sempre uma grande ameaça.</p>` : ''}
+  </div>
+  <div class="cartao">
+    <div class="grade g2">
+      <div><label for="c-ele-nivel">Nível do Elemental</label>
+        <input id="c-ele-nivel" data-ele-num="nivel" type="number" min="1" value="${el.nivel}"></div>
+      <div><label for="c-ele-esp">Especialização</label>
+        <select id="c-ele-esp" data-ele-select="especializacaoId">
+          <option value="">— escolha —</option>
+          ${ESPECIALIZACOES.map(e => `<option value="${e.id}" ${el.especializacaoId===e.id?'selected':''}>${e.nome}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="grade g3" style="margin-top:12px">
+      <div class="derivado"><div class="rot">PV</div><div class="val">${elementalPV(p)}</div><div class="obs">${esp?esp.nome:'sem Especialização'}</div></div>
+      <div class="derivado"><div class="rot">PE</div><div class="val">${elementalPE(p)}</div></div>
+      <div class="derivado"><div class="rot">Sanidade</div><div class="val">${elementalSanidade(p)}</div></div>
+    </div>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Atributos (teto ${cap})</h3>
+    <div class="grade g3">
+      ${ATRIBUTOS.map(a => `<div>
+        <label>${a.abrev}</label>
+        <input type="number" min="0" max="${cap}" data-ele-atributo="${a.id}" value="${el.atributos[a.id]}">
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Perícias treinadas</h3>
+    <div class="grade g2">
+      ${PERICIAS.filter(per => !per.livre).map(per => `<label class="checagem" style="padding:4px 0">
+        <input type="checkbox" data-ele-pericia="${per.id}" ${el.pericias[per.id]?'checked':''}> ${per.nome}
+      </label>`).join('')}
+    </div>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Como funciona</h3>
+    <p class="mini">Uma quantidade de vezes por cena igual ao <strong>Nível
+      do personagem ÷ 2</strong> (${ajudaElementalPorCena(p)} agora), você
+      pode pedir energia ao Elemental: aumenta uma rolagem por um número de
+      rounds igual à própria rolagem do Elemental (máximo Nível do
+      Elemental ÷ 4 rounds, até 5), ou aumenta o dano de um ataque.</p>
+    <p class="mini" style="margin-top:8px"><strong>Troca:</strong> uma vez
+      por cena, troque de lugar com o Elemental — ele age com o poder total
+      dele no seu corpo até decidir parar ou a energia se esgotar.</p>
+    <p class="mini" style="margin-top:8px">Um Elemental pode emprestar
+      Habilidades novas enquanto compartilha energia — elas causam o dobro
+      de dados de dano. Um personagem Ascendido pode usar as Habilidades do
+      Elemental constantemente, sem precisar dele por perto.</p>
+    <div class="linha" style="margin-top:10px;gap:16px;flex-wrap:wrap">
+      <label class="checagem">Ajuda Elemental usada nesta cena:
+        <input type="number" min="0" data-ele-num="ajudaUsadaNaCena" value="${el.ajudaUsadaNaCena}" style="width:60px;margin-left:6px">
+        / ${ajudaElementalPorCena(p)}
+      </label>
+      <label class="checagem">
+        <input type="checkbox" data-ele-check="trocaUsadaNaCena" ${el.trocaUsadaNaCena?'checked':''}> Troca já usada nesta cena
+      </label>
+    </div>
+  </div>
+  <div class="cartao">
+    <label for="c-ele-notas">Notas</label>
+    <textarea id="c-ele-notas" data-ele-campo="notas" rows="3">${esc(el.notas)}</textarea>
+  </div>`;
+}
+
 function passivaLinha(h, i){
   return `<div class="linha-lista">
     <div class="topo">
@@ -1416,6 +1560,20 @@ function ligarEventos(){
     }));
   app.querySelectorAll('[data-invper-add]').forEach(b =>
     b.onclick = () => mudar(p => p.invocacoes[Number(b.dataset.invperAdd)].periciasTreinadas.push({nome:''})));
+
+  // Elemental
+  app.querySelectorAll('[data-ele-check]').forEach(el =>
+    el.onchange = () => mudar(p => p.elemental[el.dataset.eleCheck] = el.checked));
+  app.querySelectorAll('[data-ele-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => p.elemental[el.dataset.eleCampo] = el.value, el));
+  app.querySelectorAll('[data-ele-select]').forEach(el =>
+    el.onchange = () => mudar(p => p.elemental[el.dataset.eleSelect] = el.value));
+  app.querySelectorAll('[data-ele-num]').forEach(el =>
+    el.onchange = () => mudar(p => p.elemental[el.dataset.eleNum] = Math.max(0, Number(el.value) || 0)));
+  app.querySelectorAll('[data-ele-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.elemental.atributos[el.dataset.eleAtributo] = Math.max(0, Math.min(10, Number(el.value) || 0))));
+  app.querySelectorAll('[data-ele-pericia]').forEach(el =>
+    el.onchange = () => mudar(p => p.elemental.pericias[el.dataset.elePericia] = el.checked));
 
   // Passivas
   app.querySelectorAll('[data-pas-campo]').forEach(el =>

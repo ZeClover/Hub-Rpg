@@ -2927,6 +2927,45 @@ Nível, Enxame e Perícia. Reexecutei os testes de Ascensão (decisão #72) e
 do chassi (decisão #71) sem regressão. `tsc --noEmit`, `npm run lint` e
 os 208 testes automáticos continuam limpos.
 
+## 74. Sistema do Sávio — Elemental (04/09/2026)
+
+Quarta e última fatia grande do Sistema do Sávio (decisões #71-73,
+continuando "vá para as próximas fatias"): o Elemental, o companheiro que
+é a fonte da Bênção do personagem. A planilha original documenta o
+Elemental como uma ficha quase idêntica à do personagem principal
+(Atributos, Especialização, Perícias, PV/PE/Sanidade pelas mesmas
+fórmulas) — por isso a nova aba **Elemental** reaproveita
+`ATRIBUTOS`/`ESPECIALIZACOES`/`PERICIAS` já existentes em vez de duplicar
+listas, e ganhou `elementalPV()`/`elementalPE()`/`elementalSanidade()`
+espelhando `pvMaximo()`/`peMaximo()`/`sanidadeMaxima()` só que lendo de
+`p.elemental` em vez de `p`.
+
+A aba começa perguntando se o personagem TEM um Elemental (nem todo tem);
+ligando, aparece: nome, uma das quatro Categorias (Primordial, Inato,
+Comum, Mítico — com um aviso extra pro Mítico, "filho de Celestial, pode
+superar o Nível 20"), Nível e Especialização próprios (as mesmas 4
+classes do personagem), os 6 Atributos com teto fixo em 10 (não sobe com
+a Ascensão do dono — são fichas separadas), e Perícias treinadas (mesma
+lista de 21, sem os 3 slots de Ofício livre). Card de mecânica explica
+Ajuda Elemental (Nível do personagem ÷ 2 vezes por cena, calculado e
+mostrado) e Troca, com dois campos de acompanhamento (usos na cena,
+checkbox de Troca usada).
+
+Testado com Playwright: liga o Elemental, escolhe Categoria Mítico e
+confere o aviso, define Nível 10 e Especialização Combatente com
+Constituição 5, confirma que Ajuda Elemental calcula 3 (Nível do
+personagem 6 ÷ 2), marca uma Perícia e a Troca, recarrega a página e
+confirma que tudo persistiu, e confere via `elementalPV()` que o PV bate
+(Combatente: 40+CON, +10+CON por Nível, 9 Níveis acima do 1º = 180).
+Reexecutei os testes de Invocações, Ascensão e do chassi sem regressão.
+`tsc --noEmit`, `npm run lint` e os 208 testes automáticos continuam
+limpos.
+
+Com isso, o Sistema do Sávio cobre todo o material do PDF/planilha
+original enviados pelo Zé: chassi, Habilidades/Passivas livres,
+Especializações, Ascensão (Arquétipos + Imersão Espiritual), Invocações
+e Elemental.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

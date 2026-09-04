@@ -1252,6 +1252,19 @@ passando.
       Playwright (referência do tier, cálculo de PV e pool de Atributo,
       Enxame, Perícia da invocação e persistência); `tsc`, lint e os 208
       testes automáticos continuam limpos
+- [x] **Sistema do Sávio — Elemental** (04/09/2026) — decisão #74. Nova aba
+      Elemental: o companheiro/fonte da Bênção, com ficha própria
+      reaproveitando Atributos/Especialização/Perícias já existentes —
+      Categoria (Primordial, Inato, Comum, Mítico), Nível e Especialização
+      próprios, PV/PE/Sanidade pelas mesmas fórmulas do personagem
+      principal, e card de mecânica (Ajuda Elemental = Nível do
+      personagem ÷ 2 vezes por cena, Troca). Fecha o Sistema do Sávio:
+      chassi, Habilidades/Passivas livres, Especializações, Ascensão
+      (Arquétipos + Imersão Espiritual), Invocações e Elemental — todo o
+      material do PDF/planilha original. Testado com Playwright (liga o
+      Elemental, Categoria Mítico com aviso, PV calculado, Ajuda Elemental
+      calculada, persistência); `tsc`, lint e os 208 testes automáticos
+      continuam limpos
 - [ ] Ometion
 
 ---
