@@ -3179,6 +3179,87 @@ volta a 0/2 depois de Passar Round. Reexecutei as oito baterias de
 teste anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os
 208 testes automáticos continuam limpos.
 
+## 81. D&D 5ª Edição — chassi inicial (04/09/2026)
+
+O Zé pediu pra integrar D&D 5ª Edição — "não só o sistema principal, MAS
+TODO O SISTEMA" — e mandou uma pasta do Google Drive com 23 arquivos em
+vez de anexar tudo no chat, porque não conseguia mandar de uma vez. Dado o
+tamanho do material (livros oficiais completos + suplementos + homebrews
+temáticos como Runeterra/League of Legends e "Sol da Meia-Noite"), a
+primeira decisão foi cortar essa primeira fatia, do mesmo jeito que
+Fabula Ultima e o SAO cresceram aos poucos (decisão #26):
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 81a | Fonte principal | **Livro do Jogador** (biblioteca élfica, PT-BR) — mais completo que as Regras Básicas |
+| 81b | Suplementos (Xanathar, Tasha's, Volo's, Elemental Evil, itens mágicos, talentos, homebrews temáticos) | **Fora desta fatia.** Entram um de cada vez, em fatias futuras |
+
+**Limite técnico descoberto no caminho.** A ferramenta de leitura do
+Google Drive trunca PDFs grandes num teto fixo de caracteres — o Livro do
+Jogador (314 páginas) parou na página 81, no meio do capítulo de Classes,
+sem chegar em Testes, Combate ou nas 8 classes restantes. Baixar o
+arquivo original também não deu: a ferramenta de download recusa
+qualquer arquivo acima de 10MB, e o Livro do Jogador tem quase 22MB. A
+saída foi usar as **Regras Básicas dos Jogadores** (mesma tradução
+PT-BR, mas só 5,2MB) como fonte principal do motor de regras e das
+classes — ela cabe no limite de download, e `pdftotext -layout` (instalado
+na sessão) extrai o livro inteiro sem truncar, sem depender mais da
+ferramenta do Drive. As 9 raças vieram do trecho do Livro do Jogador que
+já tinha sido lido antes de truncar (capítulo 2 inteiro, páginas 17-42).
+
+**Escopo do chassi:** as sete perguntas de `ARQUITETURA.md` (decisão
+#17), respondidas com o que dá pra jogar hoje —
+
+- Atributos: os 6 de sempre, modificador `(valor-10)/2`, bônus de
+  proficiência por nível (tabela 1-20)
+- Criação: raça (9, com sub-raças) + classe (4: Guerreiro, Ladino,
+  Clérigo, Mago — as 8 restantes ficam pra fatias futuras) + antecedente
+  (5) + atributos (array padrão sugerido)
+- Derivados: PV (dado de vida da classe + Constituição, com "Recalcular"
+  editável à mão — mesmo padrão do Fabula Ultima), CA (calculada da
+  armadura equipada, com teto de Destreza por categoria), iniciativa,
+  percepção passiva
+- Teste: d20 + modificador + bônus de proficiência (se proficiente),
+  vantagem/desvantagem
+- Condições: as 15 do Apêndice, mais Exaustão em 6 níveis
+- Progressão: nível 1-20, características de classe até o 3º nível
+  (arquétipos/domínios/tradições ficam pra quando as classes ganharem
+  profundidade, igual o Fabula Ultima fez com os Ritos)
+- Ficha: arquivo único `public/dnd-5e.html`, tema escuro do Hub, Modo Hub
+  desde o primeiro commit (mesmo padrão de Thrylikí Chelóna)
+
+**Automação era o requisito central** — o Zé foi enfático: "o sistema
+precisa ser automático e ser fácil [...] preciso que isso funcione melhor
+que uma ficha normal". Por isso nada de número solto pra preencher à mão
+quando dá pra calcular: escolher raça aplica bônus de atributo e traços
+sozinho; escolher classe preenche dado de vida, proficiências e
+perícias disponíveis; PV, CA, testes de resistência, perícias e ataque
+de arma equipada são todos calculados a partir da ficha, com "Recalcular"
+só onde o próprio livro trata o número como algo que a mesa ajusta (PV
+por nível, CA manual).
+
+**Extração em paralelo.** Como cada capítulo (raças, classes, combate +
+equipamento + condições, testes + antecedentes + conjuração) é
+independente, quatro agentes trabalharam ao mesmo tempo, cada um lendo
+sua fatia do texto já extraído localmente e devolvendo só dados
+mecânicos em JSON — mesmo caminho das decisões #25/#56. Só mecânica
+(números, fórmulas, proficiências, efeitos resumidos com palavras
+próprias) — nunca texto do livro, por ser conteúdo comercial da Wizards
+of the Coast (mesma regra do Fabula Ultima, `ARQUITETURA.md`).
+
+Testado com Playwright: criação de personagem, raça com sub-raça
+somando bônus de atributo certo, PV calculado batendo com dado de
+vida+Constituição, CA calculada reagindo à armadura equipada (com e sem
+teto de Destreza), perícias respeitando o limite da classe, arma
+equipada mostrando bônus de ataque e dano certos, condições marcáveis,
+aba de Conjuração escondida pra classe não-conjuradora, persistência
+após recarregar, e Modo Hub completo mockando `/api/personagens/*`
+(carregar, editar disparando PATCH com `resumoVida`, Compartilhar). `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos.
+`src/lib/sistemas.ts` ganhou a entrada `dnd-5e` (`situacao:
+"em-construcao"`, só 4 das 12 classes prontas) e a migração
+`0011_sistema_dnd_5e.sql` garante a linha correspondente no banco.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

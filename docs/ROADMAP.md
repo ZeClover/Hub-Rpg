@@ -1279,6 +1279,23 @@ passando.
       Playwright (Pontos de Atributo, Level Up completo, cálculo de bônus
       por efeito, redução de Nível efetivo, persistência); `tsc`, lint e
       os 208 testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — chassi inicial** (04/09/2026) — decisão #81.
+      Sistema mais denso trazido pro Hub até agora, cortado em fatia
+      inicial: os 6 atributos e testes, 9 raças (com sub-raças), 4
+      classes-base até o 3º nível (Guerreiro, Ladino, Clérigo, Mago), 5
+      antecedentes, catálogo de armas/armaduras, combate completo, as 15
+      condições do Apêndice, e a regra de conjuração (sem catálogo de
+      magias ainda). Tudo calculado automaticamente a partir da ficha —
+      raça/classe preenchem bônus e proficiências sozinhas, PV/CA/testes/
+      ataque nunca são número solto. `public/dnd-5e.html`, Modo Hub desde
+      o primeiro commit. Testado com Playwright (criação completa, bônus
+      racial, PV/CA calculados, perícias, ataque de arma, condições,
+      Modo Hub mockado); `tsc`, lint e os 208 testes automáticos
+      continuam limpos
+- [ ] D&D 5ª Edição — as 8 classes restantes (Bárbaro, Bardo, Bruxo,
+      Druida, Feiticeiro, Monge, Paladino, Patrulheiro), catálogo de
+      magias, arquétipos/domínios/tradições, ficha de inimigo e Escudo
+      do Mestre — fatias futuras, uma de cada vez (decisão #26)
 - [ ] Ometion
 
 ---

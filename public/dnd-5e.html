@@ -1,0 +1,2898 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — D&amp;D 5ª Edição</title>
+<style>
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s,transform .12s;
+}
+button:hover{border-color:var(--suave)}
+button:not(:disabled):active{transform:scale(.95)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:960px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px;
+  transition:box-shadow .18s ease, transform .18s ease}
+.cartao:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px)}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)} .g6{grid-template-columns:repeat(6,1fr)} }
+
+.derivado{text-align:center; background:var(--superficie-alta);
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+.derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
+.derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
+.derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
+.derivado.risco .val{color:var(--alerta)}
+
+.linha{display:flex; align-items:center; gap:10px}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
+  border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
+.ok{color:var(--suave); font-size:13px; margin-top:10px}
+
+.tabela{width:100%; border-collapse:collapse; font-size:13px}
+.tabela th{text-align:left; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--suave); padding:6px 8px; border-bottom:1px solid var(--borda)}
+.tabela td{padding:6px 8px; border-bottom:1px solid var(--borda)}
+.tabela tr:last-child td{border-bottom:none}
+.pericia-linha{display:flex; align-items:center; gap:10px; padding:5px 0}
+.pericia-linha input[type=checkbox]{width:auto; accent-color:var(--ambar)}
+.pericia-nome{flex:1}
+.pericia-total{font-family:Georgia,serif; color:var(--ambar-forte); min-width:34px; text-align:right}
+
+.linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
+.linha-lista .topo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+.condicoes{display:flex; flex-wrap:wrap; gap:8px}
+.condicoes label{display:flex; align-items:center; gap:7px; text-transform:none;
+  letter-spacing:0; font-family:inherit; font-size:14px; color:var(--texto);
+  border:1px solid var(--borda); border-radius:999px; padding:6px 12px;
+  margin:0; cursor:pointer}
+.condicoes input{width:auto; accent-color:var(--alerta)}
+.condicoes label:has(input:checked){border-color:rgba(156,55,70,.6); color:var(--alerta)}
+.vazio{color:var(--suave); text-align:center; padding:50px 20px}
+.mini{font-size:12px; color:var(--suave)}
+.trilha{color:var(--ambar-forte); font-family:Georgia,serif}
+
+@keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+#app.entra{animation:fadeSlideIn .32s ease-out}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">D&amp;D 5ª Edição</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <button id="btExportar">Exportar</button>
+  <button id="btImportar">Importar</button>
+  <input type="file" id="arquivo" accept="application/json" hidden>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA DE PERSONAGEM — D&D 5ª EDIÇÃO (2014), CHASSI
+
+   Este é o CHASSI do sistema (decisão #17 do Hub: cada sistema de regras é
+   um módulo próprio, respondendo às mesmas sete perguntas de
+   ARQUITETURA.md). D&D é o sistema mais denso já trazido pro Hub — esta
+   primeira fatia cobre: atributos e testes, as 9 raças do Livro do
+   Jogador, 4 classes-base (Guerreiro, Ladino, Clérigo, Mago) até o 3º
+   nível, antecedentes, equipamento (armas/armaduras), combate, condições
+   e conjuração (regra, sem catálogo de magias ainda). As 8 classes
+   restantes (Bárbaro, Bardo, Bruxo, Druida, Feiticeiro, Monge, Paladino,
+   Patrulheiro) e o catálogo de magias ficam para fatias futuras — mesmo
+   ritmo que o Fabula Ultima e o SAO cresceram, classe por classe (decisão
+   #26: uma fatia por vez).
+
+   Fonte das regras: PDFs da biblioteca do Zé no Google Drive — Livro do
+   Jogador e Regras Básicas dos Jogadores, edição brasileira (Devir/Galápagos,
+   tradução da 5ª edição 2014). Conteúdo comercial da Wizards of the Coast:
+   este arquivo codifica só MECÂNICA (números, fórmulas, proficiências,
+   efeitos resumidos) — nunca texto, arte ou descrição do livro (mesma regra
+   já seguida com o Fabula Ultima).
+
+   Automação é o requisito central desta ficha: escolher Raça e Classe
+   preenche bônus de atributo, proficiências e traços sozinho; PV, CA,
+   iniciativa, perícias e ataques são sempre calculados a partir da
+   ficha — nunca digitados à mão (mesmo espírito do botão "Recalcular" do
+   Fabula Ultima e do SAO, aqui automático desde o primeiro momento).
+
+   Arquivo único, salvando no navegador (localStorage) OU na conta do Hub
+   se aberto com ?id= — mesmo mecanismo que os outros sistemas já usam.
+   =========================================================================== */
+
+/* --- Regras do sistema, em forma de dados -------------------------------- */
+
+const ATRIBUTOS = [
+  {id:'forca',        nome:'Força'},
+  {id:'destreza',     nome:'Destreza'},
+  {id:'constituicao', nome:'Constituição'},
+  {id:'inteligencia', nome:'Inteligência'},
+  {id:'sabedoria',    nome:'Sabedoria'},
+  {id:'carisma',      nome:'Carisma'},
+];
+
+// Modificador = (valor - 10) / 2, arredondado pra baixo.
+function modAtributo(valor){ return Math.floor((valor - 10) / 2); }
+function fmtMod(mod){ return mod >= 0 ? `+${mod}` : `${mod}`; }
+
+// Bônus de Proficiência por nível — mesma tabela pra qualquer classe.
+const BONUS_PROFICIENCIA = {1:2,2:2,3:2,4:2,5:3,6:3,7:3,8:3,9:4,10:4,11:4,12:4,13:5,14:5,15:5,16:5,17:6,18:6,19:6,20:6};
+function bonusProficiencia(nivel){ return BONUS_PROFICIENCIA[Math.min(20, Math.max(1, nivel))]; }
+
+const GERACAO_ATRIBUTOS = {arrayPadrao:[15,14,13,12,10,8]};
+
+const RACAS = [
+  {
+    "id": "anao",
+    "nome": "Anão",
+    "bonusAtributo": [
+      {
+        "atributo": "constituicao",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 7.5,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Anão"
+    ],
+    "tracos": [
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Resiliência Anã",
+        "efeito": "Vantagem em testes de resistência contra veneno e resistência a dano de veneno."
+      },
+      {
+        "nome": "Treinamento Anão em Combate",
+        "efeito": "Proficiência com machado de batalha, machadinha, martelo leve e martelo de guerra."
+      },
+      {
+        "nome": "Proficiência com Ferramentas",
+        "efeito": "Proficiência em uma ferramenta de artesão à escolha: ferramentas de ferreiro, suprimentos de cervejeiro ou ferramentas de pedreiro."
+      },
+      {
+        "nome": "Especialização em Rochas",
+        "efeito": "Em testes de Inteligência (História) sobre a origem de trabalhos em pedra, soma o dobro do bônus de proficiência em vez do normal."
+      },
+      {
+        "nome": "Passo Firme",
+        "efeito": "O deslocamento não é reduzido ao usar armadura pesada."
+      }
+    ],
+    "subracas": [
+      {
+        "id": "anao-colina",
+        "nome": "Anão da Colina",
+        "bonusAtributo": [
+          {
+            "atributo": "sabedoria",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Tenacidade Anã",
+            "efeito": "PV máximo aumenta em 1, e mais 1 ponto a cada nível seguinte."
+          }
+        ]
+      },
+      {
+        "id": "anao-montanha",
+        "nome": "Anão da Montanha",
+        "bonusAtributo": [
+          {
+            "atributo": "forca",
+            "valor": 2
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Treinamento Anão com Armaduras",
+            "efeito": "Proficiência com armaduras leves e médias."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "elfo",
+    "nome": "Elfo",
+    "bonusAtributo": [
+      {
+        "atributo": "destreza",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Élfico"
+    ],
+    "tracos": [
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Sentidos Aguçados",
+        "efeito": "Proficiência na perícia Percepção."
+      },
+      {
+        "nome": "Ancestral Feérico",
+        "efeito": "Vantagem em testes de resistência contra ficar enfeitiçado; magias não podem colocá-lo para dormir."
+      },
+      {
+        "nome": "Transe",
+        "efeito": "Não precisa dormir; medita semiconsciente por 4 horas e ganha os mesmos benefícios de 8 horas de sono."
+      }
+    ],
+    "subracas": [
+      {
+        "id": "alto-elfo",
+        "nome": "Alto Elfo",
+        "bonusAtributo": [
+          {
+            "atributo": "inteligencia",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Treinamento Élfico com Armas",
+            "efeito": "Proficiência com espada longa, espada curta, arco longo e arco curto."
+          },
+          {
+            "nome": "Truque",
+            "efeito": "Conhece um truque à escolha da lista de truques do mago, usando Inteligência para conjurá-lo."
+          },
+          {
+            "nome": "Idioma Adicional",
+            "efeito": "Fala, lê e escreve mais um idioma à escolha."
+          }
+        ]
+      },
+      {
+        "id": "elfo-floresta",
+        "nome": "Elfo da Floresta",
+        "bonusAtributo": [
+          {
+            "atributo": "sabedoria",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Treinamento Élfico com Armas",
+            "efeito": "Proficiência com espada longa, espada curta, arco longo e arco curto."
+          },
+          {
+            "nome": "Pés Ligeiros",
+            "efeito": "Deslocamento base de caminhada aumenta para 10,5m."
+          },
+          {
+            "nome": "Máscara da Natureza",
+            "efeito": "Pode tentar se esconder mesmo estando apenas levemente obscurecido por folhagem, chuva, neve, névoa ou outro fenômeno natural."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "halfling",
+    "nome": "Halfling",
+    "bonusAtributo": [
+      {
+        "atributo": "destreza",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 7.5,
+    "tamanho": "Pequeno",
+    "idiomas": [
+      "Comum",
+      "Halfling"
+    ],
+    "tracos": [
+      {
+        "nome": "Sortudo",
+        "efeito": "Ao tirar 1 natural em jogada de ataque, teste de habilidade ou teste de resistência, pode rolar de novo e deve usar o novo resultado."
+      },
+      {
+        "nome": "Bravura",
+        "efeito": "Vantagem em testes de resistência contra ficar amedrontado."
+      },
+      {
+        "nome": "Agilidade Halfling",
+        "efeito": "Pode se mover através do espaço de qualquer criatura de tamanho maior que o dele."
+      }
+    ],
+    "subracas": [
+      {
+        "id": "halfling-pes-leves",
+        "nome": "Pés Leves",
+        "bonusAtributo": [
+          {
+            "atributo": "carisma",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Furtividade Natural",
+            "efeito": "Pode tentar se esconder mesmo tendo apenas a cobertura de uma criatura ao menos um tamanho maior que ele."
+          }
+        ]
+      },
+      {
+        "id": "halfling-robusto",
+        "nome": "Robusto",
+        "bonusAtributo": [
+          {
+            "atributo": "constituicao",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Resiliência dos Robustos",
+            "efeito": "Vantagem em testes de resistência contra veneno e resistência a dano de veneno."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "humano",
+    "nome": "Humano",
+    "bonusAtributo": [
+      {
+        "atributo": "forca",
+        "valor": 1
+      },
+      {
+        "atributo": "destreza",
+        "valor": 1
+      },
+      {
+        "atributo": "constituicao",
+        "valor": 1
+      },
+      {
+        "atributo": "inteligencia",
+        "valor": 1
+      },
+      {
+        "atributo": "sabedoria",
+        "valor": 1
+      },
+      {
+        "atributo": "carisma",
+        "valor": 1
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "um idioma adicional à escolha"
+    ],
+    "tracos": [],
+    "subracas": []
+  },
+  {
+    "id": "draconato",
+    "nome": "Draconato",
+    "bonusAtributo": [
+      {
+        "atributo": "forca",
+        "valor": 2
+      },
+      {
+        "atributo": "carisma",
+        "valor": 1
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Dracônico"
+    ],
+    "tracos": [
+      {
+        "nome": "Ancestral Dracônico",
+        "efeito": "Escolhe um tipo de dragão (entre 10 opções); ele determina o tipo de dano e a forma da arma de sopro (linha de 1,5m x 9m ou cone de 4,5m) e o tipo de dano da resistência abaixo."
+      },
+      {
+        "nome": "Arma de Sopro",
+        "efeito": "Uma vez por descanso curto ou longo, usa a ação para causar 2d6 de dano (metade em sucesso) na área do seu tipo dracônico; alvos fazem teste de resistência (CD 8 + mod. Constituição + bônus de proficiência). O dano sobe para 3d6 no nível 6, 4d6 no nível 11 e 5d6 no nível 16."
+      },
+      {
+        "nome": "Resistência a Dano",
+        "efeito": "Resistência ao tipo de dano associado ao seu ancestral dracônico."
+      }
+    ],
+    "subracas": []
+  },
+  {
+    "id": "gnomo",
+    "nome": "Gnomo",
+    "bonusAtributo": [
+      {
+        "atributo": "inteligencia",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 7.5,
+    "tamanho": "Pequeno",
+    "idiomas": [
+      "Comum",
+      "Gnômico"
+    ],
+    "tracos": [
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Esperteza Gnômica",
+        "efeito": "Vantagem em todos os testes de resistência de Inteligência, Sabedoria e Carisma contra magia."
+      }
+    ],
+    "subracas": [
+      {
+        "id": "gnomo-floresta",
+        "nome": "Gnomo da Floresta",
+        "bonusAtributo": [
+          {
+            "atributo": "destreza",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Ilusionista Nato",
+            "efeito": "Conhece o truque ilusão menor, usando Inteligência para conjurá-lo."
+          },
+          {
+            "nome": "Falar com Bestas Pequenas",
+            "efeito": "Pode comunicar ideias simples a Bestas de tamanho Pequeno ou menor através de sons e gestos."
+          }
+        ]
+      },
+      {
+        "id": "gnomo-rochas",
+        "nome": "Gnomo das Rochas",
+        "bonusAtributo": [
+          {
+            "atributo": "constituicao",
+            "valor": 1
+          }
+        ],
+        "tracosExtras": [
+          {
+            "nome": "Conhecimento de Artífice",
+            "efeito": "Em testes de Inteligência (História) sobre itens mágicos, objetos alquímicos ou mecanismos, soma o dobro do bônus de proficiência em vez do normal."
+          },
+          {
+            "nome": "Engenhoqueiro",
+            "efeito": "Proficiência com ferramentas de engenhoqueiro; pode gastar 1 hora e 10 po para montar um pequeno mecanismo (brinquedo mecânico, isqueiro mecânico ou caixa de música, CA 5, 1 PV), mantendo até 3 ativos ao mesmo tempo."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "meio-elfo",
+    "nome": "Meio-Elfo",
+    "bonusAtributo": [
+      {
+        "atributo": "carisma",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Élfico",
+      "um idioma adicional à escolha"
+    ],
+    "tracos": [
+      {
+        "nome": "Bônus de Atributo Flexível",
+        "efeito": "Além do +2 em Carisma, escolha dois outros atributos diferentes para receber +1 cada."
+      },
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Ancestral Feérico",
+        "efeito": "Vantagem em testes de resistência contra ficar enfeitiçado; magias não podem colocá-lo para dormir."
+      },
+      {
+        "nome": "Versatilidade em Perícia",
+        "efeito": "Ganha proficiência em duas perícias à escolha."
+      }
+    ],
+    "subracas": []
+  },
+  {
+    "id": "meio-orc",
+    "nome": "Meio-Orc",
+    "bonusAtributo": [
+      {
+        "atributo": "forca",
+        "valor": 2
+      },
+      {
+        "atributo": "constituicao",
+        "valor": 1
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Orc"
+    ],
+    "tracos": [
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Ameaçador",
+        "efeito": "Proficiência na perícia Intimidação."
+      },
+      {
+        "nome": "Resistência Implacável",
+        "efeito": "Quando reduzido a 0 PV sem morrer instantaneamente, pode ficar com 1 PV em vez disso; recarrega após um descanso longo."
+      },
+      {
+        "nome": "Ataques Selvagens",
+        "efeito": "Em um acerto crítico com arma corpo a corpo, rola um dado de dano extra da arma e soma ao dano causado."
+      }
+    ],
+    "subracas": []
+  },
+  {
+    "id": "tiefling",
+    "nome": "Tiefling",
+    "bonusAtributo": [
+      {
+        "atributo": "inteligencia",
+        "valor": 1
+      },
+      {
+        "atributo": "carisma",
+        "valor": 2
+      }
+    ],
+    "deslocamento": 9,
+    "tamanho": "Médio",
+    "idiomas": [
+      "Comum",
+      "Infernal"
+    ],
+    "tracos": [
+      {
+        "nome": "Visão no Escuro",
+        "efeito": "Enxerga na penumbra até 18m como se fosse luz plena, e no escuro como penumbra (só tons de cinza, sem cor)."
+      },
+      {
+        "nome": "Resistência Infernal",
+        "efeito": "Resistência a dano de fogo."
+      },
+      {
+        "nome": "Legado Infernal",
+        "efeito": "Conhece o truque taumaturgia; no nível 3 pode conjurar repreensão infernal (1x por descanso longo) como magia de 2° nível; no nível 5 pode conjurar escuridão (1x por descanso longo); Carisma é a habilidade de conjuração."
+      }
+    ],
+    "subracas": []
+  }
+];
+
+const CLASSES = [
+  {
+    "id": "clerigo",
+    "nome": "Clérigo",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "sabedoria",
+      "carisma"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "História",
+        "Intuição",
+        "Medicina",
+        "Persuasão",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves",
+      "Médias",
+      "Escudos"
+    ],
+    "proficienciaArmas": [
+      "Simples"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) uma maça ou (b) um machado de batalha (se proficiente)",
+      "(a) brunea, (b) armadura de couro, ou (c) cota de malha (se proficiente)",
+      "(a) uma besta leve e 20 virotes ou (b) uma arma simples",
+      "(a) um kit de sacerdote ou (b) um kit de explorador",
+      "Um escudo e um símbolo sagrado"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Conjuração",
+          "efeito": "Ganha acesso a truques e magias de clérigo (ver bloco de conjuração)."
+        },
+        {
+          "nome": "Domínio Divino",
+          "efeito": "Escolhe um domínio divino (ex: Vida, Conhecimento, Luz, etc.) que concede magias de domínio sempre preparadas e habilidades especiais adicionais em níveis futuros. Opções detalhadas ficam para depois."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Canalizar Divindade (1x/descanso)",
+          "efeito": "Usa uma ação para acionar um efeito de Canalizar Divindade (ex: Expulsar Mortos-Vivos, que força mortos-vivos num raio de 9m a testar Sabedoria ou serem afugentados por 1 minuto); recupera o uso após descanso curto ou prolongado."
+        },
+        {
+          "nome": "Habilidade de Domínio Divino",
+          "efeito": "Recebe uma habilidade adicional determinada pelo domínio escolhido no nível 1."
+        }
+      ],
+      "3": [
+        {
+          "nome": "(sem característica de classe nova)",
+          "efeito": "Nenhuma característica nova neste nível; espaços de magia adicionais."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "sabedoria",
+      "magiasConhecidas": "Não tem lista fixa de 'magias conhecidas': prepara diariamente um número de magias da lista de clérigo igual a mod. Sabedoria + nível de clérigo (mínimo 1), entre as que tem espaços disponíveis. No 1º nível conhece 3 truques (aumenta com o nível).",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "guerreiro",
+    "nome": "Guerreiro",
+    "dadoDeVida": "d10",
+    "pvNivel1": "10 + mod. Constituição",
+    "pvNivelSeguinte": "1d10 (ou 6) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "forca",
+      "constituicao"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Acrobacia",
+        "Adestrar Animais",
+        "Atletismo",
+        "História",
+        "Intuição",
+        "Intimidação",
+        "Percepção",
+        "Sobrevivência"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves",
+      "Médias",
+      "Pesadas",
+      "Escudos"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Marciais"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) cota de malha ou (b) corselete de couro, arco longo e 20 flechas",
+      "(a) uma arma marcial e um escudo ou (b) duas armas marciais",
+      "(a) uma besta leve e 20 virotes ou (b) duas machadinhas",
+      "(a) um kit de masmorra ou (b) um kit de explorador"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Estilo de Combate",
+          "efeito": "Escolhe uma especialização de combate (ex: Arquearia dá +2 em ataques à distância, Defesa dá +1 de CA com armadura, Duelo dá +2 no dano com uma arma de uma mão sem outra arma na outra mão, Combate com Arma Grande permite refazer 1s e 2s no dano de armas de duas mãos, Proteção permite impor desvantagem no ataque de um inimigo contra um aliado próximo usando reação, Luta com Duas Armas soma o mod. de atributo no dano do segundo ataque). Não pode repetir a mesma escolha."
+        },
+        {
+          "nome": "Retomar o Fôlego",
+          "efeito": "Ação adicional 1x/descanso curto ou prolongado: recupera PV = 1d10 + nível de guerreiro."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Surto de Ação (1 uso)",
+          "efeito": "1x/descanso curto ou prolongado: realiza uma ação adicional no seu turno, além da ação normal."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Arquétipo Marcial",
+          "efeito": "Escolhe um arquétipo marcial (ex: Campeão) que concede habilidades especiais neste nível e novamente nos níveis 7, 10, 15 e 18. Opções detalhadas ficam para depois."
+        }
+      ]
+    },
+    "conjuracao": null
+  },
+  {
+    "id": "ladino",
+    "nome": "Ladino",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "destreza",
+      "inteligencia"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 4,
+      "lista": [
+        "Acrobacia",
+        "Atletismo",
+        "Atuação",
+        "Furtividade",
+        "Intimidação",
+        "Intuição",
+        "Percepção",
+        "Persuasão",
+        "Prestidigitação"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Bestas de mão",
+      "Espadas longas",
+      "Rapieiras",
+      "Espadas curtas"
+    ],
+    "proficienciaFerramentas": [
+      "Ferramentas de ladino"
+    ],
+    "equipamentoInicial": [
+      "(a) uma rapieira ou (b) uma espada longa",
+      "(a) um arco curto e aljava com 20 flechas ou (b) uma espada curta",
+      "(a) kit de assalto, (b) kit de masmorra ou (c) kit de exploração",
+      "Corselete de couro, duas adagas e as ferramentas de ladino"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Especialização",
+          "efeito": "Escolhe duas perícias (ou uma perícia e as ferramentas de ladino) entre as que é proficiente; o bônus de proficiência nelas é dobrado. Ganha mais duas escolhas no 6º nível."
+        },
+        {
+          "nome": "Ataque Furtivo",
+          "efeito": "1x por turno, ao acertar com uma arma de acuidade ou à distância tendo vantagem no ataque (ou um aliado adjacente ao alvo), soma dano extra (1d6 no nível 1, aumentando com o nível conforme tabela)."
+        },
+        {
+          "nome": "Gíria Ladina",
+          "efeito": "Conhece um dialeto/código secreto que permite comunicação disfarçada com outros que o conheçam."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Ação Astuta",
+          "efeito": "Usa uma ação adicional em cada turno de combate para Correr, Desengajar ou Esconder."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Arquétipo Ladino",
+          "efeito": "Escolhe um arquétipo (ex: Ladrão) que concede habilidades especiais neste nível e novamente nos níveis 9, 13 e 17. Opções detalhadas ficam para depois."
+        }
+      ]
+    },
+    "conjuracao": null
+  },
+  {
+    "id": "mago",
+    "nome": "Mago",
+    "dadoDeVida": "d6",
+    "pvNivel1": "6 + mod. Constituição",
+    "pvNivelSeguinte": "1d6 (ou 4) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "inteligencia",
+      "sabedoria"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Arcanismo",
+        "História",
+        "Intuição",
+        "Investigação",
+        "Medicina",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [],
+    "proficienciaArmas": [
+      "Adagas",
+      "Dardos",
+      "Fundas",
+      "Cajados",
+      "Bestas leves"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) um cajado ou (b) uma adaga",
+      "(a) uma bolsa de componentes ou (b) um implemento arcano",
+      "(a) um kit de estudo ou (b) um kit de exploração",
+      "Um grimório"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Conjuração",
+          "efeito": "Ganha um grimório com 6 magias de 1º nível à escolha e acesso a truques (ver bloco de conjuração)."
+        },
+        {
+          "nome": "Recuperação Arcana",
+          "efeito": "1x por dia, ao terminar um descanso curto, recupera espaços de magia gastos cuja soma de níveis seja igual ou menor à metade do nível de mago (arred. para cima), nenhum de nível 6+."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Tradição Arcana",
+          "efeito": "Escolhe uma escola de magia (ex: Evocação) como especialização, ganhando habilidades especiais neste nível e novamente nos níveis 6, 10 e 14. Opções detalhadas ficam para depois."
+        }
+      ],
+      "3": [
+        {
+          "nome": "(sem característica de classe nova)",
+          "efeito": "Nenhuma característica nova neste nível; espaços de magia adicionais."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "inteligencia",
+      "magiasConhecidas": "Não tem lista fixa de 'magias conhecidas': prepara diariamente magias do seu grimório em número igual a mod. Inteligência + nível de mago (mínimo 1). A cada nível adquirido, adiciona 2 magias novas ao grimório (de nível para o qual tenha espaços). No 1º nível conhece 3 truques (aumenta com o nível).",
+      "trilhaDeMagiasPorNivel": true
+    }
+  }
+];
+
+const PERICIAS = [
+  {
+    "id": "atletismo",
+    "nome": "Atletismo",
+    "atributo": "forca"
+  },
+  {
+    "id": "acrobacia",
+    "nome": "Acrobacia",
+    "atributo": "destreza"
+  },
+  {
+    "id": "furtividade",
+    "nome": "Furtividade",
+    "atributo": "destreza"
+  },
+  {
+    "id": "prestidigitacao",
+    "nome": "Prestidigitação",
+    "atributo": "destreza"
+  },
+  {
+    "id": "arcanismo",
+    "nome": "Arcanismo",
+    "atributo": "inteligencia"
+  },
+  {
+    "id": "historia",
+    "nome": "História",
+    "atributo": "inteligencia"
+  },
+  {
+    "id": "investigacao",
+    "nome": "Investigação",
+    "atributo": "inteligencia"
+  },
+  {
+    "id": "natureza",
+    "nome": "Natureza",
+    "atributo": "inteligencia"
+  },
+  {
+    "id": "religiao",
+    "nome": "Religião",
+    "atributo": "inteligencia"
+  },
+  {
+    "id": "adestrar-animais",
+    "nome": "Adestrar Animais",
+    "atributo": "sabedoria"
+  },
+  {
+    "id": "intuicao",
+    "nome": "Intuição",
+    "atributo": "sabedoria"
+  },
+  {
+    "id": "medicina",
+    "nome": "Medicina",
+    "atributo": "sabedoria"
+  },
+  {
+    "id": "percepcao",
+    "nome": "Percepção",
+    "atributo": "sabedoria"
+  },
+  {
+    "id": "sobrevivencia",
+    "nome": "Sobrevivência",
+    "atributo": "sabedoria"
+  },
+  {
+    "id": "atuacao",
+    "nome": "Atuação",
+    "atributo": "carisma"
+  },
+  {
+    "id": "enganacao",
+    "nome": "Enganação",
+    "atributo": "carisma"
+  },
+  {
+    "id": "intimidacao",
+    "nome": "Intimidação",
+    "atributo": "carisma"
+  },
+  {
+    "id": "persuasao",
+    "nome": "Persuasão",
+    "atributo": "carisma"
+  }
+];
+
+const ANTECEDENTES = [
+  {
+    "nome": "Acólito",
+    "periciasConcedidas": [
+      "Intuição",
+      "Religião"
+    ],
+    "ferramentasOuIdiomas": [
+      "Dois idiomas à escolha"
+    ],
+    "equipamentoInicial": [
+      "Um símbolo sagrado",
+      "Um livro de orações ou uma roda de preces",
+      "5 palitos de incenso",
+      "Vestimentas",
+      "Um conjunto de roupas comuns",
+      "Uma algibeira com 15 peças de ouro"
+    ],
+    "caracteristica": {
+      "nome": "Abrigo dos Fiéis",
+      "efeito": "Recebe cura e caridade básica de graça em templos, santuários ou comunidades da sua fé (estilo de vida modesto, só para o personagem); pode também contar com apoio de um templo específico ao qual tenha vínculo."
+    }
+  },
+  {
+    "nome": "Criminoso",
+    "periciasConcedidas": [
+      "Enganação",
+      "Furtividade"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de jogo de tabuleiro/cartas à escolha",
+      "Ferramentas de ladino"
+    ],
+    "equipamentoInicial": [
+      "Um pé de cabra",
+      "Um conjunto de roupas escuras comuns com capuz",
+      "Uma algibeira com 15 peças de ouro"
+    ],
+    "caracteristica": {
+      "nome": "Contato Criminal",
+      "efeito": "Possui um contato de confiança no submundo do crime, que serve de informante e sabe como transmitir mensagens a longa distância (mensageiros, mestres de caravana, marinheiros ligados ao crime)."
+    }
+  },
+  {
+    "nome": "Herói Popular",
+    "periciasConcedidas": [
+      "Adestrar Animais",
+      "Sobrevivência"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de ferramentas de artesão à escolha",
+      "Veículos (terrestres)"
+    ],
+    "equipamentoInicial": [
+      "Um conjunto de ferramentas de artesão (à escolha, o mesmo tipo acima)",
+      "Uma pá",
+      "Uma panela de ferro",
+      "Um conjunto de roupas comuns",
+      "Uma algibeira com 10 peças de ouro"
+    ],
+    "caracteristica": {
+      "nome": "Hospitalidade Rústica",
+      "efeito": "Consegue se esconder, descansar ou se recuperar entre plebeus/camponeses comuns, que o protegem da lei e de perseguidores, desde que isso não coloque a vida deles em risco direto."
+    }
+  },
+  {
+    "nome": "Sábio",
+    "periciasConcedidas": [
+      "Arcanismo",
+      "História"
+    ],
+    "ferramentasOuIdiomas": [
+      "Dois idiomas à escolha"
+    ],
+    "equipamentoInicial": [
+      "Um vidro de tinta negra",
+      "Uma pena",
+      "Uma faca pequena",
+      "Uma carta de um colega falecido, com uma pergunta sem resposta",
+      "Um conjunto de roupas comuns",
+      "Uma algibeira com 10 peças de ouro"
+    ],
+    "caracteristica": {
+      "nome": "Pesquisador",
+      "efeito": "Quando precisa de um conhecimento que não possui, sabe onde e com quem consultar para obtê-lo (normalmente bibliotecas, arquivos de escribas, universidades ou outros sábios)."
+    }
+  },
+  {
+    "nome": "Soldado",
+    "periciasConcedidas": [
+      "Atletismo",
+      "Intimidação"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de jogo à escolha",
+      "Veículos (terrestres)"
+    ],
+    "equipamentoInicial": [
+      "Uma insígnia de patente",
+      "Um troféu obtido de um inimigo caído (adaga, lâmina quebrada ou tira de estandarte)",
+      "Um conjunto de dados de ossos ou cartas de jogar",
+      "Um conjunto de roupas comuns",
+      "Uma algibeira com 10 peças de ouro"
+    ],
+    "caracteristica": {
+      "nome": "Patente Militar",
+      "efeito": "Soldados leais à sua antiga organização (de patente igual ou inferior) reconhecem sua autoridade; pode requisitar equipamentos simples ou cavalos para uso temporário e acessar acampamentos militares aliados."
+    }
+  }
+];
+
+const ARMAS = [
+  {
+    "nome": "Adaga",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d4",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "acuidade",
+      "leve",
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 0.5,
+    "custo": "2po"
+  },
+  {
+    "nome": "Azagaia",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 9,
+      "longo": 36
+    },
+    "pesoKg": 1,
+    "custo": "5pp"
+  },
+  {
+    "nome": "Ataque desarmado",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1",
+    "tipoDano": "concussão",
+    "propriedades": [],
+    "alcance": null,
+    "pesoKg": null,
+    "custo": "-"
+  },
+  {
+    "nome": "Bordão",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "versátil (1d8)"
+    ],
+    "alcance": null,
+    "pesoKg": 2,
+    "custo": "2pp"
+  },
+  {
+    "nome": "Clava",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d4",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "leve"
+    ],
+    "alcance": null,
+    "pesoKg": 1.5,
+    "custo": "1pp"
+  },
+  {
+    "nome": "Clava grande",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 4.5,
+    "custo": "2pp"
+  },
+  {
+    "nome": "Foice",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d4",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "leve"
+    ],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "1po"
+  },
+  {
+    "nome": "Lança curta",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "arremesso",
+      "versátil (1d8)"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 1.5,
+    "custo": "1po"
+  },
+  {
+    "nome": "Machadinha",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "leve",
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 1,
+    "custo": "5po"
+  },
+  {
+    "nome": "Maça",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "concussão",
+    "propriedades": [],
+    "alcance": null,
+    "pesoKg": 2,
+    "custo": "5po"
+  },
+  {
+    "nome": "Martelo leve",
+    "categoria": "simples-corpo-a-corpo",
+    "dano": "1d4",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "leve",
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 1,
+    "custo": "2po"
+  },
+  {
+    "nome": "Arco curto",
+    "categoria": "simples-distancia",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "duas mãos"
+    ],
+    "alcance": {
+      "normal": 24,
+      "longo": 98
+    },
+    "pesoKg": 1,
+    "custo": "25po"
+  },
+  {
+    "nome": "Besta leve",
+    "categoria": "simples-distancia",
+    "dano": "1d8",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "recarga",
+      "duas mãos"
+    ],
+    "alcance": {
+      "normal": 24,
+      "longo": 98
+    },
+    "pesoKg": 2.5,
+    "custo": "25po"
+  },
+  {
+    "nome": "Dardo",
+    "categoria": "simples-distancia",
+    "dano": "1d4",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "acuidade",
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 0.1,
+    "custo": "5pc"
+  },
+  {
+    "nome": "Funda",
+    "categoria": "simples-distancia",
+    "dano": "1d4",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "munição"
+    ],
+    "alcance": {
+      "normal": 9,
+      "longo": 36
+    },
+    "pesoKg": null,
+    "custo": "1pp"
+  },
+  {
+    "nome": "Alabarda",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d10",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "pesada",
+      "alcance",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 2.5,
+    "custo": "20po"
+  },
+  {
+    "nome": "Chicote",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d4",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "alcance",
+      "acuidade"
+    ],
+    "alcance": null,
+    "pesoKg": 1.5,
+    "custo": "2po"
+  },
+  {
+    "nome": "Cimitarra",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "acuidade",
+      "leve"
+    ],
+    "alcance": null,
+    "pesoKg": 1.5,
+    "custo": "25po"
+  },
+  {
+    "nome": "Espada curta",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "acuidade",
+      "leve"
+    ],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "10po"
+  },
+  {
+    "nome": "Espada larga",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "2d6",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "pesada",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 2.5,
+    "custo": "50po"
+  },
+  {
+    "nome": "Espada longa",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "versátil (1d10)"
+    ],
+    "alcance": null,
+    "pesoKg": 1.5,
+    "custo": "15po"
+  },
+  {
+    "nome": "Glaive",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d10",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "pesada",
+      "alcance",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 2.5,
+    "custo": "20po"
+  },
+  {
+    "nome": "Lança longa",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d12",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "alcance",
+      "especial"
+    ],
+    "alcance": null,
+    "pesoKg": 2.5,
+    "custo": "10po"
+  },
+  {
+    "nome": "Machado de guerra",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "versátil (1d10)"
+    ],
+    "alcance": null,
+    "pesoKg": 2,
+    "custo": "10po"
+  },
+  {
+    "nome": "Machado grande",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d12",
+    "tipoDano": "cortante",
+    "propriedades": [
+      "pesada",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 3,
+    "custo": "30po"
+  },
+  {
+    "nome": "Maça-estrela",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "perfurante",
+    "propriedades": [],
+    "alcance": null,
+    "pesoKg": 2,
+    "custo": "15po"
+  },
+  {
+    "nome": "Mangual",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "concussão",
+    "propriedades": [],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "10po"
+  },
+  {
+    "nome": "Marreta",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "2d6",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "pesada",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 4.5,
+    "custo": "10po"
+  },
+  {
+    "nome": "Martelo de batalha",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "concussão",
+    "propriedades": [
+      "versátil (1d10)"
+    ],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "15po"
+  },
+  {
+    "nome": "Picareta",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d10",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "pesada",
+      "alcance",
+      "duas mãos"
+    ],
+    "alcance": null,
+    "pesoKg": 8,
+    "custo": "5po"
+  },
+  {
+    "nome": "Picareta de guerra",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "perfurante",
+    "propriedades": [],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "5po"
+  },
+  {
+    "nome": "Rapieira",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d8",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "acuidade"
+    ],
+    "alcance": null,
+    "pesoKg": 1,
+    "custo": "25po"
+  },
+  {
+    "nome": "Tridente",
+    "categoria": "marcial-corpo-a-corpo",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "arremesso",
+      "versátil (1d8)"
+    ],
+    "alcance": {
+      "normal": 6,
+      "longo": 18
+    },
+    "pesoKg": 2,
+    "custo": "5po"
+  },
+  {
+    "nome": "Arco longo",
+    "categoria": "marcial-distancia",
+    "dano": "1d8",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "pesada",
+      "duas mãos"
+    ],
+    "alcance": {
+      "normal": 46,
+      "longo": 180
+    },
+    "pesoKg": 1,
+    "custo": "50po"
+  },
+  {
+    "nome": "Besta de mão",
+    "categoria": "marcial-distancia",
+    "dano": "1d6",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "leve",
+      "recarga"
+    ],
+    "alcance": {
+      "normal": 9,
+      "longo": 36
+    },
+    "pesoKg": 1.5,
+    "custo": "75po"
+  },
+  {
+    "nome": "Besta pesada",
+    "categoria": "marcial-distancia",
+    "dano": "1d10",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "pesada",
+      "recarga",
+      "duas mãos"
+    ],
+    "alcance": {
+      "normal": 30,
+      "longo": 120
+    },
+    "pesoKg": 8,
+    "custo": "50po"
+  },
+  {
+    "nome": "Rede",
+    "categoria": "marcial-distancia",
+    "dano": null,
+    "tipoDano": null,
+    "propriedades": [
+      "especial",
+      "arremesso"
+    ],
+    "alcance": {
+      "normal": 1.5,
+      "longo": 4.5
+    },
+    "pesoKg": 1.5,
+    "custo": "1po"
+  },
+  {
+    "nome": "Zarabatana",
+    "categoria": "marcial-distancia",
+    "dano": "1",
+    "tipoDano": "perfurante",
+    "propriedades": [
+      "munição",
+      "recarga"
+    ],
+    "alcance": {
+      "normal": 7.5,
+      "longo": 30
+    },
+    "pesoKg": 0.5,
+    "custo": "10po"
+  }
+];
+
+const ARMADURAS = [
+  {
+    "nome": "Armadura Acolchoada",
+    "categoria": "leve",
+    "caTexto": "11 + mod. Destreza",
+    "caBase": 11,
+    "permiteDestreza": true,
+    "tetoDestreza": null,
+    "forcaMinima": null,
+    "desvantagemFurtividade": true,
+    "pesoKg": 3.5,
+    "custo": "5po"
+  },
+  {
+    "nome": "Corselete de Couro",
+    "categoria": "leve",
+    "caTexto": "11 + mod. Destreza",
+    "caBase": 11,
+    "permiteDestreza": true,
+    "tetoDestreza": null,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 4.5,
+    "custo": "10po"
+  },
+  {
+    "nome": "Corselete de Couro Batido",
+    "categoria": "leve",
+    "caTexto": "12 + mod. Destreza",
+    "caBase": 12,
+    "permiteDestreza": true,
+    "tetoDestreza": null,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 6,
+    "custo": "45po"
+  },
+  {
+    "nome": "Gibão",
+    "categoria": "media",
+    "caTexto": "12 + mod. Destreza (máx 2)",
+    "caBase": 12,
+    "permiteDestreza": true,
+    "tetoDestreza": 2,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 5.5,
+    "custo": "10po"
+  },
+  {
+    "nome": "Camisão de Cota de Malha",
+    "categoria": "media",
+    "caTexto": "13 + mod. Destreza (máx 2)",
+    "caBase": 13,
+    "permiteDestreza": true,
+    "tetoDestreza": 2,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 9,
+    "custo": "50po"
+  },
+  {
+    "nome": "Brunea",
+    "categoria": "media",
+    "caTexto": "14 + mod. Destreza (máx 2)",
+    "caBase": 14,
+    "permiteDestreza": true,
+    "tetoDestreza": 2,
+    "forcaMinima": null,
+    "desvantagemFurtividade": true,
+    "pesoKg": 20,
+    "custo": "50po"
+  },
+  {
+    "nome": "Peitoral de Aço",
+    "categoria": "media",
+    "caTexto": "14 + mod. Destreza (máx 2)",
+    "caBase": 14,
+    "permiteDestreza": true,
+    "tetoDestreza": 2,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 9,
+    "custo": "400po"
+  },
+  {
+    "nome": "Meia Armadura",
+    "categoria": "media",
+    "caTexto": "15 + mod. Destreza (máx 2)",
+    "caBase": 15,
+    "permiteDestreza": true,
+    "tetoDestreza": 2,
+    "forcaMinima": null,
+    "desvantagemFurtividade": true,
+    "pesoKg": 18,
+    "custo": "750po"
+  },
+  {
+    "nome": "Cota de Anéis",
+    "categoria": "pesada",
+    "caTexto": "14",
+    "caBase": 14,
+    "permiteDestreza": false,
+    "tetoDestreza": 0,
+    "forcaMinima": null,
+    "desvantagemFurtividade": true,
+    "pesoKg": 18,
+    "custo": "30po"
+  },
+  {
+    "nome": "Cota de Malha",
+    "categoria": "pesada",
+    "caTexto": "16",
+    "caBase": 16,
+    "permiteDestreza": false,
+    "tetoDestreza": 0,
+    "forcaMinima": 13,
+    "desvantagemFurtividade": true,
+    "pesoKg": 25,
+    "custo": "75po"
+  },
+  {
+    "nome": "Cota de Talas",
+    "categoria": "pesada",
+    "caTexto": "17",
+    "caBase": 17,
+    "permiteDestreza": false,
+    "tetoDestreza": 0,
+    "forcaMinima": 15,
+    "desvantagemFurtividade": true,
+    "pesoKg": 27,
+    "custo": "200po"
+  },
+  {
+    "nome": "Armadura de Placas",
+    "categoria": "pesada",
+    "caTexto": "18",
+    "caBase": 18,
+    "permiteDestreza": false,
+    "tetoDestreza": 0,
+    "forcaMinima": 15,
+    "desvantagemFurtividade": true,
+    "pesoKg": 29,
+    "custo": "1500po"
+  },
+  {
+    "nome": "Escudo",
+    "categoria": "escudo",
+    "caTexto": "+2 (somado à CA base)",
+    "caBase": 0,
+    "permiteDestreza": false,
+    "tetoDestreza": 0,
+    "forcaMinima": null,
+    "desvantagemFurtividade": false,
+    "pesoKg": 3,
+    "custo": "10po"
+  }
+];
+
+const CONDICOES = [
+  {
+    "nome": "Agarrado",
+    "efeito": "O deslocamento da criatura se torna 0 e ela não se beneficia de bônus de deslocamento. A condição termina se quem agarrou ficar incapacitado, ou se um efeito remover a criatura agarrada para fora do alcance de quem a agarrou."
+  },
+  {
+    "nome": "Amedrontado",
+    "efeito": "Enquanto a fonte do seu medo estiver na linha de visão, a criatura sofre desvantagem em testes de atributo e jogadas de ataque, e não pode se mover voluntariamente para mais perto dessa fonte."
+  },
+  {
+    "nome": "Atordoado",
+    "efeito": "A criatura fica incapacitada, não pode se mover e só fala hesitantemente. Falha automaticamente em testes de resistência de Força e Destreza. Jogadas de ataque contra ela têm vantagem."
+  },
+  {
+    "nome": "Cego",
+    "efeito": "Falha automaticamente em qualquer teste de atributo que dependa de visão. Jogadas de ataque contra a criatura têm vantagem, e os ataques dela sofrem desvantagem."
+  },
+  {
+    "nome": "Derrubado",
+    "efeito": "A única forma de se mover é rastejando, a menos que se levante (o que encerra a condição). Sofre desvantagem nas próprias jogadas de ataque. Um ataque contra ela tem vantagem se o atacante estiver a até 1,5m; de qualquer outra distância, o ataque sofre desvantagem."
+  },
+  {
+    "nome": "Enfeitiçado",
+    "efeito": "Não pode atacar quem a enfeitiçou nem alvejá-lo com habilidades nocivas ou efeitos mágicos. Quem a enfeitiçou tem vantagem em testes de atributo para interagir socialmente com ela."
+  },
+  {
+    "nome": "Envenenado",
+    "efeito": "Sofre desvantagem em jogadas de ataque e testes de atributo."
+  },
+  {
+    "nome": "Impedido",
+    "efeito": "O deslocamento se torna 0 e não se beneficia de bônus de deslocamento. Jogadas de ataque contra a criatura têm vantagem, e os ataques dela sofrem desvantagem. Sofre desvantagem em testes de resistência de Destreza."
+  },
+  {
+    "nome": "Incapacitado",
+    "efeito": "Não pode realizar ações nem reações."
+  },
+  {
+    "nome": "Inconsciente",
+    "efeito": "Está incapacitada, não pode se mover ou falar, e não percebe o ambiente ao redor. Larga tudo que segurava e fica derrubada. Falha automaticamente em testes de resistência de Força ou Destreza. Ataques contra ela têm vantagem, e qualquer acerto é um sucesso decisivo (crítico) se o atacante estiver a até 1,5m dela."
+  },
+  {
+    "nome": "Invisível",
+    "efeito": "Não pode ser vista sem magia ou sentido especial (para se esconder, é tratada como estando em escuridão total); barulhos ou rastros ainda podem denunciar sua posição. Ataques contra ela sofrem desvantagem, e os ataques dela têm vantagem."
+  },
+  {
+    "nome": "Paralisado",
+    "efeito": "Está incapacitada, não pode se mover nem falar. Falha automaticamente em testes de resistência de Força e Destreza. Ataques contra ela têm vantagem, e qualquer acerto é um sucesso decisivo (crítico) se o atacante estiver a até 1,5m dela."
+  },
+  {
+    "nome": "Petrificado",
+    "efeito": "A criatura (e itens não mágicos que carrega) vira uma substância sólida, geralmente pedra; seu peso multiplica por 10 e ela para de envelhecer. Fica incapacitada, não se move, não fala e não percebe o ambiente. Falha automaticamente em testes de resistência de Força e Destreza. Ataques contra ela têm vantagem. Tem resistência a todo tipo de dano e é imune a veneno e doença (efeitos já presentes ficam apenas suspensos, não curados)."
+  },
+  {
+    "nome": "Surdo",
+    "efeito": "Falha automaticamente em qualquer teste de atributo que dependa de audição."
+  },
+  {
+    "nome": "Exaustão",
+    "efeito": "Medida em 6 níveis cumulativos (cada nível soma os efeitos dos anteriores): 1 - desvantagem em testes de atributo; 2 - deslocamento reduzido pela metade; 3 - desvantagem em ataques e testes de resistência; 4 - PV máximos reduzidos pela metade; 5 - deslocamento reduzido a 0; 6 - morte. Terminar um descanso prolongado com água e comida reduz a exaustão em 1 nível; se o nível cair abaixo de 1, todos os efeitos desaparecem."
+  }
+];
+
+const REGRAS_COMBATE = [
+  {
+    "regra": "Ordem de Iniciativa",
+    "efeito": "No início do combate, cada participante faz um teste de Destreza (d20 + mod. Destreza). O Mestre ordena todos do maior para o menor resultado; essa é a ordem em que cada um age a cada rodada (uma rodada = 6 segundos), e ela se mantém igual em todas as rodadas seguintes. Empates: o Mestre decide a ordem entre os que ele controla, os jogadores decidem entre si; entre monstro e jogador, o Mestre decide (ou pode pedir um d20 de desempate)."
+  },
+  {
+    "regra": "Surpresa",
+    "efeito": "Se um lado não percebe a ameaça no início do combate, compara-se o teste de Destreza (Furtividade) de quem se esconde com a Sabedoria (Percepção) passiva dos oponentes. Quem não percebe fica surpreso: não pode se mover nem agir no primeiro turno e não pode usar reação até esse turno terminar."
+  },
+  {
+    "regra": "Realizando um Ataque",
+    "efeito": "Jogada de ataque: d20 + mod. de atributo (Força para corpo a corpo, Destreza para à distância, exceto propriedades Acuidade/Arremesso) + bônus de proficiência (se proficiente na arma), comparado à CA do alvo — igual ou maior acerta. Rolar 20 natural é sempre acerto e conta como acerto crítico (role todos os dados de dano em dobro, depois some os modificadores uma vez). Rolar 1 natural é sempre erro, independente de modificadores."
+  },
+  {
+    "regra": "Ação: Atacar",
+    "efeito": "Realiza um ataque corpo a corpo ou à distância; algumas características de classe (como Ataque Adicional) permitem mais de um ataque nessa mesma ação."
+  },
+  {
+    "regra": "Ação: Conjurar Magia",
+    "efeito": "Lança uma magia cujo tempo de conjuração seja 1 ação, usando essa ação do turno para isso."
+  },
+  {
+    "regra": "Ação: Correr",
+    "efeito": "Concede deslocamento extra no turno atual igual ao deslocamento máximo do personagem (dobra o quanto ele pode se mover)."
+  },
+  {
+    "regra": "Ação: Desengajar",
+    "efeito": "O movimento do personagem pelo resto do turno não provoca ataques de oportunidade."
+  },
+  {
+    "regra": "Ação: Ajudar",
+    "efeito": "Concede vantagem no próximo teste de atributo de um aliado para completar uma tarefa (se ele agir antes do início do seu próximo turno), ou dá vantagem no primeiro ataque de um aliado contra um alvo a até 1,5m do personagem, antes do início do seu próximo turno."
+  },
+  {
+    "regra": "Ação: Esconder-se",
+    "efeito": "Faz um teste de Destreza (Furtividade) para tentar se esconder; se bem-sucedido, ganha os benefícios de atacar um alvo que não pode vê-lo (vantagem nos ataques, e ataques contra ele têm desvantagem até ser notado)."
+  },
+  {
+    "regra": "Ação: Preparar",
+    "efeito": "Escolhe um gatilho perceptível e uma ação (ou movimento) para realizar em reação a ele, ainda nesta rodada; quando o gatilho ocorre, o jogador pode reagir imediatamente ou ignorar. Preparar uma magia exige tempo de conjuração de 1 ação e mantém concentração até o gatilho disparar."
+  },
+  {
+    "regra": "Ação: Usar um Objeto",
+    "efeito": "Usada quando interagir com um objeto exige atenção especial (além da interação gratuita já permitida por turno) ou quando o personagem quer interagir com mais de um objeto no turno."
+  },
+  {
+    "regra": "Ação: Esquivar",
+    "efeito": "Até o início do próximo turno do personagem, qualquer ataque contra ele sofre desvantagem (se ele puder ver o atacante), e ele tem vantagem em testes de resistência de Destreza; perde o benefício se ficar incapacitado ou se o deslocamento cair a 0."
+  },
+  {
+    "regra": "Ação: Procurar",
+    "efeito": "Foca a atenção em encontrar algo, geralmente via teste de Sabedoria (Percepção) ou Inteligência (Investigação), a critério do Mestre."
+  },
+  {
+    "regra": "Ação Adicional",
+    "efeito": "Ação extra que só existe quando uma característica de classe, magia ou habilidade específica diz explicitamente que o personagem pode realizá-la como ação adicional (ex.: Ação Astuta do ladino). Sem essa permissão, não há ação adicional disponível; só é permitida uma ação adicional por turno."
+  },
+  {
+    "regra": "Reação",
+    "efeito": "Ação instantânea em resposta a um gatilho específico, que pode ocorrer no turno do próprio personagem ou no de outra criatura (o exemplo mais comum é o ataque de oportunidade). Só é permitida uma reação entre o início de um turno próprio e o início do seguinte; usar a reação impede realizar outra até o início do próximo turno."
+  },
+  {
+    "regra": "Movimento no Turno",
+    "efeito": "No seu turno, o personagem pode se mover até seu deslocamento máximo e realizar uma ação, na ordem que preferir, podendo quebrar o movimento antes e depois da ação (e até entre múltiplos ataques de uma mesma ação de Atacar). Terreno difícil custa 1,5m extra a cada 1,5m percorrido. Levantar-se depois de derrubado custa metade do deslocamento; deitar-se não custa nada."
+  },
+  {
+    "regra": "Cobertura Metade",
+    "efeito": "Quando um obstáculo bloqueia ao menos metade do corpo do alvo, ele ganha +2 de bônus na CA e em testes de resistência de Destreza."
+  },
+  {
+    "regra": "Cobertura Três-Quartos",
+    "efeito": "Quando um obstáculo cobre ao menos três quartos do corpo do alvo, ele ganha +5 de bônus na CA e em testes de resistência de Destreza."
+  },
+  {
+    "regra": "Cobertura Total",
+    "efeito": "Quando o alvo está totalmente protegido por um obstáculo, ele não pode ser alvo direto de um ataque ou magia (só de efeitos de área que o alcancem). Coberturas não se somam — vale apenas o maior grau aplicável."
+  },
+  {
+    "regra": "Pontos de Vida e Dano",
+    "efeito": "O dano sofrido é subtraído dos pontos de vida atuais e não afeta as capacidades da criatura até ela chegar a 0. Um sucesso decisivo (crítico, 20 natural) rola todos os dados de dano do ataque em dobro antes de somar os modificadores."
+  },
+  {
+    "regra": "Caindo a 0 Pontos de Vida",
+    "efeito": "Se o dano excedente (o que sobrou além de zerar os PV) for igual ou maior que os PV máximos do personagem, ele morre instantaneamente (morte massiva). Caso contrário, ele cai inconsciente."
+  },
+  {
+    "regra": "Testes de Resistência contra a Morte",
+    "efeito": "A cada turno começado com 0 PV, o jogador rola 1d20 sem modificadores: 10 ou mais é sucesso, menos que 10 é fracasso. No 3º sucesso o personagem se estabiliza; no 3º fracasso ele morre (sucessos/fracassos não precisam ser consecutivos, zeram ao recuperar PV ou estabilizar). Rolar 1 natural conta como dois fracassos; rolar 20 natural recupera 1 ponto de vida (o personagem volta a consciência). Sofrer qualquer dano com 0 PV causa um fracasso automático (dois se for dano de sucesso decisivo); se esse dano igualar ou exceder os PV máximos, morte instantânea."
+  },
+  {
+    "regra": "Estabilizando uma Criatura",
+    "efeito": "Uma ação e um teste de Sabedoria (Medicina) CD 10 estabilizam uma criatura inconsciente a 0 PV, que passa a não precisar mais fazer testes de resistência contra a morte (mas continua inconsciente); voltar a sofrer dano quebra a estabilização. Uma criatura estável não curada recupera 1 PV após 1d4 horas."
+  },
+  {
+    "regra": "Cura",
+    "efeito": "Pontos de vida recuperados somam-se aos PV atuais sem exceder o máximo; excedente é perdido. Uma criatura morta não recupera PV por cura comum, apenas por magia que restaure a vida."
+  },
+  {
+    "regra": "Combate Corpo a Corpo",
+    "efeito": "Ataca um alvo dentro do alcance da arma ou do corpo (a maioria das criaturas tem alcance de 1,5m). Usa o modificador de Força, exceto com a propriedade Acuidade, que permite escolher Força ou Destreza."
+  },
+  {
+    "regra": "Combate à Distância",
+    "efeito": "Ataca um alvo dentro do alcance da arma. Armas com dois alcances (normal/longo) sofrem desvantagem no ataque além do alcance normal, e não podem atacar além do alcance longo. Usa o modificador de Destreza, exceto propriedades Acuidade/Arremesso. Atacar à distância enquanto uma criatura hostil que enxerga o personagem e não está incapacitada está a até 1,5m dele causa desvantagem na jogada."
+  },
+  {
+    "regra": "Ataque de Oportunidade",
+    "efeito": "É uma reação: quando uma criatura visível sai do alcance do personagem sem usar a ação Desengajar (e sem ser deslocada por efeito externo ou teletransporte), o personagem pode usar sua reação para fazer um ataque corpo a corpo contra ela, interrompendo o movimento um instante antes de sair do alcance."
+  }
+];
+
+const CONJURACAO_REGRA = {
+  "espacosDeMagia": {
+    "regraGeral": "Cada conjurador tem um número limitado de espaços de magia por nível, que se recuperam num descanso prolongado. A tabela de quantos espaços de cada nível o personagem tem por nível de personagem é específica de cada classe - fica para os dados de cada classe, não está nesta fatia.",
+    "gastoDeEspaco": "Ao lançar uma magia, gasta-se um espaço de magia de nível igual ou maior ao nível da magia. Lançar em espaço de nível superior geralmente torna o efeito mais forte (magia 'sobe' para o nível do espaço usado)."
+  },
+  "cdResistencia": "8 + bônus de proficiência + modificador do atributo de conjuração",
+  "bonusAtaque": "bônus de proficiência + modificador do atributo de conjuração",
+  "conhecidasVsPreparadas": "Algumas classes têm uma lista fixa e limitada de magias conhecidas que ficam sempre disponíveis; outras (como clérigo e mago) preparam um conjunto de magias entre um descanso e outro, escolhidas de uma lista maior de magias disponíveis à classe. O processo exato varia por classe (fora do escopo desta fatia).",
+  "truque": "Magia de nível 0. Pode ser lançada quantas vezes quiser, sem gastar espaço de magia e sem precisar ser preparada.",
+  "concentracao": "Algumas magias exigem concentração para continuarem ativas. O personagem só pode manter concentração em uma magia por vez; lançar outra magia de concentração, sofrer dano (teste de resistência de Constituição, CD = 10 ou metade do dano, o que for maior), ou ficar incapacitado/morto encerram a concentração.",
+  "componentes": {
+    "verbal": "V - exige entoar palavras; impossível se amordaçado ou em silêncio mágico.",
+    "gestual": "G - exige gesticulação; o conjurador precisa de ao menos uma mão livre.",
+    "material": "M - exige objeto(s) específico(s); pode ser substituído por bolsa de componentes ou foco arcano/símbolo sagrado, EXCETO quando o componente tem custo em peças de ouro indicado, caso em que o item específico é obrigatório (e é consumido, se a magia disser isso)."
+  },
+  "rituais": {
+    "regra": "Magias marcadas como ritual podem ser lançadas da forma normal ou como ritual. Lançar como ritual leva 10 minutos a mais que o tempo normal, mas não gasta espaço de magia (e por isso não pode ser lançada em nível superior).",
+    "requisito": "O conjurador precisa de um talento de classe que permita lançamento ritual (ex: clérigo, druida) e, normalmente, ter a magia preparada ou conhecida - exceto quando o talento da classe (como o do mago) permite ritual sem a magia estar preparada."
+  }
+};
+
+function raca(id){ return RACAS.find(r => r.id === id) || null; }
+function subraca(r, subracaId){ return r ? (r.subracas||[]).find(s => s.id === subracaId) || null : null; }
+function classe(id){ return CLASSES.find(c => c.id === id) || null; }
+function antecedente(nome){ return ANTECEDENTES.find(a => a.nome === nome) || null; }
+function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
+function arma(nome){ return ARMAS.find(a => a.nome === nome) || null; }
+function armadura(nome){ return ARMADURAS.find(a => a.nome === nome) || null; }
+
+/* --- Cálculos ------------------------------------------------------------- */
+
+// Valor final de um atributo = base + bônus racial (raça + subraça).
+function bonusRacial(p, atributoId){
+  const r = raca(p.perfil.racaId);
+  const s = subraca(r, p.perfil.subracaId);
+  let total = 0;
+  if(r) for(const b of r.bonusAtributo) if(b.atributo === atributoId) total += b.valor;
+  if(s) for(const b of s.bonusAtributo) if(b.atributo === atributoId) total += b.valor;
+  return total;
+}
+function valorAtributo(p, atributoId){ return (p.atributos[atributoId] ?? 10) + bonusRacial(p, atributoId); }
+function modFinal(p, atributoId){ return modAtributo(valorAtributo(p, atributoId)); }
+
+function nivel(p){ return Math.max(1, Math.min(20, p.nivel || 1)); }
+function prof(p){ return bonusProficiencia(nivel(p)); }
+
+function dadoDeVidaNumero(dado){ return Number(String(dado||'d8').replace(/\D/g,'')) || 8; }
+function pvMaximoSugerido(p){
+  const c = classe(p.perfil.classeId);
+  if(!c) return 8 + modFinal(p,'constituicao');
+  const dado = dadoDeVidaNumero(c.dadoDeVida);
+  const mediaPorNivel = Math.floor(dado/2) + 1; // média oficial do dado (arredondada pra cima)
+  const primeiroNivel = dado + modFinal(p,'constituicao');
+  const demaisNiveis = (nivel(p) - 1) * (mediaPorNivel + modFinal(p,'constituicao'));
+  return Math.max(1, primeiroNivel + demaisNiveis);
+}
+function pvMaximo(p){ return p.atual.pvMaximoManual ?? pvMaximoSugerido(p); }
+function pvAtual(p){ return Math.max(0, Math.min(pvMaximo(p), p.atual.pv ?? pvMaximo(p))); }
+
+function ehProficienteArma(p, armaObj){
+  const c = classe(p.perfil.classeId);
+  if(!c || !armaObj) return false;
+  const geral = armaObj.categoria.startsWith('simples') ? 'Simples' : 'Marciais';
+  return c.proficienciaArmas.includes(geral);
+}
+function modAtaqueArma(p, armaObj){
+  if(!armaObj) return 0;
+  const distancia = armaObj.categoria.endsWith('distancia');
+  const acuidade = (armaObj.propriedades||[]).includes('acuidade');
+  const modFor = modFinal(p,'forca'), modDes = modFinal(p,'destreza');
+  const modBase = distancia ? modDes : (acuidade ? Math.max(modFor, modDes) : modFor);
+  return modBase + (ehProficienteArma(p, armaObj) ? prof(p) : 0);
+}
+function modDanoArma(p, armaObj){
+  if(!armaObj) return 0;
+  const distancia = armaObj.categoria.endsWith('distancia');
+  const acuidade = (armaObj.propriedades||[]).includes('acuidade');
+  const modFor = modFinal(p,'forca'), modDes = modFinal(p,'destreza');
+  return distancia ? modDes : (acuidade ? Math.max(modFor, modDes) : modFor);
+}
+
+// CA base sem armadura: 10 + Destreza. Com armadura, a categoria decide o
+// teto de Destreza que entra na conta (leve: sem teto; média: até +2;
+// pesada: não soma Destreza) — mesma regra do Apêndice de Equipamento.
+function caBase(p){
+  const arm = armadura(p.equipamento.armaduraId);
+  const modDes = modFinal(p,'destreza');
+  let base;
+  if(!arm){ base = 10 + modDes; }
+  else if(!arm.permiteDestreza){ base = arm.caBase; } // pesada: sem bônus de Destreza
+  else if(arm.tetoDestreza != null){ base = arm.caBase + Math.min(arm.tetoDestreza, modDes); } // média: teto
+  else { base = arm.caBase + modDes; } // leve: sem teto
+  if(p.equipamento.escudo) base += 2;
+  return base;
+}
+function ca(p){ return p.atual.caManual ?? caBase(p); }
+
+function iniciativa(p){ return modFinal(p,'destreza'); }
+function percepcaoPassiva(p){ return 10 + totalPericia(p, 'percepcao'); }
+
+function ehSalvamentoProficiente(p, atributoId){
+  const c = classe(p.perfil.classeId);
+  return !!(c && c.salvamentosProficientes.includes(atributoId));
+}
+function totalSalvamento(p, atributoId){
+  return modFinal(p, atributoId) + (ehSalvamentoProficiente(p, atributoId) ? prof(p) : 0);
+}
+
+// Perícias concedidas automaticamente pelo Antecedente entram sempre —
+// o jogador só escolhe as da Classe, até o limite dela (periciasDisponiveis.escolha).
+function periciasDoAntecedente(p){
+  const a = antecedente(p.perfil.antecedente);
+  return a ? a.periciasConcedidas : [];
+}
+function ehPericiaProficiente(p, periciaId){
+  return p.periciasProficientes.includes(periciaId) || periciasDoAntecedente(p).some(nome => {
+    const per = PERICIAS.find(x => x.nome === nome);
+    return per && per.id === periciaId;
+  });
+}
+function totalPericia(p, periciaId){
+  const per = pericia(periciaId);
+  if(!per) return 0;
+  return modFinal(p, per.atributo) + (ehPericiaProficiente(p, periciaId) ? prof(p) : 0);
+}
+function limitePericiasClasse(p){
+  const c = classe(p.perfil.classeId);
+  return c ? c.periciasDisponiveis.escolha : 0;
+}
+
+/* --- Ficha em branco -------------------------------------------------- */
+
+function novoPersonagem(nome){
+  return {
+    id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
+    perfil: {
+      nome: nome || 'Novo Aventureiro',
+      racaId: '', subracaId: '', classeId: '', antecedente: '',
+      aparencia: '', historia: '',
+    },
+    nivel: 1,
+    atributos: {forca:10, destreza:10, constituicao:10, inteligencia:10, sabedoria:10, carisma:10},
+    periciasProficientes: [],
+    // atual: overrides manuais (Recalcular apaga o override e volta pra
+    // fórmula) e o que realmente muda durante o jogo (PV corrente, PV temp).
+    atual: {pv: null, pvTemp: 0, pvMaximoManual: null, caManual: null},
+    morte: {sucessos: 0, falhas: 0},
+    equipamento: {
+      armaduraId: '', escudo: false,
+      armasEquipadas: [], // [{id, nome}] — nome referencia ARMAS ou é livre
+      mochila: [], // [{id, nome, quantidade}]
+      po: 0,
+    },
+    conjuracao: {
+      atributo: '', // preenchido pela classe ao escolher
+      truques: [], magiasPreparadas: [], // [{id, nome, nivel}]
+      espacosGastos: {}, // {"1": 0, "2": 0, ...}
+    },
+    condicoesAtivas: [],
+    inspiracao: false,
+    notas: '',
+  };
+}
+
+/* --- Armazenamento -----------------------------------------------------
+
+   Presente na URL (?id=...), a ficha vive na conta do Hub em vez do
+   navegador — mesmo mecanismo do Fabula Ultima, SAO, Kaizoku no Sho e
+   Thrylikí Chelóna (decisão #40).
+------------------------------------------------------------------------- */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'dnd5e_fichas';
+let falhouAoSalvar = false;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function carregar(){
+  try{
+    const cru = localStorage.getItem(CHAVE);
+    return cru ? JSON.parse(cru) : [];
+  }catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    // Resumo genérico pro Hub de Mestre ler sem saber a fórmula deste
+    // sistema (decisão #46) — espelhado a cada salvamento.
+    p.resumoVida = {atual: pvAtual(p), maxima: pvMaximo(p), rotulo: 'PV'};
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({dados: p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
+    if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+  }
+}
+
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null,
+  aba: 'status',
+  carregandoHub: !!MODO_HUB,
+  erroHub: null,
+  ehDono: false,
+  compartilhado: false,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
+
+const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p];
+    estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false;
+    render();
+  }
+}
+
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor;
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({compartilhado: valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+function mudar(mudanca){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  salvar(); render();
+}
+
+let debounce = null;
+function mudarSemRedesenhar(mudanca, elemento){
+  if(MODO_HUB && !estado.ehDono) return;
+  const p = atual(); if(!p) return;
+  mudanca(p);
+  p.atualizadoEm = Date.now();
+  clearTimeout(debounce);
+  debounce = setTimeout(() => {
+    salvar();
+    if(elemento && elemento.dataset.perfil === 'nome') desenharBarra();
+  }, 300);
+}
+
+/* --- Desenho da tela ---------------------------------------------------- */
+
+const ABAS = [
+  {id:'status',      nome:'Status'},
+  {id:'pericias',    nome:'Perícias'},
+  {id:'combate',     nome:'Combate'},
+  {id:'conjuracao',  nome:'Conjuração'},
+  {id:'equipamento', nome:'Equipamento'},
+  {id:'notas',       nome:'Notas'},
+];
+
+let ultimaChaveTela = null;
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){
+    app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`;
+    return;
+  }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio">
+      <h2>Ficha não encontrada</h2>
+      <p class="mini">Ela pode ter sido apagada, ou não é sua.
+      <a href="/fichas" style="color:var(--ambar)">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+
+  const p = atual();
+  if(!p){
+    app.innerHTML = `<div class="vazio">
+      <h2>Nenhum personagem ainda</h2>
+      <p class="mini">Clique em "+ Novo" para criar a primeira ficha,
+      ou importe um arquivo que você tenha exportado antes.</p></div>`;
+    return;
+  }
+
+  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de
+       <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar
+      ? (MODO_HUB
+        ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong>
+           Confira sua internet — se cair, exporte para não perder o que você
+           preencheu.</div>`
+        : `<div class="aviso"><strong>Não consegui salvar no navegador.</strong>
+           Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
+           perder o que você preencheu.</div>`) : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a =>
+        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+      ).join('') + `</div>`
+    + painelDerivados(p)
+    + ({status:abaStatus, pericias:abaPericias, combate:abaCombate, conjuracao:abaConjuracao, equipamento:abaEquipamento, notas:abaNotas}[estado.aba])(p);
+
+  const chaveTela = `aba:${estado.aba}`;
+  app.classList.remove('entra');
+  if(chaveTela !== ultimaChaveTela){
+    void app.offsetWidth;
+    app.classList.add('entra');
+  }
+  ultimaChaveTela = chaveTela;
+
+  ligarEventos();
+
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+      .forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+
+    const labelCompartilhar = document.getElementById('labelCompartilhar');
+    labelCompartilhar.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btImportar').hidden = !estado.ehDono;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.fichas.length
+    ? estado.fichas.map(f =>
+        `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`
+      ).join('')
+    : `<option>— sem personagens —</option>`;
+}
+
+function painelDerivados(p){
+  const pv = pvAtual(p);
+  const max = pvMaximo(p);
+  const emRisco = pv <= Math.floor(max/2) && pv > 0;
+  const morto = pv <= 0;
+  return `<div class="grade g5" style="margin-bottom:14px">
+    <div class="derivado ${emRisco||morto?'risco':''}">
+      <div class="rot">Pontos de Vida</div>
+      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${max}</span></div>
+      <div class="obs">${p.atual.pvTemp ? `+${p.atual.pvTemp} temp` : (morto ? 'inconsciente' : 'atual/máximo')}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Classe de Armadura</div>
+      <div class="val">${ca(p)}</div>
+      <div class="obs">${p.atual.caManual!=null ? 'manual' : 'calculada'}</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Iniciativa</div>
+      <div class="val">${fmtMod(iniciativa(p))}</div>
+      <div class="obs">Destreza</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Percepção Passiva</div>
+      <div class="val">${percepcaoPassiva(p)}</div>
+      <div class="obs">10 + Percepção</div>
+    </div>
+    <div class="derivado">
+      <div class="rot">Nível</div>
+      <div class="val">${nivel(p)}</div>
+      <div class="obs">bônus prof. ${fmtMod(prof(p))}</div>
+    </div>
+  </div>`;
+}
+
+function campo(rotulo, chave, valor, tipo){
+  return `<div><label for="c-${chave}">${rotulo}</label>
+    <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+function abaStatus(p){
+  const r = raca(p.perfil.racaId);
+  const s = subraca(r, p.perfil.subracaId);
+  const c = classe(p.perfil.classeId);
+  const ant = antecedente(p.perfil.antecedente);
+  const todosTracos = [...(r ? r.tracos : []), ...(s ? s.tracosExtras : [])];
+
+  const caracteristicas = [];
+  if(c) for(let n = 1; n <= nivel(p); n++){
+    const lista = c.caracteristicasPorNivel[String(n)];
+    if(lista) for(const item of lista) caracteristicas.push({nivel:n, ...item});
+  }
+
+  return `<div class="cartao">
+    <div class="grade g3">
+      ${campo('Nome', 'nome', p.perfil.nome)}
+      <div><label for="c-nivel">Nível</label>
+        <input id="c-nivel" type="number" min="1" max="20" value="${nivel(p)}"></div>
+      <div><label for="c-po">Peças de Ouro</label>
+        <input id="c-po" type="number" min="0" value="${p.equipamento.po}"></div>
+    </div>
+    <div class="grade g3" style="margin-top:14px">
+      <div><label for="c-raca">Raça</label>
+        <select id="c-raca">
+          <option value="">— escolher —</option>
+          ${RACAS.map(x => `<option value="${x.id}" ${x.id===p.perfil.racaId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+        </select></div>
+      <div><label for="c-subraca">Sub-raça</label>
+        <select id="c-subraca" ${!r || !r.subracas.length ? 'disabled' : ''}>
+          <option value="">${r && r.subracas.length ? '— escolher —' : '— não se aplica —'}</option>
+          ${r ? r.subracas.map(x => `<option value="${x.id}" ${x.id===p.perfil.subracaId?'selected':''}>${esc(x.nome)}</option>`).join('') : ''}
+        </select></div>
+      <div><label for="c-classe">Classe</label>
+        <select id="c-classe">
+          <option value="">— escolher —</option>
+          ${CLASSES.map(x => `<option value="${x.id}" ${x.id===p.perfil.classeId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+        </select></div>
+    </div>
+    <div style="margin-top:14px">
+      <label for="c-antecedente">Antecedente</label>
+      <select id="c-antecedente">
+        <option value="">— escolher —</option>
+        ${ANTECEDENTES.map(x => `<option value="${esc(x.nome)}" ${x.nome===p.perfil.antecedente?'selected':''}>${esc(x.nome)}</option>`).join('')}
+      </select>
+    </div>
+    ${!c ? '' : `<p class="mini" style="margin-top:10px">Dado de vida <strong>${esc(c.dadoDeVida)}</strong> · perícias da classe: escolha ${c.periciasDisponiveis.escolha} · proficiência em armaduras: ${c.proficienciaArmaduras.length?esc(c.proficienciaArmaduras.join(', ')):'nenhuma'} · armas: ${esc(c.proficienciaArmas.join(', '))}</p>`}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Atributos</h2>
+    <div class="grade g6">
+      ${ATRIBUTOS.map(a => {
+        const base = p.atributos[a.id] ?? 10;
+        const final = valorAtributo(p, a.id);
+        const mod = modFinal(p, a.id);
+        const bonusR = bonusRacial(p, a.id);
+        return `<div>
+          <label for="c-atr-${a.id}">${a.nome}</label>
+          <input id="c-atr-${a.id}" data-atributo="${a.id}" type="number" min="1" max="30" value="${base}">
+          <div class="mini" style="text-align:center;margin-top:4px">
+            ${bonusR ? `${final} (+${bonusR} racial)` : `${final}`} · <strong style="color:var(--ambar-forte)">${fmtMod(mod)}</strong>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <p class="mini" style="margin-top:10px">Array padrão sugerido pro 1º nível: ${GERACAO_ATRIBUTOS.arrayPadrao.join(', ')} (distribua entre os 6 atributos antes do bônus racial).</p>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Testes de Resistência</h2>
+    <table class="tabela">
+      <thead><tr><th>Atributo</th><th>Proficiente</th><th>Total</th></tr></thead>
+      <tbody>
+        ${ATRIBUTOS.map(a => `<tr>
+          <td>${a.nome}</td>
+          <td>${ehSalvamentoProficiente(p, a.id) ? 'Sim (classe)' : '—'}</td>
+          <td><strong style="color:var(--ambar-forte)">${fmtMod(totalSalvamento(p, a.id))}</strong></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Pontos de Vida e Classe de Armadura</h2>
+    <div class="grade g4">
+      <div><label for="c-pv-max">PV Máximo</label>
+        <input id="c-pv-max" type="number" min="1" value="${pvMaximo(p)}">
+        <button id="btPvRecalcular" style="margin-top:6px;width:100%">Recalcular</button></div>
+      <div><label for="c-pv-atual">PV Atual</label>
+        <input id="c-pv-atual" type="number" min="0" value="${pvAtual(p)}"></div>
+      <div><label for="c-pv-temp">PV Temporário</label>
+        <input id="c-pv-temp" type="number" min="0" value="${p.atual.pvTemp||0}"></div>
+      <div><label for="c-ca-manual">CA (em branco = calculada)</label>
+        <input id="c-ca-manual" type="number" value="${p.atual.caManual ?? ''}">
+        <button id="btCaRecalcular" style="margin-top:6px;width:100%">Usar calculada</button></div>
+    </div>
+    <p class="mini" style="margin-top:8px">PV sugerido: ${esc(c ? c.pvNivel1 : '')}${c ? ` no 1º nível, depois ${esc(c.pvNivelSeguinte)}` : ''}. "Recalcular" usa a média oficial do dado de vida — pra rolar de verdade, ajuste o número à mão.</p>
+  </div>
+
+  ${!ant ? '' : `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:8px">Antecedente: ${esc(ant.nome)}</h2>
+    <p class="mini">Perícias concedidas: ${esc(ant.periciasConcedidas.join(', '))}${ant.ferramentasOuIdiomas.length ? ` · ${esc(ant.ferramentasOuIdiomas.join(', '))}` : ''}</p>
+    <p class="mini" style="margin-top:6px"><strong>${esc(ant.caracteristica.nome)}:</strong> ${esc(ant.caracteristica.efeito)}</p>
+  </div>`}
+
+  ${!todosTracos.length ? '' : `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:8px">Traços Raciais</h2>
+    ${todosTracos.map(t => `<p class="mini" style="margin-bottom:6px"><strong style="color:var(--texto)">${esc(t.nome)}:</strong> ${esc(t.efeito)}</p>`).join('')}
+    <p class="mini" style="margin-top:4px">Deslocamento: ${r ? r.deslocamento : 9}m · Tamanho: ${r ? esc(r.tamanho) : 'Médio'} · Idiomas: ${r ? esc(r.idiomas.join(', ')) : '—'}</p>
+  </div>`}
+
+  ${!caracteristicas.length ? '' : `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:8px">Características de Classe</h2>
+    ${caracteristicas.map(t => `<p class="mini" style="margin-bottom:6px"><strong style="color:var(--texto)">${esc(t.nome)}</strong> <span style="color:var(--suave)">(nível ${t.nivel})</span>: ${esc(t.efeito)}</p>`).join('')}
+  </div>`}`;
+}
+
+function abaPericias(p){
+  const c = classe(p.perfil.classeId);
+  const limite = limitePericiasClasse(p);
+  const escolhidas = p.periciasProficientes.length;
+  return `<div class="cartao">
+    <p class="mini" style="margin-bottom:10px">
+      Perícias em <strong style="color:var(--ambar-forte)">âmbar</strong> vêm do antecedente (automáticas).
+      A classe permite escolher ${limite} perícia(s) da lista dela — ${escolhidas} de ${limite} escolhidas.
+    </p>
+    ${PERICIAS.map(per => {
+      const doAntecedente = periciasDoAntecedente(p).includes(per.nome);
+      const marcada = ehPericiaProficiente(p, per.id);
+      const podeMarcar = c && c.periciasDisponiveis.lista.includes(per.nome);
+      const travada = doAntecedente || (!podeMarcar && !marcada) || (!marcada && escolhidas >= limite);
+      return `<div class="pericia-linha">
+        <input type="checkbox" ${marcada?'checked':''} ${doAntecedente || travada ? 'disabled' : ''} data-pericia-check="${per.id}">
+        <span class="pericia-nome" style="${doAntecedente?'color:var(--ambar-forte)':''}">${esc(per.nome)} <span class="mini">(${ATRIBUTOS.find(a=>a.id===per.atributo).nome})</span></span>
+        <span class="pericia-total">${fmtMod(totalPericia(p, per.id))}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function abaCombate(p){
+  const armasNaoEscudo = ARMADURAS.filter(a => a.categoria !== 'escudo');
+  return `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Armadura</h2>
+    <div class="grade g2">
+      <div><label for="c-armadura">Armadura equipada</label>
+        <select id="c-armadura">
+          <option value="">Sem armadura</option>
+          ${armasNaoEscudo.map(a => `<option value="${esc(a.nome)}" ${a.nome===p.equipamento.armaduraId?'selected':''}>${esc(a.nome)} (CA ${esc(a.caTexto)})</option>`).join('')}
+        </select></div>
+      <div class="linha" style="margin-top:22px">
+        <input type="checkbox" id="c-escudo" style="width:auto" ${p.equipamento.escudo?'checked':''}>
+        <label for="c-escudo" style="margin:0;text-transform:none;letter-spacing:0;font-family:inherit">Escudo equipado (+2 CA)</label>
+      </div>
+    </div>
+    <p class="mini" style="margin-top:8px">CA calculada: <strong style="color:var(--ambar-forte)">${caBase(p)}</strong>${p.atual.caManual!=null ? ` — sobrescrita à mão pra ${p.atual.caManual} na aba Status` : ''}</p>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Armas Equipadas</h2>
+    ${p.equipamento.armasEquipadas.map(item => {
+      const armaObj = arma(item.nome);
+      return `<div class="linha-lista">
+        <div class="linha">
+          <select data-arma-select="${item.id}" style="flex:1">
+            ${ARMAS.map(a => `<option value="${esc(a.nome)}" ${a.nome===item.nome?'selected':''}>${esc(a.nome)}</option>`).join('')}
+          </select>
+          <button data-arma-remover="${item.id}" class="perigo">Remover</button>
+        </div>
+        ${armaObj ? `<p class="mini" style="margin-top:8px">
+          Ataque <strong style="color:var(--ambar-forte)">${fmtMod(modAtaqueArma(p, armaObj))}</strong> ·
+          Dano <strong style="color:var(--ambar-forte)">${esc(armaObj.dano)}${fmtMod(modDanoArma(p, armaObj))}</strong> ${esc(armaObj.tipoDano||'')}
+          ${armaObj.propriedades.length ? `· ${esc(armaObj.propriedades.join(', '))}` : ''}
+          ${!ehProficienteArma(p, armaObj) ? ' · <span style="color:var(--alerta)">sem proficiência</span>' : ''}
+        </p>` : ''}
+      </div>`;
+    }).join('')}
+    <button id="btAddArma" class="destaque">+ Equipar arma</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Testes de Resistência contra a Morte</h2>
+    <p class="mini" style="margin-bottom:10px">Só importa com PV em 0 — role 1d20 sem modificadores a cada turno: 10+ é sucesso, menos é fracasso.</p>
+    <div class="grade g2">
+      <div><label for="c-morte-sucessos">Sucessos</label>
+        <input id="c-morte-sucessos" type="number" min="0" max="3" data-morte="sucessos" value="${p.morte.sucessos}"></div>
+      <div><label for="c-morte-falhas">Fracassos</label>
+        <input id="c-morte-falhas" type="number" min="0" max="3" data-morte="falhas" value="${p.morte.falhas}"></div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES.map(cnd => `<label title="${esc(cnd.efeito)}">
+        <input type="checkbox" data-condicao="${esc(cnd.nome)}" ${p.condicoesAtivas.includes(cnd.nome)?'checked':''}>
+        ${esc(cnd.nome)}
+      </label>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Referência de Combate</h2>
+    ${REGRAS_COMBATE.map(r => `<p class="mini" style="margin-bottom:8px"><strong style="color:var(--texto)">${esc(r.regra)}:</strong> ${esc(r.efeito)}</p>`).join('')}
+  </div>`;
+}
+
+function abaConjuracao(p){
+  const c = classe(p.perfil.classeId);
+  if(!c || !c.conjuracao){
+    return `<div class="vazio"><p>Esta classe não conjura magias.</p></div>`;
+  }
+  const cdCalc = 8 + prof(p) + modFinal(p, c.conjuracao.atributo);
+  const ataqueCalc = prof(p) + modFinal(p, c.conjuracao.atributo);
+  return `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Conjuração</h2>
+    <div class="grade g3">
+      <div class="derivado"><div class="rot">Atributo</div><div class="val" style="font-size:18px">${esc(ATRIBUTOS.find(a=>a.id===c.conjuracao.atributo).nome)}</div></div>
+      <div class="derivado"><div class="rot">CD de Resistência</div><div class="val">${cdCalc}</div></div>
+      <div class="derivado"><div class="rot">Bônus de Ataque</div><div class="val">${fmtMod(ataqueCalc)}</div></div>
+    </div>
+    <p class="mini" style="margin-top:10px">${esc(c.conjuracao.magiasConhecidas)}</p>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Truques Conhecidos</h2>
+    ${p.conjuracao.truques.map((t,i) => `<div style="margin-bottom:8px">
+      <input data-truque-campo="${i}" value="${esc(t)}" placeholder="nome do truque"></div>`).join('')}
+    <button id="btAddTruque">+ Adicionar truque</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Magias Preparadas</h2>
+    ${p.conjuracao.magiasPreparadas.map(m => `<div class="linha-lista">
+      <div class="linha">
+        <input data-magia-campo="${m.id}|nome" value="${esc(m.nome)}" placeholder="nome da magia" style="flex:2">
+        <input data-magia-campo="${m.id}|nivel" type="number" min="0" max="9" value="${m.nivel}" style="flex:1" title="nível da magia">
+        <button data-magia-remover="${m.id}" class="perigo">Remover</button>
+      </div>
+    </div>`).join('')}
+    <button id="btAddMagia" class="destaque">+ Adicionar magia preparada</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Espaços de Magia Gastos</h2>
+    <p class="mini" style="margin-bottom:10px">O total de espaços por nível vem da tabela de progressão da classe (fatia futura) — aqui só se acompanha quanto já foi gasto desde o último descanso prolongado.</p>
+    <div class="grade g5">
+      ${[1,2,3,4,5,6,7,8,9].map(n => `<div>
+        <label for="c-espaco-${n}">Nível ${n}</label>
+        <input id="c-espaco-${n}" type="number" min="0" data-espaco="${n}" value="${p.conjuracao.espacosGastos[n]||0}"></div>`).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Regras de Conjuração</h2>
+    <p class="mini" style="margin-bottom:8px"><strong>Truque:</strong> ${esc(CONJURACAO_REGRA.truque)}</p>
+    <p class="mini" style="margin-bottom:8px"><strong>Concentração:</strong> ${esc(CONJURACAO_REGRA.concentracao)}</p>
+    <p class="mini" style="margin-bottom:8px"><strong>Componentes:</strong> V — ${esc(CONJURACAO_REGRA.componentes.verbal)}</p>
+    <p class="mini" style="margin-bottom:8px">G — ${esc(CONJURACAO_REGRA.componentes.gestual)}</p>
+    <p class="mini" style="margin-bottom:8px">M — ${esc(CONJURACAO_REGRA.componentes.material)}</p>
+    <p class="mini"><strong>Rituais:</strong> ${esc(CONJURACAO_REGRA.rituais.regra)}</p>
+  </div>`;
+}
+
+function abaEquipamento(p){
+  return `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Mochila</h2>
+    ${p.equipamento.mochila.map(item => `<div class="linha" style="margin-bottom:8px">
+      <input data-item-campo="${item.id}|nome" value="${esc(item.nome)}" placeholder="item" style="flex:3">
+      <input data-item-campo="${item.id}|quantidade" type="number" min="0" value="${item.quantidade}" style="flex:1">
+      <button data-item-remover="${item.id}" class="perigo">Remover</button>
+    </div>`).join('')}
+    <button id="btAddItem" class="destaque">+ Adicionar item</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Catálogo de Armas</h2>
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>Dano</th><th>Propriedades</th><th>Peso</th><th>Custo</th></tr></thead>
+      <tbody>${ARMAS.map(a => `<tr>
+        <td>${esc(a.nome)}</td><td>${esc(a.dano||'—')} ${esc(a.tipoDano||'')}</td>
+        <td>${esc((a.propriedades||[]).join(', '))}</td><td>${a.pesoKg??'—'}kg</td><td>${esc(a.custo)}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Catálogo de Armaduras</h2>
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>CA</th><th>Força mín.</th><th>Furtividade</th><th>Peso</th><th>Custo</th></tr></thead>
+      <tbody>${ARMADURAS.map(a => `<tr>
+        <td>${esc(a.nome)}</td><td>${esc(a.caTexto)}</td><td>${a.forcaMinima ?? '—'}</td>
+        <td>${a.desvantagemFurtividade ? 'desvantagem' : '—'}</td><td>${a.pesoKg??'—'}kg</td><td>${esc(a.custo)}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+function abaNotas(p){
+  return `<div class="cartao">
+    <label for="c-aparencia">Aparência</label>
+    <textarea id="c-aparencia" data-perfil="aparencia" rows="3">${esc(p.perfil.aparencia)}</textarea>
+  </div>
+  <div class="cartao">
+    <label for="c-historia">História</label>
+    <textarea id="c-historia" data-perfil="historia" rows="5">${esc(p.perfil.historia)}</textarea>
+  </div>
+  <div class="cartao">
+    <div class="linha" style="margin-bottom:10px">
+      <input type="checkbox" id="c-inspiracao" style="width:auto" ${p.inspiracao?'checked':''}>
+      <label for="c-inspiracao" style="margin:0;text-transform:none;letter-spacing:0;font-family:inherit">Inspiração</label>
+    </div>
+    <label for="c-notas">Notas Livres</label>
+    <textarea id="c-notas" rows="6">${esc(p.notas)}</textarea>
+  </div>`;
+}
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b =>
+    b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  app.querySelectorAll('[data-perfil]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.perfil[el.dataset.perfil] = el.value; }, el));
+
+  app.querySelectorAll('[data-perfil-select]').forEach(el =>
+    el.onchange = () => mudar(p => { p.perfil[el.dataset.perfilSelect] = el.value; }));
+
+  const selRaca = app.querySelector('#c-raca');
+  if(selRaca) selRaca.onchange = () => mudar(p => { p.perfil.racaId = selRaca.value; p.perfil.subracaId = ''; });
+  const selSubraca = app.querySelector('#c-subraca');
+  if(selSubraca) selSubraca.onchange = () => mudar(p => { p.perfil.subracaId = selSubraca.value; });
+  const selClasse = app.querySelector('#c-classe');
+  if(selClasse) selClasse.onchange = () => mudar(p => {
+    p.perfil.classeId = selClasse.value;
+    p.periciasProficientes = [];
+    const c = classe(selClasse.value);
+    if(c && c.conjuracao) p.conjuracao.atributo = c.conjuracao.atributo;
+  });
+  const selAntecedente = app.querySelector('#c-antecedente');
+  if(selAntecedente) selAntecedente.onchange = () => mudar(p => { p.perfil.antecedente = selAntecedente.value; });
+
+  app.querySelectorAll('[data-atributo]').forEach(el =>
+    el.onchange = () => mudar(p => p.atributos[el.dataset.atributo] = Math.max(1, Math.min(30, Number(el.value) || 10))));
+
+  const numNivel = app.querySelector('#c-nivel');
+  if(numNivel) numNivel.onchange = () => mudar(p => p.nivel = Math.max(1, Math.min(20, Number(numNivel.value) || 1)));
+
+  app.querySelectorAll('[data-pericia-check]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.periciaCheck;
+      const jaTem = p.periciasProficientes.includes(id);
+      if(jaTem){ p.periciasProficientes = p.periciasProficientes.filter(x => x !== id); }
+      else if(p.periciasProficientes.length < limitePericiasClasse(p)){ p.periciasProficientes = [...p.periciasProficientes, id]; }
+    }));
+
+  const btPvRecalcular = app.querySelector('#btPvRecalcular');
+  if(btPvRecalcular) btPvRecalcular.onclick = () => mudar(p => { p.atual.pvMaximoManual = null; p.atual.pv = pvMaximoSugerido(p); });
+  const numPvMax = app.querySelector('#c-pv-max');
+  if(numPvMax) numPvMax.onchange = () => mudar(p => p.atual.pvMaximoManual = Math.max(1, Number(numPvMax.value) || 1));
+  const numPvAtual = app.querySelector('#c-pv-atual');
+  if(numPvAtual) numPvAtual.onchange = () => mudar(p => p.atual.pv = Math.max(0, Math.min(pvMaximo(p), Number(numPvAtual.value) || 0)));
+  const numPvTemp = app.querySelector('#c-pv-temp');
+  if(numPvTemp) numPvTemp.onchange = () => mudar(p => p.atual.pvTemp = Math.max(0, Number(numPvTemp.value) || 0));
+
+  const btCaRecalcular = app.querySelector('#btCaRecalcular');
+  if(btCaRecalcular) btCaRecalcular.onclick = () => mudar(p => { p.atual.caManual = null; });
+  const numCa = app.querySelector('#c-ca-manual');
+  if(numCa) numCa.onchange = () => mudar(p => p.atual.caManual = Number(numCa.value) || null);
+
+  const selArmadura = app.querySelector('#c-armadura');
+  if(selArmadura) selArmadura.onchange = () => mudar(p => p.equipamento.armaduraId = selArmadura.value);
+  const chkEscudo = app.querySelector('#c-escudo');
+  if(chkEscudo) chkEscudo.onchange = () => mudar(p => p.equipamento.escudo = chkEscudo.checked);
+
+  const btAddArma = app.querySelector('#btAddArma');
+  if(btAddArma) btAddArma.onclick = () => mudar(p => p.equipamento.armasEquipadas.push({id: uid(), nome: ARMAS[0] ? ARMAS[0].nome : ''}));
+  app.querySelectorAll('[data-arma-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const item = p.equipamento.armasEquipadas.find(a => a.id === el.dataset.armaSelect);
+      if(item) item.nome = el.value;
+    }));
+  app.querySelectorAll('[data-arma-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.equipamento.armasEquipadas = p.equipamento.armasEquipadas.filter(a => a.id !== b.dataset.armaRemover); }));
+
+  const btAddItem = app.querySelector('#btAddItem');
+  if(btAddItem) btAddItem.onclick = () => mudar(p => p.equipamento.mochila.push({id: uid(), nome:'', quantidade:1}));
+  app.querySelectorAll('[data-item-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [id, chave] = el.dataset.itemCampo.split('|');
+      const item = p.equipamento.mochila.find(i => i.id === id);
+      if(item) item[chave] = chave === 'quantidade' ? (Number(el.value)||0) : el.value;
+    }, el));
+  app.querySelectorAll('[data-item-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.equipamento.mochila = p.equipamento.mochila.filter(i => i.id !== b.dataset.itemRemover); }));
+
+  const numPo = app.querySelector('#c-po');
+  if(numPo) numPo.onchange = () => mudar(p => p.equipamento.po = Math.max(0, Number(numPo.value) || 0));
+
+  const btAddMagia = app.querySelector('#btAddMagia');
+  if(btAddMagia) btAddMagia.onclick = () => mudar(p => p.conjuracao.magiasPreparadas.push({id: uid(), nome:'', nivel:1}));
+  app.querySelectorAll('[data-magia-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [id, chave] = el.dataset.magiaCampo.split('|');
+      const m = p.conjuracao.magiasPreparadas.find(x => x.id === id);
+      if(m) m[chave] = chave === 'nivel' ? (Number(el.value)||0) : el.value;
+    }, el));
+  app.querySelectorAll('[data-magia-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.conjuracao.magiasPreparadas = p.conjuracao.magiasPreparadas.filter(m => m.id !== b.dataset.magiaRemover); }));
+  app.querySelectorAll('[data-truque-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      p.conjuracao.truques[Number(el.dataset.truqueCampo)] = el.value;
+    }, el));
+  const btAddTruque = app.querySelector('#btAddTruque');
+  if(btAddTruque) btAddTruque.onclick = () => mudar(p => p.conjuracao.truques.push(''));
+  app.querySelectorAll('[data-espaco]').forEach(el =>
+    el.onchange = () => mudar(p => { p.conjuracao.espacosGastos[el.dataset.espaco] = Math.max(0, Number(el.value)||0); }));
+
+  app.querySelectorAll('[data-condicao]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const id = el.dataset.condicao;
+      p.condicoesAtivas = el.checked ? [...p.condicoesAtivas, id] : p.condicoesAtivas.filter(c => c !== id);
+    }));
+
+  const chkInspiracao = app.querySelector('#c-inspiracao');
+  if(chkInspiracao) chkInspiracao.onchange = () => mudar(p => p.inspiracao = chkInspiracao.checked);
+
+  app.querySelectorAll('[data-morte]').forEach(el =>
+    el.onchange = () => mudar(p => { p.morte[el.dataset.morte] = Math.max(0, Math.min(3, Number(el.value)||0)); }));
+
+  const taNotas = app.querySelector('#c-notas');
+  if(taNotas) taNotas.oninput = () => mudarSemRedesenhar(p => p.notas = taNotas.value, taNotas);
+}
+
+/* --- Barra: novo / seletor / exportar / importar / excluir -------------- */
+
+document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; estado.aba = 'status'; render(); };
+document.getElementById('btNovo').onclick = () => {
+  const p = novoPersonagem();
+  estado.fichas.push(p);
+  estado.atualId = p.id;
+  estado.aba = 'status';
+  salvar(); render();
+};
+document.getElementById('btExcluir').onclick = () => {
+  const p = atual(); if(!p) return;
+  if(!confirm(`Excluir "${p.perfil.nome}"? Não tem como desfazer.`)) return;
+  estado.fichas = estado.fichas.filter(f => f.id !== p.id);
+  estado.atualId = estado.fichas[0]?.id || null;
+  salvar(); render();
+};
+document.getElementById('btExportar').onclick = () => {
+  const p = atual(); if(!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${(p.perfil.nome||'personagem').toLowerCase().replace(/[^a-z0-9]+/g,'-')}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById('btImportar').onclick = () => document.getElementById('arquivo').click();
+document.getElementById('arquivo').onchange = e => {
+  const arq = e.target.files[0]; if(!arq) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const lido = JSON.parse(leitor.result);
+      if(MODO_HUB){
+        lido.id = MODO_HUB;
+        estado.fichas = [lido];
+        estado.atualId = MODO_HUB;
+      }else{
+        lido.id = uid();
+        estado.fichas.push(lido);
+        estado.atualId = lido.id;
+      }
+      salvar(); render();
+    }catch(err){ alert('Arquivo inválido.'); console.error(err); }
+  };
+  leitor.readAsText(arq);
+  e.target.value = '';
+};
+document.getElementById('chkCompartilhar').onchange = e => alternarCompartilhado(e.target.checked);
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>
