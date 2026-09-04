@@ -1209,10 +1209,11 @@ passando.
       Nível 10 por classe. Sistema SAO ganhou pistas mais claras de que
       o Level Up mora na aba Classes. Testado com Playwright nos quatro
       sistemas; `tsc`, lint e os 208 testes automáticos continuam limpos
-- [ ] **Customização visual** (ideia registrada, não implementada) — tema/
-      cor por sistema, fonte do título, reordenar ou esconder abas,
-      layout compacto vs. espaçoso. Fica pra quando o Zé quiser puxar
-      essa fatia
+- [ ] **Customização visual nos outros três sistemas** (ideia registrada,
+      não implementada) — fonte do título, reordenar ou esconder abas,
+      layout compacto vs. espaçoso continuam em aberto pra qualquer
+      sistema. Tema/cor já saiu no Sistema do Sávio (linha abaixo); fica
+      pra quando o Zé quiser puxar o resto
 - [x] **Sistema do Sávio — chassi e ficha jogável básica** (04/09/2026) —
       decisão #71. Quinto sistema do Hub, homebrew de um amigo do Zé (a
       partir do PDF "SISTEMA_DO_SAVIO" e da planilha original). Traço
@@ -1279,6 +1280,18 @@ passando.
       Playwright (Pontos de Atributo, Level Up completo, cálculo de bônus
       por efeito, redução de Nível efetivo, persistência); `tsc`, lint e
       os 208 testes automáticos continuam limpos
+- [x] **Sistema do Sávio — animações melhores e Tema customizável**
+      (04/09/2026) — decisão #81. Entrada de tela virou uma cascata (cada
+      cartão anima com um atraso maior que o anterior, curva de easing
+      mais suave), botões ganharam leve "levantar" no hover, e chegou uma
+      seção "🎨 Tema" na aba Perfil: cor livre + 8 presets, salva com o
+      personagem (`p.temaCor`), reescrevendo as variáveis CSS de destaque
+      em tempo real. Puxa parte da ideia "Customização visual" que estava
+      registrada sem dono — cor/tema saiu; fonte do título, reordenar
+      abas e layout compacto continuam em aberto. Testado com Playwright
+      (troca de preset, RGB derivado, persistência) e print de tela
+      conferindo visualmente; `tsc`, lint e os 208 testes automáticos
+      continuam limpos
 - [ ] Ometion
 
 ---

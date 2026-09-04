@@ -3179,6 +3179,47 @@ volta a 0/2 depois de Passar Round. Reexecutei as oito baterias de
 teste anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os
 208 testes automáticos continuam limpos.
 
+## 81. Sistema do Sávio — animações melhores e Tema customizável (04/09/2026)
+
+O Zé pediu duas coisas de acabamento: "colocar animações melhores" e
+"customização de tema, colocar a cor que quiser, mas também presets de
+cores variadas, pra tornar mais customizável" — puxando a ideia que já
+estava registrada e sem dono no ROADMAP ("Customização visual... tema/cor
+por sistema").
+
+**Animações**: a entrada de tela (troca de aba, Modo Guiado, Level Up)
+virou uma cascata — cada filho direto de `#app` anima com um atraso um
+pouco maior que o anterior (`#app.entra > *:nth-child(n)`), em vez de tudo
+aparecer de uma vez, com uma curva de easing mais suave
+(`cubic-bezier(.16,1,.3,1)`) e um leve `scale` além do deslizar vertical.
+Botões ganharam um leve "levantar" no hover (`translateY(-1px)`), e o
+resumo do Level Up ganhou o mesmo brilho no título que os outros três
+sistemas já tinham (`brilhoNivel`). Uma regra `prefers-reduced-motion`
+desliga tudo isso pra quem pediu menos movimento no sistema operacional.
+
+**Tema customizável**: nova seção "🎨 Tema" na aba Perfil, com uma cor
+livre (`<input type="color">`) e 8 presets (Violeta, Âmbar, Esmeralda,
+Safira, Rubi, Rosa, Turquesa, Grafite). A cor escolhida vira `p.temaCor`
+— guardada com o personagem, então some com exportar/importar e o Modo
+Hub, sem precisar de um "tema do navegador" separado. Tecnicamente: as
+variáveis CSS `--roxo`/`--roxo-forte`/`--roxo-rgb` (que toda a ficha já
+usava) passaram a ser reescritas em tempo real por `aplicarTema()`, chamada
+a cada `render()`; `--roxo-forte` é calculada clareando a cor escolhida
+(`corMaisClara()`, mistura com branco), e `--roxo-rgb` existe porque
+`rgba()` não aceita `var(--roxo)` sozinho quando precisa de transparência
+— os `rgba(139,110,224,X)` fixos que já existiam no CSS viraram
+`rgba(var(--roxo-rgb),X)`. O botão "Excluir" e avisos de erro continuam
+na cor de alerta fixa, sem seguir o tema — perigo não deveria mudar de cor
+conforme o gosto de ninguém.
+
+Testado com Playwright: confere a cor padrão, troca pra um preset (Rubi)
+e confirma que a variável CSS, o RGB derivado e o background computado de
+um botão realmente mudaram, recarrega a página e confirma que o tema
+persistiu no personagem — mais um print de tela conferindo visualmente a
+cascata de cores por toda a ficha. Reexecutei as dez baterias de teste
+anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos continuam limpos (mudança é só CSS/JS estático da ficha).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

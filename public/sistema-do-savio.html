@@ -10,7 +10,12 @@
 :root{
   --fundo:#0a0910; --superficie:#131022; --superficie-alta:#1c1830;
   --borda:#2c2547; --texto:#f0eef8; --suave:#a099bd;
-  --roxo:#8b6ee0; --roxo-forte:#ac93f5; --alerta:#c4506b;
+  /* --roxo/--roxo-forte/--roxo-rgb são a cor de tema — trocadas em tempo
+     real por aplicarTema(), a partir da escolha livre ou de um preset
+     (aba Perfil). --roxo-rgb existe pra dar transparência (rgba) numa cor
+     que muda: não dá pra fazer isso com var(--roxo) sozinho. */
+  --roxo:#8b6ee0; --roxo-forte:#ac93f5; --roxo-rgb:139,110,224;
+  --alerta:#c4506b;
   --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#c4506b;
 }
 *{box-sizing:border-box}
@@ -36,23 +41,23 @@ button{
   background:transparent; border:1px solid var(--borda); border-radius:8px;
   padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s,transform .12s;
 }
-button:hover{border-color:var(--suave)}
+button:hover{border-color:var(--suave); transform:translateY(-1px)}
 button:not(:disabled):active{transform:scale(.95)}
-button.destaque{border-color:rgba(139,110,224,.4); background:rgba(139,110,224,.12); color:var(--roxo-forte)}
-button.destaque:hover{background:rgba(139,110,224,.22)}
+button.destaque{border-color:rgba(var(--roxo-rgb),.4); background:rgba(var(--roxo-rgb),.12); color:var(--roxo-forte)}
+button.destaque:hover{background:rgba(var(--roxo-rgb),.22)}
 button.perigo{border-color:rgba(196,80,107,.5); color:var(--alerta)}
 input,select,textarea{
   background:var(--superficie-alta); border:1px solid var(--borda);
   border-radius:8px; padding:7px 10px; width:100%;
 }
-input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(139,110,224,.6)}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(var(--roxo-rgb),.6)}
 textarea{resize:vertical}
 label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
 
 main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
-.abas button[aria-current="true"]{border-color:rgba(139,110,224,.5); color:var(--roxo-forte)}
+.abas button[aria-current="true"]{border-color:rgba(var(--roxo-rgb),.5); color:var(--roxo-forte)}
 
 .cartao{background:var(--superficie); border:1px solid var(--borda);
   border-radius:12px; padding:18px; margin-bottom:14px;
@@ -72,12 +77,27 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .aviso{border:1px solid rgba(196,80,107,.5); background:rgba(196,80,107,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
-.resumo-nivel{border:1px solid rgba(139,110,224,.5); background:rgba(139,110,224,.1);
+.resumo-nivel{border:1px solid rgba(var(--roxo-rgb),.5); background:rgba(var(--roxo-rgb),.1);
   border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
 .resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--roxo-forte); font-family:Georgia,serif}
+@keyframes brilhoNivel{0%{text-shadow:0 0 0 transparent} 35%{text-shadow:0 0 14px var(--roxo)} 100%{text-shadow:0 0 0 transparent}}
+#app.entra .resumo-nivel h3{animation:brilhoNivel 1.2s ease-out}
 
-@keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
-#app.entra{animation:fadeSlideIn .32s ease-out}
+/* Entrada em cascata: cada filho direto de #app anima com um atraso um
+   pouco maior que o anterior, então a tela inteira parece "se montar"
+   em vez de piscar de uma vez — só quando a tela muda de verdade (troca
+   de aba, Modo Guiado, Level Up), nunca a cada tecla digitada. */
+@keyframes fadeSlideIn{from{opacity:0; transform:translateY(10px) scale(.985)} to{opacity:1; transform:translateY(0) scale(1)}}
+#app.entra > *{animation:fadeSlideIn .42s cubic-bezier(.16,1,.3,1) backwards}
+#app.entra > *:nth-child(1){animation-delay:0s}
+#app.entra > *:nth-child(2){animation-delay:.035s}
+#app.entra > *:nth-child(3){animation-delay:.07s}
+#app.entra > *:nth-child(4){animation-delay:.105s}
+#app.entra > *:nth-child(5){animation-delay:.14s}
+#app.entra > *:nth-child(n+6){animation-delay:.17s}
+@media (prefers-reduced-motion: reduce){
+  #app.entra > *{animation:none}
+}
 .vazio{color:var(--suave); text-align:center; padding:50px 20px}
 .mini{font-size:12px; color:var(--suave)}
 .linha-lista{border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:10px; background:var(--superficie-alta)}
@@ -400,9 +420,52 @@ const CATEGORIAS_ELEMENTAL = [
   {id:'mitico', nome:'Mítico', sobre:'Ser humanoide lendário — "filho de Celestial". Pode superar o Nível 20; sempre é uma grande ameaça, em qualquer situação.'},
 ];
 
+// Presets de tema — cor de destaque pronta, além da cor livre (input
+// type="color"). Cada personagem guarda a própria escolha (p.temaCor),
+// junto com o resto da ficha — exportar/importar leva o tema junto.
+const PRESETS_TEMA = [
+  {nome:'Violeta', cor:'#8b6ee0'},
+  {nome:'Âmbar',   cor:'#e0a234'},
+  {nome:'Esmeralda',cor:'#3fae6a'},
+  {nome:'Safira',  cor:'#4a90e2'},
+  {nome:'Rubi',    cor:'#d64550'},
+  {nome:'Rosa',    cor:'#e0609a'},
+  {nome:'Turquesa',cor:'#2fb8b0'},
+  {nome:'Grafite', cor:'#9098a8'},
+];
+const TEMA_PADRAO = PRESETS_TEMA[0].cor;
+
 /* --- Personagem ----------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+// Converte "#8b6ee0" em "139,110,224" (formato que rgba() aceita) — é o
+// que dá transparência a uma cor de tema que muda em tempo real.
+function hexParaRgb(hex){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return '139,110,224';
+  return [1,2,3].map(i => parseInt(m[i],16)).join(',');
+}
+// Clareia uma cor misturando com branco — usada pra derivar o "-forte"
+// (texto/destaque) a partir da cor de tema escolhida, sem pedir uma
+// segunda cor pro jogador.
+function corMaisClara(hex, proporcao){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return hex;
+  const canais = [1,2,3].map(i => {
+    const c = parseInt(m[i],16);
+    return Math.round(c + (255-c)*proporcao);
+  });
+  return '#' + canais.map(c => c.toString(16).padStart(2,'0')).join('');
+}
+// Aplica a cor de tema nas variáveis CSS que toda a ficha usa — chamado a
+// cada render() com a cor do personagem atual (ou o padrão, sem ficha).
+function aplicarTema(hexCor){
+  const cor = /^#[a-f\d]{6}$/i.test(hexCor||'') ? hexCor : TEMA_PADRAO;
+  document.documentElement.style.setProperty('--roxo', cor);
+  document.documentElement.style.setProperty('--roxo-forte', corMaisClara(cor, .22));
+  document.documentElement.style.setProperty('--roxo-rgb', hexParaRgb(cor));
+}
 
 function novoPersonagem(nome){
   return {
@@ -468,6 +531,7 @@ function novoPersonagem(nome){
       tiers: 0, // -3..3: cada unidade muda o PE gasto por round em ±3 (base 10)
     },
     anotacoes: '',
+    temaCor: TEMA_PADRAO,
   };
 }
 
@@ -888,6 +952,7 @@ function render(){
   }
 
   const p = atual();
+  aplicarTema(p ? p.temaCor : TEMA_PADRAO);
 
   if(!p){
     app.innerHTML = `<div class="vazio">
@@ -1147,6 +1212,7 @@ function seletorEspecializacao(p){
 }
 
 function abaPerfil(p){
+  const temaAtual = p.temaCor || TEMA_PADRAO;
   return `<div class="cartao">
     <div class="grade g2">
       ${campo('Nome','nome',p.perfil.nome)}
@@ -1173,6 +1239,24 @@ function abaPerfil(p){
   <div class="cartao">
     <label for="c-historia">História do personagem</label>
     <textarea id="c-historia" data-perfil="historia" rows="5">${esc(p.perfil.historia)}</textarea>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">🎨 Tema</h3>
+    <p class="mini">A cor de destaque desta ficha — some com a ficha (exportar/importar leva junto).</p>
+    <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
+      <div>
+        <label for="c-tema-cor">Cor livre</label>
+        <input id="c-tema-cor" type="color" data-tema-cor value="${temaAtual}" style="width:60px;padding:2px;height:38px">
+      </div>
+      <div style="flex:1;min-width:200px">
+        <label>Presets</label>
+        <div class="linha" style="flex-wrap:wrap;gap:8px">
+          ${PRESETS_TEMA.map(t => `<button type="button" data-tema-preset="${t.cor}" title="${t.nome}"
+              style="width:32px;height:32px;padding:0;border-radius:999px;background:${t.cor};
+              border:2px solid ${temaAtual.toLowerCase()===t.cor.toLowerCase()?'var(--texto)':'transparent'}"></button>`).join('')}
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -1660,7 +1744,7 @@ function abaAscensao(p){
         <input type="checkbox" data-asc-check="passivaUsadaSessao" ${p.ascensao.passivaUsadaSessao?'checked':''}>
         "${arq.passivaNome}" já foi usada nesta sessão
       </label>` : ''}
-    <div class="aviso" style="margin-top:12px;border-color:rgba(139,110,224,.5);background:rgba(139,110,224,.1)">
+    <div class="aviso" style="margin-top:12px;border-color:rgba(var(--roxo-rgb),.5);background:rgba(var(--roxo-rgb),.1)">
       <strong>Embate de Fluxo:</strong> em vez de rolar uma perícia, role
       Nível × maior Atributo (${p.nivel * maiorAtributo(p)}) + 1d100. Quem
       perde — ou é nocauteado, se perder por metade da rolagem do
@@ -1769,6 +1853,11 @@ function ligarEventos(){
   };
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
   if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+
+  const temaCorInput = app.querySelector('[data-tema-cor]');
+  if(temaCorInput) temaCorInput.onchange = () => mudar(p => p.temaCor = temaCorInput.value);
+  app.querySelectorAll('[data-tema-preset]').forEach(b =>
+    b.onclick = () => mudar(p => p.temaCor = b.dataset.temaPreset));
 
   app.querySelectorAll('[data-perfil]').forEach(el =>
     (el.tagName==='TEXTAREA' ? el.oninput = () => mudarSemRedesenhar(p => p.perfil ? p.perfil[el.dataset.perfil]!==undefined ? (p.perfil[el.dataset.perfil]=el.value) : (p[el.dataset.perfil]=el.value) : null, el)
