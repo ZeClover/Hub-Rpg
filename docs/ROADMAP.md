@@ -1199,6 +1199,16 @@ passando.
       `#appRoot`) em vez de criar um novo. Testado com Playwright nos
       quatro sistemas, mais o script que reproduzia o bug do Chromium;
       `tsc`, lint e os 208 testes automáticos continuam limpos
+- [x] **Level Up guiado em passos, com mais explicação e poderes reais**
+      (04/09/2026) — decisão #70. O resumo do Level Up virou um wizard
+      de verdade (um passo de cada vez, com Voltar/Próximo) nas quatro
+      fichas, em vez de tudo empilhado numa tela só. Kaizoku no Sho
+      ganhou o passo de Poder embutindo o painel de Poderes inteiro
+      (Fonte de Poder, Budô/Akuma no Mi de verdade — reverte parte da
+      exclusão da decisão #68). Fabula Ultima passou a mostrar o teto de
+      Nível 10 por classe. Sistema SAO ganhou pistas mais claras de que
+      o Level Up mora na aba Classes. Testado com Playwright nos quatro
+      sistemas; `tsc`, lint e os 208 testes automáticos continuam limpos
 - [ ] **Customização visual** (ideia registrada, não implementada) — tema/
       cor por sistema, fonte do título, reordenar ou esconder abas,
       layout compacto vs. espaçoso. Fica pra quando o Zé quiser puxar

@@ -2755,6 +2755,7 @@ function subirDeNivel(p, zerarProgresso){
   p.nivel += 1;
   if(zerarProgresso) p.progressaoEscolar.progressoNivel = 0;
   estado.nivelUpResumo = {antes, depois: snapshotNivel(p)};
+  estado.passoNivelUp = 1;
 }
 
 // Quantas técnicas/poderes "gratuitos" (Fórmulas + Poderes Livres, nessa
@@ -2904,6 +2905,11 @@ const estado = {
   // depois) — só de exibição, não é salvo na ficha; some ao fechar ou ao
   // trocar de personagem. Mesmo padrão do botão de Level Up do Kaizoku no Sho.
   nivelUpResumo: null,
+  // passoNivelUp: em qual passo do Level Up guiado a pessoa está (1, 2, 3...)
+  // — o resumo mostra só as escolhas liberadas daquele Nível uma de cada vez
+  // (Marco, depois Ascensão, depois cada jeito de gastar PE), em vez de tudo
+  // empilhado numa tela só.
+  passoNivelUp: 1,
   // modoGuiado/passoGuiado: tela alternativa de criação passo a passo, pra
   // quem tá vendo o sistema pela primeira vez — não é dado do personagem,
   // só um jeito diferente de mostrar os mesmos campos da ficha normal.
@@ -3791,7 +3797,13 @@ function painelProgressoNivel(p){
 // já embute os formulários de Marco/Ascensão (quando liberados) e um
 // "gastar PE agora" com os mesmos botões da aba Atributos, pra escolher e
 // aplicar sem precisar navegar até outra aba.
-function painelResumoNivel(p, resumo){
+// Monta a lista de passos do Level Up guiado — só entram os que esse Nível
+// específico realmente libera (Marco/Ascensão) ou permite gastar (PE), pra
+// mostrar um de cada vez em vez de empilhar tudo numa tela só. Usa
+// resumo.depois.peDisponivel (fotografado no momento de subir de Nível) em
+// vez de peDisponivel(p) ao vivo, pra a lista de passos não encolher no meio
+// do fluxo se a pessoa gastar todo o PE no primeiro passo de compra.
+function passosNivelUpThryliki(p, resumo){
   const {antes, depois} = resumo;
   const linha = (rotulo, chave) => {
     const a = antes[chave], d = depois[chave];
@@ -3800,47 +3812,95 @@ function painelResumoNivel(p, resumo){
   };
   const novosMarcos = depois.marcosRecebidos - antes.marcosRecebidos;
   const novasAscensoes = depois.ascensoesConcluidas - antes.ascensoesConcluidas;
-  return `<div class="resumo-nivel">
-    <h3>⭐ Subiu de Nível! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível ${antes.nivel} → ${depois.nivel}</span></h3>
-    <p class="mini" style="margin-bottom:8px">O que mudou só por causa do Nível novo.</p>
+  const passos = [];
+
+  passos.push({titulo: 'O que mudou', corpo: `
+    <p class="mini" style="margin-bottom:8px">Números que mudam só por causa do Nível novo:</p>
     ${linha('Vida Máxima', 'vidaMaxima')}
     ${linha('PE ganho (total)', 'peGanho')}
     ${linha('PE disponível', 'peDisponivel')}
     ${linha('Categoria', 'categoria')}
     ${linha('Ciclo', 'ciclo')}
     ${linha('Nível no Ciclo', 'nivelNoCiclo')}
+    <p class="mini" style="margin-top:10px">
+      <strong>PE (Ponto de Evolução)</strong> é a moeda pra comprar Grau de
+      Atributo, Treinamento, Talento, Recurso/Eletiva e Fórmulas/Poderes —
+      você ganha 1 por Nível, e acumula se não gastar. <strong>Categoria</strong>
+      é sua faixa de poder atual (I a V), calculada pela posição dentro do
+      Ciclo de 20 Níveis — comparar Categorias com um alvo muda o Impacto
+      dos seus ataques.
+    </p>`});
 
-    ${novosMarcos > 0 ? `
-      <div class="cartao" style="margin-top:12px">
-        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🎁 +${novosMarcos} Marco${novosMarcos>1?'s':''} da Área liberado${novosMarcos>1?'s':''} — escolha agora:</p>
-        ${blocoFormMarco(p)}
-      </div>` : ''}
+  if(novosMarcos > 0) passos.push({titulo: 'Marco da Área', corpo: `
+    <p class="mini" style="margin-bottom:8px">
+      <strong>Marco da Área</strong> é um bônus que não gasta PE — vem
+      automático nas posições 1/5/9/13/17 de cada Ciclo de 20 Níveis, e só
+      escolhe conteúdo do Currículo que o seu Ano atual já libera. Você
+      ganhou +${novosMarcos} Marco${novosMarcos>1?'s':''} agora — escolha:
+    </p>
+    ${blocoFormMarco(p)}`});
 
-    ${novasAscensoes > 0 ? `
-      <div class="cartao" style="margin-top:12px">
-        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🌟 Ascensão liberada — escolha um eixo de escala agora:</p>
-        ${blocoFormAscensao(p)}
-      </div>` : ''}
+  if(novasAscensoes > 0) passos.push({titulo: 'Ascensão', corpo: `
+    <p class="mini" style="margin-bottom:8px">
+      <strong>Ascensão</strong> é liberada a cada 20 Níveis — um degrau
+      permanente de escala num único eixo (alcance, duração, quantidade de
+      alvos etc). Não dá bônus direto no d20, Impacto grátis, ação extra
+      nem Categoria VI. Escolha o eixo agora:
+    </p>
+    ${blocoFormAscensao(p)}`});
 
-    ${peDisponivel(p) > 0 ? `
-      <div class="cartao" style="margin-top:12px">
-        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">💰 ${peDisponivel(p)} PE disponível — comprar um Grau agora:</p>
-        <div class="grade g5">${blocoAtributos(p)}</div>
-        <details style="margin-top:10px">
-          <summary class="mini" style="cursor:pointer">Ou subir um Treinamento</summary>
-          <div style="margin-top:10px">${blocoTreinamentos(p)}</div>
-        </details>
-        <details style="margin-top:10px">
-          <summary class="mini" style="cursor:pointer">Ou comprar um Talento</summary>
-          <div style="margin-top:10px">${blocoFormTalento(p)}</div>
-        </details>
-        <details style="margin-top:10px">
-          <summary class="mini" style="cursor:pointer">Ou comprar um Recurso/Eletiva</summary>
-          <div style="margin-top:10px">${blocoFormRecurso(p)}</div>
-        </details>
-      </div>` : ''}
+  if(depois.peDisponivel > 0){
+    passos.push({titulo: 'Gastar PE — Grau de Atributo', corpo: `
+      <p class="mini" style="margin-bottom:8px">
+        Você tem ${depois.peDisponivel} PE disponível. <strong>Grau de
+        Atributo</strong> é o bônus fixo que entra em todo teste daquele
+        Atributo. Comprar aqui é opcional — o PE não vencido continua
+        disponível pra gastar depois, na aba Atributos.
+      </p>
+      <div class="grade g5">${blocoAtributos(p)}</div>`});
+    passos.push({titulo: 'Gastar PE — Treinamento', corpo: `
+      <p class="mini" style="margin-bottom:8px">
+        <strong>Treinamento</strong> é o outro bônus de teste, específico
+        de cada Perícia (Nada/Treinado/Perito/Expert = +0/+5/+10/+15).
+        Subir de degrau custa PE e exige a Categoria mínima (Treinado: I,
+        Perito: II, Expert: III).
+      </p>
+      ${blocoTreinamentos(p)}`});
+    passos.push({titulo: 'Gastar PE — Talento', corpo: `
+      <p class="mini" style="margin-bottom:8px">
+        <strong>Talento</strong> é uma melhoria ligada ao motor da sua
+        Área — diferente de Grau e Treinamento, existem só 3 tipos, cada
+        um com custo e função próprios.
+      </p>
+      ${blocoFormTalento(p)}`});
+    passos.push({titulo: 'Gastar PE — Recurso/Eletiva', corpo: `
+      <p class="mini" style="margin-bottom:8px">
+        <strong>Recurso/Eletiva</strong> compra mais do recurso principal
+        da sua Área, uma opção preparada a mais, ou até uma Eletiva de
+        outra Área — 5 tipos, cada um com limite e custo próprios.
+      </p>
+      ${blocoFormRecurso(p)}`});
+  }
 
-    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>
+  return passos;
+}
+
+function painelResumoNivel(p, resumo){
+  const passos = passosNivelUpThryliki(p, resumo);
+  if(estado.passoNivelUp > passos.length) estado.passoNivelUp = passos.length;
+  if(estado.passoNivelUp < 1) estado.passoNivelUp = 1;
+  const passoAtual = passos[estado.passoNivelUp - 1];
+  const ultimo = estado.passoNivelUp >= passos.length;
+  return `<div class="resumo-nivel">
+    <h3>⭐ Subiu de Nível! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível ${resumo.antes.nivel} → ${resumo.depois.nivel}</span></h3>
+    <p class="mini" style="text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Passo ${estado.passoNivelUp} de ${passos.length} — ${esc(passoAtual.titulo)}</p>
+    ${passoAtual.corpo}
+    <div class="linha" style="justify-content:space-between;margin-top:16px">
+      ${estado.passoNivelUp > 1 ? `<button id="btNivelUpAnterior">← Voltar</button>` : `<span></span>`}
+      ${ultimo
+        ? `<button id="btFecharResumoNivel" class="destaque">Concluir — voltar pra ficha</button>`
+        : `<button id="btNivelUpProximo" class="destaque">Próximo →</button>`}
+    </div>
   </div>`;
 }
 
@@ -5610,7 +5670,11 @@ function ligarEventos(){
   const btSubirNivelDireto = document.getElementById('btSubirNivelDireto');
   if(btSubirNivelDireto) btSubirNivelDireto.onclick = () => mudar(p => { subirDeNivel(p, false); });
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
-  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; estado.passoNivelUp = 1; render(); };
+  const btNivelUpProximo = document.getElementById('btNivelUpProximo');
+  if(btNivelUpProximo) btNivelUpProximo.onclick = () => { estado.passoNivelUp += 1; render(); };
+  const btNivelUpAnterior = document.getElementById('btNivelUpAnterior');
+  if(btNivelUpAnterior) btNivelUpAnterior.onclick = () => { estado.passoNivelUp -= 1; render(); };
 
   app.querySelectorAll('[data-portfolio]').forEach(el =>
     el.onchange = () => mudar(p => { p.progressaoEscolar.portfolio[el.dataset.portfolio] = el.checked; }));
@@ -5810,6 +5874,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.nivelUpResumo = null;
+  estado.passoNivelUp = 1;
   estado.modoGuiado = false;
   render();
 };
@@ -5820,6 +5885,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.atualId = p.id;
   estado.aba = 'status';
   estado.nivelUpResumo = null;
+  estado.passoNivelUp = 1;
   // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
   // com um clique em "Ver ficha completa" (barra do topo).
   estado.modoGuiado = true;
@@ -5839,6 +5905,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.nivelUpResumo = null;
+  estado.passoNivelUp = 1;
   estado.modoGuiado = false;
   salvar(); render();
 };
@@ -5873,6 +5940,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.nivelUpResumo = null;
+      estado.passoNivelUp = 1;
       estado.modoGuiado = false;
       salvar(); render();
     }catch(err){

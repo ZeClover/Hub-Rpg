@@ -2191,6 +2191,7 @@ function painelResumoNivel(p, resumo){
   const classeAtual = p.classes.find(c => c.classeId === classeId);
   return `<div class="resumo-nivel">
     <h3>⭐ ${esc(nomeClasse)} subiu para Nível ${nivelClasse}! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível total ${antes.nivelTotal} → ${depois.nivelTotal}</span></h3>
+    <p class="mini" style="margin-bottom:8px">O que mudou só por causa desse Nível novo em ${esc(nomeClasse)} (as outras classes não mudam):</p>
     ${linha('Pontos de Vida máximos', 'pv')}
     ${linha('Pontos de Mana máximos', 'pm')}
     ${linha('Pontos de Inventário máximos', 'pi')}
@@ -2198,13 +2199,13 @@ function painelResumoNivel(p, resumo){
 
     ${classeAtual ? `
       <div style="margin-top:12px">
-        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Escolha o Poder novo de ${esc(nomeClasse)} agora:</p>
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Todo Nível de classe dá 1 Poder novo pra escolher (até o máximo de vezes de cada um) — escolha o de ${esc(nomeClasse)} agora:</p>
         ${blocoPoderesClasse(p, classeAtual)}
       </div>` : ''}
 
     ${dominouAgora ? `
       <div class="cartao" style="margin-top:12px">
-        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🎖️ Classe dominada (Nível 10)! Escolha uma Habilidade Heroica dela agora:</p>
+        <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">🎖️ ${esc(nomeClasse)} chegou no Nível 10 — a classe está <strong>dominada</strong>! Cada classe dominada dá direito a escolher 1 Habilidade Heroica dela (pág. 176). Escolha agora:</p>
         ${blocoHeroicasParaClasse(p, classeId)}
       </div>` : ''}
 
@@ -2277,13 +2278,22 @@ function blocoClassesFU(p){
           </select>
         </div>
         <div>
-          <label for="c-nv-${i}">Nível</label>
+          <label for="c-nv-${i}">Nível <span class="mini" style="text-transform:none;letter-spacing:0">(${c.nivel||0}/10)</span></label>
           <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" max="10" value="${c.nivel||0}">
         </div>
         <button data-subir-nivel="${i}" class="destaque" ${!c.classeId || (c.nivel||0)>=10 ? 'disabled':''} title="Sobe 1 Nível nesta classe e mostra o que mudou">⭐ +1 Nível</button>
         <button data-remover-classe="${i}" ${p.classes.length<=2?'disabled':''}>Tirar</button>
       </div>`).join('')}
     <button id="btAddClasse" ${p.classes.length>=7?'disabled':''}>+ Outra classe</button>
+
+    <p class="mini" style="margin-top:10px">
+      Cada classe tem um teto de <strong>Nível 10</strong> (pág. 176) —
+      chegar lá "domina" a classe e libera escolher uma Habilidade
+      Heroica dela. O <strong>Nível Total</strong> do personagem (lá em
+      cima, nos derivados) é a soma do nível de todas as classes juntas,
+      e esse não tem teto — dá pra ter, por exemplo, 3 classes no Nível
+      10 cada, somando Nível Total 30.
+    </p>
 
     ${total === NIVEL_INICIAL && usadas >= 2
       ? `<p class="ok">Nível ${total}, ${usadas} classes — pronto para começar.</p>`

@@ -1023,7 +1023,7 @@ function painelDerivados(p){
     <div class="derivado">
       <div class="rot">Nível</div>
       <div class="val">${nivelGeral(p)}</div>
-      <div class="obs">iniciativa ${iniciativa(p)}</div>
+      <div class="obs">iniciativa ${iniciativa(p)} · suba na aba Classes</div>
     </div>
   </div>`;
 }
@@ -1299,7 +1299,7 @@ function linhaClasse(p, i){
       <label for="c-nv-${i}">Nível</label>
       <input id="c-nv-${i}" data-nivel="${i}" type="number" min="0" value="${c.nivel||0}">
     </div>
-    <button data-subir-nivel="${i}" class="destaque" ${!c.classeId?'disabled':''} title="Sobe 1 Nível nesta classe e mostra o que mudou">⭐ +1 Nível</button>
+    <button data-subir-nivel="${i}" class="destaque" ${!c.classeId?'disabled':''} title="Sobe 1 Nível nesta classe: ganha PV, PM e 1 ponto de Poder pra gastar nela">⭐ +1 Nível (sobe PV/PM e dá 1 Poder)</button>
     <button data-remover-classe="${i}" ${p.classes.length<=1?'disabled':''}>Tirar</button>
   </div>`;
 }
@@ -1337,10 +1337,11 @@ function painelResumoNivel(p, resumo){
   };
   return `<div class="resumo-nivel">
     <h3>⭐ ${esc(nomeClasse)} subiu para Nível ${nivelClasse}! <span style="font-size:11px;color:var(--suave);font-weight:normal">Nível geral ${antes.nivelGeral} → ${depois.nivelGeral}</span></h3>
+    <p class="mini" style="margin-bottom:8px">O Nível geral é a soma do nível de todas as classes — subiu porque ${esc(nomeClasse)} subiu. PV e PM máximos dependem do Nível geral, por isso mudam mesmo se você tiver outras classes:</p>
     ${linha('Pontos de Vida máximos', 'pv')}
     ${linha('Pontos de Mana máximos', 'pm')}
     <div style="margin-top:12px">
-      <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Escolha o Poder novo de ${esc(nomeClasse)} agora:</p>
+      <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Cada Nível numa classe dá 1 ponto de Poder pra gastar só nela — escolha onde investir o de ${esc(nomeClasse)} agora:</p>
       ${blocoPoderesClasse(p, classeId)}
     </div>
     <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>
@@ -1367,6 +1368,13 @@ function abaClasses(p){
       de cada uma é o que você anota na mesa (não tem cálculo automático de
       XP aqui ainda: fica pro mestre decidir o ritmo). O Nível geral do
       personagem, lá em cima, é a soma de todos.
+    </p>
+    <p class="mini" style="margin:0 0 16px">
+      É aqui que se sobe de nível: clique "⭐ +1 Nível" na classe que subiu.
+      Isso aumenta o Nível geral (e com ele PV e PM máximos, que dependem do
+      Nível geral, não do nível de uma classe só) e dá 1 ponto de Poder pra
+      gastar nos poderes daquela classe — a tela seguinte já deixa escolher
+      onde gastar, na hora.
     </p>
     ${p.classes.map((c,i) => linhaClasse(p, i)).join('')}
     <button id="btAddClasse">+ Outra classe</button>

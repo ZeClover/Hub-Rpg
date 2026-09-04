@@ -2700,6 +2700,92 @@ guiado como página separada, "mostra tudo") nos quatro sistemas — nada
 quebrou. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos (mudança é só HTML/CSS/JS estático das quatro fichas).
 
+## 70. Level Up guiado em passos, com mais explicação e poderes reais (04/09/2026)
+
+Pedido do Zé olhando o Level Up guiado das decisões #66-68 em uso de
+verdade: "o level up guiado vai ser passando por pontos... primeiro
+aparece uma parte das escolhas, exemplo atributos, dps vai para
+pericias" — o resumo estava mostrando tudo empilhado numa tela só, e
+"tá mt simples"/"mt simplificado" pra decisões que merecem explicação.
+Ele apontou quatro problemas específicos, um por sistema.
+
+**Fabula Ultima** — "basicamente não tem quantos níveis vc pode evoluir
+pra cada classe": o campo de Nível de cada classe tinha `max="10"` mas
+nada na tela mostrava esse teto. Adicionado "(X/10)" ao lado do rótulo
+"Nível" e um parágrafo explicando que cada classe tem teto 10 (dominar
+libera Habilidade Heroica) mas o Nível Total do personagem, soma de
+todas as classes, não tem teto. Também deixei o resumo mais explicativo
+(o que "1 Poder por Nível" significa, o que "dominar" realmente libera)
+— e no processo achei e corrigi um texto que eu mesmo tinha inventado
+errado ("10 Pontos de Habilidade Heroica normais", que não existe no
+sistema — é 1 por classe dominada, `dominadas.length`).
+
+**Sistema SAO** — "como upa esse nível, n tem nada de botão nem nada
+disso": o botão de Level Up existia, mas só dentro da aba Classes, sem
+nenhuma pista no painel de derivados (que só mostrava "Nível: 3") de
+que é ali que se sobe. Adicionado "suba na aba Classes" no derivado de
+Nível, texto explicando na aba Classes que subir aumenta PV/PM (que
+dependem do Nível geral, soma de todas as classes) e dá 1 Poder pra
+gastar só naquela classe, e o próprio botão ficou mais descritivo
+("+1 Nível (sobe PV/PM e dá 1 Poder)").
+
+**Thrylikí Chelóna e Kaizoku no Sho** — os dois ganharam a mudança
+estrutural principal: o resumo do Level Up virou um **wizard em
+passos** de verdade (`estado.passoNivelUp`/`state.passoNivelUp`, reseta
+a 1 toda vez que sobe de Nível ou ao trocar/criar/apagar/importar
+personagem), com botões "← Voltar"/"Próximo →" e "Concluir" só no
+último passo — em vez de tudo (Marco, Ascensão, 4 formas de gastar PE,
+ou Atributos+Perícias+Poder) espremido numa tela só com `<details>`.
+
+Em Thrylikí, a lista de passos é montada dinamicamente por
+`passosNivelUpThryliki()`: "O que mudou" sempre aparece primeiro; Marco
+e Ascensão só entram se aquele Nível especificamente os liberou; os 4
+jeitos de gastar PE (Grau, Treinamento, Talento, Recurso/Eletiva) cada
+um vira seu próprio passo, usando `resumo.depois.peDisponivel`
+(fotografado no momento de subir de Nível) pra decidir se aparecem —
+não `peDisponivel(p)` ao vivo, porque senão a lista de passos encolheria
+no meio do fluxo assim que a pessoa gastasse todo o PE no primeiro
+passo de compra, embaralhando em qual passo ela está. Cada passo ganhou
+um parágrafo explicando o conceito na hora que ele aparece (o que é
+Marco, Ascensão, Grau, Treinamento, Talento, Recurso) — a ideia é a
+ficha explicar sozinha, sem precisar abrir o Grimório.
+
+Em Kaizoku no Sho, os passos são fixos: "O que mudou" → Atributos →
+Perícias → Poder — mesma ordem do exemplo que o Zé deu. O passo de
+Poder foi o pedido mais específico: "precisa de aparecer os poderes...
+os poderes que eles podem ganhar" — antes só existia o widget abstrato
+de "Nível do Poder" (Pontos investidos/Outro bônus/Total), sem a
+Fonte de Poder nem as aptidões de Budô/características de Akuma no Mi
+de verdade. Isso reverte parte do que a decisão #68 tinha decidido
+deixar de fora ("grande e stateful demais pra reusar com segurança"):
+agora o passo de Poder embute **`panelPoderes(p)` inteiro** — Fonte de
+Poder, Budô escolhido e suas aptidões, ou Akuma no Mi e suas
+características, os catálogos de efeitos, tudo. Isso só ficou seguro de
+fazer por causa do fallback que a decisão #68 já tinha posto em
+`renderPanel()` (cai pra `renderAll()` quando `#panelHost` não existe)
+— sem ele, `bindPoderes()` quebraria tentando religar elementos que só
+existem na aba Poderes normal. Cada passo do wizard agora liga só o
+bind daquele passo específico (`bindAtributos`/`bindPericias`/
+`bindPoderes`, escolhido por um campo `bind` no objeto de cada passo),
+em vez de ligar os três de uma vez como antes — necessário porque
+`bindPoderes()` acessa elementos (`eg_busca`, `pw_fonte`) sem guarda de
+nulo, que só existem quando o passo de Poder está de fato na tela.
+
+Testado com Playwright: Thrylikí sobe até o Nível 5 e confirma a
+sequência de passos certa (Marco aparece só nesse Nível; nos outros
+Níveis só os 4 passos de PE aparecem, na ordem Grau→Treinamento→
+Talento→Recurso), registra o Marco e compra um Talento pelo wizard, e
+"Voltar" funciona. Kaizoku sobe de NC, percorre Atributos→Perícias→
+Poder, escolhe Budô "Arma Viva" e confirma que a lista real de
+aptidões aparece, e um teste à parte comprova que as três escolhas
+(Atributo, Perícia, Poder) feitas em passos diferentes do mesmo wizard
+persistem juntas no personagem depois de "Concluir". Reexecutei as
+animações (decisão #69) — trocar de passo dentro do wizard não reativa
+a animação de entrada, só entrar/sair do resumo como um todo — e as
+baterias de teste das decisões #65-69 nos quatro sistemas. `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos
+(mudança é só HTML/JS estático das quatro fichas).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
