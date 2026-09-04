@@ -3084,6 +3084,43 @@ regressão (só ajustei a expectativa de um teste antigo que ainda
 esperava o número errado). `tsc --noEmit`, `npm run lint` e os 208
 testes automáticos continuam limpos.
 
+## 79. Sistema do Sávio — Total de Perícia calculado e Passivas automáticas (04/09/2026)
+
+Dois pedidos do Zé no mesmo fôlego. Primeiro: "mesma coisa pra somar com
+perícia, atributo + nivel/4 + 5 se for treinado, e dá pra trocar
+livremente Luta pra Destreza ou Força e troca a soma" — a aba Perícias
+só mostrava "+5"/"+0" (o bônus de treino sozinho), sem o Total de
+verdade (`Atributo + (Nível÷4 arredondado pra cima) + 5 se treinada`,
+fórmula confirmada na planilha original, `BB18`). Virou
+`periciaTotal(p, per)`, mostrado na ponta de cada linha da aba
+Perícias. Luta ganhou um seletor FOR/DEX inline (`p.lutaAtributo`,
+padrão Força) — regra do documento ("Luta pode ser rolado com Destreza
+quando estiver de mãos limpas, ou usando armas marciais ou leves") que
+antes só aparecia como texto, sem trocar o cálculo de verdade.
+`periciaAtributoId(p, per)` decide qual Atributo cada Perícia usa,
+sendo Luta a única que consulta a escolha do jogador em vez do
+`per.atributo` fixo.
+
+Segundo pedido: "passivas também sejam automáticas, e que contem
+automaticamente na coisa indicada" — mesmo tratamento que as
+Habilidades ganharam na decisão #76: cada Passiva agora tem caixas de
+marcar pros efeitos que ela dá (Dano/Cura/Movimento/RD/Vantagem,
+Alcance — as duas colunas de `TABELA_PASSIVA`), e a ficha mostra o
+número certo (+3 ou 1d6, +3m) assim que marcada, em vez de precisar
+escrever o efeito à mão. Diferente de Habilidade, o valor de Passiva não
+depende de Nível nem cai ao combinar — é sempre o mesmo, por isso não
+tem o aviso de "Nível efetivo" que Habilidade tem.
+
+Testado com Playwright: confere o Total calculado de uma Perícia
+destreinada e treinada (FOR 4, Nível 1 → 5 e 10), confirma que Luta usa
+Força por padrão e troca pra Destreza quando selecionado (total 5→3
+depois de subir DEX), e confere que uma Passiva sem efeito marcado
+avisa, mostra "+3 ou 1d6" ao marcar Dano/Cura/Movimento/RD/Vantagem e
+"+3m" ao marcar Alcance, com tudo persistindo depois de recarregar.
+Reexecutei as seis baterias de teste anteriores sem regressão. `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -295,6 +295,17 @@ function habilidadeNivelEfetivo(h){
 // completa fica pra fatia futura, aqui só o registro do Nível interno atual.
 const TABELA_PASSIVA = {danoCuraMovRDVant:'+3 ou 1d6', alcance:'+3m'};
 
+// Efeitos que uma Passiva pode dar — mesma ideia dos efeitos de
+// Habilidade (marca a caixa, a ficha mostra o número certo sozinha), só
+// que aqui o valor é fixo (não depende de Nível nem cai ao combinar).
+const EFEITOS_PASSIVA = [
+  {chave:'danoCuraMovRDVant', rotulo:'Dano / Cura / Movimento / RD / Vantagem'},
+  {chave:'alcance', rotulo:'Alcance'},
+];
+function passivaEfeitosEscolhidos(h){
+  return EFEITOS_PASSIVA.filter(e => h.efeitos && h.efeitos[e.chave]);
+}
+
 const TIPOS_HABILIDADE = [
   {id:'sustentada', nome:'Sustentada', sobre:'custa metade do PE normal a cada turno seguinte até desativar ou faltar PE; começa 2 Níveis acima por já ter 2 desvantagens embutidas; só buff em si mesmo; custa Ação Bônus.'},
   {id:'duradoura',  nome:'Duradoura',  sobre:'dura um número fixo de rounds (tabela de Duração do Nível 1); mais barata que Sustentada, mas mais fraca; custa Ação Bônus, exceto armadilhas de dano contínuo (ex: sangramento).'},
@@ -401,6 +412,9 @@ function novoPersonagem(nome){
     // nome escolhido em `oficios`.
     pericias: {},
     oficios: {oficio1:'', oficio2:'', oficio3:''},
+    // Luta pode rolar com Força ou Destreza, à escolha livre do jogador
+    // (regra do documento: desarmado ou com arma leve/marcial).
+    lutaAtributo: 'forca',
     atual: {pv:null, pe:null, sanidade:null},
     bonus: {pv:0, pe:0, sanidade:0}, // "outros bônus" que o mestre conceder
     arma: {nome:'', tamanho:'media', notas:''},
@@ -483,6 +497,20 @@ function periciasTreinadasContagem(p){
   return PERICIAS.filter(per => p.pericias[per.id]).length;
 }
 function periciasTreinadasLimite(p){ return 2 + atributoEfetivo(p,'inteligencia') + Math.ceil(p.nivel/4); }
+
+// Qual Atributo uma Perícia usa de verdade — Luta é a única que troca
+// livremente entre Força e Destreza, à escolha do jogador.
+function periciaAtributoId(p, per){
+  return per.id === 'luta' ? p.lutaAtributo : per.atributo;
+}
+// Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
+// (5 se for treinada, senão 0) — mesma fórmula do limite de treináveis,
+// só que aplicada perícia a perícia.
+function periciaTotal(p, per){
+  const atributo = atributoEfetivo(p, periciaAtributoId(p, per));
+  const bonusTreino = p.pericias[per.id] ? 5 : 0;
+  return atributo + bonusTreino + Math.ceil(p.nivel/4);
+}
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
 function arquetipo(p){ return p.ascensao.primeira ? ARQUETIPOS.find(a => a.id === p.ascensao.arquetipoId) || null : null; }
@@ -1070,8 +1098,9 @@ function abaPericias(p){
   return `<div class="cartao">
     <p class="mini">
       Você treina <strong>2 + Inteligência + (Nível ÷ 4, arredondado pra
-      cima)</strong> perícias. Treinada dá <strong>+5</strong> no teste;
-      sem treino fica em <strong>+0</strong>.
+      cima)</strong> perícias. O Total de cada Perícia é
+      <strong>Atributo + (Nível ÷ 4, arredondado pra cima) + 5 se for
+      treinada</strong> (senão +0 no lugar do 5).
     </p>
     <p class="mini" style="margin-top:4px;${treinadas>limite?'color:var(--alerta)':''}">
       Treinadas: ${treinadas} / ${limite}${treinadas>limite ? ' — acima do limite, combine com o Mestre' : ''}
@@ -1079,17 +1108,23 @@ function abaPericias(p){
   </div>
   <div class="cartao">
     ${PERICIAS.map(per => {
-      const atr = ATRIBUTOS.find(a => a.id === per.atributo);
       const nomeExibido = per.livre ? (p.oficios[per.id] || per.nome) : per.nome;
+      const ehLuta = per.id === 'luta';
+      const atr = ATRIBUTOS.find(a => a.id === periciaAtributoId(p, per));
       return `<div class="linha" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda)">
         <label class="checagem" style="flex:1">
           <input type="checkbox" data-pericia="${per.id}" ${p.pericias[per.id]?'checked':''}>
           ${per.livre
             ? `<input data-oficio="${per.id}" value="${esc(p.oficios[per.id])}" placeholder="${per.nome}" style="width:auto;flex:1">`
             : `<span>${nomeExibido}</span>`}
-          <span class="selo">${atr.abrev}</span>
+          ${ehLuta
+            ? `<select data-luta-atributo style="width:auto">
+                <option value="forca" ${p.lutaAtributo==='forca'?'selected':''}>FOR</option>
+                <option value="destreza" ${p.lutaAtributo==='destreza'?'selected':''}>DEX</option>
+              </select>`
+            : `<span class="selo">${atr.abrev}</span>`}
         </label>
-        <span class="mini">${p.pericias[per.id] ? '+5' : '+0'}</span>
+        <span class="mini" style="font-family:Georgia,serif;color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
       </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}`;
     }).join('')}
   </div>`;
@@ -1343,6 +1378,7 @@ function abaElemental(p){
 }
 
 function passivaLinha(h, i){
+  const efeitosEscolhidos = passivaEfeitosEscolhidos(h);
   return `<div class="linha-lista">
     <div class="topo">
       <input data-pas-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Passiva" style="flex:1">
@@ -1350,7 +1386,21 @@ function passivaLinha(h, i){
     </div>
     <div><label>Cópias empilhadas (1–3)</label>
       <input type="number" min="1" max="3" data-pas-num="${i}|copias" value="${h.copias}"></div>
-    <label>Efeito</label>
+    <div style="margin-top:10px">
+      <label>O que ela faz (marque um ou mais)</label>
+      <div class="grade g2">
+        ${EFEITOS_PASSIVA.map(e => `<label class="checagem" style="padding:4px 0">
+          <input type="checkbox" data-pas-efeito="${i}|${e.chave}" ${h.efeitos&&h.efeitos[e.chave]?'checked':''}> ${e.rotulo}
+        </label>`).join('')}
+      </div>
+      ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
+        ${efeitosEscolhidos.map(e => `<div class="derivado">
+          <div class="rot">${e.rotulo}</div>
+          <div class="val" style="font-size:18px">${TABELA_PASSIVA[e.chave]}</div>
+        </div>`).join('')}
+      </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
+    </div>
+    <label style="margin-top:10px">Descrição livre (opcional)</label>
     <textarea data-pas-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
   </div>`;
 }
@@ -1595,6 +1645,8 @@ function ligarEventos(){
     el.onchange = () => mudar(p => p.pericias[el.dataset.pericia] = el.checked));
   app.querySelectorAll('[data-oficio]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => p.oficios[el.dataset.oficio] = el.value, el));
+  const lutaAtributo = app.querySelector('[data-luta-atributo]');
+  if(lutaAtributo) lutaAtributo.onchange = () => mudar(p => p.lutaAtributo = lutaAtributo.value);
 
   app.querySelectorAll('[data-arma]').forEach(el =>
     el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
@@ -1741,10 +1793,17 @@ function ligarEventos(){
       const [i, chave] = el.dataset.pasNum.split('|');
       p.passivas[Number(i)][chave] = Number(el.value) || 0;
     }, el));
+  app.querySelectorAll('[data-pas-efeito]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.pasEfeito.split('|');
+      const h = p.passivas[Number(i)];
+      if(!h.efeitos) h.efeitos = {};
+      h.efeitos[chave] = el.checked;
+    }));
   app.querySelectorAll('[data-pas-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.passivas.splice(Number(b.dataset.pasRemover), 1)));
   const addPas = document.getElementById('btAddPassiva');
-  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', copias:1, efeito:''}));
+  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', copias:1, efeito:'', efeitos:{}}));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
