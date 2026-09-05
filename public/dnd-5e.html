@@ -2117,6 +2117,1584 @@ const MULTICLASSE = {
   "regras": "Para qualificar-se a multiclassar, o personagem deve ter o valor de habilidade mínimo tanto da classe atual quanto da nova classe (ver preRequisitos). O XP necessário para subir de nível depende sempre do nível de personagem total (soma dos níveis em todas as classes), nunca do nível numa classe isolada. Pontos de Vida: só se recebem os PV de 1º nível de uma classe quando o personagem é de 1º nível; qualquer nível adicional (na mesma classe ou em outra) concede PV como 'nível após o 1º'. Dados de Vida de todas as classes se somam num único poço — se forem do mesmo tipo, ficam juntos; se forem de tipos diferentes, são controlados separadamente. O bônus de proficiência é sempre baseado no nível de personagem total, nunca no nível de uma classe específica. Ao ganhar nível numa classe que não é a primeira, o personagem recebe apenas parte das proficiências iniciais dessa classe (armas, armaduras, uma perícia ou ferramentas específicas, conforme tabela própria de Proficiências de Multiclasse), e só recebe o equipamento inicial da primeira classe escolhida. Características de classe que já existam em mais de uma classe do personagem (Canalizar Divindade, Ataque Extra, Defesa sem Armadura, Conjuração) têm regras específicas: Canalizar Divindade soma os efeitos disponíveis mas só ganha usos extras quando uma classe concede isso explicitamente; Ataque Extra não se acumula (nunca mais de dois ataques, salvo exceção do guerreiro); Defesa sem Armadura não pode ser adquirida de uma segunda classe. Conjuração multiclasse: magias conhecidas e preparadas de cada classe conjuradora são determinadas separadamente, como se o personagem fosse de classe única daquela classe; já os espaços de magia são calculados somando todos os níveis em classes conjuradoras completas (bardo, clérigo, druida, feiticeiro, mago), mais metade (arredondado para baixo) dos níveis em paladino e patrulheiro, mais um terço (arredondado para baixo) dos níveis de guerreiro ou ladino que tiverem a característica Cavaleiro Arcano ou Trapaceiro Arcano — usando esse total na tabela 'Multiclasse para Conjurador: Espaço de Magia por Nível de Magia'. Espaços de magia de nível mais alto que as magias conhecidas só podem ser usados para conjurar as magias de nível inferior conhecidas, aproveitando efeitos de aprimoramento de nível superior quando aplicável. A Magia de Pacto do bruxo mantém espaços de magia próprios e separados dos demais, mas espaços de uma característica podem ser usados para conjurar magias da outra característica (Conjuração x Magia de Pacto) quando o personagem possuir as duas."
 };
 
+// Nome que o livro usa pro "tipo de subclasse" de cada classe — só rótulo de tela.
+const NOMES_SUBCLASSE = {
+  barbaro: 'Caminho Primitivo', bardo: 'Colégio de Bardo', bruxo: 'Patrono Sobrenatural',
+  clerigo: 'Domínio Divino', druida: 'Círculo Druídico', feiticeiro: 'Origem da Feitiçaria',
+  guerreiro: 'Arquétipo Marcial', ladino: 'Arquétipo Ladino', mago: 'Tradição Arcana',
+  monge: 'Tradição Monástica', paladino: 'Juramento Sagrado', patrulheiro: 'Conclave de Patrulheiro',
+};
+
+const ARQUETIPOS = [
+  {
+    "classeId": "barbaro",
+    "subclasses": [
+      {
+        "id": "barbaro-furioso",
+        "nome": "Caminho do Furioso",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Frenesi",
+              "efeito": "Enquanto estiver em fúria, pode entrar em frenesi: em cada turno após o primeiro, pode fazer um ataque corpo-a-corpo com arma extra como ação bônus. Ao terminar essa fúria, sofre 1 nível de exaustão."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Fúria Inconsciente",
+              "efeito": "Enquanto em fúria, não pode ficar enfeitiçado nem amedrontado. Se já estava enfeitiçado ou amedrontado ao entrar em fúria, o efeito fica suspenso durante a fúria."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Presença Intimidante",
+              "efeito": "Ação: escolhe uma criatura a até 9 metros que possa vê-lo ou ouvi-lo; ela faz um teste de resistência de Sabedoria (CD 8 + bônus de proficiência + mod. de Carisma) ou fica amedrontada até o início do próximo turno do bárbaro. Pode gastar a ação em turnos seguintes para manter o efeito. Se a criatura for bem-sucedida, fica imune a essa característica vinda deste bárbaro por 24 horas."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Retaliação",
+              "efeito": "Reação: ao sofrer dano de uma criatura a até 1,5 metro, pode fazer um ataque corpo-a-corpo com arma contra ela."
+            }
+          ]
+        }
+      },
+      {
+        "id": "barbaro-guerreiro-totemico",
+        "nome": "Caminho do Guerreiro Totêmico",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Conselheiro Espiritual",
+              "efeito": "Ganha a capacidade de conjurar sentido bestial e falar com animais, mas apenas na forma de rituais."
+            },
+            {
+              "nome": "Totem Espiritual",
+              "efeito": "Escolhe um totem (Águia, Lobo ou Urso) e ganha um benefício enquanto estiver em fúria. Águia (sem armadura pesada): inimigos têm desvantagem em ataques de oportunidade contra o bárbaro e ele pode usar a ação Disparada como ação bônus. Lobo: aliados têm vantagem em ataques corpo-a-corpo contra criaturas hostis a até 1,5 metro do bárbaro. Urso: resistência a todos os tipos de dano, exceto psíquico."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Aspecto da Besta",
+              "efeito": "Escolhe um totem (o mesmo do 3º nível ou outro) e ganha um benefício permanente. Águia: visão nítida a até 1,6 km e nenhuma desvantagem em Sabedoria (Percepção) por penumbra. Lobo: pode rastrear em passo rápido e se mover furtivamente em passo normal. Urso: capacidade de carga dobrada e vantagem em testes de Força para empurrar, puxar, erguer ou quebrar objetos."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Andarilho Espiritual",
+              "efeito": "Pode conjurar comunhão com a natureza como ritual; uma manifestação espiritual de um dos animais totêmicos já escolhidos transmite a informação buscada."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Sintonia Totêmica",
+              "efeito": "Escolhe um totem (mesmo ou outro) e ganha um benefício mágico enquanto em fúria. Águia: deslocamento de voo igual ao deslocamento de caminhada (cai se terminar o turno no ar sem apoio). Lobo: pode usar ação bônus para derrubar no chão uma criatura Grande ou menor ao acertá-la em corpo-a-corpo. Urso: criaturas hostis a até 1,5 metro têm desvantagem em ataques contra alvos que não o bárbaro (ou outro personagem com esta característica), salvo se não puderem vê-lo/ouvi-lo ou não puderem ficar amedrontadas."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "bardo",
+    "subclasses": [
+      {
+        "id": "bardo-colegio-conhecimento",
+        "nome": "Colégio do Conhecimento",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência em três perícias à escolha."
+            },
+            {
+              "nome": "Palavras de Interrupção",
+              "efeito": "Reação: quando uma criatura a até 18 metros faz uma jogada de ataque, teste de habilidade ou jogada de dano, pode gastar um uso de Inspiração de Bardo e subtrair o resultado do dado da rolagem da criatura (decide depois de ver a rolagem, mas antes do resultado ser determinado). A criatura é imune se não puder ouvir o bardo ou não puder ser enfeitiçada."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Segredos Mágicos Adicionais",
+              "efeito": "Aprende duas magias (ou truques) adicionais de qualquer classe, de nível que possa conjurar; contam como magias de bardo mas não entram no total de magias conhecidas."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Perícia Inigualável",
+              "efeito": "Ao fazer um teste de habilidade, pode gastar um uso de Inspiração de Bardo, rolar o dado e somar o resultado ao teste, decidindo depois de ver a rolagem do teste mas antes de saber se foi bem-sucedido."
+            }
+          ]
+        }
+      },
+      {
+        "id": "bardo-colegio-bravura",
+        "nome": "Colégio da Bravura",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência com armaduras médias, escudos e armas marciais."
+            },
+            {
+              "nome": "Inspiração em Combate",
+              "efeito": "Uma criatura que tenha um dado de Inspiração de Bardo do bardo pode rolá-lo e somar o resultado a uma jogada de dano que acabou de fazer, ou usar a reação para somá-lo à própria CA contra um ataque, depois da rolagem de ataque ser feita mas antes de saber se acertou."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Ataque Extra",
+              "efeito": "Pode atacar duas vezes, em vez de uma, sempre que realizar a ação de Ataque no seu turno."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Magia de Batalha",
+              "efeito": "Ao usar a ação para conjurar uma magia de bardo, pode realizar um ataque com arma como ação bônus."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "bruxo",
+    "subclasses": [
+      {
+        "id": "bruxo-arquifada",
+        "nome": "Arquifada",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Lista de Magia Expandida",
+              "efeito": "Adiciona à lista de magias de bruxo: 1º nível — fogo das fadas, sono; 2º — acalmar emoções, força fantasmagórica; 3º — piscar, ampliar plantas; 4º — dominar besta, invisibilidade maior; 5º — dominar pessoa, similaridade."
+            },
+            {
+              "nome": "Presença Feérica",
+              "efeito": "Ação: cada criatura em um cubo de 3 metros centrado no bruxo faz um teste de resistência de Sabedoria (CD de magia de bruxo) ou fica enfeitiçada ou amedrontada (à escolha do bruxo) até o início do próximo turno dele. Um uso por descanso curto ou longo."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Névoa de Fuga",
+              "efeito": "Reação ao sofrer dano: fica invisível e se teletransporta até 18 metros para um espaço desocupado visível, permanecendo invisível até o início do próximo turno, até atacar ou até conjurar uma magia. Um uso por descanso curto ou longo."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Defesa Sedutora",
+              "efeito": "Não pode ser enfeitiçado. Quando tentam enfeitiçá-lo, pode usar a reação para reverter o efeito contra o atacante, que faz um teste de resistência de Sabedoria (CD de magia de bruxo) ou fica enfeitiçado por 1 minuto ou até sofrer dano."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Delírio Sombrio",
+              "efeito": "Ação: uma criatura a até 18 metros faz teste de resistência de Sabedoria (CD de magia de bruxo); se falhar, fica enfeitiçada ou amedrontada (à escolha) por 1 minuto ou até a concentração do bruxo ser quebrada, e enxerga apenas a si mesma, o bruxo e uma ilusão à escolha dele; o efeito também termina se a criatura sofrer dano. Um uso por descanso curto ou longo."
+            }
+          ]
+        }
+      },
+      {
+        "id": "bruxo-corruptor",
+        "nome": "O Corruptor",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Lista de Magia Expandida",
+              "efeito": "Adiciona à lista de magias de bruxo: 1º nível — mãos flamejantes, comando; 2º — cegueira/surdez, raio ardente; 3º — bola de fogo, névoa fétida; 4º — escudo de fogo, muralha de fogo; 5º — coluna de chamas, consagrar."
+            },
+            {
+              "nome": "Bênção do Obscuro",
+              "efeito": "Ao reduzir uma criatura hostil a 0 pontos de vida, ganha pontos de vida temporários iguais ao mod. de Carisma + nível de bruxo (mínimo 1)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Sorte do Próprio Obscuro",
+              "efeito": "Ao fazer um teste de habilidade ou de resistência, pode somar 1d10 à jogada, decidindo depois de ver o resultado inicial mas antes de qualquer efeito da jogada. Um uso por descanso curto ou longo."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Resistência Demoníaca",
+              "efeito": "Ao terminar um descanso curto ou longo, escolhe um tipo de dano e ganha resistência a ele até escolher outro tipo com esta característica; dano de armas mágicas ou de prata ignora essa resistência."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Lançar no Inferno",
+              "efeito": "Ao acertar uma criatura com um ataque, pode transportá-la instantaneamente para um plano inferior; ela retorna ao fim do turno do bruxo e, se não for um corruptor, sofre 10d10 de dano psíquico. Um uso por descanso curto ou longo."
+            }
+          ]
+        }
+      },
+      {
+        "id": "bruxo-grande-antigo",
+        "nome": "O Grande Antigo",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Lista de Magia Expandida",
+              "efeito": "Adiciona à lista de magias de bruxo: 1º nível — sussurros dissonantes, riso histérico de Tasha; 2º — detectar pensamentos, força fantasmagórica; 3º — clarividência, enviar mensagem; 4º — dominar besta, tentáculos negros de Evard; 5º — dominar pessoa, telecinésia."
+            },
+            {
+              "nome": "Despertar a Mente",
+              "efeito": "Pode se comunicar telepaticamente com qualquer criatura que possa ver a até 9 metros, sem precisar compartilhar um idioma (a criatura precisa compreender ao menos um idioma)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Proteção Entrópica",
+              "efeito": "Reação: ao ser alvo de uma jogada de ataque, impõe desvantagem nela; se o ataque errar, a próxima jogada de ataque do bruxo contra essa criatura tem vantagem até o fim do próximo turno dele. Um uso por descanso curto ou longo."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Escudo de Pensamentos",
+              "efeito": "Seus pensamentos ficam protegidos contra leitura por telepatia ou outros meios, a menos que permita; ganha resistência a dano psíquico e quem causa dano psíquico a ele sofre a mesma quantidade de dano."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Criar Lacaio",
+              "efeito": "Ação: toca um humanoide incapacitado, que fica enfeitiçado pelo bruxo até que remover maldição seja conjurada nele, a condição enfeitiçado seja removida ou esta característica seja usada de novo; pode se comunicar telepaticamente com a criatura enfeitiçada enquanto estiverem no mesmo plano de existência."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "clerigo",
+    "subclasseNivelEscolha": 1,
+    "subclasses": [
+      {
+        "id": "clerigo-conhecimento",
+        "nome": "Domínio do Conhecimento",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas (não contam no limite diário): 1º nível — comando, identificação; 3º nível — augúrio, sugestão; 5º nível — dificultar detecção, falar com os mortos; 7º nível — olho arcano, confusão; 9º nível — conhecimento lendário, vidência."
+            },
+            {
+              "nome": "Bênçãos do Conhecimento",
+              "efeito": "Aprende 2 idiomas à escolha e ganha proficiência em 2 perícias dentre Arcanismo, História, Natureza ou Religião. Bônus de proficiência dobrado em testes com essas perícias."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Conhecimento das Eras",
+              "efeito": "Ação: escolhe uma perícia ou ferramenta e ganha proficiência nela por 10 minutos."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Canalizar Divindade: Ler Pensamentos",
+              "efeito": "Ação: criatura vista a até 18m faz teste de resistência de Sabedoria; se falhar, lê seus pensamentos superficiais por 1 minuto e pode, no lugar disso, conjurar sugestão nela sem gastar espaço de magia (alvo falha automaticamente no teste)."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Conjuração Poderosa",
+              "efeito": "Soma o modificador de Sabedoria ao dano de qualquer truque de clérigo."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Visões do Passado",
+              "efeito": "Medita 1+ minuto (até nº de minutos igual à Sabedoria, mantendo concentração) para obter visões do passado recente de um objeto que segura ou do ambiente ao redor. Só pode usar de novo após descanso curto ou longo."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-enganacao",
+        "nome": "Domínio da Enganação",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — enfeitiçar pessoa, disfarçar-se; 3º nível — reflexos, passos sem pegadas; 5º nível — piscar, dissipar magia; 7º nível — porta dimensional, metamorfose; 9º nível — dominar pessoa, modificar memória."
+            },
+            {
+              "nome": "Bênção do Trapaceiro",
+              "efeito": "Ação: toca uma criatura voluntária (não você) concedendo vantagem em testes de Destreza (Furtividade) por 1 hora ou até reusar a característica."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Invocar Duplicidade",
+              "efeito": "Ação: cria uma duplicata ilusória de si mesmo, num espaço desocupado a até 9m, que dura 1 minuto ou até perder concentração. Pode mover a ilusão até 9m (ação bônus, máx. 36m de você), conjurar magias como se estivesse no espaço da ilusão, e ganha vantagem em ataques contra criatura adjacente a você e à ilusão simultaneamente."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Canalizar Divindade: Manto de Sombras",
+              "efeito": "Ação: fica invisível até o final do próximo turno; a invisibilidade termina se atacar ou conjurar magia."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Golpe Divino",
+              "efeito": "1x por turno, ao acertar ataque com arma, causa 1d8 de dano de veneno extra (2d8 a partir do 14º nível)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Duplicidade Aprimorada",
+              "efeito": "Invocar Duplicidade passa a criar até 4 duplicatas; ação bônus move quantas quiser, até 9m cada, máx. 36m de você."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-guerra",
+        "nome": "Domínio da Guerra",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — auxílio divino, escudo da fé; 3º nível — arma mágica, arma espiritual; 5º nível — manto do cruzado, espíritos guardiões; 7º nível — movimentação livre, pele de pedra; 9º nível — coluna de chamas, imobilizar monstro."
+            },
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência em armas marciais e armaduras pesadas."
+            },
+            {
+              "nome": "Sacerdote da Guerra",
+              "efeito": "Ao usar a ação de Ataque, pode fazer um ataque com arma adicional como ação bônus. Usos = modificador de Sabedoria (mín. 1) por descanso longo."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Ataque Dirigido",
+              "efeito": "Em uma jogada de ataque, pode conceder +10 à rolagem (decide depois de ver o resultado, antes de saber se acertou)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Canalizar Divindade: Bênção do Deus da Guerra",
+              "efeito": "Reação: criatura a até 9m que fizer uma jogada de ataque recebe +10 nela (decide após ver a rolagem, antes do resultado)."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Golpe Divino",
+              "efeito": "1x por turno, ao acertar ataque com arma, causa 1d8 de dano extra do mesmo tipo da arma (2d8 a partir do 14º nível)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Avatar da Batalha",
+              "efeito": "Resistência a dano concussão, cortante e perfurante de ataques não-mágicos."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-luz",
+        "nome": "Domínio da Luz",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — mãos flamejantes, fogo das fadas; 3º nível — esfera flamejante, raio ardente; 5º nível — luz do dia, bola de fogo; 7º nível — guardião da fé, muralha de fogo; 9º nível — coluna de chamas, vidência."
+            },
+            {
+              "nome": "Truque Adicional",
+              "efeito": "Aprende o truque luz, se ainda não souber."
+            },
+            {
+              "nome": "Labareda Protetora",
+              "efeito": "Reação ao ser atacado por criatura a até 9m que possa ver: impõe desvantagem na jogada de ataque (atacante que não pode ser cegado é imune). Usos = modificador de Sabedoria (mín. 1) por descanso longo."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Radiação do Amanhecer",
+              "efeito": "Ação: dissipa escuridão mágica num raio de 9m; criaturas hostis nesse raio fazem teste de Constituição, sofrendo 2d10 + nível de clérigo em dano radiante (metade se bem-sucedidas). Cobertura total anula o efeito."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Labareda Aprimorada",
+              "efeito": "Pode usar Labareda Protetora também quando uma criatura vista a até 9m atacar outra pessoa que não você."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Conjuração Poderosa",
+              "efeito": "Soma o modificador de Sabedoria ao dano de qualquer truque de clérigo."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Coroa de Luz",
+              "efeito": "Ação: ativa aura por 1 minuto (ou até dissipar) emitindo luz plena num raio de 18m e penumbra por mais 9m. Inimigos na luz plena têm desvantagem em testes de resistência contra suas magias de dano de fogo ou radiante."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-natureza",
+        "nome": "Domínio da Natureza",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — amizade animal, falar com animais; 3º nível — pele de árvore, crescer espinhos; 5º nível — ampliar plantas, muralha de vento; 7º nível — dominar besta, vinha esmagadora; 9º nível — praga de insetos, caminhar em árvores."
+            },
+            {
+              "nome": "Acólito da Natureza",
+              "efeito": "Aprende um truque de druida à escolha e ganha proficiência em uma perícia dentre Adestrar Animais, Natureza ou Sobrevivência."
+            },
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência com armaduras pesadas."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Enfeitiçar Animais e Plantas",
+              "efeito": "Ação: cada besta ou criatura-planta a até 9m que possa vê-lo faz teste de Sabedoria; se falhar, fica enfeitiçada (amistosa) por 1 minuto ou até sofrer dano."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Amortecer Elementos",
+              "efeito": "Reação: quando você ou criatura a até 9m sofrer dano de ácido, frio, fogo, elétrico ou trovão, concede resistência a esse tipo de dano."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Golpe Divino",
+              "efeito": "1x por turno, ao acertar ataque com arma, causa 1d8 de dano extra de frio, fogo ou elétrico à escolha (2d8 a partir do 14º nível)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Senhor da Natureza",
+              "efeito": "Ação bônus: comanda verbalmente criaturas enfeitiçadas por Enfeitiçar Animais e Plantas, dizendo o que farão no próximo turno delas."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-tempestade",
+        "nome": "Domínio da Tempestade",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — névoa obscurecente, onda trovejante; 3º nível — lufada de vento, despedaçar; 5º nível — convocar relâmpagos, nevasca; 7º nível — controlar a água, tempestade de gelo; 9º nível — onda destrutiva, praga de insetos."
+            },
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência em armas marciais e armaduras pesadas."
+            },
+            {
+              "nome": "Ira da Tormenta",
+              "efeito": "Reação ao ser atingido por ataque de criatura a até 1,5m que possa ver: força teste de Destreza; falha causa 2d8 de dano elétrico ou trovejante (à escolha), metade se sucesso. Usos = modificador de Sabedoria (mín. 1) por descanso longo."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Ira Destruidora",
+              "efeito": "Ao rolar dano elétrico ou trovejante, pode causar o dano máximo em vez de rolar."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Golpe de Relâmpago",
+              "efeito": "Ao causar dano elétrico em criatura Grande ou menor, pode empurrá-la até 3m."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Golpe Divino",
+              "efeito": "1x por turno, ao acertar ataque com arma, causa 1d8 de dano trovejante extra (2d8 a partir do 14º nível)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Filho da Tormenta",
+              "efeito": "Ganha deslocamento de voo igual ao deslocamento de caminhada, desde que não esteja em local subterrâneo ou fechado."
+            }
+          ]
+        }
+      },
+      {
+        "id": "clerigo-vida",
+        "nome": "Domínio da Vida",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Magias de Domínio",
+              "efeito": "Sempre tem preparadas: 1º nível — bênção, curar ferimentos; 3º nível — restauração menor, arma espiritual; 5º nível — sinal de esperança, revivificar; 7º nível — proteção contra a morte, guardião da fé; 9º nível — curar ferimentos em massa, reviver os mortos."
+            },
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência com armaduras pesadas."
+            },
+            {
+              "nome": "Discípulo da Vida",
+              "efeito": "Magias de cura que restauram pontos de vida curam +2 + nível da magia a mais."
+            }
+          ],
+          "2": [
+            {
+              "nome": "Canalizar Divindade: Preservar a Vida",
+              "efeito": "Ação: cura um total de 5x nível de clérigo em pontos de vida, distribuído entre criaturas a até 9m; nenhuma pode ser curada além de metade do seu máximo; não funciona em mortos-vivos ou constructos."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Curandeiro Abençoado",
+              "efeito": "Ao conjurar magia de cura em outra criatura, você também recupera 2 + nível da magia em pontos de vida."
+            }
+          ],
+          "8": [
+            {
+              "nome": "Golpe Divino",
+              "efeito": "1x por turno, ao acertar ataque com arma, causa 1d8 de dano radiante extra (2d8 a partir do 14º nível)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Cura Suprema",
+              "efeito": "Ao rolar dados para recuperar pontos de vida com magia, usa sempre o maior resultado possível em vez de rolar."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "druida",
+    "subclasseNivelEscolha": 2,
+    "subclasses": [
+      {
+        "id": "druida-terra",
+        "nome": "Círculo da Terra",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Truque Adicional",
+              "efeito": "Aprende um truque de druida adicional à escolha."
+            },
+            {
+              "nome": "Recuperação Natural",
+              "efeito": "Em um descanso curto, recupera espaços de magia gastos com nível combinado até metade do nível de druida (arredondado para baixo), nenhum de 6º nível ou superior. Só pode usar de novo após descanso longo."
+            }
+          ],
+          "3": [
+            {
+              "nome": "Magias de Círculo",
+              "efeito": "Escolhe um terreno (ártico, costa, deserto, floresta, montanha, pântano, planície ou subterrâneo); ganha acesso, sempre preparadas e fora do limite diário, às magias de círculo daquele terreno para o 3º nível (ex.: ártico — imobilizar pessoa, crescer espinho; costa — passo nebuloso, reflexos; deserto — nublar, silêncio; floresta — patas de aranha, pele de árvore; montanha — crescer espinho, patas de aranha; pântano — escuridão, flecha ácida; planície — invisibilidade, passos sem pegadas; subterrâneo — patas de aranha, teia)."
+            }
+          ],
+          "5": [
+            {
+              "nome": "Magias de Círculo",
+              "efeito": "Ganha as magias de círculo de 5º nível do terreno escolhido (ex.: ártico — nevasca, lentidão; costa — andar na água, respirar água; deserto — criar alimentos, proteção contra energia; floresta — convocar relâmpagos, crescer plantas; montanha — mesclar-se às rochas, relâmpago; pântano — andar na água, névoa fétida; planície — luz do dia, velocidade; subterrâneo — forma gasosa, névoa fétida)."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Magias de Círculo",
+              "efeito": "Ganha as magias de círculo de 7º nível do terreno escolhido (ex.: ártico — movimentação livre, tempestade de gelo; costa — movimentação livre, controlar água; deserto — praga, terreno alucinógeno; floresta — adivinhação, movimentação livre; montanha — moldar rochas, pele de pedra; pântano — localizar criatura, movimentação livre; planície — adivinhação, movimentação livre; subterrâneo — invisibilidade maior, moldar rochas)."
+            }
+          ],
+          "9": [
+            {
+              "nome": "Magias de Círculo",
+              "efeito": "Ganha as magias de círculo de 9º nível do terreno escolhido (ex.: ártico — comunhão com a natureza, cone de frio; costa — vidência, conjurar elemental; deserto — muralha de pedra, praga de insetos; floresta — comunhão com a natureza, passo de árvore; montanha — criar passagem, muralha de pedra; pântano — vidência, praga de insetos; planície — praga de insetos, sonho; subterrâneo — praga de insetos, névoa mortal)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Caminho da Floresta",
+              "efeito": "Move-se por terreno difícil não-mágico sem custo extra; atravessa plantas não-mágicas sem ser retardado ou sofrer dano delas; vantagem em testes de resistência contra plantas criadas/manipuladas magicamente para impedir movimento."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Proteção Natural",
+              "efeito": "Não pode ser enfeitiçado ou amedrontado por elementais ou fadas; imune a venenos e doenças."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Santuário Natural",
+              "efeito": "Quando uma besta ou planta ataca você, ela faz teste de Sabedoria (CD das suas magias de druida); em falha, deve escolher outro alvo ou o ataque erra automaticamente; em sucesso fica imune a esse efeito por 24h. A criatura sabe do efeito antes de decidir atacar."
+            }
+          ]
+        }
+      },
+      {
+        "id": "druida-lua",
+        "nome": "Círculo da Lua",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Forma Selvagem de Combate",
+              "efeito": "Usa Forma Selvagem como ação bônus em vez de ação. Enquanto transformado, pode gastar espaço de magia como ação bônus para recuperar 1d8 pontos de vida por nível do espaço."
+            },
+            {
+              "nome": "Formas de Círculo",
+              "efeito": "Pode assumir Forma Selvagem de besta com ND até 1, ignorando a coluna ND Máx. da tabela (demais limitações continuam valendo)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Formas de Círculo",
+              "efeito": "Limite de ND para Forma Selvagem sobe para nível de druida ÷ 3 (arredondado para baixo)."
+            },
+            {
+              "nome": "Ataque Primordial",
+              "efeito": "Ataques na forma de besta contam como mágicos para superar resistência/imunidade a dano não-mágico."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Forma Selvagem de Elemental",
+              "efeito": "Pode gastar 2 usos de Forma Selvagem de uma vez para se transformar em elemental da água, ar, fogo ou terra."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Mil Formas",
+              "efeito": "Pode conjurar alterar-se à vontade."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "feiticeiro",
+    "subclasseNivelEscolha": 1,
+    "subclasses": [
+      {
+        "id": "feiticeiro-linhagem-draconica",
+        "nome": "Linhagem Dracônica",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Ancestral Dracônico",
+              "efeito": "Escolhe um tipo de dragão como ancestral, definindo o tipo de dano usado por características futuras (Azul/Bronze=elétrico; Branco/Prata=frio; Cobre/Negro=ácido; Latão/Ouro/Vermelho=fogo; Verde=veneno). Fala/lê/escreve Dracônico; bônus de proficiência dobrado em testes de Carisma ao interagir com dragões."
+            },
+            {
+              "nome": "Resiliência Dracônica",
+              "efeito": "Máximo de pontos de vida +1 no 1º nível e +1 a cada nível seguinte na classe. Sem armadura, CA = 13 + modificador de Destreza."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Afinidade Elemental",
+              "efeito": "Ao conjurar magia que cause dano do tipo do ancestral dracônico, soma modificador de Carisma a uma rolagem de dano da magia. Pode gastar 1 ponto de feitiçaria para ganhar resistência a esse tipo de dano por 1 hora."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Asas de Dragão",
+              "efeito": "Ação bônus: cria asas de dragão dando deslocamento de voo igual ao deslocamento atual; dissipa com ação bônus. Incompatível com armadura não adaptada; roupas não adaptadas são destruídas ao manifestar as asas."
+            }
+          ],
+          "18": [
+            {
+              "nome": "Presença Dracônica",
+              "efeito": "Ação, gasta 5 pontos de feitiçaria: aura de 18m por 1 minuto (ou até perder concentração); criaturas hostis que iniciem o turno na aura fazem teste de Sabedoria ou ficam enfeitiçadas (admiração) ou amedrontadas (medo), à escolha; sucesso concede imunidade à aura por 24h."
+            }
+          ]
+        }
+      },
+      {
+        "id": "feiticeiro-magia-selvagem",
+        "nome": "Magia Selvagem",
+        "caracteristicasPorNivel": {
+          "1": [
+            {
+              "nome": "Surto de Magia Selvagem",
+              "efeito": "Ao conjurar magia de feiticeiro de 1º nível ou superior, o mestre pode pedir 1d20; em resultado 1, rola na tabela Surto de Magia Selvagem para efeito aleatório (máx. 1 surto por turno). Efeito de magia gerado por surto ignora Metamágica e dura pela duração total mesmo se normalmente exigisse concentração."
+            },
+            {
+              "nome": "Marés de Caos",
+              "efeito": "Ganha vantagem em uma jogada de ataque, teste de habilidade ou de resistência; após usar, só recupera com descanso longo. A qualquer momento antes de recuperar, o mestre pode rolar na tabela Surto de Magia Selvagem após você conjurar magia de 1º nível ou superior, e então você recupera o uso."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Dobrar a Sorte",
+              "efeito": "Reação, gasta 2 pontos de feitiçaria: quando outra criatura vista faz jogada de ataque, teste de habilidade ou resistência, rola 1d4 e aplica como bônus ou penalidade à escolha, após a rolagem mas antes do efeito."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Caos Controlado",
+              "efeito": "Ao rolar na tabela Surto de Magia Selvagem, rola duas vezes e usa o resultado que quiser."
+            }
+          ],
+          "18": [
+            {
+              "nome": "Bombardeio de Magia",
+              "efeito": "Ao rolar dano de magia e obter o maior resultado possível em algum dado, pode rolar esse dado novamente e somar o novo valor ao dano. Uso limitado a 1x por rodada."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "guerreiro",
+    "subclasses": [
+      {
+        "id": "guerreiro-campeao",
+        "nome": "Campeão",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Crítico Aprimorado",
+              "efeito": "Seus ataques com arma acertam crítico com 19 ou 20 no dado, em vez de só 20."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Atletismo Extraordinário",
+              "efeito": "Adiciona metade do bônus de proficiência (arredondado para cima) em qualquer teste de Força, Destreza ou Constituição em que ainda não aplique o bônus de proficiência; o alcance do salto longo com corrida aumenta em 0,3m x seu modificador de Força."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Estilo de Luta Adicional",
+              "efeito": "Escolhe um segundo Estilo de Combate."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Crítico Superior",
+              "efeito": "Seus ataques com arma acertam crítico com 18, 19 ou 20 no dado."
+            }
+          ],
+          "18": [
+            {
+              "nome": "Sobrevivente",
+              "efeito": "No início de cada turno seu, recupera 5 + modificador de Constituição em pontos de vida, se estiver com metade ou menos do PV máximo (e não estiver a 0 PV)."
+            }
+          ]
+        }
+      },
+      {
+        "id": "guerreiro-cavaleiro-arcano",
+        "nome": "Cavaleiro Arcano",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Conjuração Limitada",
+              "efeito": "Ganha conjuração de magias de mago focada nas escolas de Abjuração e Evocação (habilidade de conjuração: Inteligência). Aprende truques e magias conhecidas e espaços de magia de 1º a 4º nível conforme progride até o 20º nível de guerreiro (tabela própria de progressão lenta, similar a um meio-conjurador)."
+            },
+            {
+              "nome": "Vínculo com Arma",
+              "efeito": "Realiza um ritual de 1 hora para vincular uma arma a si; não pode ser desarmado dela (a menos que incapacitado) e pode invocá-la à mão com uma ação bônus. Pode manter até duas armas vinculadas, mas só invoca uma por vez."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Magia de Guerra",
+              "efeito": "Ao usar a ação para conjurar um truque, pode realizar um ataque com arma como ação bônus."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Golpe Místico",
+              "efeito": "Ao acertar uma criatura com ataque de arma, ela fica com desvantagem no próximo teste de resistência contra uma magia sua até o fim do seu próximo turno."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Investida Arcana",
+              "efeito": "Ao usar Surto de Ação, pode se teletransportar até 9 metros para um espaço desocupado que possa ver, antes ou depois da ação adicional."
+            }
+          ],
+          "18": [
+            {
+              "nome": "Magia de Guerra Aprimorada",
+              "efeito": "Ao usar a ação para conjurar qualquer magia (não só truques), pode realizar um ataque com arma como ação bônus."
+            }
+          ]
+        }
+      },
+      {
+        "id": "guerreiro-mestre-de-batalha",
+        "nome": "Mestre de Batalha",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Manobras de Combate",
+              "efeito": "Aprende 3 manobras à escolha de uma lista de manobras marciais (sem listar cada uma) e ganha 4 dados de superioridade (d8), recuperados em descanso curto ou longo. CD das manobras = 8 + bônus de proficiência + modificador de Força ou Destreza (à escolha)."
+            },
+            {
+              "nome": "Estudioso da Guerra",
+              "efeito": "Ganha proficiência com um tipo de ferramenta de artesão à escolha."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Manobras de Combate (progressão)",
+              "efeito": "Aprende 2 manobras adicionais (total 5) e ganha mais 1 dado de superioridade (total 5); pode trocar manobras conhecidas a cada nova manobra aprendida."
+            },
+            {
+              "nome": "Conheça seu Inimigo",
+              "efeito": "Gastando ao menos 1 minuto observando ou interagindo com uma criatura fora de combate, descobre se ela é igual, superior ou inferior a você em duas características à escolha (Força, Destreza, Constituição, CA, PV atuais, nível total ou níveis de guerreiro)."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Manobras de Combate (progressão)",
+              "efeito": "Aprende 2 manobras adicionais (total 7); pode trocar manobras conhecidas."
+            },
+            {
+              "nome": "Dados de Superioridade Aprimorados",
+              "efeito": "Seus dados de superioridade se tornam d10."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Manobras de Combate (progressão)",
+              "efeito": "Aprende 2 manobras adicionais (total 9) e ganha mais 1 dado de superioridade (total 6); pode trocar manobras conhecidas."
+            },
+            {
+              "nome": "Implacável",
+              "efeito": "Ao rolar iniciativa sem nenhum dado de superioridade restante, recupera um dado de superioridade."
+            }
+          ],
+          "18": [
+            {
+              "nome": "Dados de Superioridade Aprimorados",
+              "efeito": "Seus dados de superioridade se tornam d12."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "ladino",
+    "subclasses": [
+      {
+        "id": "ladino-assassino",
+        "nome": "Assassino",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Proficiência Adicional",
+              "efeito": "Ganha proficiência com kit de disfarce e kit de venenos."
+            },
+            {
+              "nome": "Assassinar",
+              "efeito": "Tem vantagem nas jogadas de ataque contra qualquer criatura que ainda não tenha agido no combate. Qualquer ataque contra uma criatura surpresa é automaticamente um acerto crítico."
+            }
+          ],
+          "9": [
+            {
+              "nome": "Especialização em Infiltração",
+              "efeito": "Gastando 7 dias e 25 po, cria uma identidade falsa completa (histórico, profissão, filiações) que outras criaturas acreditam ser real enquanto não houver motivo óbvio para desconfiar."
+            }
+          ],
+          "13": [
+            {
+              "nome": "Impostor",
+              "efeito": "Após estudar por ao menos 3 horas a fala, escrita e maneirismos de uma pessoa, consegue imitá-los infalivelmente."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Golpe Letal",
+              "efeito": "Ao acertar uma criatura surpresa, ela faz um teste de resistência de Constituição (CD 8 + modificador de Destreza + bônus de proficiência); se falhar, o dano do ataque é dobrado."
+            }
+          ]
+        }
+      },
+      {
+        "id": "ladino-ladrao",
+        "nome": "Ladrão",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Mãos Rápidas",
+              "efeito": "Pode usar a ação bônus de Ação Ardilosa para fazer um teste de Destreza (Prestidigitação), usar ferramentas de ladrão (abrir fechadura/desarmar armadilha) ou usar um objeto."
+            },
+            {
+              "nome": "Andarilho de Telhados",
+              "efeito": "Escalar deixa de custar movimento extra; o alcance do salto com corrida aumenta em 0,3m x modificador de Destreza."
+            }
+          ],
+          "9": [
+            {
+              "nome": "Furtividade Suprema",
+              "efeito": "Tem vantagem em testes de Destreza (Furtividade) se não se mover mais que metade do deslocamento no turno."
+            }
+          ],
+          "13": [
+            {
+              "nome": "Usar Instrumento Mágico",
+              "efeito": "Ignora requisitos de classe, raça e nível para usar qualquer item mágico."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Reflexos de Ladrão",
+              "efeito": "No primeiro turno de cada combate (se não estiver surpreso), age duas vezes: uma na sua iniciativa normal e outra na iniciativa menos 10."
+            }
+          ]
+        }
+      },
+      {
+        "id": "ladino-trapaceiro-arcano",
+        "nome": "Trapaceiro Arcano",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Conjuração Limitada",
+              "efeito": "Ganha conjuração de magias de mago focada nas escolas de Encantamento e Ilusão (habilidade de conjuração: Inteligência), incluindo o truque mãos mágicas. Progressão lenta de truques, magias conhecidas e espaços de magia de 1º a 4º nível até o 20º nível de ladino."
+            },
+            {
+              "nome": "Mãos Mágicas Malabaristas",
+              "efeito": "A mão espectral de mãos mágicas pode ficar invisível, guardar/recuperar itens em recipientes carregados por outra criatura e usar ferramentas de ladrão à distância, podendo passar despercebida em teste de Destreza (Prestidigitação) contra Sabedoria (Percepção)."
+            }
+          ],
+          "9": [
+            {
+              "nome": "Emboscada Mágica",
+              "efeito": "Se estiver escondido de uma criatura ao conjurar uma magia nela, ela tem desvantagem no teste de resistência contra essa magia."
+            }
+          ],
+          "13": [
+            {
+              "nome": "Trapaceiro Versátil",
+              "efeito": "Com ação bônus, usa a mão de mãos mágicas para distrair um alvo próximo, concedendo a si mesmo vantagem nas jogadas de ataque contra ele até o fim do turno."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Ladrão de Magia",
+              "efeito": "Ao ser alvo de uma magia, pode usar a reação para forçar um teste de resistência no conjurador; se falhar, ignora o efeito e rouba a magia (nível 1+) por 8 horas, podendo conjurá-la com seus próprios espaços. Uso limitado a 1x por descanso longo."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "mago",
+    "subclasses": [
+      {
+        "id": "mago-abjuracao",
+        "nome": "Escola de Abjuração",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Abjuração Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de abjuração no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Proteção Arcana",
+              "efeito": "Ao conjurar magia de abjuração de 1º nível ou superior, cria um escudo com PV iguais a 2x nível de mago + modificador de Inteligência, que absorve dano em seu lugar até um descanso longo; recupera PV do escudo (2x nível da magia) sempre que conjurar outra magia de abjuração."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Proteção Projetada",
+              "efeito": "Com reação, transfere dano sofrido por uma criatura visível a até 9m para sua Proteção Arcana."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Abjuração Aprimorada",
+              "efeito": "Adiciona o bônus de proficiência a testes de habilidade exigidos por magias de abjuração que você conjura (ex.: contramágica, dissipar magia)."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Resistência à Magia",
+              "efeito": "Vantagem em testes de resistência contra magias e resistência a dano de magias."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-adivinhacao",
+        "nome": "Escola de Adivinhação",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Adivinhação Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de adivinhação no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Prodígio",
+              "efeito": "Ao terminar um descanso longo, rola 2d20 e guarda os resultados; pode substituir qualquer jogada de ataque, teste de resistência ou teste de habilidade (sua ou de outra criatura visível) por uma dessas rolagens, uma vez por rodada, até usá-las ou até o próximo descanso longo."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Especialista em Adivinhação",
+              "efeito": "Ao conjurar magia de adivinhação de 2º nível ou superior usando um espaço, recupera um espaço de magia de nível inferior (máximo 5º)."
+            }
+          ],
+          "10": [
+            {
+              "nome": "O Terceiro Olho",
+              "efeito": "Com uma ação, ganha um entre quatro benefícios até um descanso: visão no escuro (18m), visão no Plano Etéreo (18m), ler qualquer idioma, ou ver invisibilidade a 3m. Uso limitado a 1x por descanso longo."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Prodígio Maior",
+              "efeito": "Rola 3d20 (em vez de 2d20) para a característica Prodígio."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-conjuracao",
+        "nome": "Escola de Conjuração",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Conjuração Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de conjuração no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Conjuração Menor",
+              "efeito": "Com uma ação, cria um objeto inanimado não-mágico visível (até 90cm, 5kg) em sua mão ou a até 3m; o objeto some após 1 hora, dano recebido/causado, ou nova utilização da característica."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Transposição Benígna",
+              "efeito": "Com ação, teleporta-se até 9m para espaço visível desocupado, ou troca de lugar com criatura Pequena/Média voluntária no alcance. Recarrega em descanso longo ou ao conjurar magia de conjuração de 1º nível+."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Conjuração Focada",
+              "efeito": "Concentração em magias de conjuração não pode ser quebrada por dano sofrido."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Invocações Resistentes",
+              "efeito": "Criaturas invocadas ou criadas por suas magias de conjuração ganham 30 pontos de vida temporários."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-encantamento",
+        "nome": "Escola de Encantamento",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Encantamento Instruído",
+              "efeito": "Custo em ouro e tempo para copiar magias de encantamento no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Olhar Hipnotizante",
+              "efeito": "Com ação, uma criatura visível a até 1,5m que possa vê-lo/ouvi-lo faz teste de resistência de Sabedoria (CD das suas magias) ou fica enfeitiçada, com deslocamento 0 e incapacitada até o fim do seu próximo turno; pode manter o efeito gastando ação em turnos seguintes. Uso limitado por criatura até descanso longo após falha ou fim do efeito."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Encanto Instintivo",
+              "efeito": "Com reação, ao ser alvo de ataque de criatura visível a até 9m, desvia o ataque para outra criatura próxima; o atacante faz teste de resistência de Sabedoria ou deve atacar a criatura mais próxima."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Dividir Encantamento",
+              "efeito": "Ao conjurar magia de encantamento de 1º nível+ visando uma única criatura, pode afetar uma segunda criatura também."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Alterar Memórias",
+              "efeito": "Ao enfeitiçar uma criatura, pode fazê-la não perceber que está enfeitiçada; ao fim do efeito, pode apagar parte da memória do período enfeitiçado (teste de resistência de Inteligência da criatura para resistir)."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-evocacao",
+        "nome": "Escola de Evocação",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Evocação Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de evocação no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Esculpir Magias",
+              "efeito": "Ao conjurar magia de evocação com área de efeito, pode escolher 1 + nível da magia de criaturas visíveis para passarem automaticamente no teste de resistência e não sofrerem dano (se aplicável)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Truque Potente",
+              "efeito": "Truques de dano causam metade do dano (em vez de nenhum) quando a criatura passa no teste de resistência, sem efeitos adicionais."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Evocação Potencializada",
+              "efeito": "Adiciona o modificador de Inteligência ao resultado de uma rolagem de dano de magias de evocação conjuradas."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Sobrecarga",
+              "efeito": "Magias de mago de 5º nível ou inferior que causem dano passam a causar dano máximo; usos repetidos entre descansos longos causam dano necrótico crescente (2d12 por nível da magia na 2ª vez, aumentando 1d12 a cada uso extra) que ignora resistência/imunidade."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-ilusao",
+        "nome": "Escola de Ilusão",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Ilusão Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de ilusão no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Ilusão Menor Aprimorada",
+              "efeito": "Aprende o truque ilusão menor (ou outro truque de mago se já o conhece); o truque não conta no total de truques conhecidos; ao conjurar ilusão menor pode criar som e imagem simultaneamente."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Ilusões Moldáveis",
+              "efeito": "Com ação, pode mudar a natureza de uma ilusão em andamento (duração 1 minuto+) usando os parâmetros normais da magia, desde que possa vê-la."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Eu Ilusório",
+              "efeito": "Com reação, ao ser alvo de ataque, cria uma duplicata ilusória de si mesmo que faz o ataque errar automaticamente; a ilusão então se dissipa. Uso limitado a 1x por descanso longo."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Realidade Ilusória",
+              "efeito": "Ao conjurar magia de ilusão de 1º nível+, pode tornar real (por 1 minuto) um objeto inanimado não-mágico parte da ilusão, com ação bônus; o objeto não pode causar dano diretamente."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-necromancia",
+        "nome": "Escola de Necromancia",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Necromancia Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de necromancia no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Colheita Sinistra",
+              "efeito": "Uma vez por turno, ao matar uma ou mais criaturas com magia de 1º nível+, recupera PV iguais ao dobro do nível da magia (ou triplo do seu nível de mago, se a magia for de necromancia); não funciona contra constructos ou mortos-vivos."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Escravos Mortos-Vivos",
+              "efeito": "Ganha a magia animar mortos (se não a tiver) e, ao conjurá-la, cria um morto-vivo adicional; mortos-vivos criados por suas magias de necromancia ganham PV extra igual ao seu nível de mago e somam bônus de proficiência ao dano."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Acostumado à Morte-Vida",
+              "efeito": "Resistência a dano necrótico; seu PV máximo não pode ser reduzido."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Comandar Mortos-Vivos",
+              "efeito": "Com ação, tenta dominar um morto-vivo visível a até 18m (mesmo criado por outro conjurador) via teste de resistência de Carisma (CD das suas magias); se falhar, ele passa a obedecer seus comandos."
+            }
+          ]
+        }
+      },
+      {
+        "id": "mago-transmutacao",
+        "nome": "Escola de Transmutação",
+        "caracteristicasPorNivel": {
+          "2": [
+            {
+              "nome": "Transmutação Instruída",
+              "efeito": "Custo em ouro e tempo para copiar magias de transmutação no grimório é reduzido à metade."
+            },
+            {
+              "nome": "Alquimia Menor",
+              "efeito": "Transmuta temporariamente um objeto não-mágico de madeira, pedra, ferro, cobre ou prata em outro desses materiais (30cm³ a cada 10 minutos de trabalho); reverte após 1 hora ou perda de concentração."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Pedra de Transmutador",
+              "efeito": "Gastando 8 horas, cria uma pedra que concede a quem a possui um benefício à escolha (visão no escuro 18m, +3m de deslocamento, proficiência em resistência de Constituição, ou resistência a um dano elemental); pode trocar o benefício ao conjurar magia de conjuração de 1º nível+. Só uma pedra ativa por vez."
+            }
+          ],
+          "10": [
+            {
+              "nome": "Metamorfo",
+              "efeito": "Ganha a magia metamorfose (se não a tiver) e pode conjurá-la em si mesmo sem gastar espaço de magia para virar besta de ND 1 ou menor, 1x por descanso curto ou longo (ainda pode conjurá-la normalmente gastando espaços)."
+            }
+          ],
+          "14": [
+            {
+              "nome": "Mestre Transmutador",
+              "efeito": "Com ação, consome a Pedra de Transmutador (destruindo-a) para um efeito à escolha: transformar um objeto não-mágico em outro de valor similar; remover maldições/doenças/venenos e curar todo o PV de uma criatura; conjurar reviver mortos sem gastar espaço/precisar da magia no grimório; ou reduzir a idade aparente de uma criatura em 3d10 anos (mínimo 13)."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "monge",
+    "subclasses": [
+      {
+        "id": "monge-mao-aberta",
+        "nome": "Caminho da Mão Aberta",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Técnica da Mão Aberta",
+              "efeito": "Ao acertar um alvo com um dos golpes da Rajada de Golpes, impõe um efeito extra à escolha: o alvo faz teste de Destreza ou cai no chão; ou faz teste de Força ou é empurrado 4,5m; ou o alvo não pode realizar reações até o final do seu próximo turno."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Integridade Corporal",
+              "efeito": "Com uma ação, recupera pontos de vida igual a três vezes o nível de monge. Uma vez por descanso longo."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Tranquilidade",
+              "efeito": "Ao terminar um descanso longo, ganha o efeito da magia santuário (CD 8 + mod. Sabedoria + bônus de proficiência) até o início do próximo descanso longo."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Palma Vibrante",
+              "efeito": "Ao acertar um golpe desarmado, pode gastar 3 pontos de chi para iniciar vibrações letais imperceptíveis no alvo, que duram um número de dias igual ao nível de monge. Usando uma ação (mesmo plano do alvo), pode terminá-las: o alvo faz teste de Constituição — se falhar, cai a 0 pontos de vida; se passar, sofre 10d10 de dano necrótico. Apenas um alvo pode estar sob esse efeito por vez."
+            }
+          ]
+        }
+      },
+      {
+        "id": "monge-sombra",
+        "nome": "Caminho da Sombra",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Artes Sombrias",
+              "efeito": "Com uma ação, gasta 2 pontos de chi para conjurar escuridão, visão no escuro, passos sem pegadas ou silêncio, sem componentes materiais. Também aprende o truque ilusão menor, se ainda não o conhecer."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Passo das Sombras",
+              "efeito": "Com uma ação bônus, enquanto sob penumbra ou escuridão, teleporta-se até 18m para um espaço desocupado visível também sob penumbra ou escuridão. Ganha vantagem no primeiro ataque corpo a corpo antes do fim do turno."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Manto de Sombras",
+              "efeito": "Com uma ação, enquanto em área de penumbra ou escuridão, fica invisível até atacar, conjurar uma magia ou entrar em área de luz plena."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Oportunista",
+              "efeito": "Quando uma criatura a até 1,5m de você é atingida por um ataque de outra criatura (que não você), pode usar a reação para realizar um ataque corpo a corpo contra ela."
+            }
+          ]
+        }
+      },
+      {
+        "id": "monge-quatro-elementos",
+        "nome": "Caminho dos Quatro Elementos",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Disciplinas Elementais",
+              "efeito": "Aprende disciplinas mágicas elementais que gastam pontos de chi para ativar um efeito (algumas conjuram magias sem exigir componentes materiais); começa conhecendo a disciplina Sintonia Elemental mais uma outra à escolha. Pode trocar uma disciplina conhecida por outra sempre que aprende uma nova. A partir do 5° nível, pode gastar pontos de chi adicionais para aumentar o nível de uma magia conjurada por disciplina, até um máximo determinado pelo nível de monge (3 pontos entre 5°-8°, 4 entre 9°-12°, 5 entre 13°-16°, 6 entre 17°-20°)."
+            }
+          ],
+          "6": [
+            {
+              "nome": "Disciplinas Elementais",
+              "efeito": "Aprende mais uma disciplina elemental à escolha (pode substituir uma já conhecida)."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Disciplinas Elementais",
+              "efeito": "Aprende mais uma disciplina elemental à escolha (pode substituir uma já conhecida)."
+            }
+          ],
+          "17": [
+            {
+              "nome": "Disciplinas Elementais",
+              "efeito": "Aprende mais uma disciplina elemental à escolha (pode substituir uma já conhecida)."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "paladino",
+    "subclasses": [
+      {
+        "id": "paladino-devocao",
+        "nome": "Juramento de Devoção",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Magias de Juramento",
+              "efeito": "Ganha acesso a magias de juramento, sempre preparadas (não contam no limite de magias preparadas): 3° nível — proteção contra o bem e mal, santuário; 5° — restauração menor, zona da verdade; 9° — sinal de esperança, dissipar magia; 13° — movimentação livre, guardião da fé; 17° — comunhão, coluna de chamas."
+            },
+            {
+              "nome": "Canalizar Divindade: Arma Sagrada",
+              "efeito": "Com uma ação, por 1 minuto imbui uma arma empunhada com energia positiva: soma o modificador de Carisma às jogadas de ataque com ela (mín. +1), a arma emite luz plena em 6m e penumbra por mais 6m, e torna-se mágica caso não seja."
+            },
+            {
+              "nome": "Canalizar Divindade: Expulsar o Profano",
+              "efeito": "Com uma ação, cada corruptor ou morto-vivo que possa ver ou ouvir você a até 9m faz teste de resistência de Sabedoria ou é expulso por 1 minuto (ou até sofrer dano): deve se afastar de você, não pode se aproximar a menos de 9m, não pode reagir e só pode Disparar ou Esquivar."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Aura de Devoção",
+              "efeito": "Você e aliados a até 3m não podem ser enfeitiçados enquanto você estiver consciente. O alcance aumenta para 9m no 18° nível."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Pureza de Espírito",
+              "efeito": "Fica permanentemente sob o efeito da magia proteção contra o bem e mal."
+            }
+          ],
+          "20": [
+            {
+              "nome": "Halo Sagrado",
+              "efeito": "Com uma ação, por 1 minuto emana luz plena num raio de 9m e penumbra por mais 9m: inimigos que começam o turno na luz plena sofrem 10 de dano radiante; ganha vantagem em testes de resistência contra magias de corruptores ou mortos-vivos. Uma vez por descanso longo."
+            }
+          ]
+        }
+      },
+      {
+        "id": "paladino-anciaos",
+        "nome": "Juramento dos Anciões",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Magias de Juramento",
+              "efeito": "Ganha acesso a magias de juramento, sempre preparadas: 3° nível — golpe constritor, falar com animais; 5° — raio lunar, passo nebuloso; 9° — ampliar plantas, proteção contra energia; 13° — tempestade de gelo, pele de pedra; 17° — comunhão com a natureza, caminhar em árvores."
+            },
+            {
+              "nome": "Canalizar Divindade: Fúria da Natureza",
+              "efeito": "Com uma ação, vinhas prendem uma criatura visível a até 3m; ela faz teste de Força ou Destreza (à escolha dela) ou fica impedida, repetindo o teste no final de cada turno até se libertar."
+            },
+            {
+              "nome": "Canalizar Divindade: Expulsar os Infiéis",
+              "efeito": "Com uma ação, cada fada ou corruptor que possa ver ou ouvir você a até 9m faz teste de resistência de Sabedoria ou é expulso por 1 minuto (ou até sofrer dano), nas mesmas condições da Expulsão (afastar-se, não reagir, só Disparar ou Esquivar)."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Aura de Vigilância",
+              "efeito": "Você e aliados a até 3m têm resistência a dano de magias. O alcance aumenta para 9m no 18° nível."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Sentinela Imortal",
+              "efeito": "Ao ser reduzido a 0 pontos de vida sem morrer totalmente, pode optar por cair para 1 ponto de vida em vez disso; também não sofre efeitos de envelhecimento nem pode envelhecer magicamente. Uma vez por descanso longo."
+            }
+          ],
+          "20": [
+            {
+              "nome": "Campeão dos Anciões",
+              "efeito": "Com uma ação, por 1 minuto: recupera 10 pontos de vida no início de cada turno; pode conjurar magias de paladino com tempo de conjuração de 1 ação usando uma ação bônus; inimigos a até 3m têm desvantagem em testes de resistência contra suas magias e Canalizar Divindade. Uma vez por descanso longo."
+            }
+          ]
+        }
+      },
+      {
+        "id": "paladino-vinganca",
+        "nome": "Juramento de Vingança",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Magias de Juramento",
+              "efeito": "Ganha acesso a magias de juramento, sempre preparadas: 3° nível — perdição, marca do caçador; 5° — imobilizar pessoa, passo nebuloso; 9° — velocidade, proteção contra energia; 13° — banimento, porta dimensional; 17° — imobilizar monstro, vidência."
+            },
+            {
+              "nome": "Canalizar Divindade: Abjurar Inimigo",
+              "efeito": "Com uma ação, uma criatura visível a até 18m faz teste de resistência de Sabedoria (corruptores e mortos-vivos com desvantagem, salvo imunidade a amedrontar). No fracasso fica amedrontada por 1 minuto (ou até sofrer dano) com deslocamento 0; no sucesso tem o deslocamento reduzido à metade pelo mesmo período."
+            },
+            {
+              "nome": "Canalizar Divindade: Voto de Inimizade",
+              "efeito": "Com uma ação bônus, ganha vantagem nas jogadas de ataque contra uma criatura visível a até 3m, por 1 minuto ou até ela cair a 0 pontos de vida ou ficar inconsciente."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Vingador Implacável",
+              "efeito": "Ao acertar um ataque de oportunidade, pode se mover até metade do deslocamento imediatamente, como parte da mesma reação, sem provocar ataques de oportunidade."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Alma de Vingança",
+              "efeito": "Quando uma criatura sob efeito do seu Voto de Inimizade realiza um ataque, pode usar a reação para atacar corpo a corpo contra ela, se estiver ao alcance."
+            }
+          ],
+          "20": [
+            {
+              "nome": "Anjo Vingador",
+              "efeito": "Com uma ação, por 1 hora: ganha asas e deslocamento de voo de 18m; emana aura de ameaça em raio de 9m — a primeira vez que um inimigo entra na aura ou começa o turno nela em combate, faz teste de Sabedoria ou fica amedrontado por 1 minuto (ou até sofrer dano), e ataques contra ele têm vantagem. Uma vez por descanso longo."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "classeId": "patrulheiro",
+    "subclasses": [
+      {
+        "id": "patrulheiro-besta",
+        "nome": "Conclave da Besta",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Companheiro Animal",
+              "efeito": "Com 8h de trabalho e 50po em ervas raras, invoca um companheiro animal (besta) vinculado a você. O companheiro usa seu bônus de proficiência (aplicado também a CA e dano), ganha 2 perícias à escolha e proficiência em todos os testes de resistência, perde a ação Ataques Múltiplos, ganha um dado de vida a mais por nível de patrulheiro após o 3°, e compartilha o movimento furtivo do Explorador Natural. Se morrer, pode ser trazido de volta com 8h de trabalho e 25po."
+            }
+          ],
+          "5": [
+            {
+              "nome": "Ataque Coordenado",
+              "efeito": "Quando você usa a ação de Ataque, se o companheiro puder ver você, ele pode usar a reação para realizar um ataque corpo a corpo."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Defesa da Besta",
+              "efeito": "Enquanto o companheiro puder ver você, ele tem vantagem em todos os testes de resistência."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Tempestade de Garras e Presas",
+              "efeito": "O companheiro pode usar sua ação para atacar corpo a corpo cada criatura à sua escolha a até 1,5m dele, com uma jogada de ataque separada para cada alvo."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Defesa da Besta Superior",
+              "efeito": "Quando um atacante visível acerta o companheiro, ele pode usar a reação para reduzir o dano desse ataque à metade."
+            }
+          ]
+        }
+      },
+      {
+        "id": "patrulheiro-cacador",
+        "nome": "Conclave do Caçador",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Presa do Caçador",
+              "efeito": "Escolhe uma opção: Assassino de Colossos (ao acertar um ataque com arma, causa 1d8 de dano extra se o alvo não estiver no máximo de pontos de vida, uma vez por turno); Matador de Gigantes (reação para atacar uma criatura Grande ou maior a até 1,5m que acertou ou errou um ataque contra você); ou Destruidor de Hordas (uma vez por turno, ao atacar com arma, pode fazer outro ataque com a mesma arma contra outra criatura a até 1,5m do alvo original, dentro do alcance da arma)."
+            }
+          ],
+          "5": [
+            {
+              "nome": "Ataque Extra",
+              "efeito": "Pode atacar duas vezes, em vez de uma, sempre que realizar a ação de Ataque."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Táticas Defensivas",
+              "efeito": "Escolhe uma opção: Escapar da Horda (ataques de oportunidade contra você são feitos com desvantagem); Defesa Contra Múltiplos Ataques (+4 de CA contra ataques subsequentes da mesma criatura no turno); ou Vontade de Aço (vantagem em testes de resistência contra ficar amedrontado)."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Ataque Múltiplo",
+              "efeito": "Escolhe uma opção: Saraivada (ação, ataque à distância contra qualquer número de criaturas a até 3m de um ponto visível dentro do alcance da arma, jogada de ataque separada por alvo, gasta munição para cada) ou Ataque Giratório (ação, ataque corpo a corpo contra qualquer número de criaturas a até 1,5m de você, jogada de ataque separada por alvo)."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Defesa de Caçador Superior",
+              "efeito": "Escolhe uma opção: Evasão (sem dano em teste de Destreza bem-sucedido contra efeitos de área, metade se falhar); Manter-se Contra a Maré (reação para forçar uma criatura hostil que errou um ataque corpo a corpo contra você a repetir o ataque contra outra criatura); ou Esquiva Sobrenatural (reação para reduzir à metade o dano de um ataque que o acertou)."
+            }
+          ]
+        }
+      },
+      {
+        "id": "patrulheiro-rastreador-subterraneo",
+        "nome": "Conclave do Rastreador Subterrâneo",
+        "caracteristicasPorNivel": {
+          "3": [
+            {
+              "nome": "Batedor do Subterrâneo",
+              "efeito": "No primeiro turno de combate, ganha +3m de deslocamento e, se usar a ação de Ataque nesse turno, pode realizar um ataque adicional. Criaturas com visão no escuro não ganham benefício dela ao tentar detectá-lo ou ao determinar se ele pode se esconder delas em escuridão ou penumbra."
+            },
+            {
+              "nome": "Magia do Rastreador Subterrâneo",
+              "efeito": "Ganha visão no escuro com alcance de 27m. Ganha acesso a magias adicionais nos níveis 3°, 5°, 9°, 13° e 17° (disfarçar-se, truque de corda, glifo de vigilância, invisibilidade maior, similaridade), que contam como magias de patrulheiro mas não ocupam vaga de magias conhecidas."
+            }
+          ],
+          "5": [
+            {
+              "nome": "Ataque Extra",
+              "efeito": "Pode atacar duas vezes, em vez de uma, sempre que realizar a ação de Ataque."
+            }
+          ],
+          "7": [
+            {
+              "nome": "Mente de Aço",
+              "efeito": "Ganha proficiência em testes de resistência de Sabedoria."
+            }
+          ],
+          "11": [
+            {
+              "nome": "Rajada do Rastreador",
+              "efeito": "Uma vez em cada um dos seus turnos, ao errar um ataque, pode realizar outro ataque."
+            }
+          ],
+          "15": [
+            {
+              "nome": "Esquiva do Rastreador",
+              "efeito": "Quando uma criatura ataca você sem ter vantagem, pode usar a reação (antes do resultado da jogada) para impor desvantagem nessa jogada de ataque."
+            }
+          ]
+        }
+      }
+    ]
+  }
+];
+
 const ARMAS = [
   {
     "nome": "Adaga",
@@ -3005,6 +4583,16 @@ function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 function arma(nome){ return ARMAS.find(a => a.nome === nome) || null; }
 function armadura(nome){ return ARMADURAS.find(a => a.nome === nome) || null; }
 function talento(nome){ return TALENTOS.find(t => t.nome === nome) || null; }
+function subclassesDaClasse(classeId){ return (ARQUETIPOS.find(a => a.classeId === classeId) || {subclasses:[]}).subclasses; }
+function subclasse(classeId, subclasseId){ return subclassesDaClasse(classeId).find(s => s.id === subclasseId) || null; }
+// Nível em que a classe escolhe subclasse = o menor nível citado entre as características de
+// qualquer uma das opções dela (todas as opções de uma classe escolhem no mesmo nível).
+function nivelEscolhaSubclasse(classeId){
+  const subs = subclassesDaClasse(classeId);
+  if(!subs.length) return null;
+  const niveis = subs.flatMap(s => Object.keys(s.caracteristicasPorNivel).map(Number));
+  return niveis.length ? Math.min(...niveis) : null;
+}
 
 /* --- Cálculos ------------------------------------------------------------- */
 
@@ -3114,7 +4702,7 @@ function novoPersonagem(nome){
     id: uid(), criadoEm: Date.now(), atualizadoEm: Date.now(),
     perfil: {
       nome: nome || 'Novo Aventureiro',
-      racaId: '', subracaId: '', classeId: '', antecedente: '',
+      racaId: '', subracaId: '', classeId: '', subclasseId: '', antecedente: '',
       aparencia: '', historia: '',
     },
     nivel: 1,
@@ -3410,6 +4998,16 @@ function abaStatus(p){
     if(lista) for(const item of lista) caracteristicas.push({nivel:n, ...item});
   }
 
+  const opcoesSubclasse = p.perfil.classeId ? subclassesDaClasse(p.perfil.classeId) : [];
+  const nivelSubclasse = p.perfil.classeId ? nivelEscolhaSubclasse(p.perfil.classeId) : null;
+  const podeEscolherSubclasse = nivelSubclasse !== null && nivel(p) >= nivelSubclasse;
+  const sc = subclasse(p.perfil.classeId, p.perfil.subclasseId);
+  const caracteristicasSubclasse = [];
+  if(sc) for(let n = 1; n <= nivel(p); n++){
+    const lista = sc.caracteristicasPorNivel[String(n)];
+    if(lista) for(const item of lista) caracteristicasSubclasse.push({nivel:n, ...item});
+  }
+
   return `<div class="cartao">
     <div class="grade g3">
       ${campo('Nome', 'nome', p.perfil.nome)}
@@ -3443,6 +5041,13 @@ function abaStatus(p){
       </select>
     </div>
     ${!c ? '' : `<p class="mini" style="margin-top:10px">Dado de vida <strong>${esc(c.dadoDeVida)}</strong> · perícias da classe: escolha ${c.periciasDisponiveis.escolha} · proficiência em armaduras: ${c.proficienciaArmaduras.length?esc(c.proficienciaArmaduras.join(', ')):'nenhuma'} · armas: ${esc(c.proficienciaArmas.join(', '))}</p>`}
+    ${!opcoesSubclasse.length ? '' : podeEscolherSubclasse ? `<div style="margin-top:14px">
+      <label for="c-subclasse">${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'Subclasse')}</label>
+      <select id="c-subclasse">
+        <option value="">— escolher —</option>
+        ${opcoesSubclasse.map(x => `<option value="${x.id}" ${x.id===p.perfil.subclasseId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+      </select>
+    </div>` : `<p class="mini" style="margin-top:10px">Escolhe ${esc((NOMES_SUBCLASSE[p.perfil.classeId] || 'subclasse').toLowerCase())} a partir do ${nivelSubclasse}º nível.</p>`}
   </div>
 
   <div class="cartao">
@@ -3511,6 +5116,11 @@ function abaStatus(p){
   ${!caracteristicas.length ? '' : `<div class="cartao">
     <h2 style="font-size:16px;margin-bottom:8px">Características de Classe</h2>
     ${caracteristicas.map(t => `<p class="mini" style="margin-bottom:6px"><strong style="color:var(--texto)">${esc(t.nome)}</strong> <span style="color:var(--suave)">(nível ${t.nivel})</span>: ${esc(t.efeito)}</p>`).join('')}
+  </div>`}
+
+  ${!sc ? '' : `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:8px">${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'Subclasse')}: ${esc(sc.nome)}</h2>
+    ${caracteristicasSubclasse.length ? caracteristicasSubclasse.map(t => `<p class="mini" style="margin-bottom:6px"><strong style="color:var(--texto)">${esc(t.nome)}</strong> <span style="color:var(--suave)">(nível ${t.nivel})</span>: ${esc(t.efeito)}</p>`).join('') : `<p class="mini">Nenhuma característica ainda no nível atual.</p>`}
   </div>`}`;
 }
 
@@ -3769,10 +5379,13 @@ function ligarEventos(){
   const selClasse = app.querySelector('#c-classe');
   if(selClasse) selClasse.onchange = () => mudar(p => {
     p.perfil.classeId = selClasse.value;
+    p.perfil.subclasseId = '';
     p.periciasProficientes = [];
     const c = classe(selClasse.value);
     if(c && c.conjuracao) p.conjuracao.atributo = c.conjuracao.atributo;
   });
+  const selSubclasse = app.querySelector('#c-subclasse');
+  if(selSubclasse) selSubclasse.onchange = () => mudar(p => { p.perfil.subclasseId = selSubclasse.value; });
   const selAntecedente = app.querySelector('#c-antecedente');
   if(selAntecedente) selAntecedente.onchange = () => mudar(p => { p.perfil.antecedente = selAntecedente.value; });
 

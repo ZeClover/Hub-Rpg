@@ -1303,9 +1303,23 @@ passando.
       com Playwright (classe nova calculando PV certo, Talentos, classe
       conjuradora nova) sem regressão na fatia anterior; `tsc`, lint e os
       208 testes automáticos continuam limpos
-- [ ] D&D 5ª Edição — catálogo de magias, arquétipos/domínios/tradições
-      de cada classe, ficha de inimigo e Escudo do Mestre — fatias
-      futuras, uma de cada vez (decisão #26)
+- [x] **D&D 5ª Edição — arquétipos/subclasses das 12 classes** (04/09/2026)
+      — decisão #83. Todas as opções de subclasse do livro pras 12
+      classes (Caminho Primitivo, Colégio de Bardo, Patrono, Domínio
+      Divino — 7 opções —, Círculo Druídico, Origem da Feitiçaria,
+      Arquétipo Marcial, Arquétipo Ladino, as 8 Tradições Arcanas,
+      Tradição Monástica, Juramento Sagrado, Conclave de Patrulheiro),
+      com características reais por nível. Seletor de subclasse aparece
+      sozinho só quando o personagem já alcança o nível de escolha da
+      classe (calculado, não fixado à mão). Não precisou de arquivo
+      novo — o texto já estava em mãos das fatias anteriores. Testado
+      com Playwright (Bruxo escolhendo Patrono no 1º nível, Guerreiro
+      esperando até o 3º) sem regressão; `tsc`, lint e os 208 testes
+      automáticos continuam limpos
+- [ ] D&D 5ª Edição — catálogo de magias, ficha de inimigo e Escudo do
+      Mestre — fatias futuras, uma de cada vez (decisão #26); os dois
+      últimos exigem Manual dos Monstros e Livro do Mestre, ainda não
+      enviados
 - [ ] Ometion
 
 ---

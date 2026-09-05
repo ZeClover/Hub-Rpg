@@ -3311,6 +3311,69 @@ Arcana, Tradição Monástica, Juramento Sagrado, Conclave de
 Patrulheiro), catálogo de magias, ficha de inimigo e Escudo do Mestre —
 fatias futuras.
 
+## 83. D&D 5ª Edição — arquétipos/subclasses das 12 classes (04/09/2026)
+
+O Zé pediu explicitamente "12 classes de vez" ao escolher entre fechar os
+arquétipos ou o catálogo de magias como próxima fatia (decisão #82 tinha
+deixado as duas em aberto). Diferente das duas fatias anteriores, não
+precisou de nenhum arquivo novo — o texto de cada classe já extraído
+(`phb.txt` e `phb-parte2.txt`) já trazia as subclasses dela, só não
+tinham sido processadas ainda.
+
+Quatro agentes em paralelo extraíram, pra cada uma das 12 classes, TODAS
+as opções de subclasse do livro com as características reais por nível
+(os números variam por classe — não é sempre 3/6/10/14):
+
+| Classe | Nome do "tipo" | Opções | Nível de escolha |
+|---|---|---|---|
+| Bárbaro | Caminho Primitivo | Furioso, Guerreiro Totêmico | 3º |
+| Bardo | Colégio de Bardo | Conhecimento, Bravura | 3º |
+| Bruxo | Patrono Sobrenatural | Arquifada, O Corruptor, O Grande Antigo | 1º |
+| Clérigo | Domínio Divino | Conhecimento, Enganação, Guerra, Luz, Natureza, Tempestade, Vida (7!) | 1º |
+| Druida | Círculo Druídico | Terra, Lua | 2º |
+| Feiticeiro | Origem da Feitiçaria | Linhagem Dracônica, Magia Selvagem | 1º |
+| Guerreiro | Arquétipo Marcial | Campeão, Cavaleiro Arcano, Mestre de Batalha | 3º |
+| Ladino | Arquétipo Ladino | Assassino, Ladrão, Trapaceiro Arcano | 3º |
+| Mago | Tradição Arcana | as 8 escolas de magia | 2º |
+| Monge | Tradição Monástica | Mão Aberta, Sombra, Quatro Elementos | 3º |
+| Paladino | Juramento Sagrado | Devoção, Anciões, Vingança | 3º |
+| Patrulheiro | Conclave de Patrulheiro | Besta, Caçador, Rastreador Subterrâneo (3, não só os 2 clássicos) | 3º |
+
+O nível de escolha de cada classe não foi fixado à mão — a ficha calcula
+sozinha (`nivelEscolhaSubclasse()`) como o menor nível citado entre as
+características de qualquer opção daquela classe, então nenhuma tabela
+precisou ser digitada duas vezes.
+
+Automação de novo no centro: o seletor de subclasse só aparece na tela
+quando o nível do personagem já alcança o nível de escolha da classe
+atual (antes disso, mostra só um aviso de a partir de qual nível);
+escolher uma opção mostra as características dela pro nível atual, do
+mesmo jeito que as características de classe já funcionavam. Trocar de
+classe limpa a subclasse escolhida (evita ficar com uma subclasse de
+outra classe pendurada).
+
+Como já é regra do projeto (Fabula Ultima, decisões anteriores de D&D):
+só mecânica, nunca o texto do livro. Manobras de combate do Mestre de
+Batalha e Disciplinas Elementais do Monge (Quatro Elementos) entraram
+como UMA característica resumida cada ("escolhe N manobras/disciplinas
+de uma lista"), sem listar as opções individuais — proibitivamente
+grande pra esta fatia e sem valor mecânico sem o resto do sistema de
+manobra/disciplina, que fica pra depois se algum dia fizer sentido.
+
+Testado com Playwright: Bruxo (escolhe no 1º nível) já mostrando o
+seletor de Patrono desde a criação e aplicando a característica ao
+escolher Arquifada; Guerreiro no 1º nível mostrando só o aviso "a partir
+do 3º nível" sem seletor, e o seletor aparecendo ao subir pro 3º com o
+Campeão aplicando certo; persistência após recarregar — mais toda a
+bateria de testes das duas fatias anteriores sem regressão. `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos.
+
+**Segue fora de escopo:** catálogo de magias (o próximo passo natural,
+já com o texto em mãos igual desta fatia), ficha de inimigo e Escudo do
+Mestre (esses dois exigem Manual dos Monstros e Livro do Mestre, ainda
+não enviados — arquivos grandes, vão precisar ser divididos como o
+Livro do Jogador foi).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
