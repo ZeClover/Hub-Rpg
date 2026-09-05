@@ -3286,6 +3286,65 @@ combinando efeitos) continua com o texto de sempre. Reexecutei todas as
 baterias anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os 208
 testes automáticos continuam limpos.
 
+## 84. Sistema do Sávio — aviso de Sustentada sem Dano/Cura e lista de Habilidades na aba Combate (05/09/2026)
+
+Duas melhorias pedidas juntas. Primeiro: a regra "Sustentada só serve pra
+Buff em você mesmo" (já na decisão #83) ganhou um aviso visual — ao marcar
+o Tipo como Sustentada, aparece na hora "⚠ Sustentada não pode causar Dano
+nem dar Cura — só serve pra Buff em você mesmo", destacado na cor de
+alerta. Segundo: a aba Combate ganhou um card "Habilidades" listando
+**todas** as Habilidades já criadas (não só as ativas), cada uma com
+Tipo/Nível/bônus calculado e o mesmo botão de Ativar/Desativar/Usar que já
+existia na aba Habilidades — pra não precisar trocar de aba no meio de um
+combate só pra ativar algo.
+
+No caminho, achei e corrigi um bug de verdade: trocar o campo "Tipo" de
+uma Habilidade usava `oninput` com `mudarSemRedesenhar()` (o mesmo caminho
+"não redesenha a tela" usado nos campos de texto, pra não perder o foco
+ao digitar) — só que o texto descritivo, o custo padrão e agora o aviso de
+Sustentada dependem do Tipo, então a tela ficava com a informação antiga
+até *outra* ação disparar um redesenho por acaso. Corrigido: o `<select>`
+de Tipo passou a usar `onchange` + `mudar()` (redesenho completo), igual
+já acontecia com o campo Nível pelo mesmo motivo (decisão #76).
+
+Testado com Playwright: nenhum aviso aparece com Tipo Imediata (padrão);
+aviso aparece na hora ao trocar pra Sustentada; a aba Combate lista as
+Habilidades criadas com a marca "sem Dano/Cura" pras Sustentadas; ativar
+uma Habilidade Imediata direto pela aba Combate desconta o PE certo.
+Reexecutei todas as baterias anteriores sem regressão. `tsc --noEmit`,
+`npm run lint` e os 208 testes automáticos continuam limpos.
+
+## 85. Sistema do Sávio — Fluxo só depois da Primeira Ascensão, e Atributo/Perícia própria do Elemental (05/09/2026)
+
+Dois ajustes que o Zé apontou depois de conferir a ficha. Primeiro:
+o card "Fluxo" (reforça um ataque básico gastando PE) aparecia na aba
+Combate pra qualquer personagem, mas é um Embate de Fluxo — só existe
+depois da Primeira Ascensão. Agora, sem a Primeira Ascensão, o card mostra
+só "Só libera depois da Primeira Ascensão (aba Ascensão)".
+
+Segundo, e maior: o Elemental tem ficha própria (decisão #74), mas
+Atributos e Perícias eram só caixas soltas — sem orçamento de pontos pra
+gastar em Atributo, nem Total calculado ou limite de treino em Perícias,
+como o Zé pediu ("tem pericia e atributo proprio e tem limites seguindo a
+mesma logica do player de evolução"). Criadas as versões "elemental" das
+mesmas contas do personagem principal — `elementalPontosAtributosBase/
+Gastos/Disponiveis`, `elementalPericiaTotal`, `elementalPericiasTreinadas
+Contagem/Limite` — usando o Nível e os Atributos do próprio Elemental (sem
+bônus de Ascensão ou Passiva, que o Elemental não tem). A aba Elemental
+ganhou o mesmo card "Pontos de Atributo" da aba Atributos do personagem, e
+a lista de Perícias virou igual à do personagem: Total calculado por
+Perícia, contador de Treinadas/Limite, e a troca livre de Atributo da
+Perícia Luta (Força/Destreza) — agora também com Ofícios (as 3 vagas
+livres) próprios do Elemental.
+
+Testado com Playwright: card Fluxo bloqueado antes e liberado depois de
+marcar a Primeira Ascensão; Pontos de Atributo do Elemental calculados
+pelo Nível dele; limite de Perícias treinadas pela Inteligência e Nível
+do Elemental; Total de Perícia calculado certo; tudo persiste depois de
+recarregar a página. Reexecutei todas as baterias anteriores sem
+regressão. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

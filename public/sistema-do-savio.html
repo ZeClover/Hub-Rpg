@@ -553,6 +553,8 @@ function novoPersonagem(nome){
       nome: '', categoriaId: '', nivel: 1, especializacaoId: '',
       atributos: {forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0},
       pericias: {},
+      oficios: {},
+      lutaAtributo: 'forca',
       ajudaUsadaNaCena: 0,
       trocaUsadaNaCena: false,
       notas: '',
@@ -807,6 +809,33 @@ function elementalSanidade(p){
 // personagem pode pedir energia ao Elemental — usa o Nível do PERSONAGEM,
 // não o do Elemental (regra do documento).
 function ajudaElementalPorCena(p){ return Math.floor(p.nivel/2); }
+
+// O Elemental é uma ficha pequena própria — Atributos e Perícias seguem a
+// MESMA lógica de evolução do personagem principal (pontosAtributosBase,
+// periciaTotal, periciasTreinadasLimite), só que usando o Nível e os
+// Atributos do próprio Elemental em vez dos do dono. Sem bônus de Ascensão
+// ou Passiva — o Elemental não tem nenhum dos dois.
+function elementalPontosAtributosBase(nivel){ return pontosAtributosBase(nivel); }
+function elementalPontosAtributosGastos(p){
+  return ATRIBUTOS.reduce((t,a) => t + (p.elemental.atributos[a.id]||0), 0);
+}
+function elementalPontosAtributosDisponiveis(p){
+  return elementalPontosAtributosBase(p.elemental.nivel) - elementalPontosAtributosGastos(p);
+}
+function elementalPericiaAtributoId(p, per){
+  return per.id === 'luta' ? (p.elemental.lutaAtributo || 'forca') : per.atributo;
+}
+function elementalPericiaTotal(p, per){
+  const atributo = p.elemental.atributos[elementalPericiaAtributoId(p, per)]||0;
+  const bonusTreino = p.elemental.pericias[per.id] ? 5 : 0;
+  return atributo + bonusTreino + Math.ceil(p.elemental.nivel/4);
+}
+function elementalPericiasTreinadasContagem(p){
+  return PERICIAS.filter(per => p.elemental.pericias[per.id]).length;
+}
+function elementalPericiasTreinadasLimite(p){
+  return 2 + (p.elemental.atributos.inteligencia||0) + Math.ceil(p.elemental.nivel/4);
+}
 
 // Fotografia dos números que mudam só por causa do Nível do personagem —
 // usada pra montar o resumo do botão "⭐ Subir de Nível".
@@ -1390,6 +1419,7 @@ function habilidadeLinha(h, i, p){
     </div>
     <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${custoFinal ?? '—'} PE${meiaCusto ? ' (já com a metade da Segunda Ascensão)' : ''}</p>
     <p class="mini" style="margin:8px 0">${(TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).sobre}</p>
+    ${h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta);font-weight:600">⚠ Sustentada não pode causar Dano nem dar Cura — só serve pra Buff em você mesmo.</p>` : ''}
     <div style="margin-top:10px">
       <label>O que ela faz (marque um ou mais)</label>
       <div class="grade g2">
@@ -1573,6 +1603,11 @@ function abaElemental(p){
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Atributos (teto ${cap})</h3>
+    <div class="derivado" style="margin-bottom:14px;max-width:260px">
+      <div class="rot">Pontos de Atributo</div>
+      <div class="val" style="${elementalPontosAtributosDisponiveis(p)<0?'color:var(--alerta)':''}">${elementalPontosAtributosGastos(p)}<span style="font-size:14px;color:var(--suave)">/${elementalPontosAtributosBase(el.nivel)}</span></div>
+      <div class="obs">${elementalPontosAtributosDisponiveis(p)<0 ? `${-elementalPontosAtributosDisponiveis(p)} acima do disponível` : `${elementalPontosAtributosDisponiveis(p)} restantes pra gastar`}</div>
+    </div>
     <div class="grade g3">
       ${ATRIBUTOS.map(a => `<div>
         <label>${a.abrev}</label>
@@ -1581,11 +1616,35 @@ function abaElemental(p){
     </div>
   </div>
   <div class="cartao">
-    <h3 style="font-size:16px;margin-bottom:10px">Perícias treinadas</h3>
-    <div class="grade g2">
-      ${PERICIAS.filter(per => !per.livre).map(per => `<label class="checagem" style="padding:4px 0">
-        <input type="checkbox" data-ele-pericia="${per.id}" ${el.pericias[per.id]?'checked':''}> ${per.nome}
-      </label>`).join('')}
+    <h3 style="font-size:16px;margin-bottom:10px">Perícias</h3>
+    <p class="mini">Mesma lógica do personagem: treina <strong>2 +
+      Inteligência + (Nível ÷ 4, arredondado pra cima)</strong> perícias, e
+      o Total de cada uma é <strong>Atributo + (Nível ÷ 4) + 5 se for
+      treinada</strong> — usando o Atributo e o Nível do próprio Elemental.</p>
+    <p class="mini" style="margin-top:4px;${elementalPericiasTreinadasContagem(p)>elementalPericiasTreinadasLimite(p)?'color:var(--alerta)':''}">
+      Treinadas: ${elementalPericiasTreinadasContagem(p)} / ${elementalPericiasTreinadasLimite(p)}${elementalPericiasTreinadasContagem(p)>elementalPericiasTreinadasLimite(p) ? ' — acima do limite, combine com o Mestre' : ''}
+    </p>
+    <div style="margin-top:10px">
+      ${PERICIAS.map(per => {
+        const nomeExibido = per.livre ? ((el.oficios||{})[per.id] || per.nome) : per.nome;
+        const ehLuta = per.id === 'luta';
+        const atr = ATRIBUTOS.find(a => a.id === elementalPericiaAtributoId(p, per));
+        return `<div class="linha" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda)">
+          <label class="checagem" style="flex:1">
+            <input type="checkbox" data-ele-pericia="${per.id}" ${el.pericias[per.id]?'checked':''}>
+            ${per.livre
+              ? `<input data-ele-oficio="${per.id}" value="${esc((el.oficios||{})[per.id]||'')}" placeholder="${per.nome}" style="width:auto;flex:1">`
+              : `<span>${nomeExibido}</span>`}
+            ${ehLuta
+              ? `<select data-ele-luta-atributo style="width:auto">
+                  <option value="forca" ${el.lutaAtributo==='forca'?'selected':''}>FOR</option>
+                  <option value="destreza" ${el.lutaAtributo==='destreza'?'selected':''}>DEX</option>
+                </select>`
+              : `<span class="selo">${atr.abrev}</span>`}
+          </label>
+          <span class="mini" style="font-family:Georgia,serif;color:var(--roxo-forte);font-size:15px">${elementalPericiaTotal(p, per)}</span>
+        </div>`;
+      }).join('')}
     </div>
   </div>
   <div class="cartao">
@@ -1675,6 +1734,31 @@ function abaPassivas(p){
   <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>`;
 }
 
+function habilidadeResumoCombate(h, i){
+  const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
+  const nivelEfetivo = habilidadeNivelEfetivo(h);
+  const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
+  const resumoEfeitos = efeitosEscolhidos.map(e => `${e.rotulo}: ${linhaTabela[e.coluna]}`).join(' · ');
+  const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
+  const sufixoReacao = h.reacao ? ' como Reação' : '';
+  const rotuloBotao = h.tipo === 'imediata' ? `Usar${sufixoReacao} (−${h.custoPe||0} PE)`
+    : h.ativa ? 'Desativar' : `Ativar${sufixoReacao} (−${h.custoPe||0} PE)`;
+  return `<div class="linha" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px;margin-top:8px">
+    <div>
+      <strong>${esc(h.nome)||'(sem nome)'}</strong>
+      <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
+      ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
+      <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
+        ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
+          : h.ativa
+            ? (h.tipo === 'duradoura' ? `🟣 Ativa — ${h.duracaoRestante ?? '?'} round(s) restante(s)` : `🟣 Ativa (sustentada) — gasta ${Math.ceil((h.custoPe||0)/2)} PE a cada round`)
+            : '⚪ Inativa'}
+      </span>
+    </div>
+    <button data-hab-ativar="${i}" class="${h.ativa?'perigo':'destaque'}">${rotuloBotao}</button>
+  </div>`;
+}
+
 function abaCombate(p){
   const tam = TAMANHOS_ARMA.find(t => t.id === p.arma.tamanho) || TAMANHOS_ARMA[1];
   const ativas = habilidadesAtivas(p);
@@ -1694,6 +1778,10 @@ function abaCombate(p){
     </div>` : `<p class="mini" style="margin-top:8px">Nenhuma Habilidade ativa agora.</p>`}
   </div>
   <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Habilidades</h3>
+    ${p.habilidades.length ? p.habilidades.map((h,i) => habilidadeResumoCombate(h,i)).join('') : `<p class="mini">Nenhuma Habilidade criada ainda — crie na aba Habilidades.</p>`}
+  </div>
+  <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Arma</h3>
     <div class="grade g2">
       ${campo('Nome da arma','arma-nome',p.arma.nome)}
@@ -1708,14 +1796,17 @@ function abaCombate(p){
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
       especial (exceto Mestre das Armas, que ocupa todos os encaixes).</p>
   </div>
-  <div class="cartao">
+  ${p.ascensao.primeira ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Fluxo</h3>
     <p class="mini">Reforça um ataque básico (soco, chute, mordida, arma
       branca): +1d6 de dano a cada 2 PE gastos, ou +6 de RD a cada 4 PE
       gastos. Limite de PE usado de uma vez = seu maior Atributo
       (${maiorAtributo(p)}); dobra pra usar como reação, e dobra de novo se
       for a variante do Combatente.</p>
-  </div>
+  </div>` : `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Fluxo</h3>
+    <p class="mini">Só libera depois da Primeira Ascensão (aba Ascensão).</p>
+  </div>`}
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Exaustão (0 PE)</h3>
     <p class="mini">Ao chegar a 0 PE, pode aceitar uma Exaustão pra recuperar
@@ -1968,7 +2059,7 @@ function ligarEventos(){
   if(imeTiers) imeTiers.onchange = () => mudar(p => p.imersao.tiers = Math.max(-3, Math.min(3, Number(imeTiers.value) || 0)));
 
   // Habilidades
-  app.querySelectorAll('[data-hab-campo]').forEach(el =>
+  app.querySelectorAll('[data-hab-campo]:not(select)').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => {
       const [i, chave] = el.dataset.habCampo.split('|');
       p.habilidades[Number(i)][chave] = el.value;
@@ -1978,6 +2069,14 @@ function ligarEventos(){
       const [i, chave] = el.dataset.habNum.split('|');
       p.habilidades[Number(i)][chave] = Number(el.value) || 0;
     }, el));
+  // Tipo usa onchange (redesenha a tela inteira) — o texto de "sobre", o
+  // custo padrão e o aviso de Sustentada (sem Dano/Cura, +2 de Nível
+  // efetivo) dependem do Tipo escolhido.
+  app.querySelectorAll('select[data-hab-campo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.habCampo.split('|');
+      p.habilidades[Number(i)][chave] = el.value;
+    }));
   // Nível usa onchange (redesenha a tela inteira) e não oninput — o texto de
   // "custo padrão" logo abaixo depende do Nível, e mudarSemRedesenhar() não
   // redesenha nada (existe pra não perder o foco de campo de texto).
@@ -2062,6 +2161,13 @@ function ligarEventos(){
     el.onchange = () => mudar(p => p.elemental.atributos[el.dataset.eleAtributo] = Math.max(0, Math.min(10, Number(el.value) || 0))));
   app.querySelectorAll('[data-ele-pericia]').forEach(el =>
     el.onchange = () => mudar(p => p.elemental.pericias[el.dataset.elePericia] = el.checked));
+  app.querySelectorAll('[data-ele-oficio]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      if(!p.elemental.oficios) p.elemental.oficios = {};
+      p.elemental.oficios[el.dataset.eleOficio] = el.value;
+    }, el));
+  const eleLutaAtributo = app.querySelector('[data-ele-luta-atributo]');
+  if(eleLutaAtributo) eleLutaAtributo.onchange = () => mudar(p => p.elemental.lutaAtributo = eleLutaAtributo.value);
 
   // Passivas
   app.querySelectorAll('[data-pas-campo]').forEach(el =>
