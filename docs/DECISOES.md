@@ -3220,6 +3220,72 @@ cascata de cores por toda a ficha. Reexecutei as dez baterias de teste
 anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos continuam limpos (mudança é só CSS/JS estático da ficha).
 
+## 82. Sistema do Sávio — Tema expandido pro fundo da tela, não só nos números (04/09/2026)
+
+Depois de ver o tema no ar, o Zé notou: "apareceu, mas só trocou a cor dos
+números". A decisão #81 só reescrevia `--roxo`/`--roxo-forte`/`--roxo-rgb`
+(destaques, números, borda da aba ativa). Perguntei se ele queria expandir
+o alcance da cor pra mais elementos da ficha — respondeu "Sim, expandir
+mais".
+
+Agora `aplicarTema()` também deriva `--fundo`, `--superficie`,
+`--superficie-alta` e `--borda` a partir do matiz (hue, 0-360°) da cor
+escolhida, via duas funções novas de conversão de cor:
+`matizDoHex(hex)` extrai o matiz de um HEX (fórmula padrão RGB→HSL) e
+`corHsl(h,s,l)` faz o caminho de volta (HSL→HEX). A saturação e a
+luminosidade de cada variável ficam fixas (uma receita por variável — ex.
+fundo é sempre bem escuro, `hsl(h,35%,5%)`), só o matiz muda com o tema;
+isso mantém a ficha sempre escura e legível, com qualquer cor escolhida
+tingindo o fundo/superfícies/bordas em vez de só o destaque.
+
+Ficaram de fora de propósito: `--texto`/`--suave` (texto continua neutro,
+não pode perder contraste por causa do tema) e `--alerta`/`--verde`/
+`--laranja`/`--vermelho` (cores de status — perigo, sucesso, aviso — não
+podem mudar de sentido conforme o gosto de ninguém).
+
+Testado com Playwright: troca de preset (Violeta → Esmeralda) e confere
+via `getComputedStyle` que `--fundo`, `--superficie` e `--borda` realmente
+mudam de matiz; screenshot de tela cheia confirmando visualmente que a
+ficha inteira fica com o tom da cor escolhida e continua legível.
+Reexecutei todas as baterias anteriores sem regressão. `tsc --noEmit`,
+`npm run lint` e os 208 testes automáticos continuam limpos.
+
+## 83. Sistema do Sávio — Habilidade Sustentada aplica o +2 de Nível de verdade (05/09/2026)
+
+O Zé colou o texto original de "Tipos de Habilidades" (Sustentadas,
+Duradouras, Imediatas) e pediu pra atualizar a ficha do Sávio com ele. A
+regra da Sustentada — "por isso, as técnicas sustentadas são de dois
+níveis acima, mesmo que não tenha desbloqueado o nível de habilidade" — já
+estava descrita em texto na ficha, mas não fazia nada: `habilidadeNivelEfetivo()`
+só descontava 1 Nível quando a Habilidade combinava mais de um efeito,
+ignorando o tipo Sustentada por completo.
+
+Corrigido: `habilidadeNivelEfetivo(h)` agora soma +2 ao Nível nominal
+quando `h.tipo === 'sustentada'`, e só depois desconta 1 se a Habilidade
+combina mais de um efeito — as duas contas se somam. O resultado é
+travado entre 1 e 5, porque `TABELA_HABILIDADE` só tem 5 linhas (uma
+Sustentada de Nível nominal 4 ou 5 não passa do teto da tabela). Isso
+significa que uma Sustentada de Nível 1 já calcula Dano/Cura/Movimento/RD,
+Alcance, Duração e Vantagem como se fosse Nível 3 — igual manda o texto,
+mas agora de verdade, sem o jogador precisar somar +2 de cabeça.
+
+A mensagem de aviso na aba Habilidades também mudou: antes só avisava
+quando combinava efeitos ("Nível efetivo cai pra X"); agora também avisa
+quando é Sustentada ("Nível efetivo sobe pra X, por já ter duas
+desvantagens embutidas"), e cobre o caso de ter as duas coisas ao mesmo
+tempo. Aproveitei pra completar o texto descritivo da Sustentada com o
+detalhe da concentração (golpe mental, ficar inconsciente ou dano massivo
+desfaz a Habilidade na hora) que estava só no texto original e não tinha
+chegado na ficha.
+
+Testado com Playwright: Habilidade Sustentada de Nível nominal 1 calcula
+o bônus como se fosse Nível 3 (`+3d12 ou +18`); combinando 2 efeitos numa
+Sustentada dá Nível efetivo 2 (+2 −1); Nível nominal 5 numa Sustentada
+trava em 5 e não estoura a tabela; o aviso antigo (Habilidade não-Sustentada
+combinando efeitos) continua com o texto de sempre. Reexecutei todas as
+baterias anteriores sem regressão. `tsc --noEmit`, `npm run lint` e os 208
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

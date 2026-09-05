@@ -1281,17 +1281,21 @@ passando.
       por efeito, redução de Nível efetivo, persistência); `tsc`, lint e
       os 208 testes automáticos continuam limpos
 - [x] **Sistema do Sávio — animações melhores e Tema customizável**
-      (04/09/2026) — decisão #81. Entrada de tela virou uma cascata (cada
-      cartão anima com um atraso maior que o anterior, curva de easing
-      mais suave), botões ganharam leve "levantar" no hover, e chegou uma
-      seção "🎨 Tema" na aba Perfil: cor livre + 8 presets, salva com o
-      personagem (`p.temaCor`), reescrevendo as variáveis CSS de destaque
-      em tempo real. Puxa parte da ideia "Customização visual" que estava
-      registrada sem dono — cor/tema saiu; fonte do título, reordenar
-      abas e layout compacto continuam em aberto. Testado com Playwright
-      (troca de preset, RGB derivado, persistência) e print de tela
-      conferindo visualmente; `tsc`, lint e os 208 testes automáticos
-      continuam limpos
+      (04-05/09/2026) — decisões #81 e #82. Entrada de tela virou uma
+      cascata (cada cartão anima com um atraso maior que o anterior, curva
+      de easing mais suave), botões ganharam leve "levantar" no hover, e
+      chegou uma seção "🎨 Tema" na aba Perfil: cor livre + 8 presets,
+      salva com o personagem (`p.temaCor`), reescrevendo as variáveis CSS
+      em tempo real. Depois do Zé notar que só os números mudavam de cor,
+      o alcance do tema foi expandido pra fundo/superfícies/bordas da
+      ficha inteira (via matiz da cor escolhida), mantendo texto e cores
+      de status (alerta/verde/laranja/vermelho) fixos por legibilidade.
+      Puxa parte da ideia "Customização visual" que estava registrada sem
+      dono — cor/tema saiu; fonte do título, reordenar abas e layout
+      compacto continuam em aberto. Testado com Playwright (troca de
+      preset, RGB derivado, variáveis de fundo/superfície/borda,
+      persistência) e prints de tela conferindo visualmente; `tsc`, lint
+      e os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

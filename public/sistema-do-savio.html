@@ -8,12 +8,16 @@
 /* Mesma paleta-base do Hub RPG, com destaque em violeta pra diferenciar
    visualmente este sistema dos outros três (âmbar). */
 :root{
+  /* --fundo/--superficie/--superficie-alta/--borda/--roxo/--roxo-forte/
+     --roxo-rgb são a cor de tema — trocadas em tempo real por
+     aplicarTema(), a partir da escolha livre ou de um preset (aba
+     Perfil). Os valores abaixo são só o ponto de partida (tema Violeta),
+     usados até o JS rodar pela primeira vez. --roxo-rgb existe pra dar
+     transparência (rgba) numa cor que muda: não dá pra fazer isso com
+     var(--roxo) sozinho. --texto/--suave ficam sempre neutros (não
+     seguem o tema), pra garantir contraste com qualquer cor escolhida. */
   --fundo:#0a0910; --superficie:#131022; --superficie-alta:#1c1830;
   --borda:#2c2547; --texto:#f0eef8; --suave:#a099bd;
-  /* --roxo/--roxo-forte/--roxo-rgb são a cor de tema — trocadas em tempo
-     real por aplicarTema(), a partir da escolha livre ou de um preset
-     (aba Perfil). --roxo-rgb existe pra dar transparência (rgba) numa cor
-     que muda: não dá pra fazer isso com var(--roxo) sozinho. */
   --roxo:#8b6ee0; --roxo-forte:#ac93f5; --roxo-rgb:139,110,224;
   --alerta:#c4506b;
   --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#c4506b;
@@ -302,10 +306,14 @@ const EFEITOS_HABILIDADE = [
 function habilidadeEfeitosEscolhidos(h){
   return EFEITOS_HABILIDADE.filter(e => h.efeitos && h.efeitos[e.chave]);
 }
-// Nível efetivo: cai 1 se a Habilidade combina mais de um efeito.
+// Nível efetivo: sobe 2 se for Sustentada (ela já nasce com duas desvantagens
+// embutidas — gasto contínuo de PE e precisar de concentração) e cai 1 se a
+// Habilidade combina mais de um efeito. As duas contas se somam.
 function habilidadeNivelEfetivo(h){
   const n = habilidadeEfeitosEscolhidos(h).length;
-  return Math.max(1, h.nivel - (n > 1 ? 1 : 0));
+  let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0);
+  nivel -= (n > 1 ? 1 : 0);
+  return Math.max(1, Math.min(5, nivel));
 }
 
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
@@ -334,7 +342,7 @@ function passivaEfeitosEscolhidos(h){
 }
 
 const TIPOS_HABILIDADE = [
-  {id:'sustentada', nome:'Sustentada', sobre:'custa metade do PE normal a cada turno seguinte até desativar ou faltar PE; começa 2 Níveis acima por já ter 2 desvantagens embutidas; só buff em si mesmo; custa Ação Bônus.'},
+  {id:'sustentada', nome:'Sustentada', sobre:'custa metade do PE normal a cada turno seguinte até desativar ou faltar PE; começa 2 Níveis acima por já ter 2 desvantagens embutidas; precisa de concentração — golpe mental, ficar inconsciente ou dano massivo desativa na hora; só buff em si mesmo; custa Ação Bônus.'},
   {id:'duradoura',  nome:'Duradoura',  sobre:'dura um número fixo de rounds (tabela de Duração do Nível 1); mais barata que Sustentada, mas mais fraca; custa Ação Bônus, exceto armadilhas de dano contínuo (ex: sangramento).'},
   {id:'imediata',   nome:'Imediata',   sobre:'instantânea, um único efeito; se for um Buff de uso único conta como desvantagem embutida (não vale pra dano/debuff); custa Ação Comum, exceto se for buff em si mesmo.'},
 ];
@@ -458,13 +466,48 @@ function corMaisClara(hex, proporcao){
   });
   return '#' + canais.map(c => c.toString(16).padStart(2,'0')).join('');
 }
+// Extrai só o matiz (hue, 0-360) de uma cor — usado pra "pintar" fundo,
+// superfícies e bordas com a MESMA família de cor do destaque, só que bem
+// mais escura/discreta (a claridade e saturação ficam fixas, só o matiz
+// muda com o tema).
+function matizDoHex(hex){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return 255;
+  const [r,g,b] = [1,2,3].map(i => parseInt(m[i],16)/255);
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
+  if(d === 0) return 0;
+  let h;
+  if(max === r) h = ((g-b)/d) % 6;
+  else if(max === g) h = (b-r)/d + 2;
+  else h = (r-g)/d + 4;
+  h *= 60;
+  return h < 0 ? h+360 : h;
+}
+// Monta uma cor a partir de matiz/saturação/luminosidade (0-100%) — o
+// jeito mais direto de gerar tons escuros discretos numa família de cor.
+function corHsl(h, s, l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s*Math.min(l, 1-l);
+  const f = n => l - a*Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  const canal = n => Math.round(255*f(n));
+  return '#' + [0,8,4].map(n => canal(n).toString(16).padStart(2,'0')).join('');
+}
 // Aplica a cor de tema nas variáveis CSS que toda a ficha usa — chamado a
 // cada render() com a cor do personagem atual (ou o padrão, sem ficha).
+// Além do destaque (--roxo), agora também tinge fundo/superfícies/bordas
+// com o mesmo matiz — bem mais escuro, pra continuar fácil de ler com
+// qualquer cor escolhida.
 function aplicarTema(hexCor){
   const cor = /^#[a-f\d]{6}$/i.test(hexCor||'') ? hexCor : TEMA_PADRAO;
+  const h = matizDoHex(cor);
   document.documentElement.style.setProperty('--roxo', cor);
   document.documentElement.style.setProperty('--roxo-forte', corMaisClara(cor, .22));
   document.documentElement.style.setProperty('--roxo-rgb', hexParaRgb(cor));
+  document.documentElement.style.setProperty('--fundo', corHsl(h, 35, 5));
+  document.documentElement.style.setProperty('--superficie', corHsl(h, 32, 9));
+  document.documentElement.style.setProperty('--superficie-alta', corHsl(h, 28, 13));
+  document.documentElement.style.setProperty('--borda', corHsl(h, 24, 20));
 }
 
 function novoPersonagem(nome){
@@ -1354,7 +1397,7 @@ function habilidadeLinha(h, i, p){
           <input type="checkbox" data-hab-efeito="${i}|${e.chave}" ${h.efeitos&&h.efeitos[e.chave]?'checked':''}> ${e.rotulo}
         </label>`).join('')}
       </div>
-      ${efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${efeitosEscolhidos.length} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
+      ${h.tipo === 'sustentada' && efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${efeitosEscolhidos.length} efeitos (−1): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${efeitosEscolhidos.length} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
