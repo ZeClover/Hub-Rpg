@@ -1292,10 +1292,20 @@ passando.
       racial, PV/CA calculados, perícias, ataque de arma, condições,
       Modo Hub mockado); `tsc`, lint e os 208 testes automáticos
       continuam limpos
-- [ ] D&D 5ª Edição — as 8 classes restantes (Bárbaro, Bardo, Bruxo,
-      Druida, Feiticeiro, Monge, Paladino, Patrulheiro), catálogo de
-      magias, arquétipos/domínios/tradições, ficha de inimigo e Escudo
-      do Mestre — fatias futuras, uma de cada vez (decisão #26)
+- [x] **D&D 5ª Edição — as 8 classes restantes, Talentos e
+      Antecedentes** (04/09/2026) — decisão #82. As 12 classes do livro
+      completas até o 3º nível (Bárbaro, Bardo, Bruxo, Druida,
+      Feiticeiro, Monge, Paladino, Patrulheiro somados aos 4 anteriores).
+      Nova aba Talentos (40, com catálogo e talentos escolhidos aplicando
+      efeito automático) e regra de Multiclasse como referência. 13
+      Antecedentes no total (8 novos: Artesão de Guilda, Artista,
+      Charlatão, Eremita, Forasteiro, Marinheiro, Nobre, Órfão). Testado
+      com Playwright (classe nova calculando PV certo, Talentos, classe
+      conjuradora nova) sem regressão na fatia anterior; `tsc`, lint e os
+      208 testes automáticos continuam limpos
+- [ ] D&D 5ª Edição — catálogo de magias, arquétipos/domínios/tradições
+      de cada classe, ficha de inimigo e Escudo do Mestre — fatias
+      futuras, uma de cada vez (decisão #26)
 - [ ] Ometion
 
 ---

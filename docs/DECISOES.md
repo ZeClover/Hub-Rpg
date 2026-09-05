@@ -3260,6 +3260,57 @@ após recarregar, e Modo Hub completo mockando `/api/personagens/*`
 "em-construcao"`, só 4 das 12 classes prontas) e a migração
 `0011_sistema_dnd_5e.sql` garante a linha correspondente no banco.
 
+## 82. D&D 5ª Edição — as 8 classes restantes, Talentos e Antecedentes (04/09/2026)
+
+Continuação direta da decisão #81. O Zé mandou o Livro do Jogador completo
+(dividido em 4 partes de ~80 páginas pelo próprio Google Drive) — a
+primeira parte repetia o que já tinha sido lido (páginas 1-81), as três
+seguintes cobriam exatamente o que faltava (82 até o fim, ~316 páginas).
+
+Com o livro inteiro em mãos, quatro agentes em paralelo extraíram:
+
+- As 8 classes que faltavam — **Bárbaro, Bardo, Bruxo, Druida, Feiticeiro,
+  Monge, Paladino, Patrulheiro** — no mesmo formato das 4 já existentes
+  (dado de vida, salvamentos, perícias, proficiências, equipamento
+  inicial, características até o 3º nível, regra de conjuração pras 6
+  classes que conjuram). `src/lib/sistemas.ts` não mudou — o catálogo de
+  classes já estava certo, só a lista `CLASSES` do chassi cresceu de 4
+  para as 12 completas
+- **Talentos** (40, Capítulo 6) e a regra de **Multiclasse** (pré-requisito
+  de atributo por classe + como PV, proficiências e conjuração se
+  combinam) — nova aba "Talentos" na ficha, com uma lista de talentos
+  escolhidos (nome + efeito automático) e o catálogo completo como
+  referência
+- **8 Antecedentes novos** (Artesão de Guilda, Artista, Charlatão,
+  Eremita, Forasteiro, Marinheiro, Nobre, Órfão), somados aos 5 que já
+  existiam — total de 13, cobrindo todos os antecedentes do livro
+
+Mesma regra de direito autoral das decisões anteriores: só mecânica
+(números, fórmulas, proficiências, efeito resumido em palavras
+próprias), nunca o texto do livro.
+
+Um detalhe de regras ficou registrado pros agentes, sem virar mecânica
+de ficha ainda: o Bardo escolhe "três perícias quaisquer" (não uma
+lista fechada como as outras classes) — a `periciasDisponiveis.lista`
+dele lista as 18 perícias do sistema, então a interface de escolha
+funciona igual às outras classes sem precisar de um caso especial.
+
+Testado com Playwright: uma das 8 classes novas (Bárbaro) mostrando
+Fúria e PV calculado certo com a nova raça/antecedente, aba Talentos
+com catálogo e talento escolhido aplicando o efeito, uma classe
+conjuradora nova (Druida) preenchendo a aba Conjuração, persistência
+após recarregar — mais toda a bateria de testes da fatia anterior
+(criação completa, raça com sub-raça, combate, Modo Hub) sem
+regressão. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos.
+
+**Segue fora de escopo:** arquétipos/subclasses (Caminho Primitivo,
+Colégio de Bardo, Domínio Divino, Patrono do Bruxo, Círculo Druídico,
+Origem de Feitiçaria, Arquétipo Marcial, Arquétipo Ladino, Tradição
+Arcana, Tradição Monástica, Juramento Sagrado, Conclave de
+Patrulheiro), catálogo de magias, ficha de inimigo e Escudo do Mestre —
+fatias futuras.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

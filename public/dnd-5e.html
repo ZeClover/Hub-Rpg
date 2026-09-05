@@ -923,6 +923,599 @@ const CLASSES = [
       "trilhaDeMagiasPorNivel": true
     }
   }
+,
+  {
+    "id": "barbaro",
+    "nome": "Bárbaro",
+    "dadoDeVida": "d12",
+    "pvNivel1": "12 + mod. Constituição",
+    "pvNivelSeguinte": "1d12 (ou 7) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "forca",
+      "constituicao"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Adestrar Animais",
+        "Atletismo",
+        "Intimidação",
+        "Natureza",
+        "Percepção",
+        "Sobrevivência"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves",
+      "Médias",
+      "Escudos"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Marciais"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) um machado grande ou (b) qualquer arma marcial corpo-a-corpo",
+      "(a) dois machados de mão ou (b) qualquer arma simples",
+      "Um pacote de aventureiro e quatro azagaias"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Fúria",
+          "efeito": "Ação bônus para entrar em fúria (dura 1 minuto, limitada a um número de usos por descanso longo conforme o nível). Enquanto durar e sem vestir armadura pesada: vantagem em testes e salvamentos de Força; bônus fixo no dano de ataques corpo-a-corpo com Força (cresce com o nível, começa em +2); resistência a dano de concussão, cortante e perfurante. Não é possível conjurar ou concentrar-se em magias enquanto em fúria. Termina antes do tempo se cair inconsciente ou passar um turno inteiro sem atacar ou sofrer dano."
+        },
+        {
+          "nome": "Defesa sem Armadura",
+          "efeito": "Sem vestir armadura, CA = 10 + mod. Destreza + mod. Constituição; pode usar escudo normalmente."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Ataque Descuidado",
+          "efeito": "Ao fazer o primeiro ataque do turno, pode optar por atacar descuidadamente: vantagem nas jogadas de ataque corpo-a-corpo com Força nesse turno, mas ataques contra o personagem também têm vantagem até o início do próximo turno dele."
+        },
+        {
+          "nome": "Sentido de Perigo",
+          "efeito": "Vantagem em salvamentos de Destreza contra efeitos visíveis (armadilhas, magias); perde o benefício se estiver cego, surdo ou incapacitado."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Caminho Primitivo",
+          "efeito": "Escolhe uma subclasse (caminho primitivo), que concede características neste nível e novamente nos níveis 6, 10 e 14. Opções detalhadas ficam para depois."
+        }
+      ]
+    },
+    "conjuracao": null
+  },
+  {
+    "id": "bardo",
+    "nome": "Bardo",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "destreza",
+      "carisma"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 3,
+      "lista": [
+        "Acrobacia",
+        "Adestrar Animais",
+        "Arcanismo",
+        "Atletismo",
+        "Atuação",
+        "Enganação",
+        "Furtividade",
+        "História",
+        "Intimidação",
+        "Intuição",
+        "Investigação",
+        "Medicina",
+        "Natureza",
+        "Percepção",
+        "Persuasão",
+        "Prestidigitação",
+        "Religião",
+        "Sobrevivência"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Bestas de mão",
+      "Espadas longas",
+      "Rapieiras",
+      "Espadas curtas"
+    ],
+    "proficienciaFerramentas": [
+      "Três instrumentos musicais, à sua escolha"
+    ],
+    "equipamentoInicial": [
+      "(a) uma rapieira, (b) uma espada longa ou (c) qualquer arma simples",
+      "(a) um pacote de diplomata ou (b) um pacote de artista",
+      "(a) um lute ou (b) qualquer outro instrumento musical",
+      "Armadura de couro e uma adaga"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Conjuração",
+          "efeito": "Ganha acesso a truques e magias de bardo (ver bloco de conjuração)."
+        },
+        {
+          "nome": "Inspiração de Bardo (d6)",
+          "efeito": "Ação bônus para dar a uma criatura a até 18m que possa ouvi-lo um dado de Inspiração de Bardo (d6). Nos próximos 10 minutos, ela pode rolar esse dado e somar o resultado a um teste de habilidade, jogada de ataque ou salvamento (decide antes de saber o resultado). Usos por descanso longo = mod. Carisma (mínimo 1); o dado aumenta de tamanho em níveis mais altos."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Versatilidade",
+          "efeito": "Soma metade do bônus de proficiência (arred. para baixo) a qualquer teste de habilidade em que ainda não tenha proficiência."
+        },
+        {
+          "nome": "Canção do Descanso (d6)",
+          "efeito": "Durante um descanso curto, se o bardo ou aliados que o ouçam recuperarem PV gastando Dados de Vida, cada um recupera 1d6 PV adicionais (o dado cresce em níveis mais altos)."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Colégio de Bardo",
+          "efeito": "Escolhe uma subclasse (colégio de bardo), que concede características neste nível e novamente nos níveis 6 e 14. Opções detalhadas ficam para depois."
+        },
+        {
+          "nome": "Aptidão",
+          "efeito": "Escolhe duas perícias em que já é proficiente; o bônus de proficiência nelas é dobrado (ganha mais duas escolhas no nível 10)."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "carisma",
+      "magiasConhecidas": "No 1º nível conhece 2 truques e 4 magias de 1º nível da lista de bardo; aprende truques e magias adicionais em níveis mais altos (coluna própria na tabela de progressão) e pode trocar uma magia conhecida por outra a cada nível ganho na classe. Já possui espaços de magia de 1º nível desde o 1º nível. CD de magia = 8 + bônus de proficiência + mod. Carisma; modificador de ataque de magia = bônus de proficiência + mod. Carisma.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "bruxo",
+    "nome": "Bruxo",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "sabedoria",
+      "carisma"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Arcanismo",
+        "Enganação",
+        "História",
+        "Intimidação",
+        "Investigação",
+        "Natureza",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Armaduras leves"
+    ],
+    "proficienciaArmas": [
+      "Armas simples"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) uma bolsa de componentes ou (b) um foco arcano",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Armadura de couro, uma arma simples à escolha e duas adagas"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Patrono Transcendental",
+          "efeito": "Escolhe um patrono (Arquifada, Corruptor ou Grande Antigo), que concede traços neste nível e novamente nos níveis 6, 10 e 14. Detalhes de cada patrono ficam para depois."
+        },
+        {
+          "nome": "Magia de Pacto",
+          "efeito": "Conjura magias de bruxo usando um número reduzido de espaços de magia, todos do mesmo nível (ver bloco de conjuração)."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Invocações Místicas",
+          "efeito": "Ganha 2 invocações místicas à escolha (fragmentos de poder mágico permanente com regras próprias, algumas com pré-requisito de nível). Aprende mais em níveis mais altos e pode trocar uma invocação conhecida ao subir de nível."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Dádiva do Pacto",
+          "efeito": "Escolhe um dom do patrono: Pacto da Corrente (aprende convocar familiar como ritual, com formas especiais disponíveis), Pacto da Lâmina (cria com uma ação uma arma corpo-a-corpo mágica na mão vazia, proficiente enquanto a empunha) ou Pacto do Tomo (recebe um grimório que permite conjurar à vontade 3 truques extras de qualquer lista de magia)."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "carisma",
+      "magiasConhecidas": "Conhece 2 truques no 1º nível (mais em níveis altos) e 2 magias de 1º nível conhecidas no 1º nível, ganhando mais conforme a tabela de progressão. Todos os espaços de magia são do mesmo nível (que sobe com o nível de bruxo) e se recuperam num descanso curto ou longo — diferente das outras classes conjuradoras. Pode trocar uma magia conhecida por outra ao subir de nível.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "druida",
+    "nome": "Druida",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "inteligencia",
+      "sabedoria"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Arcanismo",
+        "Adestrar Animais",
+        "Intuição",
+        "Medicina",
+        "Natureza",
+        "Percepção",
+        "Religião",
+        "Sobrevivência"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Armaduras leves",
+      "Armaduras médias",
+      "Escudos (nunca feitos de metal)"
+    ],
+    "proficienciaArmas": [
+      "Clavas",
+      "Adagas",
+      "Dardos",
+      "Azagaias",
+      "Maças",
+      "Bordões",
+      "Cimitarras",
+      "Foices",
+      "Fundas",
+      "Lanças"
+    ],
+    "proficienciaFerramentas": [
+      "Kit de herbalismo"
+    ],
+    "equipamentoInicial": [
+      "(a) um escudo de madeira ou (b) qualquer arma simples",
+      "(a) uma cimitarra ou (b) qualquer arma corpo-a-corpo simples",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Armadura de couro, um pacote de aventureiro e um foco druídico"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Druídico",
+          "efeito": "Conhece o idioma secreto Druídico, incluindo o uso dele para deixar mensagens escondidas."
+        },
+        {
+          "nome": "Conjuração",
+          "efeito": "Prepara magias diariamente a partir da lista completa de magias de druida (ver bloco de conjuração)."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Forma Selvagem",
+          "efeito": "Usa a ação para assumir a forma de uma besta já vista antes, 2 vezes por descanso curto ou longo. No 2º nível, limitado a ND 1/4 sem deslocamento de voo ou natação; mantém Inteligência, Sabedoria, Carisma, tendência e personalidade, mas não pode conjurar magias nem falar na forma animal (com exceções detalhadas). Duração máxima em horas = metade do nível de druida (arred. para baixo)."
+        },
+        {
+          "nome": "Círculo Druídico",
+          "efeito": "Escolhe um círculo (Círculo da Terra ou Círculo da Lua), que concede características neste nível e novamente nos níveis 6, 10 e 14. Detalhes de cada círculo ficam para depois."
+        }
+      ],
+      "3": [
+        {
+          "nome": "(sem característica de classe nova)",
+          "efeito": "Nenhuma característica nova neste nível; espaços de magia adicionais."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "sabedoria",
+      "magiasConhecidas": "Não tem lista fixa de 'magias conhecidas': prepara diariamente magias da lista de druida em número igual a mod. Sabedoria + nível de druida (mínimo 1), desde que tenha espaço de magia do nível dela. Conhece 2 truques no 1º nível (aumenta com o nível). Pode conjurar como ritual qualquer magia preparada que tenha o descritor ritual.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "feiticeiro",
+    "nome": "Feiticeiro",
+    "dadoDeVida": "d6",
+    "pvNivel1": "6 + mod. Constituição",
+    "pvNivelSeguinte": "1d6 (ou 4) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "constituicao",
+      "carisma"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Arcanismo",
+        "Enganação",
+        "Intuição",
+        "Intimidação",
+        "Persuasão",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [],
+    "proficienciaArmas": [
+      "Adagas",
+      "Dardos",
+      "Fundas",
+      "Bordões",
+      "Bestas leves"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) uma bolsa de componentes ou (b) um foco arcano",
+      "(a) um pacote de explorador ou (b) um pacote de aventureiro"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Conjuração",
+          "efeito": "Conhece 4 truques e 2 magias de 1º nível iniciais, todas da lista de feiticeiro (ver bloco de conjuração)."
+        },
+        {
+          "nome": "Origem de Feitiçaria",
+          "efeito": "Escolhe a fonte da magia inata (Linhagem Dracônica ou Magia Selvagem), que concede características neste nível e novamente nos níveis 6, 14 e 18. Detalhes de cada origem ficam para depois."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Fonte de Magia",
+          "efeito": "Ganha uma reserva de pontos de feitiçaria (2 no 2º nível, mais em níveis altos, recuperados num descanso longo). Com uma ação bônus, pode converter pontos de feitiçaria em um espaço de magia extra (custo crescente por nível do espaço, até o 5º) ou converter um espaço de magia não usado em pontos de feitiçaria (quantidade igual ao nível do espaço)."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Metamágica",
+          "efeito": "Escolhe 2 opções de Metamágica (ex.: Magia Distante, Magia Estendida, Magia Potencializada, Magia Sutil, entre outras), cada uma gastando pontos de feitiçaria para alterar como uma magia é conjurada. Só uma opção pode ser usada por magia, salvo exceção. Ganha mais opções nos níveis 10 e 17."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "carisma",
+      "magiasConhecidas": "Conhece um número fixo e crescente de magias e truques (4 truques e 2 magias de 1º nível no 1º nível, conforme a tabela de progressão), sem precisar preparar diariamente. Pode trocar uma magia conhecida por outra ao subir de nível. A partir do 2º nível, os pontos de feitiçaria dão flexibilidade extra para criar espaços de magia.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "monge",
+    "nome": "Monge",
+    "dadoDeVida": "d8",
+    "pvNivel1": "8 + mod. Constituição",
+    "pvNivelSeguinte": "1d8 (ou 5) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "forca",
+      "destreza"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Acrobacia",
+        "Atletismo",
+        "Furtividade",
+        "História",
+        "Intuição",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [],
+    "proficienciaArmas": [
+      "Simples",
+      "Espadas curtas"
+    ],
+    "proficienciaFerramentas": [
+      "Escolha um tipo de ferramenta de artesão ou um instrumento musical"
+    ],
+    "equipamentoInicial": [
+      "(a) uma espada curta ou (b) qualquer arma simples",
+      "(a) um pacote de explorador ou (b) um pacote de aventureiro",
+      "10 dardos"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Defesa sem Armadura",
+          "efeito": "Sem armadura nem escudo, CA = 10 + mod. Destreza + mod. Sabedoria."
+        },
+        {
+          "nome": "Artes Marciais",
+          "efeito": "Desarmado ou com arma de monge (espadas curtas e armas simples corpo-a-corpo sem a propriedade duas mãos ou pesada), sem armadura nem escudo: pode usar Destreza no lugar de Força para ataque e dano; pode rolar o dado de Artes Marciais (1d4 no nível 1, aumenta com o nível: 1d6 no 5º, 1d8 no 11º, 1d10 no 17º) no lugar do dado de dano normal desses ataques; ao usar a ação de Ataque com golpe desarmado ou arma de monge, pode desferir um golpe desarmado adicional com uma ação bônus."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Chi",
+          "efeito": "Ganha uma reserva de pontos de chi (2 no nível 2, aumenta 1 por nível de monge) usada para acionar características especiais; pontos gastos são recuperados ao fim de um descanso curto ou longo (precisa investir ao menos 30 min do descanso meditando). Conhece de início três características de chi: Rajada de Golpes (gasta 1 ponto para, logo após a ação de Ataque, fazer dois golpes desarmados como ação bônus), Defesa Paciente (gasta 1 ponto para usar a ação de Esquivar como ação bônus) e Passo do Vento (gasta 1 ponto para usar Desengajar ou Disparada como ação bônus, com distância de salto dobrada no turno). CD de resistência de características de chi = 8 + bônus de proficiência + mod. Sabedoria."
+        },
+        {
+          "nome": "Movimento sem Armadura",
+          "efeito": "Sem armadura nem escudo, deslocamento aumenta em 3m; esse bônus cresce em níveis posteriores (até +9m no nível 18); no nível 9 permite mover-se sobre superfícies verticais e líquidos sem cair."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Tradição Monástica",
+          "efeito": "Escolhe uma tradição monástica (Caminho da Mão Aberta, Caminho Sombrio ou Caminho dos Quatro Elementos), que concede características neste nível e novamente nos níveis 6, 11 e 17. Opções detalhadas ficam para depois."
+        },
+        {
+          "nome": "Defletir Projéteis",
+          "efeito": "Reação ao ser atingido por ataque de arma à distância: reduz o dano sofrido em 1d10 + mod. Destreza + nível de monge; se o dano cair a 0, pode apanhar o projétil (se pequeno o bastante e com uma mão livre) e gastar 1 ponto de chi para atacar à distância com ele na mesma reação (alcance 6/18m, com proficiência)."
+        }
+      ]
+    },
+    "conjuracao": null
+  },
+  {
+    "id": "paladino",
+    "nome": "Paladino",
+    "dadoDeVida": "d10",
+    "pvNivel1": "10 + mod. Constituição",
+    "pvNivelSeguinte": "1d10 (ou 6) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "sabedoria",
+      "carisma"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 2,
+      "lista": [
+        "Atletismo",
+        "Intuição",
+        "Intimidação",
+        "Medicina",
+        "Persuasão",
+        "Religião"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Todas",
+      "Escudos"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Marciais"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) uma arma marcial e um escudo ou (b) duas armas marciais",
+      "(a) cinco azagaias ou (b) qualquer arma simples corpo-a-corpo",
+      "(a) um pacote de sacerdote ou (b) um pacote de aventureiro",
+      "Cota de malha e um símbolo sagrado"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Sentido Divino",
+          "efeito": "Ação para detectar, a até 18m e sem cobertura total, a presença e o tipo (celestial, corruptor ou morto-vivo) de criaturas dessas naturezas até o fim do próximo turno, e também locais/objetos consagrados ou profanados. Usos = 1 + mod. Carisma; recupera todos ao fim de um descanso longo."
+        },
+        {
+          "nome": "Cura pelas Mãos",
+          "efeito": "Reserva de cura que se enche em descanso longo, com total de PV igual ao nível de paladino x 5; com uma ação, toca uma criatura e gasta pontos da reserva para curá-la (até o total restante), ou gasta 5 pontos para curar uma doença ou neutralizar um veneno (não afeta mortos-vivos nem constructos)."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Estilo de Luta",
+          "efeito": "Escolhe uma especialização de combate fixa (ex: Combate com Armas Grandes, Defesa, Duelismo, Proteção), não podendo repetir a escolha."
+        },
+        {
+          "nome": "Conjuração",
+          "efeito": "Passa a conjurar magias divinas de paladino (ver bloco de conjuração)."
+        },
+        {
+          "nome": "Destruição Divina",
+          "efeito": "Ao acertar um ataque corpo-a-corpo com arma, pode gastar um espaço de magia para causar dano radiante extra: 2d8 para espaço de 1º nível, +1d8 por nível de espaço acima (máx. 5d8); +1d8 se o alvo for corruptor ou morto-vivo."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Saúde Divina",
+          "efeito": "Torna-se imune a doenças."
+        },
+        {
+          "nome": "Juramento Sagrado",
+          "efeito": "Escolhe um juramento sagrado (Juramento de Devoção, dos Anciões ou de Vingança), que concede magias de juramento sempre preparadas e a opção Canalizar Divindade, além de características neste nível e novamente nos níveis 7, 15 e 20. Opções detalhadas ficam para depois."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "carisma",
+      "magiasConhecidas": "Não tem lista fixa de 'magias conhecidas': a partir do 2º nível, prepara diariamente magias da lista de paladino em número igual a mod. Carisma + metade do nível de paladino arredondado para baixo (mínimo 1), entre as que tem espaços disponíveis. Magias de juramento (a partir do 3º nível) ficam sempre preparadas à parte desse total.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  },
+  {
+    "id": "patrulheiro",
+    "nome": "Patrulheiro",
+    "dadoDeVida": "d10",
+    "pvNivel1": "10 + mod. Constituição",
+    "pvNivelSeguinte": "1d10 (ou 6) + mod. Constituição por nível",
+    "salvamentosProficientes": [
+      "forca",
+      "destreza"
+    ],
+    "periciasDisponiveis": {
+      "escolha": 3,
+      "lista": [
+        "Adestrar Animais",
+        "Atletismo",
+        "Furtividade",
+        "Intuição",
+        "Investigação",
+        "Natureza",
+        "Percepção",
+        "Sobrevivência"
+      ]
+    },
+    "proficienciaArmaduras": [
+      "Leves",
+      "Médias",
+      "Escudos"
+    ],
+    "proficienciaArmas": [
+      "Simples",
+      "Marciais"
+    ],
+    "proficienciaFerramentas": [],
+    "equipamentoInicial": [
+      "(a) brunea ou (b) armadura de couro",
+      "(a) duas espadas curtas ou (b) duas armas simples corpo-a-corpo",
+      "(a) um pacote de explorador ou (b) um pacote de aventureiro",
+      "Um arco longo e uma aljava com 20 flechas"
+    ],
+    "caracteristicasPorNivel": {
+      "1": [
+        {
+          "nome": "Inimigo Favorito",
+          "efeito": "Escolhe um tipo de inimigo favorito (bestas, fadas, humanoide, monstruosidades ou mortos-vivos): +2 de bônus nas jogadas de dano contra criaturas desse tipo, vantagem em testes de Sabedoria (Sobrevivência) para rastreá-las e de Inteligência para lembrar informações sobre elas, além de aprender um idioma falado por esse tipo, se houver."
+        },
+        {
+          "nome": "Explorador Natural",
+          "efeito": "Ignora terreno difícil e tem vantagem em rolagens de iniciativa; no primeiro turno de combate, vantagem nas jogadas de ataque contra criaturas que ainda não agiram. Ao viajar 1h+ pelo ambiente selvagem: grupo não é atrasado por terreno difícil, não se perde exceto por magia, permanece alerta mesmo fazendo outra atividade, pode se mover furtivamente sozinho, forrageia o dobro de comida, e ao rastrear descobre número exato, tamanhos e tempo de passagem das criaturas."
+        }
+      ],
+      "2": [
+        {
+          "nome": "Estilo de Luta",
+          "efeito": "Escolhe uma especialização de combate fixa (ex: Arquearia, Combate com Duas Armas, Defesa, Duelismo), não podendo repetir a escolha."
+        },
+        {
+          "nome": "Conjuração",
+          "efeito": "Passa a conjurar magias da natureza como o druida (ver bloco de conjuração)."
+        }
+      ],
+      "3": [
+        {
+          "nome": "Conclave de Patrulheiro",
+          "efeito": "Escolhe um conclave de patrulheiro (Conclave da Besta, do Caçador ou do Rastreador Subterrâneo), que concede características neste nível e novamente nos níveis 5, 7, 11 e 15. Opções detalhadas ficam para depois."
+        },
+        {
+          "nome": "Consciência Primitiva",
+          "efeito": "Comunica-se de forma básica com bestas (ação, entende ânimo/necessidades/intenção simples) e, concentrando-se por 1 minuto, pode sentir se algum inimigo favorito está a até 8km, sabendo quantidade, direção e distância aproximada."
+        }
+      ]
+    },
+    "conjuracao": {
+      "atributo": "sabedoria",
+      "magiasConhecidas": "Tem lista fixa de magias conhecidas (coluna 'Magias Conhecidas' da tabela): 2 magias de 1º nível conhecidas a partir do 2º nível de classe, crescendo com o nível (até 11 no 20º); a cada nível de patrulheiro ganho pode trocar uma magia conhecida por outra da lista de patrulheiro, de nível para o qual tenha espaços.",
+      "trilhaDeMagiasPorNivel": true
+    }
+  }
 ];
 
 const PERICIAS = [
@@ -1127,7 +1720,402 @@ const ANTECEDENTES = [
       "efeito": "Soldados leais à sua antiga organização (de patente igual ou inferior) reconhecem sua autoridade; pode requisitar equipamentos simples ou cavalos para uso temporário e acessar acampamentos militares aliados."
     }
   }
+,
+  {
+    "nome": "Artesão de Guilda",
+    "periciasConcedidas": [
+      "Intuição",
+      "Persuasão"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de ferramenta de artesão (à escolha)",
+      "Um idioma à escolha"
+    ],
+    "equipamentoInicial": [
+      "Um conjunto de ferramentas de artesão (à escolha)",
+      "Uma carta de apresentação da guilda",
+      "Um conjunto de roupas de viajante",
+      "Algibeira com 15 po"
+    ],
+    "caracteristica": {
+      "nome": "Associados da Guilda",
+      "efeito": "Membros da guilda garantem hospedagem, comida e custeiam seu funeral se necessário, mediante o pagamento de uma cota mensal de 5 po (o não pagamento gera dívida com a guilda)."
+    }
+  },
+  {
+    "nome": "Artista",
+    "periciasConcedidas": [
+      "Acrobacia",
+      "Atuação"
+    ],
+    "ferramentasOuIdiomas": [
+      "Kit de disfarce",
+      "Um tipo de instrumento musical"
+    ],
+    "equipamentoInicial": [
+      "Um instrumento musical (à escolha)",
+      "Um presente de um admirador",
+      "Um traje",
+      "Algibeira com 15 po"
+    ],
+    "caracteristica": {
+      "nome": "Pela Demanda Popular",
+      "efeito": "Você sempre encontra um lugar para atuar e recebe alojamento e comida modesta de graça enquanto atuar toda noite, além de ser bem recebido por quem já o viu se apresentar."
+    }
+  },
+  {
+    "nome": "Charlatão",
+    "periciasConcedidas": [
+      "Enganação",
+      "Prestidigitação"
+    ],
+    "ferramentasOuIdiomas": [
+      "Kit de disfarce",
+      "Kit de falsificação"
+    ],
+    "equipamentoInicial": [
+      "Um conjunto de roupas finas",
+      "Um kit de disfarce",
+      "Ferramentas de trapaça à escolha",
+      "Algibeira com 15 po"
+    ],
+    "caracteristica": {
+      "nome": "Identidade Falsa",
+      "efeito": "Você tem uma segunda identidade com documentos e disfarces, e pode forjar documentos oficiais desde que já tenha visto um exemplo ou a caligrafia de quem imita."
+    }
+  },
+  {
+    "nome": "Eremita",
+    "periciasConcedidas": [
+      "Medicina",
+      "Religião"
+    ],
+    "ferramentasOuIdiomas": [
+      "Kit de herbalismo",
+      "Um idioma à escolha"
+    ],
+    "equipamentoInicial": [
+      "Estojo de pergaminho cheio de notas de estudos e orações",
+      "Um cobertor de inverno",
+      "Um conjunto de roupas comuns",
+      "Um kit de herbalismo",
+      "5 po"
+    ],
+    "caracteristica": {
+      "nome": "Descoberta",
+      "efeito": "Sua reclusão prolongada lhe deu acesso a uma descoberta única e poderosa, cuja natureza é definida em conjunto com o Mestre."
+    }
+  },
+  {
+    "nome": "Forasteiro",
+    "periciasConcedidas": [
+      "Atletismo",
+      "Sobrevivência"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de instrumento musical",
+      "Um idioma à escolha"
+    ],
+    "equipamentoInicial": [
+      "Um bordão",
+      "Uma armadilha de caça",
+      "Um fetiche de um animal que matou",
+      "Um conjunto de roupas de viajante",
+      "Algibeira com 10 po"
+    ],
+    "caracteristica": {
+      "nome": "Andarilho",
+      "efeito": "Você tem memória excelente para mapas e geografia, recorda o traçado geral do terreno ao redor e pode encontrar comida e água fresca para si e até cinco outras pessoas a cada dia em ambiente natural adequado."
+    }
+  },
+  {
+    "nome": "Marinheiro",
+    "periciasConcedidas": [
+      "Atletismo",
+      "Percepção"
+    ],
+    "ferramentasOuIdiomas": [
+      "Ferramentas de navegador",
+      "Veículos (aquático)"
+    ],
+    "equipamentoInicial": [
+      "Uma malagueta (clava)",
+      "15 metros de corda de seda",
+      "Um amuleto da sorte ou bugiganga",
+      "Um conjunto de trajes comuns",
+      "Algibeira com 10 po"
+    ],
+    "caracteristica": {
+      "nome": "Passagem de Navio",
+      "efeito": "Você consegue passagem gratuita para si e seus companheiros em um navio em que trabalhou ou com o qual teve boas relações, em troca de ajudar a tripulação durante a viagem."
+    }
+  },
+  {
+    "nome": "Nobre",
+    "periciasConcedidas": [
+      "História",
+      "Persuasão"
+    ],
+    "ferramentasOuIdiomas": [
+      "Um tipo de kit de jogos",
+      "Um idioma à escolha"
+    ],
+    "equipamentoInicial": [
+      "Um conjunto de trajes finos",
+      "Um anel de sinete",
+      "Um pergaminho de linhagem",
+      "Algibeira com 25 po"
+    ],
+    "caracteristica": {
+      "nome": "Posição Privilegiada",
+      "efeito": "Graças à origem nobre, você é bem-vindo na alta sociedade e pode conseguir audiência com um nobre local quando precisar."
+    }
+  },
+  {
+    "nome": "Órfão",
+    "periciasConcedidas": [
+      "Furtividade",
+      "Prestidigitação"
+    ],
+    "ferramentasOuIdiomas": [
+      "Kit de disfarce",
+      "Ferramentas de ladrão"
+    ],
+    "equipamentoInicial": [
+      "Uma faca pequena",
+      "Um mapa da cidade em que cresceu",
+      "Um rato de estimação",
+      "Um pequeno objeto de lembrança dos pais",
+      "Um conjunto de roupas comuns",
+      "Algibeira com 10 po"
+    ],
+    "caracteristica": {
+      "nome": "Segredos da Cidade",
+      "efeito": "Fora de combate, você (e quem estiver guiando) pode viajar entre dois pontos quaisquer da cidade com o dobro da velocidade normal, conhecendo passagens ocultas pela expansão urbana."
+    }
+  }
 ];
+
+const TALENTOS = [
+  {
+    "nome": "Adepto Elemental",
+    "preRequisito": "Capacidade de conjurar pelo menos uma magia",
+    "efeito": "Ao adquirir o talento, escolha um tipo de dano entre ácido, elétrico, fogo, frio ou trovão. Magias que você conjurar ignoram resistência a dano desse tipo, e ao rolar dano desse tipo você pode tratar qualquer resultado 1 no dado de dano como 2. Pode ser escolhido várias vezes, sempre com um tipo de dano diferente a cada escolha."
+  },
+  {
+    "nome": "Adepto Marcial",
+    "preRequisito": null,
+    "efeito": "Aprende duas manobras de combate à escolha entre as disponíveis ao arquétipo Mestre de Batalha do guerreiro; a CD de resistência das manobras é 8 + bônus de proficiência + modificador de Força ou Destreza. Ganha um dado de superioridade d6 (ou +1 dado adicional se já possuir dados de superioridade), gasto ao usar uma manobra e recuperado ao final de um descanso curto ou longo."
+  },
+  {
+    "nome": "Atacante Bestial",
+    "preRequisito": null,
+    "efeito": "Uma vez por turno, ao rolar o dano de um ataque corpo a corpo com arma, você pode rolar novamente o dado de dano da arma e usar qualquer um dos dois resultados."
+  },
+  {
+    "nome": "Atirador Aguçado",
+    "preRequisito": null,
+    "efeito": "Atacar um alvo além do alcance normal com arma à distância não impõe desvantagem. Seus ataques à distância ignoram meia-cobertura e três-quartos de cobertura. Antes de atacar com uma arma à distância em que seja proficiente, pode sofrer -5 na jogada de ataque para causar +10 de dano se acertar."
+  },
+  {
+    "nome": "Ator",
+    "preRequisito": null,
+    "efeito": "Aumenta Carisma em 1 (máx. 20). Vantagem em testes de Carisma (Atuação) e Carisma (Enganação) ao tentar se passar por outra pessoa. Pode imitar a fala de outra pessoa ou sons de outra criatura que tenha ouvido por pelo menos 1 minuto; um ouvinte só percebe o embuste com um teste de Sabedoria (Intuição) bem-sucedido contra seu teste de Carisma (Enganação)."
+  },
+  {
+    "nome": "Atirador de Magia",
+    "preRequisito": "Capacidade de conjurar pelo menos uma magia",
+    "efeito": "O alcance de magias que exigem jogada de ataque é dobrado. Seus ataques à distância com magia ignoram meia-cobertura e três-quartos de cobertura. Aprende um truque que exige jogada de ataque, escolhido da lista de bardo, bruxo, clérigo, druida, feiticeiro ou mago, usando a habilidade de conjuração correspondente a essa lista."
+  },
+  {
+    "nome": "Atleta",
+    "preRequisito": null,
+    "efeito": "Aumenta Força ou Destreza em 1 (máx. 20). Levantar-se de caído custa apenas 1,5 metro de deslocamento. Escalar não custa movimento adicional. Salto em distância ou altura correndo exige apenas 1,5 metro de corrida, em vez de 3 metros."
+  },
+  {
+    "nome": "Combatente Montado",
+    "preRequisito": null,
+    "efeito": "Enquanto montado e não incapacitado: vantagem em ataques corpo a corpo contra criaturas desmontadas menores que a montaria; pode forçar que um ataque direcionado à montaria seja direcionado a você; se a montaria for alvo de efeito que peça teste de resistência de Destreza para reduzir dano à metade, ela não sofre dano se passar e sofre apenas metade se falhar."
+  },
+  {
+    "nome": "Conjurador de Guerra",
+    "preRequisito": "Capacidade de conjurar pelo menos uma magia",
+    "efeito": "Vantagem em testes de resistência de Constituição para manter concentração em magia ao sofrer dano. Pode realizar componentes somáticos de magias mesmo com armas ou escudo em uma ou ambas as mãos. Quando o movimento de criatura hostil provocaria um ataque de oportunidade, pode usar a reação para conjurar nela uma magia de alvo único com tempo de conjuração de 1 ação, em vez de atacar."
+  },
+  {
+    "nome": "Conjurador de Ritual",
+    "preRequisito": "Inteligência ou Sabedoria 13 ou maior",
+    "efeito": "Ganha um livro de rituais com duas magias de 1º nível com o descritor ritual, escolhidas da lista de uma classe conjuradora (bardo, bruxo, clérigo, druida, feiticeiro ou mago); conjura essas magias como rituais usando o livro e a habilidade de conjuração da classe escolhida. Pode copiar novas magias rituais da lista dessa classe para o livro (nível da magia até metade do seu nível, arredondado para cima), gastando 2 horas e 50 po por nível da magia."
+  },
+  {
+    "nome": "Curandeiro",
+    "preRequisito": null,
+    "efeito": "Usar um kit de primeiros-socorros para estabilizar uma criatura moribunda também restaura 1 ponto de vida a ela. Com uma ação, pode gastar um uso do kit para curar uma criatura em 1d6+4 PV mais PV adicionais iguais ao total de Dados de Vida dela; a mesma criatura só pode ser curada assim de novo após um descanso curto ou longo."
+  },
+  {
+    "nome": "Duelista Defensivo",
+    "preRequisito": "Destreza 13 ou maior",
+    "efeito": "Empunhando uma arma de acuidade em que seja proficiente, ao ser atingido por um ataque corpo a corpo pode usar a reação para somar seu bônus de proficiência à CA contra esse ataque específico, potencialmente fazendo-o errar."
+  },
+  {
+    "nome": "Especialista em Besta",
+    "preRequisito": null,
+    "efeito": "Ignora a característica de recarga de bestas em que é proficiente. Estar a até 1,5 metro de criatura hostil não impõe desvantagem em ataques à distância. Ao usar a ação de Ataque com uma arma de uma mão, pode usar a ação bônus para atacar com uma besta de mão carregada que esteja empunhando."
+  },
+  {
+    "nome": "Especialista em Briga",
+    "preRequisito": null,
+    "efeito": "Aumenta Força ou Constituição em 1 (máx. 20). Ataques desarmados passam a causar 1d4 de dano. Ao acertar um ataque desarmado ou com arma improvisada, pode usar a ação bônus no mesmo turno para tentar agarrar o alvo."
+  },
+  {
+    "nome": "Explorador de Cavernas",
+    "preRequisito": null,
+    "efeito": "Vantagem em testes de Sabedoria (Percepção) e Inteligência (Investigação) para detectar portas secretas. Vantagem em testes de resistência contra armadilhas e resistência a dano causado por armadilhas. Pode procurar armadilhas viajando em ritmo normal, em vez de meio ritmo."
+  },
+  {
+    "nome": "Imobilizador",
+    "preRequisito": "Força 13 ou maior",
+    "efeito": "Vantagem em jogadas de ataque contra uma criatura que você tenha agarrado. Pode usar a ação para tentar imobilizar uma criatura já agarrada realizando outro teste de agarrar; se bem-sucedido, você e a criatura ficam ambos impedidos até o agarre terminar."
+  },
+  {
+    "nome": "Iniciado em Magia",
+    "preRequisito": null,
+    "efeito": "Escolha uma classe conjuradora (bardo, bruxo, clérigo, druida, feiticeiro ou mago); aprende dois truques dessa lista e uma magia de 1º nível da mesma lista, conjurável no menor nível possível (recarrega após um descanso longo). Usa a habilidade de conjuração correspondente à classe escolhida (Carisma para bardo/bruxo/feiticeiro, Sabedoria para clérigo/druida, Inteligência para mago)."
+  },
+  {
+    "nome": "Investida Poderosa",
+    "preRequisito": null,
+    "efeito": "Ao usar a ação de Disparada, pode usar a ação bônus para realizar um ataque corpo a corpo com arma ou empurrar uma criatura. Se moveu ao menos 3 metros em linha reta imediatamente antes dessa ação bônus, ganha +5 no dano do ataque (se acertar) ou empurra o alvo até 3 metros (se bem-sucedido)."
+  },
+  {
+    "nome": "Líder Inspirador",
+    "preRequisito": "Carisma 13 ou maior",
+    "efeito": "Gasta 10 minutos inspirando até seis criaturas amigáveis (incluindo você mesmo) a até 9 metros que possam ver/ouvir e compreender você; cada uma ganha PV temporários iguais ao seu nível + seu modificador de Carisma. Uma mesma criatura só pode ganhar esses PV temporários de novo após um descanso curto ou longo."
+  },
+  {
+    "nome": "Maestria em Arma de Haste",
+    "preRequisito": null,
+    "efeito": "Ao atacar com glaive, alabarda ou bordão usando a ação de Ataque, pode usar a ação bônus para atacar corpo a corpo com a outra extremidade da arma (dado de dano d4, dano de concussão, mesmo modificador de habilidade). Enquanto empunhar glaive, alabarda, lança longa ou bastão, outras criaturas provocam ataque de oportunidade ao entrarem no seu alcance."
+  },
+  {
+    "nome": "Maestria em Armadura Média",
+    "preRequisito": "Proficiência em armadura média",
+    "efeito": "Vestir armadura média não impõe desvantagem em testes de Destreza (Furtividade). Com armadura média, pode adicionar 3 (em vez de 2) à CA se tiver Destreza 16 ou maior."
+  },
+  {
+    "nome": "Maestria em Armadura Pesada",
+    "preRequisito": "Proficiência em armadura pesada",
+    "efeito": "Aumenta Força em 1 (máx. 20). Vestindo armadura pesada, dano de concussão, cortante e perfurante recebido de ataques não-mágicos é reduzido em 3."
+  },
+  {
+    "nome": "Matador de Conjuradores",
+    "preRequisito": null,
+    "efeito": "Quando uma criatura a até 1,5 metro de você conjura uma magia, pode usar a reação para atacar corpo a corpo contra ela. Ao causar dano numa criatura concentrada em uma magia, ela tem desvantagem no teste de resistência para manter a concentração. Vantagem em testes de resistência contra magias de criaturas a até 1,5 metro de você."
+  },
+  {
+    "nome": "Mente Afiada",
+    "preRequisito": null,
+    "efeito": "Aumenta Inteligência em 1 (máx. 20). Sempre sabe qual direção é o norte e quantas horas faltam para o próximo nascer ou pôr do sol. Consegue relembrar com precisão qualquer coisa vista ou ouvida no último mês."
+  },
+  {
+    "nome": "Mestre de Armas",
+    "preRequisito": null,
+    "efeito": "Aumenta Força ou Destreza em 1 (máx. 20). Ganha proficiência com quatro armas simples ou marciais à sua escolha."
+  },
+  {
+    "nome": "Mestre de Armas Grandes",
+    "preRequisito": null,
+    "efeito": "Ao causar um acerto crítico com arma corpo a corpo ou reduzir uma criatura a 0 PV, pode realizar um ataque corpo a corpo adicional com a ação bônus. Antes de atacar corpo a corpo com uma arma pesada em que seja proficiente, pode sofrer -5 na jogada de ataque para causar +10 de dano se acertar."
+  },
+  {
+    "nome": "Mestre de Escudo",
+    "preRequisito": null,
+    "efeito": "Empunhando escudo: ao usar a ação de Ataque, pode usar a ação bônus para tentar empurrar uma criatura a até 1,5 metro; se não estiver incapacitado, pode somar o bônus de CA do escudo a um teste de resistência de Destreza contra magia ou efeito nocivo que o tenha como alvo; pode usar a reação para não sofrer dano (em vez de metade) ao passar num teste de resistência de Destreza contra efeito que causaria metade do dano, interpondo o escudo."
+  },
+  {
+    "nome": "Mobilidade",
+    "preRequisito": null,
+    "efeito": "Deslocamento aumenta em 3 metros. Ao usar a ação de Disparada, mover-se por terreno difícil não custa movimento adicional nesse turno. Ao atacar corpo a corpo contra uma criatura, você não provoca ataque de oportunidade dela pelo resto do turno, tenha acertado ou não."
+  },
+  {
+    "nome": "Observador",
+    "preRequisito": null,
+    "efeito": "Aumenta Inteligência ou Sabedoria em 1 (máx. 20). Se puder ver a boca de uma criatura falando um idioma que compreende, consegue ler seus lábios. Ganha +5 de bônus nos valores passivos de Sabedoria (Percepção) e Inteligência (Investigação)."
+  },
+  {
+    "nome": "Perito",
+    "preRequisito": null,
+    "efeito": "Ganha proficiência em qualquer combinação de três perícias ou ferramentas à sua escolha."
+  },
+  {
+    "nome": "Poliglota",
+    "preRequisito": null,
+    "efeito": "Aumenta Inteligência em 1 (máx. 20). Aprende três idiomas à escolha. Consegue criar criptogramas escritos que só são decifrados por quem for ensinado, passar num teste de Inteligência (CD igual ao seu valor de Inteligência + bônus de proficiência) ou usar magia."
+  },
+  {
+    "nome": "Proteção Leve",
+    "preRequisito": null,
+    "efeito": "Aumenta Força ou Destreza em 1 (máx. 20). Ganha proficiência com armaduras leves."
+  },
+  {
+    "nome": "Proteção Moderada",
+    "preRequisito": "Proficiência em armadura leve",
+    "efeito": "Aumenta Força ou Destreza em 1 (máx. 20). Ganha proficiência com armadura média e escudos."
+  },
+  {
+    "nome": "Proteção Pesada",
+    "preRequisito": "Proficiência em armadura média",
+    "efeito": "Aumenta Força em 1 (máx. 20). Ganha proficiência com armadura pesada."
+  },
+  {
+    "nome": "Resiliente",
+    "preRequisito": null,
+    "efeito": "Escolha um valor de habilidade: aumenta esse valor em 1 (máx. 20) e ganha proficiência em testes de resistência usando essa habilidade."
+  },
+  {
+    "nome": "Resistente",
+    "preRequisito": null,
+    "efeito": "Aumenta Constituição em 1 (máx. 20). Ao rolar um Dado de Vida para recuperar pontos de vida, o valor mínimo recuperado nessa rolagem é igual a duas vezes seu modificador de Constituição (mínimo de 2)."
+  },
+  {
+    "nome": "Robusto",
+    "preRequisito": null,
+    "efeito": "Seu PV máximo aumenta em um valor igual a duas vezes seu nível de personagem ao adquirir este talento. A cada nível ganho depois disso, o PV máximo aumenta mais 2 pontos."
+  },
+  {
+    "nome": "Sentinela",
+    "preRequisito": null,
+    "efeito": "Ao atingir uma criatura com ataque de oportunidade, o deslocamento dela se torna 0 pelo resto do turno. Criaturas provocam ataque de oportunidade seu mesmo ao realizar a ação Desengajar antes de sair do seu alcance. Quando uma criatura a até 1,5 metro ataca um alvo diferente de você (que não possua este talento), pode usar a reação para atacá-la corpo a corpo."
+  },
+  {
+    "nome": "Sorrateiro",
+    "preRequisito": "Destreza 13 ou maior",
+    "efeito": "Pode tentar se esconder mesmo estando apenas levemente obscurecido para quem quer enganar. Errar um ataque à distância enquanto escondido não revela sua posição. Penumbra não impõe desvantagem em testes de Sabedoria (Percepção) relacionados à visão."
+  },
+  {
+    "nome": "Sortudo",
+    "preRequisito": null,
+    "efeito": "Você tem 3 pontos de sorte, recuperados após um descanso longo. Pode gastar um ponto para rolar um d20 adicional em uma jogada de ataque, teste de habilidade ou teste de resistência (escolhendo qual d20 usar, mesmo depois de rolar mas antes de saber o resultado), ou quando sofrer um ataque, obrigando quem atacou a rolar novamente. Se mais de uma criatura gastar ponto de sorte na mesma jogada, os efeitos se cancelam."
+  }
+];
+
+const MULTICLASSE = {
+  "preRequisitos": {
+    "Bárbaro": "Força 13",
+    "Bardo": "Carisma 13",
+    "Bruxo": "Carisma 13",
+    "Clérigo": "Sabedoria 13",
+    "Druida": "Sabedoria 13",
+    "Feiticeiro": "Carisma 13",
+    "Guerreiro": "Força 13 ou Destreza 13",
+    "Ladino": "Destreza 13",
+    "Mago": "Inteligência 13",
+    "Monge": "Destreza 13 e Sabedoria 13",
+    "Paladino": "Força 13 e Carisma 13",
+    "Patrulheiro": "Destreza 13 e Sabedoria 13"
+  },
+  "regras": "Para qualificar-se a multiclassar, o personagem deve ter o valor de habilidade mínimo tanto da classe atual quanto da nova classe (ver preRequisitos). O XP necessário para subir de nível depende sempre do nível de personagem total (soma dos níveis em todas as classes), nunca do nível numa classe isolada. Pontos de Vida: só se recebem os PV de 1º nível de uma classe quando o personagem é de 1º nível; qualquer nível adicional (na mesma classe ou em outra) concede PV como 'nível após o 1º'. Dados de Vida de todas as classes se somam num único poço — se forem do mesmo tipo, ficam juntos; se forem de tipos diferentes, são controlados separadamente. O bônus de proficiência é sempre baseado no nível de personagem total, nunca no nível de uma classe específica. Ao ganhar nível numa classe que não é a primeira, o personagem recebe apenas parte das proficiências iniciais dessa classe (armas, armaduras, uma perícia ou ferramentas específicas, conforme tabela própria de Proficiências de Multiclasse), e só recebe o equipamento inicial da primeira classe escolhida. Características de classe que já existam em mais de uma classe do personagem (Canalizar Divindade, Ataque Extra, Defesa sem Armadura, Conjuração) têm regras específicas: Canalizar Divindade soma os efeitos disponíveis mas só ganha usos extras quando uma classe concede isso explicitamente; Ataque Extra não se acumula (nunca mais de dois ataques, salvo exceção do guerreiro); Defesa sem Armadura não pode ser adquirida de uma segunda classe. Conjuração multiclasse: magias conhecidas e preparadas de cada classe conjuradora são determinadas separadamente, como se o personagem fosse de classe única daquela classe; já os espaços de magia são calculados somando todos os níveis em classes conjuradoras completas (bardo, clérigo, druida, feiticeiro, mago), mais metade (arredondado para baixo) dos níveis em paladino e patrulheiro, mais um terço (arredondado para baixo) dos níveis de guerreiro ou ladino que tiverem a característica Cavaleiro Arcano ou Trapaceiro Arcano — usando esse total na tabela 'Multiclasse para Conjurador: Espaço de Magia por Nível de Magia'. Espaços de magia de nível mais alto que as magias conhecidas só podem ser usados para conjurar as magias de nível inferior conhecidas, aproveitando efeitos de aprimoramento de nível superior quando aplicável. A Magia de Pacto do bruxo mantém espaços de magia próprios e separados dos demais, mas espaços de uma característica podem ser usados para conjurar magias da outra característica (Conjuração x Magia de Pacto) quando o personagem possuir as duas."
+};
 
 const ARMAS = [
   {
@@ -2016,6 +3004,7 @@ function antecedente(nome){ return ANTECEDENTES.find(a => a.nome === nome) || nu
 function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 function arma(nome){ return ARMAS.find(a => a.nome === nome) || null; }
 function armadura(nome){ return ARMADURAS.find(a => a.nome === nome) || null; }
+function talento(nome){ return TALENTOS.find(t => t.nome === nome) || null; }
 
 /* --- Cálculos ------------------------------------------------------------- */
 
@@ -2147,6 +3136,7 @@ function novoPersonagem(nome){
       espacosGastos: {}, // {"1": 0, "2": 0, ...}
     },
     condicoesAtivas: [],
+    talentosEscolhidos: [], // [{id, nome}] — nome referencia TALENTOS
     inspiracao: false,
     notas: '',
   };
@@ -2278,6 +3268,7 @@ const ABAS = [
   {id:'status',      nome:'Status'},
   {id:'pericias',    nome:'Perícias'},
   {id:'combate',     nome:'Combate'},
+  {id:'talentos',    nome:'Talentos'},
   {id:'conjuracao',  nome:'Conjuração'},
   {id:'equipamento', nome:'Equipamento'},
   {id:'notas',       nome:'Notas'},
@@ -2328,7 +3319,7 @@ function render(){
         `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
       ).join('') + `</div>`
     + painelDerivados(p)
-    + ({status:abaStatus, pericias:abaPericias, combate:abaCombate, conjuracao:abaConjuracao, equipamento:abaEquipamento, notas:abaNotas}[estado.aba])(p);
+    + ({status:abaStatus, pericias:abaPericias, combate:abaCombate, talentos:abaTalentos, conjuracao:abaConjuracao, equipamento:abaEquipamento, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -2704,6 +3695,42 @@ function abaEquipamento(p){
   </div>`;
 }
 
+function abaTalentos(p){
+  return `<div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Talentos Escolhidos</h2>
+    <p class="mini" style="margin-bottom:10px">O livro concede um talento em troca de um Aumento de Valor de Habilidade, geralmente no 4º nível e em níveis seguintes (varia por classe) — a mesa decide quando isso acontece; aqui você só registra quais talentos o personagem já tem.</p>
+    ${p.talentosEscolhidos.map(item => {
+      const t = talento(item.nome);
+      return `<div class="linha-lista">
+        <div class="linha">
+          <select data-talento-select="${item.id}" style="flex:1">
+            ${TALENTOS.map(x => `<option value="${esc(x.nome)}" ${x.nome===item.nome?'selected':''}>${esc(x.nome)}</option>`).join('')}
+          </select>
+          <button data-talento-remover="${item.id}" class="perigo">Remover</button>
+        </div>
+        ${t ? `<p class="mini" style="margin-top:8px">${t.preRequisito ? `<strong>Pré-requisito:</strong> ${esc(t.preRequisito)} — ` : ''}${esc(t.efeito)}</p>` : ''}
+      </div>`;
+    }).join('')}
+    <button id="btAddTalento" class="destaque">+ Adicionar talento</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Multiclasse</h2>
+    <p class="mini" style="margin-bottom:8px"><strong>Pré-requisitos:</strong> ${Object.entries(MULTICLASSE.preRequisitos).map(([classe,req]) => `${esc(classe)}: ${esc(req)}`).join(' · ')}</p>
+    <p class="mini">${esc(MULTICLASSE.regras)}</p>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:16px;margin-bottom:12px">Catálogo de Talentos</h2>
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>Pré-requisito</th><th>Efeito</th></tr></thead>
+      <tbody>${TALENTOS.map(t => `<tr>
+        <td>${esc(t.nome)}</td><td>${esc(t.preRequisito || '—')}</td><td>${esc(t.efeito)}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
 function abaNotas(p){
   return `<div class="cartao">
     <label for="c-aparencia">Aparência</label>
@@ -2802,6 +3829,16 @@ function ligarEventos(){
     }, el));
   app.querySelectorAll('[data-item-remover]').forEach(b =>
     b.onclick = () => mudar(p => { p.equipamento.mochila = p.equipamento.mochila.filter(i => i.id !== b.dataset.itemRemover); }));
+
+  const btAddTalento = app.querySelector('#btAddTalento');
+  if(btAddTalento) btAddTalento.onclick = () => mudar(p => p.talentosEscolhidos.push({id: uid(), nome: TALENTOS[0] ? TALENTOS[0].nome : ''}));
+  app.querySelectorAll('[data-talento-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const item = p.talentosEscolhidos.find(t => t.id === el.dataset.talentoSelect);
+      if(item) item.nome = el.value;
+    }));
+  app.querySelectorAll('[data-talento-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.talentosEscolhidos = p.talentosEscolhidos.filter(t => t.id !== b.dataset.talentoRemover); }));
 
   const numPo = app.querySelector('#c-po');
   if(numPo) numPo.onchange = () => mudar(p => p.equipamento.po = Math.max(0, Number(numPo.value) || 0));
