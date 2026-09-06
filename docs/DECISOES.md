@@ -3345,6 +3345,85 @@ recarregar a página. Reexecutei todas as baterias anteriores sem
 regressão. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos.
 
+## 86. Kaizoku no Sho — Aptidões pegas, Pontos de Poder gastos, e mais de um Budô/Akuma no Mi (05/09/2026)
+
+O Zé pediu pra listar as Aptidões que foram pegas, com as gratuitas
+aparecendo tanto na lista geral quanto duplicadas numa seção só delas
+("pq as gratis podem ser compradas no futuro"), lembrando que comprar
+Aptidão ou evoluir o Poder gasta Pontos de Poder e as gratuitas não
+contam, e um botão pra aumentar as gratuitas em +1 (motivo de história).
+No meio da conversa, apareceu que o personagem pode ter mais de um Budô
+e mais de uma Akuma no Mi ao mesmo tempo, cada um com suas próprias
+Aptidões e seu próprio Nível do Poder — pediu pra isso entrar na ficha
+também.
+
+**Custo em Pontos de Poder**: confirmado com o Zé — toda Aptidão comprada
+(fora as gratuitas) custa 1 Ponto de Poder fixo, igual ao Nível do Poder
+(1 ponto = 1 nível). Nenhum catálogo de Aptidão (Livro Base, Expansão,
+Budô, Akuma no Mi) tinha campo de custo — só Qualidades/Defeitos tinham.
+
+**Um orçamento só, dividido por fonte pra mostrar**: também confirmado
+com o Zé (exemplo dele: Espadachim gastando 3 + Mera Mera no Mi gastando
+3 = 6 gastos no total, "mas são divididos os pontos gastos"). Não é um
+orçamento cheio por fonte — é `pontosPoder(nc)` uma vez só, com o gasto
+de cada fonte contado separado só pra mostrar de onde vem cada ponto.
+Cada Budô e cada Akuma no Mi tem seu próprio Nível do Poder (com pontos
+próprios investidos), mas o ponto gasto ali soma no mesmo total.
+
+**Estrutura de dados**: `p.poder.budoId`+`p.poder.aptidoes` (um Budô só) e
+`p.poder.akuma` (uma Akuma no Mi só) viraram `p.poder.budos[]` e
+`p.poder.akumas[]` — cada item com `{id, budoId/tipo, aptidões próprias,
+nivel:{pontos,outro}}`. Fichas antigas migram automaticamente (o único
+Budô/Akuma no Mi que já existia vira o primeiro item da lista nova).
+`state.budoIdx`/`state.akumaIdx` (transitórios, não salvos) dizem qual
+item está aberto pra edição — os painéis de edição (inclusive todo o
+orçamento de criação de Akuma no Mi, soma-zero, Zoan etc.) continuam os
+mesmos de antes, só que agora operando sobre UM item específico da lista
+em vez do objeto único global. A "Fonte de Poder" (seletor único
+nenhum/Budô/Akuma no Mi/Trabalho Duro) saiu — agora Budô, Akuma no Mi e
+Nível avulso (Trabalho Duro) são seções independentes, cada uma com seu
+botão de "+ Adicionar".
+
+`totalNivelPoder(p)` (usado em fórmulas genéricas de Combate/Dano que não
+sabem de qual fonte vêm, como a Dificuldade de Poder no ataque manual)
+virou o MAIOR Nível entre todas as fontes do personagem — uma
+simplificação deliberada, já que essas fórmulas nunca foram desenhadas
+pra saber de qual Budô/Akuma no Mi puxar; cada tabela de técnica
+específica (Zoan, de um Budô) usa o Nível daquela fonte exata, não o
+máximo.
+
+**Aptidões pegas**: nova seção no topo da aba Aptidões — resumo de Pontos
+de Poder gastos por fonte (Livro Base comprada, Expansão, cada Budô, cada
+Akuma no Mi, Nível avulso), lista única com TUDO que foi escolhido em
+qualquer aba (nome + origem + se é gratuita), a mesma lista de gratuitas
+duplicada numa seção só dela, e uma seção "Compradas — Livro Base +
+Expansão" juntando as duas fontes que têm Aptidão de catálogo (Budô/Akuma
+no Mi já aparecem na lista geral, mas não entram nessa soma porque o Zé
+pediu especificamente "expansão e do livro base juntas"). Botão "+1
+Aptidão Gratuita" soma em `p.aptidoesGratisExtra` (novo campo), que
+empurra o limite de gratuitas do Livro Base pra cima permanentemente —
+aproveitei pra ligar de verdade a Qualidade "Treinado" (que já dizia no
+texto "aumenta as aptidões grátis de 3 pra 4" mas não fazia nada).
+
+Testado com Playwright: 2 Budôs + 1 Akuma no Mi ao mesmo tempo, Aptidões
+de cada um isoladas entre si (marcar uma no Budô 1 não vaza pro Budô 2),
+Pontos de Poder gastos somando Aptidões + Nível investido de todas as
+fontes corretamente, Gratuitas/Compradas do Livro Base separadas pelo
+limite certo, botão +1 Gratuita movendo uma Aptidão de "comprada" pra
+"gratuita" retroativamente, e tudo persistindo depois de recarregar.
+Reexecutei a bateria de testes já existente do Kaizoku no Sho — achei e
+corrigi uma que dependia do seletor antigo de "Fonte de Poder" (removido
+de propósito nessa mudança); as outras três que já falhavam antes de eu
+mexer em qualquer coisa (confirmado rodando contra o commit anterior)
+ficaram de fora, viraram tarefa separada. `tsc --noEmit`, `npm run lint`
+e os 208 testes automáticos continuam limpos.
+
+Também corrigido nessa leva, sem relação com Aptidões: o campo de Belly
+(฿) do Inventário usava `<input type="number">`, que em alguns
+navegadores/teclados numéricos trava bem antes de 1 trilhão — virou um
+campo de texto numérico puro (`inputmode="numeric"`, filtra só dígitos),
+sem limite de dígitos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

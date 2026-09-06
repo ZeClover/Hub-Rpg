@@ -3658,8 +3658,17 @@ function novoPersonagem(nome){
     // Aptidões que dizem "à sua escolha" — quem escolhe o alvo é o jogador.
     // Formato: { 'Perito': {tipo:'pericia', alvo:'acrobacia', valor:2} }
     escolhasAptidao: {},
-    poder: { fonte:'nenhum', budoId:null, nivel:{pontos:0, outro:0}, aptidoes:[],
-      akuma: { tipo:null, caracteristicas:[], aptidaoEspecial:null, aptidoesGerais:[], zoanCaracteristicas:[], zoanArmas:[] },
+    // Aptidões gratuitas extras do Livro Base, além das 3 da criação (ex: o
+    // Mestre concede uma por algum motivo da história) — some com a base de
+    // 3 (+1 se tiver a Qualidade "Treinado") em aptidoesLivroBaseGratisLimite.
+    aptidoesGratisExtra: 0,
+    // poder.budos e poder.akumas: o personagem pode ter mais de um Budô e/ou
+    // mais de uma Akuma no Mi ao mesmo tempo — cada entrada tem suas próprias
+    // Aptidões e seu próprio Nível do Poder, mas todas gastam do mesmo total
+    // de Pontos de Poder do personagem (pontosPoder(nc)).
+    poder: { fonte:'nenhum', nivel:{pontos:0, outro:0},
+      budos: [],  // cada: {id, budoId, aptidoes:[], nivel:{pontos:0, outro:0}}
+      akumas: [], // cada: {id, tipo, caracteristicas:[], aptidaoEspecial, aptidoesGerais:[], zoanCaracteristicas:[], zoanArmas:[], nivel:{pontos:0, outro:0}}
       expansao: {
         haki: { ativo:false, armamento:[], observacao:[], conquistador:[] },
         aptidoes: { especie:[], combate:[], manobra:[], gerais:[], tecnica:[] },
@@ -3693,14 +3702,44 @@ const STORAGE_KEY = 'kns_roster_v1';
 // schema (ex: personagens criados antes da Fase 2 não tinham `poder`).
 function migrarPersonagem(p){
   if(!p.poder){
-    p.poder = { fonte:'nenhum', budoId:null, nivel:{pontos:0, outro:0}, aptidoes:[],
-      akuma: { tipo:null, caracteristicas:[], aptidaoEspecial:null, aptidoesGerais:[], zoanCaracteristicas:[], zoanArmas:[] } };
+    p.poder = { fonte:'nenhum', nivel:{pontos:0, outro:0}, budos:[], akumas:[] };
   }
-  if(!p.poder.akuma){
-    p.poder.akuma = { tipo:null, caracteristicas:[], aptidaoEspecial:null, aptidoesGerais:[], zoanCaracteristicas:[], zoanArmas:[] };
+  if(!p.poder.nivel) p.poder.nivel = {pontos:0, outro:0};
+  // Fichas de antes desta versão tinham 1 Budô só (budoId+aptidoes soltos no
+  // objeto poder) e 1 Akuma no Mi só (objeto poder.akuma) — vira o primeiro
+  // (e único) item de cada lista nova, sem perder nada que já foi escolhido.
+  if(!Array.isArray(p.poder.budos)){
+    p.poder.budos = [];
+    if(p.poder.budoId){
+      p.poder.budos.push({ id: uid(), budoId: p.poder.budoId, aptidoes: p.poder.aptidoes||[], nivel: {pontos:0, outro:0} });
+    }
   }
-  if(!p.poder.akuma.zoanCaracteristicas) p.poder.akuma.zoanCaracteristicas = [];
-  if(!p.poder.akuma.zoanArmas) p.poder.akuma.zoanArmas = [];
+  if(!Array.isArray(p.poder.akumas)){
+    p.poder.akumas = [];
+    const ak = p.poder.akuma;
+    if(ak && (ak.tipo || (ak.aptidoesGerais||[]).length || (ak.caracteristicas||[]).length || ak.aptidaoEspecial)){
+      p.poder.akumas.push({
+        id: uid(),
+        tipo: ak.tipo||null,
+        caracteristicas: ak.caracteristicas||[],
+        aptidaoEspecial: ak.aptidaoEspecial||null,
+        aptidoesGerais: ak.aptidoesGerais||[],
+        zoanCaracteristicas: ak.zoanCaracteristicas||[],
+        zoanArmas: ak.zoanArmas||[],
+        nivel: {pontos:0, outro:0},
+      });
+    }
+  }
+  p.poder.akumas.forEach(ak=>{
+    if(!ak.zoanCaracteristicas) ak.zoanCaracteristicas = [];
+    if(!ak.zoanArmas) ak.zoanArmas = [];
+    if(!ak.nivel) ak.nivel = {pontos:0, outro:0};
+  });
+  p.poder.budos.forEach(b=>{
+    if(!b.aptidoes) b.aptidoes = [];
+    if(!b.nivel) b.nivel = {pontos:0, outro:0};
+  });
+  if(p.aptidoesGratisExtra === undefined) p.aptidoesGratisExtra = 0;
   if(!p.poder.expansao){
     p.poder.expansao = {
       haki: { ativo:false, armamento:[], observacao:[], conquistador:[] },
@@ -3854,6 +3893,11 @@ const state = {
   // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
   modoGuiado: false,
   passoGuiado: 1,
+  // Qual Budô/Akuma no Mi está aberto pra edição na aba Poderes agora —
+  // transitório (não salvo na ficha), travado dentro do intervalo válido
+  // por budoIdxAtual()/akumaIdxAtual() sempre que a lista muda de tamanho.
+  budoIdx: 0,
+  akumaIdx: 0,
 };
 
 if(!MODO_HUB && state.roster.length && !state.personagemId){
@@ -3928,17 +3972,54 @@ function limiteAtributo(nc){ return nc; }
 // 15-16 do Livro Base: "nenhum poder deve ter nível acima de 2" em NC4).
 function limiteNivelPoder(nc){ return Math.max(0, Math.floor(nc / 2)); }
 
-function budoAtual(p){
-  return BUDO_DEF.find(b => b.id === p.poder.budoId) || null;
+// Nível de UMA fonte de Poder (o objeto {pontos,outro} do avulso, de um
+// Budô ou de uma Akuma no Mi específica) — cada fonte tem o seu.
+function nivelDe(nivelObj){
+  return (nivelObj?.pontos||0) + (nivelObj?.outro||0);
 }
+function budosDoPersonagem(p){ return p.poder.budos || []; }
+function akumasDoPersonagem(p){ return p.poder.akumas || []; }
+// state.budoIdx/akumaIdx (definidos em `state`) dizem qual Budô/Akuma no Mi
+// está aberto pra edição agora — travados dentro do intervalo válido, pra
+// nunca apontar pra um item removido.
+function budoIdxAtual(p){
+  const n = budosDoPersonagem(p).length;
+  return n ? Math.max(0, Math.min(state.budoIdx||0, n-1)) : 0;
+}
+function akumaIdxAtual(p){
+  const n = akumasDoPersonagem(p).length;
+  return n ? Math.max(0, Math.min(state.akumaIdx||0, n-1)) : 0;
+}
+function budoEntradaAtual(p){
+  const arr = budosDoPersonagem(p);
+  return arr.length ? arr[budoIdxAtual(p)] : null;
+}
+function akumaEntradaAtual(p){
+  const arr = akumasDoPersonagem(p);
+  return arr.length ? arr[akumaIdxAtual(p)] : null;
+}
+function budoDefDe(entrada){
+  return entrada ? (BUDO_DEF.find(b => b.id === entrada.budoId) || null) : null;
+}
+// "Nível do Poder do personagem" pra fórmulas genéricas de Combate/Danos que
+// não são de uma técnica específica (ex: Dificuldade de Poder no ataque
+// manual): usa o MAIOR entre o avulso e todas as fontes — cada Budô/Akuma no
+// Mi tem seu próprio Nível (ver nivelDe), isso aqui é só o "seu nível mais
+// alto" pra esses cálculos que sempre existiram sem saber de qual fonte vêm.
 function totalNivelPoder(p){
-  return (p.poder.nivel.pontos||0) + (p.poder.nivel.outro||0);
+  return Math.max(
+    nivelDe(p.poder.nivel),
+    0,
+    ...budosDoPersonagem(p).map(b => nivelDe(b.nivel)),
+    ...akumasDoPersonagem(p).map(ak => nivelDe(ak.nivel)),
+  );
 }
 
 // Orçamento de criação de Akuma no Mi: soma de tudo deve ser 0, soma das
-// características positivas sozinhas não pode passar de 10.
-function akumaOrcamento(p){
-  const ak = p.poder.akuma;
+// características positivas sozinhas não pode passar de 10. Recebe a
+// instância (ak = uma entrada de p.poder.akumas), não o personagem — cada
+// Akuma no Mi tem seu próprio orçamento, independente das outras.
+function akumaOrcamento(ak){
   const tipoObj = AKUMA_CRIACAO.tipos.find(t => t.nome === ak.tipo);
   let soma = tipoObj ? tipoObj.custo : 0;
   let positivos = (tipoObj && tipoObj.custo > 0) ? tipoObj.custo : 0;
@@ -3959,8 +4040,7 @@ function ehTipoZoan(nomeTipo){
 // (confirmado no texto de cada Tipo em AKUMA_CRIACAO). A ficha não bloqueia
 // a escolha (mesmo padrão usado em outros lugares do app), só avisa.
 const AKUMA_CATEGORIAS_RESTRITAS_ZOAN_BASICO = ['Efeitos Permitidos', 'Alcance', 'Dano ou Cura', 'Resistência', 'Dureza', 'Tamanho'];
-function categoriasZoanRestritasEmUso(p){
-  const ak = p.poder.akuma;
+function categoriasZoanRestritasEmUso(ak){
   if(ak.tipo !== 'Zoan Comum' && ak.tipo !== 'Zoan Ancestral') return [];
   return ak.caracteristicas
     .filter(sel => AKUMA_CATEGORIAS_RESTRITAS_ZOAN_BASICO.includes(sel.categoria))
@@ -3968,11 +4048,84 @@ function categoriasZoanRestritasEmUso(p){
 }
 // Zoan tem seu próprio orçamento à parte (5 pontos), não entra na soma zero
 // da criação geral de Akuma no Mi.
-function zoanPontosGastos(p){
-  return p.poder.akuma.zoanCaracteristicas.reduce((s, nome) => {
+function zoanPontosGastos(ak){
+  return ak.zoanCaracteristicas.reduce((s, nome) => {
     const c = ZOAN_DEF.caracteristicas.find(x => x.nome === nome);
     return s + (c && typeof c.custo === 'number' ? c.custo : 0);
   }, 0);
+}
+
+// ---- Pontos de Poder: quanto custa comprar Aptidão, e quanto já foi gasto
+// no total (Budô + Akuma no Mi + Expansão + Livro Base além das gratuitas +
+// Nível do Poder de cada fonte, tudo saindo do mesmo pontosPoder(nc)). ----
+const CUSTO_APTIDAO_PONTOS_PODER = 1;
+// As 3 aptidões gratuitas de criação do Livro Base sobem pra 4 com a
+// Qualidade "Treinado" (efeito já descrito em QUALIDADES_DEF, mas que antes
+// não mudava nada de verdade), e mais 1 por aptidão extra concedida na mesa
+// (botão "+1 Aptidão Gratuita").
+function aptidoesLivroBaseGratisLimite(p){
+  const bonusTreinado = (p.peculiaridades.qualidades||[]).includes('q_treinado') ? 1 : 0;
+  return 3 + bonusTreinado + (p.aptidoesGratisExtra||0);
+}
+function aptidoesLivroBaseGratuitas(p){
+  return p.aptidoesBase.slice(0, aptidoesLivroBaseGratisLimite(p));
+}
+function aptidoesLivroBaseCompradas(p){
+  return p.aptidoesBase.slice(aptidoesLivroBaseGratisLimite(p));
+}
+function totalAptidoesExpansaoCompradas(p){
+  const ex = p.poder.expansao.aptidoes;
+  return APTIDOES_EXPANSAO_CATEGORIAS.reduce((s,cat) => s + (ex[cat.chave]||[]).length, 0);
+}
+function totalAptidoesBudoCompradas(p){
+  return budosDoPersonagem(p).reduce((s,b) => s + (b.aptidoes||[]).length, 0);
+}
+function totalAptidoesAkumaCompradas(p){
+  return akumasDoPersonagem(p).reduce((s,ak) => s + (ak.aptidoesGerais||[]).length + (ak.aptidaoEspecial?1:0), 0);
+}
+// Pontos investidos em Nível do Poder, somando TODAS as fontes (avulso +
+// cada Budô + cada Akuma no Mi) — cada fonte tem seu próprio Nível, mas o
+// ponto sai do mesmo total.
+function totalPontosNivelInvestidos(p){
+  const budosNivel = budosDoPersonagem(p).reduce((s,b) => s + (b.nivel.pontos||0), 0);
+  const akumasNivel = akumasDoPersonagem(p).reduce((s,ak) => s + (ak.nivel.pontos||0), 0);
+  return (p.poder.nivel.pontos||0) + budosNivel + akumasNivel;
+}
+function pontosPoderGastos(p){
+  return (
+    aptidoesLivroBaseCompradas(p).length * CUSTO_APTIDAO_PONTOS_PODER
+    + totalAptidoesExpansaoCompradas(p) * CUSTO_APTIDAO_PONTOS_PODER
+    + totalAptidoesBudoCompradas(p) * CUSTO_APTIDAO_PONTOS_PODER
+    + totalAptidoesAkumaCompradas(p) * CUSTO_APTIDAO_PONTOS_PODER
+    + totalPontosNivelInvestidos(p)
+  );
+}
+function pontosPoderDisponiveis(p){
+  return pontosPoder(p.nc) - pontosPoderGastos(p);
+}
+// Lista única de TUDO que foi escolhido em qualquer aba de Aptidão/Poder —
+// pra mostrar num só lugar em vez de precisar visitar aba por aba. Cada
+// entrada sabe de onde veio e se é gratuita (só o Livro Base tem gratuitas).
+function listaAptidoesPegas(p){
+  const out = [];
+  const limiteGratis = aptidoesLivroBaseGratisLimite(p);
+  p.aptidoesBase.forEach((nome, i) => out.push({nome, origem:'Livro Base', gratuita: i < limiteGratis}));
+  APTIDOES_EXPANSAO_CATEGORIAS.forEach(cat => {
+    (p.poder.expansao.aptidoes[cat.chave]||[]).forEach(nome => out.push({nome, origem:'Expansão — '+cat.titulo, gratuita:false}));
+  });
+  const budos = budosDoPersonagem(p);
+  budos.forEach((entrada,i) => {
+    const def = budoDefDe(entrada);
+    const rotulo = 'Budô'+(budos.length>1?' '+(i+1):'')+(def?': '+def.nome:'');
+    (entrada.aptidoes||[]).forEach(nome => out.push({nome, origem:rotulo, gratuita:false}));
+  });
+  const akumas = akumasDoPersonagem(p);
+  akumas.forEach((ak,i) => {
+    const rotulo = 'Akuma no Mi'+(akumas.length>1?' '+(i+1):'')+(ak.tipo?': '+ak.tipo:'');
+    (ak.aptidoesGerais||[]).forEach(nome => out.push({nome, origem:rotulo, gratuita:false}));
+    if(ak.aptidaoEspecial) out.push({nome:ak.aptidaoEspecial, origem:rotulo+' (Especial)', gratuita:false});
+  });
+  return out;
 }
 
 function totalAtributosGastos(p){
@@ -4392,8 +4545,12 @@ function efeitosMecanicosAtivosDetalhado(p){
     if(pr) add('Profissão: '+pr.nome, pr);
   }
 
-  const budo = budoAtual(p);
-  if(budo){
+  // Um personagem pode ter mais de um Budô e mais de uma Akuma no Mi — cada
+  // um contribui seus próprios efeitos, rotulados com o nome pra não
+  // misturar de onde veio cada bônus quando há mais de um da mesma fonte.
+  budosDoPersonagem(p).forEach(entrada => {
+    const budo = budoDefDe(entrada);
+    if(!budo) return;
     // Regras que valem só por ter o estilo, sem depender de aptidão comprada.
     if(budo.efeitoMecanicoEstilo) add('Estilo: '+budo.nome, {efeitoMecanico: budo.efeitoMecanicoEstilo});
     /* Técnicas do estilo. No KNS não se compra técnica avulsa — sobe-se o
@@ -4401,23 +4558,24 @@ function efeitosMecanicosAtivosDetalhado(p){
        por nível em vez de pedir pro jogador marcar uma a uma. Só entram as
        poucas técnicas que são ESTADO sustentado (têm efeitoMecanico); golpe
        não vira bônus. Como são 'ativado', chegam desligadas: viram botão. */
-    const nivelAtual = totalNivelPoder(p);
+    const nivelAtual = nivelDe(entrada.nivel);
     (budo.efeitos||[])
       .filter(e => e.efeitoMecanico && (e.nivel || 0) <= nivelAtual)
-      .forEach(e => add('Técnica: '+e.nome, e));
-    (p.poder.aptidoes||[]).forEach(nome => add('Aptidão de Budô: '+nome, (budo.aptidoes||[]).find(a=>a.nome===nome)));
-  }
-  if(p.poder.fonte === 'akuma'){
-    (p.poder.akuma.aptidoesGerais||[]).forEach(nome => add('Aptidão de Akuma no Mi: '+nome, AKUMA_APTIDOES.find(a=>a.nome===nome)));
-    if(p.poder.akuma.aptidaoEspecial) add('Aptidão Especial: '+p.poder.akuma.aptidaoEspecial, AKUMA_APTIDOES_ESPECIAIS.find(a=>a.nome===p.poder.akuma.aptidaoEspecial));
-    (p.poder.akuma.zoanCaracteristicas||[]).forEach(nome => add('Característica Zoan: '+nome, (ZOAN_DEF.caracteristicas||[]).find(c=>c.nome===nome)));
+      .forEach(e => add('Técnica ('+budo.nome+'): '+e.nome, e));
+    (entrada.aptidoes||[]).forEach(nome => add('Aptidão de Budô ('+budo.nome+'): '+nome, (budo.aptidoes||[]).find(a=>a.nome===nome)));
+  });
+  akumasDoPersonagem(p).forEach((ak,i) => {
+    const rotulo = 'Akuma no Mi'+(akumasDoPersonagem(p).length>1?' '+(i+1):'')+(ak.tipo?' ('+ak.tipo+')':'');
+    (ak.aptidoesGerais||[]).forEach(nome => add(rotulo+': '+nome, AKUMA_APTIDOES.find(a=>a.nome===nome)));
+    if(ak.aptidaoEspecial) add(rotulo+' — Especial: '+ak.aptidaoEspecial, AKUMA_APTIDOES_ESPECIAIS.find(a=>a.nome===ak.aptidaoEspecial));
+    (ak.zoanCaracteristicas||[]).forEach(nome => add(rotulo+' — Característica Zoan: '+nome, (ZOAN_DEF.caracteristicas||[]).find(c=>c.nome===nome)));
     // Características escolhidas na criação da fruta (o orçamento soma-zero).
-    (p.poder.akuma.caracteristicas||[]).forEach(sel => {
+    (ak.caracteristicas||[]).forEach(sel => {
       const cat = AKUMA_CRIACAO.caracteristicas.find(c => c.categoria === sel.categoria);
       const opt = cat && (cat.opcoes||[]).find(o => o.nome === sel.opcao);
-      if(opt) add('Característica: '+sel.opcao, opt);
+      if(opt) add(rotulo+' — Característica: '+sel.opcao, opt);
     });
-  }
+  });
   const ex = p.poder.expansao;
   if(ex){
     (ex.aptidoes.especie||[]).forEach(nome => add('Aptidão de Espécie (Exp.): '+nome, EXP_APTIDOES_ESPECIE.find(a=>a.nome===nome)));
@@ -5777,80 +5935,126 @@ function bindPeculiaridades(p){
 }
 
 /* ---------- Poderes (Fase 2) ---------- */
-// Só o widget de "Nível do Poder" (pontos investidos + total), separado do
-// resto de panelPoderes — pequeno e autocontido o bastante pra embutir no
-// resumo do Level Up sem arrastar o Budô/Akuma no Mi/Haki inteiro junto.
-function blocoNivelPoder(p){
-  const nivelTotal = totalNivelPoder(p);
-  const limite = limiteNivelPoder(p.nc);
+// Widget genérico de "Nível do Poder" (pontos investidos + total) — cada
+// fonte (avulso/Trabalho Duro, cada Budô, cada Akuma no Mi) tem o seu
+// próprio objeto {pontos,outro}, então esta função recebe QUAL objeto e
+// COM QUE ids desenhar, em vez de ler `p.poder.nivel` fixo.
+function blocoNivelPoderCampo(nivelObj, idPontos, idOutro, limite, titulo){
+  const total = nivelDe(nivelObj);
   return `
-    <h3>Nível do Poder</h3>
+    <h3>${titulo}</h3>
     <div class="field-row">
-      <div class="field"><label>Pontos investidos</label><input type="number" id="pw_nivelPontos" min="0" value="${p.poder.nivel.pontos}"></div>
-      <div class="field"><label>Outro bônus</label><input type="number" id="pw_nivelOutro" value="${p.poder.nivel.outro}"></div>
-      <div class="field"><label>Nível do Poder total</label><input type="text" disabled value="${nivelTotal}"></div>
+      <div class="field"><label>Pontos investidos</label><input type="number" id="${idPontos}" min="0" value="${nivelObj.pontos}"></div>
+      <div class="field"><label>Outro bônus</label><input type="number" id="${idOutro}" value="${nivelObj.outro}"></div>
+      <div class="field"><label>Nível do Poder total</label><input type="text" disabled value="${total}"></div>
     </div>
-    ${nivelTotal > limite ? `<div class="warn-box">Nível do Poder (${nivelTotal}) passou do limite de ${limite} pra NC ${p.nc}.</div>` : ''}`;
+    ${total > limite ? `<div class="warn-box">Nível do Poder (${total}) passou do limite de ${limite} nesta NC.</div>` : ''}`;
+}
+function bindNivelPoderCampo(nivelObj, idPontos, idOutro){
+  const pontosEl = document.getElementById(idPontos);
+  if(pontosEl) pontosEl.addEventListener('input', e=>{
+    nivelObj.pontos = Math.max(0, Number(e.target.value)||0);
+    onFieldChange(); renderPanel();
+  });
+  const outroEl = document.getElementById(idOutro);
+  if(outroEl) outroEl.addEventListener('input', e=>{
+    nivelObj.outro = Number(e.target.value)||0;
+    onFieldChange(); renderPanel();
+  });
+}
+// Atalhos pro Nível avulso (Trabalho Duro / sem Budô nem Akuma no Mi) —
+// usados também no resumo do Level Up, que só quer esse bloco isolado.
+function blocoNivelPoder(p){
+  return blocoNivelPoderCampo(p.poder.nivel, 'pw_nivelPontos', 'pw_nivelOutro', limiteNivelPoder(p.nc), 'Nível do Poder — Trabalho Duro / avulso');
 }
 function bindNivelPoder(p){
-  const pontosEl = document.getElementById('pw_nivelPontos');
-  if(pontosEl) pontosEl.addEventListener('input', e=>{
-    p.poder.nivel.pontos = Math.max(0, Number(e.target.value)||0);
-    onFieldChange(); renderPanel();
-  });
-  const outroEl = document.getElementById('pw_nivelOutro');
-  if(outroEl) outroEl.addEventListener('input', e=>{
-    p.poder.nivel.outro = Number(e.target.value)||0;
-    onFieldChange(); renderPanel();
-  });
+  bindNivelPoderCampo(p.poder.nivel, 'pw_nivelPontos', 'pw_nivelOutro');
 }
 function panelPoderes(p){
-  const nivelTotal = totalNivelPoder(p);
   const limite = limiteNivelPoder(p.nc);
-  const budo = budoAtual(p);
-  const fontesInfo = {
-    nenhum: 'Personagem ainda sem fonte de poder definida.',
-    budo: 'Estilo de luta (Budô): aptidões do estilo + 1 Poder nomeado com técnicas por Nível.',
-    akuma: 'Akuma no Mi — fruta criada por um sistema de pontos: escolha o Tipo e as Características até a soma total dar exatamente zero (máx. 10 pontos em características positivas).',
-    trabalhoDuro: 'Trabalho Duro: aptidão que permite focar só em Budô OU só em Akuma no Mi sem misturar. Regras específicas não detalhadas aqui ainda.',
-  };
+  const gasto = pontosPoderGastos(p);
+  const totalPontos = pontosPoder(p.nc);
+  const disponivel = totalPontos - gasto;
+  const budos = budosDoPersonagem(p);
+  const akumas = akumasDoPersonagem(p);
+  const budoIdx = budoIdxAtual(p);
+  const akumaIdx = akumaIdxAtual(p);
+  const budoEntrada = budos[budoIdx] || null;
+  const budoDef = budoDefDe(budoEntrada);
+  const akumaEntrada = akumas[akumaIdx] || null;
   return `
     <div class="panel">
       <h2>Poderes</h2>
-      <p class="panel-note">Nível do Poder é comprado por pontos (1 ponto = 1 nível), com limite de ${limite} nesta NC (metade do NC, arredondado pra baixo — mesma fórmula do Limite de Perícia). Pontos de Poder disponíveis para gastar em aptidões/níveis: ${pontosPoder(p.nc)}.</p>
-      <div class="field-row">
-        <div class="field">
-          <label>Fonte de Poder</label>
-          <select id="pw_fonte">
-            <option value="nenhum" ${p.poder.fonte==='nenhum'?'selected':''}>Nenhuma ainda</option>
-            <option value="budo" ${p.poder.fonte==='budo'?'selected':''}>Budô (estilo de luta)</option>
-            <option value="akuma" ${p.poder.fonte==='akuma'?'selected':''}>Akuma no Mi</option>
-            <option value="trabalhoDuro" ${p.poder.fonte==='trabalhoDuro'?'selected':''}>Trabalho Duro</option>
-          </select>
-        </div>
-        ${p.poder.fonte==='budo' ? `
-        <div class="field">
-          <label>Budô escolhido</label>
-          <select id="pw_budo">
-            <option value="">— escolher —</option>
-            ${BUDO_DEF.map(b=>`<option value="${b.id}" ${p.poder.budoId===b.id?'selected':''}>${b.nome}${b.origem==='expansao'?' (Expansão)':''}${b.transcrito?'':' (catálogo pendente)'}</option>`).join('')}
-          </select>
-        </div>` : ''}
-      </div>
-      <p class="panel-note">${fontesInfo[p.poder.fonte]}</p>
+      <p class="panel-note">Nível do Poder é comprado por pontos (1 ponto = 1 nível), com limite de ${limite} nesta NC (metade do NC, arredondado pra baixo — mesma fórmula do Limite de Perícia). Toda Aptidão comprada (fora as gratuitas do Livro Base) custa ${CUSTO_APTIDAO_PONTOS_PODER} Ponto de Poder. Você pode ter mais de um Budô e mais de uma Akuma no Mi ao mesmo tempo — cada um com suas próprias Aptidões e seu próprio Nível do Poder, mas todos gastando do mesmo total de Pontos de Poder abaixo.</p>
+      <div class="limit-caption"><span>Pontos de Poder gastos (todas as fontes)</span><span style="${disponivel<0?'color:#c0392b':''}">${gasto} / ${totalPontos}</span></div>
+      ${disponivel<0 ? `<div class="warn-box">Gastou ${-disponivel} Ponto(s) de Poder acima do disponível.</div>` : ''}
 
-      ${blocoNivelPoder(p)}
-
-      ${budo ? panelBudoDetalhe(p, budo, nivelTotal) : ''}
-      ${p.poder.fonte==='akuma' ? panelAkumaDetalhe(p) : ''}
+      ${blocoNivelPoderCampo(p.poder.nivel, 'pw_nivelPontos', 'pw_nivelOutro', limite, 'Nível do Poder — Trabalho Duro / avulso (sem Budô nem Akuma no Mi)')}
     </div>
+
+    <div class="panel">
+      <h2>Budôs</h2>
+      <p class="panel-note">Pode ter mais de um Budô ao mesmo tempo — cada um com suas próprias Aptidões e seu próprio Nível do Poder.</p>
+      ${budos.length ? `<table class="data">
+        <thead><tr><th>Budô</th><th class="num">Aptidões</th><th class="num">Nível</th><th></th></tr></thead>
+        <tbody>
+          ${budos.map((b,i)=>{
+            const def = budoDefDe(b);
+            return `<tr${i===budoIdx?' style="font-weight:bold"':''}>
+              <td><a href="#" data-budosel="${i}">${def?escapeHtml(def.nome):'(escolher Budô)'}</a></td>
+              <td class="num">${(b.aptidoes||[]).length}</td>
+              <td class="num">${nivelDe(b.nivel)}</td>
+              <td><button type="button" data-budodel="${i}" class="btn danger">Remover</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>` : `<p class="panel-note">Nenhum Budô ainda.</p>`}
+      <button type="button" id="pw_addBudo" class="btn">+ Adicionar Budô</button>
+
+      ${budoEntrada ? `
+      <h3 style="margin-top:16px;">Editando Budô ${budoIdx+1} de ${budos.length}</h3>
+      <div class="field">
+        <label>Budô escolhido</label>
+        <select id="pw_budo">
+          <option value="">— escolher —</option>
+          ${BUDO_DEF.map(b=>`<option value="${b.id}" ${budoEntrada.budoId===b.id?'selected':''}>${b.nome}${b.origem==='expansao'?' (Expansão)':''}${b.transcrito?'':' (catálogo pendente)'}</option>`).join('')}
+        </select>
+      </div>
+      ${blocoNivelPoderCampo(budoEntrada.nivel, 'pw_budoNivelPontos', 'pw_budoNivelOutro', limite, 'Nível do Poder deste Budô')}
+      ${budoDef ? panelBudoDetalhe(budoDef, nivelDe(budoEntrada.nivel)) : ''}
+      ` : ''}
+    </div>
+
+    <div class="panel">
+      <h2>Akuma no Mi</h2>
+      <p class="panel-note">Pode ter mais de uma Akuma no Mi ao mesmo tempo — cada uma com seu próprio orçamento de criação (soma zero) e seu próprio Nível do Poder.</p>
+      ${akumas.length ? `<table class="data">
+        <thead><tr><th>Akuma no Mi</th><th class="num">Aptidões</th><th class="num">Nível</th><th></th></tr></thead>
+        <tbody>
+          ${akumas.map((ak,i)=>`<tr${i===akumaIdx?' style="font-weight:bold"':''}>
+            <td><a href="#" data-akumasel="${i}">${ak.tipo?escapeHtml(ak.tipo):'(escolher Tipo)'}</a></td>
+            <td class="num">${(ak.aptidoesGerais||[]).length + (ak.aptidaoEspecial?1:0)}</td>
+            <td class="num">${nivelDe(ak.nivel)}</td>
+            <td><button type="button" data-akumadel="${i}" class="btn danger">Remover</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>` : `<p class="panel-note">Nenhuma Akuma no Mi ainda.</p>`}
+      <button type="button" id="pw_addAkuma" class="btn">+ Adicionar Akuma no Mi</button>
+
+      ${akumaEntrada ? `
+      <h3 style="margin-top:16px;">Editando Akuma no Mi ${akumaIdx+1} de ${akumas.length}</h3>
+      ${blocoNivelPoderCampo(akumaEntrada.nivel, 'pw_akumaNivelPontos', 'pw_akumaNivelOutro', limite, 'Nível do Poder desta Akuma no Mi')}
+      ${panelAkumaDetalhe(akumaEntrada)}
+      ` : ''}
+    </div>
+
     <div class="panel">
       <h2>Catálogo de Efeitos Gerais</h2>
       <p class="panel-note">Lista compartilhada de técnicas por Nível (1-6), usada como base por alguns Budôs ("Efeitos Permitidos") e pela criação de Akuma no Mi (característica "Efeitos Permitidos"). É só consulta — nada aqui é "comprado" direto pelo personagem por enquanto.</p>
       <input type="text" class="pecu-search" id="eg_busca" placeholder="Buscar técnica...">
       <div id="eg_lista"></div>
     </div>
-    ${p.poder.fonte==='akuma' ? `
+    ${akumas.length ? `
     <div class="panel">
       <h2>Catálogo de Efeitos Exclusivos de Akuma no Mi</h2>
       <p class="panel-note">Técnicas que só Akuma no Mi pode comprar (fora da lista de Efeitos Gerais). Também só consulta.</p>
@@ -5978,12 +6182,51 @@ function seletorEscolhaAlvo(p, apt){
 }
 function panelAptidoes(p){
   const total = p.aptidoesBase.length;
+  const limiteGratis = aptidoesLivroBaseGratisLimite(p);
+  const pegas = listaAptidoesPegas(p);
+  const gratuitas = pegas.filter(a => a.gratuita);
+  const compradasLivroBaseExpansao = pegas.filter(a => !a.gratuita && (a.origem === 'Livro Base' || a.origem.startsWith('Expansão')));
+  const gasto = pontosPoderGastos(p);
+  const totalPontos = pontosPoder(p.nc);
   return `
     <div class="panel">
+      <h2>Aptidões pegas <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">(resumo de tudo)</span></h2>
+      <p class="panel-note">Cada Aptidão comprada (fora as gratuitas do Livro Base) custa ${CUSTO_APTIDAO_PONTOS_PODER} Ponto de Poder, igual evoluir o Nível do Poder — Budô, Akuma no Mi, Expansão e Livro Base (além das gratuitas) gastam do mesmo total, cada fonte contada separada abaixo.</p>
+      <div class="limit-caption"><span>Pontos de Poder gastos (todas as fontes)</span><span style="${gasto>totalPontos?'color:#c0392b':''}">${gasto} / ${totalPontos}</span></div>
+      ${gasto>totalPontos ? `<div class="warn-box">Gastou ${gasto-totalPontos} Ponto(s) de Poder acima do disponível.</div>` : ''}
+      <table class="data" style="margin-top:8px;">
+        <thead><tr><th>Fonte</th><th class="num">Aptidões</th><th class="num">Nível investido</th></tr></thead>
+        <tbody>
+          <tr><td>Livro Base (compradas, além das ${limiteGratis} gratuitas)</td><td class="num">${aptidoesLivroBaseCompradas(p).length}</td><td class="num">—</td></tr>
+          <tr><td>Expansão</td><td class="num">${totalAptidoesExpansaoCompradas(p)}</td><td class="num">—</td></tr>
+          ${budosDoPersonagem(p).map((b,i,arr) => { const def = budoDefDe(b); return `<tr><td>Budô${arr.length>1?' '+(i+1):''}${def?': '+escapeHtml(def.nome):''}</td><td class="num">${(b.aptidoes||[]).length}</td><td class="num">${b.nivel.pontos||0}</td></tr>`; }).join('')}
+          ${akumasDoPersonagem(p).map((ak,i,arr) => `<tr><td>Akuma no Mi${arr.length>1?' '+(i+1):''}${ak.tipo?': '+escapeHtml(ak.tipo):''}</td><td class="num">${(ak.aptidoesGerais||[]).length + (ak.aptidaoEspecial?1:0)}</td><td class="num">${ak.nivel.pontos||0}</td></tr>`).join('')}
+          <tr><td>Trabalho Duro / avulso</td><td class="num">—</td><td class="num">${p.poder.nivel.pontos||0}</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:16px;">Todas as Aptidões pegas (${pegas.length})</h3>
+      ${pegas.length ? `<table class="data">
+        <thead><tr><th>Aptidão</th><th>Origem</th><th></th></tr></thead>
+        <tbody>
+          ${pegas.map(a=>`<tr><td>${escapeHtml(a.nome)}</td><td>${escapeHtml(a.origem)}</td><td>${a.gratuita?'<span class="tag-imported">gratuita</span>':''}</td></tr>`).join('')}
+        </tbody>
+      </table>` : `<p class="panel-note">Nenhuma Aptidão escolhida ainda.</p>`}
+
+      <h3 style="margin-top:16px;">Aptidões Gratuitas (${gratuitas.length} / ${limiteGratis})</h3>
+      <p class="panel-note">Mesma lista de cima, só as gratuitas — aparece duplicada de propósito: aqui é fácil ver só o que veio de graça, separado do que foi comprado com Pontos de Poder.</p>
+      ${gratuitas.length ? `<ul style="margin:0; padding-left:18px; font-size:13px;">${gratuitas.map(a=>`<li>${escapeHtml(a.nome)}</li>`).join('')}</ul>` : `<p class="panel-note">Nenhuma ainda.</p>`}
+      <button type="button" id="apt_addGratis" class="btn" style="margin-top:8px;">+1 Aptidão Gratuita</button>
+      <p class="panel-note" style="margin-top:4px;">Use quando o personagem ganhar uma Aptidão gratuita extra por algum motivo da história (recompensa de missão, treino especial etc.) — aumenta o limite de gratuitas do Livro Base em 1, permanentemente.</p>
+
+      <h3 style="margin-top:16px;">Aptidões Compradas — Livro Base + Expansão (${compradasLivroBaseExpansao.length})</h3>
+      ${compradasLivroBaseExpansao.length ? `<ul style="margin:0; padding-left:18px; font-size:13px;">${compradasLivroBaseExpansao.map(a=>`<li>${escapeHtml(a.nome)} <span style="color:var(--parchment-dim)">— ${escapeHtml(a.origem)}</span></li>`).join('')}</ul>` : `<p class="panel-note">Nenhuma ainda.</p>`}
+    </div>
+    <div class="panel">
       <h2>Aptidões <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">(Livro Base)</span></h2>
-      <p class="panel-note">Todo personagem escolhe <b>3 aptidões gratuitas</b> deste capítulo na criação (independente de Budô/Akuma no Mi — essas são as aptidões "de base" do sistema). Marque as escolhidas nas 4 categorias abaixo.</p>
-      <div class="limit-caption"><span>Escolhidas: ${total} / 3</span></div>
-      ${total > 3 ? `<div class="warn-box">Você marcou ${total} aptidões, o padrão da criação de personagem é 3. Se for compra extra com pontos/aptidão que dá mais escolhas, tudo bem — só confira com o mestre.</div>` : ''}
+      <p class="panel-note">Todo personagem escolhe <b>${limiteGratis} aptidões gratuitas</b> deste capítulo na criação (independente de Budô/Akuma no Mi — essas são as aptidões "de base" do sistema). Marque as escolhidas nas 4 categorias abaixo; a partir da ${limiteGratis+1}ª, cada Aptidão passa a custar ${CUSTO_APTIDAO_PONTOS_PODER} Ponto de Poder.</p>
+      <div class="limit-caption"><span>Escolhidas: ${total} / ${limiteGratis} gratuitas</span></div>
+      ${total > limiteGratis ? `<p class="panel-note">${total-limiteGratis} acima das gratuitas — contando como compradas (${(total-limiteGratis)*CUSTO_APTIDAO_PONTOS_PODER} Ponto(s) de Poder).</p>` : ''}
       ${inputBusca('apb_busca', 'Buscar aptidão por nome, efeito ou pré-requisito...')}
       <div class="pecu-cols pecu-cols-auto">
         ${APTIDOES_BASE_CATEGORIAS.map(cat => `
@@ -5998,6 +6241,11 @@ function panelAptidoes(p){
   `;
 }
 function bindAptidoes(p){
+  const addGratisBtn = document.getElementById('apt_addGratis');
+  if(addGratisBtn) addGratisBtn.addEventListener('click', ()=>{
+    p.aptidoesGratisExtra = (p.aptidoesGratisExtra||0) + 1;
+    onFieldChange(); renderPanel();
+  });
   let busca = '';
   const draw = ()=>{
     let totalEncontrado = 0;
@@ -6128,9 +6376,8 @@ function bindAptidoesExpansao(p){
   const buscaEl = document.getElementById('apx_busca');
   if(buscaEl) buscaEl.addEventListener('input', e=>{ busca = e.target.value; draw(); });
 }
-function panelAkumaDetalhe(p){
-  const ak = p.poder.akuma;
-  const {soma, positivos} = akumaOrcamento(p);
+function panelAkumaDetalhe(ak){
+  const {soma, positivos} = akumaOrcamento(ak);
   const tipoObj = AKUMA_CRIACAO.tipos.find(t => t.nome === ak.tipo);
   const aptEspecialObj = AKUMA_APTIDOES_ESPECIAIS.find(a => a.nome === ak.aptidaoEspecial);
   return `
@@ -6173,9 +6420,9 @@ function panelAkumaDetalhe(p){
     <div class="limit-caption"><span>Soma das positivas (máx 10)</span><span>${positivos}</span></div>
     ${soma !== 0 ? `<div class="warn-box">A soma total está em ${soma}, deveria ser exatamente 0.</div>` : ''}
     ${positivos > 10 ? `<div class="warn-box">Soma das características positivas (${positivos}) passou do limite de 10.</div>` : ''}
-    ${categoriasZoanRestritasEmUso(p).length ? `<div class="warn-box">${escapeHtml(ak.tipo)} não tem acesso a: ${AKUMA_CATEGORIAS_RESTRITAS_ZOAN_BASICO.join(', ')}. Você escolheu algo em: ${categoriasZoanRestritasEmUso(p).join(', ')} — a ficha não bloqueia, mas confira com o livro/mestre.</div>` : ''}
+    ${categoriasZoanRestritasEmUso(ak).length ? `<div class="warn-box">${escapeHtml(ak.tipo)} não tem acesso a: ${AKUMA_CATEGORIAS_RESTRITAS_ZOAN_BASICO.join(', ')}. Você escolheu algo em: ${categoriasZoanRestritasEmUso(ak).join(', ')} — a ficha não bloqueia, mas confira com o livro/mestre.</div>` : ''}
 
-    ${ehTipoZoan(ak.tipo) ? panelZoanDetalhe(p) : ''}
+    ${ehTipoZoan(ak.tipo) ? panelZoanDetalhe(ak) : ''}
 
     <h3>Aptidão Especial (direito a 1)</h3>
     <select id="ak_aptEspecial">
@@ -6198,10 +6445,9 @@ function panelAkumaDetalhe(p){
     </div>
   `;
 }
-function panelZoanDetalhe(p){
-  const ak = p.poder.akuma;
-  const nivelTotal = totalNivelPoder(p);
-  const pontosGastos = zoanPontosGastos(p);
+function panelZoanDetalhe(ak){
+  const nivelTotal = nivelDe(ak.nivel);
+  const pontosGastos = zoanPontosGastos(ak);
   const efeitosDisponiveis = ZOAN_DEF.efeitosPorNivel.filter(e => e.nivel <= Math.max(1, nivelTotal));
   const efeitosBloqueados = ZOAN_DEF.efeitosPorNivel.filter(e => e.nivel > Math.max(1, nivelTotal));
   return `
@@ -6291,13 +6537,13 @@ function renderAkumaEfeitosLista(termo){
   `;
   ligarBotoesSugerirAtaque();
 }
-function renderBudoAptidoesLista(p, budo, termo){
+function renderBudoAptidoesLista(entrada, budo, termo){
   const host = document.getElementById('budoapt_lista');
   if(!host) return;
   const lista = (budo.aptidoes||[]).filter(a => bateBusca(a, termo));
   host.innerHTML = lista.map(a => `
     <label class="pecu-item">
-      <input type="checkbox" data-budoapt="${escapeHtml(a.nome)}" ${p.poder.aptidoes.includes(a.nome)?'checked':''}>
+      <input type="checkbox" data-budoapt="${escapeHtml(a.nome)}" ${entrada.aptidoes.includes(a.nome)?'checked':''}>
       <div>
         <div class="nome">${a.nome} ${a.prereq && a.prereq!=='—' ? `<span class="custo">(pré-req: ${a.prereq})</span>` : ''}</div>
         <div class="efeito">${a.efeito}</div>
@@ -6308,13 +6554,13 @@ function renderBudoAptidoesLista(p, budo, termo){
   document.querySelectorAll('#budoapt_lista [data-budoapt]').forEach(cb=>{
     cb.addEventListener('change', ()=>{
       const nome = cb.dataset.budoapt;
-      if(cb.checked) p.poder.aptidoes.push(nome);
-      else p.poder.aptidoes = p.poder.aptidoes.filter(x=>x!==nome);
+      if(cb.checked) entrada.aptidoes.push(nome);
+      else entrada.aptidoes = entrada.aptidoes.filter(x=>x!==nome);
       onFieldChange(); renderPanel();
     });
   });
 }
-function panelBudoDetalhe(p, budo, nivelTotal){
+function panelBudoDetalhe(budo, nivelTotal){
   if(!budo.transcrito){
     return `<div class="info-box">O catálogo de "${budo.nome}" ainda não foi transcrito do livro nesta ficha — só o nome está registrado. ${budo.resumo||''}</div>`;
   }
@@ -6381,26 +6627,73 @@ function bindPoderes(p){
   document.getElementById('eg_busca').addEventListener('input', e=>{
     renderEfeitosGeraisLista(e.target.value);
   });
-  document.getElementById('pw_fonte').addEventListener('change', e=>{
-    p.poder.fonte = e.target.value;
-    if(p.poder.fonte !== 'budo') p.poder.budoId = null;
+
+  // Lista de Budôs: selecionar qual editar, remover, adicionar novo.
+  document.querySelectorAll('[data-budosel]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      e.preventDefault();
+      state.budoIdx = Number(a.dataset.budosel);
+      renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-budodel]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.budodel);
+      p.poder.budos.splice(i, 1);
+      state.budoIdx = 0;
+      onFieldChange(); renderPanel();
+    });
+  });
+  const addBudoBtn = document.getElementById('pw_addBudo');
+  if(addBudoBtn) addBudoBtn.addEventListener('click', ()=>{
+    p.poder.budos.push({ id: uid(), budoId: null, aptidoes: [], nivel: {pontos:0, outro:0} });
+    state.budoIdx = p.poder.budos.length - 1;
     onFieldChange(); renderPanel();
   });
   const budoSel = document.getElementById('pw_budo');
   if(budoSel){
     budoSel.addEventListener('change', e=>{
-      p.poder.budoId = e.target.value || null;
-      p.poder.aptidoes = [];
+      const entrada = budoEntradaAtual(p);
+      if(!entrada) return;
+      entrada.budoId = e.target.value || null;
+      entrada.aptidoes = [];
       onFieldChange(); renderPanel();
     });
   }
-  bindNivelPoder(p);
-  const budoAtualDetalhe = budoAtual(p);
-  if(budoAtualDetalhe && budoAtualDetalhe.transcrito){
-    renderBudoAptidoesLista(p, budoAtualDetalhe, '');
-    const budoaptBusca = document.getElementById('budoapt_busca');
-    if(budoaptBusca) budoaptBusca.addEventListener('input', e=>{ renderBudoAptidoesLista(p, budoAtualDetalhe, e.target.value); });
+  bindNivelPoderCampo(p.poder.nivel, 'pw_nivelPontos', 'pw_nivelOutro');
+  const budoEntradaEdicao = budoEntradaAtual(p);
+  const budoDefEdicao = budoDefDe(budoEntradaEdicao);
+  if(budoEntradaEdicao){
+    bindNivelPoderCampo(budoEntradaEdicao.nivel, 'pw_budoNivelPontos', 'pw_budoNivelOutro');
   }
+  if(budoEntradaEdicao && budoDefEdicao && budoDefEdicao.transcrito){
+    renderBudoAptidoesLista(budoEntradaEdicao, budoDefEdicao, '');
+    const budoaptBusca = document.getElementById('budoapt_busca');
+    if(budoaptBusca) budoaptBusca.addEventListener('input', e=>{ renderBudoAptidoesLista(budoEntradaEdicao, budoDefEdicao, e.target.value); });
+  }
+
+  // Lista de Akuma no Mi: selecionar qual editar, remover, adicionar nova.
+  document.querySelectorAll('[data-akumasel]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      e.preventDefault();
+      state.akumaIdx = Number(a.dataset.akumasel);
+      renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-akumadel]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.akumadel);
+      p.poder.akumas.splice(i, 1);
+      state.akumaIdx = 0;
+      onFieldChange(); renderPanel();
+    });
+  });
+  const addAkumaBtn = document.getElementById('pw_addAkuma');
+  if(addAkumaBtn) addAkumaBtn.addEventListener('click', ()=>{
+    p.poder.akumas.push({ id: uid(), tipo:null, caracteristicas:[], aptidaoEspecial:null, aptidoesGerais:[], zoanCaracteristicas:[], zoanArmas:[], nivel:{pontos:0, outro:0} });
+    state.akumaIdx = p.poder.akumas.length - 1;
+    onFieldChange(); renderPanel();
+  });
 
   const aexBusca = document.getElementById('aex_busca');
   if(aexBusca){
@@ -6408,53 +6701,57 @@ function bindPoderes(p){
     aexBusca.addEventListener('input', e=>{ renderAkumaEfeitosLista(e.target.value); });
   }
   bindHaki(p);
-  const akTipoSel = document.getElementById('ak_tipo');
-  if(akTipoSel){
-    akTipoSel.addEventListener('change', e=>{
-      p.poder.akuma.tipo = e.target.value || null;
-      onFieldChange(); renderPanel();
+  const akEntradaEdicao = akumaEntradaAtual(p);
+  if(akEntradaEdicao){
+    bindNivelPoderCampo(akEntradaEdicao.nivel, 'pw_akumaNivelPontos', 'pw_akumaNivelOutro');
+    const akTipoSel = document.getElementById('ak_tipo');
+    if(akTipoSel){
+      akTipoSel.addEventListener('change', e=>{
+        akEntradaEdicao.tipo = e.target.value || null;
+        onFieldChange(); renderPanel();
+      });
+    }
+    document.querySelectorAll('[data-akcat]').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        const categoria = sel.dataset.akcat;
+        const opcao = sel.value;
+        akEntradaEdicao.caracteristicas = akEntradaEdicao.caracteristicas.filter(s=>s.categoria!==categoria);
+        if(opcao) akEntradaEdicao.caracteristicas.push({categoria, opcao});
+        onFieldChange(); renderPanel();
+      });
+    });
+    const akAptEspecialSel = document.getElementById('ak_aptEspecial');
+    if(akAptEspecialSel){
+      akAptEspecialSel.addEventListener('change', e=>{
+        akEntradaEdicao.aptidaoEspecial = e.target.value || null;
+        onFieldChange(); renderPanel();
+      });
+    }
+    document.querySelectorAll('[data-akapt]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        const nome = cb.dataset.akapt;
+        if(cb.checked) akEntradaEdicao.aptidoesGerais.push(nome);
+        else akEntradaEdicao.aptidoesGerais = akEntradaEdicao.aptidoesGerais.filter(x=>x!==nome);
+        onFieldChange(); renderPanel();
+      });
+    });
+    document.querySelectorAll('[data-zoancarac]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        const nome = cb.dataset.zoancarac;
+        if(cb.checked) akEntradaEdicao.zoanCaracteristicas.push(nome);
+        else akEntradaEdicao.zoanCaracteristicas = akEntradaEdicao.zoanCaracteristicas.filter(x=>x!==nome);
+        onFieldChange(); renderPanel();
+      });
+    });
+    document.querySelectorAll('[data-zoanarma]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        const nome = cb.dataset.zoanarma;
+        if(cb.checked) akEntradaEdicao.zoanArmas.push(nome);
+        else akEntradaEdicao.zoanArmas = akEntradaEdicao.zoanArmas.filter(x=>x!==nome);
+        onFieldChange(); renderPanel();
+      });
     });
   }
-  document.querySelectorAll('[data-akcat]').forEach(sel=>{
-    sel.addEventListener('change', ()=>{
-      const categoria = sel.dataset.akcat;
-      const opcao = sel.value;
-      p.poder.akuma.caracteristicas = p.poder.akuma.caracteristicas.filter(s=>s.categoria!==categoria);
-      if(opcao) p.poder.akuma.caracteristicas.push({categoria, opcao});
-      onFieldChange(); renderPanel();
-    });
-  });
-  const akAptEspecialSel = document.getElementById('ak_aptEspecial');
-  if(akAptEspecialSel){
-    akAptEspecialSel.addEventListener('change', e=>{
-      p.poder.akuma.aptidaoEspecial = e.target.value || null;
-      onFieldChange(); renderPanel();
-    });
-  }
-  document.querySelectorAll('[data-akapt]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      const nome = cb.dataset.akapt;
-      if(cb.checked) p.poder.akuma.aptidoesGerais.push(nome);
-      else p.poder.akuma.aptidoesGerais = p.poder.akuma.aptidoesGerais.filter(x=>x!==nome);
-      onFieldChange(); renderPanel();
-    });
-  });
-  document.querySelectorAll('[data-zoancarac]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      const nome = cb.dataset.zoancarac;
-      if(cb.checked) p.poder.akuma.zoanCaracteristicas.push(nome);
-      else p.poder.akuma.zoanCaracteristicas = p.poder.akuma.zoanCaracteristicas.filter(x=>x!==nome);
-      onFieldChange(); renderPanel();
-    });
-  });
-  document.querySelectorAll('[data-zoanarma]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      const nome = cb.dataset.zoanarma;
-      if(cb.checked) p.poder.akuma.zoanArmas.push(nome);
-      else p.poder.akuma.zoanArmas = p.poder.akuma.zoanArmas.filter(x=>x!==nome);
-      onFieldChange(); renderPanel();
-    });
-  });
   // Cobre as tabelas de técnica que não têm busca própria (Zoan e Budô) —
   // as outras duas (Efeitos Gerais/Exclusivos) já se religam sozinhas acima.
   ligarBotoesSugerirAtaque();
@@ -6471,7 +6768,7 @@ function panelInventario(p){
       <h2>Inventário</h2>
       <p class="panel-note">Compartimentos = 3 + piso(Força/2) — regra RAW do Livro Base pág. 226. Cada compartimento excedente dá -3m de deslocamento e -1 de precisão em Força/Agilidade (e tudo que depende delas: Combate Corporal, Esquiva, perícias como Acrobacia/Atletismo/Furtividade) — já aplicado nas outras abas, não é só uma prévia.</p>
       <div class="field-row">
-        <div class="field"><label>Belly (฿) em caixa</label><input type="number" id="inv_belly" min="0" value="${p.inventario.belly}"></div>
+        <div class="field"><label>Belly (฿) em caixa</label><input type="text" inputmode="numeric" id="inv_belly" value="${p.inventario.belly}"></div>
         <div class="field"><label>Gasto estimado em itens carregados</label><input type="text" disabled value="${fmtBellyInv(gastoEmItens)}"></div>
       </div>
       <div class="limit-bar"><div class="limit-bar-fill ${penalidade>0?'over':''}" style="width:${Math.min(100,(usados/Math.max(1,capacidade))*100)}%"></div></div>
@@ -6709,7 +7006,9 @@ function renderTracosLista(termo){
 }
 function bindInventario(p){
   document.getElementById('inv_belly').addEventListener('input', e=>{
-    p.inventario.belly = Math.max(0, Number(e.target.value)||0);
+    // Campo de texto (não number) de propósito: <input type="number"> trava
+    // em navegador/teclado numérico bem antes de 1 trilhão. Aceita só dígitos.
+    p.inventario.belly = Math.max(0, Number(String(e.target.value).replace(/\D/g,''))||0);
     onFieldChange(); renderPanel();
   });
 
@@ -7008,13 +7307,19 @@ function renderFichaCard(){
       <div class="stat-line"><span class="k">Deslocamento</span><span class="v">${deslocamento(p)}m</span></div>
 
       <div class="stat-group-title">Poder</div>
-      <div class="stat-line"><span class="k">Fonte</span><span class="v">${budoAtual(p) ? budoAtual(p).nome : (p.poder.fonte==='nenhum'?'—':p.poder.fonte)}</span></div>
+      <div class="stat-line"><span class="k">Fontes</span><span class="v">${(() => {
+        const budoNomes = budosDoPersonagem(p).map(b => (budoDefDe(b)||{}).nome).filter(Boolean);
+        const akumaCount = akumasDoPersonagem(p).length;
+        const partes = [...budoNomes];
+        if(akumaCount) partes.push(akumaCount===1 ? 'Akuma no Mi' : akumaCount+' Akuma no Mi');
+        return escapeHtml(partes.join(', ') || '—');
+      })()}</span></div>
       <div class="stat-line"><span class="k">Nível do Poder</span><span class="v">${totalNivelPoder(p)} / ${limiteNivelPoder(p.nc)}</span></div>
 
       <div class="stat-group-title">Pontos</div>
       <div class="stat-line"><span class="k">Atributos</span><span class="v">${gastosAtr} / ${totalAtr}</span></div>
       <div class="stat-line"><span class="k">Perícias</span><span class="v">${gastosPer} / ${totalPer}</span></div>
-      <div class="stat-line"><span class="k">Poder (pontos)</span><span class="v">${pontosPoder(p.nc)}</span></div>
+      <div class="stat-line"><span class="k">Poder (pontos)</span><span class="v">${pontosPoderGastos(p)} / ${pontosPoder(p.nc)}</span></div>
       <div class="stat-line"><span class="k">Peculiaridades</span><span class="v">${pontosQualidades(p)}Q / ${pontosDefeitos(p)}D</span></div>
     </div>
     <div class="points-line">
