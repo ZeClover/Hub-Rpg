@@ -3519,6 +3519,53 @@ de reparo Médio+Avariado batendo com a conta manual, e a tabela de outros
 recursos presente. `tsc --noEmit`, `npm run lint` e os 208 testes
 automáticos continuam limpos.
 
+## 89. Kaizoku no Sho — recalibra preços do Escudo do Mestre e coloca os outros recursos na calculadora de verdade (06/09/2026)
+
+O Zé olhou a decisão #88 e achou os preços baixos demais ("cara, acho que
+tá mt barato, não?") e pediu pra trazer os "outros recursos sugeridos"
+(que tinham ficado só numa tabela de referência) pra dentro da
+calculadora de verdade também.
+
+**Preços recalibrados**: o problema era comparar com a escala errada —
+100 ฿/dia de comida parece razoável perto de dinheiro real, mas nesta
+ficha um Long Pose custa 50.000 ฿, uma Eternal Pose 600.000 ฿ e uma arma
+de fogo passa de 1.000.000 ฿. Nessa escala, uma semana de comida pra 10
+pessoas a 100฿/dia (7.000 ฿ total) é troco — não pesa em nada no bolso da
+tripulação, o que tira a graça de rastrear o gasto. Subi tudo que era
+referência de mesa (não o item oficial do catálogo) por uma faixa de
+5-8x, usando Long Pose/Eternal Pose como âncora de "quanto uma compra
+grande custa": Comida 100→500 (Refeição de Porto, mantendo "Ração de
+Viagem" a 100 ฿ como a opção mais barata/o item oficial), Água 50→400,
+Reparo de navio (bases) 5.000-100.000 → 30.000-600.000 (Enorme agora bate
+com o preço da Eternal Pose, de propósito), e os recursos extras também
+subiram (ver tabela abaixo).
+
+**Outros recursos viraram linhas de verdade**: Pólvora e Munição,
+Suprimentos Médicos, Rum/Bebida e Materiais de Acampamento saíram da
+tabela estática e entraram na mesma calculadora de Comida/Água — cada um
+com checkbox pra ligar/desligar (nem toda tripulação carrega arma de
+fogo ou bebe rum) e seletor de qualidade, tudo na mesma unidade "฿ por
+pessoa por dia" pra somar junto num só Total de Suprimentos. Log
+Pose/Eternal Pose viraram um bloco à parte com campo de quantidade (são
+preço fechado, não por pessoa) — um "Total geral desta compra" no fim
+soma suprimentos + itens de navegação; o Reparo do Navio continua fora
+desse total, porque escala por porte do navio, não por gente a bordo.
+
+Preços finais (referência de mesa, ฿/pessoa/dia exceto onde marcado):
+Comida 100/500/1.200/3.000 (Ração de Viagem/Refeição de Porto/Boa Mesa/
+Banquete), Água 200/400/900 (Porto/Comum/Novo Mundo), Pólvora e Munição
+100/250 (Básica/Boa), Suprimentos Médicos 80/200 (Básico/Completo), Rum
+50/150 (Comum/Fino), Materiais de Acampamento 60 (Padrão). Reparo do
+navio: bases 30.000/90.000/240.000/600.000 (Pequeno/Médio/Grande/
+Enorme) × 10%/35%/70%/120% (Arranhado/Avariado/Muito danificado/Quase
+afundando) — percentuais sem mudança, só as bases subiram.
+
+Testado com Playwright: total recalculado batendo com a conta manual
+ligando/desligando recursos extras, dobrar a tripulação dobra o total,
+Log Pose somando certo no Total geral, reparo Médio+Avariado batendo.
+`tsc --noEmit`, `npm run lint` e os 208 testes automáticos continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

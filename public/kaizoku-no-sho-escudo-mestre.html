@@ -21,10 +21,10 @@
     background-image:linear-gradient(180deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
     color:var(--parchment); font-family:var(--body); line-height:1.5; min-height:100vh;
   }
-  .wrap{max-width:900px; margin:0 auto; padding:28px 20px 80px;}
+  .wrap{max-width:960px; margin:0 auto; padding:28px 20px 80px;}
   .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-bright); margin:0 0 6px;}
   h1{font-family:var(--disp); font-weight:600; font-size:clamp(26px,4.2vw,38px); margin:0; color:var(--parchment); letter-spacing:-0.01em;}
-  .hero-sub{font-size:14px; color:var(--parchment-dim); max-width:64ch; margin-top:8px;}
+  .hero-sub{font-size:14px; color:var(--parchment-dim); max-width:68ch; margin-top:8px;}
   a{color:var(--brass-bright);}
   h2{font-family:var(--disp); font-weight:600; font-size:19px; margin:0; color:var(--brass-bright);}
   h3{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--parchment-dim); margin:16px 0 6px;}
@@ -36,21 +36,28 @@
   .field{display:flex; flex-direction:column; gap:4px;}
   .field-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px;}
   .field-row .field{flex:1; min-width:170px;}
-  input[type=number], select{
+  input[type=number], input[type=checkbox], select{
     font-family:var(--body); font-size:14px; color:var(--ink);
+  }
+  input[type=number], select{
     background:var(--parchment); border:1px solid var(--line-strong);
     border-radius:var(--radius); padding:8px 10px; width:100%;
   }
+  input[type=checkbox]{width:18px; height:18px; cursor:pointer; accent-color:var(--brass);}
   select{cursor:pointer;}
   input:focus, select:focus{outline:2px solid var(--brass-bright); outline-offset:1px;}
   table.data{width:100%; border-collapse:collapse; font-size:13px; margin-top:4px;}
   table.data th{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-strong);}
-  table.data td{padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.data td{padding:8px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
   table.data tr:last-child td{border-bottom:none;}
+  table.data tr.desligado{opacity:.4;}
+  table.data select{width:auto; min-width:220px;}
   .num{font-family:var(--mono); text-align:right; white-space:nowrap;}
   .total-line{display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; padding-top:12px; border-top:1px solid var(--line-strong);}
   .total-line .rot{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim);}
   .total-line .val{font-family:var(--mono); font-size:22px; color:var(--brass-bright); font-weight:600;}
+  .total-line.grande{margin-top:20px; padding-top:16px; border-top:2px solid var(--brass);}
+  .total-line.grande .val{font-size:28px;}
   .tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--line-strong); border-radius:999px; color:var(--parchment-dim);}
 </style>
 </head>
@@ -61,48 +68,60 @@
   <p class="hero-sub">
     Referência rápida de suprimentos e reparo pra ter aberta durante a
     sessão — o custo em Belly (฿) sobe junto com o tamanho da tripulação,
-    do jeito que uma travessia de verdade pesaria no bolso. Os valores de
-    Ração de Viagem, Long Pose e Eternal Pose são os mesmos já usados na
-    ficha; o resto é referência da mesa (não é regra oficial do livro),
-    ajuste como quiser.
+    do jeito que uma travessia de verdade pesaria no bolso. Ração de
+    Viagem, Long Pose e Eternal Pose usam os mesmos preços já usados no
+    catálogo de itens da ficha; o resto é referência da mesa (não é regra
+    oficial do livro) calibrada pela mesma escala — perto do que um Long
+    Pose (50.000 ฿) ou uma arma de fogo (na casa do milhão) já custam.
   </p>
 
   <div class="panel">
     <h2>🍖 Suprimentos da Tripulação</h2>
-    <p class="panel-note">Comida e Água Potável cobram por pessoa, por dia — quanto mais gente a bordo, maior a conta.</p>
+    <p class="panel-note">Cada linha cobra por pessoa, por dia — desmarque o que não se aplica a esta viagem (nem toda tripulação carrega arma de fogo ou bebe rum). Quanto mais gente a bordo, maior a conta.</p>
     <div class="field-row">
       <div class="field">
         <label for="numPessoas">Nº de tripulantes</label>
-        <input type="number" id="numPessoas" min="1" value="4">
+        <input type="number" id="numPessoas" min="1" value="6">
       </div>
       <div class="field">
         <label for="numDias">Dias de viagem</label>
         <input type="number" id="numDias" min="1" value="7">
       </div>
-      <div class="field">
-        <label for="qualComida">Qualidade da comida</label>
-        <select id="qualComida">
-          <option value="100">Ração de Viagem — 100 ฿/pessoa/dia</option>
-          <option value="300">Refeição Decente — 300 ฿/pessoa/dia</option>
-          <option value="800">Banquete/Farta — 800 ฿/pessoa/dia</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="qualAgua">Água potável</label>
-        <select id="qualAgua">
-          <option value="50">Porto abastecido — 50 ฿/pessoa/dia</option>
-          <option value="150">Mar escasso (Novo Mundo) — 150 ฿/pessoa/dia</option>
-        </select>
-      </div>
     </div>
     <table class="data">
-      <thead><tr><th>Suprimento</th><th class="num">Custo unitário</th><th class="num">Total</th></tr></thead>
+      <thead><tr><th></th><th>Suprimento</th><th>Qualidade</th><th class="num">฿/pessoa/dia</th><th class="num">Subtotal</th></tr></thead>
+      <tbody id="tabelaSuprimentos"></tbody>
+    </table>
+    <div class="total-line"><span class="rot">Total de suprimentos da viagem</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
+  </div>
+
+  <div class="panel">
+    <h2>🧭 Itens de Navegação (avulsos)</h2>
+    <p class="panel-note">Preço fechado, não por pessoa — os dois já existem no catálogo de itens da ficha, com o mesmo valor.</p>
+    <table class="data">
+      <thead><tr><th>Item</th><th>Pra que serve</th><th class="num">Preço unitário</th><th style="width:90px">Quantos</th><th class="num">Subtotal</th></tr></thead>
       <tbody>
-        <tr><td>Comida</td><td class="num" id="unitComida">—</td><td class="num" id="totalComida">—</td></tr>
-        <tr><td>Água Potável</td><td class="num" id="unitAgua">—</td><td class="num" id="totalAgua">—</td></tr>
+        <tr>
+          <td>Log Pose de reposição</td>
+          <td>Navegação — perder o Log Pose original é comum em naufrágio/roubo</td>
+          <td class="num">฿ 50.000</td>
+          <td><input type="number" id="qtdLogPose" min="0" value="0"></td>
+          <td class="num" id="totalLogPose">฿ 0</td>
+        </tr>
+        <tr>
+          <td>Eternal Pose</td>
+          <td>Rota permanente pra uma ilha específica — item raro, nem sempre à venda</td>
+          <td class="num">฿ 600.000</td>
+          <td><input type="number" id="qtdEternalPose" min="0" value="0"></td>
+          <td class="num" id="totalEternalPose">฿ 0</td>
+        </tr>
       </tbody>
     </table>
-    <div class="total-line"><span class="rot">Total da viagem</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
+  </div>
+
+  <div class="total-line grande">
+    <span class="rot">Total geral desta compra</span>
+    <span class="val" id="totalGeral">฿ 0</span>
   </div>
 
   <div class="panel">
@@ -110,19 +129,19 @@
     <p class="panel-note">
       Reparo depende do PORTE do navio e da GRAVIDADE do dano, não da
       tripulação — um casco maior custa mais pra consertar não importa
-      quantos marujos estejam a bordo. Isso é uma referência rápida pra
-      estimar na hora; a regra completa de construção/reparo do
-      Carpinteiro (Ofício) continua valendo se a mesa quiser o cálculo
-      exato em m³ e matéria-prima.
+      quantos marujos estejam a bordo, por isso fica fora do total geral
+      acima. Isso é uma referência rápida pra estimar na hora; a regra
+      completa de construção/reparo do Carpinteiro (Ofício) continua
+      valendo se a mesa quiser o cálculo exato em m³ e matéria-prima.
     </p>
     <div class="field-row">
       <div class="field">
         <label for="porteNavio">Porte do navio</label>
         <select id="porteNavio">
-          <option value="5000">Pequeno — base 5.000 ฿</option>
-          <option value="15000">Médio — base 15.000 ฿</option>
-          <option value="40000">Grande — base 40.000 ฿</option>
-          <option value="100000">Enorme — base 100.000 ฿</option>
+          <option value="30000">Pequeno — base 30.000 ฿</option>
+          <option value="90000">Médio — base 90.000 ฿</option>
+          <option value="240000">Grande — base 240.000 ฿</option>
+          <option value="600000">Enorme — base 600.000 ฿</option>
         </select>
       </div>
       <div class="field">
@@ -143,44 +162,93 @@
       por cima do valor estimado se a tripulação tiver alguém no posto.
     </p>
   </div>
-
-  <div class="panel">
-    <h2>⚓ Outros recursos sugeridos</h2>
-    <p class="panel-note">Ideias de mais itens de logística pra tripulação, na mesma lógica de custear a viagem — os dois primeiros também escalam por pessoa/semana, os de navegação são preço fechado (já usados no catálogo da ficha).</p>
-    <table class="data">
-      <thead><tr><th>Recurso</th><th>Pra que serve</th><th class="num">Preço de referência</th></tr></thead>
-      <tbody>
-        <tr><td>Pólvora e Munição</td><td>Mantém armas de fogo e canhões da tripulação abastecidos</td><td class="num">80 ฿/pessoa/semana<br>(canhão avulso: ~200 ฿/tiro)</td></tr>
-        <tr><td>Suprimentos Médicos</td><td>Curativos, remédios, antitoxina — repõe o que o Kit Médico gasta</td><td class="num">60 ฿/pessoa/semana</td></tr>
-        <tr><td>Rum / Bebida</td><td>Moral da tripulação — tradição pirata, não é obrigatório</td><td class="num">40 ฿/pessoa/semana</td></tr>
-        <tr><td>Materiais de Acampamento</td><td>Quando a tripulação desembarca por vários dias em terra firme</td><td class="num">30 ฿/pessoa/semana</td></tr>
-        <tr><td>Log Pose de reposição</td><td>Navegação — perder o Log Pose original é comum em naufrágio/roubo</td><td class="num">50.000 ฿</td></tr>
-        <tr><td>Eternal Pose</td><td>Rota permanente pra uma ilha específica — item raro, nem sempre à venda</td><td class="num">600.000 ฿</td></tr>
-      </tbody>
-    </table>
-  </div>
 </div>
 <script>
+// Cada recurso cobra "por pessoa, por dia" — os valores foram calibrados
+// pra escala de preços que a própria ficha já usa (Long Pose 50.000 ฿,
+// Eternal Pose 600.000 ฿, armas de fogo na casa do milhão), não pelo preço
+// de comida do mundo real. "Ração de Viagem" é o único valor que já existia
+// no catálogo de itens (100 ฿) — o resto é referência de mesa.
+const RECURSOS = [
+  { id:'comida', nome:'Comida', ligado:true, tiers:[
+    {rotulo:'Ração de Viagem', valor:100},
+    {rotulo:'Refeição de Porto', valor:500},
+    {rotulo:'Boa Mesa', valor:1200},
+    {rotulo:'Banquete/Farta', valor:3000},
+  ], tierPadrao:1 },
+  { id:'agua', nome:'Água Potável', ligado:true, tiers:[
+    {rotulo:'Porto abastecido', valor:200},
+    {rotulo:'Mar comum', valor:400},
+    {rotulo:'Novo Mundo (escassa)', valor:900},
+  ], tierPadrao:1 },
+  { id:'polvora', nome:'Pólvora e Munição', ligado:false, tiers:[
+    {rotulo:'Básica', valor:100},
+    {rotulo:'Boa qualidade', valor:250},
+  ], tierPadrao:0 },
+  { id:'medico', nome:'Suprimentos Médicos', ligado:true, tiers:[
+    {rotulo:'Básico', valor:80},
+    {rotulo:'Completo', valor:200},
+  ], tierPadrao:0 },
+  { id:'rum', nome:'Rum / Bebida', ligado:false, tiers:[
+    {rotulo:'Comum', valor:50},
+    {rotulo:'Fino', valor:150},
+  ], tierPadrao:0 },
+  { id:'acampamento', nome:'Materiais de Acampamento', ligado:false, tiers:[
+    {rotulo:'Padrão', valor:60},
+  ], tierPadrao:0 },
+];
+
 function fmtBelly(n){ return '฿ ' + Math.round(n).toLocaleString('pt-BR'); }
+
+const corpo = document.getElementById('tabelaSuprimentos');
+corpo.innerHTML = RECURSOS.map(r => `
+  <tr id="linha-${r.id}">
+    <td><input type="checkbox" id="on-${r.id}" ${r.ligado?'checked':''}></td>
+    <td>${r.nome}</td>
+    <td><select id="tier-${r.id}">
+      ${r.tiers.map((t,i)=>`<option value="${t.valor}" ${i===r.tierPadrao?'selected':''}>${t.rotulo}</option>`).join('')}
+    </select></td>
+    <td class="num" id="unit-${r.id}">—</td>
+    <td class="num" id="sub-${r.id}">—</td>
+  </tr>
+`).join('');
+
 function recalcular(){
   const pessoas = Math.max(1, Number(document.getElementById('numPessoas').value) || 1);
   const dias = Math.max(1, Number(document.getElementById('numDias').value) || 1);
-  const custoComida = Number(document.getElementById('qualComida').value);
-  const custoAgua = Number(document.getElementById('qualAgua').value);
-  const totalComida = pessoas * dias * custoComida;
-  const totalAgua = pessoas * dias * custoAgua;
-  document.getElementById('unitComida').textContent = fmtBelly(custoComida) + '/dia';
-  document.getElementById('unitAgua').textContent = fmtBelly(custoAgua) + '/dia';
-  document.getElementById('totalComida').textContent = fmtBelly(totalComida);
-  document.getElementById('totalAgua').textContent = fmtBelly(totalAgua);
-  document.getElementById('totalSuprimentos').textContent = fmtBelly(totalComida + totalAgua);
+
+  let totalSuprimentos = 0;
+  RECURSOS.forEach(r => {
+    const ligado = document.getElementById('on-'+r.id).checked;
+    const unit = Number(document.getElementById('tier-'+r.id).value);
+    const sub = ligado ? pessoas * dias * unit : 0;
+    document.getElementById('unit-'+r.id).textContent = fmtBelly(unit) + '/dia';
+    document.getElementById('sub-'+r.id).textContent = ligado ? fmtBelly(sub) : '—';
+    document.getElementById('linha-'+r.id).classList.toggle('desligado', !ligado);
+    totalSuprimentos += sub;
+  });
+  document.getElementById('totalSuprimentos').textContent = fmtBelly(totalSuprimentos);
+
+  const qtdLog = Math.max(0, Number(document.getElementById('qtdLogPose').value) || 0);
+  const qtdEternal = Math.max(0, Number(document.getElementById('qtdEternalPose').value) || 0);
+  const totalLog = qtdLog * 50000;
+  const totalEternal = qtdEternal * 600000;
+  document.getElementById('totalLogPose').textContent = fmtBelly(totalLog);
+  document.getElementById('totalEternalPose').textContent = fmtBelly(totalEternal);
+
+  document.getElementById('totalGeral').textContent = fmtBelly(totalSuprimentos + totalLog + totalEternal);
 
   const base = Number(document.getElementById('porteNavio').value);
   const gravidade = Number(document.getElementById('gravidadeDano').value);
   document.getElementById('totalReparo').textContent = fmtBelly(base * gravidade);
 }
-['numPessoas','numDias','qualComida','qualAgua','porteNavio','gravidadeDano'].forEach(id=>{
+
+['numPessoas','numDias','qtdLogPose','qtdEternalPose','porteNavio','gravidadeDano'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recalcular);
+});
+RECURSOS.forEach(r=>{
+  document.getElementById('on-'+r.id).addEventListener('change', recalcular);
+  document.getElementById('tier-'+r.id).addEventListener('change', recalcular);
 });
 recalcular();
 </script>

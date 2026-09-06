@@ -1312,16 +1312,20 @@ passando.
       persistência, e a diferença de comportamento do Kaizoku no Sho
       confirmada de propósito); `tsc`, lint e os 208 testes automáticos
       continuam limpos
-- [x] **Kaizoku no Sho — Escudo do Mestre** (06/09/2026) — decisão #88.
-      Primeiro Escudo do Mestre do sistema (era o único dos cinco com
-      `escudoMestre: null`). Calculadora de Suprimentos da Tripulação
-      (Comida + Água Potável, escalando por tripulante × dias de viagem,
-      em Belly) e de Recursos pra Recuperar o Navio (escalando por Porte
-      do navio × Gravidade do dano, não por tripulante), mais uma tabela
-      de outros recursos sugeridos (Pólvora, Suprimentos Médicos, Rum,
-      Log Pose/Eternal Pose reaproveitando os preços já existentes no
-      catálogo). Testado com Playwright (cálculo escalando com mais
-      gente, reparo batendo com a conta manual); `tsc`, lint e os 208
+- [x] **Kaizoku no Sho — Escudo do Mestre** (06/09/2026) — decisões #88 e
+      #89. Primeiro Escudo do Mestre do sistema (era o único dos cinco
+      com `escudoMestre: null`). Calculadora de Suprimentos da
+      Tripulação (Comida, Água Potável, Pólvora e Munição, Suprimentos
+      Médicos, Rum e Materiais de Acampamento — cada um ligável/
+      desligável e com seletor de qualidade, escalando por tripulante ×
+      dias de viagem, em Belly), Log Pose/Eternal Pose avulsos (preço
+      fechado, reaproveitando os valores já existentes no catálogo) e
+      Recursos pra Recuperar o Navio (escalando por Porte do navio ×
+      Gravidade do dano, não por tripulante). Preços recalibrados depois
+      do Zé achar a primeira leva barata demais — usando Long Pose
+      (50.000 ฿) e Eternal Pose (600.000 ฿) como âncora de escala.
+      Testado com Playwright (total batendo com a conta manual, dobrar a
+      tripulação dobra o total, reparo batendo); `tsc`, lint e os 208
       testes automáticos continuam limpos
 - [ ] Ometion
 
