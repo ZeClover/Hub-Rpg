@@ -3424,6 +3424,55 @@ navegadores/teclados numéricos trava bem antes de 1 trilhão — virou um
 campo de texto numérico puro (`inputmode="numeric"`, filtra só dígitos),
 sem limite de dígitos.
 
+## 87. Tema customizável nos outros quatro sistemas (SAO, Fabula Ultima, Thrylikí Chelóna, Kaizoku no Sho) (06/09/2026)
+
+O Zé pediu pra levar o tema (cor livre + 8 presets, decisões #81/#82) que
+só o Sistema do Sávio tinha pras outras quatro fichas do Hub. Os quatro
+já usavam a mesma paleta de base entre si (`--fundo`/`--superficie`/
+`--superficie-alta`/`--borda`/`--ambar`/`--ambar-forte`/`--alerta`,
+mesmo `estado`/`render()`/`ligarEventos()`/`novoPersonagem()` que o
+Sávio), então portei a mesma receita de `aplicarTema()`
+(`hexParaRgb`/`corMaisClara`/`matizDoHex`/`corHsl`) pros três primeiros:
+SAO, Fabula Ultima e Thrylikí Chelóna ganharam `--ambar-rgb` novo (os
+`rgba(224,162,52,X)` fixos que cada CSS já tinha viraram
+`rgba(var(--ambar-rgb),X)`), um card "🎨 Tema" na aba de Perfil/Status, e
+`p.temaCor` salvo com o personagem — igual ao Sávio, com fundo/
+superfícies/bordas tingidos pelo matiz da cor escolhida.
+
+**Kaizoku no Sho precisou de um desenho diferente.** Esse sistema usa
+outra paleta (`--navy-deep`/`--navy-mid`/`--parchment`/`--brass`/
+`--brass-bright`/`--verdigris`/`--danger`, visual "mapa náutico + latão")
+onde o destaque (`--brass`) e o fundo (`--navy`) são cores DIFERENTES de
+propósito — não uma família só de cor quente como nos outros quatro.
+Tentei aplicar a mesma receita (tingir o navy pelo matiz do destaque
+escolhido) e o resultado mudava até a aparência PADRÃO da ficha (o navy
+ficava marrom no preset "Brass", por perder o azul original) — motivo
+por que decidi diferente aqui: o tema no Kaizoku no Sho só troca
+`--brass`/`--brass-bright`/`--brass-rgb` (o destaque), e `--navy-deep`/
+`--navy-mid` ficam sempre fixos, preservando o contraste que é a cara
+deste sistema. `--parchment`/`--ink`/`--verdigris`/`--danger` também
+ficam fixos, como nos outros. `--navy-deep-rgb` novo (`rgba(15,33,54,X)`
+fixos viraram `rgba(var(--navy-deep-rgb),X)`) pra manter a gradiente do
+card de resumo consistente mesmo sendo estático agora.
+
+No caminho, achei e corrigi um bug real no Kaizoku no Sho: `renderPanel()`
+(o redesenho rápido usado por quase toda troca de campo, diferente de
+`renderAll()`) nunca chamava `aplicarTema()` — trocar a cor de tema não
+atualizava a tela até um redesenho completo acontecer por outro motivo.
+Corrigido chamando `aplicarTema()` também no início de `renderPanel()`.
+
+Testado com Playwright nos quatro: presets e cor livre mudando as
+variáveis CSS certas, fundo/superfícies tingidos nos três com paleta
+quente (confirmando que mudam de matiz), fundo do Kaizoku no Sho
+confirmado como NÃO mudando (comportamento esperado e diferente de
+propósito), e persistência depois de recarregar em todos. Reexecutei as
+baterias de teste já existentes de cada sistema — achei mais dois testes
+que já estavam quebrados antes de eu mexer em qualquer coisa (confirmado
+rodando contra o commit anterior a esta mudança): um no Fabula Ultima e
+quatro no Thrylikí Chelóna, todos dívida de teste antiga, sem relação com
+tema. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos nos quatro sistemas.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1209,11 +1209,10 @@ passando.
       Nível 10 por classe. Sistema SAO ganhou pistas mais claras de que
       o Level Up mora na aba Classes. Testado com Playwright nos quatro
       sistemas; `tsc`, lint e os 208 testes automáticos continuam limpos
-- [ ] **Customização visual nos outros três sistemas** (ideia registrada,
-      não implementada) — fonte do título, reordenar ou esconder abas,
-      layout compacto vs. espaçoso continuam em aberto pra qualquer
-      sistema. Tema/cor já saiu no Sistema do Sávio (linha abaixo); fica
-      pra quando o Zé quiser puxar o resto
+- [ ] **Customização visual — o que falta** (ideia registrada, não
+      implementada) — fonte do título, reordenar ou esconder abas, layout
+      compacto vs. espaçoso continuam em aberto pra qualquer sistema.
+      Tema/cor já saiu nos cinco sistemas (linhas abaixo)
 - [x] **Sistema do Sávio — chassi e ficha jogável básica** (04/09/2026) —
       decisão #71. Quinto sistema do Hub, homebrew de um amigo do Zé (a
       partir do PDF "SISTEMA_DO_SAVIO" e da planilha original). Traço
@@ -1296,6 +1295,23 @@ passando.
       preset, RGB derivado, variáveis de fundo/superfície/borda,
       persistência) e prints de tela conferindo visualmente; `tsc`, lint
       e os 208 testes automáticos continuam limpos
+- [x] **Tema customizável em SAO, Fabula Ultima, Thrylikí Chelóna e
+      Kaizoku no Sho** (06/09/2026) — decisão #87. Levou o tema do
+      Sistema do Sávio (cor livre + 8 presets, `p.temaCor`) pros outros
+      quatro sistemas do Hub. Os três com a mesma paleta de base do Sávio
+      (SAO, Fabula Ultima, Thrylikí Chelóna) ganharam a receita idêntica —
+      destaque e fundo/superfícies/bordas tingidos pelo matiz da cor.
+      Kaizoku no Sho usa outra paleta (navy + latão, de propósito duas
+      cores diferentes) — lá o tema só troca o destaque (`--brass`), o
+      fundo navy fica fixo, senão a aparência padrão mudava de cor. De
+      quebra, corrigido um bug de verdade no Kaizoku no Sho:
+      `renderPanel()` nunca aplicava o tema, só `renderAll()`. Com isso a
+      ideia "Customização visual" perde a parte de cor/tema — fonte do
+      título, reordenar abas e layout compacto continuam em aberto.
+      Testado com Playwright nos quatro sistemas (preset, cor livre,
+      persistência, e a diferença de comportamento do Kaizoku no Sho
+      confirmada de propósito); `tsc`, lint e os 208 testes automáticos
+      continuam limpos
 - [ ] Ometion
 
 ---

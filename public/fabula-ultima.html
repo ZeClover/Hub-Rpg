@@ -5,11 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ficha — Fabula Ultima</title>
 <style>
-/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar.
+   --fundo/--superficie/--superficie-alta/--borda/--ambar/--ambar-forte/
+   --ambar-rgb são reescritos em tempo real por aplicarTema() conforme a cor
+   de tema do personagem — os valores abaixo são só o padrão (Âmbar) antes
+   do JS carregar. --texto/--suave e --alerta NUNCA mudam com o tema —
+   legibilidade e sinalização de perigo não deveriam depender do gosto de
+   ninguém. */
 :root{
   --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
   --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
-  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --ambar-rgb:224,162,52; --alerta:#9c3746;
 }
 *{box-sizing:border-box}
 html{color-scheme:dark}
@@ -36,21 +42,21 @@ button{
 }
 button:hover{border-color:var(--suave)}
 button:not(:disabled):active{transform:scale(.95)}
-button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
-button.destaque:hover{background:rgba(224,162,52,.2)}
+button.destaque{border-color:rgba(var(--ambar-rgb),.4); background:rgba(var(--ambar-rgb),.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(var(--ambar-rgb),.2)}
 button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
 input,select,textarea{
   background:var(--superficie-alta); border:1px solid var(--borda);
   border-radius:8px; padding:7px 10px; width:100%;
 }
-input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(var(--ambar-rgb),.6)}
 textarea{resize:vertical}
 label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
 
 main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
-.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+.abas button[aria-current="true"]{border-color:rgba(var(--ambar-rgb),.5); color:var(--ambar-forte)}
 
 .cartao{background:var(--superficie); border:1px solid var(--borda);
   border-radius:12px; padding:18px; margin-bottom:14px;
@@ -70,7 +76,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
-.resumo-nivel{border:1px solid rgba(224,162,52,.5); background:rgba(224,162,52,.1);
+.resumo-nivel{border:1px solid rgba(var(--ambar-rgb),.5); background:rgba(var(--ambar-rgb),.1);
   border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
 .resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--ambar-forte); font-family:Georgia,serif}
 
@@ -1732,6 +1738,80 @@ const defesaMagica = p => {
 const iniciativa = p =>
   armaduraEquipada(p).iniciativa + (escudoEquipado(p)?.iniciativa || 0) + (p.bonus.iniciativa || 0) + bonusDeAcessorios(p,'iniciativa');
 
+const PRESETS_TEMA = [
+  {nome:'Âmbar',    cor:'#e0a234'},
+  {nome:'Violeta',  cor:'#8b6ee0'},
+  {nome:'Esmeralda',cor:'#3fae6a'},
+  {nome:'Safira',   cor:'#4a90e2'},
+  {nome:'Rubi',     cor:'#d64550'},
+  {nome:'Rosa',     cor:'#e0609a'},
+  {nome:'Turquesa', cor:'#2fb8b0'},
+  {nome:'Grafite',  cor:'#9098a8'},
+];
+const TEMA_PADRAO = PRESETS_TEMA[0].cor;
+
+// Converte "#e0a234" em "224,162,52" (formato que rgba() aceita) — é o que
+// dá transparência a uma cor de tema que muda em tempo real.
+function hexParaRgb(hex){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return '224,162,52';
+  return [1,2,3].map(i => parseInt(m[i],16)).join(',');
+}
+// Clareia uma cor misturando com branco — usada pra derivar o "-forte"
+// (texto/destaque) a partir da cor de tema escolhida, sem pedir uma
+// segunda cor pro jogador.
+function corMaisClara(hex, proporcao){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return hex;
+  const canais = [1,2,3].map(i => {
+    const c = parseInt(m[i],16);
+    return Math.round(c + (255-c)*proporcao);
+  });
+  return '#' + canais.map(c => c.toString(16).padStart(2,'0')).join('');
+}
+// Extrai só o matiz (hue, 0-360) de uma cor — usado pra "pintar" fundo,
+// superfícies e bordas com a MESMA família de cor do destaque, só que bem
+// mais escura/discreta (a claridade e saturação ficam fixas, só o matiz
+// muda com o tema).
+function matizDoHex(hex){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return 40;
+  const [r,g,b] = [1,2,3].map(i => parseInt(m[i],16)/255);
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
+  if(d === 0) return 0;
+  let h;
+  if(max === r) h = ((g-b)/d) % 6;
+  else if(max === g) h = (b-r)/d + 2;
+  else h = (r-g)/d + 4;
+  h *= 60;
+  return h < 0 ? h+360 : h;
+}
+// Monta uma cor a partir de matiz/saturação/luminosidade (0-100%) — o jeito
+// mais direto de gerar tons escuros discretos numa família de cor.
+function corHsl(h, s, l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s*Math.min(l, 1-l);
+  const f = n => l - a*Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  const canal = n => Math.round(255*f(n));
+  return '#' + [0,8,4].map(n => canal(n).toString(16).padStart(2,'0')).join('');
+}
+// Aplica a cor de tema nas variáveis CSS que toda a ficha usa — chamado a
+// cada render() com a cor do personagem atual (ou o padrão, sem ficha).
+// Tinge o destaque (--ambar) E fundo/superfícies/bordas com o mesmo matiz,
+// bem mais escuro, pra continuar fácil de ler com qualquer cor escolhida.
+function aplicarTema(hexCor){
+  const cor = /^#[a-f\d]{6}$/i.test(hexCor||'') ? hexCor : TEMA_PADRAO;
+  const h = matizDoHex(cor);
+  document.documentElement.style.setProperty('--ambar', cor);
+  document.documentElement.style.setProperty('--ambar-forte', corMaisClara(cor, .22));
+  document.documentElement.style.setProperty('--ambar-rgb', hexParaRgb(cor));
+  document.documentElement.style.setProperty('--fundo', corHsl(h, 35, 5));
+  document.documentElement.style.setProperty('--superficie', corHsl(h, 32, 9));
+  document.documentElement.style.setProperty('--superficie-alta', corHsl(h, 28, 13));
+  document.documentElement.style.setProperty('--borda', corHsl(h, 24, 20));
+}
+
 /* --- Personagem --------------------------------------------------------- */
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -1787,6 +1867,7 @@ function novoPersonagem(nome){
     zenites: ZENITES_INICIAIS,
     lacos: [],
     anotacoes: '',
+    temaCor: TEMA_PADRAO,
   };
 }
 
@@ -1953,6 +2034,7 @@ function render(){
   }
 
   const p = atual();
+  aplicarTema(p ? p.temaCor : TEMA_PADRAO);
 
   if(!p){
     app.innerHTML = `<div class="vazio">
@@ -2172,6 +2254,32 @@ function abaPerfil(p){
     <div style="margin-top:14px">
       <label for="c-anotacoes">Anotações</label>
       <textarea id="c-anotacoes" data-campo="anotacoes" rows="5">${esc(p.anotacoes)}</textarea>
+    </div>
+  </div>
+  ${blocoTema(p)}`;
+}
+
+// Card "🎨 Tema" — reaproveitado no Perfil de todo sistema do Hub. A cor
+// livre + os presets viram --ambar/--ambar-forte/--ambar-rgb e o matiz de
+// --fundo/--superficie/--superficie-alta/--borda em tempo real (aplicarTema()).
+function blocoTema(p){
+  const temaAtual = p.temaCor || TEMA_PADRAO;
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">🎨 Tema</h3>
+    <p class="mini">A cor de destaque desta ficha — some com a ficha (exportar/importar leva junto).</p>
+    <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
+      <div>
+        <label for="c-tema-cor">Cor livre</label>
+        <input id="c-tema-cor" type="color" data-tema-cor value="${temaAtual}" style="width:60px;padding:2px;height:38px">
+      </div>
+      <div style="flex:1;min-width:200px">
+        <label>Presets</label>
+        <div class="linha" style="flex-wrap:wrap;gap:8px">
+          ${PRESETS_TEMA.map(t => `<button type="button" data-tema-preset="${t.cor}" title="${t.nome}"
+              style="width:32px;height:32px;padding:0;border-radius:999px;background:${t.cor};
+              border:2px solid ${temaAtual.toLowerCase()===t.cor.toLowerCase()?'var(--texto)':'transparent'}"></button>`).join('')}
+        </div>
+      </div>
     </div>
   </div>`;
 }
@@ -3218,6 +3326,11 @@ function ligarEventos(){
     estado.aba = 'perfil';
     render();
   };
+
+  const temaCorInput = app.querySelector('[data-tema-cor]');
+  if(temaCorInput) temaCorInput.onchange = () => mudar(p => p.temaCor = temaCorInput.value);
+  app.querySelectorAll('[data-tema-preset]').forEach(b =>
+    b.onclick = () => mudar(p => p.temaCor = b.dataset.temaPreset));
 
   app.querySelectorAll('[data-perfil]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => p.perfil[el.dataset.perfil] = el.value, el));

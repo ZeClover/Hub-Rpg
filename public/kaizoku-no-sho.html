@@ -7,14 +7,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* --navy-deep/--navy-mid/--brass/--brass-bright/--brass-rgb são
+     reescritos em tempo real por aplicarTema() conforme a cor de tema do
+     personagem — os valores abaixo são só o padrão (Brass/Navy) antes do JS
+     carregar. --parchment/--parchment-dim/--ink/--verdigris/--verdigris-bright/
+     --line/--line-strong/--danger NUNCA mudam com o tema — legibilidade e
+     sinalização de status não deveriam depender do gosto de ninguém. */
   :root{
     --navy-deep:#0F2136;
+    --navy-deep-rgb:15,33,54;
     --navy-mid:#16304C;
     --parchment:#EDE3CB;
     --parchment-dim:#DDD0AE;
     --ink:#1C1A14;
     --brass:#C08A45;
     --brass-bright:#DDA75F;
+    --brass-rgb:192,138,69;
     --verdigris:#4C7A73;
     --verdigris-bright:#6FA79D;
     --line:rgba(237,227,203,0.16);
@@ -87,7 +95,7 @@
   .roster-bar{
     display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;
     border:1px solid var(--line-strong); border-radius:var(--radius);
-    background:rgba(15,33,54,0.5); padding:14px 16px; margin-bottom:22px;
+    background:rgba(var(--navy-deep-rgb),0.5); padding:14px 16px; margin-bottom:22px;
   }
   .roster-bar .field{min-width:220px; flex:1;}
   .btn{
@@ -113,7 +121,7 @@
     border-radius:var(--radius) var(--radius) 0 0; padding:10px 14px; cursor:pointer;
   }
   .tab-btn:hover{color:var(--parchment);}
-  .tab-btn.active{color:var(--brass-bright); border-color:var(--line-strong); background:rgba(192,138,69,0.08); position:relative; top:1px;}
+  .tab-btn.active{color:var(--brass-bright); border-color:var(--line-strong); background:rgba(var(--brass-rgb),0.08); position:relative; top:1px;}
   .tab-btn.stub{opacity:.55;}
 
   /* ---------- Layout ---------- */
@@ -122,7 +130,7 @@
 
   .panel{
     border:1px solid var(--line); border-radius:var(--radius);
-    background:rgba(15,33,54,0.4); padding:18px 18px 14px; margin-bottom:16px;
+    background:rgba(var(--navy-deep-rgb),0.4); padding:18px 18px 14px; margin-bottom:16px;
     transition:box-shadow .18s ease, transform .18s ease;
   }
   .panel:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px);}
@@ -207,7 +215,7 @@
   .pecu-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
   .pecu-cols-auto{grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));}
   @media (max-width:760px){.pecu-cols{grid-template-columns:1fr;}}
-  .ataque-card{border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:12px; background:rgba(15,33,54,0.25);}
+  .ataque-card{border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:12px; background:rgba(var(--navy-deep-rgb),0.25);}
   .ataque-card .info-box{margin-top:10px;}
   .pecu-search-wrap{position:relative; margin-bottom:10px;}
   .pecu-search-wrap .pecu-search{margin-bottom:0; padding-right:60px;}
@@ -220,12 +228,12 @@
   .ficha{
     position:sticky; top:20px;
     border:1px solid var(--brass); border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(192,138,69,0.08), rgba(15,33,54,0.6));
+    background:linear-gradient(180deg, rgba(var(--brass-rgb),0.08), rgba(var(--navy-deep-rgb),0.6));
     padding:0; overflow:hidden;
   }
   .ficha-head{
     padding:16px 18px; border-bottom:1px solid var(--line-strong);
-    background:rgba(192,138,69,0.08);
+    background:rgba(var(--brass-rgb),0.08);
   }
   .ficha-head h2{font-family:var(--disp); font-size:19px; margin:0 0 2px; color:var(--parchment); font-weight:600;}
   .ficha-head .ship-class{font-family:var(--mono); font-size:11px; color:var(--brass-bright); letter-spacing:.06em; text-transform:uppercase;}
@@ -239,7 +247,7 @@
     color:var(--verdigris-bright); margin:14px 0 4px;
   }
   .stat-group-title:first-child{margin-top:0;}
-  .points-line{display:flex; justify-content:space-between; align-items:baseline; padding:10px 18px; background:rgba(192,138,69,0.14); border-top:1px solid var(--brass);}
+  .points-line{display:flex; justify-content:space-between; align-items:baseline; padding:10px 18px; background:rgba(var(--brass-rgb),0.14); border-top:1px solid var(--brass);}
   .points-line .k{font-family:var(--disp); font-weight:600; font-size:13px; color:var(--parchment);}
   .points-line .v{font-family:var(--mono); font-size:16px; color:var(--brass-bright); font-weight:600;}
   .points-line .v.zero{color:var(--verdigris-bright);}
@@ -3621,6 +3629,52 @@ function uid(){
   });
 }
 
+const PRESETS_TEMA = [
+  {nome:'Brass',    cor:'#C08A45'},
+  {nome:'Violeta',  cor:'#8b6ee0'},
+  {nome:'Esmeralda',cor:'#3fae6a'},
+  {nome:'Safira',   cor:'#4a90e2'},
+  {nome:'Rubi',     cor:'#d64550'},
+  {nome:'Rosa',     cor:'#e0609a'},
+  {nome:'Turquesa', cor:'#2fb8b0'},
+  {nome:'Grafite',  cor:'#9098a8'},
+];
+const TEMA_PADRAO = PRESETS_TEMA[0].cor;
+
+// Converte "#C08A45" em "192,138,69" (formato que rgba() aceita) — é o que
+// dá transparência a uma cor de tema que muda em tempo real.
+function hexParaRgb(hex){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return '192,138,69';
+  return [1,2,3].map(i => parseInt(m[i],16)).join(',');
+}
+// Clareia uma cor misturando com branco — usada pra derivar o "-bright"
+// (destaque) a partir da cor de tema escolhida, sem pedir uma segunda cor
+// pro jogador.
+function corMaisClara(hex, proporcao){
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+  if(!m) return hex;
+  const canais = [1,2,3].map(i => {
+    const c = parseInt(m[i],16);
+    return Math.round(c + (255-c)*proporcao);
+  });
+  return '#' + canais.map(c => c.toString(16).padStart(2,'0')).join('');
+}
+// Aplica a cor de tema nas variáveis CSS que toda a ficha usa — chamado a
+// cada renderAll() com a cor do personagem atual (ou o padrão, sem ficha).
+// Só tinge o destaque (--brass) — diferente dos outros sistemas do Hub, o
+// navy de fundo aqui é DE PROPÓSITO uma cor diferente do destaque (o
+// contraste "azul de mapa + latão" é a cara do Kaizoku no Sho), então
+// retintar o navy pelo matiz do destaque mudaria até a aparência padrão
+// (o navy ficaria marrom no preset Brass, por exemplo). --navy-deep/
+// --navy-mid/--parchment/--ink/--verdigris/--danger ficam sempre fixos.
+function aplicarTema(hexCor){
+  const cor = /^#[a-f\d]{6}$/i.test(hexCor||'') ? hexCor : TEMA_PADRAO;
+  document.documentElement.style.setProperty('--brass', cor);
+  document.documentElement.style.setProperty('--brass-bright', corMaisClara(cor, .22));
+  document.documentElement.style.setProperty('--brass-rgb', hexParaRgb(cor));
+}
+
 function novoPersonagem(nome){
   const p = {
     id: uid(),
@@ -3685,6 +3739,7 @@ function novoPersonagem(nome){
     // do efeito) — o resto (atributo, bônus de Combate, Dificuldade) vem
     // das mesmas fórmulas já usadas nas abas Combate/Danos/Recursos.
     ataquesProntos: [],
+    temaCor: TEMA_PADRAO,
   };
   ATRIBUTOS_DEF.forEach(a => p.atributos[a.id] = 0);
   COMBATE_DEF.forEach(c => p.combate[c.id] = { base:3, outro:0 });
@@ -5188,6 +5243,7 @@ function renderAll(){
   }
 
   const p = personagemAtual();
+  aplicarTema(p ? p.temaCor : TEMA_PADRAO);
   if(!p){
     root.innerHTML = `<div class="empty-state"><h2>Nenhum personagem ainda</h2><p>Clique em "+ Novo" para criar sua primeira ficha, ou importe um arquivo JSON exportado anteriormente.</p></div>`;
     return;
@@ -5278,6 +5334,7 @@ function renderPanel(){
   // existe — nesse caso o redesenho certo é a tela inteira de novo.
   if(!host){ renderAll(); return; }
   const p = personagemAtual();
+  aplicarTema(p ? p.temaCor : TEMA_PADRAO);
   switch(state.tab){
     case 'perfil': host.innerHTML = panelPerfil(p); bindPerfil(p); break;
     case 'atributos': host.innerHTML = panelAtributos(p); bindAtributos(p); break;
@@ -5375,7 +5432,34 @@ function panelPerfil(p){
       <div class="field-row"><div class="field"><label>Biografia</label><textarea id="f_biografia" rows="6">${escapeHtml(p.perfil.biografia)}</textarea></div></div>
       <div class="field-row"><div class="field"><label>Curiosidades</label><textarea id="f_curiosidades" rows="3">${escapeHtml(p.perfil.curiosidades)}</textarea></div></div>
     </div>
+    ${blocoTema(p)}
   `;
+}
+
+// Card "🎨 Tema" — reaproveitado no Perfil de todo sistema do Hub. A cor
+// livre + os presets viram --brass/--brass-bright/--brass-rgb e o matiz de
+// --navy-deep/--navy-mid em tempo real (aplicarTema()).
+function blocoTema(p){
+  const temaAtual = p.temaCor || TEMA_PADRAO;
+  return `
+    <div class="panel">
+      <h2>🎨 Tema</h2>
+      <p class="panel-note">A cor de destaque desta ficha — some com a ficha (exportar/importar leva junto).</p>
+      <div class="field-row" style="align-items:flex-end;flex-wrap:wrap;gap:14px">
+        <div class="field" style="max-width:80px">
+          <label for="f_temaCor">Cor livre</label>
+          <input id="f_temaCor" type="color" data-tema-cor value="${temaAtual}" style="width:60px;padding:2px;height:38px">
+        </div>
+        <div class="field" style="flex:1;min-width:200px">
+          <label>Presets</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${PRESETS_TEMA.map(t => `<button type="button" data-tema-preset="${t.cor}" title="${t.nome}"
+                style="width:32px;height:32px;padding:0;border-radius:999px;background:${t.cor};
+                border:2px solid ${temaAtual.toLowerCase()===t.cor.toLowerCase()?'var(--parchment)':'transparent'}"></button>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 function panelEspecieDetalhe(p){
   const e = ESPECIES_TODAS.find(x=>x.nome===p.perfil.especie);
@@ -5487,6 +5571,17 @@ function bindPerfil(p){
   });
   const btnLevelUp = document.getElementById('btnLevelUp');
   if(btnLevelUp) btnLevelUp.addEventListener('click', ()=>{ subirDeNivel(p); });
+
+  const temaCorInput = document.getElementById('f_temaCor');
+  if(temaCorInput) temaCorInput.addEventListener('change', ()=>{
+    p.temaCor = temaCorInput.value;
+    onFieldChange(); renderPanel();
+  });
+  document.querySelectorAll('[data-tema-preset]').forEach(b =>
+    b.addEventListener('click', ()=>{
+      p.temaCor = b.dataset.temaPreset;
+      onFieldChange(); renderPanel();
+    }));
 }
 
 // Fotografia dos números que mudam só por causa do NC — usada pra montar o
@@ -5536,7 +5631,7 @@ function passosNivelUpKaizoku(p, resumo){
         <div class="panel">
           <h3 class="resumo-titulo">⭐ Subiu de nível! <span style="font-size:11px; color:var(--parchment-dim); font-weight:normal;">NC ${antes.nc} → NC ${depois.nc}</span></h3>
           <p class="panel-note">NC (Nível de Campanha) é o "nível de personagem" deste sistema — sobe quando o mestre decidir, sem cálculo de XP automático aqui. Subir 1 NC aumenta todos os limites e totais abaixo, que os próximos passos já deixam gastar:</p>
-          <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(192,138,69,0.06);">
+          <div style="border:1px solid var(--line); border-radius:var(--radius); padding:4px 14px; background:rgba(var(--brass-rgb),0.06);">
             ${linha('Vitalidade Máxima', 'vitalidade')}
             ${linha('Pontos de Atributos (total)', 'pontosAtributos')}
             ${linha('Pontos de Perícias (total)', 'pontosPericias')}
