@@ -21,12 +21,12 @@
     background-image:linear-gradient(180deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
     color:var(--parchment); font-family:var(--body); line-height:1.5; min-height:100vh;
   }
-  .wrap{max-width:960px; margin:0 auto; padding:28px 20px 80px;}
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 20px 80px;}
   .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-bright); margin:0 0 6px;}
   h1{font-family:var(--disp); font-weight:600; font-size:clamp(26px,4.2vw,38px); margin:0; color:var(--parchment); letter-spacing:-0.01em;}
   .hero-sub{font-size:14px; color:var(--parchment-dim); max-width:68ch; margin-top:8px;}
   a{color:var(--brass-bright);}
-  h2{font-family:var(--disp); font-weight:600; font-size:19px; margin:0; color:var(--brass-bright);}
+  h2{font-family:var(--disp); font-weight:600; font-size:19px; margin:0; color:var(--brass-bright); display:flex; align-items:center; justify-content:space-between; gap:10px;}
   h3{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--parchment-dim); margin:16px 0 6px;}
   p{margin:8px 0 0;}
   .mini{font-size:12px; color:var(--parchment-dim);}
@@ -34,8 +34,8 @@
   .panel-note{font-size:12px; color:var(--parchment-dim); margin:6px 0 14px;}
   label{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--parchment-dim); display:block; margin-bottom:4px;}
   .field{display:flex; flex-direction:column; gap:4px;}
-  .field-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px;}
-  .field-row .field{flex:1; min-width:170px;}
+  .field-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; align-items:flex-end;}
+  .field-row .field{flex:1; min-width:150px;}
   input[type=number], input[type=checkbox], select{
     font-family:var(--body); font-size:14px; color:var(--ink);
   }
@@ -46,12 +46,14 @@
   input[type=checkbox]{width:18px; height:18px; cursor:pointer; accent-color:var(--brass);}
   select{cursor:pointer;}
   input:focus, select:focus{outline:2px solid var(--brass-bright); outline-offset:1px;}
+  .tabela-scroll{overflow-x:auto;}
   table.data{width:100%; border-collapse:collapse; font-size:13px; margin-top:4px;}
-  table.data th{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-strong);}
+  table.data th{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-strong); white-space:nowrap;}
   table.data td{padding:8px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
   table.data tr:last-child td{border-bottom:none;}
   table.data tr.desligado{opacity:.4;}
-  table.data select{width:auto; min-width:220px;}
+  table.data select{width:auto; min-width:180px;}
+  table.data input[type=number]{width:70px;}
   .num{font-family:var(--mono); text-align:right; white-space:nowrap;}
   .total-line{display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; padding-top:12px; border-top:1px solid var(--line-strong);}
   .total-line .rot{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim);}
@@ -59,6 +61,22 @@
   .total-line.grande{margin-top:20px; padding-top:16px; border-top:2px solid var(--brass);}
   .total-line.grande .val{font-size:28px;}
   .tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--line-strong); border-radius:999px; color:var(--parchment-dim);}
+  .btn{
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    background:transparent; color:var(--parchment-dim);
+    border:1px solid var(--line-strong); border-radius:var(--radius);
+    padding:7px 10px; cursor:pointer; transition:all .15s ease; white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--brass-bright); color:var(--parchment);}
+  .btn:not(:disabled):active{transform:scale(.95);}
+  .btn.primary{background:var(--brass); border-color:var(--brass); color:var(--navy-deep); font-weight:600;}
+  .btn.primary:hover{background:var(--brass-bright); border-color:var(--brass-bright);}
+  .btn.danger{color:#F0BDB4; border-color:var(--danger);}
+  .btn.danger:hover{background:rgba(192,91,76,0.15);}
+  .btn:disabled{opacity:.35; cursor:not-allowed;}
+  .btn-link{background:none; border:none; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--parchment-dim); cursor:pointer; text-decoration:underline; padding:0;}
+  .btn-link:hover{color:var(--brass-bright);}
+  .estoque-val{font-family:var(--mono); font-weight:600; color:var(--brass-bright); font-size:15px;}
 </style>
 </head>
 <body>
@@ -66,61 +84,55 @@
   <span class="eyebrow">Kaizoku no Sho</span>
   <h1>Escudo do Mestre</h1>
   <p class="hero-sub">
-    Referência rápida de suprimentos e reparo pra ter aberta durante a
+    Suprimentos, reparo e estoque da tripulação pra ter aberto durante a
     sessão — o custo em Belly (฿) sobe junto com o tamanho da tripulação,
     do jeito que uma travessia de verdade pesaria no bolso. Ração de
     Viagem, Long Pose e Eternal Pose usam os mesmos preços já usados no
     catálogo de itens da ficha; o resto é referência da mesa (não é regra
-    oficial do livro) calibrada pela mesma escala — perto do que um Long
-    Pose (50.000 ฿) ou uma arma de fogo (na casa do milhão) já custam.
+    oficial do livro) calibrada pela mesma escala. O estoque fica salvo
+    neste navegador (não sincroniza entre aparelhos nem com os jogadores).
   </p>
 
   <div class="panel">
-    <h2>🍖 Suprimentos da Tripulação</h2>
-    <p class="panel-note">Cada linha cobra por pessoa, por dia — desmarque o que não se aplica a esta viagem (nem toda tripulação carrega arma de fogo ou bebe rum). Quanto mais gente a bordo, maior a conta.</p>
+    <h2>🍖 Suprimentos da Tripulação <button type="button" class="btn-link" id="btnZerarEstoque">zerar todo o estoque</button></h2>
+    <p class="panel-note">Cada linha cobra por pessoa, por dia — desmarque o que não se aplica a esta viagem. "Comprar" soma ao Estoque a quantidade de pessoa-dias desta compra (tripulantes × dias); "Consumir dias" desconta do estoque conforme a viagem acontece.</p>
     <div class="field-row">
       <div class="field">
         <label for="numPessoas">Nº de tripulantes</label>
         <input type="number" id="numPessoas" min="1" value="6">
       </div>
       <div class="field">
-        <label for="numDias">Dias de viagem</label>
+        <label for="numDias">Dias desta compra</label>
         <input type="number" id="numDias" min="1" value="7">
       </div>
+      <div class="field">
+        <label for="numDiasConsumir">Dias a consumir do estoque</label>
+        <input type="number" id="numDiasConsumir" min="1" value="1">
+      </div>
+      <button type="button" class="btn primary" id="btnConsumirDias">📉 Consumir</button>
     </div>
+    <div class="tabela-scroll">
     <table class="data">
-      <thead><tr><th></th><th>Suprimento</th><th>Qualidade</th><th class="num">฿/pessoa/dia</th><th class="num">Subtotal</th></tr></thead>
+      <thead><tr><th></th><th>Suprimento</th><th>Qualidade</th><th class="num">฿/pessoa/dia</th><th class="num">Custo da compra</th><th class="num">Estoque</th><th class="num">Dá pra</th><th></th></tr></thead>
       <tbody id="tabelaSuprimentos"></tbody>
     </table>
-    <div class="total-line"><span class="rot">Total de suprimentos da viagem</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
+    </div>
+    <div class="total-line"><span class="rot">Custo desta compra</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
   </div>
 
   <div class="panel">
     <h2>🧭 Itens de Navegação (avulsos)</h2>
-    <p class="panel-note">Preço fechado, não por pessoa — os dois já existem no catálogo de itens da ficha, com o mesmo valor.</p>
+    <p class="panel-note">Preço fechado, não por pessoa — os dois já existem no catálogo de itens da ficha, com o mesmo valor. "Comprar" soma a quantidade ao estoque; "Gastar 1" tira um do estoque quando a tripulação usa.</p>
+    <div class="tabela-scroll">
     <table class="data">
-      <thead><tr><th>Item</th><th>Pra que serve</th><th class="num">Preço unitário</th><th style="width:90px">Quantos</th><th class="num">Subtotal</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Log Pose de reposição</td>
-          <td>Navegação — perder o Log Pose original é comum em naufrágio/roubo</td>
-          <td class="num">฿ 50.000</td>
-          <td><input type="number" id="qtdLogPose" min="0" value="0"></td>
-          <td class="num" id="totalLogPose">฿ 0</td>
-        </tr>
-        <tr>
-          <td>Eternal Pose</td>
-          <td>Rota permanente pra uma ilha específica — item raro, nem sempre à venda</td>
-          <td class="num">฿ 600.000</td>
-          <td><input type="number" id="qtdEternalPose" min="0" value="0"></td>
-          <td class="num" id="totalEternalPose">฿ 0</td>
-        </tr>
-      </tbody>
+      <thead><tr><th>Item</th><th>Pra que serve</th><th class="num">Preço unitário</th><th style="width:80px">Comprar quantos</th><th class="num">Custo</th><th class="num">Estoque</th><th></th></tr></thead>
+      <tbody id="tabelaNavegacao"></tbody>
     </table>
+    </div>
   </div>
 
   <div class="total-line grande">
-    <span class="rot">Total geral desta compra</span>
+    <span class="rot">Total desta compra (suprimentos + navegação)</span>
     <span class="val" id="totalGeral">฿ 0</span>
   </div>
 
@@ -130,9 +142,10 @@
       Reparo depende do PORTE do navio e da GRAVIDADE do dano, não da
       tripulação — um casco maior custa mais pra consertar não importa
       quantos marujos estejam a bordo, por isso fica fora do total geral
-      acima. Isso é uma referência rápida pra estimar na hora; a regra
-      completa de construção/reparo do Carpinteiro (Ofício) continua
-      valendo se a mesa quiser o cálculo exato em m³ e matéria-prima.
+      acima (e não tem estoque — é um serviço, não um suprimento). Isso é
+      uma referência rápida pra estimar na hora; a regra completa de
+      construção/reparo do Carpinteiro (Ofício) continua valendo se a
+      mesa quiser o cálculo exato em m³ e matéria-prima.
     </p>
     <div class="field-row">
       <div class="field">
@@ -197,11 +210,41 @@ const RECURSOS = [
     {rotulo:'Padrão', valor:60},
   ], tierPadrao:0 },
 ];
+const ITENS_NAVEGACAO = [
+  { id:'logPose', nome:'Log Pose de reposição', sobre:'Navegação — perder o Log Pose original é comum em naufrágio/roubo', preco:50000 },
+  { id:'eternalPose', nome:'Eternal Pose', sobre:'Rota permanente pra uma ilha específica — item raro, nem sempre à venda', preco:600000 },
+];
+
+// Estoque: guardado neste navegador só (não é dado de campanha no Hub,
+// é uma calculadora estática) — quantidade em "pessoa-dias" pros
+// suprimentos (1 unidade = comida/água/etc de 1 pessoa por 1 dia) e em
+// unidades inteiras pros itens de navegação.
+const CHAVE_ESTOQUE = 'kns_escudo_estoque_v1';
+function carregarEstoque(){
+  try{
+    const cru = JSON.parse(localStorage.getItem(CHAVE_ESTOQUE) || '{}');
+    const estoque = {};
+    RECURSOS.forEach(r => estoque[r.id] = Math.max(0, Number(cru[r.id]) || 0));
+    ITENS_NAVEGACAO.forEach(it => estoque[it.id] = Math.max(0, Number(cru[it.id]) || 0));
+    return estoque;
+  }catch(e){
+    const vazio = {};
+    RECURSOS.forEach(r => vazio[r.id] = 0);
+    ITENS_NAVEGACAO.forEach(it => vazio[it.id] = 0);
+    return vazio;
+  }
+}
+function salvarEstoque(){
+  try{ localStorage.setItem(CHAVE_ESTOQUE, JSON.stringify(estoque)); }
+  catch(e){ /* localStorage indisponível (aba anônima etc.) — só não persiste */ }
+}
+const estoque = carregarEstoque();
 
 function fmtBelly(n){ return '฿ ' + Math.round(n).toLocaleString('pt-BR'); }
+function fmtNum(n){ return Math.round(n).toLocaleString('pt-BR'); }
 
-const corpo = document.getElementById('tabelaSuprimentos');
-corpo.innerHTML = RECURSOS.map(r => `
+const corpoSuprimentos = document.getElementById('tabelaSuprimentos');
+corpoSuprimentos.innerHTML = RECURSOS.map(r => `
   <tr id="linha-${r.id}">
     <td><input type="checkbox" id="on-${r.id}" ${r.ligado?'checked':''}></td>
     <td>${r.nome}</td>
@@ -210,8 +253,37 @@ corpo.innerHTML = RECURSOS.map(r => `
     </select></td>
     <td class="num" id="unit-${r.id}">—</td>
     <td class="num" id="sub-${r.id}">—</td>
+    <td class="num"><span class="estoque-val" id="estoque-${r.id}">0</span></td>
+    <td class="num" id="dura-${r.id}">—</td>
+    <td><button type="button" class="btn primary" id="comprar-${r.id}">🛒 Comprar</button></td>
   </tr>
 `).join('');
+
+const corpoNavegacao = document.getElementById('tabelaNavegacao');
+corpoNavegacao.innerHTML = ITENS_NAVEGACAO.map(it => `
+  <tr>
+    <td>${it.nome}</td>
+    <td>${it.sobre}</td>
+    <td class="num">${fmtBelly(it.preco)}</td>
+    <td><input type="number" id="qtd-${it.id}" min="0" value="0"></td>
+    <td class="num" id="custo-${it.id}">฿ 0</td>
+    <td class="num"><span class="estoque-val" id="estoque-${it.id}">0</span></td>
+    <td style="display:flex; gap:6px;">
+      <button type="button" class="btn primary" id="comprar-${it.id}">🛒 Comprar</button>
+      <button type="button" class="btn danger" id="gastar-${it.id}">Gastar 1</button>
+    </td>
+  </tr>
+`).join('');
+
+function atualizarEstoqueNaTela(){
+  RECURSOS.forEach(r => {
+    document.getElementById('estoque-'+r.id).textContent = fmtNum(estoque[r.id]);
+  });
+  ITENS_NAVEGACAO.forEach(it => {
+    document.getElementById('estoque-'+it.id).textContent = fmtNum(estoque[it.id]);
+    document.getElementById('gastar-'+it.id).disabled = estoque[it.id] <= 0;
+  });
+}
 
 function recalcular(){
   const pessoas = Math.max(1, Number(document.getElementById('numPessoas').value) || 1);
@@ -225,31 +297,77 @@ function recalcular(){
     document.getElementById('unit-'+r.id).textContent = fmtBelly(unit) + '/dia';
     document.getElementById('sub-'+r.id).textContent = ligado ? fmtBelly(sub) : '—';
     document.getElementById('linha-'+r.id).classList.toggle('desligado', !ligado);
+    document.getElementById('dura-'+r.id).textContent = Math.floor(estoque[r.id] / pessoas) + ' dia(s)';
+    document.getElementById('comprar-'+r.id).disabled = !ligado;
     totalSuprimentos += sub;
   });
   document.getElementById('totalSuprimentos').textContent = fmtBelly(totalSuprimentos);
 
-  const qtdLog = Math.max(0, Number(document.getElementById('qtdLogPose').value) || 0);
-  const qtdEternal = Math.max(0, Number(document.getElementById('qtdEternalPose').value) || 0);
-  const totalLog = qtdLog * 50000;
-  const totalEternal = qtdEternal * 600000;
-  document.getElementById('totalLogPose').textContent = fmtBelly(totalLog);
-  document.getElementById('totalEternalPose').textContent = fmtBelly(totalEternal);
+  let totalNavegacao = 0;
+  ITENS_NAVEGACAO.forEach(it => {
+    const qtd = Math.max(0, Number(document.getElementById('qtd-'+it.id).value) || 0);
+    const custo = qtd * it.preco;
+    document.getElementById('custo-'+it.id).textContent = fmtBelly(custo);
+    totalNavegacao += custo;
+  });
 
-  document.getElementById('totalGeral').textContent = fmtBelly(totalSuprimentos + totalLog + totalEternal);
+  document.getElementById('totalGeral').textContent = fmtBelly(totalSuprimentos + totalNavegacao);
 
   const base = Number(document.getElementById('porteNavio').value);
   const gravidade = Number(document.getElementById('gravidadeDano').value);
   document.getElementById('totalReparo').textContent = fmtBelly(base * gravidade);
+
+  atualizarEstoqueNaTela();
 }
 
-['numPessoas','numDias','qtdLogPose','qtdEternalPose','porteNavio','gravidadeDano'].forEach(id=>{
+['numPessoas','numDias','porteNavio','gravidadeDano'].forEach(id=>{
   document.getElementById(id).addEventListener('input', recalcular);
 });
 RECURSOS.forEach(r=>{
   document.getElementById('on-'+r.id).addEventListener('change', recalcular);
   document.getElementById('tier-'+r.id).addEventListener('change', recalcular);
+  document.getElementById('comprar-'+r.id).addEventListener('click', ()=>{
+    const pessoas = Math.max(1, Number(document.getElementById('numPessoas').value) || 1);
+    const dias = Math.max(1, Number(document.getElementById('numDias').value) || 1);
+    estoque[r.id] += pessoas * dias;
+    salvarEstoque();
+    recalcular();
+  });
 });
+ITENS_NAVEGACAO.forEach(it=>{
+  document.getElementById('qtd-'+it.id).addEventListener('input', recalcular);
+  document.getElementById('comprar-'+it.id).addEventListener('click', ()=>{
+    const qtd = Math.max(0, Number(document.getElementById('qtd-'+it.id).value) || 0);
+    if(qtd <= 0) return;
+    estoque[it.id] += qtd;
+    salvarEstoque();
+    recalcular();
+  });
+  document.getElementById('gastar-'+it.id).addEventListener('click', ()=>{
+    if(estoque[it.id] <= 0) return;
+    estoque[it.id] -= 1;
+    salvarEstoque();
+    recalcular();
+  });
+});
+document.getElementById('btnConsumirDias').addEventListener('click', ()=>{
+  const pessoas = Math.max(1, Number(document.getElementById('numPessoas').value) || 1);
+  const diasConsumir = Math.max(1, Number(document.getElementById('numDiasConsumir').value) || 1);
+  RECURSOS.forEach(r => {
+    if(!document.getElementById('on-'+r.id).checked) return;
+    estoque[r.id] = Math.max(0, estoque[r.id] - pessoas * diasConsumir);
+  });
+  salvarEstoque();
+  recalcular();
+});
+document.getElementById('btnZerarEstoque').addEventListener('click', ()=>{
+  if(!confirm('Zerar o estoque de todos os suprimentos e itens de navegação?')) return;
+  RECURSOS.forEach(r => estoque[r.id] = 0);
+  ITENS_NAVEGACAO.forEach(it => estoque[it.id] = 0);
+  salvarEstoque();
+  recalcular();
+});
+
 recalcular();
 </script>
 </body>

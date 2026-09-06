@@ -1312,21 +1312,26 @@ passando.
       persistência, e a diferença de comportamento do Kaizoku no Sho
       confirmada de propósito); `tsc`, lint e os 208 testes automáticos
       continuam limpos
-- [x] **Kaizoku no Sho — Escudo do Mestre** (06/09/2026) — decisões #88 e
-      #89. Primeiro Escudo do Mestre do sistema (era o único dos cinco
-      com `escudoMestre: null`). Calculadora de Suprimentos da
-      Tripulação (Comida, Água Potável, Pólvora e Munição, Suprimentos
-      Médicos, Rum e Materiais de Acampamento — cada um ligável/
-      desligável e com seletor de qualidade, escalando por tripulante ×
-      dias de viagem, em Belly), Log Pose/Eternal Pose avulsos (preço
-      fechado, reaproveitando os valores já existentes no catálogo) e
-      Recursos pra Recuperar o Navio (escalando por Porte do navio ×
-      Gravidade do dano, não por tripulante). Preços recalibrados depois
-      do Zé achar a primeira leva barata demais — usando Long Pose
-      (50.000 ฿) e Eternal Pose (600.000 ฿) como âncora de escala.
-      Testado com Playwright (total batendo com a conta manual, dobrar a
-      tripulação dobra o total, reparo batendo); `tsc`, lint e os 208
-      testes automáticos continuam limpos
+- [x] **Kaizoku no Sho — Escudo do Mestre com estoque da tripulação**
+      (06/09/2026) — decisões #88, #89 e #90. Primeiro Escudo do Mestre
+      do sistema (era o único dos cinco com `escudoMestre: null`).
+      Calculadora de Suprimentos da Tripulação (Comida, Água Potável,
+      Pólvora e Munição, Suprimentos Médicos, Rum e Materiais de
+      Acampamento — cada um ligável/desligável e com seletor de
+      qualidade, escalando por tripulante × dias de viagem, em Belly,
+      preços calibrados pela mesma escala de Long Pose/Eternal Pose/
+      armas que a ficha já usa) e Recursos pra Recuperar o Navio
+      (escalando por Porte do navio × Gravidade do dano, não por
+      tripulante). Depois ganhou estoque de verdade: cada suprimento tem
+      um botão Comprar (soma tripulantes×dias ao estoque) e um botão
+      Consumir (desconta de todos os recursos ligados de uma vez,
+      simulando a viagem passar); Log Pose/Eternal Pose viraram itens
+      avulsos com Comprar/Gastar 1 em unidades inteiras. Estoque salvo no
+      `localStorage` do navegador (não é dado de campanha no banco do
+      Hub — decisão registrada, campanha compartilhada fica pra uma
+      fatia futura se precisar). Testado com Playwright (compra/consumo
+      certos, persistência entre recarregamentos, reparo batendo); `tsc`,
+      lint e os 208 testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

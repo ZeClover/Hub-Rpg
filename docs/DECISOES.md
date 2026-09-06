@@ -3566,6 +3566,52 @@ Log Pose somando certo no Total geral, reparo Médio+Avariado batendo.
 `tsc --noEmit`, `npm run lint` e os 208 testes automáticos continuam
 limpos.
 
+## 90. Kaizoku no Sho — Escudo do Mestre ganha estoque de verdade (comprar/consumir) (06/09/2026)
+
+O Zé apontou que faltava a parte principal: "eu preciso que seja
+possível eu comprar isso e gastar isso, para eu controlar o estoque
+deles". Até aqui a página só calculava preço — não guardava nada. Cada
+suprimento (Comida, Água, Pólvora e Munição, Suprimentos Médicos, Rum,
+Materiais de Acampamento) ganhou uma coluna de **Estoque**, guardada em
+"pessoa-dias" (1 unidade = comida/água/etc. de 1 pessoa por 1 dia — a
+mesma unidade que a calculadora já usava pra custo, só que agora
+acumulada em vez de descartada a cada cálculo):
+
+- **🛒 Comprar**: soma ao estoque `tripulantes × dias desta compra` —
+  reaproveita os mesmos campos que já calculavam o custo, então comprar
+  é literalmente "converter a compra que a calculadora já mostrou em
+  estoque de verdade". Fica desabilitado pra recurso desligado (não dá
+  pra comprar Pólvora se a linha está desmarcada).
+- **📉 Consumir**: um único botão desconta `tripulantes × dias a
+  consumir` do estoque de TODOS os recursos ligados de uma vez — simula
+  "a viagem andou N dias", travado em 0 (não fica negativo).
+- **Dá pra**: cada linha mostra `estoque ÷ tripulantes`, arredondado pra
+  baixo — quantos dias esse estoque aguenta com a tripulação atual.
+- Log Pose e Eternal Pose (itens de navegação, preço fechado) ganharam a
+  mesma lógica em unidades inteiras: **Comprar** soma a quantidade
+  escolhida, **Gastar 1** desconta um quando a tripulação usa (some
+  desabilitado com estoque 0).
+- Botão "zerar todo o estoque" (com confirmação) pra recomeçar uma
+  campanha nova sem editar cada linha na mão.
+
+**Onde o estoque mora**: `localStorage` do navegador (chave
+`kns_escudo_estoque_v1`), não o banco do Hub — o Escudo do Mestre é uma
+página estática igual a dos outros sistemas (mesmo conteúdo pra qualquer
+campanha, decisão de arquitetura já registrada em `sistemas.ts`), e
+guardar estoque por campanha de verdade pediria mexer no schema do banco
+e na página da campanha no Hub — fora do escopo do que foi pedido agora.
+Na prática isso significa: o estoque é por navegador, não sincroniza
+entre aparelhos nem aparece pros jogadores. Se um dia isso virar um
+problema de verdade (jogar em mais de um aparelho, querer que os
+jogadores vejam o estoque), vira outra fatia.
+
+Testado com Playwright: comprar soma a quantidade certa
+(tripulantes×dias), consumir desconta de todos os recursos ligados sem
+ficar negativo, recurso desligado não deixa comprar, Log Pose
+comprar/gastar funcionando, estoque persistindo depois de recarregar a
+página, e zerar estoque limpando tudo. `tsc --noEmit`, `npm run lint` e
+os 208 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
