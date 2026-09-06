@@ -3473,6 +3473,52 @@ quatro no Thrylikí Chelóna, todos dívida de teste antiga, sem relação com
 tema. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos nos quatro sistemas.
 
+## 88. Kaizoku no Sho — Escudo do Mestre com calculadora de suprimentos e reparo do navio (06/09/2026)
+
+O Zé pediu pra colocar, na "parte de mestre" do Kaizoku no Sho, preço
+básico de Comida, Água Potável e Recursos pra recuperar o barco — em
+Belly, subindo com a quantidade de tripulantes ("água potável custa mais
+pra mais pessoas", "comida custa mais pra mais pessoas") — e sugestão de
+outros recursos. O Kaizoku no Sho era o único dos cinco sistemas com
+`escudoMestre: null` em `src/lib/sistemas.ts` — não existia essa página
+ainda (os outros três Escudo do Mestre são só referência estática, sem
+`<script>` nenhum; esse é o primeiro a precisar de uma conta ao vivo).
+
+Criado `public/kaizoku-no-sho-escudo-mestre.html` e registrado em
+`sistemas.ts` (agora aparece o link "Abrir Escudo do Mestre" na página da
+campanha, igual os outros sistemas). Três blocos:
+
+- **Suprimentos da Tripulação** (Comida + Água): calculadora ao vivo —
+  número de tripulantes × dias de viagem × custo por pessoa/dia, com
+  seletor de qualidade (Ração de Viagem/Decente/Farta pra comida; Porto
+  abastecido/Mar escasso do Novo Mundo pra água). "Ração de Viagem" usa
+  o mesmo preço (100 ฿) do item que já existe no catálogo da ficha — o
+  resto (água, as outras qualidades de comida) é referência de mesa, não
+  regra oficial do livro, sinalizado como tal na página.
+- **Reparo do Navio**: decidi que isso NÃO deveria escalar por
+  tripulante como comida/água — quem determina o custo de consertar um
+  casco é o tamanho do navio e a gravidade do dano, não quantos marujos
+  estão a bordo. Calculadora com Porte (Pequeno/Médio/Grande/Enorme,
+  bases 5.000/15.000/40.000/100.000 ฿) × Gravidade do dano (Arranhado
+  10% / Avariado 35% / Muito danificado 70% / Quase afundando 120%),
+  com nota lembrando que a regra completa de construção/reparo do
+  Carpinteiro (Ofício) continua valendo — isso aqui é só uma estimativa
+  rápida pra mesa, e os descontos de graduação do Carpinteiro (-10%/-20%/
+  -30%, já existentes na regra do Ofício) se aplicam por cima.
+- **Outros recursos sugeridos** (tabela de referência, não interativa):
+  Pólvora e Munição e Suprimentos Médicos (por pessoa/semana, mesma
+  lógica de escalar com a tripulação), Rum/Bebida e Materiais de
+  Acampamento (idem), e Log Pose/Eternal Pose de reposição — estes dois
+  reaproveitando os preços exatos (50.000 ฿ e 600.000 ฿) que já existem
+  no catálogo de itens da ficha, em vez de inventar um novo número pra
+  algo que o livro já precifica.
+
+Testado com Playwright: total de suprimentos calculado certo pra 4 e pra
+10 tripulantes (confirmando que sobe com mais gente, como pedido), custo
+de reparo Médio+Avariado batendo com a conta manual, e a tabela de outros
+recursos presente. `tsc --noEmit`, `npm run lint` e os 208 testes
+automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

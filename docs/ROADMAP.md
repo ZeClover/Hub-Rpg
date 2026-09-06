@@ -1312,6 +1312,17 @@ passando.
       persistência, e a diferença de comportamento do Kaizoku no Sho
       confirmada de propósito); `tsc`, lint e os 208 testes automáticos
       continuam limpos
+- [x] **Kaizoku no Sho — Escudo do Mestre** (06/09/2026) — decisão #88.
+      Primeiro Escudo do Mestre do sistema (era o único dos cinco com
+      `escudoMestre: null`). Calculadora de Suprimentos da Tripulação
+      (Comida + Água Potável, escalando por tripulante × dias de viagem,
+      em Belly) e de Recursos pra Recuperar o Navio (escalando por Porte
+      do navio × Gravidade do dano, não por tripulante), mais uma tabela
+      de outros recursos sugeridos (Pólvora, Suprimentos Médicos, Rum,
+      Log Pose/Eternal Pose reaproveitando os preços já existentes no
+      catálogo). Testado com Playwright (cálculo escalando com mais
+      gente, reparo batendo com a conta manual); `tsc`, lint e os 208
+      testes automáticos continuam limpos
 - [ ] Ometion
 
 ---

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escudo do Mestre — Kaizoku no Sho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0F2136; --navy-deep-rgb:15,33,54; --navy-mid:#16304C;
+    --parchment:#EDE3CB; --parchment-dim:#DDD0AE; --ink:#1C1A14;
+    --brass:#C08A45; --brass-bright:#DDA75F; --brass-rgb:192,138,69;
+    --line:rgba(237,227,203,0.16); --line-strong:rgba(237,227,203,0.32);
+    --danger:#C05B4C; --radius:2px;
+    --disp:'Fraunces', serif; --body:'Space Grotesk', sans-serif; --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--navy-deep);
+    background-image:linear-gradient(180deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+    color:var(--parchment); font-family:var(--body); line-height:1.5; min-height:100vh;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:28px 20px 80px;}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-bright); margin:0 0 6px;}
+  h1{font-family:var(--disp); font-weight:600; font-size:clamp(26px,4.2vw,38px); margin:0; color:var(--parchment); letter-spacing:-0.01em;}
+  .hero-sub{font-size:14px; color:var(--parchment-dim); max-width:64ch; margin-top:8px;}
+  a{color:var(--brass-bright);}
+  h2{font-family:var(--disp); font-weight:600; font-size:19px; margin:0; color:var(--brass-bright);}
+  h3{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--parchment-dim); margin:16px 0 6px;}
+  p{margin:8px 0 0;}
+  .mini{font-size:12px; color:var(--parchment-dim);}
+  .panel{border:1px solid var(--line); border-radius:var(--radius); background:rgba(var(--navy-deep-rgb),0.4); padding:18px 18px 16px; margin-top:18px;}
+  .panel-note{font-size:12px; color:var(--parchment-dim); margin:6px 0 14px;}
+  label{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--parchment-dim); display:block; margin-bottom:4px;}
+  .field{display:flex; flex-direction:column; gap:4px;}
+  .field-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px;}
+  .field-row .field{flex:1; min-width:170px;}
+  input[type=number], select{
+    font-family:var(--body); font-size:14px; color:var(--ink);
+    background:var(--parchment); border:1px solid var(--line-strong);
+    border-radius:var(--radius); padding:8px 10px; width:100%;
+  }
+  select{cursor:pointer;}
+  input:focus, select:focus{outline:2px solid var(--brass-bright); outline-offset:1px;}
+  table.data{width:100%; border-collapse:collapse; font-size:13px; margin-top:4px;}
+  table.data th{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-strong);}
+  table.data td{padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.data tr:last-child td{border-bottom:none;}
+  .num{font-family:var(--mono); text-align:right; white-space:nowrap;}
+  .total-line{display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; padding-top:12px; border-top:1px solid var(--line-strong);}
+  .total-line .rot{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim);}
+  .total-line .val{font-family:var(--mono); font-size:22px; color:var(--brass-bright); font-weight:600;}
+  .tag{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid var(--line-strong); border-radius:999px; color:var(--parchment-dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">Kaizoku no Sho</span>
+  <h1>Escudo do Mestre</h1>
+  <p class="hero-sub">
+    Referência rápida de suprimentos e reparo pra ter aberta durante a
+    sessão — o custo em Belly (฿) sobe junto com o tamanho da tripulação,
+    do jeito que uma travessia de verdade pesaria no bolso. Os valores de
+    Ração de Viagem, Long Pose e Eternal Pose são os mesmos já usados na
+    ficha; o resto é referência da mesa (não é regra oficial do livro),
+    ajuste como quiser.
+  </p>
+
+  <div class="panel">
+    <h2>🍖 Suprimentos da Tripulação</h2>
+    <p class="panel-note">Comida e Água Potável cobram por pessoa, por dia — quanto mais gente a bordo, maior a conta.</p>
+    <div class="field-row">
+      <div class="field">
+        <label for="numPessoas">Nº de tripulantes</label>
+        <input type="number" id="numPessoas" min="1" value="4">
+      </div>
+      <div class="field">
+        <label for="numDias">Dias de viagem</label>
+        <input type="number" id="numDias" min="1" value="7">
+      </div>
+      <div class="field">
+        <label for="qualComida">Qualidade da comida</label>
+        <select id="qualComida">
+          <option value="100">Ração de Viagem — 100 ฿/pessoa/dia</option>
+          <option value="300">Refeição Decente — 300 ฿/pessoa/dia</option>
+          <option value="800">Banquete/Farta — 800 ฿/pessoa/dia</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="qualAgua">Água potável</label>
+        <select id="qualAgua">
+          <option value="50">Porto abastecido — 50 ฿/pessoa/dia</option>
+          <option value="150">Mar escasso (Novo Mundo) — 150 ฿/pessoa/dia</option>
+        </select>
+      </div>
+    </div>
+    <table class="data">
+      <thead><tr><th>Suprimento</th><th class="num">Custo unitário</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        <tr><td>Comida</td><td class="num" id="unitComida">—</td><td class="num" id="totalComida">—</td></tr>
+        <tr><td>Água Potável</td><td class="num" id="unitAgua">—</td><td class="num" id="totalAgua">—</td></tr>
+      </tbody>
+    </table>
+    <div class="total-line"><span class="rot">Total da viagem</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
+  </div>
+
+  <div class="panel">
+    <h2>🔨 Recursos para Recuperar o Barco</h2>
+    <p class="panel-note">
+      Reparo depende do PORTE do navio e da GRAVIDADE do dano, não da
+      tripulação — um casco maior custa mais pra consertar não importa
+      quantos marujos estejam a bordo. Isso é uma referência rápida pra
+      estimar na hora; a regra completa de construção/reparo do
+      Carpinteiro (Ofício) continua valendo se a mesa quiser o cálculo
+      exato em m³ e matéria-prima.
+    </p>
+    <div class="field-row">
+      <div class="field">
+        <label for="porteNavio">Porte do navio</label>
+        <select id="porteNavio">
+          <option value="5000">Pequeno — base 5.000 ฿</option>
+          <option value="15000">Médio — base 15.000 ฿</option>
+          <option value="40000">Grande — base 40.000 ฿</option>
+          <option value="100000">Enorme — base 100.000 ฿</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="gravidadeDano">Gravidade do dano</label>
+        <select id="gravidadeDano">
+          <option value="0.1">Arranhado — 10% do valor base</option>
+          <option value="0.35">Avariado — 35% do valor base</option>
+          <option value="0.7">Muito danificado — 70% do valor base</option>
+          <option value="1.2">Quase afundando — 120% do valor base</option>
+        </select>
+      </div>
+    </div>
+    <div class="total-line"><span class="rot">Custo estimado de reparo</span><span class="val" id="totalReparo">฿ 0</span></div>
+    <p class="mini" style="margin-top:10px">
+      Carpinteiro <span class="tag">Profissional</span> desconta 10%,
+      <span class="tag">Especialista</span> 20%, <span class="tag">Mestre</span>
+      30% do custo total de reparo (regra já existente do Ofício) — aplique
+      por cima do valor estimado se a tripulação tiver alguém no posto.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>⚓ Outros recursos sugeridos</h2>
+    <p class="panel-note">Ideias de mais itens de logística pra tripulação, na mesma lógica de custear a viagem — os dois primeiros também escalam por pessoa/semana, os de navegação são preço fechado (já usados no catálogo da ficha).</p>
+    <table class="data">
+      <thead><tr><th>Recurso</th><th>Pra que serve</th><th class="num">Preço de referência</th></tr></thead>
+      <tbody>
+        <tr><td>Pólvora e Munição</td><td>Mantém armas de fogo e canhões da tripulação abastecidos</td><td class="num">80 ฿/pessoa/semana<br>(canhão avulso: ~200 ฿/tiro)</td></tr>
+        <tr><td>Suprimentos Médicos</td><td>Curativos, remédios, antitoxina — repõe o que o Kit Médico gasta</td><td class="num">60 ฿/pessoa/semana</td></tr>
+        <tr><td>Rum / Bebida</td><td>Moral da tripulação — tradição pirata, não é obrigatório</td><td class="num">40 ฿/pessoa/semana</td></tr>
+        <tr><td>Materiais de Acampamento</td><td>Quando a tripulação desembarca por vários dias em terra firme</td><td class="num">30 ฿/pessoa/semana</td></tr>
+        <tr><td>Log Pose de reposição</td><td>Navegação — perder o Log Pose original é comum em naufrágio/roubo</td><td class="num">50.000 ฿</td></tr>
+        <tr><td>Eternal Pose</td><td>Rota permanente pra uma ilha específica — item raro, nem sempre à venda</td><td class="num">600.000 ฿</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+function fmtBelly(n){ return '฿ ' + Math.round(n).toLocaleString('pt-BR'); }
+function recalcular(){
+  const pessoas = Math.max(1, Number(document.getElementById('numPessoas').value) || 1);
+  const dias = Math.max(1, Number(document.getElementById('numDias').value) || 1);
+  const custoComida = Number(document.getElementById('qualComida').value);
+  const custoAgua = Number(document.getElementById('qualAgua').value);
+  const totalComida = pessoas * dias * custoComida;
+  const totalAgua = pessoas * dias * custoAgua;
+  document.getElementById('unitComida').textContent = fmtBelly(custoComida) + '/dia';
+  document.getElementById('unitAgua').textContent = fmtBelly(custoAgua) + '/dia';
+  document.getElementById('totalComida').textContent = fmtBelly(totalComida);
+  document.getElementById('totalAgua').textContent = fmtBelly(totalAgua);
+  document.getElementById('totalSuprimentos').textContent = fmtBelly(totalComida + totalAgua);
+
+  const base = Number(document.getElementById('porteNavio').value);
+  const gravidade = Number(document.getElementById('gravidadeDano').value);
+  document.getElementById('totalReparo').textContent = fmtBelly(base * gravidade);
+}
+['numPessoas','numDias','qualComida','qualAgua','porteNavio','gravidadeDano'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', recalcular);
+});
+recalcular();
+</script>
+</body>
+</html>

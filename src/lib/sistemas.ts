@@ -65,7 +65,7 @@ export const SISTEMAS: Sistema[] = [
     situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: null,
-    escudoMestre: null,
+    escudoMestre: "/kaizoku-no-sho-escudo-mestre.html",
     campoVidaInimigo: null,
     grimorio: "/kaizoku-no-sho-grimorio.html",
   },
