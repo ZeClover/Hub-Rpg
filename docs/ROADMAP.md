@@ -1316,10 +1316,22 @@ passando.
       com Playwright (Bruxo escolhendo Patrono no 1º nível, Guerreiro
       esperando até o 3º) sem regressão; `tsc`, lint e os 208 testes
       automáticos continuam limpos
-- [ ] D&D 5ª Edição — catálogo de magias, ficha de inimigo e Escudo do
-      Mestre — fatias futuras, uma de cada vez (decisão #26); os dois
-      últimos exigem Manual dos Monstros e Livro do Mestre, ainda não
-      enviados
+- [x] **D&D 5ª Edição — catálogo de magias** (04/09/2026) — decisão #84.
+      As ~361 magias do Livro do Jogador, cruzadas com a lista de acesso
+      de cada uma das 8 classes conjuradoras (Bardo, Bruxo, Clérigo,
+      Druida, Feiticeiro, Mago, Paladino, Patrulheiro). Aba Conjuração
+      ganhou seletores de catálogo pra truques e magias preparadas
+      (como o "+ Do catálogo" do SAO/Fabula Ultima) — escolher uma magia
+      já traz escola, tempo, alcance, componentes, duração e efeito
+      automaticamente, mais uma tabela de referência com o catálogo
+      inteiro da classe. Sete agentes em paralelo (extração de dados),
+      com retomada de sessão no meio do trabalho depois de um limite de
+      API — sem perder o que já tinha sido lido. Testado com Playwright
+      sem regressão nas três fatias anteriores; `tsc`, lint e os 208
+      testes automáticos continuam limpos
+- [ ] D&D 5ª Edição — ficha de inimigo e Escudo do Mestre — fatias
+      futuras (decisão #26); exigem Manual dos Monstros e Livro do
+      Mestre, ainda não enviados
 - [ ] Ometion
 
 ---

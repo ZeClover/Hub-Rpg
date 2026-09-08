@@ -3374,6 +3374,68 @@ Mestre (esses dois exigem Manual dos Monstros e Livro do Mestre, ainda
 não enviados — arquivos grandes, vão precisar ser divididos como o
 Livro do Jogador foi).
 
+## 84. D&D 5ª Edição — catálogo de magias (04/09/2026)
+
+Última peça pra deixar os 8 conjuradores (Bardo, Bruxo, Clérigo, Druida,
+Feiticeiro, Mago, Paladino, Patrulheiro) jogáveis de verdade — até aqui a
+aba Conjuração só deixava digitar nome de magia à mão, sem catálogo nem
+mecânica por trás.
+
+O Capítulo 11 (Magias) do Livro do Jogador tem duas partes bem
+diferentes: a **Lista de Magias** (só nomes, organizada por classe e por
+nível — quem pode conjurar o quê) e a **Descrição das Magias** (~360
+magias únicas, em ordem alfabética, cada uma com escola, tempo de
+conjuração, alcance, componentes, duração e o efeito completo). Sete
+agentes trabalharam em paralelo: um extraiu a lista por classe, seis
+dividiram as ~5500 linhas de descrições em fatias alfabéticas de ~900
+linhas cada.
+
+**Rate limit no meio do trabalho.** Os seis agentes de descrição bateram
+no limite de sessão da API bem na hora de escrever o arquivo final —
+cada um já tinha lido e processado o próprio trecho, só faltava salvar o
+JSON. Em vez de descartar o trabalho e começar de novo (o que jogaria
+fora leituras de texto caras), retomei os agentes que ainda existiam
+(`SendMessage` pro `agentId` original) pra eles terminarem de escrever
+a partir da própria memória — sem reler o texto fonte de novo. Os dois
+que não tinham travado nesse ponto exato (parte 4 e 6) já tinham
+concluído antes de cair.
+
+**Checagem de fronteira entre fatias.** Cada agente lia um intervalo de
+linhas fixo, o que corre risco de cortar uma magia ao meio ou duplicá-la
+entre dois agentes vizinhos (o layout do PDF em duas/três colunas
+também intercala texto de forma confusa, então cada agente teve que
+reconstruir a ordem de leitura por conta própria). Depois de juntar as
+seis partes, cruzei o resultado com a lista por classe: de ~365 magias
+brutas, 4 eram duplicatas de fronteira (removidas) e sobraram 361
+únicas — contra a lista por classe, só 3 nomes não bateram, e eram só
+diferença de grafia (ex. "Enfraquecer o Intelecto" vs "Enfraquecer
+Intelecto"), não magia faltando de verdade. Corrigido normalizando os 3
+nomes na lista por classe pros nomes canônicos das descrições.
+
+Escolher uma classe conjuradora agora mostra um catálogo de verdade na
+aba Conjuração: truques e magias preparadas viram seletores (como o "+
+Do catálogo" que o SAO e o Fabula Ultima já usam pra golpes/magias),
+filtrados pelas magias que aquela classe específica tem acesso e pelo
+nível certo — escolher uma já mostra tempo de conjuração, alcance,
+componentes, duração e o efeito completo, sem precisar digitar nada.
+Uma tabela de referência com o catálogo inteiro da classe também fica
+disponível na mesma aba.
+
+Mesma regra de direito autoral de sempre: cada efeito foi resumido com
+palavras próprias pelos agentes, preservando números/dados/CDs (que são
+mecânica, não prosa) — nunca a frase literal do livro.
+
+Testado com Playwright: aba Conjuração do Mago mostrando CD/bônus de
+ataque calculados, catálogo de magias da classe completo, truque e
+magia preparada escolhidos no seletor já trazendo os detalhes mecânicos
+automaticamente, classe não-conjuradora continuando sem catálogo,
+persistência após recarregar — mais toda a bateria de testes das três
+fatias anteriores de D&D sem regressão. `tsc --noEmit`, `npm run lint`
+e os 208 testes automáticos continuam limpos.
+
+**Segue fora de escopo:** ficha de inimigo e Escudo do Mestre — ainda
+exigem Manual dos Monstros e Livro do Mestre, não enviados.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
