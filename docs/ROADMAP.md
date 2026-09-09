@@ -1382,6 +1382,14 @@ passando.
       API — sem perder o que já tinha sido lido. Testado com Playwright
       sem regressão nas três fatias anteriores; `tsc`, lint e os 208
       testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — Modo Guiado** (09/09/2026) — decisão #95. A
+      mesma tela de criação passo a passo dos outros quatro sistemas
+      (SAO, Fabula Ultima, Kaizoku no Sho, Thrylikí Chelóna): Nome+Raça
+      → Classe+Antecedente(+Subclasse) → Atributos+Perícias → Resumo
+      com PV/CA calculados. Personagem novo já abre nela; botão na
+      barra alterna a qualquer momento. Testado com Playwright sem
+      regressão nas quatro fatias anteriores; `tsc`, lint e os 208
+      testes automáticos continuam limpos
 - [ ] D&D 5ª Edição — ficha de inimigo e Escudo do Mestre — fatias
       futuras (decisão #26); exigem Manual dos Monstros e Livro do
       Mestre, ainda não enviados

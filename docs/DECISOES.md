@@ -3868,6 +3868,45 @@ e os 208 testes automáticos continuam limpos.
 **Segue fora de escopo:** ficha de inimigo e Escudo do Mestre — ainda
 exigem Manual dos Monstros e Livro do Mestre, não enviados.
 
+## 95. D&D 5ª Edição — Modo Guiado (09/09/2026)
+
+O Zé notou que o D&D não tinha o Modo Guiado que os outros quatro
+sistemas do Hub já têm (SAO, Fabula Ultima, Kaizoku no Sho, Thrylikí
+Chelóna) — uma tela alternativa de criação passo a passo, pro personagem
+novo não abrir direto numa ficha cheia de campos.
+
+Mesmo padrão dos outros sistemas: personagem novo (`+ Novo`) já abre no
+Modo Guiado; o botão na barra ("🧭 Modo Guiado" / "📋 Ver ficha completa")
+alterna a qualquer momento; é só uma forma diferente de mostrar os
+mesmos campos — sem estado próprio, sem duplicar dado.
+
+Quatro passos, seguindo a ordem natural de criação de personagem do
+próprio livro:
+
+1. **Nome e Raça** — a raça já aplica bônus de atributo e traços sozinha
+2. **Classe e Antecedente** — junto da subclasse, se o nível já permitir
+   escolher (reaproveita a mesma lógica da decisão #93)
+3. **Atributos e Perícias** — reaproveita a aba de Perícias inteira
+   (`abaPericias`), então o limite de escolha da classe e as concedidas
+   pelo antecedente já funcionam igual à ficha completa
+4. **Resumo** — PV, CA, iniciativa e percepção passiva calculados
+   (reaproveita `painelDerivados`), com "Concluir" levando pra ficha
+   completa
+
+Como os campos são os mesmos (mesmos `id`, mesmo `data-*`), a função que
+liga os eventos (`ligarEventos`) não precisou de nenhum caso novo — só
+os três botões de navegação (Próximo/Voltar/Concluir).
+
+Testado com Playwright: personagem novo abre em "Passo 1 de 4",
+preencher nome+raça e avançar até o resumo funciona, "Voltar" preserva
+o que já foi preenchido, "Concluir" leva pra ficha completa com os
+dados persistidos, e o botão da barra reabre o Modo Guiado a qualquer
+momento — mais toda a bateria de testes das quatro fatias anteriores de
+D&D sem regressão (precisou só ajustar os testes antigos, que abriam a
+ficha completa direto após "+ Novo" — comportamento que mudou de
+propósito). `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

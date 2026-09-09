@@ -102,6 +102,7 @@ main{max-width:960px; margin:0 auto; padding:20px 16px 80px}
 <div class="barra">
   <span class="marca">D&amp;D 5ª Edição</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--ambar);text-decoration:none;font-size:13px">← Fichas</a>
+  <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
     <input type="checkbox" id="chkCompartilhar" style="width:auto">
     Compartilhar (link de leitura)
@@ -12326,6 +12327,10 @@ const estado = {
   erroHub: null,
   ehDono: false,
   compartilhado: false,
+  // modoGuiado/passoGuiado: tela alternativa de criação passo a passo — não
+  // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
+  modoGuiado: false,
+  passoGuiado: 1,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -12435,14 +12440,16 @@ function render(){
            Pode ser aba anônima ou armazenamento cheio. Exporte agora para não
            perder o que você preencheu.</div>`) : '';
 
-  app.innerHTML = alerta
-    + `<div class="abas">` + ABAS.map(a =>
-        `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-      ).join('') + `</div>`
-    + painelDerivados(p)
-    + ({status:abaStatus, pericias:abaPericias, combate:abaCombate, talentos:abaTalentos, conjuracao:abaConjuracao, equipamento:abaEquipamento, notas:abaNotas}[estado.aba])(p);
+  app.innerHTML = estado.modoGuiado
+    ? alerta + telaGuiada(p)
+    : alerta
+      + `<div class="abas">` + ABAS.map(a =>
+          `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
+        ).join('') + `</div>`
+      + painelDerivados(p)
+      + ({status:abaStatus, pericias:abaPericias, combate:abaCombate, talentos:abaTalentos, conjuracao:abaConjuracao, equipamento:abaEquipamento, notas:abaNotas}[estado.aba])(p);
 
-  const chaveTela = `aba:${estado.aba}`;
+  const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : `aba:${estado.aba}`;
   app.classList.remove('entra');
   if(chaveTela !== ultimaChaveTela){
     void app.offsetWidth;
@@ -12459,6 +12466,11 @@ function render(){
 }
 
 function desenharBarra(){
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.hidden = !atual();
+  btModoGuiado.textContent = estado.modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = estado.modoGuiado ? 'destaque' : '';
+
   if(MODO_HUB){
     document.getElementById('seletor').hidden = true;
     document.getElementById('btNovo').hidden = true;
@@ -12516,6 +12528,136 @@ function painelDerivados(p){
 function campo(rotulo, chave, valor, tipo){
   return `<div><label for="c-${chave}">${rotulo}</label>
     <input id="c-${chave}" data-perfil="${chave}" type="${tipo||'text'}" value="${esc(valor)}"></div>`;
+}
+
+// Extraído de abaStatus pra dar pra reusar no Modo Guiado (telaGuiada).
+function blocoAtributosDnd(p){
+  return `<div class="grade g6">
+      ${ATRIBUTOS.map(a => {
+        const base = p.atributos[a.id] ?? 10;
+        const final = valorAtributo(p, a.id);
+        const mod = modFinal(p, a.id);
+        const bonusR = bonusRacial(p, a.id);
+        return `<div>
+          <label for="c-atr-${a.id}">${a.nome}</label>
+          <input id="c-atr-${a.id}" data-atributo="${a.id}" type="number" min="1" max="30" value="${base}">
+          <div class="mini" style="text-align:center;margin-top:4px">
+            ${bonusR ? `${final} (+${bonusR} racial)` : `${final}`} · <strong style="color:var(--ambar-forte)">${fmtMod(mod)}</strong>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <p class="mini" style="margin-top:10px">Array padrão sugerido pro 1º nível: ${GERACAO_ATRIBUTOS.arrayPadrao.join(', ')} (distribua entre os 6 atributos antes do bônus racial).</p>`;
+}
+
+function telaGuiada(p){
+  const passo = estado.passoGuiado;
+  const totalPassos = 4;
+  const r = raca(p.perfil.racaId);
+  const c = classe(p.perfil.classeId);
+  const opcoesSubclasse = p.perfil.classeId ? subclassesDaClasse(p.perfil.classeId) : [];
+  const nivelSubclasse = p.perfil.classeId ? nivelEscolhaSubclasse(p.perfil.classeId) : null;
+  const podeEscolherSubclasse = nivelSubclasse !== null && nivel(p) >= nivelSubclasse;
+
+  const cabecalho = `
+    <div class="cartao" style="text-align:center">
+      <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${Array.from({length: totalPassos}, (_, i) => i+1).map(n =>
+          `<span style="width:26px;height:4px;border-radius:2px;background:${n<=passo?'var(--ambar)':'var(--borda)'}"></span>`).join('')}
+      </div>
+    </div>`;
+
+  if(passo === 1){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">1. Quem é seu personagem?</h2>
+      <p class="mini" style="margin:6px 0 14px">O nome e a raça dele — a raça já aplica bônus de atributo e traços sozinha.</p>
+      <div class="grade g2">
+        ${campo('Nome', 'nome', p.perfil.nome)}
+        <div><label for="c-nivel">Nível</label>
+          <input id="c-nivel" type="number" min="1" max="20" value="${nivel(p)}"></div>
+      </div>
+      <div class="grade g2" style="margin-top:14px">
+        <div><label for="c-raca">Raça</label>
+          <select id="c-raca">
+            <option value="">— escolher —</option>
+            ${RACAS.map(x => `<option value="${x.id}" ${x.id===p.perfil.racaId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+          </select></div>
+        <div><label for="c-subraca">Sub-raça</label>
+          <select id="c-subraca" ${!r || !r.subracas.length ? 'disabled' : ''}>
+            <option value="">${r && r.subracas.length ? '— escolher —' : '— não se aplica —'}</option>
+            ${r ? r.subracas.map(x => `<option value="${x.id}" ${x.id===p.perfil.subracaId?'selected':''}>${esc(x.nome)}</option>`).join('') : ''}
+          </select></div>
+      </div>
+      ${!r ? '' : `<p class="mini" style="margin-top:10px">Deslocamento ${r.deslocamento}m · Tamanho ${esc(r.tamanho)} · ${r.tracos.length} traço(s) racial(is) — dá pra ver todos na ficha completa depois.</p>`}
+    </div>
+    <div class="linha" style="justify-content:flex-end">
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 2){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">2. Classe e Antecedente</h2>
+      <p class="mini" style="margin:6px 0 14px">A classe decide dado de vida, proficiências e perícias disponíveis; o antecedente concede duas perícias fixas.</p>
+      <div class="grade g2">
+        <div><label for="c-classe">Classe</label>
+          <select id="c-classe">
+            <option value="">— escolher —</option>
+            ${CLASSES.map(x => `<option value="${x.id}" ${x.id===p.perfil.classeId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+          </select></div>
+        <div><label for="c-antecedente">Antecedente</label>
+          <select id="c-antecedente">
+            <option value="">— escolher —</option>
+            ${ANTECEDENTES.map(x => `<option value="${esc(x.nome)}" ${x.nome===p.perfil.antecedente?'selected':''}>${esc(x.nome)}</option>`).join('')}
+          </select></div>
+      </div>
+      ${!c ? '' : `<p class="mini" style="margin-top:10px">Dado de vida <strong>${esc(c.dadoDeVida)}</strong> · perícias da classe: escolha ${c.periciasDisponiveis.escolha} (dá pra marcar na ficha completa) · proficiência em armaduras: ${c.proficienciaArmaduras.length?esc(c.proficienciaArmaduras.join(', ')):'nenhuma'} · armas: ${esc(c.proficienciaArmas.join(', '))}</p>`}
+      ${!opcoesSubclasse.length ? '' : podeEscolherSubclasse ? `<div style="margin-top:14px">
+        <label for="c-subclasse">${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'Subclasse')}</label>
+        <select id="c-subclasse">
+          <option value="">— escolher —</option>
+          ${opcoesSubclasse.map(x => `<option value="${x.id}" ${x.id===p.perfil.subclasseId?'selected':''}>${esc(x.nome)}</option>`).join('')}
+        </select>
+      </div>` : ''}
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 3){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Atributos</h2>
+      <p class="mini" style="margin:6px 0 14px">Distribua o array padrão entre os 6 atributos — o bônus racial e o modificador já aparecem calculados.</p>
+      ${blocoAtributosDnd(p)}
+    </div>
+    ${abaPericias(p)}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 4: resumo + próximos passos
+  return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">4. Pronto pra jogar!</h2>
+      <p class="mini" style="margin:6px 0 14px">
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial — PV, CA e testes
+        calculados sozinhos. Equipamento, talentos e conjuração (se a classe conjurar)
+        você preenche na ficha completa, aos poucos.
+      </p>
+    </div>
+    ${painelDerivados(p)}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
+    </div>`;
 }
 
 function abaStatus(p){
@@ -12585,22 +12727,7 @@ function abaStatus(p){
 
   <div class="cartao">
     <h2 style="font-size:16px;margin-bottom:12px">Atributos</h2>
-    <div class="grade g6">
-      ${ATRIBUTOS.map(a => {
-        const base = p.atributos[a.id] ?? 10;
-        const final = valorAtributo(p, a.id);
-        const mod = modFinal(p, a.id);
-        const bonusR = bonusRacial(p, a.id);
-        return `<div>
-          <label for="c-atr-${a.id}">${a.nome}</label>
-          <input id="c-atr-${a.id}" data-atributo="${a.id}" type="number" min="1" max="30" value="${base}">
-          <div class="mini" style="text-align:center;margin-top:4px">
-            ${bonusR ? `${final} (+${bonusR} racial)` : `${final}`} · <strong style="color:var(--ambar-forte)">${fmtMod(mod)}</strong>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-    <p class="mini" style="margin-top:10px">Array padrão sugerido pro 1º nível: ${GERACAO_ATRIBUTOS.arrayPadrao.join(', ')} (distribua entre os 6 atributos antes do bônus racial).</p>
+    ${blocoAtributosDnd(p)}
   </div>
 
   <div class="cartao">
@@ -12930,6 +13057,18 @@ function ligarEventos(){
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
 
+  // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
+  const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
+  if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
+  const btGuiadoAnterior = app.querySelector('#btGuiadoAnterior');
+  if(btGuiadoAnterior) btGuiadoAnterior.onclick = () => { estado.passoGuiado -= 1; render(); };
+  const btGuiadoConcluir = app.querySelector('#btGuiadoConcluir');
+  if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
+    estado.modoGuiado = false;
+    estado.aba = 'status';
+    render();
+  };
+
   app.querySelectorAll('[data-perfil]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => { p.perfil[el.dataset.perfil] = el.value; }, el));
 
@@ -13058,13 +13197,22 @@ function ligarEventos(){
 
 /* --- Barra: novo / seletor / exportar / importar / excluir -------------- */
 
-document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; estado.aba = 'status'; render(); };
+document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; estado.aba = 'status'; estado.modoGuiado = false; render(); };
 document.getElementById('btNovo').onclick = () => {
   const p = novoPersonagem();
   estado.fichas.push(p);
   estado.atualId = p.id;
   estado.aba = 'status';
+  // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
+  // com um clique em "Ver ficha completa" (barra do topo).
+  estado.modoGuiado = true;
+  estado.passoGuiado = 1;
   salvar(); render();
+};
+document.getElementById('btModoGuiado').onclick = () => {
+  estado.modoGuiado = !estado.modoGuiado;
+  estado.passoGuiado = 1;
+  render();
 };
 document.getElementById('btExcluir').onclick = () => {
   const p = atual(); if(!p) return;
