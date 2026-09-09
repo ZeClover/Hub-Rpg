@@ -3907,6 +3907,35 @@ ficha completa direto após "+ Novo" — comportamento que mudou de
 propósito). `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
 continuam limpos.
 
+## 96. D&D 5ª Edição — explicar termos do jogo no Modo Guiado (09/09/2026)
+
+O Zé testou o Modo Guiado (decisão #95) e achou que "ainda tá pouco
+explicado" — não a interface, mas os próprios termos de D&D, que são
+estranhos pra quem nunca jogou o sistema.
+
+Cada um dos 4 passos ganhou um parágrafo curto (estilo `<p class="mini">`,
+igual o resto da ficha) explicando os conceitos que aparecem naquele
+passo, em português comum:
+
+1. **Nome e Raça** — o que é bônus de atributo e traço racial (dados
+   automáticos, o jogador não calcula nada)
+2. **Classe e Antecedente** — dado de vida, proficiência (o que acontece
+   se usar arma/armadura sem ela), o que é um antecedente, e o que é uma
+   subclasse (com aviso de "só a partir do nível X" quando ainda não dá
+   pra escolher)
+3. **Atributos e Perícias** — o significado de cada um dos 6 atributos
+   (ganhou um campo `sobre` novo, igual o SAO já tem em `ATRIBUTOS`), o
+   que é o array padrão, por que o modificador é o número que importa, e
+   o que são perícia e bônus de proficiência
+4. **Resumo** — o que PV, CA, Iniciativa e Percepção Passiva significam
+   na prática, não só a fórmula
+
+Nada de mecânica mudou — só texto explicativo a mais, reaproveitando os
+mesmos dados (`ATRIBUTOS`, `NOMES_SUBCLASSE`) que já existiam. Testado
+com Playwright (Modo Guiado passo a passo e as quatro baterias
+anteriores de D&D), sem regressão. `tsc --noEmit`, `npm run lint` e os
+208 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -152,12 +152,12 @@ main{max-width:960px; margin:0 auto; padding:20px 16px 80px}
 /* --- Regras do sistema, em forma de dados -------------------------------- */
 
 const ATRIBUTOS = [
-  {id:'forca',        nome:'Força'},
-  {id:'destreza',     nome:'Destreza'},
-  {id:'constituicao', nome:'Constituição'},
-  {id:'inteligencia', nome:'Inteligência'},
-  {id:'sabedoria',    nome:'Sabedoria'},
-  {id:'carisma',      nome:'Carisma'},
+  {id:'forca',        nome:'Força',        sobre:'poder físico — atacar corpo a corpo, carregar peso'},
+  {id:'destreza',     nome:'Destreza',     sobre:'agilidade e reflexos — esquivar, atacar à distância, furtividade'},
+  {id:'constituicao', nome:'Constituição', sobre:'resistência física — quantos pontos de vida você ganha por nível'},
+  {id:'inteligencia', nome:'Inteligência', sobre:'raciocínio e memória — conhecimento, magias de Mago'},
+  {id:'sabedoria',    nome:'Sabedoria',    sobre:'percepção e intuição — notar coisas, magias de Clérigo e Druida'},
+  {id:'carisma',      nome:'Carisma',      sobre:'força de personalidade — convencer, intimidar, magias de Bardo e Bruxo'},
 ];
 
 // Modificador = (valor - 10) / 2, arredondado pra baixo.
@@ -12544,10 +12544,14 @@ function blocoAtributosDnd(p){
           <div class="mini" style="text-align:center;margin-top:4px">
             ${bonusR ? `${final} (+${bonusR} racial)` : `${final}`} · <strong style="color:var(--ambar-forte)">${fmtMod(mod)}</strong>
           </div>
+          <p class="mini" style="margin-top:6px">${esc(a.sobre)}</p>
         </div>`;
       }).join('')}
     </div>
-    <p class="mini" style="margin-top:10px">Array padrão sugerido pro 1º nível: ${GERACAO_ATRIBUTOS.arrayPadrao.join(', ')} (distribua entre os 6 atributos antes do bônus racial).</p>`;
+    <p class="mini" style="margin-top:10px">
+      <strong>Array padrão</strong> sugerido pro 1º nível: ${GERACAO_ATRIBUTOS.arrayPadrao.join(', ')} — distribua esses 6 números entre os 6 atributos (na ordem que quiser), antes do bônus racial ser somado.
+      O número ao lado de cada atributo é só de referência — quem entra nas contas de ataque, testes e magia é o <strong style="color:var(--ambar-forte)">modificador</strong> (o número com + ou − ao lado), calculado a partir dele.
+    </p>`;
 }
 
 function telaGuiada(p){
@@ -12572,7 +12576,7 @@ function telaGuiada(p){
     return cabecalho + `
     <div class="cartao">
       <h2 style="font-size:18px">1. Quem é seu personagem?</h2>
-      <p class="mini" style="margin:6px 0 14px">O nome e a raça dele — a raça já aplica bônus de atributo e traços sozinha.</p>
+      <p class="mini" style="margin:6px 0 14px">O nome e a raça dele. Toda raça dá um <strong>bônus de atributo</strong> (pontos extras somados automaticamente a um ou mais dos 6 atributos que você distribui no passo 3) e um ou mais <strong>traços raciais</strong> (uma habilidade especial gratuita, só por ser daquela raça — ver no escuro, resistência a veneno, etc.). Os dois são aplicados sozinhos, sem você precisar calcular nada.</p>
       <div class="grade g2">
         ${campo('Nome', 'nome', p.perfil.nome)}
         <div><label for="c-nivel">Nível</label>
@@ -12601,7 +12605,7 @@ function telaGuiada(p){
     return cabecalho + `
     <div class="cartao">
       <h2 style="font-size:18px">2. Classe e Antecedente</h2>
-      <p class="mini" style="margin:6px 0 14px">A classe decide dado de vida, proficiências e perícias disponíveis; o antecedente concede duas perícias fixas.</p>
+      <p class="mini" style="margin:6px 0 14px">A <strong>classe</strong> decide o <strong>dado de vida</strong> (o dado que você rola pra saber quanto PV ganha a cada nível — um d12 aguenta muito mais dano que um d6), quais armas e armaduras você usa sem penalidade (isso é <strong>proficiência</strong> — usar algo sem ela prejudica seu ataque) e quais perícias ficam disponíveis. O <strong>antecedente</strong> é o que seu personagem fazia antes de virar aventureiro (soldado, criminoso, sábio...) e sempre dá 2 perícias fixas, de graça.</p>
       <div class="grade g2">
         <div><label for="c-classe">Classe</label>
           <select id="c-classe">
@@ -12616,12 +12620,13 @@ function telaGuiada(p){
       </div>
       ${!c ? '' : `<p class="mini" style="margin-top:10px">Dado de vida <strong>${esc(c.dadoDeVida)}</strong> · perícias da classe: escolha ${c.periciasDisponiveis.escolha} (dá pra marcar na ficha completa) · proficiência em armaduras: ${c.proficienciaArmaduras.length?esc(c.proficienciaArmaduras.join(', ')):'nenhuma'} · armas: ${esc(c.proficienciaArmas.join(', '))}</p>`}
       ${!opcoesSubclasse.length ? '' : podeEscolherSubclasse ? `<div style="margin-top:14px">
+        <p class="mini" style="margin-bottom:6px">Uma <strong>${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'subclasse')}</strong> é uma especialização dentro da classe — muda parte das habilidades que você recebe dali pra frente. Essa classe já deixa escolher.</p>
         <label for="c-subclasse">${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'Subclasse')}</label>
         <select id="c-subclasse">
           <option value="">— escolher —</option>
           ${opcoesSubclasse.map(x => `<option value="${x.id}" ${x.id===p.perfil.subclasseId?'selected':''}>${esc(x.nome)}</option>`).join('')}
         </select>
-      </div>` : ''}
+      </div>` : `<p class="mini" style="margin-top:14px">Essa classe também tem <strong>${esc(NOMES_SUBCLASSE[p.perfil.classeId] || 'subclasse')}</strong> (uma especialização dentro da classe), mas só a partir do ${nivelSubclasse}º nível — por enquanto não tem o que escolher.</p>`}
     </div>
     <div class="linha" style="justify-content:space-between">
       <button id="btGuiadoAnterior">← Voltar</button>
@@ -12635,6 +12640,12 @@ function telaGuiada(p){
       <h2 style="font-size:18px">3. Atributos</h2>
       <p class="mini" style="margin:6px 0 14px">Distribua o array padrão entre os 6 atributos — o bônus racial e o modificador já aparecem calculados.</p>
       ${blocoAtributosDnd(p)}
+    </div>
+    <div class="cartao">
+      <p class="mini" style="margin-bottom:10px">
+        Cada <strong>perícia</strong> abaixo é uma habilidade específica (Persuasão, Furtividade, Percepção...) ligada a um dos 6 atributos.
+        Ficar bom nela (proficiente) soma o <strong>bônus de proficiência</strong> — um número que só cresce com o nível — ao seu modificador do atributo.
+      </p>
     </div>
     ${abaPericias(p)}
     <div class="linha" style="justify-content:space-between">
@@ -12654,6 +12665,14 @@ function telaGuiada(p){
       </p>
     </div>
     ${painelDerivados(p)}
+    <div class="cartao">
+      <p class="mini">
+        <strong>Pontos de Vida (PV)</strong>: quanto dano seu personagem aguenta antes de cair — chegar a 0 deixa inconsciente.
+        <strong>Classe de Armadura (CA)</strong>: quão difícil é te acertar num ataque; quanto maior, melhor.
+        <strong>Iniciativa</strong>: decide a ordem dos turnos no combate — rola um d20 e soma esse número.
+        <strong>Percepção Passiva</strong>: o quanto seu personagem nota sem precisar rolar dado, útil pro mestre saber se ele repara em algo escondido.
+      </p>
+    </div>
     <div class="linha" style="justify-content:space-between">
       <button id="btGuiadoAnterior">← Voltar</button>
       <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>

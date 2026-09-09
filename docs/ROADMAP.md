@@ -1390,6 +1390,15 @@ passando.
       barra alterna a qualquer momento. Testado com Playwright sem
       regressão nas quatro fatias anteriores; `tsc`, lint e os 208
       testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — explicar termos do jogo no Modo Guiado**
+      (09/09/2026) — decisão #96. Cada um dos 4 passos ganhou um
+      parágrafo curto explicando os termos que aparecem nele (bônus de
+      atributo, traço racial, dado de vida, proficiência, antecedente,
+      subclasse, array padrão, modificador, perícia, bônus de
+      proficiência, PV, CA, Iniciativa, Percepção Passiva), em
+      português comum. Só texto a mais, nenhuma mecânica mudou. Testado
+      com Playwright sem regressão nas cinco fatias anteriores; `tsc`,
+      lint e os 208 testes automáticos continuam limpos
 - [ ] D&D 5ª Edição — ficha de inimigo e Escudo do Mestre — fatias
       futuras (decisão #26); exigem Manual dos Monstros e Livro do
       Mestre, ainda não enviados
