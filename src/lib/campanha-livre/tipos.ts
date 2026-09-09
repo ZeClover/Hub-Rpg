@@ -98,11 +98,16 @@ export type CodexLivre = {
   criadoEm: number;
 };
 
+/** Regra #15/#120 do pedido: mapa por descoberta, nunca revela tudo de graça. */
+export type EstadoDescobertaLocal = "ouviu_falar" | "conhecido" | "visitado";
+
 export type LocalLivre = {
   id: string;
   nome: string;
   descricao?: string;
-  descoberto: boolean;
+  estadoDescoberta: EstadoDescobertaLocal;
+  /** Nomes livres de outros locais conhecidos que ligam com este — sem coordenadas nem mapa gráfico (regra: começar simples). */
+  conexoesConhecidas: string[];
   conhecimento: string[];
   criadoEm: number;
 };
@@ -482,7 +487,19 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     npcs: Array.isArray(d.npcs) ? d.npcs : [],
     descobertas: Array.isArray(d.descobertas) ? d.descobertas : [],
     codex: Array.isArray(d.codex) ? d.codex : [],
-    locais: Array.isArray(d.locais) ? d.locais : [],
+    // Fichas de antes desta fatia guardavam `descoberto: boolean` em vez do
+    // estado de 3 valores — migra sem perder a informação (true -> visitado,
+    // false -> ouviu falar) e completa `conexoesConhecidas` ausente.
+    locais: Array.isArray(d.locais)
+      ? d.locais.map((l) => {
+          const bruto = l as unknown as { estadoDescoberta?: EstadoDescobertaLocal; descoberto?: boolean; conexoesConhecidas?: string[] };
+          return {
+            ...l,
+            estadoDescoberta: bruto.estadoDescoberta ?? (bruto.descoberto === false ? "ouviu_falar" : "visitado"),
+            conexoesConhecidas: Array.isArray(bruto.conexoesConhecidas) ? bruto.conexoesConhecidas : [],
+          };
+        })
+      : [],
     criaturas: Array.isArray(d.criaturas) ? d.criaturas : [],
     diario: Array.isArray(d.diario) ? d.diario : [],
     modificadoresTemporarios: Array.isArray(d.modificadoresTemporarios) ? d.modificadoresTemporarios : [],

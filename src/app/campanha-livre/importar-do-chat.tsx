@@ -622,13 +622,18 @@ function DescricaoMudanca({
     return (
       <div className="text-sm text-texto">
         <p>
-          <strong>{mudanca.nome}</strong>: +{mudanca.conhecimentoNovo.length} informação(ões)
+          <strong>{mudanca.nome}</strong>
+          {mudanca.conhecimentoNovo.length > 0 && <> — +{mudanca.conhecimentoNovo.length} informação(ões)</>}
+          {mudanca.conexoesNovas.length > 0 && <> — +{mudanca.conexoesNovas.length} conexão(ões)</>}
+          {mudanca.estadoDescoberta && <> — estado → {mudanca.estadoDescoberta}</>}
         </p>
-        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
-          {mudanca.conhecimentoNovo.map((c, i) => (
-            <li key={i}>{c}</li>
-          ))}
-        </ul>
+        {mudanca.conhecimentoNovo.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.conhecimentoNovo.map((c, i) => (
+              <li key={i}>{c}</li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   }

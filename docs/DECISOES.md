@@ -4095,6 +4095,47 @@ cancelar uma aula faz ela sumir do "bloco atual" imediatamente. `tsc
 --noEmit`, `npm run lint`, `npm run build` e os 246 testes automáticos
 (220 + 26) continuam limpos.
 
+## 100. Academia Mágica — Mapa por descoberta (09/09/2026)
+
+Terceira fatia da Academia Mágica. "Locais" já existia no Campanha
+Livre (decisão original do protocolo v1.0), mas só tinha um
+`descoberto: boolean` — o pedido (partes #15/#120) queria um estado de
+3 valores (**ouviu falar** / **conhecido** / **visitado**), igual ao
+resto do mapa: "não revelar mapa completo automaticamente".
+
+**Migração, não campo duplicado** (regra #124: "se pode ser derivado
+com segurança, não persistir duplicado"): `descoberto: boolean` saiu,
+virou `estadoDescoberta: "ouviu_falar" | "conhecido" | "visitado"`.
+Fichas antigas migram sozinhas em `normalizarPersonagemLivre`
+(`descoberto: true` → `visitado`, `false` → `ouviu_falar`) — sem perder
+informação, sem exigir nada do Zé. O HUB_UPDATE também aceita os dois
+formatos: `discovery_state: heard/known/visited` (novo) continua
+funcionando com o `discovered: true/false` antigo se algum prompt salvo
+ainda usar esse formato.
+
+Também adiciona `conexoesConhecidas: string[]` em cada local — nomes
+livres de outros locais conhecidos que ligam com este (regra #16:
+"atalhos conhecidos"), sem coordenadas nem mapa gráfico de verdade
+(regra #15: "não transformar em editor gráfico complexo, começar
+simples e útil"). `locations_update` ganhou `connections_add` e
+`discovery_state` como ações válidas, além do `known_information_add`
+que já existia — qualquer uma sozinha já é suficiente pra não dar
+error.
+
+Tela: select de estado de descoberta em vez do checkbox binário, lista
+de conexões com formulário de adicionar (mesmo padrão do
+"Conhecimento" que os NPCs já tinham).
+
+Testado: migração de ficha antiga coberta por um `tipos.test.ts` novo
+(não existia teste dedicado pra `normalizarPersonagemLivre` até agora,
+apesar de já ser uma função crítica — aproveitei pra cobrir também os
+outros fallbacks de ficha antiga: calendário/compromissos/mural
+ausentes, `dados: {}` de ficha nunca aberta). Mais testes de parser/
+aplicar/desfazer pros dois formatos de HUB_UPDATE (legado e novo) e
+verificação no navegador de verdade (mesma técnica das decisões
+#98/#99). `tsc --noEmit`, `npm run lint`, `npm run build` e os 256
+testes automáticos (246 + 10) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

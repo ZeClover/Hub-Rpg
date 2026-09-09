@@ -279,10 +279,34 @@ test("aplica locations_add e locations_update", () => {
   const ficha = novoPersonagemLivre("Zé");
   const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("locations_add:\n  - name: Jardim Norte\n    description: Região de coleta."));
   assert.equal(d1.locais.length, 1);
-  assert.equal(d1.locais[0].descoberto, true);
+  assert.equal(d1.locais[0].estadoDescoberta, "visitado");
 
   const { dados: d2 } = aplicarMudancas(d1, mudancasDe("locations_update:\n  - name: Jardim Norte\n    known_information_add:\n      - Reage à mana."));
   assert.deepEqual(d2.locais[0].conhecimento, ["Reage à mana."]);
+});
+
+test("locations_add com discovery_state 'heard' e locations_update com connections_add e discovery_state", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("locations_add:\n  - name: Torre Velha\n    discovery_state: heard"));
+  assert.equal(d1.locais[0].estadoDescoberta, "ouviu_falar");
+  assert.deepEqual(d1.locais[0].conexoesConhecidas, []);
+
+  const { dados: d2 } = aplicarMudancas(
+    d1,
+    mudancasDe("locations_update:\n  - name: Torre Velha\n    connections_add:\n      - Biblioteca\n    discovery_state: visited"),
+  );
+  assert.deepEqual(d2.locais[0].conexoesConhecidas, ["Biblioteca"]);
+  assert.equal(d2.locais[0].estadoDescoberta, "visitado");
+});
+
+test("desfazer locations_update (discovery_state) restaura o local inteiro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("locations_add:\n  - name: Torre Velha\n    discovery_state: heard"));
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("locations_update:\n  - name: Torre Velha\n    discovery_state: visited"));
+  assert.equal(d2.locais[0].estadoDescoberta, "visitado");
+  const eventoUpdate = d2.eventos.find((e) => e.tipo === "local_update")!;
+  const desfeito = desfazerEvento(d2, eventoUpdate.id);
+  assert.equal(desfeito.locais[0].estadoDescoberta, "ouviu_falar");
 });
 
 test("aplica bestiary_add", () => {

@@ -39,6 +39,7 @@ import { parse as parseYaml } from "yaml";
 import type {
   CategoriaMural,
   DiaSemana,
+  EstadoDescobertaLocal,
   ObjetivoMissao,
   OrigemCompromisso,
   StatusCompromisso,
@@ -235,13 +236,15 @@ export type MudancaLocalAdd = Base & {
   tipo: "local_add";
   nome: string;
   descricao?: string;
-  descoberto: boolean;
+  estadoDescoberta: EstadoDescobertaLocal;
 };
 
 export type MudancaLocalUpdate = Base & {
   tipo: "local_update";
   nome: string;
   conhecimentoNovo: string[];
+  conexoesNovas: string[];
+  estadoDescoberta?: EstadoDescobertaLocal;
 };
 
 export type MudancaCriaturaAdd = Base & {
@@ -566,6 +569,12 @@ const TIPOS_EXCECAO_CALENDARIO_MAP: Record<string, TipoExcecaoCalendario> = {
   cancelled: "cancelado",
   changed: "alterado",
   added: "adicionado",
+};
+
+const ESTADOS_DESCOBERTA_LOCAL_MAP: Record<string, EstadoDescobertaLocal> = {
+  heard: "ouviu_falar",
+  known: "conhecido",
+  visited: "visitado",
 };
 
 const ORIGENS_COMPROMISSO: Record<string, OrigemCompromisso> = {
@@ -1478,12 +1487,20 @@ function interpretarLocalAdd(bruto: unknown): MudancaLocalAdd {
   const nome = typeof objeto.name === "string" ? objeto.name : null;
   if (!nome) alertas.push({ nivel: "error", mensagem: "Item em locations_add sem 'name'." });
 
+  const estadoBruto = typeof objeto.discovery_state === "string" ? objeto.discovery_state : undefined;
+  let estadoDescoberta = estadoBruto ? ESTADOS_DESCOBERTA_LOCAL_MAP[estadoBruto] : undefined;
+  if (estadoBruto && !estadoDescoberta) {
+    alertas.push({ nivel: "warning", mensagem: `Estado de descoberta desconhecido: "${estadoBruto}" — ignorado.` });
+  }
+  // legado: antes desta fatia o campo era `discovered: boolean` — continua aceito.
+  if (!estadoDescoberta) estadoDescoberta = objeto.discovered === false ? "ouviu_falar" : "visitado";
+
   return {
     id: proximoId(),
     tipo: "local_add",
     nome: nome ?? "(sem nome)",
     descricao: typeof objeto.description === "string" ? objeto.description : undefined,
-    descoberto: objeto.discovered !== false,
+    estadoDescoberta,
     alertas,
   };
 }
@@ -1497,8 +1514,21 @@ function interpretarLocalUpdate(bruto: unknown): MudancaLocalUpdate {
   const conhecimentoNovo = Array.isArray(objeto.known_information_add)
     ? objeto.known_information_add.filter((t): t is string => typeof t === "string")
     : [];
-  if (conhecimentoNovo.length === 0) {
-    alertas.push({ nivel: "error", mensagem: `locations_update para "${nome ?? "?"}" não tem 'known_information_add'.` });
+  const conexoesNovas = Array.isArray(objeto.connections_add)
+    ? objeto.connections_add.filter((t): t is string => typeof t === "string")
+    : [];
+
+  const estadoBruto = typeof objeto.discovery_state === "string" ? objeto.discovery_state : undefined;
+  const estadoDescoberta = estadoBruto ? ESTADOS_DESCOBERTA_LOCAL_MAP[estadoBruto] : undefined;
+  if (estadoBruto && !estadoDescoberta) {
+    alertas.push({ nivel: "warning", mensagem: `Estado de descoberta desconhecido: "${estadoBruto}" — ignorado.` });
+  }
+
+  if (conhecimentoNovo.length === 0 && conexoesNovas.length === 0 && !estadoDescoberta) {
+    alertas.push({
+      nivel: "error",
+      mensagem: `locations_update para "${nome ?? "?"}" não tem 'known_information_add', 'connections_add' nem 'discovery_state'.`,
+    });
   }
 
   return {
@@ -1506,6 +1536,8 @@ function interpretarLocalUpdate(bruto: unknown): MudancaLocalUpdate {
     tipo: "local_update",
     nome: nome ?? "(sem nome)",
     conhecimentoNovo,
+    conexoesNovas,
+    estadoDescoberta,
     alertas,
   };
 }

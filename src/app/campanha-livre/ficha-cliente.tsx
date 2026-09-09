@@ -28,6 +28,7 @@ import {
   type EntradaDiario,
   type EntradaEscola,
   type EntradaMural,
+  type EstadoDescobertaLocal,
   type EventoAplicado,
   type ExcecaoCalendario,
   type LocalLivre,
@@ -2021,6 +2022,32 @@ function ConhecimentoNovo({ onAdicionar }: { onAdicionar: (texto: string) => voi
   );
 }
 
+function ConexaoNova({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
+  const [texto, setTexto] = useState("");
+  return (
+    <div className="mt-2 flex gap-2">
+      <input
+        type="text"
+        value={texto}
+        onChange={(e) => setTexto(e.target.value)}
+        placeholder="nome de outro local conhecido que liga com este"
+        className="flex-1 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          if (!texto.trim()) return;
+          onAdicionar(texto.trim());
+          setTexto("");
+        }}
+        className="rounded border border-ambar/40 bg-ambar/10 px-2 py-1 text-xs text-ambar-forte hover:bg-ambar/20"
+      >
+        + Conexão
+      </button>
+    </div>
+  );
+}
+
 function RelacaoNova({ onAdicionar }: { onAdicionar: (stat: string) => void }) {
   const [stat, setStat] = useState("");
   return (
@@ -2149,7 +2176,13 @@ function Descobertas({
   );
 }
 
-/* ---------- Locais ---------- */
+const ESTADO_DESCOBERTA_LOCAL_OPCOES: { valor: EstadoDescobertaLocal; rotulo: string }[] = [
+  { valor: "ouviu_falar", rotulo: "Ouviu falar" },
+  { valor: "conhecido", rotulo: "Conhecido" },
+  { valor: "visitado", rotulo: "Visitado" },
+];
+
+/* ---------- Locais (mapa por descoberta) ---------- */
 function Locais({
   dados,
   somenteLeitura,
@@ -2176,7 +2209,8 @@ function Locais({
     const novo: LocalLivre = {
       id: `local-${Date.now().toString(36)}`,
       nome: nomeNovo.trim(),
-      descoberto: true,
+      estadoDescoberta: "ouviu_falar",
+      conexoesConhecidas: [],
       conhecimento: [],
       criadoEm: Date.now(),
     };
@@ -2186,6 +2220,9 @@ function Locais({
 
   return (
     <div>
+      <p className="text-sm text-texto-suave">
+        Mapa por descoberta — só mostra o que Zé já ouviu falar, conhece ou visitou. Sem coordenadas nem imagem, só a lista organizada.
+      </p>
       <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar local…" />
       {dados.locais.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum local ainda.</p>}
       {dados.locais.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
@@ -2194,8 +2231,7 @@ function Locais({
           <li key={l.id} className="rounded-lg border border-borda bg-superficie p-4">
             <div className="flex items-start justify-between gap-3">
               <p className="font-titulo text-texto">
-                {l.nome}
-                {!l.descoberto && <span className="ml-2 text-xs font-normal text-texto-suave">(não visitado)</span>}
+                {l.nome} <span className="text-xs font-normal text-texto-suave">· {ESTADO_DESCOBERTA_LOCAL_OPCOES.find((o) => o.valor === l.estadoDescoberta)?.rotulo}</span>
               </p>
               {!somenteLeitura && (
                 <button type="button" onClick={() => remover(l.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
@@ -2205,10 +2241,17 @@ function Locais({
             </div>
             {l.descricao && <p className="mt-1 text-sm text-texto-suave">{l.descricao}</p>}
             {!somenteLeitura && (
-              <label className="mt-2 flex items-center gap-1 text-xs text-texto-suave">
-                <input type="checkbox" checked={l.descoberto} onChange={(e) => atualizar(l.id, { descoberto: e.target.checked })} />
-                Descoberto
-              </label>
+              <select
+                value={l.estadoDescoberta}
+                onChange={(e) => atualizar(l.id, { estadoDescoberta: e.target.value as EstadoDescobertaLocal })}
+                className="mt-2 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto"
+              >
+                {ESTADO_DESCOBERTA_LOCAL_OPCOES.map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </option>
+                ))}
+              </select>
             )}
             {l.conhecimento.length > 0 && (
               <ul className="mt-2 list-inside list-disc text-xs text-texto-suave">
@@ -2219,6 +2262,12 @@ function Locais({
             )}
             {!somenteLeitura && (
               <ConhecimentoNovo onAdicionar={(texto) => atualizar(l.id, { conhecimento: [...l.conhecimento, texto] })} />
+            )}
+            {l.conexoesConhecidas.length > 0 && (
+              <p className="mt-2 text-xs text-texto-suave">Conexões: {l.conexoesConhecidas.join(", ")}</p>
+            )}
+            {!somenteLeitura && (
+              <ConexaoNova onAdicionar={(texto) => atualizar(l.id, { conexoesConhecidas: [...l.conexoesConhecidas, texto] })} />
             )}
           </li>
         ))}

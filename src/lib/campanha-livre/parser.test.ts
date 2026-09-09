@@ -532,23 +532,61 @@ test("codex_add: sem text gera error", () => {
   if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
 
-test("locations_add: discovered default true", () => {
+test("locations_add: discovered default true (legado)", () => {
   const r = interpretarHubUpdate(bloco("locations_add:\n  - name: Jardim Norte\n    description: Região usada para coleta."));
   assert.equal(r.ok, true);
   if (r.ok) {
     const [m] = r.mudancas;
     assert.equal(m.tipo, "local_add");
-    if (m.tipo === "local_add") assert.equal(m.descoberto, true);
+    if (m.tipo === "local_add") assert.equal(m.estadoDescoberta, "visitado");
   }
 });
 
-test("locations_add: discovered false respeitado", () => {
+test("locations_add: discovered false respeitado (legado)", () => {
   const r = interpretarHubUpdate(bloco("locations_add:\n  - name: Jardim Oculto\n    discovered: false"));
   assert.equal(r.ok, true);
   if (r.ok) {
     const [m] = r.mudancas;
-    if (m.tipo === "local_add") assert.equal(m.descoberto, false);
+    if (m.tipo === "local_add") assert.equal(m.estadoDescoberta, "ouviu_falar");
   }
+});
+
+test("locations_add: discovery_state 'known' (protocolo novo)", () => {
+  const r = interpretarHubUpdate(bloco("locations_add:\n  - name: Torre Velha\n    discovery_state: known"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "local_add") assert.equal(m.estadoDescoberta, "conhecido");
+});
+
+test("locations_update: connections_add sozinho é suficiente (sem known_information_add)", () => {
+  const r = interpretarHubUpdate(bloco("locations_update:\n  - name: Jardim Norte\n    connections_add:\n      - Torre Velha"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "local_update");
+  if (m.tipo === "local_update") {
+    assert.deepEqual(m.conexoesNovas, ["Torre Velha"]);
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
+test("locations_update: discovery_state sozinho é suficiente", () => {
+  const r = interpretarHubUpdate(bloco("locations_update:\n  - name: Jardim Norte\n    discovery_state: visited"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "local_update") {
+    assert.equal(m.estadoDescoberta, "visitado");
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
+test("locations_update: sem known_information_add, connections_add nem discovery_state vira error", () => {
+  const r = interpretarHubUpdate(bloco("locations_update:\n  - name: Jardim Norte"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
 
 test("locations_update: known_information_add", () => {

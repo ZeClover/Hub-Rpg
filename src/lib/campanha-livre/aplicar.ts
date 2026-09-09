@@ -57,7 +57,7 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     npcs: atual.npcs.map((n) => ({ ...n, conhecimento: [...n.conhecimento], relacoes: { ...n.relacoes } })),
     descobertas: atual.descobertas.map((d) => ({ ...d, evidencias: [...d.evidencias] })),
     codex: [...atual.codex],
-    locais: atual.locais.map((l) => ({ ...l, conhecimento: [...l.conhecimento] })),
+    locais: atual.locais.map((l) => ({ ...l, conhecimento: [...l.conhecimento], conexoesConhecidas: [...l.conexoesConhecidas] })),
     criaturas: atual.criaturas.map((c) => ({ ...c, tracosConhecidos: [...c.tracosConhecidos] })),
     diario: atual.diario.map((e) => ({ ...e, eventos: [...e.eventos] })),
     modificadoresTemporarios: atual.modificadoresTemporarios.map((m) => ({ ...m, duracao: { ...m.duracao } })),
@@ -442,7 +442,8 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
         id: gerarId(),
         nome: mudanca.nome,
         descricao: mudanca.descricao,
-        descoberto: mudanca.descoberto,
+        estadoDescoberta: mudanca.estadoDescoberta,
+        conexoesConhecidas: [],
         conhecimento: [],
         criadoEm: Date.now(),
       };
@@ -455,8 +456,21 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       const local = dados.locais.find((l) => l.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
       if (!local) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
       const antes = copiar(local);
-      local.conhecimento.push(...mudanca.conhecimentoNovo);
-      registrar(mudanca.tipo, `${mudanca.nome}: +${mudanca.conhecimentoNovo.length} informação(ões)`, {
+      const partes: string[] = [];
+      if (mudanca.conhecimentoNovo.length > 0) {
+        local.conhecimento.push(...mudanca.conhecimentoNovo);
+        partes.push(`+${mudanca.conhecimentoNovo.length} informação(ões)`);
+      }
+      if (mudanca.conexoesNovas.length > 0) {
+        local.conexoesConhecidas.push(...mudanca.conexoesNovas);
+        partes.push(`+${mudanca.conexoesNovas.length} conexão(ões)`);
+      }
+      if (mudanca.estadoDescoberta && mudanca.estadoDescoberta !== local.estadoDescoberta) {
+        partes.push(`${local.estadoDescoberta} → ${mudanca.estadoDescoberta}`);
+        local.estadoDescoberta = mudanca.estadoDescoberta;
+      }
+      if (partes.length === 0) continue;
+      registrar(mudanca.tipo, `${mudanca.nome}: ${partes.join(", ")}`, {
         forma: "lista",
         lista: "locais",
         identificador: antes.nome,

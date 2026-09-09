@@ -1429,9 +1429,17 @@ passando.
       Nova aba Calendário no Campanha Livre. Testado com os cenários
       exatos do pedido (14:40 numa segunda cheia → aula atual História;
       15:46 → próxima aula é terça) e no navegador de verdade
-- [ ] Academia Mágica — Mapa e tela "AGORA" — fatias futuras (decisão
-      #26); a tela "AGORA" consome o Calendário + Missões/Pesquisas/
-      Recursos que já existem, por isso vem depois dele, não antes
+- [x] **Academia Mágica — Mapa por descoberta** (09/09/2026) — decisão
+      #100. `Locais` ganhou estado de 3 valores (ouviu falar/conhecido/
+      visitado) no lugar do `descoberto: boolean` antigo — migração
+      automática pra fichas já existentes, sem perder dado — e
+      conexões conhecidas entre locais (nomes livres, sem mapa gráfico
+      nem coordenadas). `locations_update` ganhou `connections_add` e
+      `discovery_state` como ações válidas. Testado com um
+      `tipos.test.ts` novo cobrindo a migração de ficha antiga
+- [ ] Academia Mágica — tela "AGORA" — fatia futura (decisão #26);
+      consome o Calendário + Missões/Pesquisas/Recursos/Mapa que já
+      existem, por isso vem por último, não antes
 
 ---
 
