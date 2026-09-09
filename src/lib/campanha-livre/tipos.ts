@@ -73,7 +73,19 @@ export type NpcLivre = {
   tags?: string[];
   /** Só o que o jogador já sabe sobre o NPC — nunca segredo de mestre (regra #55 do protocolo). */
   conhecimento: string[];
-  /** Nomes livres (trust, proximity, o que a campanha usar) — igual a `atributos`. */
+  /**
+   * Estado qualitativo da relação (regra #17 do pedido: "NÃO quero Lina
+   * 82/100 ♥♥♥♥ — quero estados qualitativos: amizade próxima, mentor,
+   * rivalidade competitiva..."). Texto livre com sugestões na tela, não um
+   * enum fechado — cada relação tem sua própria nuance.
+   */
+  estadoRelacao?: string;
+  /**
+   * Nomes livres (trust, proximity, o que a campanha usar) — igual a
+   * `atributos`. Mecanismo numérico genérico e pré-existente (não é a
+   * "relação" em si, que agora é `estadoRelacao`) — só continua aqui pra
+   * campanhas que queiram algum contador numérico próprio.
+   */
   relacoes: Record<string, number>;
   criadoEm: number;
 };
@@ -251,6 +263,24 @@ export type EntradaMural = {
   criadaEm: number;
 };
 
+/**
+ * "Coisas que Zé pode fazer" (regra #11 do pedido) — memória de possibilidades
+ * já descobertas (continuar uma pesquisa, visitar um local, cumprir uma
+ * promessa). NUNCA é um menu de ações: não limita o que o jogador pode
+ * fazer, só ajuda a lembrar do que ele já sabe que pode. `arquivada` é pra
+ * quando Zé decide não seguir aquilo — não é "recusada" nem "concluída",
+ * só deixou de ser relevante lembrar.
+ */
+export type OportunidadeLivre = {
+  id: string;
+  descricao: string;
+  npc?: string;
+  local?: string;
+  origem?: string;
+  arquivada: boolean;
+  criadaEm: number;
+};
+
 export type DiaSemana = "domingo" | "segunda" | "terca" | "quarta" | "quinta" | "sexta" | "sabado";
 
 /** Um horário fixo da grade semanal (ex: "toda segunda, 08:00-09:45, Mana"). Raramente muda — pensado pra ser configurado uma vez. */
@@ -353,7 +383,8 @@ export type NomeLista =
   | "compromissos"
   | "mural"
   | "gradeHoraria"
-  | "excecoesCalendario";
+  | "excecoesCalendario"
+  | "oportunidades";
 
 export type AlvoEventoLista =
   | { forma: "lista"; lista: "inventario"; identificador: string; antes: ItemLivre | null }
@@ -375,7 +406,8 @@ export type AlvoEventoLista =
   | { forma: "lista"; lista: "compromissos"; identificador: string; antes: CompromissoLivre | null }
   | { forma: "lista"; lista: "mural"; identificador: string; antes: EntradaMural | null }
   | { forma: "lista"; lista: "gradeHoraria"; identificador: string; antes: BlocoGrade | null }
-  | { forma: "lista"; lista: "excecoesCalendario"; identificador: string; antes: ExcecaoCalendario | null };
+  | { forma: "lista"; lista: "excecoesCalendario"; identificador: string; antes: ExcecaoCalendario | null }
+  | { forma: "lista"; lista: "oportunidades"; identificador: string; antes: OportunidadeLivre | null };
 
 export type AlvoEvento = AlvoEventoRaiz | AlvoEventoMapa | AlvoEventoLista;
 
@@ -419,6 +451,7 @@ export type PersonagemLivre = {
   escola: EntradaEscola[];
   compromissos: CompromissoLivre[];
   mural: EntradaMural[];
+  oportunidades: OportunidadeLivre[];
   /** Que dia da semana é o "dia 1" da campanha — todo o resto (dia atual, grade) deriva daqui por módulo 7. */
   diaSemanaDoDia1: DiaSemana;
   diaAtual: number;
@@ -461,6 +494,7 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     escola: [],
     compromissos: [],
     mural: [],
+    oportunidades: [],
     diaSemanaDoDia1: "segunda",
     diaAtual: 1,
     horaAtual: "08:00",
@@ -519,6 +553,7 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     escola: Array.isArray(d.escola) ? d.escola : [],
     compromissos: Array.isArray(d.compromissos) ? d.compromissos : [],
     mural: Array.isArray(d.mural) ? d.mural : [],
+    oportunidades: Array.isArray(d.oportunidades) ? d.oportunidades : [],
     diaSemanaDoDia1: d.diaSemanaDoDia1 ?? "segunda",
     diaAtual: typeof d.diaAtual === "number" ? d.diaAtual : 1,
     horaAtual: typeof d.horaAtual === "string" ? d.horaAtual : "08:00",

@@ -220,6 +220,25 @@ test("aplica npcs_add e npcs_update", () => {
   assert.deepEqual(d2.npcs[0].conhecimento, ["Faz muitas anotações."]);
 });
 
+test("npcs_update com relationship_state (regra #17 — estado qualitativo, não número)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Lina"));
+  assert.equal(d1.npcs[0].estadoRelacao, undefined);
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("npcs_update:\n  - name: Lina\n    relationship_state: Amizade próxima"));
+  assert.equal(d2.npcs[0].estadoRelacao, "Amizade próxima");
+});
+
+test("desfazer npcs_update (relationship_state) restaura o NPC sem o estado (não existia antes)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Lina"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("npcs_update:\n  - name: Lina\n    relationship_state: Mentor"));
+  assert.equal(segundo.dados.npcs[0].estadoRelacao, "Mentor");
+  const eventoUpdate = segundo.dados.eventos.find((e) => e.tipo === "npc_update")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoUpdate.id);
+  assert.equal(desfeito.npcs[0].estadoRelacao, undefined);
+});
+
 test("npcs_add não duplica NPC com mesmo nome", () => {
   const ficha = novoPersonagemLivre("Zé");
   const primeiro = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Lina"));
@@ -913,4 +932,41 @@ test("desfazer schedule.overrides_add remove a exceção inteira", () => {
   assert.equal(dados.excecoesCalendario.length, 1);
   const desfeito = desfazerEvento(dados, dados.eventos[0].id);
   assert.equal(desfeito.excecoesCalendario.length, 0);
+});
+
+test("aplica opportunities_add e opportunities_update", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("opportunities_add:\n  - description: Continuar a pesquisa da Torre Velha\n    npc: Lina"));
+  assert.equal(d1.oportunidades.length, 1);
+  assert.equal(d1.oportunidades[0].arquivada, false);
+  assert.equal(d1.oportunidades[0].npc, "Lina");
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("opportunities_update:\n  - description: Continuar a pesquisa da Torre Velha\n    archived: true"));
+  assert.equal(d2.oportunidades[0].arquivada, true);
+});
+
+test("opportunities_update contra oportunidade inexistente vira error e não aplica", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const mudancas = mudancasDe("opportunities_update:\n  - description: Não existe\n    archived: true");
+  const validadas = validarContraPersonagem(mudancas, ficha);
+  assert.ok(temErro(validadas[0]));
+  const { dados } = aplicarMudancas(ficha, validadas.filter((m) => !temErro(m)));
+  assert.equal(dados.oportunidades.length, 0);
+});
+
+test("desfazer opportunities_update restaura arquivada: false", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("opportunities_add:\n  - description: Continuar a pesquisa da Torre Velha"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("opportunities_update:\n  - description: Continuar a pesquisa da Torre Velha\n    archived: true"));
+  assert.equal(segundo.dados.oportunidades[0].arquivada, true);
+  const eventoUpdate = segundo.dados.eventos.find((e) => e.tipo === "oportunidade_update")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoUpdate.id);
+  assert.equal(desfeito.oportunidades[0].arquivada, false);
+});
+
+test("opportunities_add permite duas oportunidades com a mesma descrição (diferente de missões/NPCs, que checam duplicidade por nome)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("opportunities_add:\n  - description: Visitar a Torre Velha"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("opportunities_add:\n  - description: Visitar a Torre Velha"));
+  assert.equal(segundo.dados.oportunidades.length, 2);
 });

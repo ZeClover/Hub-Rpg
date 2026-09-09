@@ -1445,9 +1445,22 @@ passando.
       cards de Missões ativas, Pesquisas, Compromissos pendentes,
       Mural e "Desde a última vez" — os cinco últimos 100% derivados
       de dados que já existiam, nada novo persistido. Fecha por ora o
-      pedido grande de dinamismo pro HUB (decisões #97-101); fica pra
-      próximas fatias: Oportunidades, Caderno Escolar de verdade,
-      Relações qualitativas, Timeline, Controle Operacional GM
+      pedido grande de dinamismo pro HUB (decisões #97-101)
+- [x] **Academia Mágica — Oportunidades** (09/09/2026) — decisão #102.
+      "Coisas que Zé pode fazer" — memória de possibilidades já
+      descobertas, nunca um menu de ações. Aba nova + card na tela
+      AGORA mostrando as ainda ativas (arquivadas ficam escondidas por
+      padrão, sem apagar de verdade)
+- [x] **Academia Mágica — Relações qualitativas** (09/09/2026) —
+      decisão #103. Achado durante a auditoria da próxima fatia: NPCs
+      já mostravam relação como número editável direto na tela — a
+      violação exata que o pedido citou como exemplo do que não fazer
+      ("Lina 82/100 ♥♥♥♥"). Virou campo de texto livre com sugestões
+      (amizade próxima, mentor, rivalidade competitiva...); o mecanismo
+      numérico antigo continua existindo pra mecânica própria de
+      campanha, só relabelado como claramente opcional/secundário
+- [ ] Academia Mágica — Caderno Escolar de verdade, Timeline, Controle
+      Operacional GM — fatias futuras (decisão #26)
 
 ---
 

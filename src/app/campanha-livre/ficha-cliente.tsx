@@ -37,6 +37,7 @@ import {
   type ModificadorTemporario,
   type NomeLista,
   type NpcLivre,
+  type OportunidadeLivre,
   type PersonagemLivre,
   type PesquisaLivre,
   type RecursoLivre,
@@ -244,6 +245,7 @@ function Agora({ dados }: { dados: PersonagemLivre }) {
   const missoesAtivas = dados.missoes.filter((m) => m.status === "ativa");
   const pesquisasRecentes = [...dados.pesquisas].sort((a, b) => b.criadaEm - a.criadaEm).slice(0, 4);
   const compromissosPendentes = dados.compromissos.filter((c) => c.status === "pendente");
+  const oportunidadesAbertas = dados.oportunidades.filter((o) => !o.arquivada);
   const muralRecente = [...dados.mural].sort((a, b) => b.criadaEm - a.criadaEm).slice(0, 4);
   const eventosRecentes = dados.eventos
     .filter((e) => !e.revertido)
@@ -308,6 +310,11 @@ function Agora({ dados }: { dados: PersonagemLivre }) {
         <CardResumoAgora titulo="Compromissos pendentes" vazio="Nada pendente.">
           {compromissosPendentes.map((c) => (
             <li key={c.id}>{c.descricao}</li>
+          ))}
+        </CardResumoAgora>
+        <CardResumoAgora titulo="Oportunidades" vazio="Nenhuma registrada.">
+          {oportunidadesAbertas.map((o) => (
+            <li key={o.id}>{o.descricao}</li>
           ))}
         </CardResumoAgora>
         <CardResumoAgora titulo="Mural" vazio="Nada no mural ainda.">
@@ -1179,6 +1186,7 @@ const ABAS_MUNDO = [
   { id: "compromissos", rotulo: "Compromissos" },
   { id: "mural", rotulo: "Mural" },
   { id: "calendario", rotulo: "Calendário" },
+  { id: "oportunidades", rotulo: "Oportunidades" },
 ] as const;
 
 type AbaMundo = (typeof ABAS_MUNDO)[number]["id"];
@@ -1228,6 +1236,7 @@ function AbasMundo({
         {aba === "compromissos" && <Compromissos dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "mural" && <Mural dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "calendario" && <Calendario dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "oportunidades" && <Oportunidades dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
       </div>
     </section>
   );
@@ -1775,6 +1784,104 @@ function Calendario({
   );
 }
 
+/*
+  ---------- Oportunidades: "coisas que Zé pode fazer" (regra #11) ----------
+  NUNCA é um menu de ações — é só memória do que Zé já descobriu que
+  poderia fazer (continuar uma pesquisa, visitar um local, cumprir uma
+  promessa). O jogador continua livre pra fazer qualquer outra coisa;
+  "arquivar" só tira do radar quando deixou de ser relevante lembrar.
+*/
+function Oportunidades({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [descricaoNova, setDescricaoNova] = useState("");
+  const [busca, setBusca] = useState("");
+  const [mostrarArquivadas, setMostrarArquivadas] = useState(false);
+  const visiveis = dados.oportunidades.filter((o) => mostrarArquivadas || !o.arquivada);
+  const filtradas = visiveis.filter((o) => corresponde(busca, o.descricao, o.npc, o.local));
+
+  function alternarArquivada(id: string, arquivada: boolean) {
+    onSalvar({ ...dados, oportunidades: dados.oportunidades.map((o) => (o.id === id ? { ...o, arquivada } : o)) });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, oportunidades: dados.oportunidades.filter((o) => o.id !== id) });
+  }
+
+  function adicionar() {
+    if (!descricaoNova.trim()) return;
+    const nova: OportunidadeLivre = {
+      id: `oportunidade-${Date.now().toString(36)}`,
+      descricao: descricaoNova.trim(),
+      arquivada: false,
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, oportunidades: [...dados.oportunidades, nova] });
+    setDescricaoNova("");
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-texto-suave">
+        Coisas que Zé já sabe que pode fazer — não é lista de ações, e ele continua livre pra fazer qualquer outra coisa. Isso é só memória.
+      </p>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar oportunidade…" />
+        <label className="flex shrink-0 items-center gap-1.5 text-xs text-texto-suave">
+          <input type="checkbox" checked={mostrarArquivadas} onChange={(e) => setMostrarArquivadas(e.target.checked)} />
+          Mostrar arquivadas
+        </label>
+      </div>
+      {dados.oportunidades.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma oportunidade registrada ainda.</p>}
+      {dados.oportunidades.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
+      <ul className="mt-3 space-y-2">
+        {filtradas.map((o) => (
+          <li key={o.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className={`text-sm text-texto ${o.arquivada ? "text-texto-suave line-through" : ""}`}>{o.descricao}</p>
+              <p className="mt-1 text-xs text-texto-suave">
+                {o.npc && <>NPC: {o.npc} </>}
+                {o.local && <>· local: {o.local} </>}
+                {o.origem && <>· {o.origem}</>}
+              </p>
+            </div>
+            {!somenteLeitura && (
+              <div className="flex shrink-0 items-center gap-2 text-xs">
+                <button type="button" onClick={() => alternarArquivada(o.id, !o.arquivada)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto">
+                  {o.arquivada ? "Reabrir" : "Arquivar"}
+                </button>
+                <button type="button" onClick={() => remover(o.id)} className="text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                  Remover
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={descricaoNova}
+            onChange={(e) => setDescricaoNova(e.target.value)}
+            placeholder="Descrição (ex: continuar a pesquisa da Torre Velha)"
+            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Oportunidade
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const STATUS_MISSAO_OPCOES: { valor: StatusMissao; rotulo: string }[] = [
   { valor: "disponivel", rotulo: "Disponível" },
   { valor: "ativa", rotulo: "Ativa" },
@@ -1967,6 +2074,9 @@ function ObjetivoNovo({ onAdicionar }: { onAdicionar: (texto: string) => void })
   );
 }
 
+/** Sugestões pro campo de relação — texto livre, não um enum fechado (regra #17: cada relação tem sua nuance). */
+const ESTADOS_RELACAO_SUGERIDOS = ["Conhecido", "Colega", "Amizade próxima", "Mentor", "Rivalidade competitiva", "Tensão"];
+
 /* ---------- NPCs ---------- */
 function Npcs({
   dados,
@@ -2018,6 +2128,11 @@ function Npcs({
 
   return (
     <div>
+      <datalist id="npc-estados-relacao">
+        {ESTADOS_RELACAO_SUGERIDOS.map((e) => (
+          <option key={e} value={e} />
+        ))}
+      </datalist>
       <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar NPC…" />
       {dados.npcs.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum NPC ainda.</p>}
       {dados.npcs.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
@@ -2039,6 +2154,27 @@ function Npcs({
                 </button>
               )}
             </div>
+            {somenteLeitura ? (
+              npc.estadoRelacao && (
+                <p className="mt-1">
+                  <span className="rounded-full border border-ambar/40 bg-ambar/10 px-2 py-0.5 text-xs text-ambar-forte">{npc.estadoRelacao}</span>
+                </p>
+              )
+            ) : (
+              <div className="mt-2">
+                <label className="text-xs text-texto-suave">
+                  Relação
+                  <input
+                    type="text"
+                    list="npc-estados-relacao"
+                    value={npc.estadoRelacao ?? ""}
+                    onChange={(e) => atualizarNpc(npc.id, { estadoRelacao: e.target.value || undefined })}
+                    placeholder="ex: amizade próxima, mentor, rivalidade competitiva…"
+                    className="mt-1 block w-full max-w-xs rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+              </div>
+            )}
             {npc.descricao && <p className="mt-1 text-sm text-texto-suave">{npc.descricao}</p>}
             {npc.tags && npc.tags.length > 0 && (
               <p className="mt-1 flex flex-wrap gap-1">
@@ -2061,7 +2197,12 @@ function Npcs({
               <ConhecimentoNovo onAdicionar={(texto) => atualizarNpc(npc.id, { conhecimento: [...npc.conhecimento, texto] })} />
             )}
 
-            <div className="mt-3 flex flex-wrap gap-2">
+            {(Object.keys(npc.relacoes).length > 0 || !somenteLeitura) && (
+              <p className="mt-3 text-xs text-texto-suave">
+                Estatísticas numéricas (opcional — pra mecânica própria da campanha, não é &ldquo;quanto ele gosta de você&rdquo;)
+              </p>
+            )}
+            <div className="mt-1 flex flex-wrap gap-2">
               {Object.entries(npc.relacoes).map(([stat, valor]) => (
                 <div key={stat} className="flex items-center gap-1 rounded border border-borda bg-fundo px-2 py-1">
                   <span className="text-xs text-texto-suave">{stat}</span>
@@ -3346,6 +3487,7 @@ const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
   mural: "mural",
   gradeHoraria: "bloco de horário",
   excecoesCalendario: "exceção de calendário",
+  oportunidades: "oportunidade",
 };
 
 /** Descreve o que "Desfazer" vai fazer a este evento específico — antes → depois na direção do desfazer, não da mudança original. */

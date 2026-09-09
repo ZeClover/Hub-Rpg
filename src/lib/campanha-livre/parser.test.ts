@@ -419,6 +419,19 @@ test("npcs_update: sem known_information_add gera error", () => {
   if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
 
+test("npcs_update: relationship_state sozinho (sem known_information_add) é suficiente", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina\n    relationship_state: Amizade próxima"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "npc_update");
+  if (m.tipo === "npc_update") {
+    assert.equal(m.estadoRelacao, "Amizade próxima");
+    assert.deepEqual(m.conhecimentoNovo, []);
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
 test("relationships: change válido", () => {
   const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1\n    reason: Trabalharam juntos."));
   assert.equal(r.ok, true);
@@ -1088,4 +1101,44 @@ test("now: location e activity sozinhos (sem day nem time) são suficientes", ()
     assert.equal(m.hora, undefined);
     assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
   }
+});
+
+/* ---------- opportunities_add / opportunities_update ---------- */
+test("opportunities_add: com npc, location e source", () => {
+  const r = interpretarHubUpdate(
+    bloco("opportunities_add:\n  - description: Continuar a pesquisa da Torre Velha\n    npc: Lina\n    location: Biblioteca\n    source: Conversa com Lina"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "oportunidade_add");
+  if (m.tipo === "oportunidade_add") {
+    assert.equal(m.descricao, "Continuar a pesquisa da Torre Velha");
+    assert.equal(m.npc, "Lina");
+    assert.equal(m.local, "Biblioteca");
+    assert.equal(m.origem, "Conversa com Lina");
+  }
+});
+
+test("opportunities_add: sem description vira error", () => {
+  const r = interpretarHubUpdate(bloco("opportunities_add:\n  - npc: Lina"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("opportunities_update: archived true/false", () => {
+  const r = interpretarHubUpdate(bloco("opportunities_update:\n  - description: Continuar a pesquisa da Torre Velha\n    archived: true"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "oportunidade_update");
+  if (m.tipo === "oportunidade_update") assert.equal(m.arquivada, true);
+});
+
+test("opportunities_update: sem archived vira error", () => {
+  const r = interpretarHubUpdate(bloco("opportunities_update:\n  - description: Continuar a pesquisa da Torre Velha"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });

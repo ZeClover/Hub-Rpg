@@ -528,13 +528,17 @@ function DescricaoMudanca({
     return (
       <div className="text-sm text-texto">
         <p>
-          <strong>{mudanca.nome}</strong>: +{mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)
+          <strong>{mudanca.nome}</strong>
+          {mudanca.conhecimentoNovo.length > 0 && <> — +{mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)</>}
+          {mudanca.estadoRelacao !== undefined && <> — relação → {mudanca.estadoRelacao}</>}
         </p>
-        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
-          {mudanca.conhecimentoNovo.map((c, i) => (
-            <li key={i}>{c}</li>
-          ))}
-        </ul>
+        {mudanca.conhecimentoNovo.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.conhecimentoNovo.map((c, i) => (
+              <li key={i}>{c}</li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   }
@@ -919,11 +923,33 @@ function DescricaoMudanca({
       </p>
     );
   }
-  // excecao_calendario_add
+  if (mudanca.tipo === "excecao_calendario_add") {
+    return (
+      <p className="text-sm text-texto">
+        Exceção de calendário — dia {mudanca.dia}: <strong>{mudanca.rotuloAlvo ?? mudanca.novoRotulo}</strong> ({mudanca.calendarioTipo})
+        {mudanca.motivo && <span className="block text-xs text-texto-suave">{mudanca.motivo}</span>}
+      </p>
+    );
+  }
+  if (mudanca.tipo === "oportunidade_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova oportunidade: <strong>{mudanca.descricao}</strong>
+        </p>
+        {(mudanca.npc || mudanca.local) && (
+          <p className="mt-1 text-xs text-texto-suave">
+            {mudanca.npc && <>NPC: {mudanca.npc} </>}
+            {mudanca.local && <>· local: {mudanca.local}</>}
+          </p>
+        )}
+      </div>
+    );
+  }
+  // oportunidade_update
   return (
     <p className="text-sm text-texto">
-      Exceção de calendário — dia {mudanca.dia}: <strong>{mudanca.rotuloAlvo ?? mudanca.novoRotulo}</strong> ({mudanca.calendarioTipo})
-      {mudanca.motivo && <span className="block text-xs text-texto-suave">{mudanca.motivo}</span>}
+      Oportunidade — <strong>{mudanca.descricao}</strong>: {mudanca.arquivada ? "arquivada" : "reaberta"}
     </p>
   );
 }

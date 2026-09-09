@@ -82,6 +82,7 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     escola: atual.escola.map((e) => ({ ...e, notas: [...e.notas] })),
     compromissos: [...atual.compromissos],
     mural: [...atual.mural],
+    oportunidades: [...atual.oportunidades],
     gradeHoraria: [...atual.gradeHoraria],
     excecoesCalendario: [...atual.excecoesCalendario],
     snapshots: [...atual.snapshots],
@@ -354,8 +355,17 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       const npc = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
       if (!npc) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
       const antes = copiar(npc);
-      npc.conhecimento.push(...mudanca.conhecimentoNovo);
-      registrar(mudanca.tipo, `${mudanca.nome}: +${mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)`, {
+      const partes: string[] = [];
+      if (mudanca.conhecimentoNovo.length > 0) {
+        npc.conhecimento.push(...mudanca.conhecimentoNovo);
+        partes.push(`+${mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)`);
+      }
+      if (mudanca.estadoRelacao !== undefined) {
+        npc.estadoRelacao = mudanca.estadoRelacao;
+        partes.push(`relação → ${mudanca.estadoRelacao}`);
+      }
+      if (partes.length === 0) continue;
+      registrar(mudanca.tipo, `${mudanca.nome}: ${partes.join(", ")}`, {
         forma: "lista",
         lista: "npcs",
         identificador: antes.nome,
@@ -779,6 +789,40 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       continue;
     }
 
+    if (mudanca.tipo === "oportunidade_add") {
+      const nova = {
+        id: gerarId(),
+        descricao: mudanca.descricao,
+        npc: mudanca.npc,
+        local: mudanca.local,
+        origem: mudanca.origem,
+        arquivada: false,
+        criadaEm: Date.now(),
+      };
+      dados.oportunidades.push(nova);
+      registrar(mudanca.tipo, `Nova oportunidade: ${mudanca.descricao}`, {
+        forma: "lista",
+        lista: "oportunidades",
+        identificador: nova.descricao,
+        antes: null,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "oportunidade_update") {
+      const oportunidade = dados.oportunidades.find((o) => o.descricao.trim().toLowerCase() === mudanca.descricao.trim().toLowerCase());
+      if (!oportunidade) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(oportunidade);
+      oportunidade.arquivada = mudanca.arquivada;
+      registrar(mudanca.tipo, `${mudanca.descricao}: ${mudanca.arquivada ? "arquivada" : "reaberta"}`, {
+        forma: "lista",
+        lista: "oportunidades",
+        identificador: antes.descricao,
+        antes,
+      });
+      continue;
+    }
+
     if (mudanca.tipo === "agora") {
       if (mudanca.dia !== undefined) {
         const antes = dados.diaAtual;
@@ -1048,7 +1092,7 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.gradeHoraria = lista;
-  } else {
+  } else if (alvo.lista === "excecoesCalendario") {
     // excecoesCalendario — identidade é o próprio id gerado
     const lista = [...dados.excecoesCalendario];
     const idx = lista.findIndex((e) => e.id === alvo.identificador);
@@ -1057,6 +1101,15 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.excecoesCalendario = lista;
+  } else {
+    // oportunidades — identidade é a própria descrição, igual compromissos
+    const lista = [...dados.oportunidades];
+    const idx = lista.findIndex((o) => o.descricao.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.oportunidades = lista;
   }
 
   return dados;

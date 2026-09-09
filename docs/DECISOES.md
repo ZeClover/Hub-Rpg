@@ -4179,6 +4179,68 @@ ativo), evento de XP e de nova missão aparecendo em "Desde a última
 vez" na ordem certa. `tsc --noEmit`, `npm run lint`, `npm run build` e
 os 259 testes automáticos (256 + 3) continuam limpos.
 
+## 102. Academia Mágica — Oportunidades (09/09/2026)
+
+Quinta fatia: "coisas que Zé pode fazer" (regra #11 do pedido). Regra
+absoluta, repetida no próprio pedido: **isso não é menu de ações**.
+Não limita o jogador — é só memória do que ele já descobriu que
+poderia fazer (continuar uma pesquisa, visitar um local, cumprir uma
+promessa que não virou compromisso formal). "Você pode fazer qualquer
+outra coisa" continua valendo sempre.
+
+Tipo novo `OportunidadeLivre` (descrição, npc/local/origem opcionais,
+`arquivada: boolean`) seguindo exatamente o padrão de Compromissos/
+Mural: `opportunities_add`/`opportunities_update` no HUB_UPDATE, aba
+própria em Campanha Livre com checkbox "mostrar arquivadas" (escondidas
+por padrão, pra não acumular lixo visual, mas nunca apagadas de
+verdade), e card na tela AGORA (decisão #101) mostrando as ainda
+ativas — responde direto ao critério de sucesso #69 ("tenho alguma
+coisa importante que eu queria fazer?").
+
+Diferença de propósito de Compromissos: compromisso é algo que Zé
+prometeu ou assumiu (tem peso narrativo de obrigação); oportunidade é
+só algo que ele sabe que PODE fazer, sem compromisso nenhum. Por isso
+`arquivada` (não "cumprida"/"cancelada") — arquivar só significa "não
+é mais relevante lembrar disso", não implica sucesso nem fracasso.
+
+Testado: 8 testes novos (parser + aplicar + desfazer, incluindo
+duas oportunidades com a mesma descrição coexistindo — diferente de
+missões/NPCs, que travam duplicidade por nome) e verificação completa
+no navegador (card na AGORA só com as ativas, aba escondendo
+arquivadas por padrão, alternar arquivar/reabrir). `tsc --noEmit`,
+`npm run lint`, `npm run build` e os 267 testes automáticos (259 + 8)
+continuam limpos.
+
+## 103. Academia Mágica — Relações qualitativas (09/09/2026)
+
+Sexta fatia. Ao auditar `NpcLivre` pra decidir a próxima fatia, achei
+uma violação direta de uma regra explícita do próprio pedido (parte
+#17): `relacoes: Record<string, number>` já existia (decisão anterior
+ao pedido da Academia Mágica) e a tela mostrava um número num input ao
+lado do nome do NPC — exatamente o "Lina 82/100 ♥♥♥♥" que o pedido diz
+pra não fazer.
+
+**Não removi o mecanismo numérico** — ele é genérico (a mesma forma de
+`atributos`, nomes livres definidos pela campanha) e pode servir pra
+mecânica própria de algum sistema que não seja "quanto o NPC gosta de
+você". Só relabelei a seção como "Estatísticas numéricas (opcional)"
+pra deixar claro que não é a relação em si, e adicionei o que faltava:
+`estadoRelacao?: string` — texto livre com sugestões (Conhecido,
+Colega, Amizade próxima, Mentor, Rivalidade competitiva, Tensão) via
+`<datalist>`, não um enum fechado, porque cada relação tem sua própria
+nuance e o pedido dá esses só como exemplo. Mostrado como texto/badge
+qualitativo, nunca como barra ou número.
+
+`npcs_update` ganhou `relationship_state` como ação válida, junto do
+`known_information_add` que já existia (qualquer um dos dois sozinho
+já é suficiente, mesma lógica de `locations_update` na decisão #100).
+
+Testado: 3 testes novos de parser/aplicar/desfazer, mais verificação
+no navegador confirmando que não existe nenhum padrão "N/100" na tela
+e que o campo de relação é texto livre com sugestões. `tsc --noEmit`,
+`npm run lint`, `npm run build` e os 270 testes automáticos (267 + 3)
+continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

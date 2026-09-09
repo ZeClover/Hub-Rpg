@@ -26,6 +26,11 @@
   O motor que deriva bloco atual/próximo a partir disso fica em
   `calendario.ts`, não aqui — o parser só interpreta o texto colado.
 
+  v1.3 (pedido da Academia Mágica): opportunities_add/opportunities_update
+  ("coisas que Zé pode fazer" — memória de possibilidades, nunca um menu
+  de ações) e npcs_update.relationship_state (estado qualitativo da
+  relação — "amizade próxima", "mentor" — em vez de número/barra).
+
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
   revisão decidir o que aplicar (regras #1 e #2 da especificação).
@@ -186,6 +191,7 @@ export type MudancaNpcUpdate = Base & {
   tipo: "npc_update";
   nome: string;
   conhecimentoNovo: string[];
+  estadoRelacao?: string;
 };
 
 export type MudancaRelacao = Base & {
@@ -393,6 +399,20 @@ export type MudancaMuralAdd = Base & {
   expiracao?: string;
 };
 
+export type MudancaOportunidadeAdd = Base & {
+  tipo: "oportunidade_add";
+  descricao: string;
+  npc?: string;
+  local?: string;
+  origem?: string;
+};
+
+export type MudancaOportunidadeUpdate = Base & {
+  tipo: "oportunidade_update";
+  descricao: string;
+  arquivada: boolean;
+};
+
 export type MudancaAgora = Base & {
   tipo: "agora";
   dia?: number;
@@ -463,6 +483,8 @@ export type Mudanca =
   | MudancaCompromissoAdd
   | MudancaCompromissoUpdate
   | MudancaMuralAdd
+  | MudancaOportunidadeAdd
+  | MudancaOportunidadeUpdate
   | MudancaAgora
   | MudancaGradeAdd
   | MudancaExcecaoCalendarioAdd;
@@ -555,6 +577,8 @@ const CAMPOS_CONHECIDOS = new Set([
   "bulletin_add",
   "now",
   "schedule",
+  "opportunities_add",
+  "opportunities_update",
 ]);
 
 const DIAS_SEMANA_MAP: Record<string, DiaSemana> = {
@@ -901,6 +925,14 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
   // --- bulletin_add (mural público da campanha, pedido da Academia Mágica) ---
   if (Array.isArray(raiz.bulletin_add)) {
     for (const entrada of raiz.bulletin_add) mudancas.push(interpretarMuralAdd(entrada));
+  }
+
+  // --- opportunities_add / opportunities_update ("coisas que Zé pode fazer", pedido da Academia Mágica) ---
+  if (Array.isArray(raiz.opportunities_add)) {
+    for (const oportunidade of raiz.opportunities_add) mudancas.push(interpretarOportunidadeAdd(oportunidade));
+  }
+  if (Array.isArray(raiz.opportunities_update)) {
+    for (const oportunidade of raiz.opportunities_update) mudancas.push(interpretarOportunidadeUpdate(oportunidade));
   }
 
   // --- now (avança o "agora" da campanha — dia e/ou hora) ---
@@ -1339,8 +1371,13 @@ function interpretarNpcUpdate(bruto: unknown): MudancaNpcUpdate {
   const conhecimentoNovo = Array.isArray(objeto.known_information_add)
     ? objeto.known_information_add.filter((t): t is string => typeof t === "string")
     : [];
-  if (conhecimentoNovo.length === 0) {
-    alertas.push({ nivel: "error", mensagem: `npcs_update para "${nome ?? "?"}" não tem 'known_information_add'.` });
+  const estadoRelacao = typeof objeto.relationship_state === "string" ? objeto.relationship_state : undefined;
+
+  if (conhecimentoNovo.length === 0 && estadoRelacao === undefined) {
+    alertas.push({
+      nivel: "error",
+      mensagem: `npcs_update para "${nome ?? "?"}" não tem 'known_information_add' nem 'relationship_state'.`,
+    });
   }
 
   return {
@@ -1348,6 +1385,7 @@ function interpretarNpcUpdate(bruto: unknown): MudancaNpcUpdate {
     tipo: "npc_update",
     nome: nome ?? "(sem nome)",
     conhecimentoNovo,
+    estadoRelacao,
     alertas,
   };
 }
@@ -1950,6 +1988,42 @@ function interpretarMuralAdd(bruto: unknown): MudancaMuralAdd {
     origem: typeof objeto.source === "string" ? objeto.source : undefined,
     data: typeof objeto.date === "string" ? objeto.date : undefined,
     expiracao: typeof objeto.expires === "string" ? objeto.expires : undefined,
+    alertas,
+  };
+}
+
+function interpretarOportunidadeAdd(bruto: unknown): MudancaOportunidadeAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const descricao = typeof objeto.description === "string" ? objeto.description : null;
+  if (!descricao) alertas.push({ nivel: "error", mensagem: "Item em opportunities_add sem 'description'." });
+
+  return {
+    id: proximoId(),
+    tipo: "oportunidade_add",
+    descricao: descricao ?? "(sem descrição)",
+    npc: typeof objeto.npc === "string" ? objeto.npc : undefined,
+    local: typeof objeto.location === "string" ? objeto.location : undefined,
+    origem: typeof objeto.source === "string" ? objeto.source : undefined,
+    alertas,
+  };
+}
+
+function interpretarOportunidadeUpdate(bruto: unknown): MudancaOportunidadeUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const descricao = typeof objeto.description === "string" ? objeto.description : null;
+  if (!descricao) alertas.push({ nivel: "error", mensagem: "Item em opportunities_update sem 'description'." });
+
+  if (typeof objeto.archived !== "boolean") {
+    alertas.push({ nivel: "error", mensagem: `opportunities_update para "${descricao ?? "?"}" sem 'archived' (booleano).` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "oportunidade_update",
+    descricao: descricao ?? "(sem descrição)",
+    arquivada: objeto.archived === true,
     alertas,
   };
 }

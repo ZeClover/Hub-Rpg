@@ -311,6 +311,19 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "oportunidade_update") {
+      const existe = projetado.oportunidades.some((o) => o.descricao.trim().toLowerCase() === mudanca.descricao.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Oportunidade "${mudanca.descricao}" não existe — crie com opportunities_add primeiro.` },
+          ],
+        };
+      }
+    }
+
     if (mudanca.tipo === "excecao_calendario_add" && (mudanca.calendarioTipo === "cancelado" || mudanca.calendarioTipo === "alterado")) {
       const existe = blocosDoDia(projetado, mudanca.dia).some((b) => b.rotulo === mudanca.rotuloAlvo);
       if (!existe) {
