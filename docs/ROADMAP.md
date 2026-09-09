@@ -1332,6 +1332,76 @@ passando.
       fatia futura se precisar). Testado com Playwright (compra/consumo
       certos, persistência entre recarregamentos, reparo batendo); `tsc`,
       lint e os 208 testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — chassi inicial** (04/09/2026) — decisão #91.
+      Sistema mais denso trazido pro Hub até agora, cortado em fatia
+      inicial: os 6 atributos e testes, 9 raças (com sub-raças), 4
+      classes-base até o 3º nível (Guerreiro, Ladino, Clérigo, Mago), 5
+      antecedentes, catálogo de armas/armaduras, combate completo, as 15
+      condições do Apêndice, e a regra de conjuração (sem catálogo de
+      magias ainda). Tudo calculado automaticamente a partir da ficha —
+      raça/classe preenchem bônus e proficiências sozinhas, PV/CA/testes/
+      ataque nunca são número solto. `public/dnd-5e.html`, Modo Hub desde
+      o primeiro commit. Testado com Playwright (criação completa, bônus
+      racial, PV/CA calculados, perícias, ataque de arma, condições,
+      Modo Hub mockado); `tsc`, lint e os 208 testes automáticos
+      continuam limpos
+- [x] **D&D 5ª Edição — as 8 classes restantes, Talentos e
+      Antecedentes** (04/09/2026) — decisão #92. As 12 classes do livro
+      completas até o 3º nível (Bárbaro, Bardo, Bruxo, Druida,
+      Feiticeiro, Monge, Paladino, Patrulheiro somados aos 4 anteriores).
+      Nova aba Talentos (40, com catálogo e talentos escolhidos aplicando
+      efeito automático) e regra de Multiclasse como referência. 13
+      Antecedentes no total (8 novos: Artesão de Guilda, Artista,
+      Charlatão, Eremita, Forasteiro, Marinheiro, Nobre, Órfão). Testado
+      com Playwright (classe nova calculando PV certo, Talentos, classe
+      conjuradora nova) sem regressão na fatia anterior; `tsc`, lint e os
+      208 testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — arquétipos/subclasses das 12 classes** (04/09/2026)
+      — decisão #93. Todas as opções de subclasse do livro pras 12
+      classes (Caminho Primitivo, Colégio de Bardo, Patrono, Domínio
+      Divino — 7 opções —, Círculo Druídico, Origem da Feitiçaria,
+      Arquétipo Marcial, Arquétipo Ladino, as 8 Tradições Arcanas,
+      Tradição Monástica, Juramento Sagrado, Conclave de Patrulheiro),
+      com características reais por nível. Seletor de subclasse aparece
+      sozinho só quando o personagem já alcança o nível de escolha da
+      classe (calculado, não fixado à mão). Não precisou de arquivo
+      novo — o texto já estava em mãos das fatias anteriores. Testado
+      com Playwright (Bruxo escolhendo Patrono no 1º nível, Guerreiro
+      esperando até o 3º) sem regressão; `tsc`, lint e os 208 testes
+      automáticos continuam limpos
+- [x] **D&D 5ª Edição — catálogo de magias** (04/09/2026) — decisão #94.
+      As ~361 magias do Livro do Jogador, cruzadas com a lista de acesso
+      de cada uma das 8 classes conjuradoras (Bardo, Bruxo, Clérigo,
+      Druida, Feiticeiro, Mago, Paladino, Patrulheiro). Aba Conjuração
+      ganhou seletores de catálogo pra truques e magias preparadas
+      (como o "+ Do catálogo" do SAO/Fabula Ultima) — escolher uma magia
+      já traz escola, tempo, alcance, componentes, duração e efeito
+      automaticamente, mais uma tabela de referência com o catálogo
+      inteiro da classe. Sete agentes em paralelo (extração de dados),
+      com retomada de sessão no meio do trabalho depois de um limite de
+      API — sem perder o que já tinha sido lido. Testado com Playwright
+      sem regressão nas três fatias anteriores; `tsc`, lint e os 208
+      testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — Modo Guiado** (09/09/2026) — decisão #95. A
+      mesma tela de criação passo a passo dos outros quatro sistemas
+      (SAO, Fabula Ultima, Kaizoku no Sho, Thrylikí Chelóna): Nome+Raça
+      → Classe+Antecedente(+Subclasse) → Atributos+Perícias → Resumo
+      com PV/CA calculados. Personagem novo já abre nela; botão na
+      barra alterna a qualquer momento. Testado com Playwright sem
+      regressão nas quatro fatias anteriores; `tsc`, lint e os 208
+      testes automáticos continuam limpos
+- [x] **D&D 5ª Edição — explicar termos do jogo no Modo Guiado**
+      (09/09/2026) — decisão #96. Cada um dos 4 passos ganhou um
+      parágrafo curto explicando os termos que aparecem nele (bônus de
+      atributo, traço racial, dado de vida, proficiência, antecedente,
+      subclasse, array padrão, modificador, perícia, bônus de
+      proficiência, PV, CA, Iniciativa, Percepção Passiva), em
+      português comum. Só texto a mais, nenhuma mecânica mudou. Testado
+      com Playwright sem regressão nas cinco fatias anteriores; `tsc`,
+      lint e os 208 testes automáticos continuam limpos
+- [ ] D&D 5ª Edição — ficha de inimigo e Escudo do Mestre — fatias
+      futuras (decisão #26); exigem Manual dos Monstros e Livro do
+      Mestre, ainda não enviados
 - [ ] Ometion
 
 ---

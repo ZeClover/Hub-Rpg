@@ -96,6 +96,19 @@ export const SISTEMAS: Sistema[] = [
     grimorio: null,
   },
   {
+    chave: "dnd-5e",
+    nome: "D&D 5ª Edição",
+    descricao:
+      "O TTRPG mais tradicional. As 12 classes completas com arquétipos, 9 raças, talentos, antecedentes e catálogo de magias — falta ficha de inimigo e Escudo do Mestre.",
+    ficha: "/dnd-5e.html",
+    situacao: "pronta",
+    salvaNoHub: true,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+    grimorio: null,
+  },
+  {
     chave: "campanha-livre",
     nome: "Campanha Livre",
     descricao:
