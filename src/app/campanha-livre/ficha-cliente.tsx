@@ -34,6 +34,7 @@ import {
   type NpcLivre,
   type PersonagemLivre,
   type PesquisaLivre,
+  type RecursoLivre,
   type StatusCompromisso,
   type StatusDescoberta,
   type StatusMissao,
@@ -286,14 +287,45 @@ function Recursos({
   somenteLeitura: boolean;
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
+  const [formularioAberto, setFormularioAberto] = useState(false);
   const [nomeNovo, setNomeNovo] = useState("");
+  const [minimoNovo, setMinimoNovo] = useState("");
+  const [atualNovo, setAtualNovo] = useState("");
+  const [maximoNovo, setMaximoNovo] = useState("");
+  const [erro, setErro] = useState("");
   const nomes = Object.keys(dados.recursos);
+
+  function fecharFormulario() {
+    setFormularioAberto(false);
+    setNomeNovo("");
+    setMinimoNovo("");
+    setAtualNovo("");
+    setMaximoNovo("");
+    setErro("");
+  }
 
   function adicionar() {
     const chave = nomeNovo.trim();
-    if (!chave || dados.recursos[chave]) return;
-    onSalvar({ ...dados, recursos: { ...dados.recursos, [chave]: { atual: 0, maximo: null, minimo: null } } });
-    setNomeNovo("");
+    if (!chave) {
+      setErro("Dá um nome pro recurso.");
+      return;
+    }
+    if (dados.recursos[chave]) {
+      setErro(`Já existe um recurso chamado "${chave}".`);
+      return;
+    }
+    onSalvar({
+      ...dados,
+      recursos: {
+        ...dados.recursos,
+        [chave]: {
+          atual: atualNovo === "" ? 0 : Number(atualNovo) || 0,
+          minimo: minimoNovo === "" ? null : Number(minimoNovo),
+          maximo: maximoNovo === "" ? null : Number(maximoNovo),
+        },
+      },
+    });
+    fecharFormulario();
   }
 
   function remover(nome: string) {
@@ -315,74 +347,191 @@ function Recursos({
         significam &ldquo;sem limite configurado&rdquo; — o Hub ainda avisa se ficar negativo, mas nunca corrige
         sozinho.
       </p>
-      {nomes.length === 0 && <p className="mt-3 text-sm text-texto-suave">Nenhum recurso ainda.</p>}
+
+      {nomes.length === 0 && !formularioAberto && <p className="mt-3 text-sm text-texto-suave">Nenhum recurso registrado.</p>}
+
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        {nomes.map((nome) => {
-          const r = dados.recursos[nome];
-          return (
-            <div key={nome} className="rounded-lg border border-borda bg-superficie p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-titulo capitalize text-texto">{nome}</span>
-                {!somenteLeitura && (
-                  <button
-                    type="button"
-                    onClick={() => remover(nome)}
-                    className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
-                  >
-                    Remover
-                  </button>
-                )}
-              </div>
-              <div className="mt-2 flex items-center gap-2 text-sm">
-                <input
-                  type="number"
-                  value={r.minimo ?? ""}
-                  placeholder="sem piso"
-                  disabled={somenteLeitura}
-                  onChange={(e) => atualizar(nome, "minimo", e.target.value === "" ? null : Number(e.target.value))}
-                  className="w-20 rounded border border-borda bg-fundo px-2 py-1 text-texto placeholder:text-texto-suave disabled:opacity-60"
-                />
-                <span className="text-texto-suave">≤</span>
-                <input
-                  type="number"
-                  value={r.atual}
-                  disabled={somenteLeitura}
-                  onChange={(e) => atualizar(nome, "atual", Number(e.target.value) || 0)}
-                  className="w-20 rounded border border-borda bg-fundo px-2 py-1 text-texto disabled:opacity-60"
-                />
-                <span className="text-texto-suave">/</span>
-                <input
-                  type="number"
-                  value={r.maximo ?? ""}
-                  placeholder="sem teto"
-                  disabled={somenteLeitura}
-                  onChange={(e) => atualizar(nome, "maximo", e.target.value === "" ? null : Number(e.target.value))}
-                  className="w-24 rounded border border-borda bg-fundo px-2 py-1 text-texto placeholder:text-texto-suave disabled:opacity-60"
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
-          <input
-            type="text"
-            value={nomeNovo}
-            onChange={(e) => setNomeNovo(e.target.value)}
-            placeholder="nome do recurso (ex: mana)"
-            className="rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+        {nomes.map((nome) => (
+          <CardRecurso
+            key={nome}
+            nome={nome}
+            recurso={dados.recursos[nome]}
+            somenteLeitura={somenteLeitura}
+            onAtualizar={(campo, valor) => atualizar(nome, campo, valor)}
+            onRemover={() => remover(nome)}
           />
+        ))}
+
+        {!somenteLeitura && !formularioAberto && (
           <button
             type="button"
-            onClick={adicionar}
-            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20"
+            onClick={() => setFormularioAberto(true)}
+            className="flex min-h-[9.5rem] items-center justify-center rounded-lg border border-dashed border-borda p-4 text-sm text-texto-suave transition hover:border-ambar/50 hover:text-ambar-forte"
           >
-            + Recurso
+            + Adicionar recurso
           </button>
-        </div>
-      )}
+        )}
+
+        {!somenteLeitura && formularioAberto && (
+          <div className="rounded-lg border border-borda bg-superficie p-4">
+            <div className="space-y-3">
+              <label className="block text-xs text-texto-suave">
+                Nome
+                <input
+                  type="text"
+                  autoFocus
+                  value={nomeNovo}
+                  onChange={(e) => {
+                    setNomeNovo(e.target.value);
+                    setErro("");
+                  }}
+                  placeholder="ex: mana"
+                  className="mt-1 w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+                />
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <label className="block text-xs text-texto-suave">
+                  Mínimo
+                  <input
+                    type="number"
+                    value={minimoNovo}
+                    onChange={(e) => setMinimoNovo(e.target.value)}
+                    placeholder="—"
+                    className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+                <label className="block text-xs text-texto-suave">
+                  Atual
+                  <input
+                    type="number"
+                    value={atualNovo}
+                    onChange={(e) => setAtualNovo(e.target.value)}
+                    placeholder="0"
+                    className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+                <label className="block text-xs text-texto-suave">
+                  Máximo
+                  <input
+                    type="number"
+                    value={maximoNovo}
+                    onChange={(e) => setMaximoNovo(e.target.value)}
+                    placeholder="—"
+                    className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+              </div>
+              {erro && <p className="text-xs text-segredo">{erro}</p>}
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={adicionar}
+                  className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1.5 text-sm text-ambar-forte hover:bg-ambar/20"
+                >
+                  Adicionar recurso
+                </button>
+                <button type="button" onClick={fecharFormulario} className="rounded border border-borda px-3 py-1.5 text-sm text-texto-suave hover:text-texto">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </section>
+  );
+}
+
+/** Card de um recurso — Atual/Mínimo/Máximo com labels explícitos (regra: nada de "≤"/"/" soltos) e resumo com barra discreta quando há teto. */
+function CardRecurso({
+  nome,
+  recurso,
+  somenteLeitura,
+  onAtualizar,
+  onRemover,
+}: {
+  nome: string;
+  recurso: RecursoLivre;
+  somenteLeitura: boolean;
+  onAtualizar: (campo: "atual" | "maximo" | "minimo", valor: number | null) => void;
+  onRemover: () => void;
+}) {
+  const [confirmandoRemover, setConfirmandoRemover] = useState(false);
+  const temMaximo = recurso.maximo !== null;
+  const fracao = temMaximo && recurso.maximo! > 0 ? Math.max(0, Math.min(1, recurso.atual / recurso.maximo!)) : null;
+
+  return (
+    <div className="rounded-lg border border-borda bg-superficie p-4">
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="min-w-0 break-words font-titulo capitalize text-texto">{nome}</h3>
+        {!somenteLeitura &&
+          (confirmandoRemover ? (
+            <div className="flex shrink-0 items-center gap-1.5 text-xs">
+              <span className="text-texto-suave">Remover?</span>
+              <button type="button" onClick={onRemover} className="font-medium text-segredo hover:underline">
+                Sim
+              </button>
+              <button type="button" onClick={() => setConfirmandoRemover(false)} className="text-texto-suave hover:text-texto">
+                Não
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmandoRemover(true)}
+              aria-label={`Remover recurso ${nome}`}
+              title="Remover recurso"
+              className="shrink-0 rounded p-1 text-texto-suave transition hover:bg-segredo/10 hover:text-segredo"
+            >
+              ✕
+            </button>
+          ))}
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <label className="block text-xs text-texto-suave">
+          Mínimo
+          <input
+            type="number"
+            value={recurso.minimo ?? ""}
+            placeholder="—"
+            disabled={somenteLeitura}
+            onChange={(e) => onAtualizar("minimo", e.target.value === "" ? null : Number(e.target.value))}
+            className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave disabled:opacity-60"
+          />
+        </label>
+        <label className="block text-xs text-texto-suave">
+          Atual
+          <input
+            type="number"
+            value={recurso.atual}
+            disabled={somenteLeitura}
+            onChange={(e) => onAtualizar("atual", Number(e.target.value) || 0)}
+            className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm font-medium text-texto disabled:opacity-60"
+          />
+        </label>
+        <label className="block text-xs text-texto-suave">
+          Máximo
+          <input
+            type="number"
+            value={recurso.maximo ?? ""}
+            placeholder="—"
+            disabled={somenteLeitura}
+            onChange={(e) => onAtualizar("maximo", e.target.value === "" ? null : Number(e.target.value))}
+            className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave disabled:opacity-60"
+          />
+        </label>
+      </div>
+
+      <div className="mt-3">
+        <p className="text-sm text-texto-suave">{temMaximo ? `${recurso.atual} / ${recurso.maximo}` : `${recurso.atual}`}</p>
+        {fracao !== null && (
+          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-fundo">
+            <div className="h-full bg-ambar-forte transition-all" style={{ width: `${fracao * 100}%` }} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

@@ -3997,6 +3997,45 @@ validação contra compromisso inexistente) espelhando exatamente o
 padrão dos testes existentes de missões/NPCs. `tsc --noEmit`, `npm run
 lint` e os 220 testes automáticos (208 + 12) continuam limpos.
 
+## 98. Redesign visual do card de Recursos no Campanha Livre (09/09/2026)
+
+Pedido do Zé: a área de Recursos (Mana, Energia Diária etc.) estava
+ilegível — "[35] ≤ [35] / [35]" sem labels, símbolos soltos, botão
+"Remover" jogado no canto, formulário de adicionar sempre aberto. Só
+UI/UX, mesmo modelo de dados (`RecursoLivre`) e mesma lógica de salvar/
+editar/remover de antes — nada de regra de negócio mudou.
+
+Cada recurso virou um card com Mínimo/Atual/Máximo como campos
+rotulados (nada de `≤`/`/` soltos), resumo "atual / máximo" com barra
+de progresso discreta (só aparece quando há teto configurado — sem
+teto continua mostrando só o valor, do jeito que já era), remover virou
+um ✕ discreto no canto com confirmação inline ("Remover? Sim/Não") em
+vez de um clique direto e destrutivo. Placeholder de mínimo/máximo sem
+valor usa "—" (trocado de "Sem piso"/"Sem teto" depois de ver na tela
+que truncava nos campos mais estreitos).
+
+O formulário de "+ Adicionar recurso" só aparece depois de clicar num
+botão — antes ficava sempre visível embaixo da lista. Erro de nome
+vazio ou duplicado aparece como texto ao lado do campo, sem `alert()`.
+Grid responsivo preservado (2 colunas com espaço, 1 no celular).
+
+**Como testei sem banco de dados de verdade**: este ambiente não tem
+credenciais reais do Supabase, e a página de Campanha Livre sempre
+busca a ficha via API (diferente dos 5 sistemas estáticos, que também
+funcionam por `localStorage`). Rodei o Next em modo dev com uma URL/
+chave falsas do Supabase (só o suficiente pra passar do middleware,
+sem tentar logar de verdade) e usei o `page.route()` do Playwright pra
+interceptar `GET /api/personagens/:id` e devolver um personagem de
+mentira — isso testa o componente de verdade, no navegador de verdade,
+sem depender de login nem de banco. Testado em 1280px (desktop) e
+375px (celular): grid de 2/1 colunas, resumo e barra aparecendo certo
+(inclusive quando o atual passa do máximo, sem quebrar o layout),
+recurso sem teto mostrando só o número, nome comprido quebrando a
+linha em vez de estourar o card, confirmação de remover funcionando,
+formulário abrindo/fechando/validando. `tsc --noEmit`, `npm run lint`,
+`npm run build` e os 220 testes automáticos continuam limpos (esta
+fatia não mexeu em lógica testável por `node --test`, só JSX/CSS).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
