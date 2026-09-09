@@ -3611,6 +3611,262 @@ ficar negativo, recurso desligado não deixa comprar, Log Pose
 comprar/gastar funcionando, estoque persistindo depois de recarregar a
 página, e zerar estoque limpando tudo. `tsc --noEmit`, `npm run lint` e
 os 208 testes automáticos continuam limpos.
+## 91. D&D 5ª Edição — chassi inicial (04/09/2026)
+
+O Zé pediu pra integrar D&D 5ª Edição — "não só o sistema principal, MAS
+TODO O SISTEMA" — e mandou uma pasta do Google Drive com 23 arquivos em
+vez de anexar tudo no chat, porque não conseguia mandar de uma vez. Dado o
+tamanho do material (livros oficiais completos + suplementos + homebrews
+temáticos como Runeterra/League of Legends e "Sol da Meia-Noite"), a
+primeira decisão foi cortar essa primeira fatia, do mesmo jeito que
+Fabula Ultima e o SAO cresceram aos poucos (decisão #26):
+
+| # | Decisão | Escolha |
+|---|---------|---------|
+| 81a | Fonte principal | **Livro do Jogador** (biblioteca élfica, PT-BR) — mais completo que as Regras Básicas |
+| 81b | Suplementos (Xanathar, Tasha's, Volo's, Elemental Evil, itens mágicos, talentos, homebrews temáticos) | **Fora desta fatia.** Entram um de cada vez, em fatias futuras |
+
+**Limite técnico descoberto no caminho.** A ferramenta de leitura do
+Google Drive trunca PDFs grandes num teto fixo de caracteres — o Livro do
+Jogador (314 páginas) parou na página 81, no meio do capítulo de Classes,
+sem chegar em Testes, Combate ou nas 8 classes restantes. Baixar o
+arquivo original também não deu: a ferramenta de download recusa
+qualquer arquivo acima de 10MB, e o Livro do Jogador tem quase 22MB. A
+saída foi usar as **Regras Básicas dos Jogadores** (mesma tradução
+PT-BR, mas só 5,2MB) como fonte principal do motor de regras e das
+classes — ela cabe no limite de download, e `pdftotext -layout` (instalado
+na sessão) extrai o livro inteiro sem truncar, sem depender mais da
+ferramenta do Drive. As 9 raças vieram do trecho do Livro do Jogador que
+já tinha sido lido antes de truncar (capítulo 2 inteiro, páginas 17-42).
+
+**Escopo do chassi:** as sete perguntas de `ARQUITETURA.md` (decisão
+#17), respondidas com o que dá pra jogar hoje —
+
+- Atributos: os 6 de sempre, modificador `(valor-10)/2`, bônus de
+  proficiência por nível (tabela 1-20)
+- Criação: raça (9, com sub-raças) + classe (4: Guerreiro, Ladino,
+  Clérigo, Mago — as 8 restantes ficam pra fatias futuras) + antecedente
+  (5) + atributos (array padrão sugerido)
+- Derivados: PV (dado de vida da classe + Constituição, com "Recalcular"
+  editável à mão — mesmo padrão do Fabula Ultima), CA (calculada da
+  armadura equipada, com teto de Destreza por categoria), iniciativa,
+  percepção passiva
+- Teste: d20 + modificador + bônus de proficiência (se proficiente),
+  vantagem/desvantagem
+- Condições: as 15 do Apêndice, mais Exaustão em 6 níveis
+- Progressão: nível 1-20, características de classe até o 3º nível
+  (arquétipos/domínios/tradições ficam pra quando as classes ganharem
+  profundidade, igual o Fabula Ultima fez com os Ritos)
+- Ficha: arquivo único `public/dnd-5e.html`, tema escuro do Hub, Modo Hub
+  desde o primeiro commit (mesmo padrão de Thrylikí Chelóna)
+
+**Automação era o requisito central** — o Zé foi enfático: "o sistema
+precisa ser automático e ser fácil [...] preciso que isso funcione melhor
+que uma ficha normal". Por isso nada de número solto pra preencher à mão
+quando dá pra calcular: escolher raça aplica bônus de atributo e traços
+sozinho; escolher classe preenche dado de vida, proficiências e
+perícias disponíveis; PV, CA, testes de resistência, perícias e ataque
+de arma equipada são todos calculados a partir da ficha, com "Recalcular"
+só onde o próprio livro trata o número como algo que a mesa ajusta (PV
+por nível, CA manual).
+
+**Extração em paralelo.** Como cada capítulo (raças, classes, combate +
+equipamento + condições, testes + antecedentes + conjuração) é
+independente, quatro agentes trabalharam ao mesmo tempo, cada um lendo
+sua fatia do texto já extraído localmente e devolvendo só dados
+mecânicos em JSON — mesmo caminho das decisões #25/#56. Só mecânica
+(números, fórmulas, proficiências, efeitos resumidos com palavras
+próprias) — nunca texto do livro, por ser conteúdo comercial da Wizards
+of the Coast (mesma regra do Fabula Ultima, `ARQUITETURA.md`).
+
+Testado com Playwright: criação de personagem, raça com sub-raça
+somando bônus de atributo certo, PV calculado batendo com dado de
+vida+Constituição, CA calculada reagindo à armadura equipada (com e sem
+teto de Destreza), perícias respeitando o limite da classe, arma
+equipada mostrando bônus de ataque e dano certos, condições marcáveis,
+aba de Conjuração escondida pra classe não-conjuradora, persistência
+após recarregar, e Modo Hub completo mockando `/api/personagens/*`
+(carregar, editar disparando PATCH com `resumoVida`, Compartilhar). `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos.
+`src/lib/sistemas.ts` ganhou a entrada `dnd-5e` (`situacao:
+"em-construcao"`, só 4 das 12 classes prontas) e a migração
+`0011_sistema_dnd_5e.sql` garante a linha correspondente no banco.
+
+## 92. D&D 5ª Edição — as 8 classes restantes, Talentos e Antecedentes (04/09/2026)
+
+Continuação direta da decisão #91. O Zé mandou o Livro do Jogador completo
+(dividido em 4 partes de ~80 páginas pelo próprio Google Drive) — a
+primeira parte repetia o que já tinha sido lido (páginas 1-81), as três
+seguintes cobriam exatamente o que faltava (82 até o fim, ~316 páginas).
+
+Com o livro inteiro em mãos, quatro agentes em paralelo extraíram:
+
+- As 8 classes que faltavam — **Bárbaro, Bardo, Bruxo, Druida, Feiticeiro,
+  Monge, Paladino, Patrulheiro** — no mesmo formato das 4 já existentes
+  (dado de vida, salvamentos, perícias, proficiências, equipamento
+  inicial, características até o 3º nível, regra de conjuração pras 6
+  classes que conjuram). `src/lib/sistemas.ts` não mudou — o catálogo de
+  classes já estava certo, só a lista `CLASSES` do chassi cresceu de 4
+  para as 12 completas
+- **Talentos** (40, Capítulo 6) e a regra de **Multiclasse** (pré-requisito
+  de atributo por classe + como PV, proficiências e conjuração se
+  combinam) — nova aba "Talentos" na ficha, com uma lista de talentos
+  escolhidos (nome + efeito automático) e o catálogo completo como
+  referência
+- **8 Antecedentes novos** (Artesão de Guilda, Artista, Charlatão,
+  Eremita, Forasteiro, Marinheiro, Nobre, Órfão), somados aos 5 que já
+  existiam — total de 13, cobrindo todos os antecedentes do livro
+
+Mesma regra de direito autoral das decisões anteriores: só mecânica
+(números, fórmulas, proficiências, efeito resumido em palavras
+próprias), nunca o texto do livro.
+
+Um detalhe de regras ficou registrado pros agentes, sem virar mecânica
+de ficha ainda: o Bardo escolhe "três perícias quaisquer" (não uma
+lista fechada como as outras classes) — a `periciasDisponiveis.lista`
+dele lista as 18 perícias do sistema, então a interface de escolha
+funciona igual às outras classes sem precisar de um caso especial.
+
+Testado com Playwright: uma das 8 classes novas (Bárbaro) mostrando
+Fúria e PV calculado certo com a nova raça/antecedente, aba Talentos
+com catálogo e talento escolhido aplicando o efeito, uma classe
+conjuradora nova (Druida) preenchendo a aba Conjuração, persistência
+após recarregar — mais toda a bateria de testes da fatia anterior
+(criação completa, raça com sub-raça, combate, Modo Hub) sem
+regressão. `tsc --noEmit`, `npm run lint` e os 208 testes automáticos
+continuam limpos.
+
+**Segue fora de escopo:** arquétipos/subclasses (Caminho Primitivo,
+Colégio de Bardo, Domínio Divino, Patrono do Bruxo, Círculo Druídico,
+Origem de Feitiçaria, Arquétipo Marcial, Arquétipo Ladino, Tradição
+Arcana, Tradição Monástica, Juramento Sagrado, Conclave de
+Patrulheiro), catálogo de magias, ficha de inimigo e Escudo do Mestre —
+fatias futuras.
+
+## 93. D&D 5ª Edição — arquétipos/subclasses das 12 classes (04/09/2026)
+
+O Zé pediu explicitamente "12 classes de vez" ao escolher entre fechar os
+arquétipos ou o catálogo de magias como próxima fatia (decisão #92 tinha
+deixado as duas em aberto). Diferente das duas fatias anteriores, não
+precisou de nenhum arquivo novo — o texto de cada classe já extraído
+(`phb.txt` e `phb-parte2.txt`) já trazia as subclasses dela, só não
+tinham sido processadas ainda.
+
+Quatro agentes em paralelo extraíram, pra cada uma das 12 classes, TODAS
+as opções de subclasse do livro com as características reais por nível
+(os números variam por classe — não é sempre 3/6/10/14):
+
+| Classe | Nome do "tipo" | Opções | Nível de escolha |
+|---|---|---|---|
+| Bárbaro | Caminho Primitivo | Furioso, Guerreiro Totêmico | 3º |
+| Bardo | Colégio de Bardo | Conhecimento, Bravura | 3º |
+| Bruxo | Patrono Sobrenatural | Arquifada, O Corruptor, O Grande Antigo | 1º |
+| Clérigo | Domínio Divino | Conhecimento, Enganação, Guerra, Luz, Natureza, Tempestade, Vida (7!) | 1º |
+| Druida | Círculo Druídico | Terra, Lua | 2º |
+| Feiticeiro | Origem da Feitiçaria | Linhagem Dracônica, Magia Selvagem | 1º |
+| Guerreiro | Arquétipo Marcial | Campeão, Cavaleiro Arcano, Mestre de Batalha | 3º |
+| Ladino | Arquétipo Ladino | Assassino, Ladrão, Trapaceiro Arcano | 3º |
+| Mago | Tradição Arcana | as 8 escolas de magia | 2º |
+| Monge | Tradição Monástica | Mão Aberta, Sombra, Quatro Elementos | 3º |
+| Paladino | Juramento Sagrado | Devoção, Anciões, Vingança | 3º |
+| Patrulheiro | Conclave de Patrulheiro | Besta, Caçador, Rastreador Subterrâneo (3, não só os 2 clássicos) | 3º |
+
+O nível de escolha de cada classe não foi fixado à mão — a ficha calcula
+sozinha (`nivelEscolhaSubclasse()`) como o menor nível citado entre as
+características de qualquer opção daquela classe, então nenhuma tabela
+precisou ser digitada duas vezes.
+
+Automação de novo no centro: o seletor de subclasse só aparece na tela
+quando o nível do personagem já alcança o nível de escolha da classe
+atual (antes disso, mostra só um aviso de a partir de qual nível);
+escolher uma opção mostra as características dela pro nível atual, do
+mesmo jeito que as características de classe já funcionavam. Trocar de
+classe limpa a subclasse escolhida (evita ficar com uma subclasse de
+outra classe pendurada).
+
+Como já é regra do projeto (Fabula Ultima, decisões anteriores de D&D):
+só mecânica, nunca o texto do livro. Manobras de combate do Mestre de
+Batalha e Disciplinas Elementais do Monge (Quatro Elementos) entraram
+como UMA característica resumida cada ("escolhe N manobras/disciplinas
+de uma lista"), sem listar as opções individuais — proibitivamente
+grande pra esta fatia e sem valor mecânico sem o resto do sistema de
+manobra/disciplina, que fica pra depois se algum dia fizer sentido.
+
+Testado com Playwright: Bruxo (escolhe no 1º nível) já mostrando o
+seletor de Patrono desde a criação e aplicando a característica ao
+escolher Arquifada; Guerreiro no 1º nível mostrando só o aviso "a partir
+do 3º nível" sem seletor, e o seletor aparecendo ao subir pro 3º com o
+Campeão aplicando certo; persistência após recarregar — mais toda a
+bateria de testes das duas fatias anteriores sem regressão. `tsc
+--noEmit`, `npm run lint` e os 208 testes automáticos continuam limpos.
+
+**Segue fora de escopo:** catálogo de magias (o próximo passo natural,
+já com o texto em mãos igual desta fatia), ficha de inimigo e Escudo do
+Mestre (esses dois exigem Manual dos Monstros e Livro do Mestre, ainda
+não enviados — arquivos grandes, vão precisar ser divididos como o
+Livro do Jogador foi).
+
+## 94. D&D 5ª Edição — catálogo de magias (04/09/2026)
+
+Última peça pra deixar os 8 conjuradores (Bardo, Bruxo, Clérigo, Druida,
+Feiticeiro, Mago, Paladino, Patrulheiro) jogáveis de verdade — até aqui a
+aba Conjuração só deixava digitar nome de magia à mão, sem catálogo nem
+mecânica por trás.
+
+O Capítulo 11 (Magias) do Livro do Jogador tem duas partes bem
+diferentes: a **Lista de Magias** (só nomes, organizada por classe e por
+nível — quem pode conjurar o quê) e a **Descrição das Magias** (~360
+magias únicas, em ordem alfabética, cada uma com escola, tempo de
+conjuração, alcance, componentes, duração e o efeito completo). Sete
+agentes trabalharam em paralelo: um extraiu a lista por classe, seis
+dividiram as ~5500 linhas de descrições em fatias alfabéticas de ~900
+linhas cada.
+
+**Rate limit no meio do trabalho.** Os seis agentes de descrição bateram
+no limite de sessão da API bem na hora de escrever o arquivo final —
+cada um já tinha lido e processado o próprio trecho, só faltava salvar o
+JSON. Em vez de descartar o trabalho e começar de novo (o que jogaria
+fora leituras de texto caras), retomei os agentes que ainda existiam
+(`SendMessage` pro `agentId` original) pra eles terminarem de escrever
+a partir da própria memória — sem reler o texto fonte de novo. Os dois
+que não tinham travado nesse ponto exato (parte 4 e 6) já tinham
+concluído antes de cair.
+
+**Checagem de fronteira entre fatias.** Cada agente lia um intervalo de
+linhas fixo, o que corre risco de cortar uma magia ao meio ou duplicá-la
+entre dois agentes vizinhos (o layout do PDF em duas/três colunas
+também intercala texto de forma confusa, então cada agente teve que
+reconstruir a ordem de leitura por conta própria). Depois de juntar as
+seis partes, cruzei o resultado com a lista por classe: de ~365 magias
+brutas, 4 eram duplicatas de fronteira (removidas) e sobraram 361
+únicas — contra a lista por classe, só 3 nomes não bateram, e eram só
+diferença de grafia (ex. "Enfraquecer o Intelecto" vs "Enfraquecer
+Intelecto"), não magia faltando de verdade. Corrigido normalizando os 3
+nomes na lista por classe pros nomes canônicos das descrições.
+
+Escolher uma classe conjuradora agora mostra um catálogo de verdade na
+aba Conjuração: truques e magias preparadas viram seletores (como o "+
+Do catálogo" que o SAO e o Fabula Ultima já usam pra golpes/magias),
+filtrados pelas magias que aquela classe específica tem acesso e pelo
+nível certo — escolher uma já mostra tempo de conjuração, alcance,
+componentes, duração e o efeito completo, sem precisar digitar nada.
+Uma tabela de referência com o catálogo inteiro da classe também fica
+disponível na mesma aba.
+
+Mesma regra de direito autoral de sempre: cada efeito foi resumido com
+palavras próprias pelos agentes, preservando números/dados/CDs (que são
+mecânica, não prosa) — nunca a frase literal do livro.
+
+Testado com Playwright: aba Conjuração do Mago mostrando CD/bônus de
+ataque calculados, catálogo de magias da classe completo, truque e
+magia preparada escolhidos no seletor já trazendo os detalhes mecânicos
+automaticamente, classe não-conjuradora continuando sem catálogo,
+persistência após recarregar — mais toda a bateria de testes das três
+fatias anteriores de D&D sem regressão. `tsc --noEmit`, `npm run lint`
+e os 208 testes automáticos continuam limpos.
+
+**Segue fora de escopo:** ficha de inimigo e Escudo do Mestre — ainda
+exigem Manual dos Monstros e Livro do Mestre, não enviados.
 
 ## 31. Restrições registradas
 
