@@ -4284,6 +4284,48 @@ mostra aviso apropriado em vez de nada). `tsc --noEmit`, `npm run
 lint`, `npm run build` e os 273 testes automáticos (270 + 3) continuam
 limpos.
 
+## 105. Animações melhores em SAO, Fabula Ultima, Thrylikí Chelóna e Kaizoku no Sho (09/09/2026)
+
+Pedido do Zé: "agora volte a fazer as animações". A decisão #81 tinha levado
+a cascata de entrada, o "levantar" no hover dos botões e o respeito a
+`prefers-reduced-motion` só pro Sistema do Sávio; os outros quatro sistemas
+ficaram parados na animação simples original (decisão #69: tela inteira
+surgindo de uma vez com `fadeSlideIn`, sem cascata, sem reduced-motion) —
+igual ao que já tinha acontecido com o Tema (decisão #87 levou o tema do
+Sávio pros outros quatro depois).
+
+Levada a receita exata da #81 pros quatro arquivos, sem inventar nada novo:
+
+- `@keyframes fadeSlideIn` ganhou o `scale(.985→1)` além do deslizar vertical,
+  com easing `cubic-bezier(.16,1,.3,1)`.
+- A animação saiu de `#app.entra` (tela inteira de uma vez) para
+  `#app.entra > *` com `animation-delay` crescente por `:nth-child` (0,
+  .035s, .07s, .105s, .14s, e tudo do 6º filho em diante junto em .17s) —
+  cada cartão da tela aparece um pouco depois do anterior.
+- `button:hover` ganhou `transform:translateY(-1px)` (Kaizoku no Sho usa
+  `.btn:hover` em vez de `button:hover` — sua transição já era `all .15s
+  ease`, então só precisou do `transform` a mais).
+- `@media (prefers-reduced-motion: reduce)` desliga a cascata pra quem pediu
+  menos movimento no sistema operacional.
+
+Kaizoku no Sho usa `#appRoot` em vez de `#app` (comentário do próprio
+arquivo já registrava por quê: uma div extra mudou o tempo de remoção do
+DOM o suficiente pra expor uma race do Chromium em testes automatizados) —
+a mesma receita foi adaptada pro seletor certo, sem mudar essa estrutura.
+
+Testado com Playwright nos quatro arquivos (abrindo cada `.html` direto por
+`file://`, sem precisar de servidor — são fichas estáticas sem dependência
+de Supabase): cria um personagem novo, confere que os filhos de #app (ou
+#appRoot) saem com `animation-delay` escalonado, troca pra uma aba
+diferente da ativa e confere a cascata de novo (clicar na aba já ativa não
+reanima — comportamento antigo e intencional, não mexi nisso), confere que
+o hover muda o `transform` computado do botão, e emula
+`prefers-reduced-motion: reduce` confirmando que a animação desliga
+(`animation-name` vira `none`). Print de tela de cada ficha conferido
+visualmente — sem regressão de layout. `tsc --noEmit`, `npm run lint` e os
+273 testes automáticos continuam limpos (mudança é só CSS estático dos
+quatro arquivos).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

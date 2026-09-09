@@ -1468,6 +1468,18 @@ passando.
       currículo futuro, só o que já foi estudado
 - [ ] Academia Mágica — Timeline, Controle Operacional GM — fatias
       futuras (decisão #26)
+- [x] **Animações melhores em SAO, Fabula Ultima, Thrylikí Chelóna e
+      Kaizoku no Sho** (09/09/2026) — decisão #105. A cascata de entrada,
+      o "levantar" no hover e o `prefers-reduced-motion` (decisão #81)
+      só tinham ido pro Sistema do Sávio — levados agora, com a mesma
+      receita, pros outros quatro. Fecha a parte de animação da ideia
+      "Customização visual" nos cinco sistemas; fonte do título,
+      reordenar abas e layout compacto continuam em aberto. Testado com
+      Playwright nos quatro arquivos (cascata escalonada por
+      `nth-child`, hover mudando o `transform` computado,
+      `prefers-reduced-motion: reduce` desligando a animação) e prints
+      de tela; `tsc`, lint e os 273 testes automáticos continuam
+      limpos
 
 ---
 
