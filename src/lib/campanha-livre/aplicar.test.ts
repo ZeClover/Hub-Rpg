@@ -807,3 +807,68 @@ test("desfazer bulletin_add remove a entrada inteira", () => {
   const desfeito = desfazerEvento(dados, dados.eventos[0].id);
   assert.equal(desfeito.mural.length, 0);
 });
+
+test("aplica now: avança dia e hora, cada um vira um evento próprio", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  assert.equal(ficha.diaAtual, 1);
+  assert.equal(ficha.horaAtual, "08:00");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("now:\n  day: 2\n  time: \"14:31\""));
+  assert.equal(dados.diaAtual, 2);
+  assert.equal(dados.horaAtual, "14:31");
+  assert.equal(dados.eventos.length, 2, "day e time viram dois eventos separados, cada um desfazível sozinho");
+});
+
+test("desfazer now (hora) restaura só a hora, sem mexer no dia", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("now:\n  day: 2\n  time: \"14:31\""));
+  const eventoHora = dados.eventos.find((e) => e.tipo === "agora" && e.resumo.includes("Hora"))!;
+  const desfeito = desfazerEvento(dados, eventoHora.id);
+  assert.equal(desfeito.horaAtual, "08:00");
+  assert.equal(desfeito.diaAtual, 2, "o dia não deveria voltar, só a hora");
+});
+
+test("aplica schedule.blocks_add", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("schedule:\n  blocks_add:\n    - weekday: monday\n      start: \"08:00\"\n      end: \"09:45\"\n      label: Mana"));
+  assert.equal(dados.gradeHoraria.length, 1);
+  assert.equal(dados.gradeHoraria[0].diaSemana, "segunda");
+  assert.equal(dados.gradeHoraria[0].rotulo, "Mana");
+});
+
+test("desfazer schedule.blocks_add remove o bloco inteiro", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("schedule:\n  blocks_add:\n    - weekday: monday\n      start: \"08:00\"\n      end: \"09:45\"\n      label: Mana"));
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.gradeHoraria.length, 0);
+});
+
+test("schedule.overrides_add (cancelled) contra bloco inexistente vira error e não aplica", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const mudancas = mudancasDe("schedule:\n  overrides_add:\n    - day: 3\n      type: cancelled\n      target_label: Não existe");
+  const validadas = validarContraPersonagem(mudancas, ficha);
+  assert.ok(temErro(validadas[0]));
+  const { dados } = aplicarMudancas(ficha, validadas.filter((m) => !temErro(m)));
+  assert.equal(dados.excecoesCalendario.length, 0);
+});
+
+test("schedule.overrides_add (cancelled) contra bloco existente passa e cancela o dia certo", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: comGrade } = aplicarMudancas(
+    ficha,
+    mudancasDe("schedule:\n  blocks_add:\n    - weekday: monday\n      start: \"14:15\"\n      end: \"15:45\"\n      label: História"),
+  );
+  const mudancas = mudancasDe("schedule:\n  overrides_add:\n    - day: 1\n      type: cancelled\n      target_label: História\n      reason: feriado");
+  const validadas = validarContraPersonagem(mudancas, comGrade);
+  assert.equal(temErro(validadas[0]), false);
+  const { dados } = aplicarMudancas(comGrade, validadas);
+  assert.equal(dados.excecoesCalendario.length, 1);
+  assert.equal(dados.excecoesCalendario[0].tipo, "cancelado");
+});
+
+test("desfazer schedule.overrides_add remove a exceção inteira", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("schedule:\n  overrides_add:\n    - day: 5\n      type: added\n      start: \"18:00\"\n      end: \"19:00\"\n      label: Clube de Duelos"));
+  assert.equal(dados.excecoesCalendario.length, 1);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.excecoesCalendario.length, 0);
+});

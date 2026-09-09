@@ -12,8 +12,10 @@ import {
   eventosConflitantes,
   restaurarSnapshot,
 } from "@/lib/campanha-livre/aplicar.ts";
+import { blocoAtual, diaSemanaDoDia, DIAS_SEMANA, proximoBloco, ROTULOS_DIA_SEMANA } from "@/lib/campanha-livre/calendario.ts";
 import {
   normalizarPersonagemLivre,
+  type BlocoGrade,
   type CategoriaMural,
   type CodexLivre,
   type CompromissoLivre,
@@ -21,11 +23,13 @@ import {
   type ConquistaLivre,
   type CriaturaLivre,
   type DescobertaLivre,
+  type DiaSemana,
   type DuracaoEfeito,
   type EntradaDiario,
   type EntradaEscola,
   type EntradaMural,
   type EventoAplicado,
+  type ExcecaoCalendario,
   type LocalLivre,
   type MagiaLivre,
   type MissaoLivre,
@@ -40,6 +44,7 @@ import {
   type StatusMissao,
   type StatusObjetivo,
   type TipoDuracao,
+  type TipoExcecaoCalendario,
 } from "@/lib/campanha-livre/tipos.ts";
 
 import { ImportarDoChat } from "./importar-do-chat";
@@ -1062,6 +1067,7 @@ const ABAS_MUNDO = [
   { id: "escola", rotulo: "Escola" },
   { id: "compromissos", rotulo: "Compromissos" },
   { id: "mural", rotulo: "Mural" },
+  { id: "calendario", rotulo: "Calendário" },
 ] as const;
 
 type AbaMundo = (typeof ABAS_MUNDO)[number]["id"];
@@ -1110,6 +1116,7 @@ function AbasMundo({
         {aba === "escola" && <Escola dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "compromissos" && <Compromissos dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "mural" && <Mural dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "calendario" && <Calendario dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
       </div>
     </section>
   );
@@ -1310,6 +1317,349 @@ function Mural({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+const DIAS_SEMANA_OPCOES: { valor: DiaSemana; rotulo: string }[] = DIAS_SEMANA.map((d) => ({ valor: d, rotulo: ROTULOS_DIA_SEMANA[d] }));
+
+const TIPO_EXCECAO_OPCOES: { valor: TipoExcecaoCalendario; rotulo: string }[] = [
+  { valor: "cancelado", rotulo: "Cancelado" },
+  { valor: "alterado", rotulo: "Alterado" },
+  { valor: "adicionado", rotulo: "Adicionado" },
+];
+
+/* ---------- Calendário: grade semanal + exceções + "agora" da campanha ---------- */
+function Calendario({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [diaSemanaNova, setDiaSemanaNova] = useState<DiaSemana>("segunda");
+  const [inicioNovo, setInicioNovo] = useState("");
+  const [fimNovo, setFimNovo] = useState("");
+  const [rotuloNovo, setRotuloNovo] = useState("");
+  const [localNovo, setLocalNovo] = useState("");
+
+  const [diaExcecaoNovo, setDiaExcecaoNovo] = useState("");
+  const [tipoExcecaoNovo, setTipoExcecaoNovo] = useState<TipoExcecaoCalendario>("cancelado");
+  const [rotuloAlvoNovo, setRotuloAlvoNovo] = useState("");
+  const [novoInicioExcecao, setNovoInicioExcecao] = useState("");
+  const [novoFimExcecao, setNovoFimExcecao] = useState("");
+  const [novoRotuloExcecao, setNovoRotuloExcecao] = useState("");
+  const [motivoExcecaoNovo, setMotivoExcecaoNovo] = useState("");
+
+  const atual = blocoAtual(dados);
+  const proximo = proximoBloco(dados);
+  const semanaAtual = diaSemanaDoDia(dados, dados.diaAtual);
+
+  function removerBloco(id: string) {
+    onSalvar({ ...dados, gradeHoraria: dados.gradeHoraria.filter((b) => b.id !== id) });
+  }
+
+  function adicionarBloco() {
+    if (!inicioNovo.trim() || !fimNovo.trim() || !rotuloNovo.trim()) return;
+    const novo: BlocoGrade = {
+      id: `bloco-${Date.now().toString(36)}`,
+      diaSemana: diaSemanaNova,
+      inicio: inicioNovo.trim(),
+      fim: fimNovo.trim(),
+      rotulo: rotuloNovo.trim(),
+      local: localNovo.trim() || undefined,
+      criadoEm: Date.now(),
+    };
+    onSalvar({ ...dados, gradeHoraria: [...dados.gradeHoraria, novo] });
+    setInicioNovo("");
+    setFimNovo("");
+    setRotuloNovo("");
+    setLocalNovo("");
+  }
+
+  function removerExcecao(id: string) {
+    onSalvar({ ...dados, excecoesCalendario: dados.excecoesCalendario.filter((e) => e.id !== id) });
+  }
+
+  function adicionarExcecao() {
+    const dia = Number(diaExcecaoNovo);
+    if (!diaExcecaoNovo.trim() || Number.isNaN(dia)) return;
+    if ((tipoExcecaoNovo === "cancelado" || tipoExcecaoNovo === "alterado") && !rotuloAlvoNovo.trim()) return;
+    if (tipoExcecaoNovo === "adicionado" && (!novoInicioExcecao.trim() || !novoFimExcecao.trim() || !novoRotuloExcecao.trim())) return;
+    const nova: ExcecaoCalendario = {
+      id: `excecao-${Date.now().toString(36)}`,
+      dia,
+      tipo: tipoExcecaoNovo,
+      rotuloAlvo: rotuloAlvoNovo.trim() || undefined,
+      novoInicio: novoInicioExcecao.trim() || undefined,
+      novoFim: novoFimExcecao.trim() || undefined,
+      novoRotulo: novoRotuloExcecao.trim() || undefined,
+      motivo: motivoExcecaoNovo.trim() || undefined,
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, excecoesCalendario: [...dados.excecoesCalendario, nova] });
+    setDiaExcecaoNovo("");
+    setRotuloAlvoNovo("");
+    setNovoInicioExcecao("");
+    setNovoFimExcecao("");
+    setNovoRotuloExcecao("");
+    setMotivoExcecaoNovo("");
+  }
+
+  const gradeOrdenada = [...dados.gradeHoraria].sort(
+    (a, b) => DIAS_SEMANA.indexOf(a.diaSemana) - DIAS_SEMANA.indexOf(b.diaSemana) || a.inicio.localeCompare(b.inicio),
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-lg border border-borda bg-superficie p-4">
+        <p className="text-xs uppercase tracking-wide text-texto-suave">Agora</p>
+        <div className="mt-2 flex flex-wrap items-end gap-4">
+          <label className="text-xs text-texto-suave">
+            Dia
+            <input
+              type="number"
+              value={dados.diaAtual}
+              disabled={somenteLeitura}
+              onChange={(e) => onSalvar({ ...dados, diaAtual: Number(e.target.value) || 1 })}
+              className="mt-1 block w-20 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto disabled:opacity-60"
+            />
+          </label>
+          <label className="text-xs text-texto-suave">
+            Hora
+            <input
+              type="text"
+              value={dados.horaAtual}
+              disabled={somenteLeitura}
+              placeholder="HH:MM"
+              onChange={(e) => onSalvar({ ...dados, horaAtual: e.target.value })}
+              className="mt-1 block w-24 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave disabled:opacity-60"
+            />
+          </label>
+          <p className="text-sm text-texto">{ROTULOS_DIA_SEMANA[semanaAtual]}</p>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div>
+            <p className="text-xs text-texto-suave">Bloco atual</p>
+            <p className="mt-1 text-sm text-texto">{atual ? `${atual.rotulo} (${atual.inicio}-${atual.fim})` : "Nenhum — janela livre"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-texto-suave">Próxima obrigação</p>
+            <p className="mt-1 text-sm text-texto">
+              {proximo
+                ? `${proximo.rotulo} — ${
+                    proximo.dia === dados.diaAtual ? "hoje" : `dia ${proximo.dia} (${ROTULOS_DIA_SEMANA[diaSemanaDoDia(dados, proximo.dia)]})`
+                  } ${proximo.inicio}`
+                : "Nada agendado na grade"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p className="font-titulo text-sm text-texto">Grade semanal</p>
+        <p className="text-xs text-texto-suave">Toda semana se repete assim — pra exceção de um dia só, use &ldquo;Exceções&rdquo; embaixo.</p>
+        {gradeOrdenada.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum bloco cadastrado ainda.</p>}
+        <ul className="mt-2 space-y-1.5">
+          {gradeOrdenada.map((b) => (
+            <li key={b.id} className="flex items-center justify-between gap-3 rounded border border-borda bg-superficie px-3 py-2 text-sm">
+              <span className="text-texto">
+                <span className="text-texto-suave">{ROTULOS_DIA_SEMANA[b.diaSemana]}</span> {b.inicio}-{b.fim} — {b.rotulo}
+                {b.local && <span className="text-xs text-texto-suave"> · {b.local}</span>}
+              </span>
+              {!somenteLeitura && (
+                <button
+                  type="button"
+                  onClick={() => removerBloco(b.id)}
+                  className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                >
+                  Remover
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {!somenteLeitura && (
+          <div className="mt-2 flex flex-wrap items-end gap-2 rounded-lg border border-borda bg-superficie p-3">
+            <label className="text-xs text-texto-suave">
+              Dia
+              <select
+                value={diaSemanaNova}
+                onChange={(e) => setDiaSemanaNova(e.target.value as DiaSemana)}
+                className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto"
+              >
+                {DIAS_SEMANA_OPCOES.map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-xs text-texto-suave">
+              Início
+              <input
+                type="text"
+                value={inicioNovo}
+                onChange={(e) => setInicioNovo(e.target.value)}
+                placeholder="08:00"
+                className="mt-1 block w-20 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+              />
+            </label>
+            <label className="text-xs text-texto-suave">
+              Fim
+              <input
+                type="text"
+                value={fimNovo}
+                onChange={(e) => setFimNovo(e.target.value)}
+                placeholder="09:45"
+                className="mt-1 block w-20 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+              />
+            </label>
+            <label className="text-xs text-texto-suave">
+              Rótulo
+              <input
+                type="text"
+                value={rotuloNovo}
+                onChange={(e) => setRotuloNovo(e.target.value)}
+                placeholder="Mana"
+                className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+              />
+            </label>
+            <label className="text-xs text-texto-suave">
+              Local (opcional)
+              <input
+                type="text"
+                value={localNovo}
+                onChange={(e) => setLocalNovo(e.target.value)}
+                placeholder="Sala 3"
+                className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+              />
+            </label>
+            <button type="button" onClick={adicionarBloco} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1.5 text-sm text-ambar-forte hover:bg-ambar/20">
+              + Bloco
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div>
+        <p className="font-titulo text-sm text-texto">Exceções</p>
+        <p className="text-xs text-texto-suave">Cancelamento, mudança de horário ou evento extra num dia específico — não mexe na grade semanal.</p>
+        {dados.excecoesCalendario.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma exceção ainda.</p>}
+        <ul className="mt-2 space-y-1.5">
+          {dados.excecoesCalendario.map((e) => (
+            <li key={e.id} className="flex items-center justify-between gap-3 rounded border border-borda bg-superficie px-3 py-2 text-sm">
+              <span className="text-texto">
+                Dia {e.dia}: {e.rotuloAlvo ?? e.novoRotulo} — {TIPO_EXCECAO_OPCOES.find((o) => o.valor === e.tipo)?.rotulo}
+                {e.motivo && <span className="text-xs text-texto-suave"> ({e.motivo})</span>}
+              </span>
+              {!somenteLeitura && (
+                <button
+                  type="button"
+                  onClick={() => removerExcecao(e.id)}
+                  className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                >
+                  Remover
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {!somenteLeitura && (
+          <div className="mt-2 space-y-2 rounded-lg border border-borda bg-superficie p-3">
+            <div className="flex flex-wrap items-end gap-2">
+              <label className="text-xs text-texto-suave">
+                Dia
+                <input
+                  type="number"
+                  value={diaExcecaoNovo}
+                  onChange={(e) => setDiaExcecaoNovo(e.target.value)}
+                  placeholder="3"
+                  className="mt-1 block w-16 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                />
+              </label>
+              <label className="text-xs text-texto-suave">
+                Tipo
+                <select
+                  value={tipoExcecaoNovo}
+                  onChange={(e) => setTipoExcecaoNovo(e.target.value as TipoExcecaoCalendario)}
+                  className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto"
+                >
+                  {TIPO_EXCECAO_OPCOES.map((o) => (
+                    <option key={o.valor} value={o.valor}>
+                      {o.rotulo}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {(tipoExcecaoNovo === "cancelado" || tipoExcecaoNovo === "alterado") && (
+                <label className="text-xs text-texto-suave">
+                  Bloco alvo (rótulo)
+                  <input
+                    type="text"
+                    value={rotuloAlvoNovo}
+                    onChange={(e) => setRotuloAlvoNovo(e.target.value)}
+                    placeholder="História"
+                    className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+              )}
+            </div>
+            {(tipoExcecaoNovo === "alterado" || tipoExcecaoNovo === "adicionado") && (
+              <div className="flex flex-wrap items-end gap-2">
+                <label className="text-xs text-texto-suave">
+                  Novo início
+                  <input
+                    type="text"
+                    value={novoInicioExcecao}
+                    onChange={(e) => setNovoInicioExcecao(e.target.value)}
+                    placeholder="16:00"
+                    className="mt-1 block w-20 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+                <label className="text-xs text-texto-suave">
+                  Novo fim
+                  <input
+                    type="text"
+                    value={novoFimExcecao}
+                    onChange={(e) => setNovoFimExcecao(e.target.value)}
+                    placeholder="17:00"
+                    className="mt-1 block w-20 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+                <label className="text-xs text-texto-suave">
+                  {tipoExcecaoNovo === "adicionado" ? "Rótulo" : "Novo rótulo (opcional)"}
+                  <input
+                    type="text"
+                    value={novoRotuloExcecao}
+                    onChange={(e) => setNovoRotuloExcecao(e.target.value)}
+                    placeholder="Clube de Duelos"
+                    className="mt-1 block rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+              </div>
+            )}
+            <div className="flex items-end gap-2">
+              <label className="text-xs text-texto-suave">
+                Motivo (opcional)
+                <input
+                  type="text"
+                  value={motivoExcecaoNovo}
+                  onChange={(e) => setMotivoExcecaoNovo(e.target.value)}
+                  placeholder="professor doente"
+                  className="mt-1 block w-64 rounded border border-borda bg-fundo px-2 py-1.5 text-sm text-texto placeholder:text-texto-suave"
+                />
+              </label>
+              <button type="button" onClick={adicionarExcecao} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1.5 text-sm text-ambar-forte hover:bg-ambar/20">
+                + Exceção
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -2835,6 +3185,8 @@ const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
   escola: "aula",
   compromissos: "compromisso",
   mural: "mural",
+  gradeHoraria: "bloco de horário",
+  excecoesCalendario: "exceção de calendário",
 };
 
 /** Descreve o que "Desfazer" vai fazer a este evento específico — antes → depois na direção do desfazer, não da mudança original. */

@@ -20,6 +20,7 @@
   `atual`, porque são sobre o efeito da PRÓPRIA mudança, não sobre o que
   outras mudanças do lote criaram.
 */
+import { blocosDoDia } from "./calendario.ts";
 import type { Mudanca } from "./parser.ts";
 import type { PersonagemLivre } from "./tipos.ts";
 
@@ -305,6 +306,22 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
           alertas: [
             ...mudanca.alertas,
             { nivel: "error" as const, mensagem: `Compromisso "${mudanca.descricao}" não existe — crie com commitments_add primeiro.` },
+          ],
+        };
+      }
+    }
+
+    if (mudanca.tipo === "excecao_calendario_add" && (mudanca.calendarioTipo === "cancelado" || mudanca.calendarioTipo === "alterado")) {
+      const existe = blocosDoDia(projetado, mudanca.dia).some((b) => b.rotulo === mudanca.rotuloAlvo);
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            {
+              nivel: "error" as const,
+              mensagem: `Não existe bloco "${mudanca.rotuloAlvo}" no dia ${mudanca.dia} pra ${mudanca.calendarioTipo === "cancelado" ? "cancelar" : "alterar"} — confira a grade (schedule.blocks_add) ou o dia.`,
+            },
           ],
         };
       }

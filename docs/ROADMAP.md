@@ -1412,10 +1412,26 @@ passando.
       campanha solo por enquanto (o `Personagem.dados` do Zé já serve de
       estado da mesa). Testado com 12 testes novos; `tsc`, lint e os 220
       testes automáticos continuam limpos
-- [ ] Academia Mágica — Calendário/Horário (motor de próxima
-      aula/obrigação calculado pelo código), Mapa, e tela "AGORA" —
-      fatias futuras (decisão #26); a tela "AGORA" depende do Calendário
-      pra fazer sentido, por isso vem depois dele, não antes
+- [x] **Redesign visual do card de Recursos no Campanha Livre**
+      (09/09/2026) — decisão #98. Cada recurso (Mana, HP etc.) virou um
+      card com Mínimo/Atual/Máximo rotulados (nada de `≤`/`/` soltos),
+      resumo com barra de progresso discreta, remover com confirmação
+      inline, formulário de adicionar escondido atrás de um botão. Só
+      UI/UX, mesmo modelo de dados e lógica de salvar de antes. Testado
+      no navegador via Playwright mockando a API (ambiente sem
+      Supabase configurado) em desktop e mobile
+- [x] **Academia Mágica — Motor de Calendário/Horário** (09/09/2026) —
+      decisão #99. Grade semanal recorrente + exceções pontuais
+      (cancelado/alterado/adicionado) + o "agora" da campanha
+      (dia/hora), com um motor puro (`calendario.ts`) que calcula
+      sozinho bloco atual e próxima obrigação — o Mestre só avança
+      `now.time`/`now.day`, nunca reenvia "qual é a próxima aula".
+      Nova aba Calendário no Campanha Livre. Testado com os cenários
+      exatos do pedido (14:40 numa segunda cheia → aula atual História;
+      15:46 → próxima aula é terça) e no navegador de verdade
+- [ ] Academia Mágica — Mapa e tela "AGORA" — fatias futuras (decisão
+      #26); a tela "AGORA" consome o Calendário + Missões/Pesquisas/
+      Recursos que já existem, por isso vem depois dele, não antes
 
 ---
 

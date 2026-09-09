@@ -4036,6 +4036,65 @@ formulário abrindo/fechando/validando. `tsc --noEmit`, `npm run lint`,
 `npm run build` e os 220 testes automáticos continuam limpos (esta
 fatia não mexeu em lógica testável por `node --test`, só JSX/CSS).
 
+## 99. Academia Mágica — Motor de Calendário/Horário (09/09/2026)
+
+Segunda fatia da Academia Mágica (a primeira foi a #97, Compromissos e
+Mural). Implementa a parte mais importante pedida pra tela "AGORA"
+funcionar de verdade: **o código calcula sozinho** qual aula está
+rolando e qual é a próxima, a partir de uma grade semanal + exceções —
+regra central do pedido (partes #82-90): "não quero o Mestre reenviando
+`nextClass` a cada avanço de 10 minutos".
+
+**Modelo**: `gradeHoraria` (blocos recorrentes — "toda segunda,
+08:00-09:45, Mana") + `excecoesCalendario` (exceção pontual num dia
+específico: cancelado/alterado/adicionado) + `diaAtual`/`horaAtual`
+(o "agora" da campanha) + `diaSemanaDoDia1` (configurado uma vez, define
+que dia da semana é o dia 1 — todo o resto deriva por módulo 7). Regra
+#85 do pedido, seguida à risca: BASE + exceção, nunca reescrever a
+grade inteira pra representar uma falta de um dia só.
+
+**Motor** (`src/lib/campanha-livre/calendario.ts`, funções puras,
+zero I/O): `diaSemanaDoDia`, `blocosDoDia` (grade + exceções daquele
+dia aplicadas por cima), `blocoAtual`, `proximoBloco`. Só matemática
+sobre dados já recebidos — nunca inventa aula que não está na grade
+(regra #125: "código pode ser inteligente sobre matemática/filtro/
+ordenação; não pode inventar lore/consequência"). Testado com os
+cenários exatos do pedido (parte #84): segunda 14:40 com a grade cheia
+→ aula atual é História; 15:46 → nenhuma aula rolando, próxima é a
+de terça; aula cancelada não aparece mais como bloco do dia.
+
+**HUB_UPDATE**: `now` (`day`/`time` — avança o "agora"; cada campo vira
+um evento próprio, cada um desfazível sozinho), `schedule.blocks_add`
+(grade recorrente), `schedule.overrides_add` (exceção — valida que o
+`target_label` de um "cancelled"/"changed" realmente existe naquele
+dia antes de aplicar, senão vira error e bloqueia).
+
+**Tela**: nova aba "Calendário" em Campanha Livre — mostra dia/hora
+atual (editável direto, igual XP/Nível já eram), dia da semana
+derivado, bloco atual e próxima obrigação (100% calculados, nunca
+editados à mão), lista da grade semanal e das exceções com formulário
+de adicionar manual (a ficha continua podendo ser toda editada à mão,
+não só por HUB_UPDATE — mesma filosofia do resto do Campanha Livre).
+
+Ainda não incluído nesta fatia (fica pra próximas, decisão #26):
+integrar Compromissos com data à agenda (o campo `data` de
+`CompromissoLivre` continua texto livre, não uma referência ao dia
+absoluto — juntar os dois exigiria decidir um formato de data comum,
+melhor decidir isso quando for construir a tela "AGORA" de verdade), e
+a própria tela "AGORA" (que consome este motor + Missões/Pesquisas/
+Recursos já existentes).
+
+Testado: 11 testes do motor (`calendario.test.ts`, cobrindo os cenários
+acima ponto a ponto), mais parser/aplicar/validar pros três HUB_UPDATE
+novos (add + desfazer + validação de alvo inexistente). Verificado
+também no navegador de verdade (mesma técnica da decisão #98 — Next em
+modo dev com Supabase falso + `page.route()` mockando a API): grade
+completa renderizada, trocar a hora manualmente recalcula bloco atual/
+próxima obrigação na hora, adicionar bloco/exceção pela UI funciona,
+cancelar uma aula faz ela sumir do "bloco atual" imediatamente. `tsc
+--noEmit`, `npm run lint`, `npm run build` e os 246 testes automáticos
+(220 + 26) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

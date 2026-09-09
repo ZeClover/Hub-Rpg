@@ -938,3 +938,100 @@ test("bulletin_add: sem title vira error", () => {
   if (!r.ok) return;
   assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
+
+/* ---------- now ---------- */
+test("now: com day e time", () => {
+  const r = interpretarHubUpdate(bloco("now:\n  day: 2\n  time: \"14:31\""));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "agora");
+  if (m.tipo === "agora") {
+    assert.equal(m.dia, 2);
+    assert.equal(m.hora, "14:31");
+  }
+});
+
+test("now: só time (sem avançar o dia)", () => {
+  const r = interpretarHubUpdate(bloco("now:\n  time: \"16:05\""));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "agora");
+  if (m.tipo === "agora") {
+    assert.equal(m.dia, undefined);
+    assert.equal(m.hora, "16:05");
+  }
+});
+
+test("now: vazio (sem day nem time) vira error", () => {
+  const r = interpretarHubUpdate(bloco("now: {}"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- schedule.blocks_add ---------- */
+test("schedule.blocks_add: bloco válido", () => {
+  const r = interpretarHubUpdate(
+    bloco("schedule:\n  blocks_add:\n    - weekday: monday\n      start: \"08:00\"\n      end: \"09:45\"\n      label: Mana\n      location: Sala 3"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "grade_add");
+  if (m.tipo === "grade_add") {
+    assert.equal(m.diaSemana, "segunda");
+    assert.equal(m.inicio, "08:00");
+    assert.equal(m.fim, "09:45");
+    assert.equal(m.rotulo, "Mana");
+    assert.equal(m.local, "Sala 3");
+  }
+});
+
+test("schedule.blocks_add: sem weekday/start/end/label vira error", () => {
+  const r = interpretarHubUpdate(bloco("schedule:\n  blocks_add:\n    - label: Sem nada"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const alertas = r.mudancas[0].alertas;
+  assert.ok(alertas.some((a) => a.nivel === "error" && a.mensagem.includes("weekday")));
+  assert.ok(alertas.some((a) => a.nivel === "error" && a.mensagem.includes("start")));
+  assert.ok(alertas.some((a) => a.nivel === "error" && a.mensagem.includes("end")));
+});
+
+/* ---------- schedule.overrides_add ---------- */
+test("schedule.overrides_add: cancelled precisa de target_label", () => {
+  const r = interpretarHubUpdate(bloco("schedule:\n  overrides_add:\n    - day: 3\n      type: cancelled\n      reason: professor doente"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "excecao_calendario_add");
+  if (m.tipo === "excecao_calendario_add") {
+    assert.ok(m.alertas.some((a) => a.nivel === "error" && a.mensagem.includes("target_label")));
+  }
+});
+
+test("schedule.overrides_add: changed válido", () => {
+  const r = interpretarHubUpdate(
+    bloco("schedule:\n  overrides_add:\n    - day: 3\n      type: changed\n      target_label: História\n      start: \"16:00\"\n      end: \"17:00\""),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "excecao_calendario_add");
+  if (m.tipo === "excecao_calendario_add") {
+    assert.equal(m.calendarioTipo, "alterado");
+    assert.equal(m.dia, 3);
+    assert.equal(m.rotuloAlvo, "História");
+    assert.equal(m.novoInicio, "16:00");
+    assert.equal(m.novoFim, "17:00");
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
+test("schedule.overrides_add: added precisa de start/end/label", () => {
+  const r = interpretarHubUpdate(bloco("schedule:\n  overrides_add:\n    - day: 5\n      type: added"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});

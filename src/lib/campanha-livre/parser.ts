@@ -19,6 +19,13 @@
   só porque o tempo passou) e bulletin_add (mural público da campanha —
   só o que Zé pode legitimamente saber, nunca plot de mestre).
 
+  v1.2 (pedido da Academia Mágica): now (day/time — avança o "agora" da
+  campanha), schedule.blocks_add (grade semanal recorrente) e
+  schedule.overrides_add (exceção pontual — cancelada/alterada/
+  adicionada — pra um dia específico, sem reescrever a grade inteira).
+  O motor que deriva bloco atual/próximo a partir disso fica em
+  `calendario.ts`, não aqui — o parser só interpreta o texto colado.
+
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
   revisão decidir o que aplicar (regras #1 e #2 da especificação).
@@ -31,6 +38,7 @@ import { parse as parseYaml } from "yaml";
 
 import type {
   CategoriaMural,
+  DiaSemana,
   ObjetivoMissao,
   OrigemCompromisso,
   StatusCompromisso,
@@ -38,6 +46,7 @@ import type {
   StatusDescobertaMagia,
   StatusMissao,
   TipoDuracao,
+  TipoExcecaoCalendario,
 } from "./tipos.ts";
 
 export type NivelAlerta = "info" | "warning" | "error";
@@ -381,6 +390,32 @@ export type MudancaMuralAdd = Base & {
   expiracao?: string;
 };
 
+export type MudancaAgora = Base & {
+  tipo: "agora";
+  dia?: number;
+  hora?: string;
+};
+
+export type MudancaGradeAdd = Base & {
+  tipo: "grade_add";
+  diaSemana: DiaSemana;
+  inicio: string;
+  fim: string;
+  rotulo: string;
+  local?: string;
+};
+
+export type MudancaExcecaoCalendarioAdd = Base & {
+  tipo: "excecao_calendario_add";
+  dia: number;
+  calendarioTipo: TipoExcecaoCalendario;
+  rotuloAlvo?: string;
+  novoInicio?: string;
+  novoFim?: string;
+  novoRotulo?: string;
+  motivo?: string;
+};
+
 export type Mudanca =
   | MudancaXp
   | MudancaRecurso
@@ -422,7 +457,10 @@ export type Mudanca =
   | MudancaEscolaAdd
   | MudancaCompromissoAdd
   | MudancaCompromissoUpdate
-  | MudancaMuralAdd;
+  | MudancaMuralAdd
+  | MudancaAgora
+  | MudancaGradeAdd
+  | MudancaExcecaoCalendarioAdd;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -510,7 +548,25 @@ const CAMPOS_CONHECIDOS = new Set([
   "commitments_add",
   "commitments_update",
   "bulletin_add",
+  "now",
+  "schedule",
 ]);
+
+const DIAS_SEMANA_MAP: Record<string, DiaSemana> = {
+  sunday: "domingo",
+  monday: "segunda",
+  tuesday: "terca",
+  wednesday: "quarta",
+  thursday: "quinta",
+  friday: "sexta",
+  saturday: "sabado",
+};
+
+const TIPOS_EXCECAO_CALENDARIO_MAP: Record<string, TipoExcecaoCalendario> = {
+  cancelled: "cancelado",
+  changed: "alterado",
+  added: "adicionado",
+};
 
 const ORIGENS_COMPROMISSO: Record<string, OrigemCompromisso> = {
   promised: "prometeu",
@@ -834,6 +890,22 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
   // --- bulletin_add (mural público da campanha, pedido da Academia Mágica) ---
   if (Array.isArray(raiz.bulletin_add)) {
     for (const entrada of raiz.bulletin_add) mudancas.push(interpretarMuralAdd(entrada));
+  }
+
+  // --- now (avança o "agora" da campanha — dia e/ou hora) ---
+  if (typeof raiz.now === "object" && raiz.now !== null) {
+    mudancas.push(interpretarAgora(raiz.now));
+  }
+
+  // --- schedule.blocks_add / schedule.overrides_add (motor de calendário) ---
+  if (typeof raiz.schedule === "object" && raiz.schedule !== null) {
+    const schedule = raiz.schedule as Record<string, unknown>;
+    if (Array.isArray(schedule.blocks_add)) {
+      for (const bloco of schedule.blocks_add) mudancas.push(interpretarGradeAdd(bloco));
+    }
+    if (Array.isArray(schedule.overrides_add)) {
+      for (const excecao of schedule.overrides_add) mudancas.push(interpretarExcecaoCalendarioAdd(excecao));
+    }
   }
 
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
@@ -1844,6 +1916,90 @@ function interpretarMuralAdd(bruto: unknown): MudancaMuralAdd {
     origem: typeof objeto.source === "string" ? objeto.source : undefined,
     data: typeof objeto.date === "string" ? objeto.date : undefined,
     expiracao: typeof objeto.expires === "string" ? objeto.expires : undefined,
+    alertas,
+  };
+}
+
+function interpretarAgora(bruto: unknown): MudancaAgora {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const dia = objeto.day !== undefined ? paraNumero(objeto.day) : undefined;
+  if (objeto.day !== undefined && dia === null) alertas.push({ nivel: "error", mensagem: "now.day precisa ser numérico." });
+
+  const hora = typeof objeto.time === "string" ? objeto.time : undefined;
+  if (objeto.day === undefined && objeto.time === undefined) {
+    alertas.push({ nivel: "error", mensagem: "now precisa de 'day' e/ou 'time'." });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "agora",
+    dia: dia ?? undefined,
+    hora,
+    alertas,
+  };
+}
+
+function interpretarGradeAdd(bruto: unknown): MudancaGradeAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const diaSemanaBruta = typeof objeto.weekday === "string" ? objeto.weekday : null;
+  const diaSemana = diaSemanaBruta ? DIAS_SEMANA_MAP[diaSemanaBruta] : null;
+  if (!diaSemanaBruta) alertas.push({ nivel: "error", mensagem: "Bloco em schedule.blocks_add sem 'weekday'." });
+  else if (!diaSemana) alertas.push({ nivel: "error", mensagem: `Dia da semana desconhecido: "${diaSemanaBruta}".` });
+
+  const inicio = typeof objeto.start === "string" ? objeto.start : null;
+  if (!inicio) alertas.push({ nivel: "error", mensagem: "Bloco em schedule.blocks_add sem 'start'." });
+  const fim = typeof objeto.end === "string" ? objeto.end : null;
+  if (!fim) alertas.push({ nivel: "error", mensagem: "Bloco em schedule.blocks_add sem 'end'." });
+  const rotulo = typeof objeto.label === "string" ? objeto.label : null;
+  if (!rotulo) alertas.push({ nivel: "error", mensagem: "Bloco em schedule.blocks_add sem 'label'." });
+
+  return {
+    id: proximoId(),
+    tipo: "grade_add",
+    diaSemana: diaSemana ?? "segunda",
+    inicio: inicio ?? "00:00",
+    fim: fim ?? "00:00",
+    rotulo: rotulo ?? "(sem rótulo)",
+    local: typeof objeto.location === "string" ? objeto.location : undefined,
+    alertas,
+  };
+}
+
+function interpretarExcecaoCalendarioAdd(bruto: unknown): MudancaExcecaoCalendarioAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const dia = paraNumero(objeto.day);
+  if (objeto.day === undefined || dia === null) alertas.push({ nivel: "error", mensagem: "Item em schedule.overrides_add sem 'day' numérico." });
+
+  const tipoBruto = typeof objeto.type === "string" ? objeto.type : null;
+  const calendarioTipo = tipoBruto ? TIPOS_EXCECAO_CALENDARIO_MAP[tipoBruto] : null;
+  if (!tipoBruto) alertas.push({ nivel: "error", mensagem: "Item em schedule.overrides_add sem 'type'." });
+  else if (!calendarioTipo) alertas.push({ nivel: "error", mensagem: `Tipo de exceção de calendário desconhecido: "${tipoBruto}".` });
+
+  const rotuloAlvo = typeof objeto.target_label === "string" ? objeto.target_label : undefined;
+  if ((calendarioTipo === "cancelado" || calendarioTipo === "alterado") && !rotuloAlvo) {
+    alertas.push({ nivel: "error", mensagem: `schedule.overrides_add do tipo "${tipoBruto}" precisa de 'target_label'.` });
+  }
+
+  const novoRotulo = typeof objeto.label === "string" ? objeto.label : undefined;
+  const novoInicio = typeof objeto.start === "string" ? objeto.start : undefined;
+  const novoFim = typeof objeto.end === "string" ? objeto.end : undefined;
+  if (calendarioTipo === "adicionado" && (!novoInicio || !novoFim || !novoRotulo)) {
+    alertas.push({ nivel: "error", mensagem: "schedule.overrides_add do tipo \"added\" precisa de 'start', 'end' e 'label'." });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "excecao_calendario_add",
+    dia: dia ?? 0,
+    calendarioTipo: calendarioTipo ?? "cancelado",
+    rotuloAlvo,
+    novoInicio,
+    novoFim,
+    novoRotulo,
+    motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,
     alertas,
   };
 }

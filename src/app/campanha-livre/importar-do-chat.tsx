@@ -884,14 +884,40 @@ function DescricaoMudanca({
       </p>
     );
   }
-  // mural_add
-  return (
-    <div className="text-sm text-texto">
-      <p>
-        Novo mural: <strong>{mudanca.titulo}</strong>
+  if (mudanca.tipo === "mural_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo mural: <strong>{mudanca.titulo}</strong>
+        </p>
+        {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "agora") {
+    return (
+      <p className="text-sm text-texto">
+        Agora: {mudanca.dia !== undefined && <>Dia {mudanca.dia} </>}
+        {mudanca.hora !== undefined && <>{mudanca.hora}</>}
       </p>
-      {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
-    </div>
+    );
+  }
+  if (mudanca.tipo === "grade_add") {
+    return (
+      <p className="text-sm text-texto">
+        Novo bloco na grade: <strong>{mudanca.rotulo}</strong>{" "}
+        <span className="text-xs text-texto-suave">
+          ({mudanca.diaSemana} {mudanca.inicio}-{mudanca.fim})
+        </span>
+      </p>
+    );
+  }
+  // excecao_calendario_add
+  return (
+    <p className="text-sm text-texto">
+      Exceção de calendário — dia {mudanca.dia}: <strong>{mudanca.rotuloAlvo ?? mudanca.novoRotulo}</strong> ({mudanca.calendarioTipo})
+      {mudanca.motivo && <span className="block text-xs text-texto-suave">{mudanca.motivo}</span>}
+    </p>
   );
 }
 

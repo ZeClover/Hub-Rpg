@@ -246,6 +246,38 @@ export type EntradaMural = {
   criadaEm: number;
 };
 
+export type DiaSemana = "domingo" | "segunda" | "terca" | "quarta" | "quinta" | "sexta" | "sabado";
+
+/** Um horário fixo da grade semanal (ex: "toda segunda, 08:00-09:45, Mana"). Raramente muda — pensado pra ser configurado uma vez. */
+export type BlocoGrade = {
+  id: string;
+  diaSemana: DiaSemana;
+  inicio: string;
+  fim: string;
+  rotulo: string;
+  local?: string;
+  criadoEm: number;
+};
+
+export type TipoExcecaoCalendario = "cancelado" | "alterado" | "adicionado";
+
+/**
+ * Exceção pontual num dia específico (regra #85 do pedido: BASE + exceções, nunca reescrever
+ * a grade inteira pra representar uma exceção de um dia só). "cancelado"/"alterado" casam com
+ * um bloco da grade base pelo `rotuloAlvo`; "adicionado" cria um bloco extra que não está na grade.
+ */
+export type ExcecaoCalendario = {
+  id: string;
+  dia: number;
+  tipo: TipoExcecaoCalendario;
+  rotuloAlvo?: string;
+  novoInicio?: string;
+  novoFim?: string;
+  novoRotulo?: string;
+  motivo?: string;
+  criadaEm: number;
+};
+
 /*
   Snapshot — regra #45 do protocolo. Guarda o estado inteiro da ficha num
   momento, exceto os próprios snapshots (senão cada snapshot cresceria
@@ -284,7 +316,9 @@ export type ImportacaoAplicada = {
   vira remover a entidade. Desfazer nunca apaga o evento original (regra
   #12), só marca `revertido: true`.
 */
-export type AlvoEventoRaiz = { forma: "raiz"; campo: "xp" | "nivel"; antes: number };
+export type AlvoEventoRaiz =
+  | { forma: "raiz"; campo: "xp" | "nivel" | "diaAtual"; antes: number }
+  | { forma: "raiz"; campo: "horaAtual" | "diaSemanaDoDia1"; antes: string };
 
 export type AlvoEventoMapa = {
   forma: "mapa";
@@ -311,7 +345,9 @@ export type NomeLista =
   | "filaImagens"
   | "escola"
   | "compromissos"
-  | "mural";
+  | "mural"
+  | "gradeHoraria"
+  | "excecoesCalendario";
 
 export type AlvoEventoLista =
   | { forma: "lista"; lista: "inventario"; identificador: string; antes: ItemLivre | null }
@@ -331,7 +367,9 @@ export type AlvoEventoLista =
   | { forma: "lista"; lista: "filaImagens"; identificador: string; antes: SolicitacaoImagem | null }
   | { forma: "lista"; lista: "escola"; identificador: string; antes: EntradaEscola | null }
   | { forma: "lista"; lista: "compromissos"; identificador: string; antes: CompromissoLivre | null }
-  | { forma: "lista"; lista: "mural"; identificador: string; antes: EntradaMural | null };
+  | { forma: "lista"; lista: "mural"; identificador: string; antes: EntradaMural | null }
+  | { forma: "lista"; lista: "gradeHoraria"; identificador: string; antes: BlocoGrade | null }
+  | { forma: "lista"; lista: "excecoesCalendario"; identificador: string; antes: ExcecaoCalendario | null };
 
 export type AlvoEvento = AlvoEventoRaiz | AlvoEventoMapa | AlvoEventoLista;
 
@@ -375,6 +413,12 @@ export type PersonagemLivre = {
   escola: EntradaEscola[];
   compromissos: CompromissoLivre[];
   mural: EntradaMural[];
+  /** Que dia da semana é o "dia 1" da campanha — todo o resto (dia atual, grade) deriva daqui por módulo 7. */
+  diaSemanaDoDia1: DiaSemana;
+  diaAtual: number;
+  horaAtual: string;
+  gradeHoraria: BlocoGrade[];
+  excecoesCalendario: ExcecaoCalendario[];
   snapshots: SnapshotLivre[];
   historicoImportacoes: ImportacaoAplicada[];
   eventos: EventoAplicado[];
@@ -407,6 +451,11 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     escola: [],
     compromissos: [],
     mural: [],
+    diaSemanaDoDia1: "segunda",
+    diaAtual: 1,
+    horaAtual: "08:00",
+    gradeHoraria: [],
+    excecoesCalendario: [],
     snapshots: [],
     historicoImportacoes: [],
     eventos: [],
@@ -446,6 +495,11 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     escola: Array.isArray(d.escola) ? d.escola : [],
     compromissos: Array.isArray(d.compromissos) ? d.compromissos : [],
     mural: Array.isArray(d.mural) ? d.mural : [],
+    diaSemanaDoDia1: d.diaSemanaDoDia1 ?? "segunda",
+    diaAtual: typeof d.diaAtual === "number" ? d.diaAtual : 1,
+    horaAtual: typeof d.horaAtual === "string" ? d.horaAtual : "08:00",
+    gradeHoraria: Array.isArray(d.gradeHoraria) ? d.gradeHoraria : [],
+    excecoesCalendario: Array.isArray(d.excecoesCalendario) ? d.excecoesCalendario : [],
     snapshots: Array.isArray(d.snapshots) ? d.snapshots : [],
     // Fichas de antes desta fatia guardam importações sem `id` (regra #12/#41
     // do protocolo vieram só nesta fatia) — completa com um id sintético pra

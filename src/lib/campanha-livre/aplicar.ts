@@ -14,6 +14,7 @@
   campo "reverter" por tipo de operação — ver o comentário de `AlvoEvento`
   em tipos.ts.
 */
+import { ROTULOS_DIA_SEMANA } from "./calendario.ts";
 import { temErro } from "./validar.ts";
 import type { Mudanca } from "./parser.ts";
 import type { AlvoEvento, EventoAplicado, OrigemSnapshot, PersonagemLivre, SnapshotLivre } from "./tipos.ts";
@@ -81,6 +82,8 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     escola: atual.escola.map((e) => ({ ...e, notas: [...e.notas] })),
     compromissos: [...atual.compromissos],
     mural: [...atual.mural],
+    gradeHoraria: [...atual.gradeHoraria],
+    excecoesCalendario: [...atual.excecoesCalendario],
     snapshots: [...atual.snapshots],
     eventos: [...atual.eventos],
   };
@@ -761,6 +764,60 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       });
       continue;
     }
+
+    if (mudanca.tipo === "agora") {
+      if (mudanca.dia !== undefined) {
+        const antes = dados.diaAtual;
+        dados.diaAtual = mudanca.dia;
+        registrar(mudanca.tipo, `Dia ${antes} → ${mudanca.dia}`, { forma: "raiz", campo: "diaAtual", antes });
+      }
+      if (mudanca.hora !== undefined) {
+        const antes = dados.horaAtual;
+        dados.horaAtual = mudanca.hora;
+        registrar(mudanca.tipo, `Hora ${antes} → ${mudanca.hora}`, { forma: "raiz", campo: "horaAtual", antes });
+      }
+      continue;
+    }
+
+    if (mudanca.tipo === "grade_add") {
+      const novo = {
+        id: gerarId(),
+        diaSemana: mudanca.diaSemana,
+        inicio: mudanca.inicio,
+        fim: mudanca.fim,
+        rotulo: mudanca.rotulo,
+        local: mudanca.local,
+        criadoEm: Date.now(),
+      };
+      dados.gradeHoraria.push(novo);
+      registrar(
+        mudanca.tipo,
+        `Novo bloco: ${ROTULOS_DIA_SEMANA[mudanca.diaSemana]} ${mudanca.inicio}-${mudanca.fim} — ${mudanca.rotulo}`,
+        { forma: "lista", lista: "gradeHoraria", identificador: novo.id, antes: null },
+      );
+      continue;
+    }
+
+    if (mudanca.tipo === "excecao_calendario_add") {
+      const novo = {
+        id: gerarId(),
+        dia: mudanca.dia,
+        tipo: mudanca.calendarioTipo,
+        rotuloAlvo: mudanca.rotuloAlvo,
+        novoInicio: mudanca.novoInicio,
+        novoFim: mudanca.novoFim,
+        novoRotulo: mudanca.novoRotulo,
+        motivo: mudanca.motivo,
+        criadaEm: Date.now(),
+      };
+      dados.excecoesCalendario.push(novo);
+      registrar(
+        mudanca.tipo,
+        `Dia ${mudanca.dia}: ${mudanca.rotuloAlvo ?? mudanca.novoRotulo} — ${mudanca.calendarioTipo}${mudanca.motivo ? ` (${mudanca.motivo})` : ""}`,
+        { forma: "lista", lista: "excecoesCalendario", identificador: novo.id, antes: null },
+      );
+      continue;
+    }
   }
 
   return { dados, resumos };
@@ -784,7 +841,13 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
   const alvo = evento.alvo;
 
   if (alvo.forma === "raiz") {
-    dados[alvo.campo] = alvo.antes;
+    if (alvo.campo === "xp" || alvo.campo === "nivel" || alvo.campo === "diaAtual") {
+      dados[alvo.campo] = alvo.antes;
+    } else if (alvo.campo === "horaAtual") {
+      dados.horaAtual = alvo.antes;
+    } else {
+      dados.diaSemanaDoDia1 = alvo.antes as PersonagemLivre["diaSemanaDoDia1"];
+    }
     return dados;
   }
 
@@ -941,7 +1004,7 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.compromissos = lista;
-  } else {
+  } else if (alvo.lista === "mural") {
     // mural — identidade é o próprio id gerado (dois avisos podem ter o mesmo título)
     const lista = [...dados.mural];
     const idx = lista.findIndex((m) => m.id === alvo.identificador);
@@ -950,6 +1013,24 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.mural = lista;
+  } else if (alvo.lista === "gradeHoraria") {
+    // grade — identidade é o próprio id gerado (dois blocos podem ter o mesmo rótulo em dias diferentes)
+    const lista = [...dados.gradeHoraria];
+    const idx = lista.findIndex((b) => b.id === alvo.identificador);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.gradeHoraria = lista;
+  } else {
+    // excecoesCalendario — identidade é o próprio id gerado
+    const lista = [...dados.excecoesCalendario];
+    const idx = lista.findIndex((e) => e.id === alvo.identificador);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.excecoesCalendario = lista;
   }
 
   return dados;
