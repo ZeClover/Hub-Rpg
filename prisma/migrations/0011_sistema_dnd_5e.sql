@@ -15,7 +15,7 @@ VALUES (
   gen_random_uuid(),
   'dnd-5e',
   'D&D 5ª Edição',
-  'O TTRPG mais tradicional. Chassi inicial: atributos, 9 raças, 4 classes-base (Guerreiro, Ladino, Clérigo, Mago) e combate — mais classes a caminho.',
+  'O TTRPG mais tradicional. As 12 classes completas com arquétipos, 9 raças, talentos, antecedentes e catálogo de magias — falta ficha de inimigo e Escudo do Mestre.',
   true
 )
 ON CONFLICT ("chave") DO NOTHING;
