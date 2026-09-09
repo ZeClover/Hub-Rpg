@@ -323,7 +323,8 @@ export type ImportacaoAplicada = {
 */
 export type AlvoEventoRaiz =
   | { forma: "raiz"; campo: "xp" | "nivel" | "diaAtual"; antes: number }
-  | { forma: "raiz"; campo: "horaAtual" | "diaSemanaDoDia1"; antes: string };
+  | { forma: "raiz"; campo: "horaAtual" | "diaSemanaDoDia1"; antes: string }
+  | { forma: "raiz"; campo: "localAtual" | "atividadeAtual"; antes: string | null };
 
 export type AlvoEventoMapa = {
   forma: "mapa";
@@ -422,6 +423,10 @@ export type PersonagemLivre = {
   diaSemanaDoDia1: DiaSemana;
   diaAtual: number;
   horaAtual: string;
+  /** Onde Zé está agora — nome livre, sem coordenadas (mesma filosofia de `locais`). Null = não registrado ainda. */
+  localAtual: string | null;
+  /** O que Zé está fazendo AGORA quando não há bloco da grade cobrindo o horário — regra #88: nem tudo é calculável pela agenda. */
+  atividadeAtual: string | null;
   gradeHoraria: BlocoGrade[];
   excecoesCalendario: ExcecaoCalendario[];
   snapshots: SnapshotLivre[];
@@ -459,6 +464,8 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     diaSemanaDoDia1: "segunda",
     diaAtual: 1,
     horaAtual: "08:00",
+    localAtual: null,
+    atividadeAtual: null,
     gradeHoraria: [],
     excecoesCalendario: [],
     snapshots: [],
@@ -515,6 +522,8 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     diaSemanaDoDia1: d.diaSemanaDoDia1 ?? "segunda",
     diaAtual: typeof d.diaAtual === "number" ? d.diaAtual : 1,
     horaAtual: typeof d.horaAtual === "string" ? d.horaAtual : "08:00",
+    localAtual: typeof d.localAtual === "string" ? d.localAtual : null,
+    atividadeAtual: typeof d.atividadeAtual === "string" ? d.atividadeAtual : null,
     gradeHoraria: Array.isArray(d.gradeHoraria) ? d.gradeHoraria : [],
     excecoesCalendario: Array.isArray(d.excecoesCalendario) ? d.excecoesCalendario : [],
     snapshots: Array.isArray(d.snapshots) ? d.snapshots : [],

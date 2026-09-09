@@ -1073,3 +1073,19 @@ test("schedule.overrides_add: added precisa de start/end/label", () => {
   if (!r.ok) return;
   assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
+
+/* ---------- now.location / now.activity (pedido da tela "AGORA") ---------- */
+test("now: location e activity sozinhos (sem day nem time) são suficientes", () => {
+  const r = interpretarHubUpdate(bloco("now:\n  location: Biblioteca\n  activity: Pesquisando a Torre Velha"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "agora");
+  if (m.tipo === "agora") {
+    assert.equal(m.local, "Biblioteca");
+    assert.equal(m.atividade, "Pesquisando a Torre Velha");
+    assert.equal(m.dia, undefined);
+    assert.equal(m.hora, undefined);
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});

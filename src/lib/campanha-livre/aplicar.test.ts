@@ -851,6 +851,24 @@ test("desfazer now (hora) restaura só a hora, sem mexer no dia", () => {
   assert.equal(desfeito.diaAtual, 2, "o dia não deveria voltar, só a hora");
 });
 
+test("aplica now.location e now.activity (pedido da tela AGORA), cada um com seu evento", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  assert.equal(ficha.localAtual, null);
+  assert.equal(ficha.atividadeAtual, null);
+  const { dados } = aplicarMudancas(ficha, mudancasDe("now:\n  location: Biblioteca\n  activity: Pesquisando a Torre Velha"));
+  assert.equal(dados.localAtual, "Biblioteca");
+  assert.equal(dados.atividadeAtual, "Pesquisando a Torre Velha");
+  assert.equal(dados.eventos.length, 2);
+});
+
+test("desfazer now.location restaura null (nunca tinha sido registrado antes)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("now:\n  location: Biblioteca"));
+  const evento = dados.eventos.find((e) => e.tipo === "agora")!;
+  const desfeito = desfazerEvento(dados, evento.id);
+  assert.equal(desfeito.localAtual, null);
+});
+
 test("aplica schedule.blocks_add", () => {
   const ficha = novoPersonagemLivre("Zé");
   const { dados } = aplicarMudancas(ficha, mudancasDe("schedule:\n  blocks_add:\n    - weekday: monday\n      start: \"08:00\"\n      end: \"09:45\"\n      label: Mana"));

@@ -903,7 +903,9 @@ function DescricaoMudanca({
     return (
       <p className="text-sm text-texto">
         Agora: {mudanca.dia !== undefined && <>Dia {mudanca.dia} </>}
-        {mudanca.hora !== undefined && <>{mudanca.hora}</>}
+        {mudanca.hora !== undefined && <>{mudanca.hora} </>}
+        {mudanca.local !== undefined && <>· local: {mudanca.local} </>}
+        {mudanca.atividade !== undefined && <>· fazendo: {mudanca.atividade}</>}
       </p>
     );
   }

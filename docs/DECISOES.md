@@ -4136,6 +4136,49 @@ verificação no navegador de verdade (mesma técnica das decisões
 #98/#99). `tsc --noEmit`, `npm run lint`, `npm run build` e os 256
 testes automáticos (246 + 10) continuam limpos.
 
+## 101. Academia Mágica — tela "AGORA" (09/09/2026)
+
+Quarta e última fatia desta rodada da Academia Mágica: a tela que junta
+tudo que as três fatias anteriores construíram. Critério de sucesso do
+próprio pedido (parte #69): abrir a ficha e em poucos segundos saber
+onde estou, que horas são, o que estou fazendo, qual a próxima
+obrigação, meu estado (recursos), se tenho missão/pesquisa ativa, algo
+pendente, e o que mudou recentemente — sem entrar em nenhuma aba.
+
+**Quase tudo aqui já existia** (regra #124 — "se pode ser derivado com
+segurança, não persistir duplicado"): missões ativas, pesquisas,
+compromissos pendentes, mural e bloco atual/próxima obrigação (motor
+da decisão #99) já estavam todos guardados; a seção "Desde a última
+vez" reaproveita literalmente o `resumo` que cada `EventoAplicado` já
+guarda desde antes desta fatia (regra #3 do pedido — "não inventar
+resumo, derivado exclusivamente de deltas recebidos") — nada de
+formatar de novo, só ler os últimos 5 eventos não revertidos.
+
+**Duas coisas novas, mínimas**: `localAtual` (onde Zé está, texto
+livre) e `atividadeAtual` (o que ele escolheu fazer numa janela livre
+da grade — regra #88: "nem tudo pode ser calculado pela agenda, às
+vezes o Mestre precisa dizer"). Os dois são settable via
+`now.location`/`now.activity`, junto dos `now.day`/`now.time` que já
+existiam — continuam sendo campos "raiz" simples, cada um com seu
+próprio evento/desfazer, sem exigir uma estrutura maior.
+
+**Fora do escopo desta fatia** (decisão #26, próximas quando fizer
+sentido): "Oportunidades" (parte #11 — "coisas que Zé pode fazer",
+memória de possibilidades, não menu de ações) é um conceito novo que
+merece sua própria fatia, não uma gambiarra dentro da AGORA; os cards
+de resumo não são clicáveis pra trocar de aba ainda (o estado de aba
+ativa é local ao componente `AbasMundo`, levantar isso é um refactor
+à parte, não uma feature nova).
+
+Testado: 3 testes novos de parser/aplicar/desfazer pro `now.location`/
+`now.activity`, e verificação completa no navegador (API mockada via
+Playwright, mesma técnica das três fatias anteriores) — dia da semana
+derivado corretamente, bloco atual calculado batendo com a grade,
+missão concluída NÃO aparecendo em "ativas" (só o que realmente está
+ativo), evento de XP e de nova missão aparecendo em "Desde a última
+vez" na ordem certa. `tsc --noEmit`, `npm run lint`, `npm run build` e
+os 259 testes automáticos (256 + 3) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

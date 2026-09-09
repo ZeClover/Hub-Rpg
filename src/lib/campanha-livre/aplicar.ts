@@ -790,6 +790,16 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
         dados.horaAtual = mudanca.hora;
         registrar(mudanca.tipo, `Hora ${antes} → ${mudanca.hora}`, { forma: "raiz", campo: "horaAtual", antes });
       }
+      if (mudanca.local !== undefined) {
+        const antes = dados.localAtual;
+        dados.localAtual = mudanca.local;
+        registrar(mudanca.tipo, `Local → ${mudanca.local}`, { forma: "raiz", campo: "localAtual", antes });
+      }
+      if (mudanca.atividade !== undefined) {
+        const antes = dados.atividadeAtual;
+        dados.atividadeAtual = mudanca.atividade;
+        registrar(mudanca.tipo, `Atividade → ${mudanca.atividade}`, { forma: "raiz", campo: "atividadeAtual", antes });
+      }
       continue;
     }
 
@@ -859,6 +869,8 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
       dados[alvo.campo] = alvo.antes;
     } else if (alvo.campo === "horaAtual") {
       dados.horaAtual = alvo.antes;
+    } else if (alvo.campo === "localAtual" || alvo.campo === "atividadeAtual") {
+      dados[alvo.campo] = alvo.antes;
     } else {
       dados.diaSemanaDoDia1 = alvo.antes as PersonagemLivre["diaSemanaDoDia1"];
     }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import {
   aplicarMudancas,
@@ -197,6 +197,8 @@ export function FichaCampanhaLivre() {
         </div>
       )}
 
+      <Agora dados={dados} />
+
       <Cabecalho dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
 
       {!somenteLeitura && (
@@ -223,6 +225,114 @@ export function FichaCampanhaLivre() {
       <Snapshots dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
       <Historico dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
     </main>
+  );
+}
+
+/*
+  ---------- Agora: tela inicial da campanha ----------
+  Critério de sucesso (pedido da Academia Mágica): abrir a ficha e em
+  poucos segundos saber onde estou, que horas são, o que estou fazendo,
+  qual a próxima obrigação, e o que mudou recentemente — sem entrar em
+  nenhuma aba. Tudo aqui é 100% derivado de dados já existentes (regra
+  #124: "se pode ser derivado com segurança, não persistir duplicado")
+  — nada novo é inventado, só lido e mostrado num lugar só.
+*/
+function Agora({ dados }: { dados: PersonagemLivre }) {
+  const semana = diaSemanaDoDia(dados, dados.diaAtual);
+  const atual = blocoAtual(dados);
+  const proximo = proximoBloco(dados);
+  const missoesAtivas = dados.missoes.filter((m) => m.status === "ativa");
+  const pesquisasRecentes = [...dados.pesquisas].sort((a, b) => b.criadaEm - a.criadaEm).slice(0, 4);
+  const compromissosPendentes = dados.compromissos.filter((c) => c.status === "pendente");
+  const muralRecente = [...dados.mural].sort((a, b) => b.criadaEm - a.criadaEm).slice(0, 4);
+  const eventosRecentes = dados.eventos
+    .filter((e) => !e.revertido)
+    .slice(-5)
+    .reverse();
+  const recursos = Object.entries(dados.recursos);
+
+  return (
+    <section className="mt-6 rounded-lg border border-ambar/30 bg-superficie p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-texto-suave">Agora</p>
+          <p className="font-titulo text-2xl text-texto">
+            Dia {dados.diaAtual} · {ROTULOS_DIA_SEMANA[semana]}
+          </p>
+        </div>
+        <p className="font-titulo text-3xl text-ambar-forte">{dados.horaAtual}</p>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div>
+          <p className="text-xs text-texto-suave">Onde estou</p>
+          <p className="mt-1 text-sm text-texto">{dados.localAtual ?? "Não registrado"}</p>
+        </div>
+        <div>
+          <p className="text-xs text-texto-suave">Fazendo agora</p>
+          <p className="mt-1 text-sm text-texto">
+            {atual ? `${atual.rotulo} (${atual.inicio}-${atual.fim})` : (dados.atividadeAtual ?? "Janela livre")}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-texto-suave">Próxima obrigação</p>
+          <p className="mt-1 text-sm text-texto">
+            {proximo
+              ? `${proximo.rotulo} — ${proximo.dia === dados.diaAtual ? "hoje" : `dia ${proximo.dia} (${ROTULOS_DIA_SEMANA[diaSemanaDoDia(dados, proximo.dia)]})`} ${proximo.inicio}`
+              : "Nada agendado na grade"}
+          </p>
+        </div>
+        {recursos.length > 0 && (
+          <div>
+            <p className="text-xs text-texto-suave">Recursos</p>
+            <p className="mt-1 text-sm text-texto">
+              {recursos.map(([nome, r]) => `${nome}: ${r.atual}${r.maximo !== null ? `/${r.maximo}` : ""}`).join(" · ")}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <CardResumoAgora titulo="Missões ativas" vazio="Nenhuma missão ativa.">
+          {missoesAtivas.map((m) => (
+            <li key={m.id}>{m.nome}</li>
+          ))}
+        </CardResumoAgora>
+        <CardResumoAgora titulo="Pesquisas" vazio="Nenhuma pesquisa registrada.">
+          {pesquisasRecentes.map((p) => (
+            <li key={p.id}>
+              {p.titulo} <span className="text-texto-suave">({p.status})</span>
+            </li>
+          ))}
+        </CardResumoAgora>
+        <CardResumoAgora titulo="Compromissos pendentes" vazio="Nada pendente.">
+          {compromissosPendentes.map((c) => (
+            <li key={c.id}>{c.descricao}</li>
+          ))}
+        </CardResumoAgora>
+        <CardResumoAgora titulo="Mural" vazio="Nada no mural ainda.">
+          {muralRecente.map((m) => (
+            <li key={m.id}>{m.titulo}</li>
+          ))}
+        </CardResumoAgora>
+        <CardResumoAgora titulo="Desde a última vez" vazio="Nada mudou ainda.">
+          {eventosRecentes.map((e) => (
+            <li key={e.id}>{e.resumo}</li>
+          ))}
+        </CardResumoAgora>
+      </div>
+    </section>
+  );
+}
+
+function CardResumoAgora({ titulo, vazio, children }: { titulo: string; vazio: string; children: ReactNode }) {
+  const itens = Array.isArray(children) ? children : [children];
+  const temItens = itens.filter(Boolean).length > 0;
+  return (
+    <div className="rounded-lg border border-borda bg-fundo p-3">
+      <p className="font-titulo text-sm text-texto">{titulo}</p>
+      {temItens ? <ul className="mt-1.5 list-inside list-disc space-y-0.5 text-xs text-texto-suave">{children}</ul> : <p className="mt-1.5 text-xs text-texto-suave">{vazio}</p>}
+    </div>
   );
 }
 

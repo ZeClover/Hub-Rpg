@@ -1437,9 +1437,17 @@ passando.
       nem coordenadas). `locations_update` ganhou `connections_add` e
       `discovery_state` como ações válidas. Testado com um
       `tipos.test.ts` novo cobrindo a migração de ficha antiga
-- [ ] Academia Mágica — tela "AGORA" — fatia futura (decisão #26);
-      consome o Calendário + Missões/Pesquisas/Recursos/Mapa que já
-      existem, por isso vem por último, não antes
+- [x] **Academia Mágica — tela "AGORA"** (09/09/2026) — decisão #101.
+      Junta tudo das três fatias anteriores num painel único no topo da
+      ficha: dia/hora/dia-da-semana, local e atividade atuais (dois
+      campos novos, `now.location`/`now.activity`), bloco atual/
+      próxima obrigação (motor da decisão #99), recursos compactos, e
+      cards de Missões ativas, Pesquisas, Compromissos pendentes,
+      Mural e "Desde a última vez" — os cinco últimos 100% derivados
+      de dados que já existiam, nada novo persistido. Fecha por ora o
+      pedido grande de dinamismo pro HUB (decisões #97-101); fica pra
+      próximas fatias: Oportunidades, Caderno Escolar de verdade,
+      Relações qualitativas, Timeline, Controle Operacional GM
 
 ---
 

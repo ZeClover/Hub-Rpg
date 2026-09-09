@@ -397,6 +397,8 @@ export type MudancaAgora = Base & {
   tipo: "agora";
   dia?: number;
   hora?: string;
+  local?: string;
+  atividade?: string;
 };
 
 export type MudancaGradeAdd = Base & {
@@ -1959,8 +1961,10 @@ function interpretarAgora(bruto: unknown): MudancaAgora {
   if (objeto.day !== undefined && dia === null) alertas.push({ nivel: "error", mensagem: "now.day precisa ser numérico." });
 
   const hora = typeof objeto.time === "string" ? objeto.time : undefined;
-  if (objeto.day === undefined && objeto.time === undefined) {
-    alertas.push({ nivel: "error", mensagem: "now precisa de 'day' e/ou 'time'." });
+  const local = typeof objeto.location === "string" ? objeto.location : undefined;
+  const atividade = typeof objeto.activity === "string" ? objeto.activity : undefined;
+  if (objeto.day === undefined && objeto.time === undefined && objeto.location === undefined && objeto.activity === undefined) {
+    alertas.push({ nivel: "error", mensagem: "now precisa de pelo menos um de: 'day', 'time', 'location', 'activity'." });
   }
 
   return {
@@ -1968,6 +1972,8 @@ function interpretarAgora(bruto: unknown): MudancaAgora {
     tipo: "agora",
     dia: dia ?? undefined,
     hora,
+    local,
+    atividade,
     alertas,
   };
 }
