@@ -3281,6 +3281,29 @@ function Imagens({
 }
 
 /* ---------- Escola: módulo genérico — aulas, matérias, conteúdos (regra: não hardcode Academia Mágica) ---------- */
+/** Uma categoria de conteúdo dentro de uma aula — só aparece se tiver algo (regra: não inventar/mostrar seção vazia). */
+function BlocoConteudoAula({ titulo, itens }: { titulo: string; itens?: string[] }) {
+  if (!itens || itens.length === 0) return null;
+  return (
+    <div className="mt-2">
+      <p className="text-[11px] font-titulo uppercase tracking-wide text-texto-suave">{titulo}</p>
+      <ul className="mt-0.5 list-inside list-disc space-y-0.5 text-xs text-texto-suave">
+        {itens.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/*
+  ---------- Escola: Caderno Escolar de verdade (regra #7) ----------
+  Página de matérias primeiro — dentro de cada uma, todas as aulas
+  registradas com conceitos/exemplos/erros importantes/exercícios/
+  anotações/questões em aberto. "Último conteúdo estudado" é derivado
+  da aula mais recente daquela matéria — nunca revela o que vem depois
+  (regra #8/#9: só o passado, não o currículo futuro).
+*/
 function Escola({
   dados,
   somenteLeitura,
@@ -3290,71 +3313,112 @@ function Escola({
   somenteLeitura: boolean;
   onSalvar: (novosDados: PersonagemLivre) => void;
 }) {
-  const [materia, setMateria] = useState("");
-  const [topico, setTopico] = useState("");
+  const [materiaNova, setMateriaNova] = useState("");
+  const [topicoNovo, setTopicoNovo] = useState("");
   const [busca, setBusca] = useState("");
-  const filtradas = dados.escola.filter((e) => corresponde(busca, e.materia, e.topico));
+  const [materiaAberta, setMateriaAberta] = useState<string | null>(null);
 
   function remover(id: string) {
     onSalvar({ ...dados, escola: dados.escola.filter((e) => e.id !== id) });
   }
 
   function adicionar() {
-    if (!materia.trim()) return;
+    if (!materiaNova.trim()) return;
     const nova: EntradaEscola = {
       id: `escola-${Date.now().toString(36)}`,
-      materia: materia.trim(),
-      topico: topico.trim() || undefined,
+      materia: materiaNova.trim(),
+      topico: topicoNovo.trim() || undefined,
       notas: [],
       criadaEm: Date.now(),
     };
     onSalvar({ ...dados, escola: [nova, ...dados.escola] });
-    setMateria("");
-    setTopico("");
+    setMateriaNova("");
+    setTopicoNovo("");
   }
+
+  const materias = Array.from(new Set(dados.escola.map((e) => e.materia)));
+  const materiasFiltradas = materias.filter((m) => corresponde(busca, m));
 
   return (
     <div>
-      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar aula…" />
-      {dados.escola.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma aula registrada ainda.</p>}
-      {dados.escola.length > 0 && filtradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
+      <p className="text-sm text-texto-suave">Suas matérias — o que você já estudou até agora, sem spoiler do que vem depois.</p>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar matéria…" />
+      {materias.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhuma matéria registrada ainda.</p>}
+      {materias.length > 0 && materiasFiltradas.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
       <ul className="mt-3 space-y-2">
-        {filtradas.map((e) => (
-          <li key={e.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
-            <div>
-              <p className="font-titulo text-sm text-texto">
-                {e.materia} {e.topico && <span className="text-xs font-normal text-texto-suave">· {e.topico}</span>}
-                <span className="ml-2 text-xs font-normal text-texto-suave">{new Date(e.criadaEm).toLocaleDateString("pt-BR")}</span>
-              </p>
-              {e.notas.length > 0 && (
-                <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
-                  {e.notas.map((n, i) => (
-                    <li key={i}>{n}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            {!somenteLeitura && (
-              <button type="button" onClick={() => remover(e.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
-                Remover
+        {materiasFiltradas.map((materia) => {
+          const aulas = dados.escola.filter((e) => e.materia === materia).sort((a, b) => b.criadaEm - a.criadaEm);
+          const ultima = aulas[0];
+          const aberta = materiaAberta === materia;
+          return (
+            <li key={materia} className="rounded-lg border border-borda bg-superficie p-4">
+              <button
+                type="button"
+                onClick={() => setMateriaAberta(aberta ? null : materia)}
+                className="flex w-full items-center justify-between gap-3 text-left"
+              >
+                <div>
+                  <p className="font-titulo text-texto">{materia}</p>
+                  <p className="mt-0.5 text-xs text-texto-suave">
+                    {aulas.length} {aulas.length === 1 ? "aula registrada" : "aulas registradas"}
+                    {ultima && <> · última: {ultima.topico ?? "sem tópico"} ({new Date(ultima.criadaEm).toLocaleDateString("pt-BR")})</>}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs text-texto-suave">{aberta ? "▲ fechar" : "▼ abrir"}</span>
               </button>
-            )}
-          </li>
-        ))}
+
+              {aberta && (
+                <div className="mt-3 space-y-3 border-t border-borda pt-3">
+                  {aulas.map((aula) => (
+                    <div key={aula.id} className="rounded border border-borda bg-fundo p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm text-texto">
+                          {aula.topico ?? "Aula"}{" "}
+                          <span className="text-xs font-normal text-texto-suave">{new Date(aula.criadaEm).toLocaleDateString("pt-BR")}</span>
+                        </p>
+                        {!somenteLeitura && (
+                          <button
+                            type="button"
+                            onClick={() => remover(aula.id)}
+                            className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo"
+                          >
+                            Remover
+                          </button>
+                        )}
+                      </div>
+                      <BlocoConteudoAula titulo="Conceitos" itens={aula.conceitos} />
+                      <BlocoConteudoAula titulo="Exemplos" itens={aula.exemplos} />
+                      <BlocoConteudoAula titulo="Erros importantes" itens={aula.errosImportantes} />
+                      <BlocoConteudoAula titulo="Exercícios feitos" itens={aula.exerciciosFeitos} />
+                      <BlocoConteudoAula titulo="Anotações" itens={aula.notas} />
+                      <BlocoConteudoAula titulo="Questões em aberto" itens={aula.questoesEmAberto} />
+                      {!aula.conceitos?.length &&
+                        !aula.exemplos?.length &&
+                        !aula.errosImportantes?.length &&
+                        !aula.exerciciosFeitos?.length &&
+                        !aula.notas.length &&
+                        !aula.questoesEmAberto?.length && <p className="mt-1 text-xs text-texto-suave">Sem detalhes registrados ainda.</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
       {!somenteLeitura && (
         <div className="mt-3 flex gap-2">
           <input
             type="text"
-            value={materia}
-            onChange={(e) => setMateria(e.target.value)}
+            value={materiaNova}
+            onChange={(e) => setMateriaNova(e.target.value)}
             placeholder="matéria"
             className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
           />
           <input
             type="text"
-            value={topico}
-            onChange={(e) => setTopico(e.target.value)}
+            value={topicoNovo}
+            onChange={(e) => setTopicoNovo(e.target.value)}
             placeholder="tópico (opcional)"
             className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
           />

@@ -4241,6 +4241,49 @@ e que o campo de relação é texto livre com sugestões. `tsc --noEmit`,
 `npm run lint`, `npm run build` e os 270 testes automáticos (267 + 3)
 continuam limpos.
 
+## 104. Academia Mágica — Caderno Escolar de verdade (09/09/2026)
+
+Sétima fatia: reformular "Escola" pra parecer um caderno de verdade
+(regra #7 do pedido). A "aula" (`EntradaEscola`) já existia, mas só
+guardava matéria/tópico/anotações soltas, numa lista cronológica única
+— sem nenhuma organização por matéria.
+
+**Modelo**: `EntradaEscola` ganhou 5 campos novos, todos opcionais
+(regra: nem toda aula tem toda categoria — uma aula prática pode não
+ter "conceitos" novos, por exemplo): `conceitos`, `exemplos`,
+`errosImportantes`, `exerciciosFeitos`, `questoesEmAberto`. `notas`
+(anotações livres) continua existindo do jeito que já era.
+`school.lessons_add` ganhou os campos correspondentes
+(`concepts`/`examples`/`important_mistakes`/`exercises_done`/
+`open_questions`), todos opcionais — sem quebrar quem já mandava só
+`subject`/`topic`/`notes`.
+
+**Tela**: virou "MATÉRIAS DO ZÉ" (regra #7) — a página inicial agora é
+um índice de matérias (agrupadas a partir das aulas já registradas,
+sem duplicar estado — regra #124), cada uma mostrando quantas aulas
+tem e qual foi a última (sem revelar o que vem a seguir — regra #8/#9:
+só o passado, nunca o currículo futuro). Clicar numa matéria expande
+todas as aulas daquela matéria, cada uma com suas próprias seções —
+Conceitos, Exemplos, Erros importantes, Exercícios feitos, Anotações,
+Questões em aberto — mostradas só quando têm conteúdo (nunca uma seção
+vazia). Formulário manual de adicionar continua simples (matéria +
+tópico) — o detalhamento rico normalmente vem do Mestre via
+HUB_UPDATE, não de cinco caixas de texto preenchidas à mão.
+
+**Fora desta fatia**: cruzar automaticamente com Colinhas ("COLINHAS
+DO ZÉ" por matéria) e Magias ("magias relacionadas") citadas no pedido
+original — isso exigiria decidir uma convenção de tag compartilhada
+entre `NotaLivre.categoria` e `EntradaEscola.materia` que ainda não
+existe; fica pra uma fatia futura se isso realmente fizer falta na
+mesa.
+
+Testado: 2 testes novos de parser + 2 de aplicar/desfazer, e
+verificação completa no navegador (matérias agrupadas corretamente,
+conteúdo de uma matéria não vaza pra outra, aula sem detalhe extra
+mostra aviso apropriado em vez de nada). `tsc --noEmit`, `npm run
+lint`, `npm run build` e os 273 testes automáticos (270 + 3) continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

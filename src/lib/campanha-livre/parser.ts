@@ -373,6 +373,11 @@ export type MudancaEscolaAdd = Base & {
   materia: string;
   topico?: string;
   notas: string[];
+  conceitos: string[];
+  exemplos: string[];
+  errosImportantes: string[];
+  exerciciosFeitos: string[];
+  questoesEmAberto: string[];
 };
 
 export type MudancaCompromissoAdd = Base & {
@@ -1917,6 +1922,13 @@ function interpretarEscolaAdd(bruto: unknown): MudancaEscolaAdd {
     materia: materia ?? "(sem matéria)",
     topico: typeof objeto.topic === "string" ? objeto.topic : undefined,
     notas: Array.isArray(objeto.notes) ? objeto.notes.filter((n): n is string => typeof n === "string") : [],
+    conceitos: Array.isArray(objeto.concepts) ? objeto.concepts.filter((n): n is string => typeof n === "string") : [],
+    exemplos: Array.isArray(objeto.examples) ? objeto.examples.filter((n): n is string => typeof n === "string") : [],
+    errosImportantes: Array.isArray(objeto.important_mistakes)
+      ? objeto.important_mistakes.filter((n): n is string => typeof n === "string")
+      : [],
+    exerciciosFeitos: Array.isArray(objeto.exercises_done) ? objeto.exercises_done.filter((n): n is string => typeof n === "string") : [],
+    questoesEmAberto: Array.isArray(objeto.open_questions) ? objeto.open_questions.filter((n): n is string => typeof n === "string") : [],
     alertas,
   };
 }

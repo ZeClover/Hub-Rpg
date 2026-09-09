@@ -911,6 +911,25 @@ test("school.lessons_add válido", () => {
   }
 });
 
+test("school.lessons_add: caderno de verdade — concepts/examples/important_mistakes/exercises_done/open_questions", () => {
+  const r = interpretarHubUpdate(
+    bloco(
+      "school:\n  lessons_add:\n    - subject: Runas\n      topic: Runas de proteção\n      concepts:\n        - Runa é um símbolo que canaliza mana\n      examples:\n        - Runa de proteção básica na porta\n      important_mistakes:\n        - Desenhar a runa ao contrário inverte o efeito\n      exercises_done:\n        - Desenhou 3 runas de proteção\n      open_questions:\n        - Runas combinadas funcionam?",
+    ),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "escola_add");
+  if (m.tipo === "escola_add") {
+    assert.deepEqual(m.conceitos, ["Runa é um símbolo que canaliza mana"]);
+    assert.deepEqual(m.exemplos, ["Runa de proteção básica na porta"]);
+    assert.deepEqual(m.errosImportantes, ["Desenhar a runa ao contrário inverte o efeito"]);
+    assert.deepEqual(m.exerciciosFeitos, ["Desenhou 3 runas de proteção"]);
+    assert.deepEqual(m.questoesEmAberto, ["Runas combinadas funcionam?"]);
+  }
+});
+
 test("school.lessons_add sem subject vira error", () => {
   const r = interpretarHubUpdate(bloco("school:\n  lessons_add:\n    - topic: sem matéria"));
   assert.equal(r.ok, true);

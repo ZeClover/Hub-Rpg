@@ -970,3 +970,29 @@ test("opportunities_add permite duas oportunidades com a mesma descrição (dife
   const segundo = aplicarMudancas(primeiro.dados, mudancasDe("opportunities_add:\n  - description: Visitar a Torre Velha"));
   assert.equal(segundo.dados.oportunidades.length, 2);
 });
+
+test("aplica school.lessons_add com o caderno de verdade (conceitos/exemplos/erros/exercícios/questões)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(
+    ficha,
+    mudancasDe(
+      "school:\n  lessons_add:\n    - subject: Runas\n      topic: Runas de proteção\n      concepts:\n        - Runa canaliza mana\n      examples:\n        - Runa na porta\n      important_mistakes:\n        - Runa ao contrário inverte\n      exercises_done:\n        - Desenhou 3 runas\n      open_questions:\n        - Combinações funcionam?",
+    ),
+  );
+  assert.equal(dados.escola.length, 1);
+  const aula = dados.escola[0];
+  assert.equal(aula.materia, "Runas");
+  assert.deepEqual(aula.conceitos, ["Runa canaliza mana"]);
+  assert.deepEqual(aula.exemplos, ["Runa na porta"]);
+  assert.deepEqual(aula.errosImportantes, ["Runa ao contrário inverte"]);
+  assert.deepEqual(aula.exerciciosFeitos, ["Desenhou 3 runas"]);
+  assert.deepEqual(aula.questoesEmAberto, ["Combinações funcionam?"]);
+});
+
+test("desfazer school.lessons_add remove a aula inteira", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("school:\n  lessons_add:\n    - subject: Runas"));
+  assert.equal(dados.escola.length, 1);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.escola.length, 0);
+});

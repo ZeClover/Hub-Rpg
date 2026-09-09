@@ -1459,8 +1459,15 @@ passando.
       (amizade próxima, mentor, rivalidade competitiva...); o mecanismo
       numérico antigo continua existindo pra mecânica própria de
       campanha, só relabelado como claramente opcional/secundário
-- [ ] Academia Mágica — Caderno Escolar de verdade, Timeline, Controle
-      Operacional GM — fatias futuras (decisão #26)
+- [x] **Academia Mágica — Caderno Escolar de verdade** (09/09/2026) —
+      decisão #104. "Escola" virou "Matérias do Zé": índice de
+      matérias (agrupado das aulas já existentes) em vez de lista
+      cronológica solta; cada aula ganhou Conceitos/Exemplos/Erros
+      importantes/Exercícios feitos/Questões em aberto (todos
+      opcionais, só aparecem quando têm conteúdo). Nunca revela
+      currículo futuro, só o que já foi estudado
+- [ ] Academia Mágica — Timeline, Controle Operacional GM — fatias
+      futuras (decisão #26)
 
 ---
 

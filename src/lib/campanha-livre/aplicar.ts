@@ -79,7 +79,15 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     conquistas: [...atual.conquistas],
     reputacao: { ...atual.reputacao },
     filaImagens: [...atual.filaImagens],
-    escola: atual.escola.map((e) => ({ ...e, notas: [...e.notas] })),
+    escola: atual.escola.map((e) => ({
+      ...e,
+      notas: [...e.notas],
+      conceitos: e.conceitos ? [...e.conceitos] : undefined,
+      exemplos: e.exemplos ? [...e.exemplos] : undefined,
+      errosImportantes: e.errosImportantes ? [...e.errosImportantes] : undefined,
+      exerciciosFeitos: e.exerciciosFeitos ? [...e.exerciciosFeitos] : undefined,
+      questoesEmAberto: e.questoesEmAberto ? [...e.questoesEmAberto] : undefined,
+    })),
     compromissos: [...atual.compromissos],
     mural: [...atual.mural],
     oportunidades: [...atual.oportunidades],
@@ -723,7 +731,18 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     }
 
     if (mudanca.tipo === "escola_add") {
-      const nova = { id: gerarId(), materia: mudanca.materia, topico: mudanca.topico, notas: mudanca.notas, criadaEm: Date.now() };
+      const nova = {
+        id: gerarId(),
+        materia: mudanca.materia,
+        topico: mudanca.topico,
+        notas: mudanca.notas,
+        conceitos: mudanca.conceitos,
+        exemplos: mudanca.exemplos,
+        errosImportantes: mudanca.errosImportantes,
+        exerciciosFeitos: mudanca.exerciciosFeitos,
+        questoesEmAberto: mudanca.questoesEmAberto,
+        criadaEm: Date.now(),
+      };
       dados.escola.push(nova);
       registrar(mudanca.tipo, `Nova aula: ${mudanca.materia}${mudanca.topico ? ` — ${mudanca.topico}` : ""}`, {
         forma: "lista",

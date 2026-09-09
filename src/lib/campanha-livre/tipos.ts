@@ -226,11 +226,24 @@ export type SolicitacaoImagem = {
   criadaEm: number;
 };
 
+/**
+ * Uma aula/registro de conteúdo (regra #7 do pedido — Caderno Escolar de
+ * verdade). Cada campo é opcional porque nem toda aula tem todas as
+ * categorias (uma aula prática pode não ter "conceitos" novos, por
+ * exemplo) — a tela agrupa por `materia` e junta tudo que já foi
+ * registrado, sem inventar o que não veio.
+ */
 export type EntradaEscola = {
   id: string;
   materia: string;
   topico?: string;
+  /** Anotações livres — o que já existia antes desta fatia. */
   notas: string[];
+  conceitos?: string[];
+  exemplos?: string[];
+  errosImportantes?: string[];
+  exerciciosFeitos?: string[];
+  questoesEmAberto?: string[];
   criadaEm: number;
 };
 

@@ -855,18 +855,28 @@ function DescricaoMudanca({
     );
   }
   if (mudanca.tipo === "escola_add") {
+    const totalDetalhes =
+      mudanca.notas.length +
+      mudanca.conceitos.length +
+      mudanca.exemplos.length +
+      mudanca.errosImportantes.length +
+      mudanca.exerciciosFeitos.length +
+      mudanca.questoesEmAberto.length;
     return (
       <div className="text-sm text-texto">
         <p>
           Nova aula: <strong>{mudanca.materia}</strong>
           {mudanca.topico && <span className="text-xs text-texto-suave"> · {mudanca.topico}</span>}
         </p>
-        {mudanca.notas.length > 0 && (
-          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
-            {mudanca.notas.map((n, i) => (
-              <li key={i}>{n}</li>
-            ))}
-          </ul>
+        {totalDetalhes > 0 && (
+          <p className="mt-1 text-xs text-texto-suave">
+            {mudanca.conceitos.length > 0 && <>{mudanca.conceitos.length} conceito(s) · </>}
+            {mudanca.exemplos.length > 0 && <>{mudanca.exemplos.length} exemplo(s) · </>}
+            {mudanca.errosImportantes.length > 0 && <>{mudanca.errosImportantes.length} erro(s) importante(s) · </>}
+            {mudanca.exerciciosFeitos.length > 0 && <>{mudanca.exerciciosFeitos.length} exercício(s) · </>}
+            {mudanca.notas.length > 0 && <>{mudanca.notas.length} anotação/ões · </>}
+            {mudanca.questoesEmAberto.length > 0 && <>{mudanca.questoesEmAberto.length} questão/ões em aberto</>}
+          </p>
         )}
       </div>
     );
