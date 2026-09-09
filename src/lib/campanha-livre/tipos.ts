@@ -217,6 +217,35 @@ export type EntradaEscola = {
   criadaEm: number;
 };
 
+export type StatusCompromisso = "pendente" | "cumprido" | "cancelado" | "atrasado";
+export type OrigemCompromisso = "prometeu" | "combinou" | "convite" | "lembrete";
+
+/** "Coisas para lembrar" (promessas/combinados) — regra: nunca vira "concluído" sozinho só porque o tempo passou, só o Mestre confirma via compromisso_update. */
+export type CompromissoLivre = {
+  id: string;
+  descricao: string;
+  npc?: string;
+  origem?: OrigemCompromisso;
+  /** Livre — "dia 5", uma data real, o que a campanha usar; sem calendário nesta fatia, então o código não interpreta isso ainda. */
+  data?: string;
+  status: StatusCompromisso;
+  criadoEm: number;
+};
+
+export type CategoriaMural = "anuncio" | "evento" | "resultado" | "comunicado" | "outro";
+
+/** Informação pública da campanha (regra: só o que Zé pode legitimamente saber — nunca plot de mestre). */
+export type EntradaMural = {
+  id: string;
+  titulo: string;
+  categoria?: CategoriaMural;
+  resumo?: string;
+  origem?: string;
+  data?: string;
+  expiracao?: string;
+  criadaEm: number;
+};
+
 /*
   Snapshot — regra #45 do protocolo. Guarda o estado inteiro da ficha num
   momento, exceto os próprios snapshots (senão cada snapshot cresceria
@@ -280,7 +309,9 @@ export type NomeLista =
   | "pesquisas"
   | "conquistas"
   | "filaImagens"
-  | "escola";
+  | "escola"
+  | "compromissos"
+  | "mural";
 
 export type AlvoEventoLista =
   | { forma: "lista"; lista: "inventario"; identificador: string; antes: ItemLivre | null }
@@ -298,7 +329,9 @@ export type AlvoEventoLista =
   | { forma: "lista"; lista: "pesquisas"; identificador: string; antes: PesquisaLivre | null }
   | { forma: "lista"; lista: "conquistas"; identificador: string; antes: ConquistaLivre | null }
   | { forma: "lista"; lista: "filaImagens"; identificador: string; antes: SolicitacaoImagem | null }
-  | { forma: "lista"; lista: "escola"; identificador: string; antes: EntradaEscola | null };
+  | { forma: "lista"; lista: "escola"; identificador: string; antes: EntradaEscola | null }
+  | { forma: "lista"; lista: "compromissos"; identificador: string; antes: CompromissoLivre | null }
+  | { forma: "lista"; lista: "mural"; identificador: string; antes: EntradaMural | null };
 
 export type AlvoEvento = AlvoEventoRaiz | AlvoEventoMapa | AlvoEventoLista;
 
@@ -340,6 +373,8 @@ export type PersonagemLivre = {
   reputacao: Record<string, number>;
   filaImagens: SolicitacaoImagem[];
   escola: EntradaEscola[];
+  compromissos: CompromissoLivre[];
+  mural: EntradaMural[];
   snapshots: SnapshotLivre[];
   historicoImportacoes: ImportacaoAplicada[];
   eventos: EventoAplicado[];
@@ -370,6 +405,8 @@ export function novoPersonagemLivre(nome: string): PersonagemLivre {
     reputacao: {},
     filaImagens: [],
     escola: [],
+    compromissos: [],
+    mural: [],
     snapshots: [],
     historicoImportacoes: [],
     eventos: [],
@@ -407,6 +444,8 @@ export function normalizarPersonagemLivre(dados: unknown): PersonagemLivre {
     reputacao: d.reputacao && typeof d.reputacao === "object" ? d.reputacao : {},
     filaImagens: Array.isArray(d.filaImagens) ? d.filaImagens : [],
     escola: Array.isArray(d.escola) ? d.escola : [],
+    compromissos: Array.isArray(d.compromissos) ? d.compromissos : [],
+    mural: Array.isArray(d.mural) ? d.mural : [],
     snapshots: Array.isArray(d.snapshots) ? d.snapshots : [],
     // Fichas de antes desta fatia guardam importações sem `id` (regra #12/#41
     // do protocolo vieram só nesta fatia) — completa com um id sintético pra

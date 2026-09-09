@@ -297,6 +297,19 @@ export function validarContraPersonagem(mudancas: Mudanca[], atual: PersonagemLi
       }
     }
 
+    if (mudanca.tipo === "compromisso_update") {
+      const existe = projetado.compromissos.some((c) => c.descricao.trim().toLowerCase() === mudanca.descricao.trim().toLowerCase());
+      if (!existe) {
+        return {
+          ...mudanca,
+          alertas: [
+            ...mudanca.alertas,
+            { nivel: "error" as const, mensagem: `Compromisso "${mudanca.descricao}" não existe — crie com commitments_add primeiro.` },
+          ],
+        };
+      }
+    }
+
     if (mudanca.tipo === "reputacao" && mudanca.operacao === "change") {
       const antes = atual.reputacao[mudanca.alvo] ?? 0;
       const depois = antes + mudanca.valor;

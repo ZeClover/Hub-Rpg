@@ -79,6 +79,8 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     reputacao: { ...atual.reputacao },
     filaImagens: [...atual.filaImagens],
     escola: atual.escola.map((e) => ({ ...e, notas: [...e.notas] })),
+    compromissos: [...atual.compromissos],
+    mural: [...atual.mural],
     snapshots: [...atual.snapshots],
     eventos: [...atual.eventos],
   };
@@ -704,6 +706,61 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       });
       continue;
     }
+
+    if (mudanca.tipo === "compromisso_add") {
+      const novo = {
+        id: gerarId(),
+        descricao: mudanca.descricao,
+        npc: mudanca.npc,
+        origem: mudanca.origem,
+        data: mudanca.data,
+        status: "pendente" as const,
+        criadoEm: Date.now(),
+      };
+      dados.compromissos.push(novo);
+      registrar(mudanca.tipo, `Novo compromisso: ${mudanca.descricao}`, {
+        forma: "lista",
+        lista: "compromissos",
+        identificador: novo.descricao,
+        antes: null,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "compromisso_update") {
+      const compromisso = dados.compromissos.find((c) => c.descricao.trim().toLowerCase() === mudanca.descricao.trim().toLowerCase());
+      if (!compromisso) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
+      const antes = copiar(compromisso);
+      compromisso.status = mudanca.status;
+      registrar(mudanca.tipo, `${mudanca.descricao}: status → ${mudanca.status}`, {
+        forma: "lista",
+        lista: "compromissos",
+        identificador: antes.descricao,
+        antes,
+      });
+      continue;
+    }
+
+    if (mudanca.tipo === "mural_add") {
+      const nova = {
+        id: gerarId(),
+        titulo: mudanca.titulo,
+        categoria: mudanca.categoria,
+        resumo: mudanca.resumo,
+        origem: mudanca.origem,
+        data: mudanca.data,
+        expiracao: mudanca.expiracao,
+        criadaEm: Date.now(),
+      };
+      dados.mural.push(nova);
+      registrar(mudanca.tipo, `Novo mural: ${mudanca.titulo}`, {
+        forma: "lista",
+        lista: "mural",
+        identificador: nova.id,
+        antes: null,
+      });
+      continue;
+    }
   }
 
   return { dados, resumos };
@@ -867,7 +924,7 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.filaImagens = lista;
-  } else {
+  } else if (alvo.lista === "escola") {
     // escola — identidade é o próprio id gerado (duas aulas podem ter a mesma matéria/tópico)
     const lista = [...dados.escola];
     const idx = lista.findIndex((e) => e.id === alvo.identificador);
@@ -876,6 +933,23 @@ export function desfazerEvento(atual: PersonagemLivre, eventoId: string): Person
     } else if (idx >= 0) lista[idx] = alvo.antes;
     else lista.push(alvo.antes);
     dados.escola = lista;
+  } else if (alvo.lista === "compromissos") {
+    const lista = [...dados.compromissos];
+    const idx = lista.findIndex((c) => c.descricao.trim().toLowerCase() === identificadorNormalizado);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.compromissos = lista;
+  } else {
+    // mural — identidade é o próprio id gerado (dois avisos podem ter o mesmo título)
+    const lista = [...dados.mural];
+    const idx = lista.findIndex((m) => m.id === alvo.identificador);
+    if (alvo.antes === null) {
+      if (idx >= 0) lista.splice(idx, 1);
+    } else if (idx >= 0) lista[idx] = alvo.antes;
+    else lista.push(alvo.antes);
+    dados.mural = lista;
   }
 
   return dados;

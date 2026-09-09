@@ -761,3 +761,49 @@ test("restaurarSnapshot com id inexistente não muda nada", () => {
   const resultado = restaurarSnapshot(ficha, "id-que-nao-existe");
   assert.equal(resultado, ficha);
 });
+
+test("aplica commitments_add e commitments_update", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("commitments_add:\n  - description: Revanche com a Juno\n    npc: Juno\n    origin: promised"));
+  assert.equal(d1.compromissos.length, 1);
+  assert.equal(d1.compromissos[0].status, "pendente");
+  assert.equal(d1.compromissos[0].npc, "Juno");
+
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("commitments_update:\n  - description: Revanche com a Juno\n    status: fulfilled"));
+  assert.equal(d2.compromissos[0].status, "cumprido");
+});
+
+test("commitments_update contra compromisso inexistente vira error e não aplica", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const mudancas = mudancasDe("commitments_update:\n  - description: Não existe\n    status: fulfilled");
+  const validadas = validarContraPersonagem(mudancas, ficha);
+  assert.ok(temErro(validadas[0]));
+  const { dados } = aplicarMudancas(ficha, validadas.filter((m) => !temErro(m)));
+  assert.equal(dados.compromissos.length, 0);
+});
+
+test("desfazer commitment_update restaura o status anterior", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("commitments_add:\n  - description: Revanche com a Juno"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe("commitments_update:\n  - description: Revanche com a Juno\n    status: cancelled"));
+  assert.equal(segundo.dados.compromissos[0].status, "cancelado");
+  const eventoUpdate = segundo.dados.eventos.find((e) => e.tipo === "compromisso_update")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoUpdate.id);
+  assert.equal(desfeito.compromissos[0].status, "pendente");
+});
+
+test("aplica bulletin_add", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("bulletin_add:\n  - title: Torneio de Duelos\n    category: event\n    summary: Inscrições abertas."));
+  assert.equal(dados.mural.length, 1);
+  assert.equal(dados.mural[0].titulo, "Torneio de Duelos");
+  assert.equal(dados.mural[0].categoria, "evento");
+});
+
+test("desfazer bulletin_add remove a entrada inteira", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe("bulletin_add:\n  - title: Torneio de Duelos"));
+  assert.equal(dados.mural.length, 1);
+  const desfeito = desfazerEvento(dados, dados.eventos[0].id);
+  assert.equal(desfeito.mural.length, 0);
+});

@@ -3936,6 +3936,67 @@ com Playwright (Modo Guiado passo a passo e as quatro baterias
 anteriores de D&D), sem regressão. `tsc --noEmit`, `npm run lint` e os
 208 testes automáticos continuam limpos.
 
+## 97. Academia Mágica — Compromissos e Mural no Campanha Livre (09/09/2026)
+
+Pedido grande do Zé (167 partes) pra deixar o HUB mais dinâmico pra
+campanha da Academia Mágica: tela "AGORA", quadro de pesquisa, mural,
+calendário, mapa, relações, etc. **Regra absoluta do pedido, repetida
+várias vezes: o HUB nunca é fonte do Mestre** — ele só exibe o que o
+Mestre manda via HUB_UPDATE, nunca decide cânone, nunca inventa NPC,
+item, missão ou relação.
+
+Antes de programar, auditoria completa do projeto (sem escrever código)
+pra entender o que já existe. Achado principal: **o Hub já tem quase
+tudo isso, só que por PERSONAGEM, não por campanha** — o sistema
+"Campanha Livre" (`src/lib/campanha-livre/`, importado por HUB_UPDATE)
+já tinha Missões, NPCs, Pesquisas, Locais, Bestiário, Codex, Diário,
+Colinhas, Magias, Conquistas, Reputação, fila de Imagens e um módulo
+genérico de Escola — todos com parser, validação, aplicar, desfazer e
+snapshot prontos e testados (208 testes). Faltavam: Compromissos
+("coisas para lembrar"), Mural (informação pública), Calendário, Mapa e
+a tela "AGORA" — nenhum desses existia.
+
+Perguntei ao Zé se a Academia Mágica é campanha solo ou com mais de um
+jogador, porque isso muda a arquitetura: hoje cada jogador tem seu
+próprio `Personagem.dados` isolado, sem nada "da mesa toda" visto por
+todos. Resposta: **"pode ter os dois, mas agora coloca SOLO"** — ou
+seja, enquanto for só o Zé jogando, o `Personagem.dados` dele já
+funciona como o estado da mesa inteira, então dá pra estender o
+Campanha Livre existente sem mexer no banco de dados. Uma camada de
+estado por campanha (pra multiplayer de verdade) fica pra decidir
+depois, se um dia precisar.
+
+**Primeira fatia** (decisão #26 — uma por vez): Compromissos e Mural,
+seguindo exatamente o padrão das operações que já existiam (mesmo
+arquivo, mesma convenção de nomes, mesmo pipeline de undo/evento):
+
+- **Compromissos** (`commitments_add`/`commitments_update`) — promessas
+  e combinados ("revanche com a Juno", "prometeu conversar com Lina").
+  Regra explícita do pedido: **nunca fecha sozinho só porque o tempo
+  passou** — só muda de status quando o Mestre manda `commitments_update`
+  de propósito. Status: pendente/cumprido/cancelado/atrasado.
+- **Mural** (`bulletin_add`) — informação pública da Academia
+  (anúncios, eventos, resultados, comunicados). Regra: só o que Zé pode
+  legitimamente saber, nunca plano de mestre — igual a regra que já
+  existia pra `npcs_update.known_information_add`.
+
+Os dois ganharam aba própria em `ABAS_MUNDO` (Compromissos, Mural),
+usando os mesmos componentes de lista/busca/formulário que Missões e
+Codex já usavam — nenhum componente novo de infraestrutura, só mais
+duas listas com CRUD manual + HUB_UPDATE.
+
+Casos não incluídos nesta fatia (ficam pra próximas, quando chegar a
+vez): Calendário/Horário (motor de "próxima aula"/"próxima obrigação"
+calculado pelo código a partir de uma grade — pedido explícito de não
+fazer o Mestre reenviar isso a cada 10 minutos), Mapa, e a tela "AGORA"
+(que depende do Calendário pra fazer sentido de verdade — por isso vem
+depois, não construir a "tela bonita" antes do motor por trás dela).
+
+Testado: 12 testes novos (parser + aplicar, incluindo desfazer e
+validação contra compromisso inexistente) espelhando exatamente o
+padrão dos testes existentes de missões/NPCs. `tsc --noEmit`, `npm run
+lint` e os 220 testes automáticos (208 + 12) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

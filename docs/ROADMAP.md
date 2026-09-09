@@ -1403,6 +1403,19 @@ passando.
       futuras (decisão #26); exigem Manual dos Monstros e Livro do
       Mestre, ainda não enviados
 - [ ] Ometion
+- [x] **Academia Mágica — Compromissos e Mural no Campanha Livre**
+      (09/09/2026) — decisão #97. Primeira fatia do pedido grande de
+      dinamismo pro HUB (auditoria completa antes de programar). Duas
+      operações novas de HUB_UPDATE (`commitments_add`/`update`,
+      `bulletin_add`) e duas abas novas em Campanha Livre, seguindo
+      exatamente o padrão das operações que já existiam — decidido como
+      campanha solo por enquanto (o `Personagem.dados` do Zé já serve de
+      estado da mesa). Testado com 12 testes novos; `tsc`, lint e os 220
+      testes automáticos continuam limpos
+- [ ] Academia Mágica — Calendário/Horário (motor de próxima
+      aula/obrigação calculado pelo código), Mapa, e tela "AGORA" —
+      fatias futuras (decisão #26); a tela "AGORA" depende do Calendário
+      pra fazer sentido, por isso vem depois dele, não antes
 
 ---
 

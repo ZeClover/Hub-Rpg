@@ -14,6 +14,11 @@
   manual na ficha (ver `criarSnapshot`/`restaurarSnapshot` em
   aplicar.ts), por isso não aparecem aqui.
 
+  v1.1 (pedido da Academia Mágica): commitments_add, commitments_update
+  ("coisas para lembrar" — promessas/combinados, nunca fecham sozinhos
+  só porque o tempo passou) e bulletin_add (mural público da campanha —
+  só o que Zé pode legitimamente saber, nunca plot de mestre).
+
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
   revisão decidir o que aplicar (regras #1 e #2 da especificação).
@@ -24,7 +29,16 @@
 */
 import { parse as parseYaml } from "yaml";
 
-import type { ObjetivoMissao, StatusDescoberta, StatusDescobertaMagia, StatusMissao, TipoDuracao } from "./tipos.ts";
+import type {
+  CategoriaMural,
+  ObjetivoMissao,
+  OrigemCompromisso,
+  StatusCompromisso,
+  StatusDescoberta,
+  StatusDescobertaMagia,
+  StatusMissao,
+  TipoDuracao,
+} from "./tipos.ts";
 
 export type NivelAlerta = "info" | "warning" | "error";
 export type Alerta = { nivel: NivelAlerta; mensagem: string };
@@ -343,6 +357,30 @@ export type MudancaEscolaAdd = Base & {
   notas: string[];
 };
 
+export type MudancaCompromissoAdd = Base & {
+  tipo: "compromisso_add";
+  descricao: string;
+  npc?: string;
+  origem?: OrigemCompromisso;
+  data?: string;
+};
+
+export type MudancaCompromissoUpdate = Base & {
+  tipo: "compromisso_update";
+  descricao: string;
+  status: StatusCompromisso;
+};
+
+export type MudancaMuralAdd = Base & {
+  tipo: "mural_add";
+  titulo: string;
+  categoria?: CategoriaMural;
+  resumo?: string;
+  origem?: string;
+  data?: string;
+  expiracao?: string;
+};
+
 export type Mudanca =
   | MudancaXp
   | MudancaRecurso
@@ -381,7 +419,10 @@ export type Mudanca =
   | MudancaConquistaAdd
   | MudancaReputacao
   | MudancaImagemPedido
-  | MudancaEscolaAdd;
+  | MudancaEscolaAdd
+  | MudancaCompromissoAdd
+  | MudancaCompromissoUpdate
+  | MudancaMuralAdd;
 
 export type CabecalhoHubUpdate = {
   version: number;
@@ -466,7 +507,32 @@ const CAMPOS_CONHECIDOS = new Set([
   "reputation",
   "image_requests",
   "school",
+  "commitments_add",
+  "commitments_update",
+  "bulletin_add",
 ]);
+
+const ORIGENS_COMPROMISSO: Record<string, OrigemCompromisso> = {
+  promised: "prometeu",
+  arranged: "combinou",
+  invited: "convite",
+  reminder: "lembrete",
+};
+
+const STATUS_COMPROMISSO_MAP: Record<string, StatusCompromisso> = {
+  pending: "pendente",
+  fulfilled: "cumprido",
+  cancelled: "cancelado",
+  overdue: "atrasado",
+};
+
+const CATEGORIAS_MURAL: Record<string, CategoriaMural> = {
+  announcement: "anuncio",
+  event: "evento",
+  result: "resultado",
+  notice: "comunicado",
+  other: "outro",
+};
 
 const TIPOS_DURACAO = new Set<TipoDuracao>(["rounds", "turns", "scenes", "sessions", "until_rest", "until_removed", "custom"]);
 
@@ -755,6 +821,19 @@ export function interpretarHubUpdate(textoColado: string): ResultadoParse {
     if (Array.isArray(school.lessons_add)) {
       for (const aula of school.lessons_add) mudancas.push(interpretarEscolaAdd(aula));
     }
+  }
+
+  // --- commitments_add / commitments_update ("coisas para lembrar", pedido da Academia Mágica) ---
+  if (Array.isArray(raiz.commitments_add)) {
+    for (const compromisso of raiz.commitments_add) mudancas.push(interpretarCompromissoAdd(compromisso));
+  }
+  if (Array.isArray(raiz.commitments_update)) {
+    for (const compromisso of raiz.commitments_update) mudancas.push(interpretarCompromissoUpdate(compromisso));
+  }
+
+  // --- bulletin_add (mural público da campanha, pedido da Academia Mágica) ---
+  if (Array.isArray(raiz.bulletin_add)) {
+    for (const entrada of raiz.bulletin_add) mudancas.push(interpretarMuralAdd(entrada));
   }
 
   const camposDesconhecidos = Object.keys(raiz).filter((chave) => !CAMPOS_CONHECIDOS.has(chave));
@@ -1694,6 +1773,77 @@ function interpretarEscolaAdd(bruto: unknown): MudancaEscolaAdd {
     materia: materia ?? "(sem matéria)",
     topico: typeof objeto.topic === "string" ? objeto.topic : undefined,
     notas: Array.isArray(objeto.notes) ? objeto.notes.filter((n): n is string => typeof n === "string") : [],
+    alertas,
+  };
+}
+
+function interpretarCompromissoAdd(bruto: unknown): MudancaCompromissoAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const descricao = typeof objeto.description === "string" ? objeto.description : null;
+  if (!descricao) alertas.push({ nivel: "error", mensagem: "Item em commitments_add sem 'description'." });
+
+  const origemBruta = typeof objeto.origin === "string" ? objeto.origin : undefined;
+  const origem = origemBruta ? ORIGENS_COMPROMISSO[origemBruta] : undefined;
+  if (origemBruta && !origem) {
+    alertas.push({ nivel: "warning", mensagem: `Origem de compromisso desconhecida: "${origemBruta}" — ignorada.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "compromisso_add",
+    descricao: descricao ?? "(sem descrição)",
+    npc: typeof objeto.npc === "string" ? objeto.npc : undefined,
+    origem,
+    data: typeof objeto.date === "string" ? objeto.date : undefined,
+    alertas,
+  };
+}
+
+function interpretarCompromissoUpdate(bruto: unknown): MudancaCompromissoUpdate {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const descricao = typeof objeto.description === "string" ? objeto.description : null;
+  if (!descricao) alertas.push({ nivel: "error", mensagem: "Item em commitments_update sem 'description'." });
+
+  const statusBruto = typeof objeto.status === "string" ? objeto.status : null;
+  const status = statusBruto ? STATUS_COMPROMISSO_MAP[statusBruto] : undefined;
+  if (!statusBruto) {
+    alertas.push({ nivel: "error", mensagem: `commitments_update para "${descricao ?? "?"}" sem 'status'.` });
+  } else if (!status) {
+    alertas.push({ nivel: "error", mensagem: `Status de compromisso desconhecido: "${statusBruto}".` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "compromisso_update",
+    descricao: descricao ?? "(sem descrição)",
+    status: status ?? "pendente",
+    alertas,
+  };
+}
+
+function interpretarMuralAdd(bruto: unknown): MudancaMuralAdd {
+  const alertas: Alerta[] = [];
+  const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
+  const titulo = typeof objeto.title === "string" ? objeto.title : null;
+  if (!titulo) alertas.push({ nivel: "error", mensagem: "Item em bulletin_add sem 'title'." });
+
+  const categoriaBruta = typeof objeto.category === "string" ? objeto.category : undefined;
+  const categoria = categoriaBruta ? CATEGORIAS_MURAL[categoriaBruta] : undefined;
+  if (categoriaBruta && !categoria) {
+    alertas.push({ nivel: "warning", mensagem: `Categoria de mural desconhecida: "${categoriaBruta}" — ignorada.` });
+  }
+
+  return {
+    id: proximoId(),
+    tipo: "mural_add",
+    titulo: titulo ?? "(sem título)",
+    categoria,
+    resumo: typeof objeto.summary === "string" ? objeto.summary : undefined,
+    origem: typeof objeto.source === "string" ? objeto.source : undefined,
+    data: typeof objeto.date === "string" ? objeto.date : undefined,
+    expiracao: typeof objeto.expires === "string" ? objeto.expires : undefined,
     alertas,
   };
 }

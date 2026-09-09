@@ -845,20 +845,52 @@ function DescricaoMudanca({
       </p>
     );
   }
-  // escola_add
+  if (mudanca.tipo === "escola_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Nova aula: <strong>{mudanca.materia}</strong>
+          {mudanca.topico && <span className="text-xs text-texto-suave"> · {mudanca.topico}</span>}
+        </p>
+        {mudanca.notas.length > 0 && (
+          <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+            {mudanca.notas.map((n, i) => (
+              <li key={i}>{n}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "compromisso_add") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          Novo compromisso: <strong>{mudanca.descricao}</strong>
+        </p>
+        {(mudanca.npc || mudanca.data) && (
+          <p className="mt-1 text-xs text-texto-suave">
+            {mudanca.npc && <>NPC: {mudanca.npc} </>}
+            {mudanca.data && <>· {mudanca.data}</>}
+          </p>
+        )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "compromisso_update") {
+    return (
+      <p className="text-sm text-texto">
+        Compromisso — <strong>{mudanca.descricao}</strong>: status → {mudanca.status}
+      </p>
+    );
+  }
+  // mural_add
   return (
     <div className="text-sm text-texto">
       <p>
-        Nova aula: <strong>{mudanca.materia}</strong>
-        {mudanca.topico && <span className="text-xs text-texto-suave"> · {mudanca.topico}</span>}
+        Novo mural: <strong>{mudanca.titulo}</strong>
       </p>
-      {mudanca.notas.length > 0 && (
-        <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
-          {mudanca.notas.map((n, i) => (
-            <li key={i}>{n}</li>
-          ))}
-        </ul>
-      )}
+      {mudanca.resumo && <p className="mt-1 text-xs text-texto-suave">{mudanca.resumo}</p>}
     </div>
   );
 }

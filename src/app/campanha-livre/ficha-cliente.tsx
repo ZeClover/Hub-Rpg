@@ -14,7 +14,9 @@ import {
 } from "@/lib/campanha-livre/aplicar.ts";
 import {
   normalizarPersonagemLivre,
+  type CategoriaMural,
   type CodexLivre,
+  type CompromissoLivre,
   type CondicaoLivre,
   type ConquistaLivre,
   type CriaturaLivre,
@@ -22,6 +24,7 @@ import {
   type DuracaoEfeito,
   type EntradaDiario,
   type EntradaEscola,
+  type EntradaMural,
   type EventoAplicado,
   type LocalLivre,
   type MagiaLivre,
@@ -31,6 +34,7 @@ import {
   type NpcLivre,
   type PersonagemLivre,
   type PesquisaLivre,
+  type StatusCompromisso,
   type StatusDescoberta,
   type StatusMissao,
   type StatusObjetivo,
@@ -907,6 +911,8 @@ const ABAS_MUNDO = [
   { id: "reputacao", rotulo: "Reputação" },
   { id: "imagens", rotulo: "Imagens" },
   { id: "escola", rotulo: "Escola" },
+  { id: "compromissos", rotulo: "Compromissos" },
+  { id: "mural", rotulo: "Mural" },
 ] as const;
 
 type AbaMundo = (typeof ABAS_MUNDO)[number]["id"];
@@ -953,8 +959,209 @@ function AbasMundo({
         {aba === "reputacao" && <Reputacao dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "imagens" && <Imagens dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
         {aba === "escola" && <Escola dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "compromissos" && <Compromissos dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
+        {aba === "mural" && <Mural dados={dados} somenteLeitura={somenteLeitura} onSalvar={onSalvar} />}
       </div>
     </section>
+  );
+}
+
+const STATUS_COMPROMISSO_OPCOES: { valor: StatusCompromisso; rotulo: string }[] = [
+  { valor: "pendente", rotulo: "Pendente" },
+  { valor: "cumprido", rotulo: "Cumprido" },
+  { valor: "cancelado", rotulo: "Cancelado" },
+  { valor: "atrasado", rotulo: "Atrasado" },
+];
+
+const CATEGORIA_MURAL_OPCOES: { valor: CategoriaMural; rotulo: string }[] = [
+  { valor: "anuncio", rotulo: "Anúncio" },
+  { valor: "evento", rotulo: "Evento" },
+  { valor: "resultado", rotulo: "Resultado" },
+  { valor: "comunicado", rotulo: "Comunicado" },
+  { valor: "outro", rotulo: "Outro" },
+];
+
+/* ---------- Compromissos ("coisas para lembrar") ---------- */
+function Compromissos({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [descricaoNova, setDescricaoNova] = useState("");
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.compromissos.filter((c) => corresponde(busca, c.descricao, c.npc));
+
+  function atualizarStatus(id: string, status: StatusCompromisso) {
+    onSalvar({ ...dados, compromissos: dados.compromissos.map((c) => (c.id === id ? { ...c, status } : c)) });
+  }
+
+  function remover(id: string) {
+    onSalvar({ ...dados, compromissos: dados.compromissos.filter((c) => c.id !== id) });
+  }
+
+  function adicionar() {
+    if (!descricaoNova.trim()) return;
+    const novo: CompromissoLivre = {
+      id: `compromisso-${Date.now().toString(36)}`,
+      descricao: descricaoNova.trim(),
+      status: "pendente",
+      criadoEm: Date.now(),
+    };
+    onSalvar({ ...dados, compromissos: [...dados.compromissos, novo] });
+    setDescricaoNova("");
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-texto-suave">
+        Promessas e combinados — não é menu de ações, é só memória do que Zé já se comprometeu a fazer. Nunca fecha sozinho: só muda quando alguém marca.
+      </p>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar compromisso…" />
+      {dados.compromissos.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nenhum compromisso ainda.</p>}
+      {dados.compromissos.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
+      <ul className="mt-3 space-y-2">
+        {filtrados.map((c) => (
+          <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className={`text-sm text-texto ${c.status === "cumprido" || c.status === "cancelado" ? "line-through text-texto-suave" : ""}`}>{c.descricao}</p>
+              <p className="mt-1 text-xs text-texto-suave">
+                {c.npc && <>NPC: {c.npc} </>}
+                {c.data && <>· {c.data}</>}
+              </p>
+              <select
+                value={c.status}
+                disabled={somenteLeitura}
+                onChange={(e) => atualizarStatus(c.id, e.target.value as StatusCompromisso)}
+                className="mt-2 rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto disabled:opacity-60"
+              >
+                {STATUS_COMPROMISSO_OPCOES.map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(c.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 space-y-2 rounded-lg border border-borda bg-superficie p-4">
+          <input
+            type="text"
+            value={descricaoNova}
+            onChange={(e) => setDescricaoNova(e.target.value)}
+            placeholder="Descrição (ex: prometeu revanche pra Juno)"
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Compromisso
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Mural (informação pública da campanha) ---------- */
+function Mural({
+  dados,
+  somenteLeitura,
+  onSalvar,
+}: {
+  dados: PersonagemLivre;
+  somenteLeitura: boolean;
+  onSalvar: (novosDados: PersonagemLivre) => void;
+}) {
+  const [tituloNovo, setTituloNovo] = useState("");
+  const [resumoNovo, setResumoNovo] = useState("");
+  const [categoriaNova, setCategoriaNova] = useState<CategoriaMural>("anuncio");
+  const [busca, setBusca] = useState("");
+  const filtrados = dados.mural.filter((m) => corresponde(busca, m.titulo, m.resumo));
+
+  function remover(id: string) {
+    onSalvar({ ...dados, mural: dados.mural.filter((m) => m.id !== id) });
+  }
+
+  function adicionar() {
+    if (!tituloNovo.trim()) return;
+    const nova: EntradaMural = {
+      id: `mural-${Date.now().toString(36)}`,
+      titulo: tituloNovo.trim(),
+      categoria: categoriaNova,
+      resumo: resumoNovo.trim() || undefined,
+      criadaEm: Date.now(),
+    };
+    onSalvar({ ...dados, mural: [nova, ...dados.mural] });
+    setTituloNovo("");
+    setResumoNovo("");
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-texto-suave">Informação pública da Academia — só o que Zé pode legitimamente saber, nunca plano de mestre.</p>
+      <BarraBusca valor={busca} onMudar={setBusca} placeholder="Buscar no mural…" />
+      {dados.mural.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada no mural ainda.</p>}
+      {dados.mural.length > 0 && filtrados.length === 0 && <p className="mt-2 text-sm text-texto-suave">Nada encontrado.</p>}
+      <ul className="mt-3 space-y-2">
+        {filtrados.map((m) => (
+          <li key={m.id} className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-4">
+            <div>
+              <p className="font-titulo text-sm text-texto">
+                {m.titulo} {m.categoria && <span className="text-xs font-normal text-texto-suave">· {CATEGORIA_MURAL_OPCOES.find((o) => o.valor === m.categoria)?.rotulo}</span>}
+              </p>
+              {m.resumo && <p className="mt-1 text-sm text-texto-suave">{m.resumo}</p>}
+              {m.data && <p className="mt-1 text-xs text-texto-suave">{m.data}</p>}
+            </div>
+            {!somenteLeitura && (
+              <button type="button" onClick={() => remover(m.id)} className="shrink-0 text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-segredo">
+                Remover
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {!somenteLeitura && (
+        <div className="mt-3 space-y-2 rounded-lg border border-borda bg-superficie p-4">
+          <input
+            type="text"
+            value={tituloNovo}
+            onChange={(e) => setTituloNovo(e.target.value)}
+            placeholder="Título"
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <textarea
+            value={resumoNovo}
+            onChange={(e) => setResumoNovo(e.target.value)}
+            placeholder="Resumo"
+            rows={2}
+            className="w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <select
+            value={categoriaNova}
+            onChange={(e) => setCategoriaNova(e.target.value as CategoriaMural)}
+            className="rounded border border-borda bg-fundo px-2 py-1 text-xs text-texto"
+          >
+            {CATEGORIA_MURAL_OPCOES.map((o) => (
+              <option key={o.valor} value={o.valor}>
+                {o.rotulo}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={adicionar} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-2 text-sm text-ambar-forte hover:bg-ambar/20">
+            + Mural
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -2477,6 +2684,8 @@ const NOME_LISTA_SINGULAR: Record<NomeLista, string> = {
   conquistas: "conquista",
   filaImagens: "pedido de imagem",
   escola: "aula",
+  compromissos: "compromisso",
+  mural: "mural",
 };
 
 /** Descreve o que "Desfazer" vai fazer a este evento específico — antes → depois na direção do desfazer, não da mudança original. */

@@ -866,3 +866,75 @@ test("school.lessons_add sem subject vira error", () => {
   if (!r.ok) return;
   assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });
+
+/* ---------- commitments_add / commitments_update ---------- */
+test("commitments_add: com npc, origin e date", () => {
+  const r = interpretarHubUpdate(
+    bloco("commitments_add:\n  - description: Revanche com a Juno\n    npc: Juno\n    origin: promised\n    date: dia 5"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "compromisso_add");
+  if (m.tipo === "compromisso_add") {
+    assert.equal(m.descricao, "Revanche com a Juno");
+    assert.equal(m.npc, "Juno");
+    assert.equal(m.origem, "prometeu");
+    assert.equal(m.data, "dia 5");
+  }
+});
+
+test("commitments_add: sem description vira error", () => {
+  const r = interpretarHubUpdate(bloco("commitments_add:\n  - npc: Juno"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("commitments_add: origin desconhecida vira warning, não bloqueia", () => {
+  const r = interpretarHubUpdate(bloco("commitments_add:\n  - description: Algo\n    origin: nao_existe"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "warning"));
+  assert.ok(!r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("commitments_update: status válido", () => {
+  const r = interpretarHubUpdate(bloco("commitments_update:\n  - description: Revanche com a Juno\n    status: fulfilled"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "compromisso_update");
+  if (m.tipo === "compromisso_update") assert.equal(m.status, "cumprido");
+});
+
+test("commitments_update: sem status vira error", () => {
+  const r = interpretarHubUpdate(bloco("commitments_update:\n  - description: Revanche com a Juno"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+/* ---------- bulletin_add ---------- */
+test("bulletin_add: com category, summary e expires", () => {
+  const r = interpretarHubUpdate(
+    bloco("bulletin_add:\n  - title: Torneio de Duelos\n    category: event\n    summary: Inscrições abertas.\n    expires: dia 10"),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "mural_add");
+  if (m.tipo === "mural_add") {
+    assert.equal(m.titulo, "Torneio de Duelos");
+    assert.equal(m.categoria, "evento");
+    assert.equal(m.resumo, "Inscrições abertas.");
+    assert.equal(m.expiracao, "dia 10");
+  }
+});
+
+test("bulletin_add: sem title vira error", () => {
+  const r = interpretarHubUpdate(bloco("bulletin_add:\n  - summary: Sem título"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
