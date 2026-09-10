@@ -4625,6 +4625,54 @@ mostra texto certo, troca ao mudar de aba). Print de tela conferido.
 automáticos continuam limpos (mudança é só HTML/CSS/JS estático de
 `sao.html`).
 
+## 111. Thrylikí Chelóna — Modo Guiado completo (Fórmulas/Poderes) e Tutorial por aba (10/09/2026)
+
+Quarta fatia de "Modo Guiado + Tutorial pra todos os sistemas" (#108 FU,
+#109 Sávio, #110 SAO). O sistema mais diferente dos quatro até aqui: em
+vez de classes com catálogo fixo, cada Área de Estudo (16 ao todo) tem
+sua própria "gramática" de construção de Fórmula/Poder — Simbologia
+Arcana monta Verbo+Essência+Moldura+Cláusulas, Corpo/Cinética usa
+Esforço e Rastro, Robótica/Engenharia monta Módulos, etc. — cada uma
+com o próprio painel de UI (`painelSimbologiaArcana`, `painelCorpoCinetica`...),
+todos já existentes mas só acessíveis pela aba Combate.
+
+**Achado da auditoria**: o gap "sem Poderes escolhidos" existia em
+**dois lugares**, não um — nem a criação guiada nem o Level Up guiado
+(`passosNivelUpThryliki`) tinham um passo pra gastar PE ou usar o pacote
+inicial em Fórmulas/Poderes, mesmo o texto da própria aba Progressão
+mencionando "as duas primeiras Fórmulas/Poderes de graça do pacote
+inicial". Diferente de Fabula Ultima e SAO (onde só a criação guiada
+tinha o buraco), aqui faltava nos dois.
+
+**Correção**: extraída a composição dos painéis de Área de dentro de
+`abaCombate` pra uma função nova, `blocoFormulasPoderesArea(p)` —
+`abaCombate` continua idêntica (só chama a função no lugar de repetir a
+lista), e a criação guiada ganhou um passo novo (3 de 4) "Primeiras
+Fórmulas/Poderes" que chama a mesma função (cada painel de Área já se
+esconde sozinho se a Área não bate, então é seguro concatenar todos —
+só o certo aparece). O Level Up guiado ganhou o mesmo passo dentro do
+bloco `if(depois.peDisponivel > 0)`, ao lado dos passos já existentes de
+Grau/Treinamento/Talento/Recurso.
+
+**Tutorial**: `AJUDA_ABAS` com as 6 abas (Status, Atributos e Perícias,
+Progressão, Combate, Inventário, Notas) — mais enxuto que os outros três
+sistemas porque a própria estrutura de abas é mais enxuta aqui.
+Explicado o conceito central que não existe nos outros sistemas: Ano
+(currículo/permissão) e Nível (força) são réguas **separadas** — uma
+campanha pode combinar qualquer par dos dois, e Ano nunca avança
+automaticamente por PE ou Nível, só pela Prova de Passagem com o mestre.
+
+Testado com Playwright: os 4 passos do guiado (aplicando o Caminho
+Pronto "Duelista", área Corpo/Cinética, confirmando que o painel certo
+e o Kit de Combate do 1º Ano aparecem no passo novo), o Level Up guiado
+percorrido até confirmar que o passo "Fórmulas/Poderes" existe de
+verdade (precisou trocar o Ritmo pra "Acelerado" pra liberar o botão de
+subir Nível direto — Ritmo padrão exige 2 marcas de Progresso antes),
+e o Tutorial (abre, mostra texto certo, troca ao mudar de aba). Prints
+de tela conferidos. `tsc --noEmit`, `npm run lint`, `npm run build` e os
+289 testes automáticos continuam limpos (mudança é só HTML/CSS/JS
+estático de `thryliki-chelona.html`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

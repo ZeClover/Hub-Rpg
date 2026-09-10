@@ -3117,6 +3117,9 @@ const estado = {
   // só um jeito diferente de mostrar os mesmos campos da ficha normal.
   modoGuiado: false,
   passoGuiado: 1,
+  // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
+  // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
+  mostrarAjuda: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -3282,7 +3285,11 @@ function render(){
       : alerta
         + `<div class="abas">` + ABAS.map(a =>
             `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-          ).join('') + `</div>`
+          ).join('') + `<button id="btAjudaAba" style="margin-left:auto" aria-current="${estado.mostrarAjuda}" title="O que esta aba faz, e como funciona no sistema">❓ Ajuda</button></div>`
+        + (estado.mostrarAjuda ? `<div class="cartao" style="border-color:rgba(var(--ambar-rgb),.4)">
+            <h3 style="font-size:15px;margin-bottom:8px">❓ ${ABAS.find(a=>a.id===estado.aba)?.nome}</h3>
+            ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
+          </div>` : '')
         + painelDerivados(p)
         + ({status:abaStatus, atributos:abaAtributos, progressao:abaProgressao, combate:abaCombate, inventario:abaInventario, notas:abaNotas}[estado.aba])(p);
 
@@ -3304,7 +3311,7 @@ function render(){
   ligarEventos();
 
   if(somenteLeitura){
-    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+    app.querySelectorAll('input, select, textarea, button:not([data-aba]):not(#btAjudaAba)')
       .forEach(el => el.disabled = true);
   }
 }
@@ -3378,7 +3385,7 @@ function telaGuiada(p){
   const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
   const area = AREAS.find(a => a.id === p.perfil.areaId);
   const caminho = CAMINHOS_PRONTOS.find(c => c.id === estado.caminhoSelecionado) || CAMINHOS_PRONTOS[0];
-  const totalPassos = 3;
+  const totalPassos = 4;
   const cabecalho = `
     <div class="cartao" style="text-align:center">
       <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -3455,14 +3462,38 @@ function telaGuiada(p){
     </div>`;
   }
 
-  // passo 3: resumo + próximos passos
+  if(passo === 3){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Primeiras Fórmulas/Poderes</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        O pacote inicial da sua Área dá as <strong>duas primeiras
+        Fórmulas/Poderes de graça</strong>, sem gastar PE — o 1º Ano
+        também já libera um Kit de Combate pronto, sem depender de
+        criação livre nem de Ramo escolhido (isso só chega no 2º Ano).
+      </p>
+      ${!area ? `<div class="aviso">Nenhuma Área de Estudo escolhida ainda —
+        volte ao passo anterior e escolha uma (ou aplique um Caminho
+        Pronto no passo 1).</div>` : ''}
+    </div>
+    ${area ? blocoFormulasPoderesArea(p) : ''}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 4: resumo + próximos passos
   return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <h2 style="font-size:18px">4. Pronto pra jogar!</h2>
       <p class="mini" style="margin:6px 0 14px">
-        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial pro 1º Ano.
-        O resto (Ramo a partir do 2º Ano, Fórmulas/Poderes, Inventário) você
-        preenche aos poucos, jogando.
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial pro
+        1º Ano — Origem, Área, Atributos, Treinamentos e o Kit de Combate
+        (ou as Fórmulas/Poderes iniciais, se já construiu). O resto (Ramo
+        a partir do 2º Ano, Inventário) você preenche aos poucos, jogando.
+        Cada aba tem um botão <strong>❓ Ajuda</strong> explicando o que
+        ela faz, se precisar.
       </p>
     </div>
     ${painelDerivados(p)}
@@ -3510,6 +3541,92 @@ const DOENCAS_CATALOGO = [
   {id:'wendigo__falas-copiadas', classificacao:'Místico', criatura:'Wendigo', nome:'Falas Copiadas', pro:'Mimetismo: após ouvir uma voz, pode reproduzi-la com precisão; Enganação ainda é usada quando alguém puder contestar.', contra:'Eco involuntário: em Falha extrema de Vontade ou sob Instabilidade, uma frase emocional copiada emerge e revela presença, estado ou memória. O jogador e o Mestre definem previamente limites para esse conteúdo.', ancora:'Garganta e memória sonora.'},
   {id:'medusa__cabelos-de-cobra-e-olhar-de-pedra', classificacao:'Místico', criatura:'Medusa', nome:'Cabelos de Cobra e Olhar de Pedra', pro:'Petrificação: Ação Principal, contato visual e teste oposto. Resultado básico aplica Preso; técnica forte pode aplicar Atordoado; petrificação completa exige Ápice, preparação e saída visível.', contra:'Olhar indiscriminado: sem venda, controle ou foco preparado, aliados e pessoas queridas dentro da linha também podem ser ameaçados. Fechar os olhos remove o risco e o Pró, deixando ações visuais desfavoráveis.', ancora:'Olhos e serpentes; espelho, cobertura, cegueira e quebra de linha são contrajogos.'},
 ];
+
+// Tutorial (painel de referência) — explica o que cada aba faz, o que
+// cada coisa dentro dela significa nas regras, e um exemplo concreto.
+// Fica escondido por padrão; o botão "❓ Ajuda" na barra de abas mostra
+// o texto da aba ATUAL, e continua mostrando ao trocar de aba.
+const AJUDA_ABAS = {
+  status: `
+    <p class="mini"><strong>Ano</strong> e <strong>Nível</strong> são duas
+    réguas separadas: Ano mede o currículo que o personagem já aprendeu
+    (o que ele tem PERMISSÃO de fazer), Nível mede a força dele (quanto
+    ele consegue fazer aquilo). Uma campanha pode começar em qualquer
+    combinação — um Nível alto no 1º Ano ainda só usa o Kit de Combate do
+    1º Ano, por exemplo.</p>
+    <p class="mini" style="margin-top:8px"><strong>Caminho Pronto</strong>
+    preenche Origem + Atributos + Treinamentos de uma vez, pronto pro 1º
+    Ano — Área e Ramo continuam livres. <strong>Origem</strong> dá 2
+    Treinamentos fixos + uma Permissão narrativa (algo que só quem tem
+    aquela Origem pode fazer/acessar). <strong>Área de Estudo</strong> é
+    o motor de poder do personagem — de onde vêm as Fórmulas/Poderes
+    dela (construídos na aba Combate).</p>`,
+
+  atributos: `
+    <p class="mini">Cinco Atributos, Grau de <strong>0 a 5</strong> (na
+    criação: todos começam Grau 1, distribua 5 pontos extras, máximo Grau
+    3 na criação — ex: 3,2,2,2,1). <strong>Teste</strong> = 1d20 + Grau do
+    Atributo + Treinamento + situação (a situação varia de −5 a +5
+    conforme o contexto). Exemplo: Grau 3 + Treinado (+5) + situação
+    neutra (+0) → role 1d20+8 contra a Dificuldade que o mestre
+    define.</p>
+    <p class="mini" style="margin-top:8px"><strong>Treinamento</strong>
+    é por Perícia, não por Atributo: Nada/Treinado/Perito/Expert = +0/+5/
+    +10/+15. Cinco Treinamentos vêm de graça na criação (3 livres + 2 da
+    Origem); subir de degrau depois custa PE e exige uma Categoria mínima
+    (Treinado pede Categoria I, Perito pede II, Expert pede III — ver aba
+    Progressão pra saber sua Categoria atual).</p>`,
+
+  progressao: `
+    <p class="mini"><strong>PE (Ponto de Evolução)</strong> é a moeda de
+    progressão: 1 por Nível, acumula se não gastar. Compra Grau de
+    Atributo e Treinamento (aba Atributos), Talentos, Recursos/Eletivas,
+    e Fórmulas/Poderes a partir da terceira (as duas primeiras do pacote
+    inicial são de graça — aba Combate).</p>
+    <p class="mini" style="margin-top:8px"><strong>Marco da Área</strong>
+    chega sozinho nas posições 1/5/9/13/17 de cada ciclo de 20 Níveis —
+    não gasta PE, só escolhe conteúdo que o Ano atual já libera.
+    <strong>Ascensão</strong> chega a cada 20 Níveis — um degrau
+    permanente de escala num único eixo (ex: Alcance e Área), nunca bônus
+    direto no d20 nem Impacto grátis.</p>
+    <p class="mini" style="margin-top:8px">Importante: o <strong>Ano</strong>
+    não avança com PE nem é calculado pelo Nível — ele avança quando o
+    grupo monta o <strong>Portfólio de Prova de Passagem</strong> (4
+    itens: Domínio, Criação, Cooperação, Consequência) e passa pela Prova
+    com o Mestre. Falhar não tira nada — vira uma Recuperação e nova
+    tentativa. Entre Semestres, <strong>Recesso</strong> deixa fazer duas
+    Atividades (Estudar, Treinar, Projetar, Recuperar, Relacionar,
+    Servir) sem precisar de teste, a não ser que haja risco ou prazo.</p>`,
+
+  combate: `
+    <p class="mini">Esta aba concentra tudo de combate/poder: Vida
+    (sofrer Impacto, curar, Primeiros Socorros), o <strong>construtor de
+    Fórmulas/Poderes específico da sua Área</strong> (só o da Área
+    escolhida aparece — cada Área tem sua própria "gramática": Simbologia
+    Arcana monta Verbo+Essência+Moldura+Cláusulas, Corpo/Cinética usa
+    Esforço e Rastro, etc.), o <strong>Kit de Combate do 1º Ano</strong>
+    (opções prontas, sem depender de criação livre — é o que você usa
+    antes do 3º Ano), e <strong>Condições</strong> (no máximo uma por
+    eixo — reaplicar igual renova, mais forte substitui, mais fraca não
+    acumula).</p>
+    <p class="mini" style="margin-top:8px"><strong>Pacto com a Realidade</strong>
+    é a alternativa à morte definitiva: em vez de morrer, sacrifica uma
+    parte do corpo (um "canal" — manipulação, locomoção, sentido) à
+    Realidade, volta com metade da Vida sem penalidades extras, e registra
+    uma Dívida. O canal sacrificado nunca mais canaliza poder, nem com
+    prótese ou regeneração — é permanente por design.</p>`,
+
+  inventario: `
+    <p class="mini"><strong>Carga Pronta</strong> = 6 + Grau de Força — só
+    o que está marcado como Pronto conta nesse limite. Um item guardado
+    fora da Carga Pronta ainda existe na ficha, mas pegar ele numa cena
+    exige uma Ação Principal e acesso ao recipiente onde está guardado —
+    não é instantâneo como um item Pronto.</p>`,
+
+  notas: `
+    <p class="mini">Rascunho livre — sem regra nenhuma por trás. Use pra
+    anotar planos, dúvidas pro Mestre, ou ideias pra próxima Fórmula/Poder.</p>`,
+};
 
 function abaStatus(p){
   const origem = ORIGENS.find(o => o.id === p.perfil.origemId);
@@ -4110,6 +4227,14 @@ function passosNivelUpThryliki(p, resumo){
         outra Área — 5 tipos, cada um com limite e custo próprios.
       </p>
       ${blocoFormRecurso(p)}`});
+    passos.push({titulo: 'Gastar PE — Fórmulas/Poderes', corpo: `
+      <p class="mini" style="margin-bottom:8px">
+        As duas primeiras Fórmulas/Poderes do pacote inicial são de graça
+        — a partir da terceira, cada uma custa PE (o construtor mostra o
+        custo antes de salvar). Continua limitado ao que sua Área e Ano
+        atual liberam — criação livre de verdade só começa no 3º Ano.
+      </p>
+      ${blocoFormulasPoderesArea(p)}`});
   }
 
   return passos;
@@ -4998,8 +5123,16 @@ function painelVida(p){
   </div>`;
 }
 
+// Extraído de abaCombate pra reaproveitar no Modo Guiado (telaGuiada) e no
+// Level Up guiado (passosNivelUpThryliki) — cada painel de Área já se
+// esconde sozinho (`if(p.perfil.areaId !== '...') return '';`), então
+// concatenar todos aqui é seguro: só o da Área escolhida aparece de verdade.
+function blocoFormulasPoderesArea(p){
+  return painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelKitCombateAno1(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []);
+}
+
 function abaCombate(p){
-  return painelVida(p) + painelCorpoCinetica(p) + painelSimbologiaArcana(p) + painelRoboticaEngenharia(p) + painelBotanicaBiomancia(p) + painelArteExpressao(p) + painelZoologiaEtologia(p) + painelNovaArea(p) + painelKitCombateAno1(p) + painelConstrutorPoder(p) + painelPoderesLivres(p, p.poderesLivres || []) + `<div class="cartao">
+  return painelVida(p) + blocoFormulasPoderesArea(p) + `<div class="cartao">
     <h2 style="font-size:18px">Condições</h2>
     <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
     <div class="condicoes">
@@ -5296,6 +5429,9 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  const btAjudaAba = app.querySelector('#btAjudaAba');
+  if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
 
   // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
   const btGuiadoProximo = app.querySelector('#btGuiadoProximo');

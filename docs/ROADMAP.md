@@ -1557,6 +1557,19 @@ passando.
       confirmação explícita de que o bug do nivelUpResumo está
       corrigido); `tsc`, lint, build e os 289 testes automáticos
       continuam limpos
+- [x] **Thrylikí Chelóna — Modo Guiado completo (Fórmulas/Poderes) e
+      Tutorial por aba** (10/09/2026) — decisão #111. Quarta fatia. Aqui
+      o gap existia em DOIS lugares — nem a criação guiada nem o Level
+      Up guiado tinham passo pra usar as Fórmulas/Poderes grátis do
+      pacote inicial, porque cada uma das 16 Áreas de Estudo tem seu
+      próprio construtor. Extraída `blocoFormulasPoderesArea(p)` de
+      dentro de `abaCombate` (cada painel de Área já se esconde sozinho,
+      seguro reaproveitar) e adicionado o mesmo passo nos dois guiados.
+      Tutorial com as 6 abas do sistema, explicando o conceito central
+      que não existe nos outros sistemas: Ano (currículo) e Nível
+      (força) são réguas separadas. Testado com Playwright nos dois
+      guiados; `tsc`, lint, build e os 289 testes automáticos continuam
+      limpos
 
 ---
 
