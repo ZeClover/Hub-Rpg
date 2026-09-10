@@ -2210,6 +2210,17 @@ function Npcs({
               <ConhecimentoNovo onAdicionar={(texto) => atualizarNpc(npc.id, { conhecimento: [...npc.conhecimento, texto] })} />
             )}
 
+            {npc.relacaoQualitativa && npc.relacaoQualitativa.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs text-texto-suave">Histórico da relação</p>
+                <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
+                  {npc.relacaoQualitativa.map((texto, i) => (
+                    <li key={i}>{texto}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {(Object.keys(npc.relacoes).length > 0 || !somenteLeitura) && (
               <p className="mt-3 text-xs text-texto-suave">
                 Estatísticas numéricas (opcional — pra mecânica própria da campanha, não é &ldquo;quanto ele gosta de você&rdquo;)

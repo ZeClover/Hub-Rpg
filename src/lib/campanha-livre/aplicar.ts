@@ -54,7 +54,12 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
     inventario: atual.inventario.map((item) => ({ ...item })),
     notas: [...atual.notas],
     missoes: atual.missoes.map((m) => ({ ...m, objetivos: m.objetivos.map((o) => ({ ...o })), recompensas: [...m.recompensas], anotacoes: [...m.anotacoes] })),
-    npcs: atual.npcs.map((n) => ({ ...n, conhecimento: [...n.conhecimento], relacoes: { ...n.relacoes } })),
+    npcs: atual.npcs.map((n) => ({
+      ...n,
+      conhecimento: [...n.conhecimento],
+      relacoes: { ...n.relacoes },
+      relacaoQualitativa: n.relacaoQualitativa ? [...n.relacaoQualitativa] : undefined,
+    })),
     descobertas: atual.descobertas.map((d) => ({ ...d, evidencias: [...d.evidencias] })),
     codex: [...atual.codex],
     locais: atual.locais.map((l) => ({ ...l, conhecimento: [...l.conhecimento], conexoesConhecidas: [...l.conexoesConhecidas] })),
@@ -392,6 +397,18 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       const npc = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.npc.trim().toLowerCase());
       if (!npc) continue; // validar.ts já marcou isso como erro — não deveria chegar aqui
       const antes = copiar(npc);
+
+      if (mudanca.forma === "qualitativa") {
+        npc.relacaoQualitativa = [...(npc.relacaoQualitativa ?? []), mudanca.delta];
+        registrar(mudanca.tipo, `${mudanca.npc}: relação qualitativa — "${mudanca.delta}"`, {
+          forma: "lista",
+          lista: "npcs",
+          identificador: antes.nome,
+          antes,
+        });
+        continue;
+      }
+
       const antesValor = npc.relacoes[mudanca.stat] ?? 0;
       const depois = antesValor + mudanca.valor;
       npc.relacoes[mudanca.stat] = depois;

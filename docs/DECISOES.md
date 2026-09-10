@@ -4720,6 +4720,65 @@ Thrylikí Chelóna, Kaizoku no Sho) têm Modo Guiado completo (cobrindo tudo
 que o sistema precisa pra montar a ficha, sem deixar nada "pra depois") e
 Tutorial por aba.
 
+## 113. Campanha Livre — HUB_UPDATE: relationships aceita delta qualitativo (10/09/2026)
+
+Bug real reportado pelo Zé, na campanha Academia Mágica: um HUB_UPDATE
+tentando registrar que "Zé e Siena Marr formaram uma parceria informal"
+(texto narrativo, sem número nenhum) voltava com "NPC não existe" (quando
+o NPC ainda não tinha sido criado numa importação anterior) ou, já com o
+NPC existente, com `relationships: precisa de "stat"` +
+`relationships.2: precisa de "change"` — e a tela de revisão mostrava
+`Siena Marr: (sem stat): 0 → 0`, um dado inventado que não vinha do texto
+colado.
+
+**Causa raiz**: `relationships` (`interpretarRelacao` em `parser.ts`) só
+sabia interpretar deltas NUMÉRICOS (`stat`+`change`, decisão #49) — regra
+central do pedido da Academia Mágica (parte #17) é que relação é texto
+livre ("colegas recém-apresentados", não "amizade +5"), e o Hub já tinha
+esse formato pra `npcs_update.relationship_state` (decisão #103), mas
+não pra `relationships`. A checagem de NPC inexistente (`validar.ts`) e a
+resolução de NPC criado no mesmo lote (`npcs_add` + `relationships` no
+mesmo HUB_UPDATE, decisão #52) já funcionavam corretamente — não
+precisaram de nenhuma mudança, porque são genéricas em cima de
+`mudanca.npc`, o mesmo campo nos dois formatos.
+
+**Formato canônico**: `relationships[].delta` — texto livre, coexistindo
+com o `stat`+`change` numérico original. Um objeto usa OU `delta` OU
+`stat`/`change`, nunca os dois (`interpretarRelacao` rejeita como
+ambíguo). `summary` não foi implementado como alias — um formato só,
+documentado, sem ambiguidade sobre qual vale. `delta` complementa (não
+substitui) `npcs_update.relationship_state`: aquele é o estado ATUAL
+resumido numa palavra/frase curta (ex: "Mentor"), `relationships[].delta`
+é o histórico de fatos/eventos que a campanha foi registrando ao longo
+do tempo — por isso `NpcLivre` ganhou `relacaoQualitativa?: string[]`
+(array, acumula — nunca sobrescreve o que já tinha), campo novo e
+opcional, sem tocar em `relacoes: Record<string, number>` nem em
+`estadoRelacao`, os dois mecanismos pré-existentes.
+
+**Sem inventar métrica** (regra central do pedido, repetida aqui de
+propósito): o texto do `delta` é gravado exatamente como o Mestre
+mandou — o Hub nunca classifica, pontua nem resume automaticamente. A
+tela de revisão do Importar do Chat mostra o texto entre aspas (`Siena
+Marr — relação qualitativa: "..."`) em vez do `Nome.stat: 0 → 0` com
+input numérico, que só faz sentido pro formato numérico.
+
+Bug lateral encontrado ao mexer no clone imutável de `aplicarMudancas`:
+o array `conhecimento` e o mapa `relacoes` de cada NPC já eram
+clonados no início da função (pra `atual` nunca ser mutado por engano),
+mas um campo novo de array precisa do mesmo cuidado — `relacaoQualitativa`
+entrou nesse clone junto.
+
+Testado: 3 testes novos de parser (`delta` válido sem exigir stat/change,
+`delta`+`stat` juntos vira error, objeto sem nenhum dos dois vira error),
+4 de aplicar (persiste o texto, acumula histórico em vez de sobrescrever,
+payload misto com relação numérica + qualitativa no mesmo lote, desfazer
+restaura sem o delta) e 2 de validar (NPC inexistente com `delta` vira
+error igual ao numérico; NPC criado no mesmo `npcs_add` resolve igual ao
+numérico). Reproduzido também o payload exato do bug relatado (Siena
+Marr, `npcs_add`+`relationships.delta` no mesmo HUB_UPDATE) de ponta a
+ponta — passa sem nenhum alerta de erro. `tsc --noEmit`, `npm run lint`,
+`npm run build` e os 298 testes automáticos (289 + 9) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

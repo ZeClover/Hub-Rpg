@@ -113,12 +113,13 @@ export function ImportarDoChat({ dados, onConfirmar }: Props) {
           m.tipo === "nivel" ||
           m.tipo === "atributo" ||
           m.tipo === "moeda" ||
-          m.tipo === "relacao" ||
           m.tipo === "reputacao" ||
           m.tipo === "modificador_add"
         ) {
           return { ...m, valor: novoValor };
         }
+        // relação qualitativa (forma "delta") não tem valor numérico pra editar.
+        if (m.tipo === "relacao" && m.forma === "numerica") return { ...m, valor: novoValor };
         if (m.tipo === "item_add" || m.tipo === "item_remove") return { ...m, quantidade: novoValor };
         if (m.tipo === "magia_update") return { ...m, progressoConhecimentoDelta: novoValor };
         if (m.tipo === "pesquisa_update") return { ...m, progressoDelta: novoValor };
@@ -548,6 +549,16 @@ function DescricaoMudanca({
             ))}
           </ul>
         )}
+      </div>
+    );
+  }
+  if (mudanca.tipo === "relacao" && mudanca.forma === "qualitativa") {
+    return (
+      <div className="text-sm text-texto">
+        <p>
+          <strong>{mudanca.npc}</strong> — relação qualitativa:
+        </p>
+        <p className="mt-1 text-xs text-texto-suave">&ldquo;{mudanca.delta}&rdquo;</p>
       </div>
     );
   }

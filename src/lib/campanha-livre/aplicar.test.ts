@@ -315,6 +315,50 @@ test("aplica relationships somando ao stat existente", () => {
   assert.match(resumos[0], /2 → 3/);
 });
 
+test("aplica relationships qualitativo (delta) — persiste o texto em relacaoQualitativa, sem mexer em relacoes", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.npcs.push({ id: "n1", nome: "Siena Marr", conhecimento: [], relacoes: {}, criadoEm: 1 });
+  const { dados, resumos } = aplicarMudancas(
+    ficha,
+    mudancasDe('relationships:\n  - npc: "Siena Marr"\n    delta: "Zé e Siena estabeleceram uma parceria informal."'),
+  );
+  assert.deepEqual(dados.npcs[0].relacaoQualitativa, ["Zé e Siena estabeleceram uma parceria informal."]);
+  assert.deepEqual(dados.npcs[0].relacoes, {});
+  assert.match(resumos[0], /Siena Marr/);
+});
+
+test("relationships qualitativo acumula histórico em vez de sobrescrever", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.npcs.push({ id: "n1", nome: "Siena Marr", conhecimento: [], relacoes: {}, relacaoQualitativa: ["Primeiro encontro."], criadoEm: 1 });
+  const { dados } = aplicarMudancas(ficha, mudancasDe('relationships:\n  - npc: "Siena Marr"\n    delta: "Combinaram de estudar juntos."'));
+  assert.deepEqual(dados.npcs[0].relacaoQualitativa, ["Primeiro encontro.", "Combinaram de estudar juntos."]);
+});
+
+test("payload misto: npcs_add + relationship numérico + relationship qualitativo, tudo no mesmo lote", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  ficha.npcs.push({ id: "n1", nome: "Lina", conhecimento: [], relacoes: { trust: 1 }, criadoEm: 1 });
+  const { dados } = aplicarMudancas(
+    ficha,
+    mudancasDe(
+      'npcs_add:\n  - name: "Siena Marr"\n\nrelationships:\n  - npc: Lina\n    stat: trust\n    change: 2\n  - npc: "Siena Marr"\n    delta: "Colegas recém-apresentados."',
+    ),
+  );
+  const lina = dados.npcs.find((n) => n.nome === "Lina")!;
+  const siena = dados.npcs.find((n) => n.nome === "Siena Marr")!;
+  assert.equal(lina.relacoes.trust, 3);
+  assert.deepEqual(siena.relacaoQualitativa, ["Colegas recém-apresentados."]);
+});
+
+test("desfazer relationship qualitativo restaura o NPC sem o delta (não existia antes)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Siena Marr"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe('relationships:\n  - npc: "Siena Marr"\n    delta: "Parceria informal."'));
+  assert.deepEqual(segundo.dados.npcs[0].relacaoQualitativa, ["Parceria informal."]);
+  const eventoRelacao = segundo.dados.eventos.find((e) => e.tipo === "relacao")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoRelacao.id);
+  assert.deepEqual(desfeito.npcs[0].relacaoQualitativa, undefined);
+});
+
 test("aplica notes_update acrescentando ao texto existente", () => {
   const ficha = novoPersonagemLivre("Zé");
   ficha.notas.push({ id: "n1", titulo: "Coesão", texto: "texto original", criadaEm: 1 });

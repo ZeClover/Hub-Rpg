@@ -1587,6 +1587,23 @@ passando.
       Tutorial trocando de texto por aba); `tsc`, lint e os 289 testes
       automáticos continuam limpos. Com essa fatia, os 5 sistemas do Hub
       têm Modo Guiado completo e Tutorial por aba.
+- [x] **Campanha Livre — HUB_UPDATE: relationships aceita delta qualitativo**
+      (10/09/2026) — decisão #113. Bug real: `relationships` só entendia
+      deltas numéricos (`stat`+`change`), então uma relação narrativa
+      ("Zé e Siena formaram uma parceria informal") voltava com "NPC não
+      existe" ou "precisa de stat"/"precisa de change", e a tela chegava a
+      mostrar `Nome: (sem stat): 0 → 0`. Novo formato canônico
+      `relationships[].delta` (texto livre, nunca vira número) coexiste com
+      o numérico — um objeto usa um ou outro, nunca os dois. `NpcLivre`
+      ganhou `relacaoQualitativa?: string[]` (histórico acumulado, campo
+      novo e opcional — não mexe em `relacoes` nem `estadoRelacao`, os
+      mecanismos pré-existentes). Checagem de NPC inexistente e resolução
+      de NPC criado no mesmo `npcs_add` já eram genéricas e continuaram
+      funcionando sem mudança. Tela de revisão mostra o texto entre aspas
+      em vez do falso `0 → 0`. 9 testes novos (3 parser + 4 aplicar + 2
+      validar), incluindo o payload exato do bug relatado de ponta a
+      ponta; `tsc`, lint, build e os 298 testes automáticos (289 + 9)
+      continuam limpos
 
 ---
 

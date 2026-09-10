@@ -95,6 +95,17 @@ export type NpcLivre = {
    * campanhas que queiram algum contador numérico próprio.
    */
   relacoes: Record<string, number>;
+  /**
+   * Histórico de mudanças qualitativas de relação (decisão #113,
+   * `relationships[].delta` no HUB_UPDATE) — texto livre contando o que
+   * aconteceu entre Zé e o NPC, na ordem em que foi registrado. Nunca vira
+   * número nem classificação automática (regra central do pedido: o Hub
+   * recebe o fato que o Mestre informou, não inventa métrica de amizade).
+   * Complementar a `estadoRelacao` (um resumo curto do estado ATUAL, tipo
+   * "Mentor") — aqui é o histórico de eventos que levaram até lá. Opcional
+   * porque fichas de antes desta decisão não têm o campo.
+   */
+  relacaoQualitativa?: string[];
   criadoEm: number;
 };
 

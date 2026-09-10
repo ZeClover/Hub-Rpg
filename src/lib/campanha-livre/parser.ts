@@ -31,6 +31,14 @@
   de ações) e npcs_update.relationship_state (estado qualitativo da
   relação — "amizade próxima", "mentor" — em vez de número/barra).
 
+  v1.4 (bug reportado pelo Zé — decisão #113): relationships[].delta —
+  segundo formato pra 'relationships', qualitativo (texto livre, nunca
+  vira número), coexistindo com o formato numérico original ('stat'+
+  'change'). Um objeto usa OU 'delta' OU 'stat'/'change', nunca os dois.
+  Complementa (não substitui) npcs_update.relationship_state: aquele é o
+  estado ATUAL resumido (ex: "Mentor"), 'relationships[].delta' é o
+  histórico de eventos/fatos que a campanha foi registrando.
+
   Regra central do protocolo: o parser só entende o texto colado. Nada é
   salvo aqui — isto devolve uma lista de mudanças propostas, pra tela de
   revisão decidir o que aplicar (regras #1 e #2 da especificação).
@@ -201,13 +209,21 @@ export type MudancaNpcUpdate = Base & {
   casa?: string | null;
 };
 
+/**
+ * `relationships` aceita dois formatos, mutuamente exclusivos (decisão
+ * #113): "numerica" (`stat`+`change`, pré-existente) e "qualitativa"
+ * (`delta`, texto livre — formato canônico pra relações que não são um
+ * número, regra central do pedido: nunca inventar métrica de amizade).
+ * `forma` decide qual bloco de campos existe — nunca os dois ao mesmo
+ * tempo (`interpretarRelacao` rejeita o objeto se vierem juntos).
+ */
 export type MudancaRelacao = Base & {
   tipo: "relacao";
   npc: string;
-  stat: string;
-  valor: number;
-  motivo?: string;
-};
+} & (
+  | { forma: "numerica"; stat: string; valor: number; motivo?: string }
+  | { forma: "qualitativa"; delta: string }
+);
 
 export type MudancaNotaUpdate = Base & {
   tipo: "nota_update";
@@ -1436,20 +1452,45 @@ function interpretarRelacao(bruto: unknown): MudancaRelacao {
   const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
   const npc = typeof objeto.npc === "string" ? objeto.npc : null;
   if (!npc) alertas.push({ nivel: "error", mensagem: "Item em relationships sem 'npc'." });
+
+  // Formato canônico pra relação qualitativa é 'delta' (decisão #113) —
+  // texto livre, nunca vira número/classificação automática. 'summary' não
+  // é aceito de propósito: um formato só, sem ambiguidade sobre qual vale.
+  const delta = typeof objeto.delta === "string" && objeto.delta.trim() ? objeto.delta : null;
+  const temStat = objeto.stat !== undefined;
+
+  if (delta && temStat) {
+    alertas.push({
+      nivel: "error",
+      mensagem: `relationships para "${npc ?? "?"}" tem 'delta' junto com 'stat' — escolha um formato só (numérico com 'stat'+'change', ou qualitativo com 'delta').`,
+    });
+  }
+
+  if (delta) {
+    return { id: proximoId(), tipo: "relacao", npc: npc ?? "(sem nome)", forma: "qualitativa", delta, alertas };
+  }
+
+  if (!temStat) {
+    alertas.push({ nivel: "error", mensagem: `relationships para "${npc ?? "?"}" precisa de 'stat' (numérico) ou 'delta' (qualitativo).` });
+  }
+
   const stat = typeof objeto.stat === "string" ? objeto.stat : null;
-  if (!stat) alertas.push({ nivel: "error", mensagem: `relationships para "${npc ?? "?"}" sem 'stat'.` });
+  if (temStat && !stat) alertas.push({ nivel: "error", mensagem: `relationships para "${npc ?? "?"}": 'stat' precisa ser texto.` });
 
   const valor = paraNumero(objeto.change);
-  if (objeto.change === undefined) {
-    alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa de 'change'.` });
-  } else if (valor === null) {
-    alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa ser numérico.` });
+  if (temStat) {
+    if (objeto.change === undefined) {
+      alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa de 'change'.` });
+    } else if (valor === null) {
+      alertas.push({ nivel: "error", mensagem: `relationships.${stat ?? "?"} precisa ser numérico.` });
+    }
   }
 
   return {
     id: proximoId(),
     tipo: "relacao",
     npc: npc ?? "(sem nome)",
+    forma: "numerica",
     stat: stat ?? "(sem stat)",
     valor: valor ?? 0,
     motivo: typeof objeto.reason === "string" ? objeto.reason : undefined,

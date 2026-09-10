@@ -493,7 +493,7 @@ test("relationships: change válido", () => {
   if (r.ok) {
     const [m] = r.mudancas;
     assert.equal(m.tipo, "relacao");
-    if (m.tipo === "relacao") {
+    if (m.tipo === "relacao" && m.forma === "numerica") {
       assert.equal(m.npc, "Lina");
       assert.equal(m.stat, "trust");
       assert.equal(m.valor, 1);
@@ -503,6 +503,36 @@ test("relationships: change válido", () => {
 
 test("relationships: sem change gera error", () => {
   const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("relationships: delta qualitativo é válido e não exige stat/change", () => {
+  const r = interpretarHubUpdate(
+    bloco('relationships:\n  - npc: "Siena Marr"\n    delta: "Zé e Siena estabeleceram uma parceria informal."'),
+  );
+  assert.equal(r.ok, true);
+  if (r.ok) {
+    const [m] = r.mudancas;
+    assert.equal(m.tipo, "relacao");
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+    if (m.tipo === "relacao" && m.forma === "qualitativa") {
+      assert.equal(m.npc, "Siena Marr");
+      assert.equal(m.delta, "Zé e Siena estabeleceram uma parceria informal.");
+    } else {
+      assert.fail("esperava forma qualitativa");
+    }
+  }
+});
+
+test("relationships: delta e stat juntos no mesmo objeto é ambíguo — vira error", () => {
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1\n    delta: Texto qualquer"));
+  assert.equal(r.ok, true);
+  if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
+test("relationships: objeto sem stat e sem delta é vazio/ambíguo — vira error", () => {
+  const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina"));
   assert.equal(r.ok, true);
   if (r.ok) assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
 });

@@ -182,6 +182,30 @@ test("relationships com NPC existente não gera erro", () => {
   assert.equal(temErro(validadas[0]), false);
 });
 
+test("relationships qualitativo (delta) com NPC inexistente também vira error — mesma checagem do formato numérico", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco('relationships:\n  - npc: "Siena Marr"\n    delta: "Parceria informal."'));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
+test("relationships qualitativo com NPC declarado em npcs_add no mesmo payload não gera erro (mesma resolução do formato numérico)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(
+    bloco('npcs_add:\n  - name: "Siena Marr"\n\nrelationships:\n  - npc: "Siena Marr"\n    delta: "Parceria informal."'),
+  );
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+
+  const npcAdd = r.mudancas.find((m) => m.tipo === "npc_add")!;
+  const { dados: projetado } = aplicarMudancas(ficha, [npcAdd], "preview");
+  const comProjecao = validarContraPersonagem(r.mudancas, ficha, projetado);
+  const relacaoComProjecao = comProjecao.find((m) => m.tipo === "relacao")!;
+  assert.equal(temErro(relacaoComProjecao), false);
+});
+
 test("notes_update em colinha inexistente vira error", () => {
   const ficha = novoPersonagemLivre("Zé");
   const r = interpretarHubUpdate(bloco("notes_update:\n  - title: Colinha Fantasma\n    append: Mais texto."));
