@@ -4536,6 +4536,47 @@ sistema deve ser auditar o gap específico dele (como fiz aqui) antes de
 copiar a receita, porque cada sistema tem sua própria mecânica de
 progressão (magias, budôs, aptidões etc.).
 
+## 109. Sistema do Sávio — Modo Guiado completo (Habilidades + Passivas) e Tutorial por aba (10/09/2026)
+
+Segunda fatia de "Modo Guiado + Tutorial pra todos os sistemas" (decisão
+#108 foi a primeira, em Fabula Ultima). Mesmo padrão, adaptado: aqui não
+existe catálogo fechado de poderes (regra central do sistema — "Habilidades
+são livres", o jogador desenha o efeito usando a tabela de bônus por Nível
+como régua), então o gap não era "faltam poderes pra escolher de uma
+lista", era **faltavam as próprias Habilidades/Passivas iniciais**.
+
+Auditoria encontrou o número exato: `habilidadesEsperadas(p) = 2 +
+max(0, nivel-1)` e `passivasEsperadas(p)` também partem de 2 no Nível 1 —
+ou seja, um personagem recém-criado **já deveria ter 2 Habilidades e 2
+Passivas**, mas o passo final do Modo Guiado antigo dizia só "Habilidades e
+Passivas você preenche depois, jogando" e não deixava criar nenhuma ali.
+
+**Correção**: Modo Guiado de criação foi de 3 pra 5 passos — dois novos
+entre Atributos/Especialização e o resumo final:
+- **Passo 3 — Habilidades iniciais**: chama `abaHabilidades(p)` inteira
+  (tabela de referência + lista + botão "+ Nova Habilidade") — mesmo
+  bloco que a aba normal e o Level Up guiado já usavam, sem duplicar UI.
+- **Passo 4 — Passivas iniciais**: mesma ideia com `abaPassivas(p)`.
+
+O Level Up guiado (`telaResumoNivel`) já deixava adicionar Habilidade/
+Passiva nova ao subir de Nível — não precisou de mudança nenhuma, só a
+criação inicial tinha o buraco.
+
+**Tutorial**: `AJUDA_ABAS` com as 11 abas (Perfil, Atributos, Perícias,
+Especialização, Habilidades, Invocações, Elemental, Passivas, Combate,
+Ascensão, Notas), mesmo mecanismo do botão "❓ Ajuda" da decisão #108
+(painel que mostra o texto da aba atual, continua aberto ao trocar de
+aba). Exemplo de explicação com número real, aba Habilidades: "uma
+Habilidade Nível 3 Sustentada com Alcance + Duração juntos vira Nível
+efetivo 4 (3 +2 da Sustentada, −1 por combinar 2 efeitos)".
+
+Testado com Playwright: os 5 passos (criando 2 Habilidades reais no
+passo 3, 1 Passiva no passo 4, confirmando que persistem na ficha final
+depois de "Concluir"), e o Tutorial (abre, mostra texto certo, troca ao
+mudar de aba). Print de tela conferido. `tsc --noEmit`, `npm run lint`,
+`npm run build` e os 289 testes automáticos continuam limpos (mudança é
+só HTML/CSS/JS estático de `sistema-do-savio.html`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1530,6 +1530,19 @@ passando.
       possivelmente D&D 5ª Edição — cada um com seu próprio Modo Guiado
       em grau de completude diferente, precisa de auditoria própria antes
       de replicar
+- [x] **Sistema do Sávio — Modo Guiado completo (Habilidades + Passivas) e
+      Tutorial por aba** (10/09/2026) — decisão #109. Segunda fatia do
+      mesmo pedido. Diferente de Fabula Ultima (que tem catálogo de
+      poderes por classe), aqui Habilidades são livres — o gap real era
+      que um personagem Nível 1 já deveria ter 2 Habilidades e 2 Passivas
+      (`habilidadesEsperadas`/`passivasEsperadas` partem de 2), mas o
+      guiado antigo não deixava criar nenhuma na criação. Dois passos
+      novos (3→5), reaproveitando `abaHabilidades`/`abaPassivas` inteiras
+      sem duplicar UI. Tutorial com as 11 abas do sistema. Testado com
+      Playwright (cria Habilidades/Passivas reais nos novos passos,
+      confirma que persistem na ficha final; Tutorial abre e troca de
+      texto certo). `tsc`, lint, build e os 289 testes automáticos
+      continuam limpos
 
 ---
 

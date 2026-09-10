@@ -1040,6 +1040,9 @@ const estado = {
   // exibição, não é salvo na ficha; some ao fechar ou ao trocar de
   // personagem (mesmo mecanismo dos outros três sistemas).
   nivelUpResumo: null,
+  // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
+  // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
+  mostrarAjuda: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1166,7 +1169,11 @@ function render(){
       : alerta
         + `<div class="abas">` + ABAS.map(a =>
             `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-          ).join('') + `</div>`
+          ).join('') + `<button id="btAjudaAba" style="margin-left:auto" aria-current="${estado.mostrarAjuda}" title="O que esta aba faz, e como funciona no sistema">❓ Ajuda</button></div>`
+        + (estado.mostrarAjuda ? `<div class="cartao" style="border-color:rgba(var(--roxo-rgb),.4)">
+            <h3 style="font-size:15px;margin-bottom:8px">❓ ${ABAS.find(a=>a.id===estado.aba)?.nome}</h3>
+            ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
+          </div>` : '')
         + painelDerivados(p)
         + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
@@ -1181,7 +1188,7 @@ function render(){
   ligarEventos();
 
   if(somenteLeitura){
-    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+    app.querySelectorAll('input, select, textarea, button:not([data-aba]):not(#btAjudaAba)')
       .forEach(el => el.disabled = true);
   }
 }
@@ -1278,7 +1285,7 @@ function blocoAtributos(p){
 
 function telaGuiada(p){
   const passo = estado.passoGuiado;
-  const totalPassos = 3;
+  const totalPassos = 5;
   const cabecalho = `
     <div class="cartao" style="text-align:center">
       <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -1325,13 +1332,48 @@ function telaGuiada(p){
     </div>`;
   }
 
+  if(passo === 3){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Habilidades iniciais</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Todo personagem começa com <strong>2 Habilidades</strong> — livres
+        de verdade: você desenha o efeito usando a tabela de bônus por
+        Nível abaixo como referência, não escolhe de um catálogo fechado.
+      </p>
+    </div>
+    ${abaHabilidades(p)}
+    <div class="linha" style="justify-content:space-between;margin-top:14px">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 4){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">4. Passivas iniciais</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Todo personagem também começa com <strong>2 Passivas</strong> —
+        sempre ativas, sem precisar gastar PE nem ação pra usar.
+      </p>
+    </div>
+    ${abaPassivas(p)}
+    <div class="linha" style="justify-content:space-between;margin-top:14px">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
   return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <h2 style="font-size:18px">5. Pronto pra jogar!</h2>
       <p class="mini" style="margin:6px 0 14px">
-        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Perícias,
-        Habilidades e Passivas você preenche aos poucos, jogando — o sistema
-        do Sávio é livre de propósito.
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial —
+        atributos, especialização, Habilidades e Passivas iniciais.
+        Perícias você distribui aos poucos, jogando — o sistema do Sávio é
+        livre de propósito. Cada aba tem um botão <strong>❓ Ajuda</strong>
+        explicando o que ela faz, se precisar.
       </p>
     </div>
     ${painelDerivados(p)}
@@ -1393,6 +1435,141 @@ function seletorEspecializacao(p){
     </label>`).join('')}
   </div>`;
 }
+
+// Tutorial (painel de referência) — explica o que cada aba faz, o que
+// cada coisa dentro dela significa nas regras, e um exemplo concreto.
+// Fica escondido por padrão; o botão "❓ Ajuda" na barra de abas mostra
+// o texto da aba ATUAL, e continua mostrando ao trocar de aba.
+const AJUDA_ABAS = {
+  perfil: `
+    <p class="mini">Nome, Idade, Gênero e Altura são só descrição — sem
+    regra por trás. <strong>Nível</strong> é o número que move quase tudo
+    no sistema (PV, PE, Reações, quantas Habilidades/Passivas você tem
+    direito, qual o maior Nível de Habilidade liberado). O botão
+    <strong>⭐ Subir de Nível</strong> recalcula tudo isso sozinho e, se
+    abrir uma vaga nova de Habilidade ou Passiva, já leva pro Modo Guiado
+    de evolução pra você registrar ali mesmo.</p>
+    <p class="mini" style="margin-top:8px">Aliados/Entes Queridos,
+    Objetivo/Sonho, Descrição e História são ganchos de mesa — o Mestre
+    normalmente usa essas respostas pra criar cenas específicas pra você.
+    O card 🎨 <strong>Tema</strong> só muda a cor da tela.</p>`,
+
+  atributos: `
+    <p class="mini">Seis Atributos, cada um de <strong>0 a 10</strong>
+    (o teto sobe pra <strong>15</strong> depois da Segunda Ascensão — aba
+    Ascensão). Bater exatamente <strong>5</strong> ou <strong>10</strong>
+    num Atributo liga um bônus fixo mostrado embaixo dele na tela — não
+    precisa calcular nada, o bônus aparece sozinho quando você atinge o
+    número certo.</p>`,
+
+  pericias: `
+    <p class="mini">Quantas perícias você treina: <strong>2 + Inteligência
+    + (Nível ÷ 4, arredondado pra cima)</strong>. Exemplo: Inteligência 3,
+    Nível 5 → 2 + 3 + 2 (5÷4 arredonda pra 2) = <strong>7 perícias
+    treinadas</strong>.</p>
+    <p class="mini" style="margin-top:8px">O Total de cada perícia é
+    <strong>Atributo + (Nível ÷ 4, arredondado pra cima) + 5 se for
+    treinada</strong> (ou +0 no lugar do 5, se não for). Marcar o
+    checkbox ao lado da perícia é o que conta ela como treinada — o Total
+    à direita já soma tudo sozinho.</p>`,
+
+  classe: `
+    <p class="mini">A <strong>Especialização</strong> (Suporte, Combatente,
+    Mestre das Armas, Guerreiro Mágico) é escolhida uma vez na criação e
+    define seus <strong>PV e PE de partida</strong>, mais quanto cada um
+    cresce por Nível — cada uma tem sua própria progressão, mostrada nos
+    cards de seleção. Ela também traz um pacote de <strong>Traços
+    fixos</strong> (listados embaixo depois de escolhida) que valem pra
+    sempre, sem precisar comprar de novo.</p>`,
+
+  habilidades: `
+    <p class="mini">Habilidades são <strong>livres de verdade</strong> —
+    você não escolhe de um catálogo fechado, desenha o efeito usando a
+    tabela de referência (Nível 1 a 5 → Dano/Cura/Movimento/RD, Alcance,
+    Duração, Vantagem) como régua. Todo personagem começa com
+    <strong>2 Habilidades</strong> e ganha +1 a cada Nível.</p>
+    <p class="mini" style="margin-top:8px">Marcar <strong>mais de um
+    efeito</strong> na mesma Habilidade (ex: Dano + Alcance juntos) reduz
+    o Nível efetivo dela em 1 pra todos os efeitos combinados — é o preço
+    de empilhar. <strong>Sustentada</strong> nunca pode causar Dano nem
+    dar Cura (só serve pra Buff em você mesmo), mas em troca ganha +2 de
+    Nível efetivo automaticamente. Exemplo: uma Habilidade Nível 3
+    Sustentada com Alcance + Duração juntos vira Nível efetivo 4 (3 +2 da
+    Sustentada, −1 por combinar 2 efeitos).</p>`,
+
+  invocacoes: `
+    <p class="mini">Invocar <strong>consome uma das suas Habilidades</strong>
+    — o Nível dela decide o tier na tabela (pool de pontos de Atributo pra
+    distribuir na invocação, fórmula de PV, dano/cura padrão, bônus, e
+    quantas Passivas/Habilidades próprias ela pode ter). Agir com a
+    invocação gasta sua ação bônus ou completa; reagir com ela consome a
+    <strong>reação dela</strong>, não a sua.</p>
+    <p class="mini" style="margin-top:8px">Ter <strong>várias invocações
+    do mesmo Nível ativas ao mesmo tempo</strong> forma um Enxame — soma a
+    rolagem de todas, custa bem mais PE pra invocar, resiste a ataques de
+    alvo único mas é vulnerável a ataques em área (um só acerto em área
+    pode acertar o Enxame inteiro).</p>`,
+
+  elemental: `
+    <p class="mini">Nem todo personagem tem um — é opcional, e é a fonte
+    da sua Bênção. Quando existe, o Elemental tem <strong>ficha própria
+    pequena</strong> (Nome, Categoria, Nível, Especialização, Perícias),
+    quase um segundo personagem, mas o teto de Nível dele
+    (${10}) não sobe com a Ascensão do dono. Categoria <em>Mítico</em> é
+    especial: um Elemental desse tipo é "filho de Celestial" — pode
+    superar o Nível 20 e é sempre uma ameaça grande, em qualquer
+    situação.</p>`,
+
+  passivas: `
+    <p class="mini">Passivas ficam <strong>sempre ativas</strong>, sem
+    gastar PE nem ação pra usar. Todo personagem começa com
+    <strong>2 Passivas</strong> e ganha +1 a cada <strong>5 Níveis</strong>
+    (mais bônus extra se a Sabedoria bater 5 ou 10). Cada Passiva evolui
+    num "Nível interno" de 0 até 2 — o Nível interno 1 e 2 valem
+    exatamente o que uma Habilidade Nível 1 e Nível 2 valeriam, usando a
+    mesma tabela.</p>
+    <p class="mini" style="margin-top:8px">Ao marcar o efeito
+    "Dano/Cura/Movimento/RD/Vantagem", dá pra apontar a Passiva pra uma
+    Perícia específica — daí o bônus fixo dela soma sozinho no Total
+    daquela Perícia, na aba Perícias, sem precisar copiar o número à
+    mão.</p>`,
+
+  combate: `
+    <p class="mini"><strong>⏭ Passar Round</strong> avança o tempo pras
+    Habilidades ativas de uma vez: Duradouras perdem 1 round de duração
+    (desligam sozinhas ao zerar) e Sustentadas cobram metade do custo de
+    PE por round (desligam sozinhas se faltar PE pra pagar). Reações
+    usadas na rodada só contam Habilidades marcadas "É uma Habilidade de
+    Reação".</p>
+    <p class="mini" style="margin-top:8px">Cada Habilidade da lista tem
+    um botão pra <strong>Usar/Ativar/Desativar</strong> direto daqui, sem
+    precisar ir na aba Habilidades. <strong>Arma:</strong> só dá pra
+    carregar 1 arma + 1 item especial ao mesmo tempo — exceto Mestre das
+    Armas, especialização que ocupa todos os encaixes de propósito.</p>`,
+
+  ascensao: `
+    <p class="mini"><strong>Primeira Ascensão</strong> é um marco
+    narrativo (combine com o Mestre quando seu personagem alcança, não
+    tem fórmula de XP) — libera escolher um <strong>Arquétipo</strong>
+    (cada um dá bônus de Atributo + uma Passiva única) e os
+    <strong>Embates de Fluxo</strong>: em vez de rolar perícia, role Nível
+    × maior Atributo + 1d100; perder por metade da rolagem do vencedor
+    nocauteia.</p>
+    <p class="mini" style="margin-top:8px"><strong>Segunda Ascensão</strong>
+    só existe depois da Primeira. Ela dá de uma vez: Habilidades Nível 3
+    ou menor custam metade do PE; o teto de Atributo sobe de 10 pra 15;
+    dá pra evoluir além do Nível 20; e a cada 3 Níveis depois do 20 você
+    "ascende" uma Habilidade (sobe 1 Nível de graça) — ascender uma
+    Habilidade Nível 5 já aprimorada pro Nível 7 vira uma
+    <strong>Habilidade Máxima</strong> (1x por cena, 25 PE, bônus de
+    acerto igual ao Nível, usável até a 0 PE causando Exaustão e
+    desmaio). Também libera criar uma <strong>Imersão Espiritual</strong>.</p>`,
+
+  notas: `
+    <p class="mini">Rascunho livre — sem regra nenhuma por trás. Use pra
+    anotar o que não coube em nenhum outro campo (planos, dúvidas pro
+    Mestre, ideias de próxima Habilidade).</p>`,
+};
 
 function abaPerfil(p){
   const temaAtual = p.temaCor || TEMA_PADRAO;
@@ -2076,6 +2253,9 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  const btAjudaAba = app.querySelector('#btAjudaAba');
+  if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
 
   const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
   if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
