@@ -4779,6 +4779,100 @@ Marr, `npcs_add`+`relationships.delta` no mesmo HUB_UPDATE) de ponta a
 ponta — passa sem nenhum alerta de erro. `tsc --noEmit`, `npm run lint`,
 `npm run build` e os 298 testes automáticos (289 + 9) continuam limpos.
 
+## 114. Grimório do Sistema SAO (10/09/2026)
+
+Pedido do Zé: dos 5 sistemas do Hub, só faltavam Grimório o SAO e a
+Campanha Livre (decisão #55 já tinha deixado isso registrado como
+pendência). Este fecha o SAO.
+
+**Pesquisa antes de escrever** (mesmo método da decisão #55): um agente
+leu `public/sao.html` inteiro (2721 linhas) e extraiu, com a linha/função
+de origem de cada fato, todas as fórmulas, catálogos fechados e regras —
+nada foi inventado. Conferi manualmente as fórmulas mais centrais
+(`nivelGeral`, `pvMaximo`, `pmMaximo`, `defesa`, `defesaMagica`,
+`iniciativa`, os arrays `ATRIBUTOS` e `PERFIS`) direto no código antes de
+publicar.
+
+**15 seções**: conceito (as três inspirações declaradas no próprio
+código-comentário — Sword Art Online, Overgeared, Shangri-La Frontier),
+como montar personagem (11 abas), Atributos/Perfis, Teste, Classes e
+Multiclasse (a peça mais diferente do sistema: sem limite de quantas
+classes, Nível Geral = soma dos níveis de todas), Poderes (60 ao todo, 5
+por classe, pontos de Poder são POR CLASSE — não somam entre si), PV/PM/
+Defesa/Iniciativa, Condições/Morte/Permadeath, uma seção própria pra
+"Mundo" (Cursor, Zona, Guilda, Títulos, Duelo, Corpo Real — o que faz
+este sistema parecer um MMO de verdade), Equipamento, Crafting, Loja,
+Golpes/Magias, Skills (evoluem por USO, não escolha — trecho mais citado
+do próprio comentário do código, referência a Shangri-La Frontier), e o
+botão de +1 Nível.
+
+Ligado ao Hub do mesmo jeito que os outros três: campo `grimorio` em
+`Sistema` (`src/lib/sistemas.ts`) e link "📖 Grimório" na barra do topo
+de `sao.html` — a página da campanha (`/campanhas/[id]`) já mostra o
+link sozinha pra mestre e jogador, sem precisar mexer nela (o componente
+já lê `sistema.grimorio` genericamente desde a decisão #56).
+
+Testado com Playwright: as 15 âncoras do sumário resolvem, sem erro de
+JS. `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos (mudança é só HTML estático novo + duas
+linhas em `sistemas.ts` + um link em `sao.html`).
+
+## 115. Grimório da Campanha Livre (10/09/2026)
+
+Segunda metade do pedido "Grimório nos outros 2 sistemas" — fecha a
+pendência da decisão #55 (FU e Kaizoku já tinham o deles desde as
+decisões #61 e #64).
+
+**Diferença de propósito**: a Campanha Livre não tem regra de sistema
+fechada — "recursos", "atributos" e "moedas" são mapas de nomes livres
+que cada campanha decide, e o Mestre normal é uma IA de chat. Por isso
+este Grimório não documenta uma mecânica de jogo: documenta a
+**estrutura** — as ~24 seções da ficha e, principalmente,
+o protocolo HUB_UPDATE inteiro (as ~34 operações reconhecidas), campo a
+campo, como referência de "o que colar" pro Mestre e "o que esperar" pro
+jogador.
+
+**Pesquisa antes de escrever**: um agente leu `parser.ts` inteiro e
+extraiu, operação por operação, os campos exatos aceitos, os enums
+fechados e um exemplo de YAML válido pra cada uma que eu ainda não tinha
+mapeado com esse nível de detalhe nesta sessão (`level`, `items_update`,
+`equipment`, `missions_add/update`, `notes_update/remove`,
+`discoveries_add/update`, `codex_add`, `locations_add/update`,
+`bestiary_add`, `journal`, `temporary_modifiers`, `conditions`,
+`spells_add/update`, `spell_discoveries`, `research_add/update`,
+`achievements_add`, `reputation`, `image_requests`) — as que eu já tinha
+lido a fundo nesta mesma sessão (`xp`, `resources`, `attributes`,
+`currency`, `npcs_add/update`, `relationships` com o novo formato
+qualitativo da decisão #113, `school`, `commitments`, `bulletin`, `now`,
+`schedule`, `opportunities`) entraram direto, sem precisar de pesquisa
+nova.
+
+**16 seções**: conceito, tour pelas abas, como o HUB_UPDATE funciona
+(colar → interpretar → revisar → confirmar, com exemplo completo), as
+regras de ouro do protocolo (nunca salva sozinho, nunca inventa métrica,
+resolve dependência no mesmo lote, duplicata por nome em `_add` é
+ignorada, `_update` de algo inexistente é erro, hash+`update_id` avisam
+reimportação), e uma referência tabular de todas as operações agrupadas
+por tema — Progressão, Itens/Equipamento/Moedas, NPCs e Relações (com
+ênfase na diferença entre `estadoRelacao`/`relationships[].delta`/
+`relationships[].stat`, decisões #103 e #113), Missões/Descobertas/
+Locais/Bestiário/Codex, Colinhas/Diário, Magias/Pesquisas, Condições/
+Modificadores, Conquistas/Reputação/Imagens, Escola, Agora/Calendário/
+Compromissos/Mural, Oportunidades, e Snapshots/Histórico (desfazer por
+evento ou por importação inteira).
+
+Ligado ao Hub: campo `grimorio` em `Sistema` (`src/lib/sistemas.ts`,
+igual aos outros) e link "📖 Grimório" no cabeçalho da ficha
+(`ficha-cliente.tsx`, componente `Cabecalho`) — a página da campanha já
+mostra o link sozinha, sem mudança lá.
+
+Testado com Playwright: as 16 âncoras do sumário resolvem, sem erro.
+`tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos (mudança é HTML estático novo + duas linhas
+em `sistemas.ts` + um link em `ficha-cliente.tsx`).
+
+Com isso, os 5 sistemas do Hub têm Grimório.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

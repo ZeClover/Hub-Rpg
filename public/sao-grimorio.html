@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimório — Sistema SAO</title>
+<style>
+/* Mesma paleta do Hub RPG usada na ficha — fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746; --verde:#5c8a6a;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark; scroll-behavior:smooth}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3,h4{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 0 10px; color:var(--ambar-forte)}
+a{color:var(--ambar-forte)}
+p{margin:0 0 12px}
+.mini{font-size:12.5px; color:var(--suave)}
+.barra{
+  position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+.barra a.voltar{color:var(--ambar); text-decoration:none; font-size:13px}
+
+main{max-width:900px; margin:0 auto; padding:24px 16px 90px}
+
+.hero{border-bottom:1px solid var(--borda); padding-bottom:22px; margin-bottom:26px}
+.hero h1{font-size:32px}
+.hero .sub{color:var(--suave); font-size:16px; margin-top:6px}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.badge{border:1px solid var(--borda); border-radius:999px; padding:5px 12px; font-size:12px; color:var(--suave)}
+
+.aviso-legal{border:1px solid rgba(224,162,52,.35); background:rgba(224,162,52,.06); border-radius:10px;
+  padding:12px 16px; margin-top:18px; font-size:13px; color:var(--suave)}
+.aviso-legal strong{color:var(--ambar)}
+
+nav.toc{background:var(--superficie); border:1px solid var(--borda); border-radius:12px;
+  padding:16px 18px; margin-bottom:30px}
+nav.toc h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--suave); margin-bottom:10px}
+nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:24px}
+nav.toc li{margin-bottom:6px; font-size:13.5px; break-inside:avoid}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media(max-width:640px){ nav.toc ol{columns:1} }
+
+section{margin-bottom:40px; scroll-margin-top:64px}
+section h2{font-size:22px; border-bottom:1px solid var(--borda); padding-bottom:10px; margin-bottom:14px}
+section h3{font-size:17px; margin-top:22px; color:var(--texto)}
+section h4{font-size:14px; color:var(--ambar); text-transform:uppercase; letter-spacing:.06em; margin-top:16px}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda); border-radius:12px; padding:16px 18px; margin:14px 0}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.dica{border:1px solid rgba(224,162,52,.4); background:rgba(224,162,52,.08); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.fonte{font-size:11.5px; color:var(--suave); font-style:italic}
+
+.exemplo{border:1px solid rgba(92,138,106,.5); background:rgba(92,138,106,.1); border-radius:10px; padding:14px 16px; margin:16px 0}
+.exemplo .rotulo{display:flex; align-items:center; gap:7px; font-family:Georgia,serif; font-size:12.5px;
+  color:var(--verde); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px}
+.exemplo p{margin-bottom:8px}
+.exemplo p:last-child{margin-bottom:0}
+.exemplo .conta{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:13px; color:var(--ambar-forte);
+  background:var(--superficie-alta); border-radius:6px; padding:2px 7px; display:inline-block; margin:2px 0}
+
+.resumo{font-size:15px; color:var(--texto); background:var(--superficie-alta); border-left:3px solid var(--ambar);
+  border-radius:0 8px 8px 0; padding:10px 14px; margin:14px 0 18px}
+.resumo strong{color:var(--ambar-forte)}
+
+table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px}
+th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--ambar); font-family:Georgia,serif; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:center; white-space:nowrap}
+
+.grade2{display:grid; gap:12px}
+@media(min-width:640px){ .grade2{grid-template-columns:1fr 1fr} }
+.grade3{display:grid; gap:12px}
+@media(min-width:640px){ .grade3{grid-template-columns:repeat(3,1fr)} }
+
+details{background:var(--superficie); border:1px solid var(--borda); border-radius:10px; padding:10px 14px; margin:10px 0}
+details > summary{cursor:pointer; font-family:Georgia,serif; color:var(--ambar-forte); font-size:14.5px; list-style:revert}
+details[open] > summary{margin-bottom:10px}
+
+ul,ol{padding-left:22px}
+li{margin-bottom:5px}
+
+.top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
+  border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Sistema SAO</span>
+  <span class="mini">Grimório — manual do jogador</span>
+  <span class="cresce"></span>
+  <a class="voltar" href="/sao.html">Ir para a ficha →</a>
+</div>
+
+<main id="topo">
+  <div class="hero">
+    <h1>Grimório do Sistema SAO</h1>
+    <p class="sub">Como o sistema funciona, peça por peça — da criação do personagem até seu primeiro Golpe assistido na mesa.</p>
+    <div class="badges">
+      <span class="badge">Homebrew original do Zé</span>
+      <span class="badge">4 Atributos, em dado (d6 a d12)</span>
+      <span class="badge">Multiclasse sem limite</span>
+      <span class="badge">12 Classes, 60 Poderes</span>
+    </div>
+    <div class="aviso-legal">
+      <strong>Aviso.</strong> O Sistema SAO é homebrew <strong>original</strong> do Zé — não é um sistema
+      licenciado nem produto oficial de nenhuma obra. Ele é narrativamente inspirado em três séries
+      comerciais (<em>Sword Art Online</em>, <em>Overgeared</em> e <em>Shangri-La Frontier</em>), sem
+      relação com seus criadores ou editoras: a ideia de "o personagem sabe que está num jogo" vem de lá,
+      mas toda mecânica, número e tabela abaixo foi desenhada do zero pra esta ficha.
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#conceito">🗡️ 1. O que é o Sistema SAO</a></li>
+      <li><a href="#aprender">🧭 2. Como montar um personagem</a></li>
+      <li><a href="#atributos">🎲 3. Atributos e Perfis</a></li>
+      <li><a href="#teste">⚔️ 4. Como fazer um Teste</a></li>
+      <li><a href="#classes">🏛️ 5. Classes e Multiclasse</a></li>
+      <li><a href="#poderes">✨ 6. Poderes</a></li>
+      <li><a href="#vitalidade">❤️ 7. PV, PM, Defesa e Iniciativa</a></li>
+      <li><a href="#condicoes">💫 8. Condições, Morte e Permadeath</a></li>
+      <li><a href="#mundo">🎮 9. Mundo: Cursor, Zona, Guilda e Corpo Real</a></li>
+      <li><a href="#equipamento">🎒 10. Equipamento</a></li>
+      <li><a href="#crafting">🔨 11. Crafting</a></li>
+      <li><a href="#loja">🏪 12. Loja</a></li>
+      <li><a href="#golpes">🗡️ 13. Golpes (Sword Skills) e Magias</a></li>
+      <li><a href="#skills">📈 14. Skills</a></li>
+      <li><a href="#levelup">⭐ 15. O botão de +1 Nível</a></li>
+    </ol>
+  </nav>
+
+  <section id="conceito">
+    <h2>🗡️ 1. O que é o Sistema SAO</h2>
+    <p>O Sistema SAO é um homebrew original pra campanhas onde o personagem <strong>sabe que está dentro
+    de um jogo</strong> — vê os próprios PV/PM, o nome do golpe que acabou de usar, e o nível na tela
+    igual um MMO de verdade. Três ideias emprestadas de obras diferentes moldam o sistema:</p>
+    <ul>
+      <li><strong>De Sword Art Online:</strong> nada separa "personagem" de "jogo" — Golpes assistidos
+      (Sword Skills) automatizam parte do ataque, mas deixam uma janela de vulnerabilidade logo depois.</li>
+      <li><strong>De Overgeared:</strong> <strong>multiclasse sem limite</strong> — quantas classes o
+      personagem quiser, cada Skill evolui com o <em>uso</em> em vez de escolha numa lista, e morrer pesa
+      caro (perde XP, pode derrubar item) sem ser definitivo.</li>
+      <li><strong>De Shangri-La Frontier:</strong> nível não é tudo — a aba Skills existe justamente pra
+      dar valor a estudar e dominar o próprio sistema, não só subir de nível.</li>
+    </ul>
+    <div class="dica">A ficha tem um botão <strong>❓ Ajuda</strong> em cada aba, com uma explicação rápida
+    e um exemplo — este Grimório é a versão longa, com todas as fórmulas juntas num só lugar.</div>
+  </section>
+
+  <section id="aprender">
+    <h2>🧭 2. Como montar um personagem</h2>
+    <p>A ficha tem onze abas. O Modo Guiado (botão "🧭 Modo Guiado", ligado sozinho num personagem novo)
+    percorre isto em 4 passos: quem é o jogador + Perfil de Atributos, Atributos finos + primeira Classe,
+    primeiro Poder (subindo essa classe pro Nível 1), e um resumo final. Fora do guiado, a ordem das
+    abas já ajuda:</p>
+    <table>
+      <tr><th>Aba</th><th>O que decidir ali</th></tr>
+      <tr><td>Status</td><td>Nome, XP, PV/PM atuais e os números derivados — a "tela inicial" do personagem.</td></tr>
+      <tr><td>Mundo</td><td>Cursor, Zona, Corpo Real, Guilda, Títulos, Duelo — o lado "personagem sabe que está num jogo" (seção 9).</td></tr>
+      <tr><td>Classes</td><td>Escolher e subir de nível suas classes — sem limite de quantas (seção 5).</td></tr>
+      <tr><td>Poderes</td><td>Gastar os pontos de Poder de cada classe (seção 6).</td></tr>
+      <tr><td>Combate</td><td>Condições ativas, Penalidade de Morte, Permadeath, Switch, bônus manuais (seção 8).</td></tr>
+      <tr><td>Equipamento</td><td>Armas, armaduras e itens — peso, durabilidade, raridade (seção 10).</td></tr>
+      <tr><td>Crafting</td><td>Fabricar itens a partir de receitas e materiais (seção 11).</td></tr>
+      <tr><td>Loja</td><td>Comprar itens prontos com Ouro/Prata (seção 12).</td></tr>
+      <tr><td>Golpes e Magias</td><td>Sword Skills e magias registradas (seção 13).</td></tr>
+      <tr><td>Skills</td><td>Habilidades que evoluem com o uso, fora do sistema de Classes (seção 14).</td></tr>
+      <tr><td>Notas</td><td>Texto livre — o que não cabe em nenhuma aba fechada.</td></tr>
+    </table>
+  </section>
+
+  <section id="atributos">
+    <h2>🎲 3. Atributos e Perfis</h2>
+    <p>Quatro Atributos, cada um é <strong>ao mesmo tempo um dado e um número</strong>: o valor guardado
+    (6, 8, 10 ou 12) é o tamanho do dado rolado nos Testes (seção 4) <em>e</em> o número usado direto nas
+    fórmulas de PV/PM/Defesa (seção 7) — não existe conversão entre os dois.</p>
+    <table>
+      <tr><th>Atributo</th><th>Abrev.</th><th>Pra que serve</th></tr>
+      <tr><td>Força</td><td class="num">FOR</td><td>dano corpo a corpo, capacidade de carga</td></tr>
+      <tr><td>Agilidade</td><td class="num">AGI</td><td>iniciativa, evasão, ataque à distância</td></tr>
+      <tr><td>Mente</td><td class="num">MEN</td><td>magia, PM, percepção do sistema</td></tr>
+      <tr><td>Vontade</td><td class="num">VON</td><td>resistência mental, foco, negociação</td></tr>
+    </table>
+    <p>Na criação, escolha um dos três Perfis abaixo — ele já preenche os quatro Atributos na ordem
+    Força/Agilidade/Mente/Vontade (dá pra ajustar depois manualmente):</p>
+    <table>
+      <tr><th>Perfil</th><th>Dados</th><th>Estilo</th></tr>
+      <tr><td>Especializado</td><td class="num">d10, d10, d6, d6</td><td>ótimo em duas coisas, fraco em duas</td></tr>
+      <tr><td>Mediano</td><td class="num">d10, d8, d8, d6</td><td>um destaque, o resto equilibrado</td></tr>
+      <tr><td>Pau pra toda obra</td><td class="num">d8, d8, d8, d8</td><td>sem pico, sem buraco</td></tr>
+    </table>
+  </section>
+
+  <section id="teste">
+    <h2>⚔️ 4. Como fazer um Teste</h2>
+    <p class="resumo">Em resumo: role os <strong>dois dados de Atributo</strong> que a ação pedir, some
+    os dois resultados e compare com a Dificuldade que o mestre define. Dois dados iguais e ≥6: sucesso
+    crítico. Dois dados em 1: falha crítica.</p>
+    <p>Qual par de Atributos usar depende da ação — o mestre decide na mesa (uma ação de golpe físico
+    ágil pode pedir Força + Agilidade; uma negociação, Mente + Vontade). Não há uma tabela fechada de
+    "arma → par fixo" como noutros sistemas: é sempre situacional.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — um Teste</div>
+      <p>Um personagem com Força d8 e Agilidade d6 tenta um golpe físico ágil. Rola os dois: Força
+      <span class="conta">6</span> e Agilidade <span class="conta">4</span>, soma
+      <span class="conta">6 + 4 = 10</span>. O mestre tinha fixado Dificuldade 9 — bate, é sucesso. Se os
+      dois dados tivessem saído iguais e 6 ou mais (ex: 6 e 6), seria sucesso crítico automático, mesmo
+      contra uma Dificuldade mais alta.</p>
+    </div>
+  </section>
+
+  <section id="classes">
+    <h2>🏛️ 5. Classes e Multiclasse</h2>
+    <p class="resumo">Em resumo: não existe limite de quantas classes um personagem pode ter, nem teto de
+    nível por classe. O <strong>Nível Geral</strong> (usado nas fórmulas de PV/PM) é sempre a soma dos
+    níveis de todas as suas classes.</p>
+    <p>Personagem novo começa com uma linha de classe vazia em <strong>Nível 0</strong> — legítimo,
+    "só logado" e sem nenhum Poder ainda. O primeiro Poder só aparece ao subir alguma classe pro Nível 1
+    (seção 15). Não há cálculo automático de XP: quando e quanto subir de nível é decisão do mestre.</p>
+    <table>
+      <tr><th>Categoria</th><th>Classes</th></tr>
+      <tr><td>Combate <span class="mini">(skills de ataque e defesa — sobe fácil brigando)</span></td><td>Espadachim, Arcanista, Batedor, Lanceiro, Arqueiro</td></tr>
+      <tr><td>Produção <span class="mini">(fabricar, refinar e vender itens)</span></td><td>Ferreiro, Alquimista, Encantador, Cozinheiro</td></tr>
+      <tr><td>Outras <span class="mini">(utilidade fora de combate — fraca em briga, sem ofício)</span></td><td>Mercador, Domador, Curandeiro</td></tr>
+    </table>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — Nível Geral com multiclasse</div>
+      <p>Um personagem tem Espadachim Nível 2 e Ferreiro Nível 1 — <span class="conta">Nível Geral = 2 + 1 = 3</span>
+      (é o valor que entra nas fórmulas de PV/PM da seção 7). Mas ele tem <strong>2 pontos de Poder de
+      Espadachim</strong> e <strong>1 de Ferreiro</strong> separados — não dá pra misturar entre classes
+      diferentes (seção 6).</p>
+    </div>
+  </section>
+
+  <section id="poderes">
+    <h2>✨ 6. Poderes</h2>
+    <p>Cada uma das 12 classes tem <strong>cinco Poderes fixos</strong> (60 ao todo) — cada um com um
+    <code>max</code>: 1 significa que só pode ser escolhido uma vez, um número maior (ex: 3) significa que
+    pode ser comprado de novo, empilhando o efeito descrito no texto ("+N" no nome).</p>
+    <p><strong>Pontos de Poder de uma classe = o nível que você tem NESSA classe</strong> — não é
+    compartilhado entre classes diferentes. Uma classe no Nível 3 tem exatamente 3 pontos pra gastar só
+    nos Poderes dela.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — gastando Poder de Espadachim</div>
+      <p>Um Espadachim Nível 3 tem 3 pontos de Poder só dessa classe. Os Poderes dele incluem
+      <strong>Postura de Combate</strong> (max 1 — "escolhe uma postura até o fim da cena: Ofensiva, +2 no
+      dano/−2 de Defesa, ou Defensiva, +2 de Defesa/−2 no dano") e <strong>Domínio de Arma</strong> (max
+      3 — "cada compra: +1 no dano de golpes com a arma marcial escolhida"). Comprando Domínio de Arma
+      três vezes, os 3 pontos acabam nesse Poder só, empilhado em +3 de dano.</p>
+    </div>
+    <div class="aviso">Se algum ajuste manual deixar os pontos gastos numa classe acima do nível dela, a
+    ficha avisa — "devolva algum Poder ou suba o nível" — mas não trava sozinha.</div>
+  </section>
+
+  <section id="vitalidade">
+    <h2>❤️ 7. PV, PM, Defesa e Iniciativa</h2>
+    <p>Todos calculados sozinhos a partir do Nível Geral (seção 5), dos Atributos (seção 3) e dos bônus
+    de equipamento equipado (seção 10):</p>
+    <table>
+      <tr><th>Derivado</th><th>Fórmula</th></tr>
+      <tr><td>PV máximos</td><td class="num">10 + Nível Geral × 3 + Força + bônus de equipamento</td></tr>
+      <tr><td>PM máximos</td><td class="num">5 + Nível Geral × 2 + Mente + bônus de equipamento</td></tr>
+      <tr><td>Defesa</td><td class="num">8 + piso(Agilidade ÷ 2) + bônus manual + bônus de equipamento</td></tr>
+      <tr><td>Defesa Mágica</td><td class="num">8 + piso(Vontade ÷ 2) + bônus manual + bônus de equipamento</td></tr>
+      <tr><td>Iniciativa</td><td class="num">piso(Agilidade ÷ 2) + bônus manual + bônus de equipamento</td></tr>
+      <tr><td>PV de risco</td><td class="num">piso(PV máximos ÷ 2)</td></tr>
+    </table>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — as contas de um personagem novo</div>
+      <p>Personagem padrão (Nível Geral 1, Força 8, Agilidade 8, Mente 8, Vontade 6, sem equipamento):</p>
+      <p>PV: <span class="conta">10 + 1×3 + 8 = 21</span> · PM: <span class="conta">5 + 1×2 + 8 = 15</span>
+      · Defesa: <span class="conta">8 + 4 = 12</span> · Defesa Mágica: <span class="conta">8 + 3 = 11</span>
+      · Iniciativa: <span class="conta">4</span> · PV de risco: <span class="conta">10</span> (metade de 21, pra baixo).</p>
+    </div>
+    <p class="mini">"Bônus manual" (aba Combate) é pra qualquer efeito que a aba Equipamento ainda não
+    cobre sozinha; "bônus de equipamento" soma automaticamente de todo item equipado com o Efeito certo
+    marcado (seção 10) — os dois entram na mesma conta, sem duplicar.</p>
+  </section>
+
+  <section id="condicoes">
+    <h2>💫 8. Condições, Morte e Permadeath</h2>
+    <h3>Condições</h3>
+    <p>Nove condições fixas de combate: Atordoado, Envenenado, Sangrando, Silenciado (bloqueia magia),
+    Enraizado, Cego, Amedrontado, Exausto e Vulnerável (o pós-motion de um Golpe assistido, seção 13).</p>
+    <h3>Chegar a 0 PV não mata</h3>
+    <p>Como no MMO que inspira o sistema, zerar os PV registra uma <strong>Penalidade de Morte</strong> —
+    o personagem não morre automaticamente. A ficha sugere <strong>10% do XP atual</strong> como perda
+    (um botão calcula isso pronto), e há campos livres pra "item perdido" e notas — o mestre decide o
+    peso real na história.</p>
+    <h3>Permadeath</h3>
+    <p>Interruptor <strong>por personagem/mesa</strong>, desligado por padrão — cada campanha decide se
+    quer ligar morte definitiva de verdade.</p>
+    <h3>Switch</h3>
+    <p>Registra uma troca de posição em dupla (quem é o parceiro, e seu papel — Ataque ou Suporte); o
+    bônus mecânico de verdade da troca combina com o mestre na mesa, a ficha só guarda o registro.</p>
+  </section>
+
+  <section id="mundo">
+    <h2>🎮 9. Mundo: Cursor, Zona, Guilda e Corpo Real</h2>
+    <p>A aba Mundo junta tudo que faz este sistema parecer um MMO de verdade, não só uma folha de
+    números:</p>
+    <table>
+      <tr><th>Campo</th><th>Opções / ideia</th></tr>
+      <tr><td>Cursor</td><td>Verde (nunca atacou outro jogador), Laranja (atacou PvP mas não matou), Vermelho (matou outro jogador no jogo)</td></tr>
+      <tr><td>Zona</td><td>Segura (cidade/base — sem combate real, sem Penalidade de Morte) ou Perigo (masmorra)</td></tr>
+      <tr><td>Guilda</td><td>Rank — Líder, Oficial, Membro ou Recruta — mais papel e benefício na guilda</td></tr>
+      <tr><td>Títulos</td><td>Cada um com "como conseguiu" e uma Visão social: Admirado, Neutro ou Malvisto (referência ao "Beater" do SAO original)</td></tr>
+      <tr><td>Duelo</td><td>Desafio formal combinado antes, com testemunha — Pendente, Venceu, Perdeu ou Empate. Não muda a cor do Cursor.</td></tr>
+      <tr><td>Corpo Real</td><td>Onde está, quem cuida, se está em risco — "o que separa este sistema de um RPG comum: tem alguém de carne e osso plugado, em algum lugar, o tempo todo"</td></tr>
+    </table>
+  </section>
+
+  <section id="equipamento">
+    <h2>🎒 10. Equipamento</h2>
+    <p>Cinco tipos de item — Arma, Armadura, Acessório, Consumível, Outro — cada um podendo ter um
+    <strong>Efeito automático</strong>: Nenhum (só descritivo), Defesa, Defesa Mágica, Iniciativa, PV
+    máximo ou PM máximo. O valor desse efeito soma direto na fórmula certa (seção 7), mas só enquanto o
+    item estiver <strong>equipado</strong> e <strong>não quebrado</strong>.</p>
+    <table>
+      <tr><th>Mecânica</th><th>Fórmula / regra</th></tr>
+      <tr><td>Peso máximo</td><td class="num">10 + Força × 2</td></tr>
+      <tr><td>Peso atual</td><td class="num">soma de TODO item do inventário, equipado ou não</td></tr>
+      <tr><td>Durabilidade</td><td>Máxima 0 = nunca quebra. Máxima &gt;0: quebra ao chegar a 0 (perde o Efeito automático) — botões "Usar" (−1) e "Reparar" (volta ao máximo)</td></tr>
+    </table>
+    <h3>Raridades</h3>
+    <table>
+      <tr><th>Raridade</th><th>Sugestão de bônus</th><th class="num">Preço de venda (Prata)</th></tr>
+      <tr><td>Comum</td><td>+0 a +1</td><td class="num">5</td></tr>
+      <tr><td>Incomum</td><td>+1 a +2</td><td class="num">15</td></tr>
+      <tr><td>Raro</td><td>+2 a +3</td><td class="num">40</td></tr>
+      <tr><td>Épico</td><td>+3 a +5</td><td class="num">100</td></tr>
+      <tr><td>Lendário</td><td>+5 a +7</td><td class="num">300</td></tr>
+      <tr><td>Único</td><td>sem tabela — negocia com o mestre</td><td class="num">—</td></tr>
+    </table>
+  </section>
+
+  <section id="crafting">
+    <h2>🔨 11. Crafting</h2>
+    <p>Um estoque nomeado de materiais (<code>ex: "Minério de Ferro", quantidade 3</code>) alimenta
+    receitas de fabricação. Pra fabricar algo, o personagem precisa: (1) ao menos 1 nível na classe dona
+    da receita, e (2) todos os materiais pedidos, na quantidade certa, já no estoque — fabricar desconta
+    os materiais e entrega o item pronto (já com durabilidade cheia, se aplicável).</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — fabricando uma arma</div>
+      <p>Receita "Espada de Ferro" (classe Ferreiro): 3× Minério de Ferro + 1× Carvão →
+      arma comum, notas "1d8+FOR", peso 6, durabilidade máxima 5. Um Ferreiro Nível 1+ com esses materiais
+      no estoque pode fabricá-la a qualquer momento.</p>
+    </div>
+    <p class="mini">Além do catálogo pronto de 8 receitas, dá pra escrever <strong>receitas customizadas</strong>
+    direto na ficha, no mesmo formato — úteis pra ideias que a mesa inventar.</p>
+  </section>
+
+  <section id="loja">
+    <h2>🏪 12. Loja</h2>
+    <p>Moeda em duas casas — <strong>Ouro e Prata</strong>, câmbio fixo de <strong>100 Prata = 1
+    Ouro</strong> (a ficha sempre reconverte pro formato mais alto sozinha). Um pequeno catálogo de itens
+    prontos pode ser comprado direto, descontando da carteira.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — uma compra com desconto</div>
+      <p>Poção de Cura Simples custa 8 Prata (restaura 2d6 PV). Um Mercador com o Poder "Faro pra
+      Barganha" paga <span class="conta">arredondar(8 × 0,9) = 7 Prata</span> — o desconto de 10% só se
+      aplica a quem tem esse Poder específico.</p>
+    </div>
+  </section>
+
+  <section id="golpes">
+    <h2>🗡️ 13. Golpes (Sword Skills) e Magias</h2>
+    <p class="resumo">Em resumo: um Golpe registrado dá um dano melhor que um "ataque livre", mas deixa o
+    personagem <strong>Vulnerável</strong> por um tempo depois (pós-motion) — igual as Sword Skills do
+    SAO original.</p>
+    <p>Seis tipos de arma aceitam Golpe (espada uma mão, espada duas mãos, lança, arco, adaga, cajado).
+    Um ataque sem Golpe registrado ("ataque livre") usa só o Atributo puro — sem o dano extra do Golpe,
+    mas também sem a Vulnerabilidade depois.</p>
+    <table>
+      <tr><th>Golpe</th><th>Dano</th><th>Pós-motion</th></tr>
+      <tr><td>Corte Vertical</td><td class="num">1d8+FOR</td><td>rígido 1 turno, Defesa −2</td></tr>
+      <tr><td>Talho Pesado</td><td class="num">2d8+FOR</td><td>rígido 2 turnos, Defesa −4</td></tr>
+    </table>
+    <p class="mini">Golpes catalogados existem pros 6 tipos de arma (13 ao todo); dá pra registrar um
+    golpe "Original" também, em branco. O Poder "Golpe Original" do Espadachim é a única forma de manter
+    o efeito de um Golpe <strong>sem</strong> a Vulnerabilidade de pós-motion.</p>
+    <p>Magias funcionam mais simples: seis Escolas (Fogo, Gelo, Raio, Luz, Trevas, Suporte), cada magia
+    com um custo fixo em PM e um efeito de texto — sem golpe assistido nem pós-motion.</p>
+    <p class="mini">Exemplo do catálogo: "Bola de Fogo" (Escola Fogo) custa 3 PM — "2d6 de dano de fogo
+    numa área pequena".</p>
+    <div class="dica">Uma <strong>Habilidade Única</strong> é raríssima — não é escolha normal de
+    criação, o campo começa vazio e só o mestre libera quando fizer sentido na história.</div>
+  </section>
+
+  <section id="skills">
+    <h2>📈 14. Skills</h2>
+    <p class="resumo">Em resumo: Skill não é escolhida numa lista — ela sobe de Estágio conforme é
+    <strong>usada</strong> em jogo.</p>
+    <p>Cada Skill tem uma categoria livre (arma, magia, ofício, social...) e passa por quatro Estágios —
+    Iniciante, Intermediário, Avançado, Mestre — cada um com <strong>10 níveis internos</strong>. O
+    botão "Usar (+1)" sobe o nível interno; ao completar o 10º nível do Estágio atual, ela avança pro
+    próximo Estágio, recomeçando o nível interno em 1. Mestre no nível interno 10 é o teto — a Skill está
+    "Dominada".</p>
+  </section>
+
+  <section id="levelup">
+    <h2>⭐ 15. O botão de +1 Nível</h2>
+    <p>Na aba <strong>Classes</strong>, cada linha de classe tem um botão <strong>"⭐ +1 Nível"</strong>.
+    Ele:</p>
+    <ol>
+      <li>Soma +1 ao Nível daquela classe específica (sem teto).</li>
+      <li>Como o Nível Geral é a soma de todas as classes (seção 5), PV e PM máximos sobem sozinhos pela
+      fórmula da seção 7.</li>
+      <li>Libera <strong>+1 ponto de Poder</strong> utilizável só nos Poderes daquela classe.</li>
+    </ol>
+    <p>A tela muda pra um resumo comparando antes/depois (Nível Geral, PV e PM máximos) e já mostra o
+    painel de Poderes daquela classe embutido — dá pra gastar o ponto novo sem trocar de aba. "Concluir"
+    volta pras abas normais.</p>
+  </section>
+
+  <p class="mini" style="text-align:center;margin-top:40px">
+    Grimório escrito a partir do código-fonte da ficha do Sistema SAO do Hub — as fórmulas aqui são as
+    mesmas que a ficha usa pra calcular os números sozinha.
+    <br><a href="/sao.html">← Voltar pra ficha</a>
+  </p>
+</main>
+
+<a class="top" href="#topo">↑ topo</a>
+</body>
+</html>

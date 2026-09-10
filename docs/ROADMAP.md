@@ -1143,8 +1143,8 @@ passando.
       `sistemas.ts` e linkado no cabeçalho da ficha. Testado com
       Playwright (sumário íntegro, sem erro de JS); `tsc`, lint e os
       208 testes automáticos continuam limpos
-- [ ] Grimório dos outros 2 sistemas (SAO, Campanha Livre) — uma fatia
-      por vez, a pedido do Zé
+- [x] Grimório dos outros 2 sistemas (SAO, Campanha Livre) — decisões
+      #114 e #115 (10/09/2026), ver mais abaixo
 - [x] **Modo Guiado em Sistema SAO, Fabula Ultima e Kaizoku no Sho**
       (03/09/2026) — decisão #65. Mesmo padrão de 3 passos (identidade
       → atributos/classe → resumo) já usado em Thrylikí Chelóna
@@ -1604,6 +1604,27 @@ passando.
       validar), incluindo o payload exato do bug relatado de ponta a
       ponta; `tsc`, lint, build e os 298 testes automáticos (289 + 9)
       continuam limpos
+- [x] **Grimório do Sistema SAO** (10/09/2026) — decisão #114. Pesquisa
+      automatizada leu `sao.html` inteiro (2721 linhas) e extraiu todas
+      as fórmulas/catálogos com fonte citada; conferidas manualmente as
+      fórmulas centrais antes de publicar. 15 seções, com destaque pra
+      Multiclasse sem limite (Nível Geral = soma de todas as classes) e
+      Skills que evoluem por uso, não escolha. Ligado ao Hub via
+      `sistemas.ts` + link na ficha. Testado com Playwright (15 âncoras
+      resolvem); `tsc`, lint, build e os 298 testes automáticos continuam
+      limpos
+- [x] **Grimório da Campanha Livre** (10/09/2026) — decisão #115. Fecha
+      a pendência da decisão #55 — os 5 sistemas do Hub têm Grimório
+      agora. Diferente dos outros 4: em vez de mecânica de jogo, documenta
+      a estrutura da ficha (24 seções) e o protocolo HUB_UPDATE inteiro
+      (~34 operações, campo a campo, com exemplo de YAML válido pra cada
+      uma) — pesquisa automatizada extraiu as operações que ainda não
+      tinham sido lidas a fundo nesta sessão, direto de `parser.ts`. 16
+      seções, incluindo as regras de ouro do protocolo (nunca inventa
+      métrica, resolve dependência no mesmo lote, etc.) e a diferença
+      entre os três mecanismos de relação com NPC. Testado com Playwright
+      (16 âncoras resolvem); `tsc`, lint, build e os 298 testes
+      automáticos continuam limpos
 
 ---
 

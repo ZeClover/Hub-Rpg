@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimório — Campanha Livre</title>
+<style>
+/* Mesma paleta do Hub RPG usada na ficha — fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746; --verde:#5c8a6a;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark; scroll-behavior:smooth}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3,h4{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0 0 10px; color:var(--ambar-forte)}
+a{color:var(--ambar-forte)}
+p{margin:0 0 12px}
+code{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:12.5px; background:var(--superficie-alta); border-radius:4px; padding:1px 5px}
+.mini{font-size:12.5px; color:var(--suave)}
+.barra{
+  position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+.barra a.voltar{color:var(--ambar); text-decoration:none; font-size:13px}
+
+main{max-width:960px; margin:0 auto; padding:24px 16px 90px}
+
+.hero{border-bottom:1px solid var(--borda); padding-bottom:22px; margin-bottom:26px}
+.hero h1{font-size:32px}
+.hero .sub{color:var(--suave); font-size:16px; margin-top:6px}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.badge{border:1px solid var(--borda); border-radius:999px; padding:5px 12px; font-size:12px; color:var(--suave)}
+
+.aviso-legal{border:1px solid rgba(224,162,52,.35); background:rgba(224,162,52,.06); border-radius:10px;
+  padding:12px 16px; margin-top:18px; font-size:13px; color:var(--suave)}
+.aviso-legal strong{color:var(--ambar)}
+
+nav.toc{background:var(--superficie); border:1px solid var(--borda); border-radius:12px;
+  padding:16px 18px; margin-bottom:30px}
+nav.toc h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--suave); margin-bottom:10px}
+nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:24px}
+nav.toc li{margin-bottom:6px; font-size:13.5px; break-inside:avoid}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media(max-width:640px){ nav.toc ol{columns:1} }
+
+section{margin-bottom:40px; scroll-margin-top:64px}
+section h2{font-size:22px; border-bottom:1px solid var(--borda); padding-bottom:10px; margin-bottom:14px}
+section h3{font-size:17px; margin-top:22px; color:var(--texto)}
+section h4{font-size:14px; color:var(--ambar); text-transform:uppercase; letter-spacing:.06em; margin-top:16px}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda); border-radius:12px; padding:16px 18px; margin:14px 0}
+.aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.dica{border:1px solid rgba(224,162,52,.4); background:rgba(224,162,52,.08); border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0}
+.fonte{font-size:11.5px; color:var(--suave); font-style:italic}
+
+.exemplo{border:1px solid rgba(92,138,106,.5); background:rgba(92,138,106,.1); border-radius:10px; padding:14px 16px; margin:16px 0}
+.exemplo .rotulo{display:flex; align-items:center; gap:7px; font-family:Georgia,serif; font-size:12.5px;
+  color:var(--verde); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px}
+.exemplo p{margin-bottom:8px}
+.exemplo p:last-child{margin-bottom:0}
+.exemplo .conta{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:13px; color:var(--ambar-forte);
+  background:var(--superficie-alta); border-radius:6px; padding:2px 7px; display:inline-block; margin:2px 0}
+.exemplo pre{white-space:pre-wrap; font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace; font-size:12.5px;
+  background:var(--superficie-alta); border-radius:8px; padding:10px 12px; margin:8px 0; overflow-x:auto}
+
+.resumo{font-size:15px; color:var(--texto); background:var(--superficie-alta); border-left:3px solid var(--ambar);
+  border-radius:0 8px 8px 0; padding:10px 14px; margin:14px 0 18px}
+.resumo strong{color:var(--ambar-forte)}
+
+table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px}
+th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--borda); vertical-align:top}
+th{color:var(--ambar); font-family:Georgia,serif; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:center; white-space:nowrap}
+
+.grade2{display:grid; gap:12px}
+@media(min-width:640px){ .grade2{grid-template-columns:1fr 1fr} }
+.grade3{display:grid; gap:12px}
+@media(min-width:640px){ .grade3{grid-template-columns:repeat(3,1fr)} }
+
+details{background:var(--superficie); border:1px solid var(--borda); border-radius:10px; padding:10px 14px; margin:10px 0}
+details > summary{cursor:pointer; font-family:Georgia,serif; color:var(--ambar-forte); font-size:14.5px; list-style:revert}
+details[open] > summary{margin-bottom:10px}
+
+ul,ol{padding-left:22px}
+li{margin-bottom:5px}
+
+.top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
+  border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Campanha Livre</span>
+  <span class="mini">Grimório — manual do jogador e do protocolo HUB_UPDATE</span>
+  <span class="cresce"></span>
+  <a class="voltar" href="/campanha-livre">Ir para a ficha →</a>
+</div>
+
+<main id="topo">
+  <div class="hero">
+    <h1>Grimório da Campanha Livre</h1>
+    <p class="sub">Sem livro de regras fechado — o Mestre é o ChatGPT (ou outra IA), e a ficha guarda o que ele conta. Este Grimório explica cada aba da ficha e o protocolo HUB_UPDATE inteiro, campo por campo.</p>
+    <div class="badges">
+      <span class="badge">Sem sistema de regras fixo</span>
+      <span class="badge">~24 seções de ficha</span>
+      <span class="badge">~34 operações de HUB_UPDATE</span>
+      <span class="badge">Nunca inventa métrica</span>
+    </div>
+    <div class="aviso-legal">
+      <strong>Diferente dos outros sistemas do Hub.</strong> Aqui não existe classe, atributo fixo nem
+      fórmula de dano — "recursos", "atributos" e "moedas" são mapas de <em>nomes livres</em> que cada
+      campanha decide (mana? mercúrio? mercúrio E sanidade?). A ficha só guarda, soma e mostra; quem
+      decide o que cada número significa é a narrativa. Este Grimório documenta a <strong>estrutura</strong>
+      — as abas e o protocolo — não uma mecânica de jogo específica.
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#conceito">🎭 1. O que é a Campanha Livre</a></li>
+      <li><a href="#abas">🧭 2. As abas da ficha, em ordem</a></li>
+      <li><a href="#protocolo">📜 3. Como funciona o HUB_UPDATE</a></li>
+      <li><a href="#regras-ouro">⚖️ 4. Regras de ouro do protocolo</a></li>
+      <li><a href="#progressao">📈 5. XP, Nível, Atributos e Recursos</a></li>
+      <li><a href="#itens">🎒 6. Itens, Equipamento e Moedas</a></li>
+      <li><a href="#npcs">🧑‍🤝‍🧑 7. NPCs e Relações</a></li>
+      <li><a href="#mundo">🗺️ 8. Missões, Descobertas, Locais, Bestiário e Codex</a></li>
+      <li><a href="#notas-diario">📓 9. Colinhas (Notas) e Diário</a></li>
+      <li><a href="#magias">🔮 10. Magias e Pesquisas</a></li>
+      <li><a href="#condicoes">⏳ 11. Condições e Modificadores Temporários</a></li>
+      <li><a href="#conquistas">🏆 12. Conquistas, Reputação e Imagens</a></li>
+      <li><a href="#escola">🏫 13. Escola (Caderno Escolar)</a></li>
+      <li><a href="#agenda">📅 14. Agora, Calendário, Compromissos e Mural</a></li>
+      <li><a href="#oportunidades">🔭 15. Oportunidades</a></li>
+      <li><a href="#historico">💾 16. Snapshots e Histórico (desfazer)</a></li>
+    </ol>
+  </nav>
+
+  <section id="conceito">
+    <h2>🎭 1. O que é a Campanha Livre</h2>
+    <p>Nos outros quatro sistemas do Hub, o livro de regras já existe e a ficha só automatiza contas. Na
+    Campanha Livre não há livro nenhum — a campanha é narrada livremente (normalmente o ChatGPT como
+    Mestre, quase sempre em jogo solo), e a ficha vira uma <strong>memória estruturada</strong> de tudo
+    que a narrativa já estabeleceu: quanto XP o personagem tem, quem são os NPCs, o que já foi
+    descoberto, o que está marcado no calendário.</p>
+    <p>A forma normal de editar essa ficha não é preencher formulário por formulário — é colar, no botão
+    <strong>"Colar resposta do ChatGPT"</strong>, um bloco de texto especial que o próprio Mestre (a IA)
+    escreve junto da narrativa: o <strong>HUB_UPDATE</strong> (seção 3). A ficha interpreta esse bloco,
+    mostra uma prévia de cada mudança pra revisão, e só grava o que for confirmado.</p>
+    <div class="dica">Edição manual (clicar e digitar direto na ficha) continua funcionando em toda aba —
+    o HUB_UPDATE é um atalho pra quando a narrativa já gerou várias mudanças de uma vez, não uma
+    obrigação.</div>
+  </section>
+
+  <section id="abas">
+    <h2>🧭 2. As abas da ficha, em ordem</h2>
+    <p>Cabeçalho (Nome, XP, Nível) e quatro seções sempre visíveis logo abaixo, seguidas de uma barra de
+    abas com dezoito seções de "mundo", e finalizando com Snapshots e Histórico:</p>
+    <table>
+      <tr><th>Seção</th><th>O que guarda</th></tr>
+      <tr><td>Cabeçalho</td><td>Nome do personagem, XP, Nível — os três números mais "gerais" da ficha.</td></tr>
+      <tr><td>Recursos</td><td>Mapa livre de recursos com atual/máximo/mínimo (ex: mana, sanidade, fôlego) — nomeados pela própria campanha.</td></tr>
+      <tr><td>Atributos</td><td>Mapa livre de nomes → número, sem teto (ex: FOR, INT, ou qualquer nome que a campanha usar).</td></tr>
+      <tr><td>Moedas</td><td>Mapa livre de nomes → total (ex: ouro, berries) — só um número corrido, sem preço de catálogo embutido.</td></tr>
+      <tr><td>Condições</td><td>Efeitos de status ativos, com duração opcional (seção 11).</td></tr>
+      <tr><td>Inventário</td><td>Itens com quantidade, categoria, raridade, tags, e se está equipado (e em qual slot).</td></tr>
+    </table>
+    <p>A partir daqui, uma barra de sub-abas ("mundo da campanha") junta 18 seções:</p>
+    <table>
+      <tr><th>Aba</th><th>O que guarda</th></tr>
+      <tr><td>Missões</td><td>Nome, descrição, status e uma lista de objetivos com status próprio (seção 8).</td></tr>
+      <tr><td>NPCs</td><td>Nome, descrição, conhecimento, casa/facção, relação — qualitativa e/ou numérica (seção 7).</td></tr>
+      <tr><td>Descobertas</td><td>Investigações/mistérios com status de progresso e evidências (seção 8).</td></tr>
+      <tr><td>Locais</td><td>Nome, descrição, estado de descoberta (ouviu falar/conhecido/visitado) e conexões com outros locais (seção 8).</td></tr>
+      <tr><td>Bestiário</td><td>Criaturas conhecidas, com traços registrados aos poucos (seção 8).</td></tr>
+      <tr><td>Codex</td><td>Entradas de "enciclopédia"/lore — texto de referência, sem status de progresso (seção 8).</td></tr>
+      <tr><td>Diário</td><td>Entradas de resumo de sessão, só criadas, nunca editadas depois (seção 9).</td></tr>
+      <tr><td>Colinhas</td><td>Notas de texto livre, tituladas, que podem receber texto acrescentado depois (seção 9).</td></tr>
+      <tr><td>Magias</td><td>Nome, custo (em qualquer recurso nomeado), afinidade, progresso de conhecimento, descobertas (seção 10).</td></tr>
+      <tr><td>Pesquisas</td><td>Título, status livre, progresso numérico, objetivos/evidências/notas (seção 10).</td></tr>
+      <tr><td>Conquistas</td><td>Marcos desbloqueados — só nome e descrição, sem remoção (seção 12).</td></tr>
+      <tr><td>Reputação</td><td>Mapa livre de nome (facção/NPC/cidade) → número (seção 12).</td></tr>
+      <tr><td>Imagens</td><td>Fila de pedidos de geração de imagem — só enfileira, nunca gera sozinha (seção 12).</td></tr>
+      <tr><td>Escola</td><td>"Matérias do Zé" — aulas agrupadas por matéria, cada uma com conceitos/exemplos/erros/exercícios (seção 13).</td></tr>
+      <tr><td>Compromissos</td><td>Promessas e combinados — nunca fecham sozinhos, só quando alguém marca (seção 14).</td></tr>
+      <tr><td>Mural</td><td>Informação pública da campanha — só o que o personagem pode legitimamente saber (seção 14).</td></tr>
+      <tr><td>Calendário</td><td>Grade semanal recorrente + exceções pontuais, e o "Agora" (dia/hora/local/atividade) (seção 14).</td></tr>
+      <tr><td>Oportunidades</td><td>Memória de "coisas que dá pra fazer" — nunca um menu de ações (seção 15).</td></tr>
+    </table>
+    <p class="mini">Snapshots e Histórico ficam sempre visíveis no fim da página — não são abas de mundo, são ferramentas de segurança (seção 16).</p>
+  </section>
+
+  <section id="protocolo">
+    <h2>📜 3. Como funciona o HUB_UPDATE</h2>
+    <p class="resumo">Em resumo: o Mestre escreve um bloco <code>[HUB_UPDATE]...[/HUB_UPDATE]</code> em
+    YAML junto da narrativa. Você cola a resposta inteira (a ficha ignora o resto do texto e acha o
+    bloco sozinha) → a ficha <strong>interpreta</strong> → mostra uma <strong>prévia</strong> de cada
+    mudança, com o antes/depois → você marca o que quer aplicar → <strong>confirma</strong>.</p>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo — um HUB_UPDATE completo</div>
+      <pre>[HUB_UPDATE]
+version: 1
+update_id: "sessao-12-final"
+campaign: "Academia Mágica"
+character: "Zé Clover"
+
+xp:
+  add: 15
+  reason: "Derrotou o guardião da biblioteca"
+
+items_add:
+  - name: "Chave de Prata Enferrujada"
+    quantity: 1
+    category: "chave"
+
+npcs_add:
+  - name: "Siena Marr"
+    house: "Morwen"
+
+relationships:
+  - npc: "Siena Marr"
+    delta: "Colegas recém-apresentados, interação cooperativa."
+[/HUB_UPDATE]</pre>
+    </div>
+    <p><strong>Cabeçalho obrigatório:</strong> <code>version: 1</code> (único valor aceito hoje) mais,
+    opcionalmente, <code>update_id</code> (texto livre pra detectar reimportação — seção 4),
+    <code>campaign</code>, <code>character</code> e <code>session</code> (só informativos, não afetam
+    nada). Depois do cabeçalho, qualquer combinação das ~34 operações das seções 5 a 15 — um único
+    HUB_UPDATE pode misturar quantas quiser.</p>
+    <p><strong>Campo desconhecido nunca quebra a importação</strong> — a ficha ignora silenciosamente
+    qualquer chave que não reconheça e avisa na tela quais foram ignoradas, em vez de rejeitar o bloco
+    inteiro.</p>
+  </section>
+
+  <section id="regras-ouro">
+    <h2>⚖️ 4. Regras de ouro do protocolo</h2>
+    <ul>
+      <li><strong>Nada se salva sozinho.</strong> Colar e interpretar só mostra uma prévia — nenhuma
+      mudança grava na ficha até o clique em "Confirmar selecionadas".</li>
+      <li><strong>Nunca inventa métrica.</strong> Uma relação qualitativa ("colegas recém-apresentados;
+      interação cooperativa") nunca vira sozinha um número tipo "amizade +5" — ver seção 7. O Hub só
+      registra o fato que o Mestre informou, na íntegra.</li>
+      <li><strong>Dependência no mesmo lote resolve sozinha.</strong> Um HUB_UPDATE pode criar um NPC
+      (<code>npcs_add</code>) e, no mesmo bloco, registrar uma relação com ele (<code>relationships</code>)
+      — a prévia entende que o NPC "vai existir" assim que a criação for confirmada, sem acusar erro por
+      ordem de chaves.</li>
+      <li><strong>Duplicata por nome, na maioria das entidades <code>_add</code>, é ignorada — nunca
+      sobrescreve.</strong> Criar de novo um NPC/missão/descoberta/local/criatura/codex/magia/pesquisa/
+      conquista com o mesmo nome de algo que já existe simplesmente não faz nada (a prévia avisa "já
+      existia — ignorado").</li>
+      <li><strong>Atualizar (<code>_update</code>) uma entidade que não existe é erro, não avisa e
+      segue.</strong> A prévia marca esse item com um alerta vermelho e a caixa de seleção trava — não dá
+      pra confirmar por engano.</li>
+      <li><strong>Reimportar o mesmo bloco avisa antes de duplicar.</strong> Ver <code>update_id</code> e
+      hash na seção seguinte.</li>
+      <li><strong>Desfazer nunca some com o registro</strong> — só marca como revertido (seção 16).</li>
+    </ul>
+    <h3>Evitando reimportação duplicada</h3>
+    <p>Cada importação confirmada guarda um <strong>hash</strong> do texto colado (calculado
+    automaticamente, ignora espaços nas pontas) e o <code>update_id</code> do cabeçalho, se veio um. Colar
+    o mesmo texto de novo (ou um HUB_UPDATE com o mesmo <code>update_id</code>) mostra um aviso — "Isso
+    parece já ter sido importado em [data]" — e exige clicar em "Importar mesmo assim" antes de liberar o
+    botão de confirmar. Isso é um <strong>aviso</strong>, não um bloqueio absoluto: reaplicar de propósito
+    (ex: o Mestre reenviou o mesmo XP por engano numa sessão anterior e agora quer aplicar de verdade)
+    ainda é possível, só exige essa confirmação extra.</p>
+  </section>
+
+  <section id="progressao">
+    <h2>📈 5. XP, Nível, Atributos e Recursos</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>xp</code></td><td><code>add</code> / <code>remove</code> / <code>set</code> (um só) + <code>reason?</code></td><td>Some, subtrai ou define o XP total. <code>set</code> gera um aviso sugerindo <code>add</code>/<code>remove</code> em vez disso.</td></tr>
+      <tr><td><code>level</code></td><td><code>change</code> / <code>set</code> (um só) + <code>reason?</code></td><td>Sobe/desce o Nível manualmente. Sem checagem de mínimo/máximo — a ficha não impõe teto de nível.</td></tr>
+      <tr><td><code>attributes</code></td><td>lista de <code>{attribute, change|set, reason?}</code></td><td>Ajusta um Atributo pelo nome — cria a entrada se ainda não existir.</td></tr>
+      <tr><td><code>resources</code></td><td>mapa <code>&lt;nome&gt;: {change|set, reason?}</code></td><td>Ajusta um Recurso pelo nome. Respeita <code>mínimo</code>/<code>máximo</code> já configurados na ficha (avisa se passar do teto ou piso, sem bloquear).</td></tr>
+    </table>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo — subindo XP e gastando mana</div>
+      <pre>xp:
+  add: 15
+  reason: "Derrotou o guardião da biblioteca"
+attributes:
+  - attribute: "inteligencia"
+    change: 1
+resources:
+  mana:
+    change: -8
+    reason: "Conjurou Escudo Arcano"</pre>
+    </div>
+  </section>
+
+  <section id="itens">
+    <h2>🎒 6. Itens, Equipamento e Moedas</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>items_add</code></td><td><code>name</code>, <code>quantity?</code>, <code>category?</code>, <code>description?</code>, <code>rarity?</code>, <code>origin?</code>, <code>tags?</code>, <code>generate_image?</code>, <code>image_prompt?</code></td><td>Adiciona um item ao inventário. <code>generate_image: true</code> só marca o item pra fila de imagem (seção 12) — nunca gera nada sozinho.</td></tr>
+      <tr><td><code>items_remove</code></td><td><code>name</code> (ou <code>id</code>), <code>quantity?</code>, <code>reason?</code></td><td>Remove uma quantidade do item. Item inexistente é <strong>erro</strong>; pedir mais do que existe vira aviso e zera em vez de negativar.</td></tr>
+      <tr><td><code>items_update</code></td><td><code>name</code> (ou <code>id</code>) + <code>changes</code> com ao menos um de <code>description/category/rarity/origin/notes/quantity/equipped</code></td><td>Edita campos de um item já existente. Item inexistente é erro.</td></tr>
+      <tr><td><code>equipment</code></td><td><code>equip: [{item, slot?}]</code> e/ou <code>unequip: [{item}]</code></td><td>Marca um item como equipado (num slot, se informado) ou desequipa. Item precisa existir no inventário.</td></tr>
+      <tr><td><code>currency</code></td><td>mapa <code>&lt;nome&gt;: {change|set, reason?}</code></td><td>Ajusta uma Moeda pelo nome (ex: <code>ouro</code>, <code>berries</code>). Ficar negativo vira aviso, não bloqueia.</td></tr>
+    </table>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo — item novo, equipar e gastar moeda</div>
+      <pre>items_add:
+  - name: "Adaga Élfica"
+    quantity: 1
+    category: "arma"
+    rarity: "incomum"
+equipment:
+  equip:
+    - item: "Adaga Élfica"
+      slot: "mão secundária"
+currency:
+  ouro:
+    change: -50
+    reason: "Compra na cidade"</pre>
+    </div>
+  </section>
+
+  <section id="npcs">
+    <h2>🧑‍🤝‍🧑 7. NPCs e Relações</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>npcs_add</code></td><td><code>name</code>, <code>description?</code>, <code>first_met?</code>, <code>tags?</code>, <code>house?</code></td><td>Cria um NPC novo. Nome duplicado é ignorado (não sobrescreve).</td></tr>
+      <tr><td><code>npcs_update</code></td><td><code>name</code> + ao menos um de <code>known_information_add[]</code>, <code>relationship_state</code>, <code>house</code></td><td>Acrescenta conhecimento, define um <strong>estado</strong> de relação resumido (ex: "Mentor"), e/ou corrige a Casa. NPC precisa já existir.</td></tr>
+      <tr><td><code>relationships</code></td><td>numérico: <code>{npc, stat, change, reason?}</code> — qualitativo: <code>{npc, delta}</code></td><td>Registra uma mudança de relação. Os dois formatos são mutuamente exclusivos (nunca <code>stat</code> e <code>delta</code> juntos).</td></tr>
+    </table>
+    <p class="resumo">Em resumo: relação é <strong>texto</strong>, não pontuação de amizade. O único
+    mecanismo numérico (<code>relationships[].stat</code>/<code>change</code>, ou os "atributos" livres em
+    <code>npc.relacoes</code>) existe só pra campanhas que queiram algum contador próprio — <strong>não</strong>
+    é obrigatório, e a ficha nunca deriva um número a partir de texto sozinha.</p>
+    <p>Três lugares guardam relação, com propósitos diferentes:</p>
+    <ul>
+      <li><code>npcs_update.relationship_state</code> — um <strong>resumo curto do estado atual</strong>
+      ("Amizade próxima", "Mentor", "Rivalidade competitiva") — sobrescreve o anterior, é sempre um só
+      valor por vez.</li>
+      <li><code>relationships[].delta</code> — o formato qualitativo <strong>canônico</strong> pra um
+      evento/mudança de relação: texto livre, acumulado num histórico (nunca sobrescreve o delta
+      anterior). É o que usar pra contar "o que aconteceu" entre o personagem e o NPC.</li>
+      <li><code>relationships[].stat</code> + <code>change</code> — o formato numérico, pra quem quiser um
+      contador de verdade (ex: <code>trust</code>) — soma ao valor já existente daquele nome.</li>
+    </ul>
+    <div class="exemplo">
+      <div class="rotulo">📖 Exemplo jogado — NPC novo com relação qualitativa, no mesmo lote</div>
+      <pre>npcs_add:
+  - name: "Siena Marr"
+    house: "Morwen"
+    description: "Colega de Zé, forte em teoria."
+
+relationships:
+  - npc: "Siena Marr"
+    delta: "Zé e Siena são colegas recém-apresentados com interação acadêmica cooperativa. Combinaram que ela ajuda com teoria e ele com prática."</pre>
+      <p>A prévia reconhece que "Siena Marr" vai existir assim que <code>npcs_add</code> for confirmado —
+      não precisa importar em dois passos.</p>
+    </div>
+  </section>
+
+  <section id="mundo">
+    <h2>🗺️ 8. Missões, Descobertas, Locais, Bestiário e Codex</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>missions_add</code></td><td><code>name</code>, <code>description?</code>, <code>status?</code> (disponível/ativa/concluída/falhou/abandonada/oculta — padrão "ativa"), <code>objectives?[{text, status?}]</code></td><td>Cria uma missão com sua lista de objetivos.</td></tr>
+      <tr><td><code>missions_update</code></td><td><code>name</code>, <code>action</code> (<code>add_objective</code>/<code>complete_objective</code>/<code>fail_objective</code>/<code>reopen_objective</code>/<code>set_status</code>/<code>append_note</code>/<code>add_reward</code>/<code>reveal_reward</code>), + o campo correspondente à ação</td><td>Avança uma missão já existente. Ação de objetivo exige que o texto do objetivo já exista na missão.</td></tr>
+      <tr><td><code>discoveries_add</code></td><td><code>title</code>, <code>category?</code>, <code>status?</code> (desconhecido/suspeita/teoria/testando/parcial/confirmada/refutada — padrão "teoria"), <code>description?</code>, <code>evidence?[]</code></td><td>Registra uma investigação/mistério.</td></tr>
+      <tr><td><code>discoveries_update</code></td><td><code>title</code> + <code>status?</code> e/ou <code>evidence_add[]</code></td><td>Avança o status e/ou acrescenta evidências. Descoberta precisa já existir.</td></tr>
+      <tr><td><code>locations_add</code></td><td><code>name</code>, <code>description?</code>, <code>discovery_state?</code> (ouviu falar/conhecido/visitado)</td><td>Registra um local. Valor de estado desconhecido vira aviso, não erro.</td></tr>
+      <tr><td><code>locations_update</code></td><td><code>name</code> + ao menos um de <code>known_information_add[]</code>, <code>connections_add[]</code>, <code>discovery_state</code></td><td>Acrescenta conhecimento/conexões ou avança o estado de descoberta. Local precisa já existir.</td></tr>
+      <tr><td><code>bestiary_add</code></td><td><code>name</code>, <code>category?</code>, <code>description?</code>, <code>known_traits?[]</code></td><td>Registra uma criatura no bestiário.</td></tr>
+      <tr><td><code>codex_add</code></td><td><code>title</code>, <code>category?</code>, <code>text</code></td><td>Adiciona uma entrada de lore/enciclopédia — texto de referência, sem status de progresso.</td></tr>
+    </table>
+    <p class="mini">Todas as operações <code>_add</code> desta seção ignoram silenciosamente uma entrada
+    com nome/título já existente (não sobrescreve, não duplica).</p>
+  </section>
+
+  <section id="notas-diario">
+    <h2>📓 9. Colinhas (Notas) e Diário</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>notes_add</code></td><td><code>title</code>, <code>category?</code>, <code>text</code>, <code>tags?</code></td><td>Cria uma colinha nova.</td></tr>
+      <tr><td><code>notes_update</code></td><td><code>title</code> + <code>append</code></td><td>Acrescenta texto a uma colinha existente — nunca substitui, sempre concatena numa linha nova.</td></tr>
+      <tr><td><code>notes_remove</code></td><td><code>title</code> (ou <code>id</code>) + <code>reason?</code></td><td>Remove uma colinha. Fica sempre <strong>desmarcada por padrão</strong> na prévia — é destrutivo, você decide ativamente.</td></tr>
+      <tr><td><code>journal.add</code></td><td><code>title</code>, <code>summary?</code>, <code>events?[]</code></td><td>Cria uma entrada de diário/resumo de sessão. Só existe <code>add</code> — o diário é histórico, não é editado depois.</td></tr>
+    </table>
+  </section>
+
+  <section id="magias">
+    <h2>🔮 10. Magias e Pesquisas</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>spells_add</code></td><td><code>name</code>, <code>description?</code>, <code>affinity?</code>, <code>cost?</code> (mapa livre, ex: <code>{mana: 15}</code>), <code>knowledge.status?</code>, <code>knowledge.progress?</code>, <code>tags?</code></td><td>Registra uma magia conhecida ou em aprendizado.</td></tr>
+      <tr><td><code>spells_update</code></td><td><code>name</code> + <code>discoveries_add[]</code> e/ou <code>knowledge.change</code></td><td>Acrescenta descobertas "simples" (texto solto) e/ou avança o progresso de conhecimento. Magia precisa existir.</td></tr>
+      <tr><td><code>spell_discoveries</code></td><td><code>spell</code>, <code>title</code>, <code>description?</code>, <code>status?</code> (teoria/testando/parcial/confirmada — padrão "teoria")</td><td>Descoberta "com status" ligada a uma magia específica — diferente das descobertas simples acima. A magia referenciada precisa existir.</td></tr>
+      <tr><td><code>research_add</code></td><td><code>title</code>, <code>status?</code> (texto livre, padrão "ativa"), <code>progress?</code> (padrão 0), <code>objectives?[]</code></td><td>Cria uma linha de pesquisa com progresso numérico.</td></tr>
+      <tr><td><code>research_update</code></td><td><code>title</code> + ao menos um de <code>status</code>, <code>progress_change</code>, <code>evidence_add[]</code>, <code>objectives_add[]</code>, <code>notes_add[]</code></td><td>Avança uma pesquisa existente.</td></tr>
+    </table>
+  </section>
+
+  <section id="condicoes">
+    <h2>⏳ 11. Condições e Modificadores Temporários</h2>
+    <p>Duração compartilhada pelos dois: <code>{type, value?, description?}</code>, onde <code>type</code>
+    é um de <code>rounds/turns/scenes/sessions/until_rest/until_removed/custom</code>.</p>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>temporary_modifiers.add</code></td><td><code>name</code>, <code>target</code>, <code>value</code>, <code>duration</code> (obrigatória aqui)</td><td>Bônus/penalidade numérica temporária a um alvo nomeado (atributo, recurso — o que a campanha usar).</td></tr>
+      <tr><td><code>temporary_modifiers.remove</code></td><td><code>name</code></td><td>Remove um modificador ativo pelo nome.</td></tr>
+      <tr><td><code>conditions.add</code></td><td><code>name</code>, <code>description?</code>, <code>duration?</code> (opcional aqui)</td><td>Efeito de status ativo (ex: "Envenenado"), com ou sem prazo.</td></tr>
+      <tr><td><code>conditions.update</code></td><td><code>name</code> + <code>description?</code> e/ou <code>duration?</code></td><td>Substitui a descrição/duração de uma condição existente.</td></tr>
+      <tr><td><code>conditions.remove</code></td><td><code>name</code></td><td>Remove uma condição ativa.</td></tr>
+    </table>
+  </section>
+
+  <section id="conquistas">
+    <h2>🏆 12. Conquistas, Reputação e Imagens</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>achievements_add</code></td><td><code>name</code>, <code>description?</code></td><td>Registra um marco desbloqueado. Só existe <code>add</code> — conquista não se remove.</td></tr>
+      <tr><td><code>reputation</code></td><td><code>target</code>, <code>change</code>/<code>set</code> (um só), <code>reason?</code></td><td>Ajusta a reputação com um alvo nomeado (facção, cidade, NPC — mapa livre). Ficar negativa vira aviso.</td></tr>
+      <tr><td><code>image_requests</code></td><td><code>entity_type</code>, <code>entity_name</code>, <code>prompt_hint?</code>, <code>priority?</code></td><td>Enfileira um pedido de geração de imagem — <strong>nunca gera a imagem de verdade</strong>, só marca a fila pra alguém atender depois. Um pedido pendente repetido (mesmo tipo+nome) é ignorado.</td></tr>
+    </table>
+    <p class="mini"><code>items_add.generate_image: true</code> (mais <code>image_prompt</code>) faz a
+    mesma coisa embutido num item, em vez de uma entrada separada de <code>image_requests</code>.</p>
+  </section>
+
+  <section id="escola">
+    <h2>🏫 13. Escola (Caderno Escolar)</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>school.lessons_add</code></td><td><code>subject</code> + opcionais <code>topic</code>, <code>notes[]</code>, <code>concepts[]</code>, <code>examples[]</code>, <code>important_mistakes[]</code>, <code>exercises_done[]</code>, <code>open_questions[]</code></td><td>Registra uma aula — cada campo só aparece na ficha se tiver conteúdo, nenhuma seção vazia é mostrada.</td></tr>
+    </table>
+    <p>A tela agrupa as aulas por matéria automaticamente ("Matérias do Zé") — nunca revela o que ainda
+    vai ser estudado, só o que já foi registrado.</p>
+  </section>
+
+  <section id="agenda">
+    <h2>📅 14. Agora, Calendário, Compromissos e Mural</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>now</code></td><td>ao menos um de <code>day</code>, <code>time</code>, <code>location</code>, <code>activity</code></td><td>Avança o "agora" da campanha — o dia/hora/local/atividade atuais.</td></tr>
+      <tr><td><code>schedule.blocks_add</code></td><td><code>weekday</code>, <code>start</code>, <code>end</code>, <code>label</code>, <code>location?</code></td><td>Adiciona um bloco recorrente à grade semanal (ex: aula toda segunda 08h-09h45).</td></tr>
+      <tr><td><code>schedule.overrides_add</code></td><td><code>day</code>, <code>type</code> (cancelado/alterado/adicionado), + campos conforme o tipo</td><td>Exceção pontual num dia específico, sem reescrever a grade inteira — cancelar/alterar exige um bloco com o rótulo já existente naquele dia.</td></tr>
+      <tr><td><code>commitments_add</code></td><td><code>description</code>, <code>npc?</code>, <code>origin?</code> (prometeu/combinou/convite/lembrete), <code>date?</code></td><td>Registra uma promessa/combinado — "coisa pra lembrar".</td></tr>
+      <tr><td><code>commitments_update</code></td><td><code>description</code>, <code>status</code> (pendente/cumprido/cancelado/atrasado)</td><td>Muda o status de um compromisso existente — nunca fecha sozinho só porque o tempo passou.</td></tr>
+      <tr><td><code>bulletin_add</code></td><td><code>title</code>, <code>category?</code> (anúncio/evento/resultado/comunicado/outro), <code>summary?</code>, <code>source?</code>, <code>date?</code>, <code>expires?</code></td><td>Informação pública da campanha — só o que o personagem pode legitimamente saber, nunca plano de mestre.</td></tr>
+    </table>
+  </section>
+
+  <section id="oportunidades">
+    <h2>🔭 15. Oportunidades</h2>
+    <table>
+      <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
+      <tr><td><code>opportunities_add</code></td><td><code>description</code>, <code>npc?</code>, <code>location?</code>, <code>source?</code></td><td>Registra "algo que dá pra fazer" — memória de possibilidade, não compromisso nem menu de ações.</td></tr>
+      <tr><td><code>opportunities_update</code></td><td><code>description</code>, <code>archived: boolean</code></td><td>Arquiva (ou reabre) uma oportunidade — arquivar não significa "cumprida" nem "recusada", só que deixou de ser relevante lembrar.</td></tr>
+    </table>
+    <p class="mini">Diferente de Compromissos: uma Oportunidade nunca foi prometida por ninguém — é só
+    algo que o personagem sabe que <em>pode</em> fazer.</p>
+  </section>
+
+  <section id="historico">
+    <h2>💾 16. Snapshots e Histórico (desfazer)</h2>
+    <h3>Snapshots</h3>
+    <p>Um <strong>Snapshot</strong> é uma cópia da ficha inteira num momento — útil antes de uma
+    importação grande e arriscada. Criar é manual (botão "+ Snapshot", com título); restaurar sempre pede
+    confirmação numa prévia, mostrando XP/Nível/quantidade de itens do estado salvo, e a ficha
+    <strong>atual</strong> também vira um snapshot automático antes de restaurar — pra nunca perder o
+    "antes" de uma restauração.</p>
+    <h3>Histórico de importações</h3>
+    <p>Toda importação confirmada vira uma linha no Histórico, com a lista de mudanças aplicadas.
+    Desfazer funciona em dois níveis:</p>
+    <ul>
+      <li><strong>Por evento</strong> — cada mudança individual pode ser revertida sozinha, restaurando
+      exatamente o que aquela entidade era ANTES daquela mudança específica.</li>
+      <li><strong>Por importação inteira</strong> — desfaz todos os eventos daquele HUB_UPDATE de uma vez
+      (com aviso se algum deles já foi alterado por uma importação mais recente — "conflitante" — pra você
+      decidir se ainda quer desfazer mesmo assim).</li>
+    </ul>
+    <p class="mini">Desfazer nunca apaga a linha do Histórico nem o evento original — só marca
+    <code>revertido: true</code>. O registro de que algo aconteceu (e foi desfeito depois) permanece.</p>
+  </section>
+
+  <p class="mini" style="text-align:center;margin-top:40px">
+    Grimório escrito a partir do código-fonte do parser/validador/aplicador do protocolo HUB_UPDATE do
+    Hub (<code>src/lib/campanha-livre/</code>) — os campos e regras aqui são os mesmos que a ficha usa
+    pra interpretar o que você colar.
+    <br><a href="/campanha-livre">← Voltar pra ficha</a>
+  </p>
+</main>
+
+<a class="top" href="#topo">↑ topo</a>
+</body>
+</html>

@@ -366,7 +366,17 @@ function Cabecalho({
 
   return (
     <section className="mt-6 rounded-lg border border-borda bg-superficie p-6">
-      <label className="block text-xs uppercase tracking-wide text-texto-suave">Nome</label>
+      <div className="flex items-center justify-between gap-3">
+        <label className="block text-xs uppercase tracking-wide text-texto-suave">Nome</label>
+        <a
+          href="/campanha-livre-grimorio.html"
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 text-xs text-ambar-forte underline underline-offset-2"
+        >
+          📖 Grimório
+        </a>
+      </div>
       <input
         type="text"
         value={nome}

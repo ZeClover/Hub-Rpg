@@ -93,7 +93,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/sao-inimigo.html",
     escudoMestre: "/sao-escudo-mestre.html",
     campoVidaInimigo: ["atual", "pv"],
-    grimorio: null,
+    grimorio: "/sao-grimorio.html",
   },
   {
     chave: "dnd-5e",
@@ -119,7 +119,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
-    grimorio: null,
+    grimorio: "/campanha-livre-grimorio.html",
   },
   {
     chave: "sistema-do-savio",
