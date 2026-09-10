@@ -2155,14 +2155,17 @@ function Npcs({
               )}
             </div>
             {somenteLeitura ? (
-              npc.estadoRelacao && (
-                <p className="mt-1">
-                  <span className="rounded-full border border-ambar/40 bg-ambar/10 px-2 py-0.5 text-xs text-ambar-forte">{npc.estadoRelacao}</span>
-                </p>
-              )
+              <>
+                {npc.estadoRelacao && (
+                  <p className="mt-1">
+                    <span className="rounded-full border border-ambar/40 bg-ambar/10 px-2 py-0.5 text-xs text-ambar-forte">{npc.estadoRelacao}</span>
+                  </p>
+                )}
+                {npc.casa && <p className="mt-1 text-xs text-texto-suave">Casa: {npc.casa}</p>}
+              </>
             ) : (
-              <div className="mt-2">
-                <label className="text-xs text-texto-suave">
+              <div className="mt-2 space-y-2">
+                <label className="block text-xs text-texto-suave">
                   Relação
                   <input
                     type="text"
@@ -2170,6 +2173,16 @@ function Npcs({
                     value={npc.estadoRelacao ?? ""}
                     onChange={(e) => atualizarNpc(npc.id, { estadoRelacao: e.target.value || undefined })}
                     placeholder="ex: amizade próxima, mentor, rivalidade competitiva…"
+                    className="mt-1 block w-full max-w-xs rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto placeholder:text-texto-suave"
+                  />
+                </label>
+                <label className="block text-xs text-texto-suave">
+                  Casa
+                  <input
+                    type="text"
+                    value={npc.casa ?? ""}
+                    onChange={(e) => atualizarNpc(npc.id, { casa: e.target.value.trim() || undefined })}
+                    placeholder="ex: nome da casa/facção, se já souber — vazio = a definir"
                     className="mt-1 block w-full max-w-xs rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto placeholder:text-texto-suave"
                   />
                 </label>

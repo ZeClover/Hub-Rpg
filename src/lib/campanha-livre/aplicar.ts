@@ -350,6 +350,7 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
         descricao: mudanca.descricao,
         primeiroEncontro: mudanca.primeiroEncontro,
         tags: mudanca.tags,
+        casa: mudanca.casa,
         conhecimento: [],
         relacoes: {},
         criadoEm: Date.now(),
@@ -371,6 +372,11 @@ export function aplicarMudancas(atual: PersonagemLivre, selecionadas: Mudanca[],
       if (mudanca.estadoRelacao !== undefined) {
         npc.estadoRelacao = mudanca.estadoRelacao;
         partes.push(`relação → ${mudanca.estadoRelacao}`);
+      }
+      if (mudanca.casa !== undefined) {
+        const casaAntes = npc.casa ?? "a definir";
+        npc.casa = mudanca.casa === null ? undefined : mudanca.casa;
+        partes.push(`casa: ${casaAntes} → ${npc.casa ?? "a definir"}`);
       }
       if (partes.length === 0) continue;
       registrar(mudanca.tipo, `${mudanca.nome}: ${partes.join(", ")}`, {

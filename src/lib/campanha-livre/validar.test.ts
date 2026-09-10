@@ -154,6 +154,15 @@ test("npcs_update em NPC inexistente vira error", () => {
   assert.equal(temErro(validadas[0]), true);
 });
 
+test("npcs_update (house) em NPC inexistente também vira error — mesma checagem, campo diferente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const r = interpretarHubUpdate(bloco('npcs_update:\n  - name: "Siena Marr"\n    house: "Morwen"'));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const validadas = validarContraPersonagem(r.mudancas, ficha);
+  assert.equal(temErro(validadas[0]), true);
+});
+
 test("relationships com NPC inexistente vira error", () => {
   const ficha = novoPersonagemLivre("Zé");
   const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1"));

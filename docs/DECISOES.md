@@ -4326,6 +4326,86 @@ visualmente — sem regressão de layout. `tsc --noEmit`, `npm run lint` e os
 273 testes automáticos continuam limpos (mudança é só CSS estático dos
 quatro arquivos).
 
+## 106. HUB_UPDATE — NPCs ganham fato genérico "Casa" (npcs_add/npcs_update.house) (10/09/2026)
+
+Bug real reportado pelo Zé: um HUB_UPDATE tentando registrar que "Siena Marr
+é da Casa Morwen" voltava com "Nenhuma operação reconhecida (só campo(s)
+desconhecido(s): npcs)". Causa raiz tinha duas camadas:
+
+1. O bloco usava a chave aninhada `npcs: { update: [...] }` — mas o parser
+   sempre esperou chaves achatadas (`npcs_add`/`npcs_update`, plural,
+   mesmo padrão de `commitments_add`/`missions_update` etc.). Essa parte do
+   comportamento está correta (validação estrita, decisão #47) — só faltava
+   o Mestre saber a forma certa.
+2. **A causa real**: mesmo com a chave certa, não havia como expressar
+   "Casa" — `NpcLivre` nunca teve esse campo, e `npcs_update` só aceitava
+   `known_information_add`/`relationship_state`.
+
+**Auditoria antes de mexer** (pedido explícito do Zé): parser/validar/
+aplicar/tipos de NPC já seguem o MESMO padrão usado por item, missão,
+local, criatura, magia, condição, modificador — identidade por
+`nome.trim().toLowerCase()`, nunca por id (o `id` interno é só chave de
+UI/undo, invisível pro Mestre). Isso é arquitetura deliberada e consistente
+em ~40 tipos de operação, não um descuido específico de NPC — por isso a
+correção NÃO introduz um esquema de ID estável só pra NPC (isso quebraria a
+única convenção que o sistema inteiro já segue); resolve por nome, igual
+tudo o resto. Idempotência por `update_id`/hash já existe genérica em
+`historicoImportacoes` (checada em `importar-do-chat.tsx`) — nenhuma
+mudança precisou disso. Undo por snapshot (`AlvoEventoLista`) também já é
+genérico — restaura o NPC inteiro, então `casa` ganhou undo de graça.
+
+**A correção**: `NpcLivre.casa?: string` (texto livre, nunca um enum de
+casas específicas — cada campanha inventa as suas; ausente = "a definir",
+o Hub nunca assume uma casa padrão). `npcs_add.house` e `npcs_update.house`
+aceitam texto (define/corrige a casa), `null` ou os sinônimos
+`unknown`/`pending`/`a definir`/`desconhecida`/`desconhecido`/`none`/
+`nenhuma` (case-insensitive) pra voltar explicitamente pra "a definir" —
+sem confundir com "campo ausente = não mexe" (`casa: undefined` no
+`Mudanca`). `house` sozinho já é suficiente pra passar na validação de
+"pelo menos um campo" do `npcs_update` (mesmo padrão usado pros outros
+campos opcionais de NPC/Local/Escola). Um `house` de tipo inválido (número,
+por exemplo) vira error específico, não silenciosamente ignorado.
+
+**Preview**: `npc_add` mostra a Casa se veio; `npc_update` mostra
+"Casa: valor anterior → novo valor" (usa `dados.npcs.find(...)`, mesmo
+padrão já usado pelo preview de `relationships`).
+
+**UI manual**: campo de texto livre "Casa" na aba NPCs, ao lado de
+"Relação" — sem datalist de sugestões (diferente de Relação), porque
+qualquer sugestão exigiria inventar nomes de casa de exemplo, e o pedido
+foi explícito: nunca hardcodar uma casa específica no código do Hub.
+
+**NPC ≠ Relação**: o domínio já não separa essas duas coisas em entidades
+diferentes — "Relação" (decisão #103) é só mais um campo (`estadoRelacao`)
+dentro de `NpcLivre`, igual `casa` agora. Não havia uma tela "Relações"
+separada pra confundir.
+
+Testado: 16 testes novos (parser: house em add/update, null/sinônimos de
+pendente, tipo inválido, "sem nenhum campo" continua exigindo pelo menos
+um; aplicar: pendente→Morwen, correção Morwen→outra, null volta a
+pendente, não mexe em relação/conhecimento/xp, desfazer restaura inclusive
+pendência, NPC inexistente barra igual antes; validar: mesma checagem de
+existência cobre `house`; tipos: `casa` sobrevive a um round-trip JSON —
+"reload" — e não é inventado em ficha antiga sem o campo). Teste manual
+ponta a ponta com Playwright (ambiente sem credenciais reais: env vars
+falsas do Supabase + mock da rota `/api/personagens/:id`): colar →
+interpretar → preview mostra "a definir → Morwen" → confirmar → campo Casa
+na ficha mostra Morwen → reimportar o mesmo `update_id` mostra aviso de
+duplicado → desfazer no Histórico volta a Casa pra vazio. `tsc --noEmit`,
+`npm run lint` e os 289 testes automáticos (273 + 16) continuam limpos;
+`npm run build` sem erros.
+
+**Auditoria de outras categorias sem suporte no HUB_UPDATE** (pedido
+explícito, sem implementar nada disso agora): `codex_add`/`achievements_add`/
+`bestiary_add` são só de criação — sem `_update` pra corrigir uma entrada já
+registrada. `school` só tem `lessons_add` — sem como corrigir uma aula já
+lançada. "Última interação relevante" e "vínculos explícitos com missão/
+pesquisa/local" pedidos no relato não têm campo dedicado; hoje só dá pra
+registrar isso como texto solto em `known_information_add` (aceitável como
+paliativo, mas não é um fato estruturado). Nenhuma dessas foi mexida nesta
+fatia — ficam registradas aqui pra não precisar redescobrir a cada nova
+cena.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

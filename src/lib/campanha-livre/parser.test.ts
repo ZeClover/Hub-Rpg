@@ -432,6 +432,61 @@ test("npcs_update: relationship_state sozinho (sem known_information_add) é suf
   }
 });
 
+test("npcs_add: com house", () => {
+  const r = interpretarHubUpdate(bloco('npcs_add:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "npc_add");
+  if (m.tipo === "npc_add") assert.equal(m.casa, "Morwen");
+});
+
+test("npcs_update: house sozinho (sem known_information_add nem relationship_state) é suficiente", () => {
+  const r = interpretarHubUpdate(bloco('npcs_update:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  assert.equal(m.tipo, "npc_update");
+  if (m.tipo === "npc_update") {
+    assert.equal(m.casa, "Morwen");
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
+test("npcs_update: house null vira pendente (não confunde com 'não mexer')", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Siena Marr\n    house: null"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "npc_update") {
+    assert.equal(m.casa, null);
+    assert.equal(m.alertas.some((a) => a.nivel === "error"), false);
+  }
+});
+
+test("npcs_update: house com sinônimo de pendente ('unknown') também vira null", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Siena Marr\n    house: unknown"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "npc_update") assert.equal(m.casa, null);
+});
+
+test("npcs_update: sem 'house' no payload não mexe no campo (undefined, não null)", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina\n    relationship_state: Mentor"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const [m] = r.mudancas;
+  if (m.tipo === "npc_update") assert.equal(m.casa, undefined);
+});
+
+test("npcs_update: house com tipo inválido (número) gera error", () => {
+  const r = interpretarHubUpdate(bloco("npcs_update:\n  - name: Lina\n    house: 42"));
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.ok(r.mudancas[0].alertas.some((a) => a.nivel === "error"));
+});
+
 test("relationships: change válido", () => {
   const r = interpretarHubUpdate(bloco("relationships:\n  - npc: Lina\n    stat: trust\n    change: 1\n    reason: Trabalharam juntos."));
   assert.equal(r.ok, true);

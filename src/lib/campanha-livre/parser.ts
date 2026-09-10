@@ -185,6 +185,7 @@ export type MudancaNpcAdd = Base & {
   descricao?: string;
   primeiroEncontro?: string;
   tags?: string[];
+  casa?: string;
 };
 
 export type MudancaNpcUpdate = Base & {
@@ -192,6 +193,12 @@ export type MudancaNpcUpdate = Base & {
   nome: string;
   conhecimentoNovo: string[];
   estadoRelacao?: string;
+  /**
+   * `undefined` = 'house' não veio neste update, não mexe. `null` = veio
+   * explicitamente null/"unknown"/"pending" (etc.) — volta pra "a definir".
+   * string = a casa nova.
+   */
+  casa?: string | null;
 };
 
 export type MudancaRelacao = Base & {
@@ -1350,11 +1357,32 @@ function interpretarMissaoUpdate(bruto: unknown): MudancaMissaoUpdate {
   };
 }
 
+// Sinônimos aceitos pra "casa ainda não definida" — além do `null` literal
+// do YAML. Nunca inventamos uma casa padrão; isso só normaliza formas
+// diferentes de dizer "não sei ainda" pro mesmo estado (undefined no NPC).
+const VALORES_CASA_PENDENTE = new Set(["unknown", "pending", "a definir", "desconhecida", "desconhecido", "none", "nenhuma"]);
+
+/** `undefined` = valor de 'house' inválido (nem string nem null). `null` = pendente/desconhecida. string = a casa. */
+function interpretarValorCasa(valor: unknown): string | null | undefined {
+  if (valor === null) return null;
+  if (typeof valor === "string") {
+    const limpo = valor.trim();
+    if (!limpo || VALORES_CASA_PENDENTE.has(limpo.toLowerCase())) return null;
+    return limpo;
+  }
+  return undefined;
+}
+
 function interpretarNpcAdd(bruto: unknown): MudancaNpcAdd {
   const alertas: Alerta[] = [];
   const objeto = typeof bruto === "object" && bruto !== null ? (bruto as Record<string, unknown>) : {};
   const nome = typeof objeto.name === "string" ? objeto.name : null;
   if (!nome) alertas.push({ nivel: "error", mensagem: "NPC em npcs_add sem 'name'." });
+
+  const casa = "house" in objeto ? interpretarValorCasa(objeto.house) : undefined;
+  if ("house" in objeto && casa === undefined) {
+    alertas.push({ nivel: "error", mensagem: `NPC "${nome ?? "?"}": 'house' precisa ser texto ou null.` });
+  }
 
   return {
     id: proximoId(),
@@ -1363,6 +1391,7 @@ function interpretarNpcAdd(bruto: unknown): MudancaNpcAdd {
     descricao: typeof objeto.description === "string" ? objeto.description : undefined,
     primeiroEncontro: typeof objeto.first_met === "string" ? objeto.first_met : undefined,
     tags: Array.isArray(objeto.tags) ? objeto.tags.filter((t): t is string => typeof t === "string") : undefined,
+    casa: casa ?? undefined,
     alertas,
   };
 }
@@ -1378,10 +1407,16 @@ function interpretarNpcUpdate(bruto: unknown): MudancaNpcUpdate {
     : [];
   const estadoRelacao = typeof objeto.relationship_state === "string" ? objeto.relationship_state : undefined;
 
-  if (conhecimentoNovo.length === 0 && estadoRelacao === undefined) {
+  const houseFornecida = "house" in objeto;
+  const casa = houseFornecida ? interpretarValorCasa(objeto.house) : undefined;
+  if (houseFornecida && casa === undefined) {
+    alertas.push({ nivel: "error", mensagem: `npcs_update para "${nome ?? "?"}": 'house' precisa ser texto ou null.` });
+  }
+
+  if (conhecimentoNovo.length === 0 && estadoRelacao === undefined && !houseFornecida) {
     alertas.push({
       nivel: "error",
-      mensagem: `npcs_update para "${nome ?? "?"}" não tem 'known_information_add' nem 'relationship_state'.`,
+      mensagem: `npcs_update para "${nome ?? "?"}" não tem 'known_information_add', 'relationship_state' nem 'house'.`,
     });
   }
 
@@ -1391,6 +1426,7 @@ function interpretarNpcUpdate(bruto: unknown): MudancaNpcUpdate {
     nome: nome ?? "(sem nome)",
     conhecimentoNovo,
     estadoRelacao,
+    casa: houseFornecida ? casa : undefined,
     alertas,
   };
 }

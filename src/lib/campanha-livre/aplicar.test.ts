@@ -246,6 +246,67 @@ test("npcs_add não duplica NPC com mesmo nome", () => {
   assert.equal(segundo.dados.npcs.length, 1);
 });
 
+test("npcs_add com house define a casa na criação", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados } = aplicarMudancas(ficha, mudancasDe('npcs_add:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(dados.npcs[0].casa, "Morwen");
+});
+
+test("npcs_update: casa pendente (undefined) → Morwen", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Siena Marr"));
+  assert.equal(d1.npcs[0].casa, undefined);
+
+  const { dados: d2, resumos } = aplicarMudancas(d1, mudancasDe('npcs_update:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(d2.npcs[0].casa, "Morwen");
+  assert.match(resumos[0], /a definir → Morwen/);
+});
+
+test("npcs_update: casa existente pode ser corrigida pra outra (mostra antes → depois)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe('npcs_add:\n  - name: Siena Marr\n    house: "Morwen"'));
+  const { dados: d2, resumos } = aplicarMudancas(d1, mudancasDe('npcs_update:\n  - name: Siena Marr\n    house: "Kaelis"'));
+  assert.equal(d2.npcs[0].casa, "Kaelis");
+  assert.match(resumos[0], /Morwen → Kaelis/);
+});
+
+test("npcs_update: house null volta a casa pra 'a definir' (pendente)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(ficha, mudancasDe('npcs_add:\n  - name: Siena Marr\n    house: "Morwen"'));
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe("npcs_update:\n  - name: Siena Marr\n    house: null"));
+  assert.equal(d2.npcs[0].casa, undefined);
+});
+
+test("npcs_update: house não muda estadoRelacao, conhecimento, xp nem cria recompensa", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados: d1 } = aplicarMudancas(
+    ficha,
+    mudancasDe('npcs_add:\n  - name: Siena Marr\n\nnpcs_update:\n  - name: Siena Marr\n    relationship_state: Mentor'),
+  );
+  const xpAntes = d1.xp;
+  const { dados: d2 } = aplicarMudancas(d1, mudancasDe('npcs_update:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(d2.npcs[0].estadoRelacao, "Mentor");
+  assert.deepEqual(d2.npcs[0].conhecimento, []);
+  assert.equal(d2.xp, xpAntes);
+});
+
+test("desfazer npcs_update (house) restaura a casa anterior, inclusive voltando pra pendente", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const primeiro = aplicarMudancas(ficha, mudancasDe("npcs_add:\n  - name: Siena Marr"));
+  const segundo = aplicarMudancas(primeiro.dados, mudancasDe('npcs_update:\n  - name: Siena Marr\n    house: "Morwen"'));
+  assert.equal(segundo.dados.npcs[0].casa, "Morwen");
+  const eventoUpdate = segundo.dados.eventos.find((e) => e.tipo === "npc_update")!;
+  const desfeito = desfazerEvento(segundo.dados, eventoUpdate.id);
+  assert.equal(desfeito.npcs[0].casa, undefined);
+});
+
+test("npcs_update de NPC inexistente com house também não é aplicado (validar.ts barra antes)", () => {
+  const ficha = novoPersonagemLivre("Zé");
+  const { dados, resumos } = aplicarMudancas(ficha, mudancasDe('npcs_update:\n  - name: "Fantasma"\n    house: "Morwen"'));
+  assert.equal(dados.npcs.length, 0);
+  assert.equal(resumos.length, 0);
+});
+
 test("aplica relationships somando ao stat existente", () => {
   const ficha = novoPersonagemLivre("Zé");
   ficha.npcs.push({ id: "n1", nome: "Lina", conhecimento: [], relacoes: { trust: 2 }, criadoEm: 1 });

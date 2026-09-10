@@ -520,11 +520,15 @@ function DescricaoMudanca({
         <p>
           Novo NPC: <strong>{mudanca.nome}</strong>
         </p>
+        {mudanca.casa && <p className="mt-1 text-xs text-texto-suave">Casa: {mudanca.casa}</p>}
         {mudanca.descricao && <p className="mt-1 text-xs text-texto-suave">{mudanca.descricao}</p>}
       </div>
     );
   }
   if (mudanca.tipo === "npc_update") {
+    const npcExistente = dados.npcs.find((n) => n.nome.trim().toLowerCase() === mudanca.nome.trim().toLowerCase());
+    const casaAntes = npcExistente?.casa ?? "a definir";
+    const casaDepois = mudanca.casa === undefined ? casaAntes : mudanca.casa === null ? "a definir" : mudanca.casa;
     return (
       <div className="text-sm text-texto">
         <p>
@@ -532,6 +536,11 @@ function DescricaoMudanca({
           {mudanca.conhecimentoNovo.length > 0 && <> — +{mudanca.conhecimentoNovo.length} informação(ões) conhecida(s)</>}
           {mudanca.estadoRelacao !== undefined && <> — relação → {mudanca.estadoRelacao}</>}
         </p>
+        {mudanca.casa !== undefined && (
+          <p className="mt-1 text-xs text-texto-suave">
+            Casa: {casaAntes} → {casaDepois}
+          </p>
+        )}
         {mudanca.conhecimentoNovo.length > 0 && (
           <ul className="mt-1 list-inside list-disc text-xs text-texto-suave">
             {mudanca.conhecimentoNovo.map((c, i) => (

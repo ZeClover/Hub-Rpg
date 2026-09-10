@@ -81,6 +81,14 @@ export type NpcLivre = {
    */
   estadoRelacao?: string;
   /**
+   * Casa/facção do NPC — texto livre (nunca um enum de casas específicas:
+   * cada campanha inventa as suas). Ausente = "a definir" (o Hub nunca
+   * assume uma casa padrão). `npcs_update.house` aceita corrigir isso a
+   * qualquer momento, inclusive voltar pra "a definir" (null/"unknown"/
+   * "pending" — ver parser.ts).
+   */
+  casa?: string;
+  /**
    * Nomes livres (trust, proximity, o que a campanha usar) — igual a
    * `atributos`. Mecanismo numérico genérico e pré-existente (não é a
    * "relação" em si, que agora é `estadoRelacao`) — só continua aqui pra

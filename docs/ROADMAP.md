@@ -1480,6 +1480,22 @@ passando.
       `prefers-reduced-motion: reduce` desligando a animação) e prints
       de tela; `tsc`, lint e os 273 testes automáticos continuam
       limpos
+- [x] **HUB_UPDATE — NPCs ganham "Casa" genérica** (10/09/2026) —
+      decisão #106. Bug real: registrar que um NPC pertence a uma Casa
+      não tinha como ser expresso (`NpcLivre` não tinha esse campo).
+      `npcs_add.house`/`npcs_update.house` corrigido — texto livre,
+      nunca enum de casas específicas, com suporte a `null`/"unknown"/
+      "pending"/"a definir" pra voltar explicitamente pra pendente sem
+      confundir com "não mexeu". Segue a mesma identidade por nome que
+      todo o resto do HUB_UPDATE já usa (não introduz ID estável só pra
+      NPC). 16 testes novos + teste manual ponta a ponta com Playwright
+      (colar → preview → confirmar → reimportar mesmo update_id avisa
+      duplicado → desfazer restaura pendência); `tsc`, lint, build e os
+      289 testes automáticos (273 + 16) continuam limpos. Auditoria
+      registrada em DECISOES.md #106: `codex`/`achievements`/`bestiary`/
+      `school` ainda são só-criação (sem `_update`), e "última interação"/
+      "vínculos com missão-pesquisa-local" não têm campo dedicado ainda
+      — nenhuma fatia futura decidida, só registrado pra não redescobrir
 
 ---
 

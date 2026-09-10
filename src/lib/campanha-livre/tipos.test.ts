@@ -27,6 +27,24 @@ test("normalizarPersonagemLivre preserva 'estadoDescoberta' quando a ficha já �
   assert.deepEqual(normalizado.locais[0].conexoesConhecidas, ["Biblioteca"]);
 });
 
+test("normalizarPersonagemLivre preserva 'casa' do NPC através de um round-trip JSON (reload)", () => {
+  const comCasa = {
+    perfil: { nome: "Zé" },
+    npcs: [{ id: "n1", nome: "Siena Marr", casa: "Morwen", conhecimento: [], relacoes: {}, criadoEm: 1 }],
+  };
+  const normalizado = normalizarPersonagemLivre(JSON.parse(JSON.stringify(comCasa)));
+  assert.equal(normalizado.npcs[0].casa, "Morwen");
+});
+
+test("normalizarPersonagemLivre não inventa 'casa' pra NPC de ficha antiga sem esse campo", () => {
+  const semCasa = {
+    perfil: { nome: "Zé" },
+    npcs: [{ id: "n1", nome: "Lina", conhecimento: [], relacoes: {}, criadoEm: 1 }],
+  };
+  const normalizado = normalizarPersonagemLivre(semCasa);
+  assert.equal(normalizado.npcs[0].casa, undefined);
+});
+
 test("normalizarPersonagemLivre completa campos de calendário/compromissos/mural ausentes numa ficha bem antiga", () => {
   const bemAntigo = { perfil: { nome: "Zé" } };
   const normalizado = normalizarPersonagemLivre(bemAntigo);
