@@ -2069,6 +2069,10 @@ const estado = {
   // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
   modoGuiado: false,
   passoGuiado: 1,
+  // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
+  // não é dado do personagem. Fica aberto ao trocar de aba de propósito
+  // (o texto simplesmente atualiza pra explicar a aba nova).
+  mostrarAjuda: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -2186,7 +2190,11 @@ function render(){
       : alerta
         + `<div class="abas">` + ABAS.map(a =>
             `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-          ).join('') + `</div>`
+          ).join('') + `<button id="btAjudaAba" style="margin-left:auto" aria-current="${estado.mostrarAjuda}" title="O que esta aba faz, e como funciona no sistema">❓ Ajuda</button></div>`
+        + (estado.mostrarAjuda ? `<div class="cartao" style="border-color:rgba(var(--ambar-rgb),.4)">
+            <h3 style="font-size:15px;margin-bottom:8px">❓ ${ABAS.find(a=>a.id===estado.aba)?.nome}</h3>
+            ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
+          </div>` : '')
         + painelDerivados(p)
         + ({perfil:abaPerfil, atributos:abaAtributos, poderes:abaPoderes, heroico:abaHeroico, inventario:abaInventario, recursos:abaRecursos, lacos:abaLacos}[estado.aba])(p);
 
@@ -2208,9 +2216,10 @@ function render(){
   ligarEventos();
 
   // Modo leitura: desliga todo campo/botão de edição, menos as próprias
-  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha).
+  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha) e o
+  // Tutorial (❓ Ajuda é só leitura, não edita nada).
   if(somenteLeitura){
-    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+    app.querySelectorAll('input, select, textarea, button:not([data-aba]):not(#btAjudaAba)')
       .forEach(el => el.disabled = true);
   }
 }
@@ -2290,7 +2299,7 @@ function campo(rotulo, chave, valor, tipo){
 // tudo de novo a cada render(), então nenhum binding novo é preciso pra eles.
 function telaGuiada(p){
   const passo = estado.passoGuiado;
-  const totalPassos = 3;
+  const totalPassos = 5;
   const cabecalho = `
     <div class="cartao" style="text-align:center">
       <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -2327,7 +2336,9 @@ function telaGuiada(p){
       <p class="mini" style="margin:6px 0 16px">
         Escolha um Perfil de distribuição pros quatro Atributos, e distribua
         <strong>5 níveis</strong> entre <strong>2 ou 3 classes</strong> — o
-        essencial pra começar a jogar.
+        essencial pra começar a jogar. Cada nível de classe também dá PV, PM
+        ou PI extra (você vê o total nos passos seguintes) e, no próximo
+        passo, um Poder pra escolher.
       </p>
       ${blocoAtributosFU(p)}
     </div>
@@ -2341,13 +2352,68 @@ function telaGuiada(p){
     </div>`;
   }
 
-  // passo 3: resumo + próximos passos
+  if(passo === 3){
+    const classesComNivel = p.classes.filter(c => c.classeId && c.nivel > 0);
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Poderes iniciais</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Cada nível de classe dá <strong>1 Poder pra escolher</strong> dela
+        (pág. 176) — com 5 níveis distribuídos, você tem 5 poderes pra
+        escolher agora, entre as classes de baixo. Dá pra repetir o mesmo
+        poder várias vezes até o limite dele (o "(até 3×)" ao lado do nome,
+        por exemplo).
+      </p>
+    </div>
+    ${classesComNivel.length ? classesComNivel.map(c => blocoPoderesClasse(p, c)).join('') : `
+    <div class="cartao"><p class="mini">Nenhuma classe com nível ainda —
+      volte ao passo anterior e distribua os 5 níveis primeiro.</p></div>`}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 4){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">4. Equipamento inicial</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Arma e armadura de partida — itens marciais (🔒) exigem uma classe
+        que ainda não está na ficha; escolha entre os disponíveis por
+        enquanto, ou deixe sem e resolva depois na aba
+        <strong>Atributos e Classes</strong>.
+      </p>
+      <div class="grade g3">
+        <div><label for="c-eq-armadura">Armadura</label>
+          <select id="c-eq-armadura" data-equip="armadura">${opcoesArmadura(p)}</select></div>
+        <div><label for="c-eq-maopri">Mão principal</label>
+          <select id="c-eq-maopri" data-equip="maoPrincipal">${opcoesMaoPrincipal(p)}</select></div>
+        <div><label for="c-eq-maosec">Mão secundária</label>
+          <select id="c-eq-maosec" data-equip="maoSecundaria" ${armaPrincipalEquipada(p).maos===2?'disabled':''}>${opcoesMaoSecundaria(p)}</select></div>
+      </div>
+      <p class="mini" style="margin-top:12px">
+        Defesa <strong>${defesa(p)}</strong> · Defesa Mágica <strong>${defesaMagica(p)}</strong>
+        · Iniciativa <strong>${iniciativa(p)>=0?'+':''}${iniciativa(p)}</strong>
+        — atualiza sozinho conforme você escolhe.
+      </p>
+    </div>
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 5: resumo + próximos passos
   return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <h2 style="font-size:18px">5. Pronto pra jogar!</h2>
       <p class="mini" style="margin:6px 0 14px">
-        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Poderes,
-        Equipamento e o resto você preenche aos poucos, jogando.
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial —
+        atributos, classes, poderes e equipamento. Habilidades Heroicas só
+        chegam ao dominar uma classe (nível 10), e o resto (Acessórios,
+        Laços) você preenche aos poucos, jogando. Cada aba tem um botão
+        <strong>❓ Ajuda</strong> explicando o que ela faz, se precisar.
       </p>
     </div>
     ${painelDerivados(p)}
@@ -2356,6 +2422,128 @@ function telaGuiada(p){
       <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
     </div>`;
 }
+
+// Tutorial (painel de referência) — explica o que cada aba faz, o que
+// cada coisa dentro dela significa nas regras, e um exemplo concreto com
+// números de verdade (não "abstrato"). Fica escondido por padrão; o botão
+// "❓ Ajuda" na barra de abas mostra o texto da aba ATUAL, e continua
+// mostrando ao trocar de aba — não precisa reabrir toda vez.
+const AJUDA_ABAS = {
+  perfil: `
+    <p class="mini"><strong>Nome, Identidade, Tema e Origem</strong> são o
+    lado narrativo do personagem — não afetam nenhum número. Identidade é
+    o que ele FAZ ou É (ex: "Mercenária cínica"), Tema é o papel dele na
+    história (ex: "Busca redenção pelo que fez na guerra"), Origem é de
+    onde ele vem (ex: "Refugiada da Guerra do Norte"). Quanto mais
+    concretas essas três frases, mais fácil pro mestre criar ganchos de
+    cena específicos pra você.</p>
+    <p class="mini" style="margin-top:8px"><strong>Pontos de Fabula</strong>
+    são a moeda de "protagonismo": o mestre te dá 1 quando sua Identidade/
+    Tema/Origem geram uma boa cena (mesmo que atrapalhe o plano do grupo)
+    ou quando você tira uma Falha Crítica. Você gasta pra ativar efeitos
+    de Poderes marcados "Ponto de Fabula" (ex: refazer um teste, recuperar
+    PV/PM). Exemplo: sua Origem é "Refugiada da Guerra do Norte" — ao
+    reencontrar um veterano daquela guerra e reagir do jeito que a Origem
+    sugere, o mestre te dá 1 Ponto de Fabula, mesmo que isso compre briga
+    com um NPC importante.</p>
+    <p class="mini" style="margin-top:8px"><strong>Aparência</strong> e
+    <strong>Anotações</strong> são rascunho livre, sem regra por trás. O
+    card 🎨 <strong>Tema</strong> só muda a cor da tela — não é mecânica
+    do jogo.</p>`,
+
+  atributos: `
+    <p class="mini"><strong>Dado básico vs. dado atual:</strong> você
+    escolhe o dado básico de cada Atributo (de d6 a d12). O dado atual
+    desconta 1 degrau da escala (d6→d8→d10→d12) por cada Condição ativa
+    que afete aquele Atributo, sem nunca descer de d6 — e é o dado atual
+    que vale pra Defesa e pros PV/PM máximos. Exemplo: Vigor básico d8,
+    personagem fica <strong>Fraco</strong> (reduz Vigor) → Vigor atual
+    vira d6, e os PV máximos caem na hora (a fórmula usa o Vigor atual).</p>
+    <p class="mini" style="margin-top:8px"><strong>Classes:</strong> na
+    criação são 2 ou 3 classes com 5 níveis distribuídos entre elas. Cada
+    classe dá um benefício fixo (PV, PM, PI ou equipar algo) só por ter
+    pelo menos 1 nível nela — não importa se é nível 1 ou 5 — e esses
+    benefícios <strong>acumulam</strong> entre classes diferentes.
+    Exemplo: Guardião dá +5 PV fixos com só 1 nível investido; se você
+    também tiver 1 nível em Mestre de Armas (que também dá +5 PV), os
+    dois bônus somam — +10 PV ao todo, mesmo com só 1 nível em cada.</p>
+    <p class="mini" style="margin-top:8px"><strong>Equipamento:</strong>
+    itens marcados "marcial" (🔒 quando bloqueados) exigem uma classe
+    específica na ficha pra poder equipar — sem ela, o item aparece
+    desabilitado na lista até você pegar a classe certa.</p>`,
+
+  poderes: `
+    <p class="mini">Cada <strong>nível de classe</strong> dá direito a
+    escolher <strong>1 Poder</strong> da lista daquela classe (pág. 176).
+    Um personagem recém-criado com 5 níveis distribuídos tem 5 poderes
+    pra escolher — dá pra repetir o mesmo poder várias vezes até o limite
+    dele (o "(até 3×)" ao lado do nome, por exemplo), ou pegar 5
+    diferentes. Os botões −/+ ao lado de cada poder mostram quantas vezes
+    (NP) ele já foi escolhido.</p>
+    <p class="mini" style="margin-top:8px">Alguns poderes abrem um bloco
+    extra na tela quando você pega ao menos 1: <strong>Vincular/Invocar</strong>
+    deixa escolher um Arcano pra vincular à alma; poderes que dão acesso a
+    uma lista de feitiços mostram essa lista pra marcar quais você
+    conhece. <strong>Rituais</strong> e o <strong>Projeto do Inventor</strong>
+    (se você tiver nível em Inventor) aparecem no fim desta aba, calculando
+    custo em PM/zênites a partir de Potência × Área que você escolhe.</p>`,
+
+  heroico: `
+    <p class="mini">Uma classe fica <strong>dominada</strong> ao chegar no
+    <strong>nível 10</strong> — aí você desbloqueia o direito de escolher
+    1 Habilidade Heroica daquela classe (ou de qualquer classe dominada,
+    dependendo da habilidade). Exemplo: dominar Guerreiro E Arcanista dá
+    direito a escolher 2 Habilidades Heroicas ao todo, uma pra cada.
+    Algumas Heroicas pedem uma segunda condição além de dominar a classe
+    (🔒 na lista) — geralmente ter comprado um Poder específico daquela
+    classe primeiro, ou dominar uma segunda classe também.</p>`,
+
+  inventario: `
+    <p class="mini"><strong>Acessórios</strong> são itens mágicos raros
+    com 1 efeito só, sempre com custo em zênites — escolha do catálogo ou
+    digite um personalizado. Os marcados "genérica" não têm nome próprio:
+    são qualidades pra montar um acessório do zero junto com o mestre
+    (dá pra renomear depois de anotar). Só contam pros seus números
+    (Defesa, PV máximo etc.) os que estiverem marcados como
+    <strong>equipados</strong> — um acessório na lista mas destravado não
+    faz efeito nenhum.</p>
+    <p class="mini" style="margin-top:8px">Mais três blocos só aparecem
+    aqui se você tiver o Poder certo: <strong>Engenhocas</strong> (poder
+    Engenhocas do Inventor), <strong>Culinária</strong> (poder Culinária
+    do Gourmet) e <strong>Veículo</strong> — cada um calcula sozinho o que
+    você pode fazer com o nível daquele poder.</p>`,
+
+  recursos: `
+    <p class="mini"><strong>Agora</strong> mostra PV/PM/PI atuais (o
+    máximo é calculado sozinho, na aba Atributos e Classes) — o botão
+    <strong>Descanso completo</strong> enche os três e limpa Condições de
+    uma vez, pra não precisar fazer campo por campo. <strong>Sofrer
+    dano</strong> já cruza o valor digitado com a Afinidade daquele tipo
+    de dano antes de aplicar em PV.</p>
+    <p class="mini" style="margin-top:8px"><strong>Afinidades:</strong>
+    Imune sempre vale mais que Resistente ou Vulnerável (zera o dano
+    daquele tipo), e Absorve vale mais que tudo (o dano vira cura).
+    Exemplo: 10 de dano de Fogo com Afinidade <em>Vulnerável</em> a Fogo
+    vira mais dano que os 10 originais; com <em>Resistente</em>, vira
+    menos; com <em>Absorve</em>, você recupera PV em vez de perder.</p>
+    <p class="mini" style="margin-top:8px"><strong>Condições:</strong>
+    cada uma reduz 1 degrau do dado atual de um ou dois Atributos
+    específicos (ver aba Atributos e Classes) — elas se acumulam, mas
+    nenhum Atributo desce abaixo de d6. <strong>Zênites</strong> é só a
+    grana do personagem, sem fórmula nenhuma por trás.</p>`,
+
+  lacos: `
+    <p class="mini">Até <strong>6 Laços</strong>, um por pessoa/grupo
+    importante pro personagem. Pelas regras, cada Laço pode ter no máximo
+    <strong>uma emoção de cada par oposto</strong> do livro (ex: Admiração
+    ou Desprezo — nunca os dois no mesmo Laço; o mesmo vale para os outros
+    pares como Confiança/Ódio ou Lealdade/Medo) — a ficha não valida isso
+    sozinha, então vale conferir contra o livro na hora de escrever. O
+    <strong>nível do Laço</strong> é simplesmente quantas emoções
+    diferentes ele tem marcadas: um Laço com 2 emoções (de pares
+    diferentes) vale nível 2. Laços entram em jogo principalmente quando
+    outro PJ gasta um Ponto de Fabula pra convocar um dos seus.</p>`,
+};
 
 function abaPerfil(p){
   return `<div class="cartao">
@@ -3435,6 +3623,9 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  const btAjudaAba = app.querySelector('#btAjudaAba');
+  if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
 
   // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
   const btGuiadoProximo = app.querySelector('#btGuiadoProximo');

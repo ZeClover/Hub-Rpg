@@ -1511,6 +1511,25 @@ passando.
       abas e layout compacto continuam em aberto, sem pedido concreto.
       Testado com Playwright nos quatro arquivos; `tsc`, lint, build e os
       289 testes automáticos continuam limpos
+- [x] **Fabula Ultima — Modo Guiado completo (poderes + equipamento) e
+      Tutorial por aba** (10/09/2026) — decisão #108. Primeira fatia do
+      pedido "Modo Guiado completo + Tutorial pra todos os sistemas" —
+      Fabula Ultima escolhido pelo Zé por ser o mais denso, pra validar o
+      padrão antes de replicar. A criação guiada ganhou 2 passos novos
+      (Poderes iniciais e Equipamento inicial, entre Classes e o resumo
+      final — 3→5 passos), reaproveitando os mesmos blocos que a ficha
+      normal e o Level Up guiado já usavam, sem duplicar UI. Tutorial novo:
+      botão "❓ Ajuda" na barra de abas abre um painel de referência com o
+      que aquela aba faz, o que cada campo significa e um exemplo numérico
+      real — escrito lendo o código de cada aba, não inventado. Testado com
+      Playwright (os 5 passos do guiado escolhendo poderes/equipamento de
+      verdade; o Tutorial abrindo, trocando de texto ao mudar de aba, e
+      continuando acessível em modo leitura). `tsc`, lint, build e os 289
+      testes automáticos continuam limpos. Falta: mesmo padrão nos outros
+      quatro sistemas (Sávio, SAO, Thrylikí Chelóna, Kaizoku no Sho) e
+      possivelmente D&D 5ª Edição — cada um com seu próprio Modo Guiado
+      em grau de completude diferente, precisa de auditoria própria antes
+      de replicar
 
 ---
 

@@ -4468,6 +4468,74 @@ layout compacto continuam em aberto, sem pedido concreto ainda). `tsc
 continuam limpos (mudança é só CSS/JS estático dos quatro arquivos — não
 mexe em nenhum arquivo `.ts`/`.tsx`).
 
+## 108. Fabula Ultima — Modo Guiado completo (poderes + equipamento) e Tutorial por aba (10/09/2026)
+
+Pedido do Zé: levar Modo Guiado (criação + Level Up) e um Tutorial por aba
+"pra todos os sistemas" — primeira fatia escolhida por ele: Fabula Ultima,
+o mais denso dos cinco (validar aqui antes de replicar). Duas perguntas
+resolvidas com o Zé antes de codar: por qual sistema começar (Fabula
+Ultima) e o formato do Tutorial — **painel de referência** (botão "❓
+Ajuda" que abre um texto fixo explicando a aba atual) em vez de um tour
+com destaque visual dos elementos, mais simples de manter e replicar nos
+outros quatro sistemas depois.
+
+**Level Up guiado** já estava bem resolvido de uma fatia anterior — o
+resumo de "+1 Nível" (`painelResumoNivel`) já mostra antes/depois de PV/
+PM/PI/Crise, já deixa escolher o Poder novo da classe que subiu, e já
+libera escolher Habilidade Heroica ao dominar uma classe (nível 10). Não
+precisou de mudança.
+
+**Criação guiada** (`telaGuiada`) tinha o buraco real: o passo final só
+dizia "Poderes e Equipamento você preenche depois" — a ficha saía do
+Modo Guiado sem nenhum Poder de classe escolhido e sem arma/armadura
+equipada, mesmo já tendo 5 níveis de classe (que dão 5 Poderes pra
+escolher, pág. 176). Adicionados dois passos novos entre "Atributos e
+Classes" e o resumo final (foi de 3 pra 5 passos):
+- **Passo 3 — Poderes iniciais**: pra cada classe com nível > 0, mostra o
+  mesmo bloco de escolha de poderes que o Level Up já usava
+  (`blocoPoderesClasse`, reaproveitado sem duplicar) — sem inventar UI
+  nova, só reordenando quando ela aparece.
+- **Passo 4 — Equipamento inicial**: os mesmos três selects (armadura,
+  mão principal, mão secundária) e o resumo de Defesa/Defesa Mágica/
+  Iniciativa que a aba Atributos e Classes já tinha, também reaproveitados
+  (`opcoesArmadura`/`opcoesMaoPrincipal`/`opcoesMaoSecundaria`).
+
+Nenhum dos dois passos bloqueia avançar sem preencher (mesmo padrão não-
+bloqueante do passo de Classes, que só mostra um aviso) — forçar poderia
+travar quem quer só rascunhar um personagem incompleto por enquanto.
+
+**Tutorial**: `AJUDA_ABAS`, um objeto com um texto por aba (Perfil,
+Atributos e Classes, Poderes, Heroico, Inventário, Recursos, Laços),
+escrito a partir da leitura direta do código de cada aba (não inventado)
+— cada um explica o que a aba faz, o que os campos significam nas regras,
+e fecha com um exemplo numérico de verdade. Exemplo do texto de Atributos:
+"Guardião dá +5 PV fixos com só 1 nível investido; se você também tiver 1
+nível em Mestre de Armas (que também dá +5 PV), os dois bônus somam — +10
+PV ao todo". Botão "❓ Ajuda" fica na mesma barra das abas (canto direito,
+`margin-left:auto`); o painel mostra o texto da aba **atual** e continua
+aberto ao trocar de aba (o texto só troca sozinho) — não precisa reabrir
+a cada clique. Fica acessível mesmo em modo leitura (compartilhado/mestre
+vendo a ficha de um jogador), porque é só informação, não edição.
+
+Testado com Playwright: os 5 passos do Modo Guiado (incluindo escolher
+Mestre de Armas, subir o nível pra 5, escolher poderes reais no passo 3,
+ver os selects de equipamento no passo 4), e o Tutorial (abre, mostra o
+texto certo da aba, troca de texto ao trocar de aba sem fechar, fecha ao
+clicar de novo, e fica disponível em `button:not([data-aba]):not(#btAjudaAba)`
+mesmo quando o resto da tela é desabilitado em modo leitura). Print de
+tela conferido. `tsc --noEmit`, `npm run lint`, `npm run build` e os 289
+testes automáticos continuam limpos (mudança é só HTML/CSS/JS estático de
+`fabula-ultima.html` — nenhum arquivo `.ts`/`.tsx` foi tocado).
+
+**Fica pra depois** (fatias futuras, não iniciadas): levar o mesmo padrão
+(Modo Guiado com poderes/equipamento + Tutorial por aba) pros outros
+quatro sistemas — Sistema do Sávio, SAO, Thrylikí Chelóna, Kaizoku no Sho
+— e possivelmente D&D 5ª Edição. Cada um tem um Modo Guiado próprio já
+existente em graus variados de completude; o trabalho principal por
+sistema deve ser auditar o gap específico dele (como fiz aqui) antes de
+copiar a receita, porque cada sistema tem sua própria mecânica de
+progressão (magias, budôs, aptidões etc.).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
