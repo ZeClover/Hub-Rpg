@@ -4406,6 +4406,68 @@ paliativo, mas não é um fato estruturado). Nenhuma dessas foi mexida nesta
 fatia — ficam registradas aqui pra não precisar redescobrir a cada nova
 cena.
 
+## 107. Painel de Aparência (tema + fonte + status de salvamento) em SAO, Fabula Ultima, Thrylikí Chelóna e Kaizoku no Sho (10/09/2026)
+
+Nota de arquivo antes da decisão: o painel de Aparência do Sistema do
+Sávio (seletor de tamanho de fonte P/M/G/GG, indicador "Salvando.../Salvo
+✓/Erro", e um botão 🎨 Aparência acessível de qualquer aba com o mesmo
+controle de tema da aba Perfil) foi construído numa sessão anterior sem
+gerar uma entrada aqui — gap fechado agora, junto com a extensão pros
+outros quatro sistemas, mesmo padrão do que já aconteceu com Tema (#81 →
+#87) e Animações (#81 → #105).
+
+**O que foi levado**: a receita exata do Sávio, sem inventar nada novo.
+`ESCALAS_FONTE = {p:87.5, m:100, g:115, gg:130}` aplicado via
+`document.body.style.zoom` (zoom, não `transform` — a barra é sticky, e
+`transform` quebraria isso), persistido em `localStorage` (chave
+`hub_escala_fonte`, compartilhada entre os cinco sistemas de propósito —
+trocar a escala uma vez vale pra todas as fichas que o jogador abrir).
+Indicador de status atualiza o DOM direto (`mostrarStatusSalvo`/
+`statusSalvoOk`), sem passar por `render()`, pra não interromper quem
+está digitando no meio de um campo. O painel em si (`#painelAparencia`)
+fica FORA do container principal (`#app`/`#appRoot`) de propósito, pra
+sobreviver a qualquer redesenho e ficar acessível de qualquer aba sem
+precisar ir no Perfil.
+
+**Kaizoku no Sho exigiu adaptação, não só cópia** — arquitetura diferente
+dos outros quatro:
+- Container é `#appRoot`, cor de tema é `--brass`/`--brass-bright`/
+  `--brass-rgb` (decisão #87: só o destaque muda, o navy de fundo fica
+  fixo), e não existe uma função `mudar(fn)` genérica — o padrão local é
+  mutar `personagemAtual()` direto e chamar `persistir(); renderPanel();`,
+  então o painel de Aparência seguiu esse mesmo padrão em vez de inventar
+  um `mudar()` só pra si.
+- **Bug pego e corrigido durante o próprio desenvolvimento** (não chegou a
+  ir pro Zé): a barra de personagens (`#rosterBar`) do Kaizoku no Sho é
+  inteiramente reconstruída via `innerHTML` a cada `renderRosterBar()` —
+  diferente dos outros quatro sistemas, cuja barra é HTML estático que
+  nunca é recriado. Colar `#statusSalvo`/`#btAparencia` dentro desse
+  template fazia o "Salvo ✓" aparecer e sumir no mesmo instante (a barra
+  redesenhava por cima assim que qualquer ação disparava `persistir()` →
+  `renderAll()`). Corrigido movendo os dois pro `<header>` estático (que
+  nunca é reconstruído), ligando o clique do botão uma vez só em
+  `montarPainelAparencia()` em vez de a cada render da roster-bar — achado
+  pelo próprio teste automatizado (Playwright conferindo o texto do
+  indicador logo após criar personagem, que voltava vazio), não por
+  inspeção manual.
+- `--verde` (cor de "sucesso") não existe em Fabula Ultima nem Thrylikí
+  Chelóna (só em Sistema do Sávio e SAO) — usado `var(--verde, #4c8c5b)`
+  com fallback CSS em vez de declarar mais uma variável de cor só pra
+  isso; Kaizoku no Sho usa `--verdigris-bright` (seu próprio tom de
+  "positivo", já existente, mantendo a paleta navy+latão intacta).
+
+Testado com Playwright nos quatro arquivos (abrindo cada `.html` direto
+por `file://`): painel abre/fecha, 8 presets renderizados, trocar preset
+muda a variável CSS de tema e sincroniza o input de cor livre, trocar
+escala de fonte aplica o zoom certo e persiste após reload, indicador de
+status mostra "Salvo ✓" e some sozinho depois de ~1.8s. Prints de tela
+conferidos visualmente nos quatro. Fecha a ideia "Customização visual" nos
+cinco sistemas (tema, fonte e status de salvamento — só reordenar abas e
+layout compacto continuam em aberto, sem pedido concreto ainda). `tsc
+--noEmit`, `npm run lint`, `npm run build` e os 289 testes automáticos
+continuam limpos (mudança é só CSS/JS estático dos quatro arquivos — não
+mexe em nenhum arquivo `.ts`/`.tsx`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

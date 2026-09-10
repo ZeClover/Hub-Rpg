@@ -1496,6 +1496,21 @@ passando.
       `school` ainda são só-criação (sem `_update`), e "última interação"/
       "vínculos com missão-pesquisa-local" não têm campo dedicado ainda
       — nenhuma fatia futura decidida, só registrado pra não redescobrir
+- [x] **Painel de Aparência em SAO, Fabula Ultima, Thrylikí Chelóna e
+      Kaizoku no Sho** (10/09/2026) — decisão #107. Tamanho de fonte
+      (P/M/G/GG, persistido e compartilhado entre os cinco sistemas),
+      indicador "Salvando.../Salvo ✓/Erro", e botão 🎨 Aparência acessível
+      de qualquer aba — que só o Sistema do Sávio tinha — levados pros
+      outros quatro. Kaizoku no Sho precisou de adaptação (container
+      `#appRoot`, cor `--brass`, sem `mudar()` genérico) e um bug real foi
+      pego pelo próprio teste automatizado durante o desenvolvimento: sua
+      barra de personagens é reconstruída via `innerHTML` a cada render,
+      o que apagava o indicador de status assim que aparecia — corrigido
+      movendo status e botão pro `<header>` estático. Fecha "Customização
+      visual" (tema+animação+aparência) nos cinco sistemas — reordenar
+      abas e layout compacto continuam em aberto, sem pedido concreto.
+      Testado com Playwright nos quatro arquivos; `tsc`, lint, build e os
+      289 testes automáticos continuam limpos
 
 ---
 

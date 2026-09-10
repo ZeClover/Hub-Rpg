@@ -113,6 +113,26 @@
   .btn:disabled{opacity:.35; cursor:not-allowed;}
   .btn:disabled:hover{border-color:var(--line-strong); color:var(--parchment-dim);}
 
+  /* Indicador de salvamento — atualizado direto no DOM (mostrarStatusSalvo),
+     sem passar por renderAll(), pra não interromper quem está digitando. */
+  .status-salvo{font-family:var(--mono); font-size:11px; color:var(--parchment-dim); transition:color .2s ease; white-space:nowrap; align-self:center;}
+  .status-salvo.salvando{color:var(--brass-bright);}
+  .status-salvo.ok{color:var(--verdigris-bright);}
+  .status-salvo.erro{color:var(--danger); font-weight:600;}
+
+  /* Painel de Aparência (tema + tamanho de fonte) — fica FORA de #appRoot de
+     propósito, pra ficar acessível em qualquer aba sem precisar ir no
+     Perfil, e pra sobreviver aos renderAll()/renderPanel() (que só
+     redesenham #appRoot). */
+  .painel-aparencia{
+    border:1px solid var(--line-strong); border-radius:var(--radius);
+    background:rgba(var(--navy-deep-rgb),0.5); padding:14px 16px; margin-bottom:22px;
+  }
+  .painel-aparencia .linha{display:flex; align-items:center; flex-wrap:wrap; gap:18px;}
+  .grupo-escala{display:inline-flex; gap:4px;}
+  .grupo-escala .btn{padding:5px 10px; font-size:11px;}
+  .grupo-escala .btn[aria-current="true"]{border-color:var(--brass-bright); color:var(--brass-bright); background:rgba(var(--brass-rgb),.14);}
+
   /* ---------- Tabs ---------- */
   .tab-row{display:flex; gap:4px; flex-wrap:wrap; margin-bottom:18px; border-bottom:1px solid var(--line-strong); padding-bottom:0;}
   .tab-btn{
@@ -285,10 +305,34 @@
       <p class="hero-sub">Fase 1 — fundação, atributos, combate, perícias, recursos, danos e peculiaridades. Poderes, Inventário, Companheiro e Kugutsu chegam nas próximas fases.</p>
     </div>
     <a href="/kaizoku-no-sho-grimorio.html" target="_blank" style="font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--brass-bright); text-decoration:none; border:1px solid var(--line-strong); border-radius:var(--radius); padding:8px 14px;">📖 Grimório</a>
+    <span id="statusSalvo" class="status-salvo" style="align-self:flex-end"></span>
+    <button type="button" id="btAparencia" class="btn" style="align-self:flex-end" title="Cor do tema e tamanho da fonte">🎨 Aparência</button>
     <button type="button" id="btnModoGuiado" class="btn" style="align-self:flex-end">🧭 Modo Guiado</button>
   </header>
 
   <div class="roster-bar" id="rosterBar"></div>
+
+  <div id="painelAparencia" class="painel-aparencia" hidden>
+    <div class="linha">
+      <div class="field">
+        <label>Cor do tema</label>
+        <input id="pa-tema-cor" type="color" style="width:60px;padding:2px;height:38px">
+      </div>
+      <div class="field">
+        <label>Presets</label>
+        <div class="linha" id="pa-presets" style="flex-wrap:wrap;gap:8px"></div>
+      </div>
+      <div class="field">
+        <label>Tamanho da fonte</label>
+        <div class="grupo-escala" id="pa-escala">
+          <button type="button" class="btn" data-escala="p">P</button>
+          <button type="button" class="btn" data-escala="m">M</button>
+          <button type="button" class="btn" data-escala="g">G</button>
+          <button type="button" class="btn" data-escala="gg">GG</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="appRoot"></div>
 
@@ -3683,6 +3727,76 @@ function aplicarTema(hexCor){
   document.documentElement.style.setProperty('--brass', cor);
   document.documentElement.style.setProperty('--brass-bright', corMaisClara(cor, .22));
   document.documentElement.style.setProperty('--brass-rgb', hexParaRgb(cor));
+  atualizarPainelAparencia(cor);
+}
+
+/* --- Painel de Aparência (tema + tamanho de fonte) -------------------------
+   Fica FORA de #appRoot, montado uma vez só no carregamento (montarPainel
+   Aparencia) — por isso os cliques nele são ligados direto aqui, sem passar
+   pelo ciclo normal de renderAll()/renderPanel() do resto da ficha. O botão
+   🎨 Aparência e o indicador de status também moraram pro <header> estático
+   (fora de #rosterBar) de propósito — #rosterBar é reconstruído por
+   innerHTML em toda renderRosterBar(), o que apagaria "Salvo ✓" no instante
+   seguinte a aparecer se eles vivessem lá dentro. */
+const ESCALAS_FONTE = {p:87.5, m:100, g:115, gg:130};
+const CHAVE_ESCALA_FONTE = 'hub_escala_fonte';
+function aplicarEscalaFonte(chave){
+  const pct = ESCALAS_FONTE[chave] || 100;
+  document.body.style.zoom = pct + '%';
+  document.querySelectorAll('#pa-escala button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.escala === chave));
+}
+function mudarEscalaFonte(chave){
+  if(!ESCALAS_FONTE[chave]) return;
+  try{ localStorage.setItem(CHAVE_ESCALA_FONTE, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarEscalaFonte(chave);
+}
+function carregarEscalaFonte(){
+  try{ return localStorage.getItem(CHAVE_ESCALA_FONTE) || 'm'; }
+  catch(e){ return 'm'; }
+}
+
+function atualizarPainelAparencia(corAtual){
+  const corInput = document.getElementById('pa-tema-cor');
+  if(corInput) corInput.value = corAtual;
+  document.querySelectorAll('#pa-presets button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.paPreset.toLowerCase() === corAtual.toLowerCase()));
+}
+function montarPainelAparencia(){
+  const presets = document.getElementById('pa-presets');
+  presets.innerHTML = PRESETS_TEMA.map(t => `<button type="button" class="btn" data-pa-preset="${t.cor}" title="${t.nome}"
+      style="width:28px;height:28px;padding:0;border-radius:999px;background:${t.cor};border:2px solid transparent"></button>`).join('');
+  document.querySelectorAll('#pa-presets button').forEach(b =>
+    b.onclick = () => { const p = personagemAtual(); if(!p) return; p.temaCor = b.dataset.paPreset; persistir(); renderPanel(); });
+  document.getElementById('pa-tema-cor').onchange = e => {
+    const p = personagemAtual(); if(!p) return; p.temaCor = e.target.value; persistir(); renderPanel();
+  };
+  document.querySelectorAll('#pa-escala button').forEach(b =>
+    b.onclick = () => mudarEscalaFonte(b.dataset.escala));
+  aplicarEscalaFonte(carregarEscalaFonte());
+  // #btAparencia fica no <header> estático (nunca recriado por innerHTML),
+  // então só precisa ser ligado uma vez aqui — diferente dos botões da
+  // roster-bar, que são religados a cada renderRosterBar().
+  document.getElementById('btAparencia').addEventListener('click', () => {
+    const painel = document.getElementById('painelAparencia');
+    painel.hidden = !painel.hidden;
+  });
+}
+
+// Indicador de "Salvando.../Salvo" — atualizado direto no elemento, sem
+// passar por renderAll()/renderPanel(), pra não interromper quem está
+// digitando.
+function mostrarStatusSalvo(texto, classe){
+  const el = document.getElementById('statusSalvo');
+  if(!el) return;
+  el.textContent = texto;
+  el.className = 'status-salvo' + (classe ? ' '+classe : '');
+}
+let tempoLimparStatusSalvo = null;
+function statusSalvoOk(){
+  mostrarStatusSalvo('Salvo ✓', 'ok');
+  clearTimeout(tempoLimparStatusSalvo);
+  tempoLimparStatusSalvo = setTimeout(() => mostrarStatusSalvo('', ''), 1800);
 }
 
 function novoPersonagem(nome){
@@ -3865,6 +3979,7 @@ function salvarRoster(roster){
       armazenamento.falhouAoSalvar = false;
       renderRosterBar();
     }
+    statusSalvoOk();
     return true;
   }catch(e){
     // Falha silenciosa aqui significaria o jogador achar que salvou e perder
@@ -3874,6 +3989,7 @@ function salvarRoster(roster){
       armazenamento.falhouAoSalvar = true;
       renderRosterBar();
     }
+    mostrarStatusSalvo('Erro ao salvar', 'erro');
     return false;
   }
 }
@@ -3910,6 +4026,7 @@ let falhouAoSalvarHub = false;
 // salvar. O debounce evita uma requisição por tecla digitada.
 function salvarNoHub(){
   clearTimeout(debounceHub);
+  mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
     const p = personagemAtual(); if(!p) return;
     // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de
@@ -3924,9 +4041,11 @@ function salvarNoHub(){
       });
       if(!resposta.ok) throw new Error('resposta ' + resposta.status);
       if(falhouAoSalvarHub){ falhouAoSalvarHub = false; renderAll(); }
+      statusSalvoOk();
     }catch(e){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvarHub){ falhouAoSalvarHub = true; renderAll(); }
+      mostrarStatusSalvo('Erro ao salvar', 'erro');
     }
   }, 500);
 }
@@ -7443,6 +7562,7 @@ document.getElementById('btnModoGuiado').addEventListener('click', ()=>{
 /* =========================================================================
    INIT
    ========================================================================= */
+montarPainelAparencia();
 if(MODO_HUB){
   renderAll();
   iniciarModoHub();

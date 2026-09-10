@@ -22,6 +22,7 @@ html{color-scheme:dark}
 body{
   margin:0; background:var(--fundo); color:var(--texto);
   font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  transition:background-color .25s ease, color .25s ease;
 }
 h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
 a{color:var(--ambar-forte)}
@@ -30,10 +31,31 @@ a{color:var(--ambar-forte)}
   position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
   align-items:center; gap:10px; padding:10px 16px;
   background:var(--superficie); border-bottom:1px solid var(--borda);
+  transition:background-color .25s ease, border-color .25s ease;
 }
 .marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
   text-transform:uppercase; color:var(--ambar)}
 .cresce{flex:1}
+
+/* Indicador de salvamento — atualizado direto no DOM (mostrarStatusSalvo),
+   sem passar por render(), pra não interromper quem está digitando. */
+.status-salvo{font-size:12px; color:var(--suave); transition:color .2s ease; white-space:nowrap}
+.status-salvo.salvando{color:var(--ambar-forte)}
+.status-salvo.ok{color:var(--verde, #4c8c5b)}
+.status-salvo.erro{color:var(--alerta); font-weight:600}
+
+/* Painel de Aparência (tema + tamanho de fonte) — fica FORA de #app de
+   propósito, pra ficar acessível em qualquer aba sem precisar ir no
+   Perfil, e pra sobreviver aos render() (que só redesenham #app). */
+.painel-aparencia{
+  background:var(--superficie);
+  border-bottom:1px solid var(--borda); padding:14px 16px;
+  transition:background-color .25s ease, border-color .25s ease;
+}
+.painel-aparencia .linha{flex-wrap:wrap; gap:18px}
+.grupo-escala{display:inline-flex; gap:4px}
+.grupo-escala button{padding:5px 10px; font-size:12px}
+.grupo-escala button[aria-current="true"]{border-color:rgba(var(--ambar-rgb),.6); color:var(--ambar-forte); background:rgba(var(--ambar-rgb),.12)}
 
 button,select,input,textarea{font:inherit; color:var(--texto)}
 button{
@@ -48,6 +70,7 @@ button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
 input,select,textarea{
   background:var(--superficie-alta); border:1px solid var(--borda);
   border-radius:8px; padding:7px 10px; width:100%;
+  transition:background-color .25s ease, border-color .25s ease;
 }
 input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(var(--ambar-rgb),.6)}
 textarea{resize:vertical}
@@ -60,13 +83,14 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 
 .cartao{background:var(--superficie); border:1px solid var(--borda);
   border-radius:12px; padding:18px; margin-bottom:14px;
-  transition:box-shadow .18s ease, transform .18s ease}
+  transition:box-shadow .18s ease, transform .18s ease, background-color .25s ease, border-color .25s ease}
 .cartao:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px)}
 .grade{display:grid; gap:14px}
 @media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)} }
 
 .derivado{text-align:center; background:var(--superficie-alta);
-  border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
+  border:1px solid var(--borda); border-radius:10px; padding:12px 8px;
+  transition:background-color .25s ease, border-color .25s ease}
 .derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
 .derivado .val{font-family:Georgia,serif; font-size:28px; color:var(--ambar-forte); margin-top:4px}
 .derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
@@ -127,10 +151,33 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
+  <span id="statusSalvo" class="status-salvo"></span>
+  <button id="btAparencia" title="Cor do tema e tamanho da fonte">🎨 Aparência</button>
   <button id="btExportar">Exportar</button>
   <button id="btImportar">Importar</button>
   <input type="file" id="arquivo" accept="application/json" hidden>
   <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<div id="painelAparencia" class="painel-aparencia" hidden>
+  <div class="linha">
+    <div>
+      <label style="margin-bottom:6px">Cor do tema</label>
+      <input id="pa-tema-cor" type="color" style="width:60px;padding:2px;height:38px">
+    </div>
+    <div>
+      <label style="margin-bottom:6px">Presets</label>
+      <div class="linha" id="pa-presets" style="flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <div>
+      <label style="margin-bottom:6px">Tamanho da fonte</label>
+      <div class="grupo-escala" id="pa-escala">
+        <button type="button" data-escala="p">P</button>
+        <button type="button" data-escala="m">M</button>
+        <button type="button" data-escala="g">G</button>
+        <button type="button" data-escala="gg">GG</button>
+      </div>
+    </div>
+  </div>
 </div>
 <main id="app"></main>
 <script>
@@ -2384,6 +2431,65 @@ function aplicarTema(hexCor){
   document.documentElement.style.setProperty('--superficie', corHsl(h, 32, 9));
   document.documentElement.style.setProperty('--superficie-alta', corHsl(h, 28, 13));
   document.documentElement.style.setProperty('--borda', corHsl(h, 24, 20));
+  atualizarPainelAparencia(cor);
+}
+
+/* --- Painel de Aparência (tema + tamanho de fonte) -------------------------
+   Fica FORA de #app, montado uma vez só no carregamento (montarPainel
+   Aparencia) — por isso os cliques nele são ligados direto aqui, sem passar
+   pelo ciclo normal de ligarEventos()/render() do resto da ficha. */
+const ESCALAS_FONTE = {p:87.5, m:100, g:115, gg:130};
+const CHAVE_ESCALA_FONTE = 'hub_escala_fonte';
+function aplicarEscalaFonte(chave){
+  const pct = ESCALAS_FONTE[chave] || 100;
+  document.body.style.zoom = pct + '%';
+  document.querySelectorAll('#pa-escala button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.escala === chave));
+}
+function mudarEscalaFonte(chave){
+  if(!ESCALAS_FONTE[chave]) return;
+  try{ localStorage.setItem(CHAVE_ESCALA_FONTE, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarEscalaFonte(chave);
+}
+function carregarEscalaFonte(){
+  try{ return localStorage.getItem(CHAVE_ESCALA_FONTE) || 'm'; }
+  catch(e){ return 'm'; }
+}
+
+function atualizarPainelAparencia(corAtual){
+  const corInput = document.getElementById('pa-tema-cor');
+  if(corInput) corInput.value = corAtual;
+  document.querySelectorAll('#pa-presets button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.paPreset.toLowerCase() === corAtual.toLowerCase()));
+}
+function montarPainelAparencia(){
+  const presets = document.getElementById('pa-presets');
+  presets.innerHTML = PRESETS_TEMA.map(t => `<button type="button" data-pa-preset="${t.cor}" title="${t.nome}"
+      style="width:28px;height:28px;padding:0;border-radius:999px;background:${t.cor};border:2px solid transparent"></button>`).join('');
+  document.querySelectorAll('#pa-presets button').forEach(b =>
+    b.onclick = () => mudar(p => p.temaCor = b.dataset.paPreset));
+  document.getElementById('pa-tema-cor').onchange = e => mudar(p => p.temaCor = e.target.value);
+  document.querySelectorAll('#pa-escala button').forEach(b =>
+    b.onclick = () => mudarEscalaFonte(b.dataset.escala));
+  document.getElementById('btAparencia').onclick = () => {
+    document.getElementById('painelAparencia').hidden = !document.getElementById('painelAparencia').hidden;
+  };
+  aplicarEscalaFonte(carregarEscalaFonte());
+}
+
+// Indicador de "Salvando.../Salvo" — atualizado direto no elemento, sem
+// passar por render(), pra não interromper quem está digitando.
+function mostrarStatusSalvo(texto, classe){
+  const el = document.getElementById('statusSalvo');
+  if(!el) return;
+  el.textContent = texto;
+  el.className = 'status-salvo' + (classe ? ' '+classe : '');
+}
+let tempoLimparStatusSalvo = null;
+function statusSalvoOk(){
+  mostrarStatusSalvo('Salvo ✓', 'ok');
+  clearTimeout(tempoLimparStatusSalvo);
+  tempoLimparStatusSalvo = setTimeout(() => mostrarStatusSalvo('', ''), 1800);
 }
 
 /* --- Personagem ------------------------------------------------------------ */
@@ -2930,6 +3036,7 @@ function carregar(){
 let debounceHub = null;
 function salvarNoHub(){
   clearTimeout(debounceHub);
+  mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
     const p = atual(); if(!p) return;
     // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de Vida
@@ -2943,9 +3050,11 @@ function salvarNoHub(){
       });
       if(!resposta.ok) throw new Error('resposta ' + resposta.status);
       if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+      statusSalvoOk();
     }catch(e){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+      mostrarStatusSalvo('Erro ao salvar', 'erro');
     }
   }, 500);
 }
@@ -2955,9 +3064,11 @@ function salvar(){
   try{
     localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
     if(falhouAoSalvar){ falhouAoSalvar = false; render(); }
+    statusSalvoOk();
   }catch(e){
     console.error('Falha ao salvar', e);
     if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    mostrarStatusSalvo('Erro ao salvar', 'erro');
   }
 }
 
@@ -6075,6 +6186,7 @@ document.getElementById('arquivo').onchange = e => {
   leitor.readAsText(arquivo);
 };
 
+montarPainelAparencia();
 render();
 if(MODO_HUB) iniciarModoHub();
 </script>
