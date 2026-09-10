@@ -1003,6 +1003,9 @@ const estado = {
   // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
   // ou ao trocar de personagem.
   nivelUpResumo: null,
+  // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
+  // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
+  mostrarAjuda: false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1137,7 +1140,11 @@ function render(){
       : alerta
         + `<div class="abas">` + ABAS.map(a =>
             `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
-          ).join('') + `</div>`
+          ).join('') + `<button id="btAjudaAba" style="margin-left:auto" aria-current="${estado.mostrarAjuda}" title="O que esta aba faz, e como funciona no sistema">❓ Ajuda</button></div>`
+        + (estado.mostrarAjuda ? `<div class="cartao" style="border-color:rgba(var(--ambar-rgb),.4)">
+            <h3 style="font-size:15px;margin-bottom:8px">❓ ${ABAS.find(a=>a.id===estado.aba)?.nome}</h3>
+            ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
+          </div>` : '')
         + painelDerivados(p)
         + ({status:abaStatus, mundo:abaMundo, classes:abaClasses, poderes:abaPoderes, combate:abaCombate, equipamento:abaEquipamento, crafting:abaCrafting, loja:abaLoja, golpes:abaGolpesMagias, skills:abaSkills, notas:abaNotas}[estado.aba])(p);
 
@@ -1159,9 +1166,10 @@ function render(){
   ligarEventos();
 
   // Modo leitura: desliga todo campo/botão de edição, menos as próprias
-  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha).
+  // abas (a pessoa ainda precisa navegar pra ver o resto da ficha) e o
+  // Tutorial (❓ Ajuda é só leitura, não edita nada).
   if(somenteLeitura){
-    app.querySelectorAll('input, select, textarea, button:not([data-aba])')
+    app.querySelectorAll('input, select, textarea, button:not([data-aba]):not(#btAjudaAba)')
       .forEach(el => el.disabled = true);
   }
 }
@@ -1241,7 +1249,7 @@ function campo(rotulo, chave, valor, tipo){
 // tudo de novo a cada render(), então nenhum binding novo é preciso pra eles.
 function telaGuiada(p){
   const passo = estado.passoGuiado;
-  const totalPassos = 3;
+  const totalPassos = 4;
   const cabecalho = `
     <div class="cartao" style="text-align:center">
       <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -1304,13 +1312,40 @@ function telaGuiada(p){
     </div>`;
   }
 
-  // passo 3: resumo + próximos passos
+  if(passo === 3){
+    const c = p.classes[0];
+    const classe = c && c.classeId ? CLASSES.find(x => x.id === c.classeId) : null;
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">3. Primeiro Poder</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Um personagem "só logado" ainda não tem nenhum Poder — o primeiro
+        vem de subir a Classe pra Nível 1. Cada Nível numa classe dá 1
+        ponto de Poder pra gastar só nela.
+      </p>
+      ${!classe ? `<div class="aviso">Nenhuma classe escolhida ainda —
+        volte ao passo anterior e escolha a primeira Classe.</div>` : `
+        <p class="mini" style="margin-bottom:10px"><strong>${classe.nome}</strong>
+        — Nível atual: ${c.nivel||0}</p>
+        <button data-subir-nivel="0" class="destaque">⭐ +1 Nível (sobe PV/PM e dá 1 Poder)</button>`}
+    </div>
+    ${classe && c.nivel > 0 ? blocoPoderesClasse(p, c.classeId) : ''}
+    <div class="linha" style="justify-content:space-between">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 4: resumo + próximos passos
   return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">3. Pronto pra jogar!</h2>
+      <h2 style="font-size:18px">4. Pronto pra jogar!</h2>
       <p class="mini" style="margin:6px 0 14px">
-        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial. Poderes,
-        Equipamento e o resto você preenche aos poucos, jogando.
+        ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial —
+        atributos, primeira Classe e o Poder dela, se você já subiu de
+        Nível. Equipamento e o resto você preenche aos poucos, jogando.
+        Cada aba tem um botão <strong>❓ Ajuda</strong> explicando o que
+        ela faz, se precisar.
       </p>
     </div>
     ${painelDerivados(p)}
@@ -1319,6 +1354,134 @@ function telaGuiada(p){
       <button id="btGuiadoConcluir" class="destaque">Concluir — ver ficha completa</button>
     </div>`;
 }
+
+// Tutorial (painel de referência) — explica o que cada aba faz, o que
+// cada coisa dentro dela significa nas regras, e um exemplo concreto.
+// Fica escondido por padrão; o botão "❓ Ajuda" na barra de abas mostra
+// o texto da aba ATUAL, e continua mostrando ao trocar de aba.
+const AJUDA_ABAS = {
+  status: `
+    <p class="mini">Esta é a <strong>Janela de Status</strong> que seu
+    personagem vê dentro do jogo — ele sabe estes números tanto quanto
+    você, não é uma abstração escondida da mesa. <strong>Cursor</strong>
+    é a flag de PK (Verde = nunca atacou outro jogador; Laranja =
+    atacou mas não matou; Vermelho = matou outro jogador no jogo).</p>
+    <p class="mini" style="margin-top:8px"><strong>Teste</strong>: role o
+    dado dos dois Atributos que a ação pedir e some, contra a Dificuldade
+    que o mestre define. Os dois dados saindo no mesmo número e 6 ou mais
+    é sucesso crítico; os dois saindo em 1 é falha crítica. Exemplo:
+    Força d8 e Agilidade d6 numa ação de golpe físico ágil — role os dois,
+    some o resultado, compare com a Dificuldade.</p>`,
+
+  mundo: `
+    <p class="mini"><strong>Andar/Zona:</strong> onde o personagem está —
+    numa zona segura (cidade) não tem combate real; numa masmorra, sim,
+    sem rede de segurança. <strong>Corpo Real</strong> é o que separa este
+    sistema de um RPG comum: em algum lugar do mundo real tem alguém de
+    carne e osso plugado no jogo o tempo todo, e nem todo perigo do
+    personagem acontece na tela — por isso os campos de onde o corpo está
+    e quem cuidaria dele.</p>
+    <p class="mini" style="margin-top:8px"><strong>Guilda</strong> é o
+    cartão de sócio (rank + benefício); o nome da guilda em si fica no
+    Status. <strong>Reputação e Títulos:</strong> nem todo título é
+    elogio — quem limpa um andar primeiro ("Beater") ganha fama, mas
+    também desconfiança de quem ficou pra trás. <strong>Duelo</strong> é
+    desafio formal combinado antes, com testemunha — não muda a cor do
+    Cursor, porque não é ataque de surpresa.</p>`,
+
+  classes: `
+    <p class="mini">Multiclasse <strong>sem limite</strong> — o Nível
+    geral do personagem (usado pra calcular PV/PM máximos) é a soma do
+    Nível de todas as classes juntas. Clicar <strong>"⭐ +1 Nível"</strong>
+    numa classe sobe só o Nível dela, mas soma no geral, e dá
+    <strong>1 ponto de Poder</strong> pra gastar nos poderes daquela
+    classe especificamente — a tela seguinte já deixa escolher onde
+    gastar na hora.</p>
+    <p class="mini" style="margin-top:8px">Exemplo: Espadachim Nível 2 +
+    Ferreiro Nível 1 → Nível geral 3 (usado nas fórmulas de PV/PM), mas
+    você tem 2 pontos de Poder de Espadachim e 1 de Ferreiro — não dá pra
+    misturar entre classes diferentes.</p>`,
+
+  poderes: `
+    <p class="mini">Cada classe tem 5 poderes fixos; alguns só compram
+    uma vez, outros têm um <strong>"(+N)"</strong> ao lado do nome — dá
+    pra comprar de novo até N vezes, empilhando o efeito descrito no
+    texto a cada compra. O total de pontos gastos numa classe nunca pode
+    passar do Nível dela — o aviso "comprou mais do que o nível permite"
+    aparece se isso acontecer (normalmente por ter baixado o Nível depois
+    de já ter comprado).</p>`,
+
+  combate: `
+    <p class="mini"><strong>Penalidade de Morte:</strong> o padrão do
+    sistema é chegar a 0 PV não matar de vez — em vez disso, perde XP e
+    um item (registrado aqui). Cada mesa pode combinar diferente,
+    inclusive <strong>permadeath</strong> (morte definitiva, estilo SAO
+    original) — é um interruptor da mesa, combine com o mestre antes de
+    ligar, não decida sozinho no meio de uma cena.</p>
+    <p class="mini" style="margin-top:8px"><strong>Switch</strong> é a
+    troca de posição em dupla: quem está no Ataque avança pra golpear,
+    quem está no Suporte cobre a retaguarda, e trocam quando um dos dois
+    sinaliza — a ficha só registra quem é o par e o papel atual; o bônus
+    de verdade (geralmente vantagem no próximo teste de quem entra no
+    Ataque) combina com o mestre na mesa.</p>`,
+
+  equipamento: `
+    <p class="mini"><strong>Peso</strong> máximo é <strong>10 + Força×2
+    </strong> — passar disso marca "sobrecarregado" no derivado. Um item
+    <strong>equipado</strong> e não quebrado soma sozinho no número que o
+    campo "Efeito" apontar (ex: um anel com Efeito "PV máximo" soma
+    direto no seu PV, sem precisar copiar o valor à mão).</p>
+    <p class="mini" style="margin-top:8px"><strong>Durabilidade:</strong>
+    "Usar" desconta 1, "Reparar" volta ao máximo; durabilidade máxima 0
+    significa item que nunca desgasta. Um item quebrado (durabilidade 0)
+    para de valer o Efeito dele até ser reparado. "Vender" só aparece pra
+    itens do catálogo com preço de tabela — itens Únicos negociam valor
+    direto com o mestre.</p>`,
+
+  crafting: `
+    <p class="mini">Cada receita pede uma <strong>classe específica com
+    ao menos 1 Nível</strong> e os <strong>materiais</strong> certos em
+    estoque (aba de materiais, se existir, ou anotados aqui) — só fica
+    disponível pra craftar quando as duas condições batem. Sem a classe
+    certa, nem os materriais suficientes importam.</p>`,
+
+  loja: `
+    <p class="mini"><strong>Ouro e Prata:</strong> 100 Prata viram 1 Ouro
+    sozinho, tanto editando o valor quanto comprando/vendendo — nunca
+    precisa converter na mão. Alguns poderes de classe (ex: Faro pra
+    Barganha do Mercador) aplicam desconto direto nos preços de
+    <strong>Comprar</strong> — quando você tem o poder, o preço mostrado
+    já vem com desconto embutido.</p>`,
+
+  golpes: `
+    <p class="mini"><strong>Golpes (Sword Skills)</strong> são assistidos
+    pelo sistema: você faz a pré-motion e o jogo completa o movimento
+    sozinho, com mais dano do que um ataque livre — mas deixa a condição
+    <strong>Vulnerável (pós-motion)</strong> logo depois (registrada no
+    campo "Pós-motion" de cada golpe). Um <strong>ataque livre</strong>
+    (sem golpe registrado aqui) usa só o atributo puro: menos dano, mas
+    sem essa vulnerabilidade. Um golpe "Original" é um golpe do sistema
+    que o jogador aprendeu a fazer sozinho, na mesma velocidade, mas sem
+    a vulnerabilidade — vira seu de verdade.</p>
+    <p class="mini" style="margin-top:8px"><strong>Magias</strong> só têm
+    custo em PM e efeito — sem golpe assistido nem pós-motion.
+    <strong>Habilidade Única</strong> é raríssima: não é escolha normal
+    de criação, começa vazia e só o mestre libera quando fizer sentido na
+    história — não crie uma pra si mesmo sem combinar antes.</p>`,
+
+  skills: `
+    <p class="mini">Skill sobe de <strong>estágio</strong> com o
+    <strong>uso em jogo</strong>, nunca é escolha numa lista — clique
+    "Usar" quando ela aparecer numa cena de verdade. Cada estágio tem
+    <strong>10 níveis internos</strong>; ao completar o 10º nível do
+    estágio atual, ela avança pro próximo estágio (o ritmo de quando isso
+    acontece combina com o mestre — a ficha não impõe um número fixo de
+    usos).</p>`,
+
+  notas: `
+    <p class="mini">Rascunho livre — sem regra nenhuma por trás. Use pra
+    anotar planos, dúvidas pro mestre, ou ideias pro próximo Poder.</p>`,
+};
 
 function abaStatus(p){
   const cursor = CURSORES.find(c => c.id === p.cursor) || CURSORES[0];
@@ -2113,6 +2276,9 @@ function ligarEventos(){
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
 
+  const btAjudaAba = app.querySelector('#btAjudaAba');
+  if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
+
   // Navegação do Modo Guiado — só existem quando estado.modoGuiado está ativo.
   const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
   if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };
@@ -2122,6 +2288,11 @@ function ligarEventos(){
   if(btGuiadoConcluir) btGuiadoConcluir.onclick = () => {
     estado.modoGuiado = false;
     estado.aba = 'status';
+    // Subir de Nível no passo 3 do guiado usa o mesmo botão/binding da aba
+    // Classes, que arma estado.nivelUpResumo (pra mostrar o resumo cheio
+    // fora do guiado) — sem isso, a ficha abriria direto no resumo do
+    // Level Up em vez das abas normais.
+    estado.nivelUpResumo = null;
     render();
   };
 

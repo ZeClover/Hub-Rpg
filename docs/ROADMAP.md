@@ -1543,6 +1543,20 @@ passando.
       confirma que persistem na ficha final; Tutorial abre e troca de
       texto certo). `tsc`, lint, build e os 289 testes automáticos
       continuam limpos
+- [x] **Sistema SAO — Modo Guiado completo (primeiro Poder) e Tutorial
+      por aba** (10/09/2026) — decisão #110. Terceira fatia. Aqui um
+      personagem "só logado" legitimamente começa Nível 0 (sem Poder
+      nenhum) até clicar "+1 Nível" — passo novo (3→4) deixa isso
+      acontecer dentro do próprio guiado, reaproveitando o botão e o
+      `blocoPoderesClasse` que a aba Classes/Poderes já usavam. Bug real
+      pego pelo teste automatizado durante o desenvolvimento: usar "+1
+      Nível" dentro do guiado armava `estado.nivelUpResumo`, e fechar o
+      guiado sem limpar essa variável abria a ficha direto na tela de
+      resumo de Level Up — corrigido no handler do botão Concluir.
+      Tutorial com as 11 abas. Testado com Playwright (incluindo a
+      confirmação explícita de que o bug do nivelUpResumo está
+      corrigido); `tsc`, lint, build e os 289 testes automáticos
+      continuam limpos
 
 ---
 

@@ -4577,6 +4577,54 @@ mudar de aba). Print de tela conferido. `tsc --noEmit`, `npm run lint`,
 `npm run build` e os 289 testes automáticos continuam limpos (mudança é
 só HTML/CSS/JS estático de `sistema-do-savio.html`).
 
+## 110. Sistema SAO — Modo Guiado completo (primeiro Poder) e Tutorial por aba (10/09/2026)
+
+Terceira fatia de "Modo Guiado + Tutorial pra todos os sistemas" (#108
+Fabula Ultima, #109 Sistema do Sávio). Estrutura de classes aqui é mais
+parecida com Fabula Ultima (catálogo de 5 poderes fixos por classe,
+alguns com "(+N)" pra comprar de novo), mas a criação funciona diferente:
+não existe "distribuir 5 níveis obrigatórios" — um personagem "só logado"
+começa com a primeira classe escolhida no **Nível 0** (multiclasse sem
+limite, decisão de projeto), e só ganha Poder ao clicar "+1 Nível". Por
+isso o Modo Guiado antigo (3 passos) deixava a criação terminar
+literalmente sem nenhum Poder — nem por omissão de UI, mas porque nível 0
+é um estado legítimo do sistema.
+
+**Correção**: passo novo (3 de 4) "Primeiro Poder" entre "Atributos e
+primeira Classe" e o resumo final — mostra a classe escolhida, o Nível
+atual, e o mesmo botão "⭐ +1 Nível" que a aba Classes já usa
+(`data-subir-nivel="0"`, ligação genérica reaproveitada sem duplicar). Ao
+subir pra Nível 1, `blocoPoderesClasse` aparece inline pra escolher o
+Poder — mesmo bloco que a aba Poderes e o Level Up guiado já usavam.
+
+**Bug pego durante o próprio desenvolvimento** (nunca chegou ao Zé):
+`subirNivelClasseSAO()` sempre arma `estado.nivelUpResumo` (pra alimentar
+a tela cheia de resumo de Level Up fora do guiado) — usar o mesmo botão
+dentro do Modo Guiado deixava essa variável armada, e o botão "Concluir"
+do guiado não limpava. Resultado: fechar o Modo Guiado logo depois de
+usar "+1 Nível" no passo novo abria a ficha direto na tela de resumo de
+Level Up em vez das abas normais. Corrigido zerando
+`estado.nivelUpResumo` no handler de `btGuiadoConcluir`. Achado pelo
+próprio teste automatizado (Playwright conferindo que "Level Up guiado"
+não aparece depois de Concluir), não por inspeção manual.
+
+**Tutorial**: `AJUDA_ABAS` com as 11 abas (Status, Mundo, Classes,
+Poderes, Combate, Equipamento, Crafting, Loja, Golpes e Magias, Skills,
+Notas), mesmo mecanismo das duas fatias anteriores. Exemplo com número
+real, aba Classes: "Espadachim Nível 2 + Ferreiro Nível 1 → Nível geral 3
+(usado nas fórmulas de PV/PM), mas você tem 2 pontos de Poder de
+Espadachim e 1 de Ferreiro — não dá pra misturar entre classes
+diferentes."
+
+Testado com Playwright: os 4 passos (escolhendo Espadachim, subindo pra
+Nível 1, comprando um Poder real no passo 3), confirmação explícita de
+que o bug do `nivelUpResumo` está corrigido (tela de Level Up NÃO aparece
+ao concluir), Poder comprado persiste na ficha final, e o Tutorial (abre,
+mostra texto certo, troca ao mudar de aba). Print de tela conferido.
+`tsc --noEmit`, `npm run lint`, `npm run build` e os 289 testes
+automáticos continuam limpos (mudança é só HTML/CSS/JS estático de
+`sao.html`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
