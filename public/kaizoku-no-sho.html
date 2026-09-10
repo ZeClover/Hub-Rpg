@@ -4077,6 +4077,9 @@ const state = {
   // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
   modoGuiado: false,
   passoGuiado: 1,
+  // Tutorial por aba: liga/desliga o painel de referência (AJUDA_ABAS) da
+  // aba atual — não é dado do personagem, só estado de tela.
+  mostrarAjuda: false,
   // Qual Budô/Akuma no Mi está aberto pra edição na aba Poderes agora —
   // transitório (não salvo na ficha), travado dentro do intervalo válido
   // por budoIdxAtual()/akumaIdxAtual() sempre que a lista muda de tamanho.
@@ -5261,7 +5264,7 @@ const TABS = [
 // panelPerfil/bindPerfil inteiros são grandes demais pra um primeiro passo.
 function telaGuiada(p){
   const passo = state.passoGuiado;
-  const totalPassos = 3;
+  const totalPassos = 5;
   const cabecalho = `
     <div class="panel" style="text-align:center">
       <p class="panel-note" style="text-transform:uppercase;letter-spacing:.1em;margin:0">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -5300,11 +5303,37 @@ function telaGuiada(p){
     </div>`;
   }
 
-  // passo 3: resumo + próximos passos
+  if(passo === 3){
+    return cabecalho + `
+    <div class="panel">
+      <h2>3. Perícias</h2>
+      <p class="panel-note">Distribua os Pontos de Perícias — cada uma soma metade do atributo regente (arredondado pra cima) mais os pontos que você comprar aqui.</p>
+    </div>
+    ${panelPericias(p)}
+    <div class="field-row" style="justify-content:space-between">
+      <button type="button" class="btn" id="btnGuiadoAnterior">← Voltar</button>
+      <button type="button" class="btn primary" id="btnGuiadoProximo">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 4){
+    return cabecalho + `
+    <div class="panel">
+      <h2>4. Poder</h2>
+      <p class="panel-note">Todo personagem já começa com Pontos de Poder pra gastar — escolha uma Fonte de Poder (Budô ou Akuma no Mi) se ainda não tiver, e compre as aptidões/características que ela libera.</p>
+    </div>
+    ${panelPoderes(p)}
+    <div class="field-row" style="justify-content:space-between">
+      <button type="button" class="btn" id="btnGuiadoAnterior">← Voltar</button>
+      <button type="button" class="btn primary" id="btnGuiadoProximo">Próximo →</button>
+    </div>`;
+  }
+
+  // passo 5: resumo + próximos passos
   return cabecalho + `
     <div class="panel">
-      <h2>3. Pronto pra jogar!</h2>
-      <p class="panel-note">${escapeHtml(p.perfil.nome || 'Seu personagem')} já tem o essencial. Combate, Perícias, Poderes e o resto você preenche aos poucos, jogando.</p>
+      <h2>5. Pronto pra jogar!</h2>
+      <p class="panel-note">${escapeHtml(p.perfil.nome || 'Seu personagem')} já tem o essencial — Atributos, Perícias e Poder. Combate, Inventário e o resto você preenche aos poucos, jogando. Cada aba tem um botão <strong>❓ Ajuda</strong> explicando o que ela faz, se precisar.</p>
     </div>
     <aside class="ficha" id="fichaCard" style="position:static; margin-bottom:14px"></aside>
     <div class="field-row" style="justify-content:space-between">
@@ -5335,7 +5364,13 @@ function bindGuiado(p){
       renderAll();
     });
   });
-  if(passo === 3) renderFichaCard();
+  // Passos 3 e 4 reusam bindPericias/bindPoderes de verdade — seguro desde
+  // a decisão #68: renderPanel() (chamado por eles a cada interação) cai
+  // pra renderAll() quando #panelHost não existe, que é o caso aqui dentro
+  // do Modo Guiado.
+  if(passo === 3) bindPericias(p);
+  if(passo === 4) bindPoderes(p);
+  if(passo === 5) renderFichaCard();
 
   const btnProximo = document.getElementById('btnGuiadoProximo');
   if(btnProximo) btnProximo.addEventListener('click', ()=>{ state.passoGuiado += 1; renderAll(); });
@@ -5431,6 +5466,10 @@ function renderAll(){
     ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
     ${somenteLeitura ? `<div class="info-box leitura">Modo leitura — você está vendo a ficha de <strong>${escapeHtml(p.perfil.nome)}</strong>. Só quem é dono edita.</div>` : ''}
     <div class="tab-row" id="tabRow"></div>
+    <div class="field-row" style="justify-content:flex-end;margin:6px 0 10px">
+      <button type="button" class="btn" id="btnAjudaAba">${state.mostrarAjuda ? 'Fechar ajuda' : '❓ Ajuda'}</button>
+    </div>
+    ${state.mostrarAjuda ? `<div class="panel">${AJUDA_ABAS[state.tab] || '<p class="panel-note">Sem ajuda pra esta aba ainda.</p>'}</div>` : ''}
     <div class="grid">
       <div id="panelHost"></div>
       <aside class="ficha" id="fichaCard"></aside>
@@ -5440,10 +5479,14 @@ function renderAll(){
   renderTabs();
   renderPanel();
   renderFichaCard();
+  const btnAjudaAba = document.getElementById('btnAjudaAba');
+  if(btnAjudaAba) btnAjudaAba.addEventListener('click', ()=>{ state.mostrarAjuda = !state.mostrarAjuda; renderAll(); });
 
-  // Modo leitura: desliga todo campo/botão de edição, menos as abas.
+  // Modo leitura: desliga todo campo/botão de edição, menos as abas e a
+  // Ajuda (é só informativa — não edita nada, então continua útil pra quem
+  // está só vendo a ficha).
   if(somenteLeitura){
-    root.querySelectorAll('input, select, textarea, button:not([data-tab])')
+    root.querySelectorAll('input, select, textarea, button:not([data-tab]):not(#btnAjudaAba)')
       .forEach(el => el.disabled = true);
   }
 }
@@ -5486,6 +5529,148 @@ function onFieldChange(){
   renderFichaCard();
   renderRosterBar();
 }
+
+// Tutorial por aba ("❓ Ajuda") — painel de referência estático, sem tour
+// guiado: o botão liga/desliga um texto explicando o que aquela aba faz e
+// como ela calcula os números, com um exemplo concreto do próprio sistema.
+// Escrito lendo cada panelX(p) de verdade — nada aqui é regra inventada.
+const AJUDA_ABAS = {
+  perfil: `
+    <h3>Perfil</h3>
+    <p>Dados de identidade do personagem e o botão de Level Up. O número que
+    importa pra tudo o resto é o <b>NC (Nível de Campanha)</b> — não existe
+    XP nesta ficha: o NC sobe quando o mestre decidir na mesa, clicando em
+    "⭐ Level Up". Ele vai de 4 (criação) até 20 (topo — Yonkou/Almirante).</p>
+    <p>Todo cálculo importante do personagem (Atributos, Perícias, Poder,
+    Vitalidade...) depende só do NC atual. Por exemplo, em <b>NC 4</b> você
+    tem 12 Pontos de Atributos, 12 de Perícias e 6 de Poder pra gastar; ao
+    subir pra <b>NC 5</b>, viram 18 / 18 / 9 — o Level Up guiado mostra essa
+    diferença e já deixa gastar o que sobrou, passo a passo.</p>`,
+
+  atributos: `
+    <h3>Atributos</h3>
+    <p>Compra por pontos: você recebe um total de Pontos de Atributos que
+    escala com o NC — fórmula <b>(NC-2)×6</b>. Em NC 4 isso dá 12 pontos;
+    em NC 10, 48 pontos. Cada ponto gasto num atributo (Força, Agilidade,
+    Vigor, Destreza, Vontade...) soma 1 ao valor dele.</p>
+    <p>Dois limites acompanham o NC: o <b>máximo</b> por atributo é sempre
+    igual ao NC (em NC 4, nenhum atributo passa de 4); o <b>mínimo
+    obrigatório</b> só aparece a partir de NC 6 — fórmula
+    arredondada pra cima de (NC-4)/2 — a regra do livro pede pra primeiro
+    levar todo atributo até esse mínimo antes de gastar o resto livremente
+    (a ficha só avisa, não trava).</p>
+    <p>Atributos entram direto em quase tudo: Habilidades de Combate somam
+    o atributo regente + Valor-Base, Perícias usam metade do atributo
+    regente, e Vitalidade usa Vigor.</p>`,
+
+  combate: `
+    <h3>Combate</h3>
+    <p>As 4 Habilidades de Combate (Corporal, Distância, Poder, Manobra —
+    conforme a tabela) seguem a fórmula <b>Total = Atributo regente +
+    Valor-Base</b>. Todo personagem começa com Valor-Base 3 em cada uma,
+    que soma exatamente 12 no total das 4 — o livro permite redistribuir
+    esses 12 pontos entre elas (por exemplo, 5/3/2/2), desde que a soma
+    continue 12; a ficha avisa se não bater.</p>
+    <p>O campo "Outro" é pra bônus extras (itens, Aptidões, condições) que
+    não vêm do atributo nem do Valor-Base — some direto no Total.</p>`,
+
+  pericias: `
+    <h3>Perícias</h3>
+    <p>Cada Perícia começa com um <b>Nível Inicial</b> de graça = metade do
+    atributo regente, arredondado pra cima (Força 5 → inicial 3). Em cima
+    disso você compra <b>Pontos</b> com o orçamento de Perícias — fórmula
+    <b>(NC-2)×6</b>, igual a de Atributos (12 pontos em NC 4).</p>
+    <p>Cada Perícia tem um limite de pontos comprados nela = metade do NC,
+    arredondado pra baixo (em NC 4, no máximo 2 pontos por Perícia — a
+    linha fica destacada em vermelho se passar disso). Perícias marcadas
+    <b>[T]</b> exigem treino: com 0 pontos comprados, aparecem como "X" (não
+    podem ser usadas), mesmo tendo Nível Inicial. "Perito" é uma marcação
+    extra (geralmente dobra o dado ou dá vantagem — confira na mesa).</p>`,
+
+  recursos: `
+    <h3>Recursos</h3>
+    <p>Painel só de leitura com os números derivados de Atributos/Perícias/
+    NC, prontos pra mesa — nada aqui se compra, só a Vitalidade e a Estamina
+    perdidas são editáveis (pra marcar dano/gasto durante a sessão):</p>
+    <p><b>Vitalidade</b> = mod. de espécie + 5×Vigor + 5×NC. <b>Estamina</b>
+    = 10 + 3×Vontade. <b>Iniciativa</b> mostra só a parte fixa (Agilidade +
+    Prontidão) — o 1d8 é rolado na mesa. <b>Reação de Esquiva</b> = 9 +
+    Esquiva (é a Dificuldade que o atacante precisa bater). <b>Deslocamento</b>
+    = 10 + metade da Agilidade pra cima, mínimo 10m.</p>
+    <p><b>Dureza de Corpo</b> reduz 1 do dano de todo ataque sofrido e nunca
+    se gasta — não é cumulativa, só a fonte mais alta vale. <b>Absorção</b> é
+    da armadura equipada, funciona como uma vitalidade à parte dela e se
+    gasta batendo: ao zerar, a armadura para de proteger.</p>`,
+
+  danos: `
+    <h3>Danos</h3>
+    <p>Fórmula central do sistema: <b>Dano Final = Dano Base × Grau de
+    Dano</b>. Você define o Dano Base aqui (Arma + outros bônus, separado
+    por Corporal/Distância/Poder) e a mesa rola 2d8 no teste de acerto pra
+    achar o Grau: 2-3 é falha crítica, 4-8 é Grau 1, 9-11 Grau 2, 12-14 Grau
+    3, 15-16 é Grau 4 (crítico).</p>
+    <p>Exemplo: Dano Base Corporal 6, resultado 13 no 2d8 (Grau 3) → dano
+    final é 6 × valor do Grau 3 na tabela mostrada abaixo do Dano Base — a
+    ficha já calcula as 4 colunas pra não precisar multiplicar na mão.</p>`,
+
+  peculiaridades: `
+    <h3>Peculiaridades</h3>
+    <p>Escolha um <b>orçamento de 1 a 10 pontos</b> — esse valor não muda
+    com o NC, é fixo desde a criação. Você precisa gastar exatamente esse
+    tanto em Qualidades <b>e</b> a mesma quantidade em Defeitos (ex:
+    orçamento 4 → 4 pontos em Qualidades + 4 pontos em Defeitos, não
+    precisam ser a mesma quantidade de itens, só a mesma soma de pontos).
+    A ficha avisa em vermelho se Qualidades ou Defeitos não baterem com o
+    orçamento escolhido.</p>`,
+
+  aptidoes: `
+    <h3>Aptidões</h3>
+    <p>Todo personagem escolhe <b>3 Aptidões gratuitas</b> do Livro Base na
+    criação (esse número vira 4 com a Qualidade "Treinado", e sobe mais 1
+    permanentemente cada vez que o botão "+1 Aptidão Gratuita" é usado — pra
+    quando o mestre conceder uma na história). A partir da aptidão seguinte
+    à última gratuita, cada uma custa <b>1 Ponto de Poder</b> — o mesmo
+    Ponto de Poder usado pra subir o Nível do Poder na aba Poderes, então os
+    dois "gastam da mesma conta".</p>
+    <p>Esta aba junta num resumo só TODAS as Aptidões pegas em qualquer
+    lugar — Livro Base, Expansão, cada Budô e cada Akuma no Mi separados —
+    porque senão ficaria espalhado por várias abas sem visão geral.</p>`,
+
+  poderes: `
+    <h3>Poderes</h3>
+    <p>O <b>Nível do Poder</b> é comprado por pontos (1 ponto = 1 nível),
+    com um total de Pontos de Poder que escala com o NC — fórmula
+    <b>3×NC-6</b> (com +6 de bônus extra ao chegar em NC 20). Em NC 4 isso
+    dá 6 Pontos de Poder; cada Aptidão comprada (fora as gratuitas) também
+    sai desse mesmo total, a 1 ponto cada.</p>
+    <p>Você pode ter <b>mais de um Budô e mais de uma Akuma no Mi ao mesmo
+    tempo</b> — cada um com seu próprio Nível do Poder e suas próprias
+    Aptidões, mas todos gastando do mesmo total de Pontos de Poder acima
+    (a aba Aptidões mostra quanto cada fonte já gastou). Sem Budô nem Akuma
+    no Mi escolhidos, ainda dá pra investir Nível do Poder "avulso" (Trabalho
+    Duro), pra golpes/técnicas fora de um estilo específico.</p>`,
+
+  inventario: `
+    <h3>Inventário</h3>
+    <p>Capacidade de carga é medida em <b>compartimentos</b>, fórmula
+    <b>3 + piso(Força/2)</b> — com Força 4, são 3+2 = 5 compartimentos.
+    Cada compartimento usado além da capacidade penaliza em <b>-3m de
+    Deslocamento</b> e <b>-1 de precisão</b> em Força/Agilidade (e tudo que
+    depende delas — Combate Corporal, Esquiva, Acrobacia, Atletismo,
+    Furtividade) — já refletido nas outras abas, não é só um aviso.</p>
+    <p>O Belly (฿) em caixa é controlado manualmente aqui; o "gasto estimado
+    em itens carregados" é só informativo, somando o custo de tudo que está
+    na lista "Carregando".</p>`,
+
+  ataques: `
+    <h3>Ataques</h3>
+    <p>Não é uma aba de compra — é um atalho de mesa: monte aqui os golpes
+    que você mais usa (nome, tipo, ação, dano extra) e o resumo calculado já
+    aparece pronto, puxando os números de Combate/Danos/Recursos, sem
+    precisar abrir as três abas toda hora durante a sessão. Pra golpes de
+    Poder, o campo "Nível do Efeito" define qual nível da técnica está
+    sendo usado (pode ser menor que o Nível do Poder total do personagem).</p>`,
+};
 
 /* ---------- Perfil ---------- */
 function panelPerfil(p){

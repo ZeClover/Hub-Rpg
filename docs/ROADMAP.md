@@ -1570,6 +1570,23 @@ passando.
       (força) são réguas separadas. Testado com Playwright nos dois
       guiados; `tsc`, lint, build e os 289 testes automáticos continuam
       limpos
+- [x] **Kaizoku no Sho — Modo Guiado completo (Perícias/Poder) e Tutorial
+      por aba** (10/09/2026) — decisão #112. Quinta e última fatia. O
+      Level Up guiado já estava completo desde a decisão #9; só a criação
+      guiada parava em Nome/Espécie + Atributos, sem oferecer os 12
+      Pontos de Perícias nem os 6 de Poder que um personagem novo em NC 4
+      já tem pra gastar. Dois passos novos (3 e 4) reaproveitam
+      `panelPericias`/`bindPericias` e `panelPoderes`/`bindPoderes` de
+      verdade (Budô/Akuma no Mi completos, não resumo) — seguro pela
+      mesma mecânica da decisão #68 que já sustentava o Level Up guiado.
+      Tutorial com as 11 abas de conteúdo real (Companheiro/Kugutsu
+      ficaram de fora por serem stub); como Kaizoku usa `.tab-btn`/
+      `.active` em vez de `aria-current`, o botão de Ajuda entrou como
+      bloco próprio sem mexer em `renderTabs()`. Testado com Playwright
+      (5 passos do guiado, pontos de Perícia persistindo na aba normal,
+      Tutorial trocando de texto por aba); `tsc`, lint e os 289 testes
+      automáticos continuam limpos. Com essa fatia, os 5 sistemas do Hub
+      têm Modo Guiado completo e Tutorial por aba.
 
 ---
 

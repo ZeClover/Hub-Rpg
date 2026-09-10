@@ -4673,6 +4673,53 @@ de tela conferidos. `tsc --noEmit`, `npm run lint`, `npm run build` e os
 289 testes automáticos continuam limpos (mudança é só HTML/CSS/JS
 estático de `thryliki-chelona.html`).
 
+## 112. Kaizoku no Sho — Modo Guiado completo (Perícias/Poder) e Tutorial por aba (10/09/2026)
+
+Quinta e última fatia de "Modo Guiado + Tutorial pra todos os sistemas"
+(#108 FU, #109 Sávio, #110 SAO, #111 Thrylikí Chelóna).
+
+**Achado da auditoria**: o Level Up guiado (`passosNivelUpKaizoku`) já
+estava completo desde a decisão #9 (4 passos: O que mudou, Atributos,
+Perícias, Poder) — não precisou de correção. Já a criação guiada
+(`telaGuiada`) parava em Nome/Espécie + Atributos (3 passos) e ia direto
+pro resumo, apesar de um personagem novo em NC 4 (padrão de criação) já
+nascer com 12 Pontos de Perícias e 6 Pontos de Poder pra gastar — exatamente
+o mesmo formato de buraco das fatias anteriores (pontos "de graça" na
+criação que a ficha nunca oferecia gastar).
+
+**Correção**: `telaGuiada` ganhou dois passos novos, reaproveitando os
+painéis reais que o Level Up guiado já usa — Passo 3 "Perícias"
+(`panelPericias(p)` + `bindPericias(p)`) e Passo 4 "Poder" (`panelPoderes(p)`
++ `bindPoderes(p)`, com Budô/Akuma no Mi e suas Aptidões completos, não
+um resumo). O resumo final virou Passo 5. A reutilização de `bindPericias`/
+`bindPoderes` dentro do Modo Guiado é seguro pelo mesmo motivo da decisão
+#68: `renderPanel()` (chamada por eles a cada clique) cai pra `renderAll()`
+quando `#panelHost` não existe — que é sempre o caso dentro do Modo Guiado
+— e essa é exatamente a mecânica que já sustentava o Level Up guiado desde
+a decisão #9.
+
+**Tutorial**: `AJUDA_ABAS` com as 11 abas de conteúdo real (Perfil,
+Atributos, Combate, Perícias, Recursos, Danos, Peculiaridades, Aptidões,
+Poderes, Inventário, Ataques) — Companheiro e Kugutsu ficaram de fora por
+serem `stub:true` (sem conteúdo pra explicar ainda). Kaizoku é o único dos
+5 sistemas com barra de abas em classe `.tab-btn`/`.active` em vez de
+`aria-current`, então o botão "❓ Ajuda" e o painel de ajuda entraram como
+um bloco próprio logo abaixo da `.tab-row`, sem mexer em `renderTabs()`.
+
+Testado com Playwright: os 5 passos do guiado (criando personagem, gastando
+pontos em Atributos, comprando 2 pontos numa Perícia, passando pelo passo
+de Poder, concluindo), confirmando que os pontos de Perícia comprados no
+Modo Guiado persistem na aba normal depois de sair do guiado, e o Tutorial
+(abre, mostra o texto certo de Perícias, troca pro texto de Poderes ao
+mudar de aba). Sem erros de console. `tsc --noEmit`, `npm run lint` e os
+289 testes automáticos continuam limpos (mudança é só HTML/CSS/JS estático
+de `kaizoku-no-sho.html`).
+
+Com isso, os 5 sistemas do Hub (Fabula Ultima, Sistema do Sávio, SAO,
+Thrylikí Chelóna, Kaizoku no Sho) têm Modo Guiado completo (cobrindo tudo
+que o sistema precisa pra montar a ficha, sem deixar nada "pra depois") e
+Tutorial por aba.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
