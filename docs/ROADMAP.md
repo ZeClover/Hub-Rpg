@@ -1654,15 +1654,28 @@ passando.
       (cálculos corretos, persistência, sem regressão nos testes de Modo
       Guiado/Tutorial existentes); `tsc`, lint e os 298 testes automáticos
       continuam limpos
-- [ ] **"Ficha padrão" — pendências da mesma iniciativa** (decisão #117):
-      Fabula Ultima (PM/PI com o mesmo padrão de dano/cura rápidos — PV já
-      tinha); D&D 5e (dano/cura rápidos + Descanso seguindo a regra REAL
-      do sistema — Dados de Vida, não o atalho 50%/100%); Campanha Livre
-      (stepper genérico pros Recursos livres, sem Descanso — não se aplica
-      a um recurso sem semântica fixa); confirmar Condições/status sempre
-      visíveis em todos os sistemas; Inventário com equipar/desequipar
-      consistente; Ataques/golpes prontos (Kaizoku já tem) nos sistemas
-      que ainda não têm
+- [x] **"Ficha padrão" — conclusão da iniciativa** (11/09/2026) — decisão
+      #118. Fabula Ultima ganhou Gastar/recuperar PM e PI (mesmo padrão do
+      PV). D&D 5e ganhou dano/cura rápidos (PV Temporário absorve
+      primeiro) e Descanso com a regra REAL do sistema — Dados de Vida,
+      Curto soma a rolagem física + mod. Constituição, Longo enche PV e
+      devolve metade dos Dados (RAW). Campanha Livre ganhou stepper ±1 +
+      Gastar/Recuperar no `CardRecurso`, sem Descanso (recurso livre, sem
+      semântica fixa). Condições auditadas nos 7 sistemas: movida pra
+      seção sempre visível em SAO/FU/Thrylikí/D&D5e (estava presa numa
+      aba); criada do zero em Kaizoku (não existia NENHUM lugar pra
+      marcar condição); Sistema do Sávio não tem lista fixa de condição
+      no design (só Exaustão/morrendo, mecânicas próprias) — não
+      inventado; Campanha Livre já tinha. Inventário com equipar/
+      desequipar: já existia em SAO/FU/Thrylikí; criado em D&D 5e
+      (Mochila) e Kaizoku (armadura — Absorção agora só conta item
+      equipado); Sistema do Sávio não tinha inventário nenhum, aba criada
+      do zero. Ataques/golpes prontos: Kaizoku e SAO já tinham; FU e D&D5e
+      calculam automático por arma equipada; Thrylikí usa Fórmulas/
+      Poderes da Área; Campanha Livre não tem combate mecânico (não
+      inventado); Sistema do Sávio ganhou "Ataques prontos" na aba
+      Combate. Testado com Playwright em cada fatia; `tsc`, lint, build e
+      os 298 testes automáticos continuam limpos
 
 ---
 

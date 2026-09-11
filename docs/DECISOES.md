@@ -5018,6 +5018,121 @@ sem semântica fixa de "vida"); confirmar Condições/status sempre visíveis
 em todos; Inventário com equipar/desequipar consistente; e Ataques/golpes
 prontos (Kaizoku já tem) nos sistemas que ainda não têm.
 
+## 118. "Ficha padrão" — conclusão da iniciativa: FU, D&D 5e, Campanha Livre, Condições, Inventário e Ataques prontos (11/09/2026)
+
+Continuação e fechamento da decisão #117, autorizada pelo Zé ("faça tudo
+isso então") pra completar sem pausar as seis fatias que tinham ficado
+pendentes.
+
+**Fabula Ultima — PM e PI.** `abaRecursos(p)` ganhou "Gastar/recuperar PM
+e PI" no mesmo padrão de dano rápido que o PV já tinha (digita só o
+valor, a ficha soma/subtrai sozinha). Não ganhou um "Descanso Curto"
+inventado — FU é sistema comercial (decisão de não codificar mecânica
+que não está no livro) e o "Descanso completo" que já existia (100%,
+limpa condições) já é a regra real do sistema, então ficou como estava.
+
+**D&D 5ª Edição — dano/cura rápidos e Descanso de verdade.** Adicionado
+dano/cura rápidos em PV (dano bate primeiro no PV Temporário, sobra vai
+pro PV — regra oficial). Descanso segue a mecânica REAL do 5e, não o
+atalho 50%/100% dos homebrews: Dados de Vida (`dadosDeVidaTotal(p) =
+nivel(p)`, ficha só suporta 1 classe, sem multiclasse) — **Descanso
+Curto** deixa escolher quantos Dados gastar, o jogador rola os dados na
+mesa (o Hub nunca simula rolagem, convenção do projeto) e digita a soma;
+a ficha soma o modificador de Constituição de cada dado e aplica em PV.
+**Descanso Longo** enche o PV e devolve metade dos Dados de Vida totais
+(arredondado pra cima, mínimo 1 — regra RAW), sem mexer no PV Temporário.
+
+**Campanha Livre — stepper genérico.** `CardRecurso` ganhou um stepper
+±1 ao lado do campo Atual (respeitando mínimo/máximo quando configurados)
+e um par de campos "quanto?" + botões Gastar/Recuperar pra aplicar uma
+variação de uma vez, sem precisar calcular a subtração/soma de cabeça.
+Sem Descanso — não existe no dado nem no conceito: recursos aqui são
+livres (mana, sanidade, o que a campanha inventar), sem semântica fixa
+de "vida" pra ter uma regra de repouso.
+
+**Condições/status sempre visíveis — auditoria + correção.** Conferido
+sistema por sistema se Condições aparecia numa aba fixa (dentro de
+`painelDerivados`, a seção que renderiza antes da troca de abas) ou
+escondido dentro de uma aba específica:
+
+- **SAO, Fabula Ultima, Thrylikí Chelóna e D&D 5e** tinham Condições
+  dentro de uma aba (Combate ou Recursos) — movido pra dentro de
+  `painelDerivados(p)` nos quatro, sem duplicar a lista. Em Thrylikí,
+  "Consequências" (as três trilhas de lesão/desgaste/instabilidade) foi
+  junto, por ser o mesmo tipo de estado de status.
+- **Kaizoku no Sho não tinha NENHUM lugar pra marcar condição nenhuma**
+  — os poderes citam "recebe a condição Lento/Caído/Tonto..." no texto,
+  mas não existia checkbox nenhum. Criado `CONDICOES` (13 condições
+  citadas de verdade no texto do sistema, não inventadas) +
+  `painelCondicoes(p)`, sempre visível, novo campo `p.condicoes`.
+- **Sistema do Sávio** já tinha um campo `condicoes: []` no modelo de
+  dados, mas nunca foi usado em lugar nenhum — código morto, igual o
+  `gastarPe()` achado na decisão #117. Investigado: o sistema não tem
+  uma lista fixa de condições no design (só Exaustão e "morrendo", que
+  já são mecânicas próprias e dedicadas) — não inventei uma lista de
+  condições genérica pra não desrespeitar a decisão #17 (sistemas de
+  regras são módulos, a mecânica vem do documento do sistema, não da
+  Claude). Campo morto deixado como está.
+- **Campanha Livre** já tinha Condições sempre visível (seção própria,
+  fora de qualquer aba) desde a decisão #1 — nada a fazer.
+
+Testado com Playwright script único rodando os 5 sistemas corrigidos:
+Condições visível antes de trocar de aba, continua visível depois de
+trocar, e o estado marcado sobrevive a um reload — os 5 passaram.
+
+**Inventário com equipar/desequipar.** Auditado item por item:
+
+- **SAO, Fabula Ultima e Thrylikí Chelóna** já tinham (checkbox
+  "Equipado"/"Pronto" por item, ou seleção de arma/armadura por slot).
+  Nada a fazer.
+- **D&D 5e** só tinha uma lista de Mochila sem equipar nada — ganhou
+  checkbox "Equipado" por item (a Classe de Armadura continua manual/
+  calculada como já era, decisão de projeto anterior — CA automática a
+  partir do item equipado fica pra outra fatia, é bem mais mecânica que
+  um checkbox).
+- **Kaizoku no Sho** calculava a Absorção da armadura olhando QUALQUER
+  armadura no inventário, mesmo carregada e não vestida — ganhou
+  checkbox "Equipado" nos itens de armadura, e `absorcaoEquipada(p)`
+  passou a filtrar só os equipados (`it.equipado !== false`, compatível
+  com fichas antigas que não tinham o campo).
+- **Sistema do Sávio não tinha inventário nenhum** — só um único slot de
+  arma (nome/tamanho/notas). Criada a aba "Inventário" inteira do zero:
+  lista de itens gerais (nome, notas, checkbox Equipado), a arma
+  continua no slot próprio da aba Combate como já era.
+
+Achado no caminho: o atributo `data-inv-remover` que usei primeiro pra
+Inventário já era usado pela função de Invocações (`data-inv-remover` =
+"invocação"), e como `ligarEventos()` religa TODOS os elementos com
+aquele atributo a cada render, o segundo bind sobrescrevia o primeiro —
+remover um item de Inventário na verdade tentava remover uma Invocação
+(inofensivo só porque a lista de invocações estava vazia no teste, mas
+seria um bug real em mesa). Corrigido renomeando pra `data-iteminv-*`,
+sem colisão. Fica registrado como lição: atributos `data-*` novos
+precisam ser conferidos contra o arquivo inteiro, não só a função que
+está sendo editada.
+
+**Ataques/golpes prontos.** Auditado: Kaizoku já tinha (`ataquesProntos`,
+decisão anterior). SAO já tinha ("Golpes", lista nomeada com dano em
+texto). Fabula Ultima e D&D 5e calculam Precisão/Dano automaticamente
+por arma equipada, o que já cumpre o mesmo papel. Thrylikí Chelóna não
+usa dano de arma — ataques ali SÃO as Fórmulas/Poderes da Área escolhida,
+que o personagem já tem numa lista própria. Campanha Livre não tem
+combate mecânico nenhum (é narrado pelo mestre via HUB_UPDATE) — não
+inventei um sistema de ataque pra um sistema que não tem combate fixo.
+**Sistema do Sávio** foi o único sem nada — criado "Ataques prontos" na
+aba Combate: lista de golpes salvos (nome, dano em texto tipo "2d6+FOR",
+notas), mesmo padrão do "Golpes" de SAO.
+
+Testado com Playwright em cada fatia (D&D 5e: dano/cura + Dados de Vida
+gastos/recuperados corretos, incluindo PV Temporário absorvendo primeiro;
+Campanha Livre: stepper e Gastar/Recuperar respeitando mínimo/máximo;
+Sávio: Inventário e Ataques prontos persistindo depois de reload, sem
+regressão nos testes já existentes de Modo Guiado/Habilidades/
+Invocações/Reação/Sustentada). `tsc --noEmit`, `npm run lint`, `npm run
+build` e os 298 testes automáticos continuam limpos — mudança é só
+HTML/CSS/JS estático nos 5 arquivos de sistema + um componente React da
+Campanha Livre.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

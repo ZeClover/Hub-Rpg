@@ -1436,6 +1436,13 @@ function painelDerivados(p){
       <button type="button" id="btDescansoCurto" style="flex:1">Descanso Curto (50%)</button>
       <button type="button" id="btDescansoLongo" style="flex:1">Descanso Longo (100%)</button>
     </div>
+
+    <p class="mini" style="margin:14px 0 6px">Condições — sempre visível, não precisa entrar na aba Combate pra ver</p>
+    <div class="condicoes">
+      ${CONDICOES.map(c => `<label>
+        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
   </div>`;
 }
 
@@ -2013,15 +2020,6 @@ function abaPoderes(p){
 
 function abaCombate(p){
   return `<div class="cartao">
-    <h2 style="font-size:18px">Condições</h2>
-    <div class="condicoes">
-      ${CONDICOES.map(c => `<label>
-        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
-        ${c.nome}</label>`).join('')}
-    </div>
-  </div>
-
-  <div class="cartao">
     <h2 style="font-size:18px">Penalidade de Morte</h2>
     <p class="mini" style="margin:6px 0 14px">
       Padrão do sistema: chegar a 0 PV não mata de vez (decisão #64). Mas

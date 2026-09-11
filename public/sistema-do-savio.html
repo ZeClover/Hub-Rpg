@@ -788,6 +788,12 @@ function novoPersonagem(nome){
     atual: {pv:null, pe:null, sanidade:null},
     bonus: {pv:0, pe:0, sanidade:0}, // "outros bônus" que o mestre conceder
     arma: {nome:'', tamanho:'media', notas:''},
+    // Itens gerais, fora do encaixe de arma — cada um: {nome, notas, equipado}.
+    inventario: [],
+    // Ataques prontos: golpes/manobras que o jogador já deixa escritos com
+    // o dano calculado, pra não ter que refazer conta toda vez na mesa —
+    // cada um: {nome, dano, notas}.
+    ataques: [],
     exaustoes: 0,
     // Reações usadas na rodada atual — zera sozinho a cada "⏭ Passar
     // Round". Só Habilidades marcadas como "reação" podem alimentar o
@@ -1266,6 +1272,7 @@ const ABAS = [
   {id:'elemental',   nome:'Elemental'},
   {id:'passivas',    nome:'Passivas'},
   {id:'combate',     nome:'Combate'},
+  {id:'inventario',  nome:'Inventário'},
   {id:'ascensao',    nome:'Ascensão'},
   {id:'notas',       nome:'Notas'},
 ];
@@ -1333,7 +1340,7 @@ function render(){
             ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
           </div>` : '')
         + painelDerivados(p)
-        + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
+        + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, inventario:abaInventario, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : estado.nivelUpResumo ? 'levelup' : `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -1764,6 +1771,14 @@ const AJUDA_ABAS = {
     <strong>Habilidade Máxima</strong> (1x por cena, 25 PE, bônus de
     acerto igual ao Nível, usável até a 0 PE causando Exaustão e
     desmaio). Também libera criar uma <strong>Imersão Espiritual</strong>.</p>`,
+
+  inventario: `
+    <p class="mini">Itens gerais que o personagem carrega — a
+    <strong>Arma</strong> continua na aba Combate (só 1 arma + 1 item
+    especial equipados ao mesmo tempo, exceto Mestre das Armas). Marque
+    <strong>Equipado</strong> no item que está em uso agora; o resto fica
+    guardado, sem efeito mecânico automático — quem decide o bônus de um
+    item especial é a mesa.</p>`,
 
   notas: `
     <p class="mini">Rascunho livre — sem regra nenhuma por trás. Use pra
@@ -2284,6 +2299,25 @@ function abaCombate(p){
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
       especial (exceto Mestre das Armas, que ocupa todos os encaixes).</p>
   </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Ataques prontos</h3>
+    <p class="mini" style="margin-bottom:10px">Golpes ou manobras que você já
+      deixa escritos com o dano calculado, pra não ter que refazer a conta
+      toda vez na mesa — diferente de Habilidade, não gasta PE.</p>
+    ${(p.ataques||[]).length ? p.ataques.map((a,i) => `<div class="linha-lista" style="margin-bottom:10px">
+      <div class="topo">
+        <input id="c-ataque-nome-${i}" data-ataque-nome="${i}" value="${esc(a.nome)}" placeholder="Nome do ataque">
+        <button data-ataque-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <div class="grade g2" style="margin-top:8px">
+        <div><label for="c-ataque-dano-${i}">Dano</label>
+          <input id="c-ataque-dano-${i}" data-ataque-dano="${i}" value="${esc(a.dano||'')}" placeholder="ex: 2d6+FOR"></div>
+        <div><label for="c-ataque-notas-${i}">Notas</label>
+          <input id="c-ataque-notas-${i}" data-ataque-notas="${i}" value="${esc(a.notas||'')}" placeholder="alcance, efeito extra..."></div>
+      </div>
+    </div>`).join('') : `<p class="mini">Nenhum ataque pronto ainda.</p>`}
+    <button id="btnAddAtaque">+ Ataque</button>
+  </div>
   ${p.ascensao.primeira ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Fluxo</h3>
     <p class="mini">Reforça um ataque básico (soco, chute, mordida, arma
@@ -2317,6 +2351,30 @@ function abaCombate(p){
       <tr>${SANIDADE_POR_NIVEL.map(s => `<th>Nível ${s.nivel}</th>`).join('')}</tr>
       <tr>${SANIDADE_POR_NIVEL.map(s => `<td>${s.dado}</td>`).join('')}</tr>
     </table>
+  </div>`;
+}
+
+function abaInventario(p){
+  const itens = p.inventario || [];
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Inventário</h3>
+    <p class="mini" style="margin-bottom:10px">Itens gerais que o personagem
+      carrega. A arma continua na aba Combate — aqui é pro resto (item
+      especial, poções, objetos de cena). Marcar <strong>Equipado</strong>
+      só serve pra lembrar o que está em uso agora; a mesa é quem decide o
+      efeito de um item especial.</p>
+    ${itens.length ? itens.map((it,i) => `<div class="linha-lista" style="margin-bottom:10px">
+      <div class="topo">
+        <input id="c-iteminv-nome-${i}" data-iteminv-nome="${i}" value="${esc(it.nome)}" placeholder="Nome do item">
+        <button data-iteminv-remover="${i}" class="perigo">Remover</button>
+      </div>
+      <label for="c-iteminv-notas-${i}" style="margin-top:8px">Notas</label>
+      <textarea id="c-iteminv-notas-${i}" data-iteminv-notas="${i}" rows="2">${esc(it.notas||'')}</textarea>
+      <label class="checagem" style="margin-top:8px">
+        <input type="checkbox" data-iteminv-equipado="${i}" ${it.equipado?'checked':''}> Equipado
+      </label>
+    </div>`).join('') : `<p class="mini">Nenhum item ainda.</p>`}
+    <button id="btnAddItemInventario">+ Item</button>
   </div>`;
 }
 
@@ -2555,6 +2613,36 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-check]').forEach(el =>
     el.onchange = () => mudar(p => p[el.dataset.check] = el.checked));
+
+  // Inventário (itens gerais, fora do encaixe de arma)
+  const btnAddItemInventario = app.querySelector('#btnAddItemInventario');
+  if(btnAddItemInventario) btnAddItemInventario.onclick = () => mudar(p => {
+    if(!p.inventario) p.inventario = [];
+    p.inventario.push({nome:'', notas:'', equipado:false});
+  });
+  app.querySelectorAll('[data-iteminv-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvNome)].nome = el.value; }, el));
+  app.querySelectorAll('[data-iteminv-notas]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvNotas)].notas = el.value; }, el));
+  app.querySelectorAll('[data-iteminv-equipado]').forEach(el =>
+    el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvEquipado)].equipado = el.checked; }));
+  app.querySelectorAll('[data-iteminv-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.inventario.splice(Number(b.dataset.iteminvRemover), 1); }));
+
+  // Ataques prontos (Combate)
+  const btnAddAtaque = app.querySelector('#btnAddAtaque');
+  if(btnAddAtaque) btnAddAtaque.onclick = () => mudar(p => {
+    if(!p.ataques) p.ataques = [];
+    p.ataques.push({nome:'', dano:'', notas:''});
+  });
+  app.querySelectorAll('[data-ataque-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.ataques[Number(el.dataset.ataqueNome)].nome = el.value; }, el));
+  app.querySelectorAll('[data-ataque-dano]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.ataques[Number(el.dataset.ataqueDano)].dano = el.value; }, el));
+  app.querySelectorAll('[data-ataque-notas]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.ataques[Number(el.dataset.ataqueNotas)].notas = el.value; }, el));
+  app.querySelectorAll('[data-ataque-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.ataques.splice(Number(b.dataset.ataqueRemover), 1); }));
 
   // Ascensão
   app.querySelectorAll('[data-asc-check]').forEach(el =>

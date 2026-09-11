@@ -590,8 +590,23 @@ function CardRecurso({
   onRemover: () => void;
 }) {
   const [confirmandoRemover, setConfirmandoRemover] = useState(false);
+  const [variacao, setVariacao] = useState("");
   const temMaximo = recurso.maximo !== null;
   const fracao = temMaximo && recurso.maximo! > 0 ? Math.max(0, Math.min(1, recurso.atual / recurso.maximo!)) : null;
+
+  function ajustar(delta: number) {
+    let novo = recurso.atual + delta;
+    if (recurso.maximo !== null) novo = Math.min(recurso.maximo, novo);
+    if (recurso.minimo !== null) novo = Math.max(recurso.minimo, novo);
+    onAtualizar("atual", novo);
+  }
+
+  function aplicarVariacao(sinal: 1 | -1) {
+    const valor = Math.max(0, Number(variacao) || 0);
+    if (valor === 0) return;
+    ajustar(sinal * valor);
+    setVariacao("");
+  }
 
   return (
     <div className="rounded-lg border border-borda bg-superficie p-4">
@@ -635,13 +650,35 @@ function CardRecurso({
         </label>
         <label className="block text-xs text-texto-suave">
           Atual
-          <input
-            type="number"
-            value={recurso.atual}
-            disabled={somenteLeitura}
-            onChange={(e) => onAtualizar("atual", Number(e.target.value) || 0)}
-            className="mt-1 w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm font-medium text-texto disabled:opacity-60"
-          />
+          <div className="mt-1 flex items-stretch gap-1">
+            <input
+              type="number"
+              value={recurso.atual}
+              disabled={somenteLeitura}
+              onChange={(e) => onAtualizar("atual", Number(e.target.value) || 0)}
+              className="w-full min-w-0 rounded border border-borda bg-fundo px-2 py-1.5 text-sm font-medium text-texto disabled:opacity-60"
+            />
+            {!somenteLeitura && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => ajustar(-1)}
+                  aria-label={`Diminuir ${nome} em 1`}
+                  className="shrink-0 rounded border border-borda px-2 text-sm text-texto-suave hover:text-texto"
+                >
+                  −1
+                </button>
+                <button
+                  type="button"
+                  onClick={() => ajustar(1)}
+                  aria-label={`Aumentar ${nome} em 1`}
+                  className="shrink-0 rounded border border-borda px-2 text-sm text-texto-suave hover:text-texto"
+                >
+                  +1
+                </button>
+              </>
+            )}
+          </div>
         </label>
         <label className="block text-xs text-texto-suave">
           Máximo
@@ -655,6 +692,34 @@ function CardRecurso({
           />
         </label>
       </div>
+
+      {!somenteLeitura && (
+        <div className="mt-2 flex items-center gap-1.5">
+          <input
+            type="number"
+            min={0}
+            value={variacao}
+            onChange={(e) => setVariacao(e.target.value)}
+            placeholder="quanto?"
+            aria-label={`Variação rápida de ${nome}`}
+            className="w-20 min-w-0 rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto placeholder:text-texto-suave"
+          />
+          <button
+            type="button"
+            onClick={() => aplicarVariacao(-1)}
+            className="rounded border border-borda px-2 py-1 text-xs text-texto-suave hover:text-texto"
+          >
+            Gastar
+          </button>
+          <button
+            type="button"
+            onClick={() => aplicarVariacao(1)}
+            className="rounded border border-borda px-2 py-1 text-xs text-texto-suave hover:text-texto"
+          >
+            Recuperar
+          </button>
+        </div>
+      )}
 
       <div className="mt-3">
         <p className="text-sm text-texto-suave">{temMaximo ? `${recurso.atual} / ${recurso.maximo}` : `${recurso.atual}`}</p>

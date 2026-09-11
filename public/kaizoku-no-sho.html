@@ -400,6 +400,25 @@ const ATRIBUTOS_DEF = [
   {id:'vontade', nome:'Vontade', abrev:'VON'},
 ];
 
+// Condições de status citadas nos próprios textos de poderes/desvantagens do
+// sistema (Chute de Abertura, Doença, Insanidade etc.) — não inventa mecânica
+// nova, só junta num painel sempre visível o que já existia espalhado.
+const CONDICOES = [
+  {id:'caido',      nome:'Caído'},
+  {id:'lento',      nome:'Lento'},
+  {id:'tonto',      nome:'Tonto'},
+  {id:'furioso',    nome:'Furioso'},
+  {id:'queimando',  nome:'Queimando'},
+  {id:'acelerado',  nome:'Acelerado'},
+  {id:'alado',      nome:'Alado'},
+  {id:'assustado',  nome:'Assustado'},
+  {id:'cego',       nome:'Cego'},
+  {id:'surdo',      nome:'Surdo'},
+  {id:'ofuscado',   nome:'Ofuscado'},
+  {id:'inconsciente', nome:'Inconsciente'},
+  {id:'debilitado-mental', nome:'Debilitado mentalmente'},
+];
+
 // Perícias: atributo regente e tags confirmadas individualmente contra o
 // cabeçalho de cada perícia no Livro Base (pág. 27-51). O parágrafo-resumo
 // do livro NÃO era exaustivo sobre treino/armadura — cada perícia foi
@@ -4011,6 +4030,9 @@ function novoPersonagem(nome){
     // do efeito) — o resto (atributo, bônus de Combate, Dificuldade) vem
     // das mesmas fórmulas já usadas nas abas Combate/Danos/Recursos.
     ataquesProntos: [],
+    // Condições de status ativas agora (Caído, Lento, Tonto...) — estado de
+    // jogo, não de construção, igual togglesAtivos.
+    condicoes: [],
     temaCor: TEMA_PADRAO,
   };
   ATRIBUTOS_DEF.forEach(a => p.atributos[a.id] = 0);
@@ -4081,6 +4103,7 @@ function migrarPersonagem(p){
   if(!Array.isArray(p.aptidoesBase)) p.aptidoesBase = [];
   if(!p.escolhasAptidao || typeof p.escolhasAptidao !== 'object') p.escolhasAptidao = {};
   if(!Array.isArray(p.ataquesProntos)) p.ataquesProntos = [];
+  if(!Array.isArray(p.condicoes)) p.condicoes = [];
   return p;
 }
 
@@ -4967,7 +4990,7 @@ function dificuldadePoder(p, nivelEfeito){
    de maior absorção (não dá pra vestir duas). */
 function absorcaoEquipada(p){
   const armaduras = (p.inventario.itens||[])
-    .filter(it => it.tipo === 'armadura')
+    .filter(it => it.tipo === 'armadura' && it.equipado !== false)
     .map(it => catalogoItem(it))
     .filter(a => a && typeof a.absorcao === 'number');
   if(!armaduras.length) return null;
@@ -5066,6 +5089,35 @@ function bindBonusMecanicos(p){
       onFieldChange(); renderPanel();
     });
   }
+}
+
+// Painel sempre visível (fora de qualquer aba) com as condições de status
+// que o próprio texto do sistema já cita (Caído, Lento, Tonto...) — antes
+// não existia lugar nenhum pra marcar "meu personagem está sofrendo isso
+// agora", só a descrição narrativa dentro dos poderes que aplicam.
+function painelCondicoes(p){
+  return `<div class="panel">
+    <h2>Condições</h2>
+    <p class="panel-note">Sempre visível, não precisa trocar de aba pra ver — marque o que está valendo agora.</p>
+    <div class="field-row">
+      ${CONDICOES.map(c => `<label style="display:flex;align-items:center;gap:6px;font-weight:normal">
+        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
+        ${escapeHtml(c.nome)}</label>`).join('')}
+    </div>
+  </div>`;
+}
+function bindCondicoes(p){
+  document.querySelectorAll('[data-condicao]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const id = cb.dataset.condicao;
+      if(cb.checked){
+        if(!p.condicoes.includes(id)) p.condicoes.push(id);
+      } else {
+        p.condicoes = p.condicoes.filter(x=>x!==id);
+      }
+      onFieldChange();
+    });
+  });
 }
 
 // Sobrecarga (Fase 3): capacidade de compartimentos é sempre calculada com
@@ -5620,6 +5672,7 @@ function renderAll(){
   root.innerHTML = `
     ${falhouAoSalvarHub ? `<div class="info-box erro"><strong>Não consegui salvar no Hub.</strong> Confira sua internet — se cair, exporte para não perder o que você preencheu.</div>` : ''}
     ${somenteLeitura ? `<div class="info-box leitura">Modo leitura — você está vendo a ficha de <strong>${escapeHtml(p.perfil.nome)}</strong>. Só quem é dono edita.</div>` : ''}
+    ${painelCondicoes(p)}
     <div class="tab-row" id="tabRow"></div>
     <div class="field-row" style="justify-content:flex-end;margin:6px 0 10px">
       <button type="button" class="btn" id="btnAjudaAba">${state.mostrarAjuda ? 'Fechar ajuda' : '❓ Ajuda'}</button>
@@ -5634,6 +5687,7 @@ function renderAll(){
   renderTabs();
   renderPanel();
   renderFichaCard();
+  bindCondicoes(p);
   const btnAjudaAba = document.getElementById('btnAjudaAba');
   if(btnAjudaAba) btnAjudaAba.addEventListener('click', ()=>{ state.mostrarAjuda = !state.mostrarAjuda; renderAll(); });
 
@@ -7449,9 +7503,9 @@ function panelInventario(p){
 
       <h3>Carregando</h3>
       <table class="data">
-        <thead><tr><th>Item</th><th class="num">Qtd</th><th class="num">Compart.</th><th class="num">Custo</th><th>Detalhes</th><th></th></tr></thead>
+        <thead><tr><th>Item</th><th class="num">Qtd</th><th class="num">Compart.</th><th class="num">Custo</th><th>Detalhes</th><th></th><th></th></tr></thead>
         <tbody>
-          ${p.inventario.itens.map((it, idx) => renderInventarioLinha(it, idx)).join('') || '<tr><td colspan="6" style="padding:10px; color:var(--parchment-dim);">Nada carregado ainda.</td></tr>'}
+          ${p.inventario.itens.map((it, idx) => renderInventarioLinha(it, idx)).join('') || '<tr><td colspan="7" style="padding:10px; color:var(--parchment-dim);">Nada carregado ainda.</td></tr>'}
         </tbody>
       </table>
     </div>
@@ -7601,6 +7655,8 @@ function renderInventarioLinha(it, idx){
     detalhes = cat ? [cat.tipoDano, (cat.tracos||[]).join(', ')].filter(Boolean).join(' · ') : '(fora do catálogo)';
     custo = cat && typeof cat.custo === 'number' ? cat.custo * (it.quantidade||1) : 0;
   }
+  const equipavel = it.tipo === 'armadura';
+  const equipado = it.equipado !== false;
   return `
     <tr>
       <td>${escapeHtml(nome)} <span class="pill">${it.tipo}</span></td>
@@ -7608,6 +7664,7 @@ function renderInventarioLinha(it, idx){
       <td class="num">${comp}</td>
       <td class="num">${fmtBellyInv(custo)}</td>
       <td style="font-size:12px;">${detalhes}</td>
+      <td>${equipavel ? `<label style="display:flex;align-items:center;gap:5px;font-weight:normal;white-space:nowrap"><input type="checkbox" data-invequipado="${idx}" ${equipado?'checked':''}> Equipado</label>` : ''}</td>
       <td><button class="btn danger" type="button" data-invdel="${idx}">Remover</button></td>
     </tr>
   `;
@@ -7696,6 +7753,13 @@ function bindInventario(p){
       const idx = Number(inp.dataset.invqtd);
       p.inventario.itens[idx].quantidade = Math.max(1, Number(inp.value)||1);
       onFieldChange(); renderPanel();
+    });
+  });
+  document.querySelectorAll('[data-invequipado]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const idx = Number(cb.dataset.invequipado);
+      p.inventario.itens[idx].equipado = cb.checked;
+      onFieldChange(); renderPanel(); renderFichaCard();
     });
   });
   document.querySelectorAll('[data-invdel]').forEach(btn=>{

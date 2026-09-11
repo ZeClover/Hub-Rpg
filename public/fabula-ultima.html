@@ -2444,6 +2444,20 @@ function painelDerivados(p){
       <div class="val">${nivelTotal(p)}</div>
       <div class="obs">${p.atual.pi ?? piMaximo(p)}/${piMaximo(p)} inventário</div>
     </div>
+  </div>
+  <div class="cartao" style="margin-bottom:14px">
+    <h2 style="font-size:18px">Condições</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Cada condição reduz um passo de dado. Elas se acumulam, e nenhum
+      Atributo desce abaixo de d6.
+    </p>
+    <div class="condicoes">
+      ${CONDICOES.map(c => `<label>
+        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
+        ${c.nome} <span class="mini">(${c.reduz.map(r =>
+          ATRIBUTOS.find(a=>a.id===r).abrev).join(' e ')})</span>
+      </label>`).join('')}
+    </div>
   </div>`;
 }
 
@@ -3059,6 +3073,25 @@ function abaRecursos(p){
       <button id="btAplicarDano">Aplicar em PV</button>
       <span class="mini" id="dano-previa">${resultadoDeDano(p, 0, TIPOS_DANO[0].id).texto}</span>
     </div>
+
+    <h2 style="font-size:18px;margin-top:22px">Gastar/recuperar PM e PI</h2>
+    <p class="mini" style="margin:6px 0 12px">
+      Digite só o valor gasto ou recuperado — a ficha soma/subtrai sozinha
+      (o dano de PV, acima, já tinha isso; PM e PI ainda pediam o total
+      final antes desta fatia).
+    </p>
+    <div class="grade g4">
+      <div><label for="c-gastar-pm">Gastar PM</label><input id="c-gastar-pm" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btGastarPm" style="width:100%">Gastar</button></div>
+      <div><label for="c-recuperar-pm">Recuperar PM</label><input id="c-recuperar-pm" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btRecuperarPm" style="width:100%">Recuperar</button></div>
+    </div>
+    <div class="grade g4" style="margin-top:8px">
+      <div><label for="c-gastar-pi">Gastar PI</label><input id="c-gastar-pi" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btGastarPi" style="width:100%">Gastar</button></div>
+      <div><label for="c-recuperar-pi">Recuperar PI</label><input id="c-recuperar-pi" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btRecuperarPi" style="width:100%">Recuperar</button></div>
+    </div>
   </div>
 
   <div class="cartao">
@@ -3073,21 +3106,6 @@ function abaRecursos(p){
         <select id="c-af-${t.id}" data-afinidade="${t.id}">
           ${AFINIDADES_NIVEIS.map(n => `<option value="${n.id}" ${((p.afinidades||{})[t.id]||'normal')===n.id?'selected':''}>${n.nome}</option>`).join('')}
         </select></div>`).join('')}
-    </div>
-  </div>
-
-  <div class="cartao">
-    <h2 style="font-size:18px">Condições</h2>
-    <p class="mini" style="margin:6px 0 14px">
-      Cada condição reduz um passo de dado. Elas se acumulam, e nenhum
-      Atributo desce abaixo de d6.
-    </p>
-    <div class="condicoes">
-      ${CONDICOES.map(c => `<label>
-        <input type="checkbox" data-condicao="${c.id}" ${p.condicoes.includes(c.id)?'checked':''}>
-        ${c.nome} <span class="mini">(${c.reduz.map(r =>
-          ATRIBUTOS.find(a=>a.id===r).abrev).join(' e ')})</span>
-      </label>`).join('')}
     </div>
   </div>
 
@@ -4077,6 +4095,24 @@ function ligarEventos(){
     const atual0 = p.atual.pv ?? pvMaximo(p);
     p.atual.pv = Math.max(0, Math.min(pvMaximo(p), atual0 - r.pv));
   });
+
+  // Gastar/recuperar PM e PI (decisão #117 — "ficha padrão"): PV já tinha
+  // dano rápido via Afinidades; PM/PI só tinham o input puro (data-atualrec,
+  // valor final). Mesmo padrão de dano/cura das outras fichas, sem afinidade
+  // nenhuma envolvida (PM/PI não sofrem "tipo de dano").
+  const gastarRecurso = (chave, maximo, campo, delta) => mudar(p => {
+    const valor = Math.max(0, Number(document.getElementById(campo).value) || 0);
+    const atual0 = p.atual[chave] ?? maximo(p);
+    p.atual[chave] = Math.max(0, Math.min(maximo(p), atual0 + delta*valor));
+  });
+  const btGastarPm = document.getElementById('btGastarPm');
+  if(btGastarPm) btGastarPm.onclick = () => gastarRecurso('pm', pmMaximo, 'c-gastar-pm', -1);
+  const btRecuperarPm = document.getElementById('btRecuperarPm');
+  if(btRecuperarPm) btRecuperarPm.onclick = () => gastarRecurso('pm', pmMaximo, 'c-recuperar-pm', 1);
+  const btGastarPi = document.getElementById('btGastarPi');
+  if(btGastarPi) btGastarPi.onclick = () => gastarRecurso('pi', piMaximo, 'c-gastar-pi', -1);
+  const btRecuperarPi = document.getElementById('btRecuperarPi');
+  if(btRecuperarPi) btRecuperarPi.onclick = () => gastarRecurso('pi', piMaximo, 'c-recuperar-pi', 1);
 
   app.querySelectorAll('[data-condicao]').forEach(el =>
     el.onchange = () => mudar(p => {

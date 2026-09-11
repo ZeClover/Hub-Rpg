@@ -12157,6 +12157,8 @@ function pvMaximoSugerido(p){
 }
 function pvMaximo(p){ return p.atual.pvMaximoManual ?? pvMaximoSugerido(p); }
 function pvAtual(p){ return Math.max(0, Math.min(pvMaximo(p), p.atual.pv ?? pvMaximo(p))); }
+function dadosDeVidaTotal(p){ return nivel(p); }
+function dadosDeVidaDisponiveis(p){ return Math.max(0, dadosDeVidaTotal(p) - (p.atual.dadosDeVidaGastos||0)); }
 
 function ehProficienteArma(p, armaObj){
   const c = classe(p.perfil.classeId);
@@ -12522,6 +12524,15 @@ function painelDerivados(p){
       <div class="val">${nivel(p)}</div>
       <div class="obs">bônus prof. ${fmtMod(prof(p))}</div>
     </div>
+  </div>
+  <div class="cartao" style="margin-bottom:14px">
+    <h2 style="font-size:16px;margin-bottom:12px">Condições</h2>
+    <div class="condicoes">
+      ${CONDICOES.map(cnd => `<label title="${esc(cnd.efeito)}">
+        <input type="checkbox" data-condicao="${esc(cnd.nome)}" ${p.condicoesAtivas.includes(cnd.nome)?'checked':''}>
+        ${esc(cnd.nome)}
+      </label>`).join('')}
+    </div>
   </div>`;
 }
 
@@ -12778,6 +12789,32 @@ function abaStatus(p){
         <button id="btCaRecalcular" style="margin-top:6px;width:100%">Usar calculada</button></div>
     </div>
     <p class="mini" style="margin-top:8px">PV sugerido: ${esc(c ? c.pvNivel1 : '')}${c ? ` no 1º nível, depois ${esc(c.pvNivelSeguinte)}` : ''}. "Recalcular" usa a média oficial do dado de vida — pra rolar de verdade, ajuste o número à mão.</p>
+
+    <p class="mini" style="margin:14px 0 6px">Dano e cura — digite só o valor sofrido/curado, a ficha calcula o total sozinha</p>
+    <div class="grade g4">
+      <div><label for="c-dano-pv">Dano recebido</label><input id="c-dano-pv" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btAplicarDanoPv" style="width:100%">Aplicar dano</button></div>
+      <div><label for="c-cura-pv">Curar</label><input id="c-cura-pv" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btCurarPv" style="width:100%">Curar</button></div>
+    </div>
+    <p class="mini" style="margin:6px 0">Dano bate primeiro no PV Temporário, se houver — igual às regras oficiais.</p>
+
+    <h3 style="font-size:14px;margin-top:16px">Descanso</h3>
+    <p class="mini" style="margin:4px 0 10px">
+      Dados de Vida disponíveis: <strong>${dadosDeVidaDisponiveis(p)}/${dadosDeVidaTotal(p)}</strong> (${esc(c ? c.dadoDeVida : 'd8')}, mod. Constituição ${fmtMod(modFinal(p,'constituicao'))})
+      <button type="button" id="btDadoVidaMenos" style="margin-left:8px" ${dadosDeVidaDisponiveis(p)<=0?'disabled':''}>-1</button>
+      <button type="button" id="btDadoVidaMais" ${dadosDeVidaDisponiveis(p)>=dadosDeVidaTotal(p)?'disabled':''}>+1</button>
+    </p>
+    <div class="grade g4">
+      <div><label for="c-descanso-qtd">Dados gastos agora</label><input id="c-descanso-qtd" type="number" min="1" max="${dadosDeVidaDisponiveis(p)}" value="${Math.min(1,dadosDeVidaDisponiveis(p))}"></div>
+      <div><label for="c-descanso-soma">Soma rolada neles (${esc(c ? c.dadoDeVida : 'd8')}, role na mesa)</label><input id="c-descanso-soma" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button id="btDescansoCurto" style="width:100%" ${dadosDeVidaDisponiveis(p)<=0?'disabled':''}>Descanso Curto</button></div>
+      <div class="linha" style="align-items:flex-end"><button id="btDescansoLongo" class="destaque" style="width:100%">Descanso Longo</button></div>
+    </div>
+    <p class="mini" style="margin-top:6px">
+      <strong>Descanso Curto</strong> (regra oficial): gaste quantos Dados de Vida quiser, role-os na mesa (${esc(c ? c.dadoDeVida : 'd8')} cada), some o resultado no campo acima — a ficha soma o modificador de Constituição de cada dado e aplica em PV.
+      <strong>Descanso Longo</strong>: enche o PV e devolve metade dos Dados de Vida totais (arredondado pra cima, no mínimo 1) — não mexe no PV Temporário.
+    </p>
   </div>
 
   ${!ant ? '' : `<div class="cartao">
@@ -12874,16 +12911,6 @@ function abaCombate(p){
         <input id="c-morte-sucessos" type="number" min="0" max="3" data-morte="sucessos" value="${p.morte.sucessos}"></div>
       <div><label for="c-morte-falhas">Fracassos</label>
         <input id="c-morte-falhas" type="number" min="0" max="3" data-morte="falhas" value="${p.morte.falhas}"></div>
-    </div>
-  </div>
-
-  <div class="cartao">
-    <h2 style="font-size:16px;margin-bottom:12px">Condições</h2>
-    <div class="condicoes">
-      ${CONDICOES.map(cnd => `<label title="${esc(cnd.efeito)}">
-        <input type="checkbox" data-condicao="${esc(cnd.nome)}" ${p.condicoesAtivas.includes(cnd.nome)?'checked':''}>
-        ${esc(cnd.nome)}
-      </label>`).join('')}
     </div>
   </div>
 
@@ -12987,6 +13014,9 @@ function abaEquipamento(p){
     ${p.equipamento.mochila.map(item => `<div class="linha" style="margin-bottom:8px">
       <input data-item-campo="${item.id}|nome" value="${esc(item.nome)}" placeholder="item" style="flex:3">
       <input data-item-campo="${item.id}|quantidade" type="number" min="0" value="${item.quantidade}" style="flex:1">
+      <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:normal;white-space:nowrap">
+        <input type="checkbox" data-item-equipado="${item.id}" style="width:auto" ${item.equipado?'checked':''}> Equipado
+      </label>
       <button data-item-remover="${item.id}" class="perigo">Remover</button>
     </div>`).join('')}
     <button id="btAddItem" class="destaque">+ Adicionar item</button>
@@ -13134,6 +13164,47 @@ function ligarEventos(){
   const numPvTemp = app.querySelector('#c-pv-temp');
   if(numPvTemp) numPvTemp.onchange = () => mudar(p => p.atual.pvTemp = Math.max(0, Number(numPvTemp.value) || 0));
 
+  const btAplicarDanoPv = app.querySelector('#btAplicarDanoPv');
+  if(btAplicarDanoPv) btAplicarDanoPv.onclick = () => mudar(p => {
+    const campo = app.querySelector('#c-dano-pv');
+    let dano = Math.max(0, Number(campo.value) || 0);
+    const temp = p.atual.pvTemp || 0;
+    const absorvido = Math.min(temp, dano);
+    p.atual.pvTemp = temp - absorvido;
+    dano -= absorvido;
+    p.atual.pv = Math.max(0, pvAtual(p) - dano);
+  });
+  const btCurarPv = app.querySelector('#btCurarPv');
+  if(btCurarPv) btCurarPv.onclick = () => mudar(p => {
+    const campo = app.querySelector('#c-cura-pv');
+    const cura = Math.max(0, Number(campo.value) || 0);
+    p.atual.pv = Math.min(pvMaximo(p), pvAtual(p) + cura);
+  });
+
+  const btDadoVidaMenos = app.querySelector('#btDadoVidaMenos');
+  if(btDadoVidaMenos) btDadoVidaMenos.onclick = () => mudar(p => {
+    p.atual.dadosDeVidaGastos = Math.min(dadosDeVidaTotal(p), (p.atual.dadosDeVidaGastos||0) + 1);
+  });
+  const btDadoVidaMais = app.querySelector('#btDadoVidaMais');
+  if(btDadoVidaMais) btDadoVidaMais.onclick = () => mudar(p => {
+    p.atual.dadosDeVidaGastos = Math.max(0, (p.atual.dadosDeVidaGastos||0) - 1);
+  });
+  const btDescansoCurto = app.querySelector('#btDescansoCurto');
+  if(btDescansoCurto) btDescansoCurto.onclick = () => mudar(p => {
+    const qtd = Math.max(0, Math.min(dadosDeVidaDisponiveis(p), Number(app.querySelector('#c-descanso-qtd').value) || 0));
+    if(qtd <= 0) return;
+    const soma = Math.max(0, Number(app.querySelector('#c-descanso-soma').value) || 0);
+    const cura = Math.max(0, soma + qtd * modFinal(p, 'constituicao'));
+    p.atual.pv = Math.min(pvMaximo(p), pvAtual(p) + cura);
+    p.atual.dadosDeVidaGastos = Math.min(dadosDeVidaTotal(p), (p.atual.dadosDeVidaGastos||0) + qtd);
+  });
+  const btDescansoLongo = app.querySelector('#btDescansoLongo');
+  if(btDescansoLongo) btDescansoLongo.onclick = () => mudar(p => {
+    p.atual.pv = pvMaximo(p);
+    const recupera = Math.max(1, Math.ceil(dadosDeVidaTotal(p) / 2));
+    p.atual.dadosDeVidaGastos = Math.max(0, (p.atual.dadosDeVidaGastos||0) - recupera);
+  });
+
   const btCaRecalcular = app.querySelector('#btCaRecalcular');
   if(btCaRecalcular) btCaRecalcular.onclick = () => mudar(p => { p.atual.caManual = null; });
   const numCa = app.querySelector('#c-ca-manual');
@@ -13155,13 +13226,18 @@ function ligarEventos(){
     b.onclick = () => mudar(p => { p.equipamento.armasEquipadas = p.equipamento.armasEquipadas.filter(a => a.id !== b.dataset.armaRemover); }));
 
   const btAddItem = app.querySelector('#btAddItem');
-  if(btAddItem) btAddItem.onclick = () => mudar(p => p.equipamento.mochila.push({id: uid(), nome:'', quantidade:1}));
+  if(btAddItem) btAddItem.onclick = () => mudar(p => p.equipamento.mochila.push({id: uid(), nome:'', quantidade:1, equipado:false}));
   app.querySelectorAll('[data-item-campo]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => {
       const [id, chave] = el.dataset.itemCampo.split('|');
       const item = p.equipamento.mochila.find(i => i.id === id);
       if(item) item[chave] = chave === 'quantidade' ? (Number(el.value)||0) : el.value;
     }, el));
+  app.querySelectorAll('[data-item-equipado]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const item = p.equipamento.mochila.find(i => i.id === el.dataset.itemEquipado);
+      if(item) item.equipado = el.checked;
+    }));
   app.querySelectorAll('[data-item-remover]').forEach(b =>
     b.onclick = () => mudar(p => { p.equipamento.mochila = p.equipamento.mochila.filter(i => i.id !== b.dataset.itemRemover); }));
 

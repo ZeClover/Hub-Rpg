@@ -3531,6 +3531,34 @@ function painelDerivados(p){
       <div class="val">${peDisponivel(p)}</div>
       <div class="obs">${peGanho(p)} ganhos, ${peGastoTotal(p)} gastos</div>
     </div>
+  </div>
+  <div class="cartao" style="margin-bottom:14px">
+    <h2 style="font-size:18px">Condições</h2>
+    <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
+    <div class="condicoes">
+      ${CONDICOES_EIXO.map(c => `<label title="${c.efeito}">
+        <input type="checkbox" data-condicao-eixo="${c.id}" ${p.condicoesEixo.includes(c.id)?'checked':''}>
+        ${c.nome} <span class="mini">(${c.eixo})</span></label>`).join('')}
+    </div>
+    <p class="mini" style="margin:14px 0 6px">Graves</p>
+    <div class="condicoes">
+      ${CONDICOES_GRAVES.map(c => `<label title="${c.efeito}">
+        <input type="checkbox" data-condicao-grave="${c.id}" ${p.condicoesGraves.includes(c.id)?'checked':''}>
+        ${c.nome}</label>`).join('')}
+    </div>
+  </div>
+  <div class="cartao" style="margin-bottom:14px">
+    <h2 style="font-size:18px">Consequências</h2>
+    <p class="mini" style="margin:6px 0 14px">Três trilhas de 0 a 3 — lesão, desgaste e instabilidade que descanso sozinho não apaga rápido.</p>
+    <div class="grade g3">
+      ${CONSEQUENCIAS.map(c => `<div>
+        <label>${c.nome}</label>
+        <div class="trilha">
+          ${[0,1,2,3].map(n => `<button data-consequencia="${c.id}|${n}" class="${(p.consequencias[c.id]||0)>=n && n>0?'cheio':''}">${n}</button>`).join('')}
+        </div>
+        <p class="mini" style="margin-top:6px">${c.sobre}</p>
+      </div>`).join('')}
+    </div>
   </div>`;
 }
 
@@ -5291,36 +5319,6 @@ function blocoFormulasPoderesArea(p){
 
 function abaCombate(p){
   return painelVida(p) + blocoFormulasPoderesArea(p) + `<div class="cartao">
-    <h2 style="font-size:18px">Condições</h2>
-    <p class="mini" style="margin:6px 0 14px">No máximo uma por eixo — reaplicar igual renova, mais forte substitui, mais fraca não acumula.</p>
-    <div class="condicoes">
-      ${CONDICOES_EIXO.map(c => `<label title="${c.efeito}">
-        <input type="checkbox" data-condicao-eixo="${c.id}" ${p.condicoesEixo.includes(c.id)?'checked':''}>
-        ${c.nome} <span class="mini">(${c.eixo})</span></label>`).join('')}
-    </div>
-    <p class="mini" style="margin:14px 0 6px">Graves</p>
-    <div class="condicoes">
-      ${CONDICOES_GRAVES.map(c => `<label title="${c.efeito}">
-        <input type="checkbox" data-condicao-grave="${c.id}" ${p.condicoesGraves.includes(c.id)?'checked':''}>
-        ${c.nome}</label>`).join('')}
-    </div>
-  </div>
-
-  <div class="cartao">
-    <h2 style="font-size:18px">Consequências</h2>
-    <p class="mini" style="margin:6px 0 14px">Três trilhas de 0 a 3 — lesão, desgaste e instabilidade que descanso sozinho não apaga rápido.</p>
-    <div class="grade g3">
-      ${CONSEQUENCIAS.map(c => `<div>
-        <label>${c.nome}</label>
-        <div class="trilha">
-          ${[0,1,2,3].map(n => `<button data-consequencia="${c.id}|${n}" class="${(p.consequencias[c.id]||0)>=n && n>0?'cheio':''}">${n}</button>`).join('')}
-        </div>
-        <p class="mini" style="margin-top:6px">${c.sobre}</p>
-      </div>`).join('')}
-    </div>
-  </div>
-
-  <div class="cartao">
     <h2 style="font-size:18px">Vida zero e Risco</h2>
     <p class="mini" style="margin:6px 0 14px">
       Em 0 Vida: Caído, 1 Risco. Fim de turno sem estabilizar: +1. Golpe
