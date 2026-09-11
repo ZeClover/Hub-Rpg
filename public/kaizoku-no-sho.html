@@ -6328,28 +6328,70 @@ function bindPericias(p){
 }
 
 /* ---------- Recursos ---------- */
+// Ajuste rápido de Vitalidade/Estamina (decisão #117 — "ficha padrão"):
+// antes desta decisão, o único jeito de marcar dano era o campo "perdida",
+// que pede o TOTAL acumulado — pra cada golpe novo, o jogador precisava
+// lembrar quanto já tinha perdido antes e somar de cabeça. Os campos de
+// dano/cura abaixo resolvem isso: digita só o valor do golpe/cura, a ficha
+// soma/subtrai sozinha. O campo "perdida" continua existindo pra ajuste
+// fino/correção direta, mas deixou de ser o jeito principal de usar.
 function panelRecursos(p){
   const vitMax = vitalidadeMax(p), estMax = estaminaMax(p);
+  const vitAtual = vitMax - p.recursos.vitalidadePerdida;
+  const estAtual = estMax - p.recursos.estaminaPerdida;
   return `
     <div class="panel">
       <h2>Recursos</h2>
       <p class="panel-note">Vitalidade = mod. de espécie + 5×Vigor + 5×NC. Estamina = 10 + 3×Vontade. Iniciativa = 1d8 + Agilidade + Prontidão (aqui mostramos só a parte fixa; o dado é rolado na mesa). Reação de Esquiva = 9 + Esquiva. Deslocamento = 10 + metade da Agilidade (arredondado pra cima), mínimo 10m.</p>
       <div class="field-row">
-        <div class="field">
-          <label>Vitalidade perdida</label>
-          <input type="number" id="r_vitPerdida" min="0" value="${p.recursos.vitalidadePerdida}">
-        </div>
         <div class="field"><label>Vitalidade máxima (calculada)</label><input type="text" disabled value="${vitMax}"></div>
-        <div class="field"><label>Vitalidade atual</label><input type="text" disabled value="${vitMax - p.recursos.vitalidadePerdida}"></div>
+        <div class="field"><label>Vitalidade atual</label><input type="text" disabled value="${vitAtual}"></div>
+        <div class="field" style="align-self:flex-end">
+          <div class="field-row" style="gap:6px">
+            <button type="button" class="btn" data-vit-ajuste="-1" ${vitAtual<=0?'disabled':''} title="Corrigir -1">-1</button>
+            <button type="button" class="btn" data-vit-ajuste="1" ${vitAtual>=vitMax?'disabled':''} title="Corrigir +1">+1</button>
+          </div>
+        </div>
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>Estamina perdida</label>
-          <input type="number" id="r_estPerdida" min="0" value="${p.recursos.estaminaPerdida}">
-        </div>
-        <div class="field"><label>Estamina máxima (calculada)</label><input type="text" disabled value="${estMax}"></div>
-        <div class="field"><label>Estamina atual</label><input type="text" disabled value="${estMax - p.recursos.estaminaPerdida}"></div>
+        <div class="field"><label>Dano recebido</label><input type="number" id="r_vitDano" min="0" value="0"></div>
+        <div class="field" style="align-self:flex-end"><button type="button" class="btn" id="r_btVitDano" style="width:100%">Aplicar dano</button></div>
+        <div class="field"><label>Curar</label><input type="number" id="r_vitCura" min="0" value="0"></div>
+        <div class="field" style="align-self:flex-end"><button type="button" class="btn" id="r_btVitCura" style="width:100%">Curar</button></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Estamina máxima (calculada)</label><input type="text" disabled value="${estMax}"></div>
+        <div class="field"><label>Estamina atual</label><input type="text" disabled value="${estAtual}"></div>
+        <div class="field" style="align-self:flex-end">
+          <div class="field-row" style="gap:6px">
+            <button type="button" class="btn" data-est-ajuste="-1" ${estAtual<=0?'disabled':''} title="Corrigir -1">-1</button>
+            <button type="button" class="btn" data-est-ajuste="1" ${estAtual>=estMax?'disabled':''} title="Corrigir +1">+1</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Gastar Estamina</label><input type="number" id="r_estGasto" min="0" value="0"></div>
+        <div class="field" style="align-self:flex-end"><button type="button" class="btn" id="r_btEstGasto" style="width:100%">Gastar</button></div>
+        <div class="field"><label>Recuperar</label><input type="number" id="r_estRecupera" min="0" value="0"></div>
+        <div class="field" style="align-self:flex-end"><button type="button" class="btn" id="r_btEstRecupera" style="width:100%">Recuperar</button></div>
+      </div>
+      <div class="field-row">
+        <button type="button" class="btn" id="r_btDescansoCurto" style="flex:1">Descanso Curto (50%)</button>
+        <button type="button" class="btn" id="r_btDescansoLongo" style="flex:1">Descanso Longo (100%)</button>
+      </div>
+      <details style="margin-top:8px">
+        <summary class="panel-note" style="cursor:pointer">Ajuste direto (avançado)</summary>
+        <div class="field-row">
+          <div class="field">
+            <label>Vitalidade perdida (total acumulado)</label>
+            <input type="number" id="r_vitPerdida" min="0" value="${p.recursos.vitalidadePerdida}">
+          </div>
+          <div class="field">
+            <label>Estamina perdida (total acumulado)</label>
+            <input type="number" id="r_estPerdida" min="0" value="${p.recursos.estaminaPerdida}">
+          </div>
+        </div>
+      </details>
       <h3>Combate e movimento</h3>
       <div class="field-row">
         <div class="field"><label>Iniciativa (fixo, some 1d8 na mesa)</label><input type="text" disabled value="${iniciativaBase(p) >= 0 ? '+'+iniciativaBase(p) : iniciativaBase(p)}"></div>
@@ -6379,6 +6421,48 @@ function bindRecursos(p){
   });
   document.getElementById('r_estPerdida').addEventListener('input', e=>{
     p.recursos.estaminaPerdida = Math.max(0, Number(e.target.value)||0);
+    onFieldChange(); renderPanel();
+  });
+
+  const vitMax = vitalidadeMax(p), estMax = estaminaMax(p);
+  document.querySelectorAll('[data-vit-ajuste]').forEach(b => b.addEventListener('click', ()=>{
+    p.recursos.vitalidadePerdida = Math.max(0, Math.min(vitMax, p.recursos.vitalidadePerdida - Number(b.dataset.vitAjuste)));
+    onFieldChange(); renderPanel();
+  }));
+  document.querySelectorAll('[data-est-ajuste]').forEach(b => b.addEventListener('click', ()=>{
+    p.recursos.estaminaPerdida = Math.max(0, Math.min(estMax, p.recursos.estaminaPerdida - Number(b.dataset.estAjuste)));
+    onFieldChange(); renderPanel();
+  }));
+  document.getElementById('r_btVitDano').addEventListener('click', ()=>{
+    const dano = Math.max(0, Number(document.getElementById('r_vitDano').value)||0);
+    p.recursos.vitalidadePerdida = Math.min(vitMax, p.recursos.vitalidadePerdida + dano);
+    onFieldChange(); renderPanel();
+  });
+  document.getElementById('r_btVitCura').addEventListener('click', ()=>{
+    const cura = Math.max(0, Number(document.getElementById('r_vitCura').value)||0);
+    p.recursos.vitalidadePerdida = Math.max(0, p.recursos.vitalidadePerdida - cura);
+    onFieldChange(); renderPanel();
+  });
+  document.getElementById('r_btEstGasto').addEventListener('click', ()=>{
+    const gasto = Math.max(0, Number(document.getElementById('r_estGasto').value)||0);
+    p.recursos.estaminaPerdida = Math.min(estMax, p.recursos.estaminaPerdida + gasto);
+    onFieldChange(); renderPanel();
+  });
+  document.getElementById('r_btEstRecupera').addEventListener('click', ()=>{
+    const rec = Math.max(0, Number(document.getElementById('r_estRecupera').value)||0);
+    p.recursos.estaminaPerdida = Math.max(0, p.recursos.estaminaPerdida - rec);
+    onFieldChange(); renderPanel();
+  });
+  // Descanso (decisão #117): "não diminui, só sobe até o alvo" — nunca deixa
+  // a Vitalidade/Estamina pior do que já estavam, só melhor até a meta.
+  document.getElementById('r_btDescansoCurto').addEventListener('click', ()=>{
+    p.recursos.vitalidadePerdida = Math.min(p.recursos.vitalidadePerdida, Math.floor(vitMax * 0.5));
+    p.recursos.estaminaPerdida = Math.min(p.recursos.estaminaPerdida, Math.floor(estMax * 0.5));
+    onFieldChange(); renderPanel();
+  });
+  document.getElementById('r_btDescansoLongo').addEventListener('click', ()=>{
+    p.recursos.vitalidadePerdida = 0;
+    p.recursos.estaminaPerdida = 0;
     onFieldChange(); renderPanel();
   });
 }

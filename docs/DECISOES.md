@@ -4942,6 +4942,82 @@ só). Sem erro de JS em nenhum dos 5. `tsc --noEmit`, `npm run lint`,
 `npm run build` e os 298 testes automáticos continuam limpos (mudança é
 só HTML/CSS/JS estático nos 5 arquivos de `public/`).
 
+## 117. "Ficha padrão" — auditoria de recursos e correção de SAO, Sávio e Kaizoku no Sho (10/09/2026)
+
+Pedido do Zé: "toda ficha do Hub precisa poder aumentar/diminuir Vida, PM,
+PE ou qualquer recurso que a ficha tenha" — e junto, três funcionalidades
+marcadas como "extremamente necessárias": Descanso, Dano rápido, Condições/
+status visíveis. Regra dada pelo Zé pro Descanso nos SEUS sistemas homebrew
+(SAO, Sávio, Thrylikí Chelóna, Kaizoku no Sho): **Descanso Curto recupera
+50%, Descanso Longo recupera 100%**. D&D 5ª Edição segue a regra oficial
+própria (fica pra fatia futura, decisão #26 — ver ROADMAP).
+
+**Auditoria primeiro** (pedido explícito): um agente leu as 7 fichas do Hub
+(FU, SAO, Sávio, Thrylikí Chelóna, Kaizoku, D&D 5e, Campanha Livre) e achou
+uma escala de gravidade bem maior do que "falta polimento":
+
+- **SAO e Sistema do Sávio não tinham NENHUMA forma de editar PV/PM/PE/
+  Sanidade** — o painel só mostrava o número calculado, sem input, botão
+  nem stepper. No Sávio existia até uma função `gastarPe()` pronta, mas
+  nunca era chamada por nada — código morto. Isso não é fricção de UX, é
+  funcionalidade básica ausente: literalmente não dava pra marcar dano
+  numa luta.
+- **Kaizoku no Sho tinha a pior fricção**: o campo pedia o **total
+  acumulado perdido**, não o dano do golpe — a cada ataque novo, o
+  jogador precisava lembrar quanto já tinha perdido antes e somar de
+  cabeça antes de digitar.
+- **Fabula Ultima** já tinha "Aplicar em PV" (dano rápido), mas só pra
+  PV — PM e PI continuam input puro (fica pra próxima fatia).
+- **Thrylikí Chelóna** já tinha o padrão bom (stepper + dano/cura rápidos
+  + Recuperação) e vai além do pedido — 4 níveis de recuperação
+  (Respiro/Intervalo/Repouso/Descanso completo) em vez de só 2. Mantido
+  como está, sem forçar pro molde curto/longo — já atende e excede o
+  padrão. Referência de design pras outras fichas.
+- **D&D 5e e Campanha Livre** só têm input puro (valor final) — ficam
+  pra fatias futuras (decisões #52-#54 do plano interno).
+
+**Correção nesta fatia — SAO, Sistema do Sávio e Kaizoku no Sho**, cada
+um com: stepper de correção (±1) nos recursos centrais, campo de dano/
+gasto (soma automaticamente ao que já foi perdido) e cura/recuperação
+(subtrai automaticamente), e Descanso Curto (50%)/Longo (100%). Regra de
+segurança em todos: Descanso **nunca piora** o personagem — usa
+`Math.max`/`Math.min` com o valor atual, então descansar não derruba
+quem já está acima do alvo daquele nível de descanso.
+
+- **SAO**: PV e PM, dentro de `painelDerivados(p)` (já era a seção
+  sempre visível, acima das abas) — reaproveitado sem duplicar código,
+  inclusive dentro do resumo do Modo Guiado (`ligarEventos()` religa tudo
+  depois de qualquer render, guiado ou não).
+- **Sistema do Sávio**: PV, PE e Sanidade — três recursos, então os
+  handlers viraram genéricos (`data-recurso-ajuste="pv|-1"` etc. +
+  `MAXIMOS_RECURSO` mapeando chave → função de teto) em vez de repetir
+  três vezes o mesmo bloco.
+- **Kaizoku no Sho**: Vitalidade e Estamina. Diferente dos outros dois, o
+  dado de verdade continua sendo `vitalidadePerdida`/`estaminaPerdida`
+  (não mudei o modelo, só a UX em cima dele) — o campo antigo de "total
+  acumulado" não foi removido, só virou `<details>` de "Ajuste direto
+  (avançado)", pra quem realmente precisar setar um valor exato continuar
+  podendo.
+
+Testado com Playwright nos três: stepper, dano/cura, gasto/recuperação e
+os dois níveis de Descanso todos calculando certo (inclusive a regra de
+"nunca piora" — testado descansando quando já estava acima do alvo);
+persistência confirmada depois de recarregar a página; os testes de
+regressão já existentes de Modo Guiado/Tutorial de cada arquivo continuam
+passando sem quebra (o resumo do Modo Guiado reaproveita esses mesmos
+painéis). Sem erro de JS. `tsc --noEmit`, `npm run lint` e os 298 testes
+automáticos continuam limpos (mudança é só HTML/CSS/JS estático nos três
+arquivos).
+
+**Pendente, registrado no ROADMAP** (mesma iniciativa, fatias
+separadas): completar PM/PI da Fabula Ultima com o mesmo padrão; D&D 5e
+com dano/cura rápidos e a regra REAL de descanso do sistema (Dados de
+Vida, não o atalho 50%/100% dos homebrews); stepper genérico na Campanha
+Livre (recursos livres, sem Descanso — não faz sentido pra um recurso
+sem semântica fixa de "vida"); confirmar Condições/status sempre visíveis
+em todos; Inventário com equipar/desequipar consistente; e Ataques/golpes
+prontos (Kaizoku já tem) nos sistemas que ainda não têm.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1371,29 +1371,70 @@ function desenharBarra(){
 
 // Painel sempre visível: os quatro números que se consulta o tempo todo
 // numa sessão — igual uma janela de status de jogo de verdade.
+// Ajuste rápido de PV/PM (decisão #117 — "ficha padrão"): antes desta
+// decisão, SAO não tinha NENHUMA forma de editar PV/PM na tela — o painel
+// só mostrava o número. Reaproveitado dentro de painelDerivados() (sempre
+// visível) e também aparece de graça no resumo do Modo Guiado, porque
+// ligarEventos() religa tudo depois de qualquer render(), guiado ou não.
 function painelDerivados(p){
-  const pv = p.atual.pv ?? pvMaximo(p);
+  const pvMax = pvMaximo(p), pmMax = pmMaximo(p);
+  const pv = p.atual.pv ?? pvMax;
+  const pm = p.atual.pm ?? pmMax;
   const emRisco = pv <= pvRisco(p);
-  return `<div class="grade g4" style="margin-bottom:14px">
-    <div class="derivado ${emRisco?'risco':''}">
-      <div class="rot">Pontos de Vida</div>
-      <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${pvMaximo(p)}</span></div>
-      <div class="obs">${emRisco ? 'em risco' : 'risco em ' + pvRisco(p)}</div>
+  return `<div class="cartao" style="margin-bottom:14px">
+    <div class="grade g4">
+      <div class="derivado ${emRisco?'risco':''}">
+        <div class="rot">Pontos de Vida</div>
+        <div class="val">${pv}<span style="font-size:16px;color:var(--suave)">/${pvMax}</span></div>
+        <div class="obs">${emRisco ? 'em risco' : 'risco em ' + pvRisco(p)}</div>
+        <div class="linha" style="justify-content:center;gap:6px;margin-top:6px">
+          <button type="button" data-pv-ajuste="-1" ${pv<=0?'disabled':''} title="Corrigir -1 PV">-1</button>
+          <button type="button" data-pv-ajuste="1" ${pv>=pvMax?'disabled':''} title="Corrigir +1 PV">+1</button>
+        </div>
+      </div>
+      <div class="derivado">
+        <div class="rot">Pontos de Mana</div>
+        <div class="val">${pm}<span style="font-size:16px;color:var(--suave)">/${pmMax}</span></div>
+        <div class="obs">5 + nível×2 + Mente</div>
+        <div class="linha" style="justify-content:center;gap:6px;margin-top:6px">
+          <button type="button" data-pm-ajuste="-1" ${pm<=0?'disabled':''} title="Corrigir -1 PM">-1</button>
+          <button type="button" data-pm-ajuste="1" ${pm>=pmMax?'disabled':''} title="Corrigir +1 PM">+1</button>
+        </div>
+      </div>
+      <div class="derivado">
+        <div class="rot">Defesa</div>
+        <div class="val">${defesa(p)}</div>
+        <div class="obs">mágica ${defesaMagica(p)}</div>
+      </div>
+      <div class="derivado">
+        <div class="rot">Nível</div>
+        <div class="val">${nivelGeral(p)}</div>
+        <div class="obs">iniciativa ${iniciativa(p)} · suba na aba Classes</div>
+      </div>
     </div>
-    <div class="derivado">
-      <div class="rot">Pontos de Mana</div>
-      <div class="val">${p.atual.pm ?? pmMaximo(p)}<span style="font-size:16px;color:var(--suave)">/${pmMaximo(p)}</span></div>
-      <div class="obs">5 + nível×2 + Mente</div>
+
+    <p class="mini" style="margin:14px 0 6px">Dano e cura — digite só o valor sofrido/curado, a ficha calcula o total sozinha</p>
+    <div class="grade g4">
+      <div><label for="c-dano-pv">Dano recebido</label>
+        <input id="c-dano-pv" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button type="button" id="btAplicarDanoPv" style="width:100%">Aplicar em PV</button></div>
+      <div><label for="c-cura-pv">Curar PV</label>
+        <input id="c-cura-pv" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button type="button" id="btCurarPv" style="width:100%">Curar</button></div>
     </div>
-    <div class="derivado">
-      <div class="rot">Defesa</div>
-      <div class="val">${defesa(p)}</div>
-      <div class="obs">mágica ${defesaMagica(p)}</div>
+    <div class="grade g4" style="margin-top:8px">
+      <div><label for="c-gastar-pm">Gastar PM</label>
+        <input id="c-gastar-pm" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button type="button" id="btGastarPm" style="width:100%">Gastar</button></div>
+      <div><label for="c-recuperar-pm">Recuperar PM</label>
+        <input id="c-recuperar-pm" type="number" min="0" value="0"></div>
+      <div class="linha" style="align-items:flex-end"><button type="button" id="btRecuperarPm" style="width:100%">Recuperar</button></div>
     </div>
-    <div class="derivado">
-      <div class="rot">Nível</div>
-      <div class="val">${nivelGeral(p)}</div>
-      <div class="obs">iniciativa ${iniciativa(p)} · suba na aba Classes</div>
+
+    <p class="mini" style="margin:14px 0 6px">Descanso — recupera PV e PM juntos (nunca diminui, só sobe até o alvo)</p>
+    <div class="linha" style="gap:8px">
+      <button type="button" id="btDescansoCurto" style="flex:1">Descanso Curto (50%)</button>
+      <button type="button" id="btDescansoLongo" style="flex:1">Descanso Longo (100%)</button>
     </div>
   </div>`;
 }
@@ -2454,6 +2495,54 @@ function ligarEventos(){
     estado.nivelUpResumo = null;
     render();
   };
+
+  // Ajuste rápido de PV/PM (decisão #117) — stepper de correção, dano/cura
+  // que calculam o total sozinhos, e Descanso Curto/Longo. "Não diminui,
+  // só sobe até o alvo" no Descanso: usa Math.max com o valor atual, pra
+  // nunca curar pra baixo quem já está acima do alvo do descanso.
+  app.querySelectorAll('[data-pv-ajuste]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = pvMaximo(p);
+      p.atual.pv = Math.max(0, Math.min(max, (p.atual.pv ?? max) + Number(b.dataset.pvAjuste)));
+    }));
+  app.querySelectorAll('[data-pm-ajuste]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const max = pmMaximo(p);
+      p.atual.pm = Math.max(0, Math.min(max, (p.atual.pm ?? max) + Number(b.dataset.pmAjuste)));
+    }));
+  const btAplicarDanoPv = app.querySelector('#btAplicarDanoPv');
+  if(btAplicarDanoPv) btAplicarDanoPv.onclick = () => mudar(p => {
+    const dano = Math.max(0, Number(app.querySelector('#c-dano-pv').value) || 0);
+    p.atual.pv = Math.max(0, (p.atual.pv ?? pvMaximo(p)) - dano);
+  });
+  const btCurarPv = app.querySelector('#btCurarPv');
+  if(btCurarPv) btCurarPv.onclick = () => mudar(p => {
+    const cura = Math.max(0, Number(app.querySelector('#c-cura-pv').value) || 0);
+    const max = pvMaximo(p);
+    p.atual.pv = Math.min(max, (p.atual.pv ?? max) + cura);
+  });
+  const btGastarPm = app.querySelector('#btGastarPm');
+  if(btGastarPm) btGastarPm.onclick = () => mudar(p => {
+    const gasto = Math.max(0, Number(app.querySelector('#c-gastar-pm').value) || 0);
+    p.atual.pm = Math.max(0, (p.atual.pm ?? pmMaximo(p)) - gasto);
+  });
+  const btRecuperarPm = app.querySelector('#btRecuperarPm');
+  if(btRecuperarPm) btRecuperarPm.onclick = () => mudar(p => {
+    const rec = Math.max(0, Number(app.querySelector('#c-recuperar-pm').value) || 0);
+    const max = pmMaximo(p);
+    p.atual.pm = Math.min(max, (p.atual.pm ?? max) + rec);
+  });
+  const btDescansoCurto = app.querySelector('#btDescansoCurto');
+  if(btDescansoCurto) btDescansoCurto.onclick = () => mudar(p => {
+    const pvMax = pvMaximo(p), pmMax = pmMaximo(p);
+    p.atual.pv = Math.max(p.atual.pv ?? pvMax, Math.ceil(pvMax * 0.5));
+    p.atual.pm = Math.max(p.atual.pm ?? pmMax, Math.ceil(pmMax * 0.5));
+  });
+  const btDescansoLongo = app.querySelector('#btDescansoLongo');
+  if(btDescansoLongo) btDescansoLongo.onclick = () => mudar(p => {
+    p.atual.pv = pvMaximo(p);
+    p.atual.pm = pmMaximo(p);
+  });
 
   const temaCorInput = app.querySelector('[data-tema-cor]');
   if(temaCorInput) temaCorInput.onchange = () => mudar(p => p.temaCor = temaCorInput.value);

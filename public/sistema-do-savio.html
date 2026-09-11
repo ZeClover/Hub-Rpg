@@ -1378,31 +1378,73 @@ function desenharBarra(){
 }
 
 // Painel sempre visível: os números que se consulta o tempo todo numa mesa.
+// Ajuste rápido de PV/PE/Sanidade (decisão #117 — "ficha padrão"): antes
+// desta decisão, o Sávio não tinha NENHUMA forma de editar esses três na
+// tela (a função gastarPe() já existia mas nunca era chamada por nada).
+// Reaproveitado dentro de painelDerivados() (sempre visível).
 function painelDerivados(p){
-  const pv = p.atual.pv ?? pvMaximo(p);
-  const pe = p.atual.pe ?? peMaximo(p);
-  const sanidade = p.atual.sanidade ?? sanidadeMaxima(p);
+  const pvMax = pvMaximo(p), peMax = peMaximo(p), sanMax = sanidadeMaxima(p);
+  const pv = p.atual.pv ?? pvMax;
+  const pe = p.atual.pe ?? peMax;
+  const sanidade = p.atual.sanidade ?? sanMax;
   const emRisco = pv <= Math.floor(pvMaximo(p)/4);
-  return `<div class="grade g4" style="margin-bottom:14px">
-    <div class="derivado ${emRisco?'risco':''}">
-      <div class="rot">Pontos de Vida</div>
-      <div class="val">${pv}<span style="font-size:14px;color:var(--suave)">/${pvMaximo(p)}</span></div>
-      <div class="obs">${especializacao(p) ? especializacao(p).nome : 'sem Especialização'}</div>
+  const stepper = (chave, valor, max) => `<div class="linha" style="justify-content:center;gap:6px;margin-top:6px">
+    <button type="button" data-recurso-ajuste="${chave}|-1" ${valor<=0?'disabled':''} title="Corrigir -1">-1</button>
+    <button type="button" data-recurso-ajuste="${chave}|1" ${valor>=max?'disabled':''} title="Corrigir +1">+1</button>
+  </div>`;
+  return `<div class="cartao" style="margin-bottom:14px">
+    <div class="grade g4">
+      <div class="derivado ${emRisco?'risco':''}">
+        <div class="rot">Pontos de Vida</div>
+        <div class="val">${pv}<span style="font-size:14px;color:var(--suave)">/${pvMax}</span></div>
+        <div class="obs">${especializacao(p) ? especializacao(p).nome : 'sem Especialização'}</div>
+        ${stepper('pv', pv, pvMax)}
+      </div>
+      <div class="derivado">
+        <div class="rot">Pontos de Energia</div>
+        <div class="val">${pe}<span style="font-size:14px;color:var(--suave)">/${peMax}</span></div>
+        <div class="obs">${p.exaustoes} exaustão(ões)</div>
+        ${stepper('pe', pe, peMax)}
+      </div>
+      <div class="derivado">
+        <div class="rot">Sanidade</div>
+        <div class="val">${sanidade}<span style="font-size:14px;color:var(--suave)">/${sanMax}</span></div>
+        <div class="obs">base 100</div>
+        ${stepper('sanidade', sanidade, sanMax)}
+      </div>
+      <div class="derivado">
+        <div class="rot">Nível</div>
+        <div class="val">${p.nivel}</div>
+        <div class="obs">${reacoesPorRound(p)} reações/round</div>
+      </div>
     </div>
-    <div class="derivado">
-      <div class="rot">Pontos de Energia</div>
-      <div class="val">${pe}<span style="font-size:14px;color:var(--suave)">/${peMaximo(p)}</span></div>
-      <div class="obs">${p.exaustoes} exaustão(ões)</div>
+
+    <p class="mini" style="margin:14px 0 6px">Dano/gasto e cura/recuperação — digite só o valor sofrido, a ficha calcula o total sozinha</p>
+    <div class="grade g3">
+      <div><label for="c-perda-pv">Dano em PV</label><input id="c-perda-pv" type="number" min="0" value="0"></div>
+      <div><label for="c-perda-pe">Gastar PE</label><input id="c-perda-pe" type="number" min="0" value="0"></div>
+      <div><label for="c-perda-sanidade">Perder Sanidade</label><input id="c-perda-sanidade" type="number" min="0" value="0"></div>
     </div>
-    <div class="derivado">
-      <div class="rot">Sanidade</div>
-      <div class="val">${sanidade}<span style="font-size:14px;color:var(--suave)">/${sanidadeMaxima(p)}</span></div>
-      <div class="obs">base 100</div>
+    <div class="linha" style="gap:8px;margin-top:6px">
+      <button type="button" data-recurso-perda="pv" style="flex:1">Aplicar dano em PV</button>
+      <button type="button" data-recurso-perda="pe" style="flex:1">Gastar PE</button>
+      <button type="button" data-recurso-perda="sanidade" style="flex:1">Perder Sanidade</button>
     </div>
-    <div class="derivado">
-      <div class="rot">Nível</div>
-      <div class="val">${p.nivel}</div>
-      <div class="obs">${reacoesPorRound(p)} reações/round</div>
+    <div class="grade g3" style="margin-top:10px">
+      <div><label for="c-ganho-pv">Curar PV</label><input id="c-ganho-pv" type="number" min="0" value="0"></div>
+      <div><label for="c-ganho-pe">Recuperar PE</label><input id="c-ganho-pe" type="number" min="0" value="0"></div>
+      <div><label for="c-ganho-sanidade">Recuperar Sanidade</label><input id="c-ganho-sanidade" type="number" min="0" value="0"></div>
+    </div>
+    <div class="linha" style="gap:8px;margin-top:6px">
+      <button type="button" data-recurso-ganho="pv" style="flex:1">Curar PV</button>
+      <button type="button" data-recurso-ganho="pe" style="flex:1">Recuperar PE</button>
+      <button type="button" data-recurso-ganho="sanidade" style="flex:1">Recuperar Sanidade</button>
+    </div>
+
+    <p class="mini" style="margin:14px 0 6px">Descanso — recupera PV, PE e Sanidade juntos (nunca diminui, só sobe até o alvo)</p>
+    <div class="linha" style="gap:8px">
+      <button type="button" id="btDescansoCurto" style="flex:1">Descanso Curto (50%)</button>
+      <button type="button" id="btDescansoLongo" style="flex:1">Descanso Longo (100%)</button>
     </div>
   </div>${p.morrendo ? `<div class="aviso">⚠️ Personagem <strong>morrendo</strong> — a próxima vez que isso acontecer de novo é morte permanente (regra das 3 exaustões).</div>` : ''}`;
 }
@@ -2414,6 +2456,44 @@ function ligarEventos(){
 
   const btAjudaAba = app.querySelector('#btAjudaAba');
   if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
+
+  // Ajuste rápido de PV/PE/Sanidade (decisão #117) — stepper de correção,
+  // dano/gasto e cura/recuperação que calculam o total sozinhos, e Descanso
+  // Curto/Longo. MAXIMOS_RECURSO mapeia cada chave pra sua função de teto;
+  // "não diminui, só sobe até o alvo" no Descanso usa Math.max com o valor
+  // atual, pra nunca curar pra baixo quem já está acima do alvo.
+  const MAXIMOS_RECURSO = {pv: pvMaximo, pe: peMaximo, sanidade: sanidadeMaxima};
+  app.querySelectorAll('[data-recurso-ajuste]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [chave, delta] = b.dataset.recursoAjuste.split('|');
+      const max = MAXIMOS_RECURSO[chave](p);
+      p.atual[chave] = Math.max(0, Math.min(max, (p.atual[chave] ?? max) + Number(delta)));
+    }));
+  app.querySelectorAll('[data-recurso-perda]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const chave = b.dataset.recursoPerda;
+      const max = MAXIMOS_RECURSO[chave](p);
+      const perda = Math.max(0, Number(app.querySelector(`#c-perda-${chave}`).value) || 0);
+      p.atual[chave] = Math.max(0, (p.atual[chave] ?? max) - perda);
+    }));
+  app.querySelectorAll('[data-recurso-ganho]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const chave = b.dataset.recursoGanho;
+      const max = MAXIMOS_RECURSO[chave](p);
+      const ganho = Math.max(0, Number(app.querySelector(`#c-ganho-${chave}`).value) || 0);
+      p.atual[chave] = Math.min(max, (p.atual[chave] ?? max) + ganho);
+    }));
+  const btDescansoCurto = app.querySelector('#btDescansoCurto');
+  if(btDescansoCurto) btDescansoCurto.onclick = () => mudar(p => {
+    Object.entries(MAXIMOS_RECURSO).forEach(([chave, fnMax]) => {
+      const max = fnMax(p);
+      p.atual[chave] = Math.max(p.atual[chave] ?? max, Math.ceil(max * 0.5));
+    });
+  });
+  const btDescansoLongo = app.querySelector('#btDescansoLongo');
+  if(btDescansoLongo) btDescansoLongo.onclick = () => mudar(p => {
+    Object.entries(MAXIMOS_RECURSO).forEach(([chave, fnMax]) => { p.atual[chave] = fnMax(p); });
+  });
 
   const btGuiadoProximo = app.querySelector('#btGuiadoProximo');
   if(btGuiadoProximo) btGuiadoProximo.onclick = () => { estado.passoGuiado += 1; render(); };

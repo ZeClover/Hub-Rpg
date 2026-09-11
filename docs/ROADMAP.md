@@ -1642,6 +1642,27 @@ passando.
       (aplica e persiste após reload, esconder/reordenar abas funciona,
       trava da última aba visível funciona); `tsc`, lint, build e os 298
       testes automáticos continuam limpos
+- [x] **"Ficha padrão" — auditoria de recursos + correção de SAO, Sávio e
+      Kaizoku no Sho** (10/09/2026) — decisão #117. Auditoria encontrou
+      que SAO e Sávio não tinham NENHUMA forma de editar PV/PM/PE/Sanidade
+      (só exibiam o número), e Kaizoku pedia o total acumulado perdido em
+      vez do dano do golpe (pior fricção do Hub). Corrigido nos três:
+      stepper ±1, campo de dano/cura que soma/subtrai sozinho, e Descanso
+      Curto (50%)/Longo (100%) que nunca piora quem já está acima do
+      alvo. Thrylikí Chelóna já tinha um padrão melhor (4 níveis de
+      Recuperação) e não foi mexido. Testado com Playwright nos três
+      (cálculos corretos, persistência, sem regressão nos testes de Modo
+      Guiado/Tutorial existentes); `tsc`, lint e os 298 testes automáticos
+      continuam limpos
+- [ ] **"Ficha padrão" — pendências da mesma iniciativa** (decisão #117):
+      Fabula Ultima (PM/PI com o mesmo padrão de dano/cura rápidos — PV já
+      tinha); D&D 5e (dano/cura rápidos + Descanso seguindo a regra REAL
+      do sistema — Dados de Vida, não o atalho 50%/100%); Campanha Livre
+      (stepper genérico pros Recursos livres, sem Descanso — não se aplica
+      a um recurso sem semântica fixa); confirmar Condições/status sempre
+      visíveis em todos os sistemas; Inventário com equipar/desequipar
+      consistente; Ataques/golpes prontos (Kaizoku já tem) nos sistemas
+      que ainda não têm
 
 ---
 
