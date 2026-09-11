@@ -133,6 +133,14 @@
   .grupo-escala .btn{padding:5px 10px; font-size:11px;}
   .grupo-escala .btn[aria-current="true"]{border-color:var(--brass-bright); color:var(--brass-bright); background:rgba(var(--brass-rgb),.14);}
 
+  /* Gerenciador de abas (decisão #116) — reordenar/esconder, dentro do painel de Aparência. */
+  .abas-gerenciar{display:flex; flex-direction:column; gap:4px; max-width:320px;}
+  .abas-gerenciar .linha-aba{display:flex; align-items:center; gap:8px; font-size:13px; padding:3px 6px; border-radius:var(--radius);}
+  .abas-gerenciar .linha-aba.oculta{opacity:.45;}
+  .abas-gerenciar .linha-aba .nome-aba{flex:1;}
+  .abas-gerenciar .linha-aba .btn{padding:2px 7px; font-size:11px;}
+  .abas-gerenciar input[type="checkbox"]{width:auto;}
+
   /* ---------- Tabs ---------- */
   .tab-row{display:flex; gap:4px; flex-wrap:wrap; margin-bottom:18px; border-bottom:1px solid var(--line-strong); padding-bottom:0;}
   .tab-btn{
@@ -151,8 +159,13 @@
   .panel{
     border:1px solid var(--line); border-radius:var(--radius);
     background:rgba(var(--navy-deep-rgb),0.4); padding:18px 18px 14px; margin-bottom:16px;
-    transition:box-shadow .18s ease, transform .18s ease;
+    transition:box-shadow .18s ease, transform .18s ease, padding .15s ease, margin .15s ease;
   }
+  /* Layout compacto (decisão #116) — preferência de navegador, reduz respiro
+     sem esconder informação nenhuma; some com "espaçoso" (padrão). */
+  body.compacto .wrap{padding:16px 20px 60px;}
+  body.compacto .panel{padding:10px 12px 8px; margin-bottom:8px;}
+  body.compacto .tab-row{margin-bottom:8px;}
   .panel:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px);}
   .panel h2{font-family:var(--disp); font-weight:600; font-size:17px; margin:0 0 4px; color:var(--parchment);}
   .panel h3{font-family:var(--disp); font-weight:600; font-size:14px; margin:16px 0 8px; color:var(--brass-bright);}
@@ -330,6 +343,28 @@
           <button type="button" class="btn" data-escala="g">G</button>
           <button type="button" class="btn" data-escala="gg">GG</button>
         </div>
+      </div>
+      <div class="field">
+        <label>Fonte do título</label>
+        <div class="grupo-escala" id="pa-fonte-titulo">
+          <button type="button" class="btn" data-fonte-titulo="classica">Clássica</button>
+          <button type="button" class="btn" data-fonte-titulo="moderna">Moderna</button>
+          <button type="button" class="btn" data-fonte-titulo="elegante">Elegante</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Layout</label>
+        <div class="grupo-escala" id="pa-layout">
+          <button type="button" class="btn" data-layout="espacoso">Espaçoso</button>
+          <button type="button" class="btn" data-layout="compacto">Compacto</button>
+        </div>
+      </div>
+    </div>
+    <div class="linha" style="margin-top:14px;align-items:flex-start">
+      <div class="field">
+        <label>Abas — reordenar e esconder</label>
+        <div class="abas-gerenciar" id="pa-abas"></div>
+        <p class="panel-note" style="margin-top:6px">Precisa deixar pelo menos uma visível. Só afeta este navegador, não o personagem.</p>
       </div>
     </div>
   </div>
@@ -3756,6 +3791,112 @@ function carregarEscalaFonte(){
   catch(e){ return 'm'; }
 }
 
+// Fonte do título (decisão #116) — preferência de navegador, igual escala de
+// fonte: não é dado do personagem, por isso mesma chave em qualquer ficha do
+// Hub (quem gosta de fonte "Moderna" provavelmente gosta em toda ficha).
+// Kaizoku já usa a variável --disp pra títulos (Fraunces por padrão) —
+// reaproveitada direto, sem precisar de uma --fonte-titulo separada.
+const FONTES_TITULO = {
+  classica: "'Fraunces', serif",
+  moderna: "'Segoe UI',system-ui,-apple-system,sans-serif",
+  elegante: "'Palatino Linotype','Book Antiqua',Palatino,serif",
+};
+const CHAVE_FONTE_TITULO = 'hub_fonte_titulo';
+function aplicarFonteTitulo(chave){
+  document.documentElement.style.setProperty('--disp', FONTES_TITULO[chave] || FONTES_TITULO.classica);
+  document.querySelectorAll('#pa-fonte-titulo .btn').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.fonteTitulo === chave));
+}
+function mudarFonteTitulo(chave){
+  if(!FONTES_TITULO[chave]) return;
+  try{ localStorage.setItem(CHAVE_FONTE_TITULO, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarFonteTitulo(chave);
+}
+function carregarFonteTitulo(){
+  try{ return localStorage.getItem(CHAVE_FONTE_TITULO) || 'classica'; }
+  catch(e){ return 'classica'; }
+}
+
+// Layout compacto/espaçoso (decisão #116) — mesma lógica: preferência de
+// navegador, chave compartilhada entre todas as fichas do Hub.
+const CHAVE_LAYOUT = 'hub_layout';
+function aplicarLayout(chave){
+  document.body.classList.toggle('compacto', chave === 'compacto');
+  document.querySelectorAll('#pa-layout .btn').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.layout === chave));
+}
+function mudarLayout(chave){
+  if(chave !== 'compacto' && chave !== 'espacoso') return;
+  try{ localStorage.setItem(CHAVE_LAYOUT, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarLayout(chave);
+}
+function carregarLayout(){
+  try{ return localStorage.getItem(CHAVE_LAYOUT) || 'espacoso'; }
+  catch(e){ return 'espacoso'; }
+}
+
+// Reordenar/esconder abas (decisão #116) — preferência de navegador, por
+// SISTEMA (as abas de cada ficha são diferentes). Guarda {id, oculta} na
+// ordem escolhida; abas novas que a ficha ganhar depois entram no fim,
+// visíveis; abas removidas do sistema somem sozinhas (não ficam "fantasmas").
+const CHAVE_ABAS = 'hub_abas_kaizoku';
+function carregarPreferenciaAbas(){
+  let salvas = [];
+  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ salvas = []; }
+  const porId = new Map(salvas.map(s => [s.id, s]));
+  const lista = salvas.filter(s => TABS.some(t => t.id === s.id));
+  TABS.forEach(t => { if(!porId.has(t.id)) lista.push({id:t.id, oculta:false}); });
+  return lista.length ? lista : TABS.map(t => ({id:t.id, oculta:false}));
+}
+function salvarPreferenciaAbas(lista){
+  try{ localStorage.setItem(CHAVE_ABAS, JSON.stringify(lista)); }catch(e){ /* aba anônima etc. */ }
+}
+// Lista de abas de verdade a desenhar — na ordem escolhida, sem as ocultas.
+function tabsVisiveis(){
+  const pref = carregarPreferenciaAbas();
+  return pref.filter(s => !s.oculta).map(s => TABS.find(t => t.id === s.id)).filter(Boolean);
+}
+function renderGerenciadorAbas(){
+  const host = document.getElementById('pa-abas');
+  if(!host) return;
+  const pref = carregarPreferenciaAbas();
+  const visiveis = pref.filter(s => !s.oculta).length;
+  host.innerHTML = pref.map((s, i) => {
+    const tab = TABS.find(t => t.id === s.id);
+    if(!tab) return '';
+    return `<div class="linha-aba ${s.oculta ? 'oculta' : ''}">
+      <input type="checkbox" data-pa-aba-mostrar="${s.id}" ${s.oculta ? '' : 'checked'} ${(!s.oculta && visiveis <= 1) ? 'disabled title="Precisa de ao menos uma aba visível"' : ''}>
+      <span class="nome-aba">${tab.nome}${tab.stub ? ' ⋯' : ''}</span>
+      <button type="button" class="btn" data-pa-aba-subir="${s.id}" ${i === 0 ? 'disabled' : ''} title="Mover pra cima">↑</button>
+      <button type="button" class="btn" data-pa-aba-descer="${s.id}" ${i === pref.length - 1 ? 'disabled' : ''} title="Mover pra baixo">↓</button>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('[data-pa-aba-mostrar]').forEach(chk => chk.onchange = () => {
+    const id = chk.dataset.paAbaMostrar;
+    const nova = carregarPreferenciaAbas().map(s => s.id === id ? {...s, oculta:!chk.checked} : s);
+    if(nova.filter(s => !s.oculta).length === 0) return; // nunca deixa tudo oculto
+    salvarPreferenciaAbas(nova);
+    if(id === state.tab && !chk.checked){
+      const primeiraVisivel = nova.find(s => !s.oculta);
+      if(primeiraVisivel) state.tab = primeiraVisivel.id;
+    }
+    renderGerenciadorAbas();
+    renderAll();
+  });
+  host.querySelectorAll('[data-pa-aba-subir]').forEach(b => b.onclick = () => moverAba(b.dataset.paAbaSubir, -1));
+  host.querySelectorAll('[data-pa-aba-descer]').forEach(b => b.onclick = () => moverAba(b.dataset.paAbaDescer, 1));
+}
+function moverAba(id, delta){
+  const lista = carregarPreferenciaAbas();
+  const i = lista.findIndex(s => s.id === id);
+  const j = i + delta;
+  if(i < 0 || j < 0 || j >= lista.length) return;
+  [lista[i], lista[j]] = [lista[j], lista[i]];
+  salvarPreferenciaAbas(lista);
+  renderGerenciadorAbas();
+  renderAll();
+}
+
 function atualizarPainelAparencia(corAtual){
   const corInput = document.getElementById('pa-tema-cor');
   if(corInput) corInput.value = corAtual;
@@ -3773,7 +3914,14 @@ function montarPainelAparencia(){
   };
   document.querySelectorAll('#pa-escala button').forEach(b =>
     b.onclick = () => mudarEscalaFonte(b.dataset.escala));
+  document.querySelectorAll('#pa-fonte-titulo .btn').forEach(b =>
+    b.onclick = () => mudarFonteTitulo(b.dataset.fonteTitulo));
+  document.querySelectorAll('#pa-layout .btn').forEach(b =>
+    b.onclick = () => mudarLayout(b.dataset.layout));
   aplicarEscalaFonte(carregarEscalaFonte());
+  aplicarFonteTitulo(carregarFonteTitulo());
+  aplicarLayout(carregarLayout());
+  renderGerenciadorAbas();
   // #btAparencia fica no <header> estático (nunca recriado por innerHTML),
   // então só precisa ser ligado uma vez aqui — diferente dos botões da
   // roster-bar, que são religados a cada renderRosterBar().
@@ -5415,6 +5563,13 @@ function renderAll(){
 
   const somenteLeitura = MODO_HUB && !state.ehDono;
 
+  // Se a aba ativa foi escondida (painel de Aparência), pousa na primeira
+  // aba visível em vez de deixar o conteúdo sem botão aceso.
+  const tabsVis = tabsVisiveis();
+  if(!state.modoGuiado && !state.levelUpResumo && tabsVis.length && !tabsVis.some(t => t.id === state.tab)){
+    state.tab = tabsVis[0].id;
+  }
+
   // Anima a troca de tela sem acrescentar nenhuma div nova dentro do HTML
   // (uma div extra mudou o tempo de remoção do DOM o suficiente pra expor
   // uma race rara do Chromium com blur+innerHTML em testes automatizados) —
@@ -5493,7 +5648,7 @@ function renderAll(){
 
 function renderTabs(){
   const el = document.getElementById('tabRow');
-  el.innerHTML = TABS.map(t => `<button class="tab-btn ${t.id===state.tab?'active':''} ${t.stub?'stub':''}" data-tab="${t.id}">${t.nome}${t.stub?' ⋯':''}</button>`).join('');
+  el.innerHTML = tabsVisiveis().map(t => `<button class="tab-btn ${t.id===state.tab?'active':''} ${t.stub?'stub':''}" data-tab="${t.id}">${t.nome}${t.stub?' ⋯':''}</button>`).join('');
   el.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{ state.tab = btn.dataset.tab; renderAll(); });
   });

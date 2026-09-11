@@ -4873,6 +4873,75 @@ em `sistemas.ts` + um link em `ficha-cliente.tsx`).
 
 Com isso, os 5 sistemas do Hub têm Grimório.
 
+## 116. Customização visual — fonte do título, layout compacto e reordenar/esconder abas (10/09/2026)
+
+Fecha a ideia "Customização visual — o que falta" registrada no ROADMAP
+desde a decisão #87 (Tema) — a parte de cor já tinha ido pros 5 sistemas
+(decisões #19-29) e a de animação também (decisão #105); faltavam só
+estas três. Implementado primeiro no Sistema do Sávio (mesmo papel de
+"padrão" que ele teve nas decisões #24/#87), testado a fundo, e depois
+levado sem inventar nada novo pros outros quatro (SAO, Fabula Ultima,
+Thrylikí Chelóna, Kaizoku no Sho) — mesma receita da decisão #105.
+
+**Onde mora**: as três coisas entraram no painel "🎨 Aparência" que já
+existia (cor do tema + tamanho da fonte). Nenhuma delas é dado do
+personagem — são preferência de navegador, `localStorage`, exatamente
+como o tamanho de fonte já era. Diferença entre as duas: fonte do
+título e layout usam uma chave **compartilhada** entre os 5 sistemas
+(`hub_fonte_titulo`, `hub_layout`) — quem gosta de fonte "Moderna"
+provavelmente gosta em qualquer ficha; já a ordem/visibilidade de abas
+usa uma chave **por sistema** (`hub_abas_sao`, `hub_abas_fabula-ultima`
+etc.), porque cada sistema tem abas diferentes.
+
+**Fonte do título**: nos 4 sistemas que já usavam `Georgia,'Times New
+Roman',serif` hardcoded em vários lugares (títulos, `.marca`, valores
+de derivados, `.resumo-nivel h3`, e até em `placeholder`/`style` de
+alguns campos de texto) — tudo isso virou `var(--fonte-titulo)`, uma
+variável nova no `:root` de cada arquivo (36 ocorrências trocadas ao
+todo: 7 no Sávio, 11 no SAO, 5 na Fabula Ultima, 14 na Thrylikí
+Chelóna). Kaizoku no Sho já tinha uma variável própria pra isso
+(`--disp`, carregada via Google Fonts — Fraunces) — reaproveitada direto
+em vez de criar uma segunda variável. Três opções, mesmas em todo
+sistema: Clássica (o padrão de cada um — a serif que já existia),
+Moderna (`'Segoe UI',system-ui,-apple-system,sans-serif`) e Elegante
+(`'Palatino Linotype','Book Antiqua',Palatino,serif`) — só fontes web
+seguras, sem depender de internet (Kaizoku já dependia de qualquer
+forma pra sua opção "Clássica").
+
+**Layout compacto/espaçoso**: toggle de duas opções, igual o grupo P/M/
+G/GG de tamanho de fonte. "Compacto" reduz o padding/margin dos cards
+(`.cartao` nos 4 sistemas, `.panel` no Kaizoku) e o espaçamento entre
+eles — não esconde nem resume informação nenhuma, só aperta o respiro
+visual pra quem prefere ver mais coisa de uma vez sem rolar.
+
+**Reordenar/esconder abas**: dentro do painel de Aparência, uma lista
+com uma linha por aba — checkbox pra mostrar/esconder e duas setas
+(↑/↓) pra reordenar. Regra de segurança: nunca deixa esconder a última
+aba visível (o checkbox trava desabilitado nesse caso, com o motivo no
+`title`). Se a aba escondida era a que estava aberta, a ficha pousa
+sozinha na primeira aba visível, sem tela em branco. A lista de
+preferência é resiliente a mudança de versão: uma aba nova que o
+sistema ganhar numa fatia futura entra no fim, visível por padrão; uma
+aba removida do sistema simplesmente some da lista salva, sem virar
+"fantasma".
+
+Nos quatro sistemas com `ABAS` + `render()` clássico, a integração foi:
+`abasVisiveis()` filtra/ordena a partir da preferência salva, usada no
+lugar de `ABAS.map(...)` só na hora de desenhar os botões (o dispatcher
+de conteúdo da aba continua igual, indexado por id). No Kaizoku (que usa
+`TABS`/`state.tab`/`.tab-btn` em vez de `ABAS`/`estado.aba`/
+`aria-current`), a mesma lógica virou `tabsVisiveis()`, plugada em
+`renderTabs()`.
+
+Testado com Playwright nos 5 arquivos: fonte/layout aplicam e persistem
+depois de recarregar a página; o gerenciador de abas mostra a
+quantidade certa de linhas, esconder uma aba tira ela da barra (e some
+com "fantasma" nenhum), reordenar troca a posição corretamente, e a
+trava de "não pode esconder a última" funciona (testado até sobrar 1
+só). Sem erro de JS em nenhum dos 5. `tsc --noEmit`, `npm run lint`,
+`npm run build` e os 298 testes automáticos continuam limpos (mudança é
+só HTML/CSS/JS estático nos 5 arquivos de `public/`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

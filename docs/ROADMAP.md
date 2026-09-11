@@ -1209,10 +1209,9 @@ passando.
       Nível 10 por classe. Sistema SAO ganhou pistas mais claras de que
       o Level Up mora na aba Classes. Testado com Playwright nos quatro
       sistemas; `tsc`, lint e os 208 testes automáticos continuam limpos
-- [ ] **Customização visual — o que falta** (ideia registrada, não
-      implementada) — fonte do título, reordenar ou esconder abas, layout
-      compacto vs. espaçoso continuam em aberto pra qualquer sistema.
-      Tema/cor já saiu nos cinco sistemas (linhas abaixo)
+- [x] **Customização visual — fonte do título, layout e abas** —
+      decisão #116 (10/09/2026), ver mais abaixo. Tema/cor já tinha saído
+      nos cinco sistemas antes (linhas abaixo)
 - [x] **Sistema do Sávio — chassi e ficha jogável básica** (04/09/2026) —
       decisão #71. Quinto sistema do Hub, homebrew de um amigo do Zé (a
       partir do PDF "SISTEMA_DO_SAVIO" e da planilha original). Traço
@@ -1625,6 +1624,24 @@ passando.
       entre os três mecanismos de relação com NPC. Testado com Playwright
       (16 âncoras resolvem); `tsc`, lint, build e os 298 testes
       automáticos continuam limpos
+- [x] **Customização visual — fonte do título, layout compacto e
+      reordenar/esconder abas** (10/09/2026) — decisão #116. Fecha a
+      ideia registrada desde a decisão #87 (só a parte de cor e de
+      animação tinham saído até aqui). Implementado primeiro no Sistema
+      do Sávio, depois levado sem mudança de receita pros outros quatro
+      (mesmo método da decisão #105). Painel de Aparência ganhou: fonte
+      do título (Clássica/Moderna/Elegante — fontes web seguras, sem
+      depender de internet), layout Espaçoso/Compacto (reduz padding dos
+      cards sem esconder informação), e um gerenciador de abas
+      (mostrar/esconder com checkbox, reordenar com ↑/↓, nunca deixa
+      esconder a última visível). Tudo preferência de navegador — fonte
+      e layout numa chave compartilhada entre os 5 sistemas, abas numa
+      chave por sistema (cada um tem abas diferentes). Kaizoku no Sho
+      reaproveitou sua própria variável de fonte (`--disp`, já existia)
+      em vez de criar uma segunda. Testado com Playwright nos 5 arquivos
+      (aplica e persiste após reload, esconder/reordenar abas funciona,
+      trava da última aba visível funciona); `tsc`, lint, build e os 298
+      testes automáticos continuam limpos
 
 ---
 

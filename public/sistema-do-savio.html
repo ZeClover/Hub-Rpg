@@ -21,6 +21,8 @@
   --roxo:#8b6ee0; --roxo-forte:#ac93f5; --roxo-rgb:139,110,224;
   --alerta:#c4506b;
   --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#c4506b;
+  /* Fonte de título (decisão #116) — trocada por aplicarFonteTitulo(), preferência de navegador (não do personagem, igual a escala de fonte). */
+  --fonte-titulo:Georgia,'Times New Roman',serif;
 }
 *{box-sizing:border-box}
 html{color-scheme:dark}
@@ -29,7 +31,7 @@ body{
   font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   transition:background-color .25s ease, color .25s ease;
 }
-h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+h1,h2,h3{font-family:var(--fonte-titulo); font-weight:600; margin:0}
 a{color:var(--roxo-forte)}
 
 .barra{
@@ -38,7 +40,7 @@ a{color:var(--roxo-forte)}
   background:var(--superficie); border-bottom:1px solid var(--borda);
   transition:background-color .25s ease, border-color .25s ease;
 }
-.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+.marca{font-family:var(--fonte-titulo); font-size:12px; letter-spacing:.3em;
   text-transform:uppercase; color:var(--roxo)}
 .cresce{flex:1}
 
@@ -62,6 +64,14 @@ a{color:var(--roxo-forte)}
 .grupo-escala button{padding:5px 10px; font-size:12px}
 .grupo-escala button[aria-current="true"]{border-color:rgba(var(--roxo-rgb),.6); color:var(--roxo-forte); background:rgba(var(--roxo-rgb),.12)}
 
+/* Gerenciador de abas (decisão #116) — reordenar/esconder, dentro do painel de Aparência. */
+.abas-gerenciar{display:flex; flex-direction:column; gap:4px; max-width:320px}
+.abas-gerenciar .linha-aba{display:flex; align-items:center; gap:8px; font-size:13px; padding:3px 6px; border-radius:6px}
+.abas-gerenciar .linha-aba.oculta{opacity:.45}
+.abas-gerenciar .linha-aba .nome-aba{flex:1}
+.abas-gerenciar .linha-aba button{padding:2px 7px; font-size:11px}
+.abas-gerenciar input[type="checkbox"]{width:auto}
+
 button,select,input,textarea{font:inherit; color:var(--texto)}
 button{
   background:transparent; border:1px solid var(--borda); border-radius:8px;
@@ -80,7 +90,7 @@ input,select,textarea{
 input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(var(--roxo-rgb),.6)}
 textarea{resize:vertical}
 label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+  color:var(--suave); margin-bottom:5px; font-family:var(--fonte-titulo)}
 
 main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
@@ -88,16 +98,23 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 
 .cartao{background:var(--superficie); border:1px solid var(--borda);
   border-radius:12px; padding:18px; margin-bottom:14px;
-  transition:box-shadow .18s ease, transform .18s ease, background-color .25s ease, border-color .25s ease}
+  transition:box-shadow .18s ease, transform .18s ease, background-color .25s ease, border-color .25s ease, padding .15s ease, margin .15s ease}
 .cartao:hover{box-shadow:0 4px 16px rgba(0,0,0,.35); transform:translateY(-2px)}
-.grade{display:grid; gap:14px}
+.grade{display:grid; gap:14px; transition:gap .15s ease}
 @media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g6{grid-template-columns:repeat(6,1fr)} }
+
+/* Layout compacto (decisão #116) — preferência de navegador, reduz respiro
+   sem esconder informação nenhuma; some com "espaçoso" (padrão). */
+body.compacto main{padding:14px 16px 60px}
+body.compacto .cartao{padding:10px 12px; margin-bottom:8px}
+body.compacto .grade{gap:8px}
+body.compacto .abas{margin-bottom:14px}
 
 .derivado{text-align:center; background:var(--superficie-alta);
   border:1px solid var(--borda); border-radius:10px; padding:12px 8px;
   transition:background-color .25s ease, border-color .25s ease}
 .derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
-.derivado .val{font-family:Georgia,serif; font-size:26px; color:var(--roxo-forte); margin-top:4px}
+.derivado .val{font-family:var(--fonte-titulo); font-size:26px; color:var(--roxo-forte); margin-top:4px}
 .derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
 .derivado.risco .val{color:var(--alerta)}
 
@@ -107,7 +124,7 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
 .resumo-nivel{border:1px solid rgba(var(--roxo-rgb),.5); background:rgba(var(--roxo-rgb),.1);
   border-radius:8px; padding:12px 14px; font-size:13px; margin-top:14px}
-.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--roxo-forte); font-family:Georgia,serif}
+.resumo-nivel h3{margin:0 0 6px; font-size:15px; color:var(--roxo-forte); font-family:var(--fonte-titulo)}
 @keyframes brilhoNivel{0%{text-shadow:0 0 0 transparent} 35%{text-shadow:0 0 14px var(--roxo)} 100%{text-shadow:0 0 0 transparent}}
 #app.entra .resumo-nivel h3{animation:brilhoNivel 1.2s ease-out}
 
@@ -176,6 +193,28 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
         <button type="button" data-escala="g">G</button>
         <button type="button" data-escala="gg">GG</button>
       </div>
+    </div>
+    <div>
+      <label style="margin-bottom:6px">Fonte do título</label>
+      <div class="grupo-escala" id="pa-fonte-titulo">
+        <button type="button" data-fonte-titulo="classica">Clássica</button>
+        <button type="button" data-fonte-titulo="moderna">Moderna</button>
+        <button type="button" data-fonte-titulo="elegante">Elegante</button>
+      </div>
+    </div>
+    <div>
+      <label style="margin-bottom:6px">Layout</label>
+      <div class="grupo-escala" id="pa-layout">
+        <button type="button" data-layout="espacoso">Espaçoso</button>
+        <button type="button" data-layout="compacto">Compacto</button>
+      </div>
+    </div>
+  </div>
+  <div class="linha" style="margin-top:14px;align-items:flex-start">
+    <div>
+      <label style="margin-bottom:6px">Abas — reordenar e esconder</label>
+      <div class="abas-gerenciar" id="pa-abas"></div>
+      <p class="mini" style="margin-top:6px">Precisa deixar pelo menos uma visível. Só afeta este navegador, não o personagem.</p>
     </div>
   </div>
 </div>
@@ -580,6 +619,111 @@ function carregarEscalaFonte(){
   catch(e){ return 'm'; }
 }
 
+// Fonte do título (decisão #116) — preferência de navegador, igual escala de
+// fonte: não é dado do personagem, por isso mesma chave em qualquer ficha do
+// Hub (quem gosta de fonte "Moderna" provavelmente gosta em toda ficha).
+const FONTES_TITULO = {
+  classica: "Georgia,'Times New Roman',serif",
+  moderna: "'Segoe UI',system-ui,-apple-system,sans-serif",
+  elegante: "'Palatino Linotype','Book Antiqua',Palatino,serif",
+};
+const CHAVE_FONTE_TITULO = 'hub_fonte_titulo';
+function aplicarFonteTitulo(chave){
+  document.documentElement.style.setProperty('--fonte-titulo', FONTES_TITULO[chave] || FONTES_TITULO.classica);
+  document.querySelectorAll('#pa-fonte-titulo button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.fonteTitulo === chave));
+}
+function mudarFonteTitulo(chave){
+  if(!FONTES_TITULO[chave]) return;
+  try{ localStorage.setItem(CHAVE_FONTE_TITULO, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarFonteTitulo(chave);
+}
+function carregarFonteTitulo(){
+  try{ return localStorage.getItem(CHAVE_FONTE_TITULO) || 'classica'; }
+  catch(e){ return 'classica'; }
+}
+
+// Layout compacto/espaçoso (decisão #116) — mesma lógica: preferência de
+// navegador, chave compartilhada entre todas as fichas do Hub.
+const CHAVE_LAYOUT = 'hub_layout';
+function aplicarLayout(chave){
+  document.body.classList.toggle('compacto', chave === 'compacto');
+  document.querySelectorAll('#pa-layout button').forEach(b =>
+    b.toggleAttribute('aria-current', b.dataset.layout === chave));
+}
+function mudarLayout(chave){
+  if(chave !== 'compacto' && chave !== 'espacoso') return;
+  try{ localStorage.setItem(CHAVE_LAYOUT, chave); }catch(e){ /* aba anônima etc. */ }
+  aplicarLayout(chave);
+}
+function carregarLayout(){
+  try{ return localStorage.getItem(CHAVE_LAYOUT) || 'espacoso'; }
+  catch(e){ return 'espacoso'; }
+}
+
+// Reordenar/esconder abas (decisão #116) — preferência de navegador, mas por
+// SISTEMA (as abas de cada ficha são diferentes) — chave própria do Sávio.
+// Guarda {id, oculta} na ordem escolhida; abas novas que a ficha ganhar
+// depois entram no fim, visíveis; abas removidas do sistema somem sozinhas
+// (não ficam "fantasmas" na lista).
+const CHAVE_ABAS = 'hub_abas_savio';
+function carregarPreferenciaAbas(){
+  let salvas = [];
+  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ salvas = []; }
+  const porId = new Map(salvas.map(s => [s.id, s]));
+  const lista = salvas.filter(s => ABAS.some(a => a.id === s.id));
+  ABAS.forEach(a => { if(!porId.has(a.id)) lista.push({id:a.id, oculta:false}); });
+  return lista.length ? lista : ABAS.map(a => ({id:a.id, oculta:false}));
+}
+function salvarPreferenciaAbas(lista){
+  try{ localStorage.setItem(CHAVE_ABAS, JSON.stringify(lista)); }catch(e){ /* aba anônima etc. */ }
+}
+// Lista de abas de verdade a desenhar — na ordem escolhida, sem as ocultas.
+function abasVisiveis(){
+  const pref = carregarPreferenciaAbas();
+  return pref.filter(s => !s.oculta).map(s => ABAS.find(a => a.id === s.id)).filter(Boolean);
+}
+function renderGerenciadorAbas(){
+  const host = document.getElementById('pa-abas');
+  if(!host) return;
+  const pref = carregarPreferenciaAbas();
+  const visiveis = pref.filter(s => !s.oculta).length;
+  host.innerHTML = pref.map((s, i) => {
+    const aba = ABAS.find(a => a.id === s.id);
+    if(!aba) return '';
+    return `<div class="linha-aba ${s.oculta ? 'oculta' : ''}">
+      <input type="checkbox" data-pa-aba-mostrar="${s.id}" ${s.oculta ? '' : 'checked'} ${(!s.oculta && visiveis <= 1) ? 'disabled title="Precisa de ao menos uma aba visível"' : ''}>
+      <span class="nome-aba">${aba.nome}</span>
+      <button type="button" data-pa-aba-subir="${s.id}" ${i === 0 ? 'disabled' : ''} title="Mover pra cima">↑</button>
+      <button type="button" data-pa-aba-descer="${s.id}" ${i === pref.length - 1 ? 'disabled' : ''} title="Mover pra baixo">↓</button>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('[data-pa-aba-mostrar]').forEach(chk => chk.onchange = () => {
+    const id = chk.dataset.paAbaMostrar;
+    const nova = carregarPreferenciaAbas().map(s => s.id === id ? {...s, oculta:!chk.checked} : s);
+    if(nova.filter(s => !s.oculta).length === 0) return; // nunca deixa tudo oculto
+    salvarPreferenciaAbas(nova);
+    if(id === estado.aba && !chk.checked){
+      const primeiraVisivel = nova.find(s => !s.oculta);
+      if(primeiraVisivel) estado.aba = primeiraVisivel.id;
+    }
+    renderGerenciadorAbas();
+    render();
+  });
+  host.querySelectorAll('[data-pa-aba-subir]').forEach(b => b.onclick = () => moverAba(b.dataset.paAbaSubir, -1));
+  host.querySelectorAll('[data-pa-aba-descer]').forEach(b => b.onclick = () => moverAba(b.dataset.paAbaDescer, 1));
+}
+function moverAba(id, delta){
+  const lista = carregarPreferenciaAbas();
+  const i = lista.findIndex(s => s.id === id);
+  const j = i + delta;
+  if(i < 0 || j < 0 || j >= lista.length) return;
+  [lista[i], lista[j]] = [lista[j], lista[i]];
+  salvarPreferenciaAbas(lista);
+  renderGerenciadorAbas();
+  render();
+}
+
 function atualizarPainelAparencia(corAtual){
   const corInput = document.getElementById('pa-tema-cor');
   if(corInput) corInput.value = corAtual;
@@ -595,10 +739,17 @@ function montarPainelAparencia(){
   document.getElementById('pa-tema-cor').onchange = e => mudar(p => p.temaCor = e.target.value);
   document.querySelectorAll('#pa-escala button').forEach(b =>
     b.onclick = () => mudarEscalaFonte(b.dataset.escala));
+  document.querySelectorAll('#pa-fonte-titulo button').forEach(b =>
+    b.onclick = () => mudarFonteTitulo(b.dataset.fonteTitulo));
+  document.querySelectorAll('#pa-layout button').forEach(b =>
+    b.onclick = () => mudarLayout(b.dataset.layout));
   document.getElementById('btAparencia').onclick = () => {
     document.getElementById('painelAparencia').hidden = !document.getElementById('painelAparencia').hidden;
   };
   aplicarEscalaFonte(carregarEscalaFonte());
+  aplicarFonteTitulo(carregarFonteTitulo());
+  aplicarLayout(carregarLayout());
+  renderGerenciadorAbas();
 }
 
 // Indicador de "Salvando.../Salvo" — atualizado direto no elemento, sem
@@ -1150,6 +1301,13 @@ function render(){
 
   const somenteLeitura = MODO_HUB && !estado.ehDono;
 
+  // Se a aba ativa foi escondida (painel de Aparência), pousa na primeira
+  // aba visível em vez de deixar o conteúdo sem botão aceso.
+  const abasVis = abasVisiveis();
+  if(!estado.modoGuiado && !estado.nivelUpResumo && abasVis.length && !abasVis.some(a => a.id === estado.aba)){
+    estado.aba = abasVis[0].id;
+  }
+
   const alerta = somenteLeitura
     ? `<div class="ok">Modo leitura — você está vendo a ficha de
        <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
@@ -1167,7 +1325,7 @@ function render(){
     : estado.nivelUpResumo
       ? alerta + telaResumoNivel(p, estado.nivelUpResumo)
       : alerta
-        + `<div class="abas">` + ABAS.map(a =>
+        + `<div class="abas">` + abasVis.map(a =>
             `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`
           ).join('') + `<button id="btAjudaAba" style="margin-left:auto" aria-current="${estado.mostrarAjuda}" title="O que esta aba faz, e como funciona no sistema">❓ Ajuda</button></div>`
         + (estado.mostrarAjuda ? `<div class="cartao" style="border-color:rgba(var(--roxo-rgb),.4)">
@@ -1662,7 +1820,7 @@ function abaPericias(p){
               </select>`
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
-        <span class="mini" style="font-family:Georgia,serif;color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
+        <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
       </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}`;
     }).join('')}
   </div>`;
@@ -1930,7 +2088,7 @@ function abaElemental(p){
                 </select>`
               : `<span class="selo">${atr.abrev}</span>`}
           </label>
-          <span class="mini" style="font-family:Georgia,serif;color:var(--roxo-forte);font-size:15px">${elementalPericiaTotal(p, per)}</span>
+          <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${elementalPericiaTotal(p, per)}</span>
         </div>`;
       }).join('')}
     </div>
