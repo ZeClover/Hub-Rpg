@@ -5209,6 +5209,26 @@ diretamente pras 4 Especializações no Nível 6: os quatro batem
 exatamente com a fórmula original agora. `tsc --noEmit`, `npm run lint`
 e os 298 testes automáticos continuam limpos.
 
+## 121. Sistema do Sávio — bug: marco de Passivas errado (nível 6/11/16 em vez de 5/10/15) (12/09/2026)
+
+O Zé apontou a regra certa: começa com 2 Passivas, e o próximo ganho é
+exatamente no Nível 5, depois 10, depois 15, 20 e por diante — marcos
+redondos, não deslocados.
+
+`passivasEsperadas(p)` usava `Math.floor(Math.max(0, p.nivel-1)/5)` —
+o mesmo deslocamento "-1" usado nas fórmulas de PV/PE por Nível (que
+fazem sentido ali, porque o Nível 1 já é o valor base, sem "por Nível"
+nenhum ainda). Copiei esse padrão pra Passivas sem verificar se cabia
+aqui, e não cabe: com `nivel-1`, o segundo marco só chegava no Nível 6,
+não no 5. Trocado pra `Math.floor(p.nivel/5)` — sem o deslocamento.
+
+Testado via Playwright chamando `passivasEsperadas(p)` direto pra vários
+Níveis: 2 do Nível 1 ao 4, sobe pra 3 exatamente no Nível 5, pra 4 no
+10, pra 5 no 15, pra 6 no 20 — bate com a regra. Sem migração: a função
+recalcula do zero a cada render. `tsc --noEmit`, `npm run lint`, os 298
+testes automáticos e as checagens de Modo Guiado/Level Up/Ascensão do
+Sávio continuam passando.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

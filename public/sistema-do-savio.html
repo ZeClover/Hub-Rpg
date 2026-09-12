@@ -1048,7 +1048,9 @@ function passivasEsperadas(p){
   const arq = arquetipo(p);
   // Arquétipo Inato (Primeira Ascensão): +2 Passivas além do máximo normal.
   const bonusInato = arq && arq.id === 'inato' ? 2 : 0;
-  return 2 + Math.floor(Math.max(0, p.nivel-1)/5) + passivasBonusSabedoria(p) + bonusInato;
+  // Marcos em Nível 5, 10, 15, 20... (não 6, 11, 16 — a contagem não usa
+  // o mesmo deslocamento -1 que PV/PE por Nível usam).
+  return 2 + Math.floor(p.nivel/5) + passivasBonusSabedoria(p) + bonusInato;
 }
 
 // PV da Imersão Espiritual (Segunda Ascensão): Nível × Sabedoria efetiva.
