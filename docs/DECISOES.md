@@ -5183,6 +5183,32 @@ Guiado, Habilidades/Combate, Invocações, Reação, Sustentada, Ataques
 prontos e Inventário. `tsc --noEmit`, `npm run lint` e os 298 testes
 automáticos continuam limpos.
 
+## 120. Sistema do Sávio — bug: PE máximo do Combatente errado desde sempre (12/09/2026)
+
+O Zé notou na ficha (Combatente, Nível 6, Inteligência 0): Pontos de
+Energia mostrando 60, quando a conta certa dá 35. Rastreamos junto,
+partindo da fórmula original em Excel (a mesma que gerou a tabela
+`ESPECIALIZACOES` do Hub) e comparando termo a termo — Nível, Inteligência
+e o bônus extra bateram todos com o esperado, sobrando só a diferença nos
+20+8 por Nível que o Combatente usa pra PE.
+
+**Causa**: `ESPECIALIZACOES` (public/sistema-do-savio.html) tinha o
+Combatente com `peInicial:20, pePorNivel:8` — os valores certos, pela
+fórmula original ("10 + Nível×5"), são `peInicial:10, pePorNivel:5`.
+Erro de transcrição de quando a tabela foi montada; as outras três
+Especializações (Suporte, Mestre das Armas, Guerreiro Mágico) já
+estavam com os valores certos — conferido batendo os quatro contra a
+fórmula original. Esse bug existia desde que a ficha do Sávio foi
+criada — todo personagem Combatente sempre teve PE máximo inflado.
+
+Corrigido só o `combatente` na tabela `ESPECIALIZACOES`. Sem migração —
+`peMaximo(p)` já recalcula do zero a cada render, então qualquer
+personagem Combatente já existente mostra o valor certo assim que a
+página recarregar. Testado via Playwright chamando `peMaximo(p)`
+diretamente pras 4 Especializações no Nível 6: os quatro batem
+exatamente com a fórmula original agora. `tsc --noEmit`, `npm run lint`
+e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
