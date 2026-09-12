@@ -5133,6 +5133,56 @@ build` e os 298 testes automáticos continuam limpos — mudança é só
 HTML/CSS/JS estático nos 5 arquivos de sistema + um componente React da
 Campanha Livre.
 
+## 119. Sistema do Sávio — Habilidade aponta bônus pra uma Perícia (Dado ou Soma) + descrição visível no Combate (12/09/2026)
+
+Pedido do Zé, olhando a aba Combate: a descrição livre da Habilidade não
+aparecia ali (só nome, tipo, nível e o bônus calculado) — e ele quer que,
+ao montar uma Habilidade, dê pra escolher uma Perícia pra receber o
+bônus (igual Passiva já faz) e escolher entre **Dado** ou **Soma** pro
+formato desse bônus.
+
+**Descrição no Combate.** `habilidadeResumoCombate` ganhou uma linha
+mostrando `h.efeito` (a mesma "Descrição livre" já preenchida na aba
+Habilidades) — sem duplicar campo nenhum, só exibindo o que já existia.
+
+**Perícia + Dado/Soma.** Passiva já tinha `periciaAlvo`, mas sempre no
+modo "Soma" implícito (`bonusFixoDoTexto` só lê a parte "+18" do texto
+"+3d12 ou +18", nunca o dado). Antes de implementar pra Habilidade,
+perguntei ao Zé duas coisas que não estavam nem no pedido original nem
+em nenhum documento de regra:
+
+1. Habilidade tem Ativa/Inativa (Passiva não tem) — o bônus na Perícia
+   conta só enquanto Ativa, ou sempre? **Resposta: só enquanto Ativa** —
+   faz sentido de Buff (liga/desliga junto com a Habilidade).
+2. "Dado" não dá pra somar num número fixo de Total — como mostrar?
+   **Resposta: só um aviso de texto perto da Perícia**, sem mexer no
+   Total — o jogador rola o dado extra na hora (mesma convenção do
+   projeto de nunca simular rolagem dentro do app).
+
+Implementado só pra Habilidade **Sustentada ou Duradoura** com o efeito
+Dano/Cura/Movimento/RD marcado (são os únicos tipos com estado Ativo/
+Inativo de verdade — Imediata é instantânea, não tem "enquanto ativa"
+pra amarrar o bônus). Campos novos no modelo: `periciaAlvo` (mesma
+lista de Perícias que Passiva usa) e `tipoBonus` ('soma' por padrão ou
+'dado'). `bonusHabilidadesPericia(p, periciaId)` soma no
+`periciaTotal(p, per)` só quando: aponta pra aquela Perícia, é modo
+"soma", é Sustentada/Duradoura, e está Ativa. `avisosDadoPericia(p,
+periciaId)` faz o mesmo filtro pro modo "dado", mas devolve texto
+("+3d12 de Nome da Habilidade") pra mostrar do lado do Total da Perícia
+em vez de somar — a aba Perícias agora mostra esse aviso quando existe.
+Compatível com fichas antigas: Habilidades sem os campos novos (criadas
+antes desta fatia) tratam `periciaAlvo` como vazio e não afetam nada.
+
+Testado com Playwright: Sustentada Nível 1 (nível efetivo 3, por causa
+do +2 automático) apontada pra Acrobacia — Total sobe exatamente +18 ao
+ativar a Habilidade, volta ao normal ao desativar; trocando pra "Dado"
+o Total volta ao valor sem bônus e o aviso "+3d12" aparece do lado de
+Acrobacia; descrição aparece no Combate; tudo persiste depois de
+recarregar a página. Sem regressão nos testes já existentes de Modo
+Guiado, Habilidades/Combate, Invocações, Reação, Sustentada, Ataques
+prontos e Inventário. `tsc --noEmit`, `npm run lint` e os 298 testes
+automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
