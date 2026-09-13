@@ -5296,6 +5296,110 @@ hospedeiro.
 Testado cada item com Playwright antes de seguir pro próximo. `tsc
 --noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
 
+## 123. Sistema do Sávio — traços de Especialização viram automáticos (12-13/09/2026)
+
+Pedido do Zé: ele colou o texto completo dos traços das 4 Especializações
+(Suporte, Combatente, Mestre das Armas, Guerreiro Mágico) e disse "tudo
+isso tem que ser automático". Como boa parte do texto não tinha número
+nenhum pra codificar direto, perguntei antes de inventar regra (decisão
+#17: quem decide regra de sistema é o Zé, a Claude só codifica). Respostas
+dele, todas aplicadas:
+
+**Mecânica "Ao despertar" removida.** Foi retirada do sistema — apagada a
+última linha de traço de cada uma das 4 Especializações que citava
+despertar.
+
+**Cura grátis do Suporte é ilimitada.** Sem contador, sem gastar PE, sem
+contar nos usos por cena.
+
+**Checkbox de efeito da Habilidade virou 4 opções separadas.** Antes era
+um único `danoCuraMovRD` competindo com Alcance/Duração/Vantagem no
+desconto de Nível efetivo. Virou `dano`/`cura`/`movimento`/`rd`
+independentes — necessário pra dar bônus automático de classe (ex.:
+Suporte só bonifica cura, não dano) e pra opção de somar dano de arma (só
+faz sentido em `dano`, não em `cura`/`movimento`/`rd`).
+
+**Usos por cena do Combatente: metade do maior entre Força e
+Constituição.** `limiteTracoPorCena` ganhou a fórmula
+`Math.floor(Math.max(FOR,CON)/2)`, reaproveitando o mesmo contador manual
+(+1/-1/"Nova cena") já usado por Suporte e Guerreiro Mágico (com
+suas próprias fórmulas, Nível÷4).
+
+Depois desse primeiro lote, o Zé mandou mais correções na mesma frente:
+
+**Vantagem/Desvantagem vale nos 3 tipos de Habilidade (Imediata,
+Sustentada e Duradoura), não só Sustentada/Duradoura** como eu tinha
+implementado antes por engano — e continua não valendo pra Dano/Cura/
+Movimento (essas nunca escolhem Perícia-alvo). Nova função
+`habilidadeVantagemContaAgora(h)`: Imediata sempre conta (não fica
+"Ativa", é instantânea); Sustentada/Duradoura só contam enquanto
+`h.ativa` é true.
+
+**Invocação vai até Nível 7** (era até 5), seguindo o mesmo padrão de
+evolução que já existia. Tabela `INVOCACAO_NIVEIS` estendida com os
+valores exatos que o Zé passou: dano/cura 1d4→1d8→2d8→3d8→4d8→6d8→7d8 e
+bônus/efeito 1d6→2d6→3d6→4d6→6d6→7d6→10d6 (níveis 1 a 7).
+
+**Alcance e Duração não são mais opcionais.** Viravam parte do desconto de
+Nível efetivo — errado, porque são padrão de qualquer Habilidade (o
+Nível dela já define os dois, sem precisar marcar nada). Removidos de
+`EFEITOS_HABILIDADE`; agora aparecem como texto fixo, calculado da linha
+da `TABELA_HABILIDADE`, e só Dano/Cura/Movimento/RD/Vantagem competem
+entre si pelo desconto de Nível efetivo.
+
+**Habilidade de Dano pode somar o dano da arma equipada.** Novo campo
+`h.usaArma` (checkbox, só aparece quando a Habilidade tem o efeito Dano
+marcado); quando ligado, o resumo de combate da Habilidade soma o dado de
+dano do tamanho de arma equipado (`TAMANHOS_ARMA`).
+
+**Bônus automático de classe em efeitos de Habilidade.** Nova função
+`bonusClasseEfeitoHabilidade(p,h,chave)` = `2×Nível da Habilidade + maior
+Atributo` quando: Suporte + efeito Cura, ou Guerreiro Mágico + efeito
+Dano/Cura. Mostrado como observação (`.obs`) ao lado do efeito na aba
+Habilidades e somado no resumo de combate.
+
+**Cards automáticos por Especialização na aba Especialização**, cobrindo
+o que dava pra calcular:
+- Suporte: card de Cura grátis (texto), card de "usos por cena" (Nível÷4),
+  e um botão novo pra gastar 2 PE e usar "Apoiar" como ação bônus (o
+  traço "'Apoiar' vira ação bônus por 2 PE" não tinha número nenhum pra
+  automatizar além do gasto de PE em si).
+- Combatente: card de dano desarmado (`Pequena + Nível÷4 d4`, mínimo
+  1d4 — nova função `combatenteBonusDados`, sem conflito com a função já
+  existente pro bônus de Reflexos/Fortitude que foi renomeada pra
+  `combatenteDadosReflexos` pra não colidir o nome), card de Reflexos ou
+  Fortitude (já existia desde a decisão #122) e o card de "usos por cena".
+- Mestre das Armas: card de dano de arma (+maior Atributo) e botão pra
+  gastar 2 PE reforçando um teste.
+- Guerreiro Mágico: card de "usos por cena" e botão pra gastar 5 PE e
+  rolar Fluxo no lugar de outra Perícia.
+
+**Elemental não tem PE próprio** (já coberto na decisão #122, confirmado
+de novo nesse lote — o gasto sempre sai do PE do hospedeiro).
+
+**Sistema de Gadgets do Mestre das Armas.** Todo item do inventário ganhou
+um campo `gadgets` (0-5, só editável/visível quando a Especialização é
+Mestre das Armas). Pool total = `Nível + 1` (2 no Nível 1, +1 por Nível,
+batendo com o traço "começa com 2, +1 por Nível"), soma de todos os itens
+mostrada na aba Inventário com aviso em vermelho se passar do pool.
+Efeito de cada Gadget usado (+3 num teste, máx. 4 empilhados) ficou como
+texto de referência — é o jogador que soma na hora da rolagem, mesma
+convenção de "o Hub não simula dado".
+
+**O que ficou de fora de propósito**, por não ter nada pra calcular ou
+depender de estado fora da ficha do personagem: Suporte estabilizar
+aliado morrendo com Medicina (depende do PV do aliado, não rastreado
+aqui); Mestre das Armas atacar/disparar 3× com o mesmo item e trocar de
+arma como ação livre (pura permissão de economia de ação, sem número
+associado); Mestre das Armas fabricar/aprimorar arma em descanso, dando
+Gadgets de presente (ação de tempo de jogo/narrativa, não um estado da
+ficha).
+
+Cada peça testada com Playwright isoladamente antes de seguir pra
+próxima (efeitos separados, Vantagem nos 3 tipos, Invocação Nível 7,
+combo de arma, Alcance/Duração fixos, cards por classe, Gadgets). `tsc
+--noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

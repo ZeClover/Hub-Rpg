@@ -384,13 +384,15 @@ const CUSTO_PE_HABILIDADE = {1:2, 2:5, 3:8, 4:12, 5:20};
 // Cura, de Dano etc. (precisa pra automatizar traços como "Toda
 // Habilidade de cura ganha +2×Nível+maior atributo"). O número que sai da
 // tabela é o mesmo pros quatro; só muda o que ele representa.
+// Alcance e Duração NÃO entram aqui — são padrão de toda Habilidade (o
+// Nível dela já define os dois, sem precisar escolher nem combinar).
+// Só o que a Habilidade REALMENTE FAZ (Dano/Cura/Movimento/RD/Vantagem)
+// é escolha, e só essas competem entre si no desconto de Nível efetivo.
 const EFEITOS_HABILIDADE = [
   {chave:'dano',      rotulo:'Dano',                  coluna:'danoCuraMovRD'},
   {chave:'cura',      rotulo:'Cura',                  coluna:'danoCuraMovRD'},
   {chave:'movimento', rotulo:'Movimento',             coluna:'danoCuraMovRD'},
   {chave:'rd',        rotulo:'RD (Redução de Dano)',  coluna:'danoCuraMovRD'},
-  {chave:'alcance',   rotulo:'Alcance',                coluna:'alcance'},
-  {chave:'duracao',   rotulo:'Duração de efeito',      coluna:'duracao'},
   {chave:'vantagem',  rotulo:'Vantagem/Desvantagem',   coluna:'vantagem'},
 ];
 function habilidadeEfeitosEscolhidos(h){
@@ -415,6 +417,17 @@ function habilidadeNivelEfetivo(h){
   let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0);
   nivel -= (n > 1 ? 1 : 0);
   return Math.max(1, Math.min(5, nivel));
+}
+// Traço automático de Especialização que soma direto no efeito de uma
+// Habilidade — hoje só Suporte (Cura) e Guerreiro Mágico (Dano ou Cura),
+// os dois na mesma fórmula: +2×Nível da Habilidade + maior Atributo.
+// `maiorAtributo` já existe (usado no Fluxo do Combatente).
+function bonusClasseEfeitoHabilidade(p, h, chave){
+  const espId = p.especializacaoId;
+  const vale = (espId === 'suporte' && chave === 'cura') ||
+               (espId === 'guerreiro-magico' && (chave === 'dano' || chave === 'cura'));
+  if(!vale) return 0;
+  return 2*h.nivel + maiorAtributo(p);
 }
 
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
@@ -818,6 +831,10 @@ function novoPersonagem(nome){
     // Escolha do traço "Reflexos ou Fortitude" do Combatente (some xd4
     // na Perícia escolhida) — vazio até o jogador escolher.
     combatenteBonusPericia: '',
+    // Contador do traço "X vezes por cena: reduz à metade o custo de PE"
+    // (Suporte/Combatente/Guerreiro Mágico) — zera manualmente a cada
+    // cena nova, não tem detector de cena automático.
+    usosTracoPorCena: 0,
     exaustoes: 0,
     // Reações usadas na rodada atual — zera sozinho a cada "⏭ Passar
     // Round". Só Habilidades marcadas como "reação" podem alimentar o
@@ -1786,26 +1803,34 @@ const AJUDA_ABAS = {
     <p class="mini">Habilidades são <strong>livres de verdade</strong> —
     você não escolhe de um catálogo fechado, desenha o efeito usando a
     tabela de referência (Nível 1 a 5 → Dano/Cura/Movimento/RD, Alcance,
-    Duração, Vantagem) como régua. Todo personagem começa com
-    <strong>2 Habilidades</strong> e ganha +1 a cada Nível.</p>
+    Duração, Vantagem) como régua. <strong>Alcance</strong> e
+    <strong>Duração</strong> são padrão de toda Habilidade nesse Nível —
+    aparecem sozinhos, não precisa marcar nada nem competem com o resto.
+    O que você escolhe de verdade é <strong>o que ela faz</strong>: Dano,
+    Cura, Movimento, RD e/ou Vantagem/Desvantagem. Todo personagem começa
+    com <strong>2 Habilidades</strong> e ganha +1 a cada Nível.</p>
     <p class="mini" style="margin-top:8px">Marcar <strong>mais de um
-    efeito</strong> na mesma Habilidade (ex: Dano + Alcance juntos) reduz
-    o Nível efetivo dela em 1 pra todos os efeitos combinados — é o preço
-    de empilhar. <strong>Sustentada</strong> nunca pode causar Dano nem
-    dar Cura (só serve pra Buff em você mesmo), mas em troca ganha +2 de
-    Nível efetivo automaticamente. Exemplo: uma Habilidade Nível 3
-    Sustentada com Alcance + Duração juntos vira Nível efetivo 4 (3 +2 da
-    Sustentada, −1 por combinar 2 efeitos).</p>
-    <p class="mini" style="margin-top:8px">Uma Habilidade <strong>Sustentada
-    ou Duradoura</strong> com o efeito <strong>Vantagem/Desvantagem</strong>
-    marcado pode apontar esse bônus pra uma ou mais <strong>Perícias</strong>
-    — você escolhe entre <strong>Soma</strong> (o valor fixo entra automático
-    no Total da Perícia, só enquanto a Habilidade estiver Ativa) ou
-    <strong>Dado</strong> (a ficha não soma nada, só deixa um aviso do dado
-    extra do lado da Perícia pra você lembrar de rolar na hora). Não dá pra
-    empilhar o bônus na MESMA Perícia — mas apontar pra Perícias diferentes
-    com a mesma Habilidade conta como combinar mais de um efeito (reduz o
-    Nível efetivo, igual combinar Dano + Alcance).</p>`,
+    desses efeitos</strong> na mesma Habilidade (ex: Dano + Vantagem
+    juntos) reduz o Nível efetivo dela em 1 pra todos os efeitos
+    combinados — é o preço de empilhar. <strong>Sustentada</strong> nunca
+    pode causar Dano nem dar Cura (só serve pra Buff em você mesmo), mas
+    em troca ganha +2 de Nível efetivo automaticamente. Exemplo: uma
+    Habilidade Nível 3 Sustentada com Movimento + Vantagem juntos vira
+    Nível efetivo 4 (3 +2 da Sustentada, −1 por combinar 2 efeitos).</p>
+    <p class="mini" style="margin-top:8px">Uma Habilidade com o efeito
+    <strong>Vantagem/Desvantagem</strong> marcado pode apontar esse bônus
+    pra uma ou mais <strong>Perícias</strong> — você escolhe entre
+    <strong>Soma</strong> (o valor fixo entra automático no Total da
+    Perícia) ou <strong>Dado</strong> (a ficha não soma nada, só deixa um
+    aviso do dado extra do lado da Perícia pra você lembrar de rolar na
+    hora). Numa Habilidade <strong>Imediata</strong> o bônus conta sempre
+    (ela não fica "Ativa"); numa <strong>Sustentada ou Duradoura</strong>
+    só conta enquanto a Habilidade estiver Ativa. Não dá pra empilhar o
+    bônus na MESMA Perícia — mas apontar pra Perícias diferentes com a
+    mesma Habilidade conta como combinar mais de um efeito (reduz o
+    Nível efetivo, igual combinar Dano + Movimento). Uma Habilidade com
+    Dano marcado também pode virar <strong>Ataque com arma</strong>: soma
+    o dano dela com o dano da arma equipada (aba Combate).</p>`,
 
   invocacoes: `
     <p class="mini">Invocar <strong>consome uma das suas Habilidades</strong>
@@ -1981,7 +2006,7 @@ function abaPericias(p){
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
         <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
-      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteBonusDados(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
     }).join('')}
   </div>`;
 }
@@ -1999,10 +2024,47 @@ function abaClasse(p){
       ${especializacao(p).tracos.map(t => `<li style="margin-bottom:6px">${t}</li>`).join('')}
     </ul>
   </div>` : ''}
+  ${p.especializacaoId === 'suporte' ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Cura grátis</h3>
+    <p class="mini">Ação bônus, <strong>ilimitada</strong> (não gasta PE nem
+      conta nos usos por cena abaixo): cura <strong>1d6 + ${maiorAtributo(p)}</strong>
+      (seu maior Atributo) num aliado.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">"Apoiar" como ação bônus</h3>
+    <p class="mini">Normalmente "Apoiar" é ação completa. Por 2 PE, você pode
+      usá-la como ação bônus.</p>
+    <div class="linha" style="margin-top:8px;gap:8px">
+      <button type="button" data-suporte-apoiar>Gastar 2 PE ("Apoiar" como ação bônus)</button>
+    </div>
+  </div>` : ''}
+  ${['suporte','combatente','guerreiro-magico'].includes(p.especializacaoId) ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Usos por cena — metade do custo de PE</h3>
+    <p class="mini" style="margin-bottom:8px">${
+      p.especializacaoId === 'suporte' ? 'Reduz à metade o custo de PE de uma Habilidade usada num aliado.'
+      : p.especializacaoId === 'combatente' ? 'Reduz à metade o custo de PE pra "aprimorar" (buffar) uma Habilidade.'
+      : 'Reduz à metade o custo de PE de uma Habilidade sua.'
+    }</p>
+    <p class="mini">Limite nesta cena: <strong>${limiteTracoPorCena(p)}</strong>${p.especializacaoId==='combatente' ? ` (metade do maior entre Força e Constituição)` : ` (Nível÷4, arredondado pra baixo)`}</p>
+    <div class="linha" style="align-items:center;gap:10px;margin-top:8px">
+      <span class="mini">Usados nesta cena:</span>
+      <button type="button" data-uso-cena="-1" ${( p.usosTracoPorCena||0)<=0?'disabled':''}>-1</button>
+      <strong>${p.usosTracoPorCena||0}</strong>
+      <button type="button" data-uso-cena="1" ${(p.usosTracoPorCena||0)>=limiteTracoPorCena(p)?'disabled':''}>+1</button>
+      <button type="button" data-uso-cena="zerar">Nova cena (zerar)</button>
+    </div>
+  </div>` : ''}
   ${p.especializacaoId === 'combatente' ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Dano desarmado</h3>
+    <p class="mini">Ataque desarmado causa <strong>dano de arma Pequena
+      (${TAMANHOS_ARMA.find(t=>t.id==='pequena').dano}) + ${combatenteBonusDados(p)}d4</strong>
+      (Nível÷4, arredondado pra baixo, mínimo 1d4) em qualquer tipo de
+      dano.</p>
+  </div>
+  <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Reflexos ou Fortitude</h3>
     <p class="mini" style="margin-bottom:10px">Escolha uma vez — a Perícia
-      escolhida ganha ${combatenteBonusDados(p)}d4 extra (some Nível ${p.nivel}÷5,
+      escolhida ganha ${combatenteDadosReflexos(p)}d4 extra (some Nível ${p.nivel}÷5,
       arredondado pra cima, começando em 1d4 no Nível 1). Você pode
       transferir esse dado pra Luta por 2 PE, só naquele turno — a ficha
       não simula isso automaticamente, é você que rola o d4 extra na hora
@@ -2012,12 +2074,38 @@ function abaClasse(p){
       <option value="reflexos" ${p.combatenteBonusPericia==='reflexos'?'selected':''}>Reflexos</option>
       <option value="fortitude" ${p.combatenteBonusPericia==='fortitude'?'selected':''}>Fortitude</option>
     </select>
-    ${p.combatenteBonusPericia ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">+${combatenteBonusDados(p)}d4 em ${PERICIAS.find(per=>per.id===p.combatenteBonusPericia).nome} (aparece também na aba Perícias).</p>` : ''}
+    ${p.combatenteBonusPericia ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">+${combatenteDadosReflexos(p)}d4 em ${PERICIAS.find(per=>per.id===p.combatenteBonusPericia).nome} (aparece também na aba Perícias).</p>` : ''}
+  </div>` : ''}
+  ${p.especializacaoId === 'mestre-das-armas' ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Dano com arma e reforço</h3>
+    <p class="mini">Enquanto empunha uma arma, soma <strong>+${maiorAtributo(p)}</strong>
+      (seu maior Atributo) a todo dano causado com ela.</p>
+    <div class="linha" style="margin-top:8px;gap:8px">
+      <button type="button" data-mda-reforco>Gastar 2 PE (reforçar um teste de ataque/defesa)</button>
+    </div>
+  </div>` : ''}
+  ${p.especializacaoId === 'guerreiro-magico' ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Fluxo no lugar de outra Perícia</h3>
+    <p class="mini">Por 5 PE, pode rolar <strong>Fluxo</strong> no lugar de
+      qualquer Perícia que não seja Luta ou Pontaria.</p>
+    <div class="linha" style="margin-top:8px;gap:8px">
+      <button type="button" data-gm-fluxo>Gastar 5 PE (rolar Fluxo no lugar de outra Perícia)</button>
+    </div>
   </div>` : ''}`;
 }
 // x = Nível÷5 arredondado pra cima, começando em 1 (o traço do Combatente
 // diz "começando em 1d4" já no Nível 1, não em 0).
-function combatenteBonusDados(p){ return Math.max(1, Math.ceil(p.nivel/5)); }
+function combatenteDadosReflexos(p){ return Math.max(1, Math.ceil(p.nivel/5)); }
+// x = Nível÷4 arredondado pra baixo, mínimo 1d4 (dano desarmado).
+function combatenteBonusDados(p){ return Math.max(1, Math.floor(p.nivel/4)); }
+// Limite de usos por cena do traço "reduz à metade o custo de PE" —
+// Suporte e Guerreiro Mágico usam Nível÷4; Combatente usa metade do
+// maior entre Força e Constituição.
+function limiteTracoPorCena(p){
+  if(p.especializacaoId === 'combatente') return Math.floor(Math.max(atributoEfetivo(p,'forca'), atributoEfetivo(p,'constituicao'))/2);
+  if(p.especializacaoId === 'suporte' || p.especializacaoId === 'guerreiro-magico') return Math.floor(p.nivel/4);
+  return 0;
+}
 
 function habilidadeLinha(h, i, p){
   const custoBase = CUSTO_PE_HABILIDADE[h.nivel] ?? null;
@@ -2062,6 +2150,7 @@ function habilidadeLinha(h, i, p){
     <p class="mini" style="margin-top:4px">Custo padrão pro Nível ${h.nivel}: ${custoFinal ?? '—'} PE${meiaCusto ? ' (já com a metade da Segunda Ascensão)' : ''}</p>
     <p class="mini" style="margin:8px 0">${(TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).sobre}</p>
     ${h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta);font-weight:600">⚠ Sustentada não pode causar Dano nem dar Cura — só serve pra Buff em você mesmo.</p>` : ''}
+    <p class="mini" style="margin:8px 0">Alcance <strong>${linhaTabela.alcance}</strong> · Duração <strong>${linhaTabela.duracao}</strong> — padrão de toda Habilidade nesse Nível, não precisa marcar nada.</p>
     <div style="margin-top:10px">
       <label>O que ela faz (marque um ou mais)</label>
       <div class="grade g2">
@@ -2071,11 +2160,19 @@ function habilidadeLinha(h, i, p){
       </div>
       ${h.tipo === 'sustentada' && contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${contagemEfeitos} efeitos (−1): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${contagemEfeitos} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
-        ${efeitosEscolhidos.map(e => `<div class="derivado">
+        ${efeitosEscolhidos.map(e => {
+          const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
+          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano} da arma` : '';
+          return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
-          <div class="val" style="font-size:18px">${linhaTabela[e.coluna]}</div>
-        </div>`).join('')}
+          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}</div>
+          ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
+        </div>`;
+        }).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
+      ${h.efeitos && h.efeitos.dano ? `<label class="checagem" style="margin-top:8px;display:block">
+        <input type="checkbox" data-hab-flag="${i}|usaArma" ${h.usaArma?'checked':''}> Ataque com arma equipada (some o dano da arma junto com o da Habilidade)
+      </label>` : ''}
       ${h.efeitos && h.efeitos.vantagem ? (() => {
         const gatilho = h.tipo === 'imediata' ? '' : ' Só conta enquanto a Habilidade estiver Ativa.';
         return `<div style="margin-top:8px">
@@ -2402,11 +2499,19 @@ function abaPassivas(p){
   <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>`;
 }
 
-function habilidadeResumoCombate(h, i){
+function habilidadeResumoCombate(h, i, p){
   const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
   const nivelEfetivo = habilidadeNivelEfetivo(h);
   const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
-  const resumoEfeitos = efeitosEscolhidos.map(e => `${e.rotulo}: ${linhaTabela[e.coluna]}`).join(' · ');
+  const resumoEfeitos = [
+    `Alcance ${linhaTabela.alcance}`,
+    `Duração ${linhaTabela.duracao}`,
+    ...efeitosEscolhidos.map(e => {
+      const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
+      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano} da arma` : '';
+      return `${e.rotulo}: ${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}`;
+    }),
+  ].join(' · ');
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
   const sufixoReacao = h.reacao ? ' como Reação' : '';
   const rotuloBotao = h.tipo === 'imediata' ? `Usar${sufixoReacao} (−${h.custoPe||0} PE)`
@@ -2449,7 +2554,7 @@ function abaCombate(p){
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Habilidades</h3>
-    ${p.habilidades.length ? p.habilidades.map((h,i) => habilidadeResumoCombate(h,i)).join('') : `<p class="mini">Nenhuma Habilidade criada ainda — crie na aba Habilidades.</p>`}
+    ${p.habilidades.length ? p.habilidades.map((h,i) => habilidadeResumoCombate(h,i,p)).join('') : `<p class="mini">Nenhuma Habilidade criada ainda — crie na aba Habilidades.</p>`}
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Arma</h3>
@@ -2523,6 +2628,8 @@ function abaCombate(p){
 
 function abaInventario(p){
   const itens = p.inventario || [];
+  const ehMestreDasArmas = p.especializacaoId === 'mestre-das-armas';
+  const gadgetsUsadosTotal = gadgetsUsados(p);
   return `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Inventário</h3>
     <p class="mini" style="margin-bottom:10px">Itens gerais que o personagem
@@ -2530,6 +2637,10 @@ function abaInventario(p){
       especial, poções, objetos de cena). Marcar <strong>Equipado</strong>
       só serve pra lembrar o que está em uso agora; a mesa é quem decide o
       efeito de um item especial.</p>
+    ${ehMestreDasArmas ? `<p class="mini" style="${gadgetsUsadosTotal>gadgetsPool(p)?'color:var(--alerta)':''}">
+      <strong>Gadgets:</strong> ${gadgetsUsadosTotal} / ${gadgetsPool(p)} distribuídos (2 no Nível 1, +1 por Nível) —
+      máx. 5 por item, cada Gadget usado dá +3 num teste (máx. 4 empilhados por rolagem).
+    </p>` : ''}
     ${itens.length ? itens.map((it,i) => `<div class="linha-lista" style="margin-bottom:10px">
       <div class="topo">
         <input id="c-iteminv-nome-${i}" data-iteminv-nome="${i}" value="${esc(it.nome)}" placeholder="Nome do item">
@@ -2540,10 +2651,18 @@ function abaInventario(p){
       <label class="checagem" style="margin-top:8px">
         <input type="checkbox" data-iteminv-equipado="${i}" ${it.equipado?'checked':''}> Equipado
       </label>
+      ${ehMestreDasArmas ? `<div style="margin-top:8px;max-width:200px">
+        <label for="c-iteminv-gadgets-${i}">Gadgets equipados (máx. 5)</label>
+        <input id="c-iteminv-gadgets-${i}" type="number" min="0" max="5" data-iteminv-gadgets="${i}" value="${it.gadgets||0}">
+      </div>` : ''}
     </div>`).join('') : `<p class="mini">Nenhum item ainda.</p>`}
     <button id="btnAddItemInventario">+ Item</button>
   </div>`;
 }
+// Pool de Gadgets do Mestre das Armas: começa com 2 no Nível 1, +1 por
+// Nível — distribuídos entre os itens fabricados (aba Inventário).
+function gadgetsPool(p){ return p.nivel + 1; }
+function gadgetsUsados(p){ return (p.inventario||[]).reduce((t,it) => t + (it.gadgets||0), 0); }
 
 function abaAscensao(p){
   const arq = arquetipo(p);
@@ -2764,6 +2883,25 @@ function ligarEventos(){
     el.onchange = () => mudar(p => p.especializacaoId = el.dataset.especializacao));
   app.querySelectorAll('[data-combatente-bonus]').forEach(el =>
     el.onchange = () => mudar(p => p.combatenteBonusPericia = el.value));
+  app.querySelectorAll('[data-uso-cena]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const acao = b.dataset.usoCena;
+      if(acao === 'zerar'){ p.usosTracoPorCena = 0; return; }
+      const delta = Number(acao);
+      p.usosTracoPorCena = Math.max(0, Math.min(limiteTracoPorCena(p), (p.usosTracoPorCena||0) + delta));
+    }));
+  const btSuporteApoiar = app.querySelector('[data-suporte-apoiar]');
+  if(btSuporteApoiar) btSuporteApoiar.onclick = () => mudar(p => {
+    p.atual.pe = Math.max(0, (p.atual.pe ?? peMaximo(p)) - 2);
+  });
+  const btMdaReforco = app.querySelector('[data-mda-reforco]');
+  if(btMdaReforco) btMdaReforco.onclick = () => mudar(p => {
+    p.atual.pe = Math.max(0, (p.atual.pe ?? peMaximo(p)) - 2);
+  });
+  const btGmFluxo = app.querySelector('[data-gm-fluxo]');
+  if(btGmFluxo) btGmFluxo.onclick = () => mudar(p => {
+    p.atual.pe = Math.max(0, (p.atual.pe ?? peMaximo(p)) - 5);
+  });
 
   app.querySelectorAll('[data-pericia]').forEach(el =>
     el.onchange = () => mudar(p => p.pericias[el.dataset.pericia] = el.checked));
@@ -2787,7 +2925,7 @@ function ligarEventos(){
   const btnAddItemInventario = app.querySelector('#btnAddItemInventario');
   if(btnAddItemInventario) btnAddItemInventario.onclick = () => mudar(p => {
     if(!p.inventario) p.inventario = [];
-    p.inventario.push({nome:'', notas:'', equipado:false});
+    p.inventario.push({nome:'', notas:'', equipado:false, gadgets:0});
   });
   app.querySelectorAll('[data-iteminv-nome]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvNome)].nome = el.value; }, el));
@@ -2797,6 +2935,11 @@ function ligarEventos(){
     el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvEquipado)].equipado = el.checked; }));
   app.querySelectorAll('[data-iteminv-remover]').forEach(b =>
     b.onclick = () => mudar(p => { p.inventario.splice(Number(b.dataset.iteminvRemover), 1); }));
+  app.querySelectorAll('[data-iteminv-gadgets]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const idx = Number(el.dataset.iteminvGadgets);
+      p.inventario[idx].gadgets = Math.max(0, Math.min(5, Number(el.value)||0));
+    }));
 
   // Ataques prontos (Combate)
   const btnAddAtaque = app.querySelector('#btnAddAtaque');
@@ -2904,7 +3047,7 @@ function ligarEventos(){
   const addHab = document.getElementById('btAddHabilidade');
   if(addHab) addHab.onclick = () => mudar(p => {
     estado.habExpandidas.add(p.habilidades.length);
-    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
+    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', usaArma:false, ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
   });
   app.querySelectorAll('[data-hab-select]').forEach(el =>
     el.onchange = () => mudar(p => {
