@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 /*
-  Botão do mestre pra criar uma ficha de MONSTRO (bestiário) direto nesta
-  campanha. Abre a ficha em branco na hora, pronta pra preencher — irmão de
-  CriarPersonagem, que cria a ficha de personagem completa.
+  Botão do mestre pra criar uma ficha de PERSONAGEM completa direto nesta
+  campanha (mesma ficha de jogador do sistema) — irmão de AdicionarInimigo,
+  que cria a ficha de monstro/bestiário.
 */
-export function AdicionarInimigo({
+export function CriarPersonagem({
   campanhaId,
   ficha,
 }: {
@@ -19,11 +19,11 @@ export function AdicionarInimigo({
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  async function adicionar() {
+  async function criar() {
     setCriando(true);
     setErro(null);
     try {
-      const resposta = await fetch(`/api/campanhas/${campanhaId}/inimigos`, {
+      const resposta = await fetch(`/api/campanhas/${campanhaId}/personagens`, {
         method: "POST",
       });
       if (!resposta.ok) throw new Error("falhou");
@@ -40,11 +40,11 @@ export function AdicionarInimigo({
     <div className="mt-3">
       <button
         type="button"
-        onClick={adicionar}
+        onClick={criar}
         disabled={criando}
         className="rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20 disabled:opacity-50"
       >
-        {criando ? "Criando…" : "+ Criar ficha de monstro"}
+        {criando ? "Criando…" : "+ Criar ficha de personagem"}
       </button>
       {erro && <p className="mt-2 text-sm text-segredo">{erro}</p>}
     </div>

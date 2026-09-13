@@ -2630,6 +2630,9 @@ function abaInventario(p){
   const itens = p.inventario || [];
   const ehMestreDasArmas = p.especializacaoId === 'mestre-das-armas';
   const gadgetsUsadosTotal = gadgetsUsados(p);
+  const limiteEspecial = limiteItemEspecial(p);
+  const usado = pesoUsado(p);
+  const maximo = pesoMaximo(p);
   return `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Inventário</h3>
     <p class="mini" style="margin-bottom:10px">Itens gerais que o personagem
@@ -2637,21 +2640,57 @@ function abaInventario(p){
       especial, poções, objetos de cena). Marcar <strong>Equipado</strong>
       só serve pra lembrar o que está em uso agora; a mesa é quem decide o
       efeito de um item especial.</p>
+    <p class="mini" style="${usado>maximo?'color:var(--alerta)':''}">
+      <strong>Peso:</strong> ${usado} / ${maximo} pontos de peso (5 + 2×Força) —
+      cada item gasta peso×quantidade.
+    </p>
+    <p class="mini">
+      <strong>Itens especiais:</strong> ${contagemItemEspecial(p,'item')} / ${limiteEspecial} ·
+      <strong>Equipamentos especiais:</strong> ${contagemItemEspecial(p,'equipamento')} / ${limiteEspecial}
+      ${ehMestreDasArmas ? '(Mestre das Armas: até 3 de cada)' : '(1 de cada; só o Mestre das Armas chega a 3)'}
+    </p>
     ${ehMestreDasArmas ? `<p class="mini" style="${gadgetsUsadosTotal>gadgetsPool(p)?'color:var(--alerta)':''}">
       <strong>Gadgets:</strong> ${gadgetsUsadosTotal} / ${gadgetsPool(p)} distribuídos (2 no Nível 1, +1 por Nível) —
-      máx. 5 por item, cada Gadget usado dá +3 num teste (máx. 4 empilhados por rolagem).
+      máx. 5 por item (só em item/equipamento especial), cada Gadget usado dá +3 num teste (máx. 4 empilhados por rolagem).
     </p>` : ''}
     ${itens.length ? itens.map((it,i) => `<div class="linha-lista" style="margin-bottom:10px">
       <div class="topo">
-        <input id="c-iteminv-nome-${i}" data-iteminv-nome="${i}" value="${esc(it.nome)}" placeholder="Nome do item">
+        <input id="c-iteminv-nome-${i}" data-iteminv-nome="${i}" value="${esc(it.nome)}" placeholder="Nome do item" style="flex:1">
         <button data-iteminv-remover="${i}" class="perigo">Remover</button>
       </div>
-      <label for="c-iteminv-notas-${i}" style="margin-top:8px">Notas</label>
+      <div class="grade g3" style="margin-top:8px">
+        <div><label for="c-iteminv-tipo-${i}">Tipo</label>
+          <select id="c-iteminv-tipo-${i}" data-iteminv-tipo="${i}">
+            <option value="comum" ${it.tipo!=='especial'?'selected':''}>Comum</option>
+            <option value="especial" ${it.tipo==='especial'?'selected':''}>Especial</option>
+          </select></div>
+        ${it.tipo==='especial' ? `<div><label for="c-iteminv-subtipo-${i}">Categoria</label>
+          <select id="c-iteminv-subtipo-${i}" data-iteminv-subtipo="${i}">
+            <option value="item" ${it.subtipo!=='equipamento'?'selected':''}>Item especial</option>
+            <option value="equipamento" ${it.subtipo==='equipamento'?'selected':''}>Equipamento especial</option>
+          </select></div>` : ''}
+        <div><label for="c-iteminv-efeito-${i}">Efeito</label>
+          <select id="c-iteminv-efeito-${i}" data-iteminv-efeito="${i}">
+            ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===(it.efeito||'nulo')?'selected':''}>${e.nome}</option>`).join('')}
+          </select></div>
+      </div>
+      ${it.efeito && it.efeito !== 'nulo' ? `<div style="margin-top:8px">
+        <label for="c-iteminv-valor-${i}">Valor do efeito (ex.: 1d6, +2)</label>
+        <input id="c-iteminv-valor-${i}" data-iteminv-valor="${i}" value="${esc(it.valorEfeito||'')}">
+      </div>` : ''}
+      <div class="grade g2" style="margin-top:8px">
+        <div><label for="c-iteminv-peso-${i}">Peso (por unidade)</label>
+          <input id="c-iteminv-peso-${i}" type="number" min="0" step="0.5" data-iteminv-peso="${i}" value="${it.peso||0}"></div>
+        <div><label for="c-iteminv-qtd-${i}">Quantidade</label>
+          <input id="c-iteminv-qtd-${i}" type="number" min="1" data-iteminv-qtd="${i}" value="${it.quantidade||1}"></div>
+      </div>
+      <p class="mini" style="margin-top:4px">Peso total deste item: <strong>${pesoItem(it)}</strong></p>
+      <label for="c-iteminv-notas-${i}" style="margin-top:8px">Descrição (opcional)</label>
       <textarea id="c-iteminv-notas-${i}" data-iteminv-notas="${i}" rows="2">${esc(it.notas||'')}</textarea>
       <label class="checagem" style="margin-top:8px">
         <input type="checkbox" data-iteminv-equipado="${i}" ${it.equipado?'checked':''}> Equipado
       </label>
-      ${ehMestreDasArmas ? `<div style="margin-top:8px;max-width:200px">
+      ${ehMestreDasArmas && it.tipo==='especial' ? `<div style="margin-top:8px;max-width:200px">
         <label for="c-iteminv-gadgets-${i}">Gadgets equipados (máx. 5)</label>
         <input id="c-iteminv-gadgets-${i}" type="number" min="0" max="5" data-iteminv-gadgets="${i}" value="${it.gadgets||0}">
       </div>` : ''}
@@ -2663,6 +2702,26 @@ function abaInventario(p){
 // Nível — distribuídos entre os itens fabricados (aba Inventário).
 function gadgetsPool(p){ return p.nivel + 1; }
 function gadgetsUsados(p){ return (p.inventario||[]).reduce((t,it) => t + (it.gadgets||0), 0); }
+
+const EFEITOS_ITEM = [
+  {id:'nulo', nome:'Nulo'},
+  {id:'buff', nome:'Buff'},
+  {id:'dano', nome:'Dano'},
+  {id:'cura', nome:'Cura'},
+];
+
+// Quanto o personagem consegue carregar: 5 + 2×Força. Cada item gasta
+// peso×quantidade desses pontos (aumentar a quantidade multiplica o peso).
+function pesoMaximo(p){ return 5 + 2*atributoEfetivo(p,'forca'); }
+function pesoItem(it){ return (Number(it.peso)||0) * Math.max(1, Number(it.quantidade)||1); }
+function pesoUsado(p){ return (p.inventario||[]).reduce((total, it) => total + pesoItem(it), 0); }
+
+// Item/Equipamento especial é limitado: só o Mestre das Armas pode ter 3 de
+// cada, o resto só 1 — e não dá pra passar disso (não é só um aviso).
+function limiteItemEspecial(p){ return p.especializacaoId === 'mestre-das-armas' ? 3 : 1; }
+function contagemItemEspecial(p, subtipo, ignorarIndice){
+  return (p.inventario||[]).filter((it, i) => i !== ignorarIndice && it.tipo === 'especial' && it.subtipo === subtipo).length;
+}
 
 function abaAscensao(p){
   const arq = arquetipo(p);
@@ -2925,7 +2984,7 @@ function ligarEventos(){
   const btnAddItemInventario = app.querySelector('#btnAddItemInventario');
   if(btnAddItemInventario) btnAddItemInventario.onclick = () => mudar(p => {
     if(!p.inventario) p.inventario = [];
-    p.inventario.push({nome:'', notas:'', equipado:false, gadgets:0});
+    p.inventario.push({nome:'', tipo:'comum', subtipo:null, efeito:'nulo', valorEfeito:'', peso:0, quantidade:1, notas:'', equipado:false, gadgets:0});
   });
   app.querySelectorAll('[data-iteminv-nome]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvNome)].nome = el.value; }, el));
@@ -2940,6 +2999,41 @@ function ligarEventos(){
       const idx = Number(el.dataset.iteminvGadgets);
       p.inventario[idx].gadgets = Math.max(0, Math.min(5, Number(el.value)||0));
     }));
+  // Tipo/Categoria mexem no limite de itens/equipamentos especiais — é
+  // travado de verdade (não dá só um aviso): se já bateu no limite, a
+  // troca é recusada e o select volta pro valor antigo no redesenho.
+  app.querySelectorAll('[data-iteminv-tipo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const idx = Number(el.dataset.iteminvTipo);
+      const it = p.inventario[idx];
+      if(el.value !== 'especial'){ it.tipo = 'comum'; it.subtipo = null; return; }
+      const subtipoDesejado = it.subtipo || 'item';
+      const limite = limiteItemEspecial(p);
+      if(contagemItemEspecial(p, subtipoDesejado, idx) >= limite){
+        alert(`Limite atingido: só dá pra ter ${limite} ${subtipoDesejado==='item'?'item(ns) especial(is)':'equipamento(s) especial(is)'}.`);
+        return;
+      }
+      it.tipo = 'especial';
+      it.subtipo = subtipoDesejado;
+    }));
+  app.querySelectorAll('[data-iteminv-subtipo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const idx = Number(el.dataset.iteminvSubtipo);
+      const limite = limiteItemEspecial(p);
+      if(contagemItemEspecial(p, el.value, idx) >= limite){
+        alert(`Limite atingido: só dá pra ter ${limite} ${el.value==='item'?'item(ns) especial(is)':'equipamento(s) especial(is)'}.`);
+        return;
+      }
+      p.inventario[idx].subtipo = el.value;
+    }));
+  app.querySelectorAll('[data-iteminv-efeito]').forEach(el =>
+    el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvEfeito)].efeito = el.value; }));
+  app.querySelectorAll('[data-iteminv-valor]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvValor)].valorEfeito = el.value; }, el));
+  app.querySelectorAll('[data-iteminv-peso]').forEach(el =>
+    el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvPeso)].peso = Math.max(0, Number(el.value)||0); }));
+  app.querySelectorAll('[data-iteminv-qtd]').forEach(el =>
+    el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvQtd)].quantidade = Math.max(1, Number(el.value)||1); }));
 
   // Ataques prontos (Combate)
   const btnAddAtaque = app.querySelector('#btnAddAtaque');

@@ -6,13 +6,12 @@ import { usuarioAtual } from "@/lib/usuario";
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
-  O mestre cria uma ficha de monstro (bestiário) direto na campanha.
+  O mestre cria uma ficha de PERSONAGEM completa direto na campanha — mesma
+  ficha de jogador do sistema, útil pra um NPC importante (aliado, mentor)
+  que precisa das regras completas, não só de um bestiário.
 
-  É uma ficha comum (mesmo `Personagem`, mesmo módulo de sistema, mesma
-  tela de edição) — só nasce já com `campanhaId` preenchido, dono sendo o
-  próprio mestre e `ehMonstro` ligado (é isso que diferencia dela de uma
-  ficha de personagem também criada pelo mestre — ver a rota irmã
-  `personagens/route.ts`).
+  Rota irmã de `inimigos/route.ts`: mesmo `Personagem`, mesmo módulo de
+  sistema, só muda o nome padrão e `ehMonstro` fica desligado.
 */
 export async function POST(_requisicao: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
@@ -38,9 +37,9 @@ export async function POST(_requisicao: NextRequest, { params }: Contexto) {
       sistemaId: campanha.sistemaId,
       donoId: usuario.id,
       campanhaId,
-      nome: "Novo Monstro",
+      nome: "Novo Personagem",
       dados: {},
-      ehMonstro: true,
+      ehMonstro: false,
     },
     select: { id: true },
   });

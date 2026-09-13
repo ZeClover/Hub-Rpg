@@ -7,6 +7,7 @@ import { SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
 import { AdicionarInimigo } from "./adicionar-inimigo";
+import { CriarPersonagem } from "./criar-personagem";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { ManualDoMestre } from "./manual-mestre";
@@ -63,7 +64,7 @@ export default async function PaginaCampanha({
     }),
     banco.personagem.findMany({
       where: { campanhaId: id },
-      select: { id: true, nome: true, donoId: true },
+      select: { id: true, nome: true, donoId: true, ehMonstro: true },
     }),
   ]);
 
@@ -157,13 +158,15 @@ function VisaoDoMestre({
   fichaInimigo: string | null;
   origem: string;
   jogadores: { usuarioId: string; usuario: { nome: string | null; email: string } }[];
-  personagensDaCampanha: { id: string; nome: string; donoId: string }[];
+  personagensDaCampanha: { id: string; nome: string; donoId: string; ehMonstro: boolean }[];
   idDoMestre: string;
   manualMestre: string;
   escudoMestre: string | null;
   grimorio: string | null;
 }) {
-  const inimigos = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
+  const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
+  const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
+  const personagensDoMestre = fichasDoMestre.filter((p) => !p.ehMonstro);
 
   return (
     <>
@@ -252,24 +255,57 @@ function VisaoDoMestre({
       </section>
 
       <section className="mt-8">
-        <h2 className="font-titulo text-xl">Fichas de inimigo</h2>
+        <h2 className="font-titulo text-xl">Fichas de personagem e monstro</h2>
         <p className="mt-2 text-sm text-texto-suave">
-          Fichas suas, só pra organizar a mesa — os jogadores não veem esta
-          lista.
+          Fichas suas, criadas já dentro desta campanha — os jogadores não
+          veem esta lista.
         </p>
-        {inimigos.length > 0 && (
-          <ul className="mt-4 space-y-2">
-            {inimigos.map((inimigo) => (
-              <li key={inimigo.id}>
-                {fichaInimigo ? (
+
+        <h3 className="mt-5 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
+          Personagens
+        </h3>
+        {personagensDoMestre.length > 0 && (
+          <ul className="mt-3 space-y-2">
+            {personagensDoMestre.map((personagem) => (
+              <li key={personagem.id}>
+                {ficha ? (
                   <a
-                    href={`${fichaInimigo}?id=${inimigo.id}`}
+                    href={`${ficha}?id=${personagem.id}`}
                     className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
                   >
-                    {inimigo.nome}
+                    {personagem.nome}
                   </a>
                 ) : (
-                  <span className="text-sm text-texto">{inimigo.nome}</span>
+                  <span className="text-sm text-texto">{personagem.nome}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        {ficha ? (
+          <CriarPersonagem campanhaId={campanhaId} ficha={ficha} />
+        ) : (
+          <p className="mt-3 text-sm text-texto-suave">
+            O sistema desta campanha ainda não tem ficha própria no Hub.
+          </p>
+        )}
+
+        <h3 className="mt-6 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
+          Monstros
+        </h3>
+        {monstros.length > 0 && (
+          <ul className="mt-3 space-y-2">
+            {monstros.map((monstro) => (
+              <li key={monstro.id}>
+                {fichaInimigo ? (
+                  <a
+                    href={`${fichaInimigo}?id=${monstro.id}`}
+                    className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
+                  >
+                    {monstro.nome}
+                  </a>
+                ) : (
+                  <span className="text-sm text-texto">{monstro.nome}</span>
                 )}
               </li>
             ))}
@@ -279,7 +315,7 @@ function VisaoDoMestre({
           <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
         ) : (
           <p className="mt-3 text-sm text-texto-suave">
-            O sistema desta campanha ainda não tem ficha de inimigo própria no Hub.
+            O sistema desta campanha ainda não tem ficha de monstro própria no Hub.
           </p>
         )}
       </section>

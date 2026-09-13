@@ -5400,6 +5400,82 @@ próxima (efeitos separados, Vantagem nos 3 tipos, Invocação Nível 7,
 combo de arma, Alcance/Duração fixos, cards por classe, Gadgets). `tsc
 --noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
 
+## 124. Sistema do Sávio — peso do Inventário; Campanha — mestre cria ficha de personagem/monstro (13/09/2026)
+
+Pedido do Zé com duas partes independentes, mais um aviso de que uma
+terceira ("estruturar a ficha de monstro de verdade") fica pra depois —
+decisão #26, uma fatia por vez.
+
+**1. Peso do Inventário no Sistema do Sávio.** O quanto o personagem
+consegue carregar virou um recurso de verdade: `5 + 2×Força` de "pontos
+de peso" (`pesoMaximo`), e cada item gasta `peso × quantidade` desse
+total (`pesoItem`/`pesoUsado`) — aumentar a quantidade multiplica o
+peso, como o Zé pediu. É só um aviso (fica vermelho se passar do total),
+não trava a criação de item — diferente do limite de item especial
+abaixo, que é travado de verdade.
+
+Cada item agora escolhe **Tipo** (Comum ou Especial) e, se Especial,
+**Categoria** (Item especial ou Equipamento especial); um **Efeito**
+(Nulo/Buff/Dano/Cura) com um campo de valor livre (texto, tipo "1d6" ou
+"+2" — o Hub não simula dado, é só o jogador saber o que rolar/somar) que
+só aparece quando o efeito não é Nulo; peso, quantidade e descrição
+opcional (reaproveitado o campo `notas` que já existia). Contador embaixo
+mostra quantos itens/equipamentos especiais já existem.
+
+**Limite de item/equipamento especial é travado.** Só o Mestre das Armas
+pode ter até 3 de cada categoria (itens especiais e equipamentos
+especiais); o resto das Especializações só 1 de cada — e não dá pra
+passar disso: o select de Tipo/Categoria recusa a troca (com um alerta
+explicando o limite) quando já bateu no teto, e o próprio redesenho da
+tela devolve o select pro valor de antes. Os Gadgets do Mestre das Armas
+(decisão #123) agora só aparecem em item marcado como Especial — antes
+apareciam em qualquer item da lista, o que não fazia sentido junto com a
+ideia de que só item especial pode ser "aprimorado com gadgets".
+
+**2. Mestre cria ficha de personagem ou de monstro direto na campanha.**
+Antes só existia "+ Adicionar ficha de inimigo" (usa a ficha de
+inimigo/bestiário do sistema). Agora tem duas opções na tela da campanha:
+"+ Criar ficha de personagem" (usa a MESMA ficha de jogador do sistema —
+pra um NPC importante, aliado, etc., que precisa das regras completas) e
+"+ Criar ficha de monstro" (o botão antigo, só renomeado). As duas
+nascem já com `campanhaId` preenchido e dono sendo o próprio mestre —
+igual sempre foi, só que agora com uma rota nova (`personagens/route.ts`,
+irmã de `inimigos/route.ts`) e um campo novo no banco pra saber qual das
+duas é.
+
+Como não existia nenhum jeito de diferenciar "ficha de personagem do
+mestre" de "ficha de monstro do mestre" (as duas são donas do mestre —
+antes disso bastava, porque só existia uma opção), o `Personagem` ganhou
+a coluna `ehMonstro` (migração `0012_personagem_monstro.sql`, com
+backfill: toda ficha que já existia e era do mestre numa campanha virou
+`ehMonstro = true`, porque era a única coisa que podia ser antes). A
+tela da campanha agora separa a lista em "Personagens" e "Monstros"
+usando essa coluna.
+
+Essa coluna importava pra mais um lugar, que eu conferi antes de dar por
+terminado: o Painel de Vida da Mesa ao Vivo. O ajuste rápido de vida
+(botões +1/+5/etc.) escreve, além do espelho genérico `resumoVida`, no
+"campo de verdade" da ficha (`campoVidaInimigo`, em `sistemas.ts`) — só
+que esse campo segue o FORMATO da ficha de monstro, diferente da ficha de
+personagem/jogador. Se uma ficha de personagem do mestre entrasse nesse
+ajuste, escreveria no campo errado (formato de monstro numa ficha de
+personagem). Corrigido nas duas rotas de vida
+(`vida/route.ts`/`vida/[personagemId]/route.ts`): só ficha com
+`ehMonstro` ligado entra no grupo ajustável; ficha de personagem do
+mestre entra no grupo de "Jogadores" do painel (só leitura, mesma regra
+de sempre pra quem usa a ficha de jogador).
+
+**Fica pra depois** (aviso do próprio Zé): hoje "ficha de monstro" ainda
+é a ficha de inimigo/bestiário que já existia — só ganhou botão e nome
+novos. Estruturar de verdade uma ficha de monstro própria (campos
+diferentes, por sistema) é outra fatia.
+
+`tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos. Testado com Playwright o peso/limite de
+item especial do Sistema do Sávio; a parte de campanha (Next.js) não tem
+banco de teste neste ambiente, então foi conferida por leitura de código
+nas duas pontas (rota + tela) mais o build de produção passando.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

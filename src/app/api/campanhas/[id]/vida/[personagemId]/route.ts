@@ -9,10 +9,14 @@ import { usuarioAtual } from "@/lib/usuario";
 type Contexto = { params: Promise<{ id: string; personagemId: string }> };
 
 /*
-  Ajusta a vida de um INIMIGO pelo Painel de Vida da Mesa ao Vivo, sem
-  precisar abrir a ficha inteira. Só funciona em cima de fichas de inimigo
-  (o mestre é o dono delas) — vida de jogador o mestre só acompanha, nunca
-  edita por aqui (decisão #46).
+  Ajusta a vida de um MONSTRO pelo Painel de Vida da Mesa ao Vivo, sem
+  precisar abrir a ficha inteira. Só funciona em cima de fichas de monstro
+  (`ehMonstro` ligado, e o mestre é o dono delas) — vida de jogador, e
+  também de ficha de PERSONAGEM que o mestre criou (mesma estrutura de
+  ficha de jogador), o mestre só acompanha, nunca edita por aqui (decisão
+  #46). É por isso: o "campo de verdade" que este ajuste escreve
+  (`campoVidaInimigo`) segue o formato da ficha de monstro, que não é o
+  mesmo formato da ficha de jogador/personagem.
 
   Escreve em dois lugares: `dados.resumoVida.atual` (o espelho genérico que
   este painel lê) e o campo "de verdade" daquele sistema (via
@@ -41,12 +45,18 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
 
   const personagem = await banco.personagem.findUnique({
     where: { id: personagemId },
-    select: { id: true, campanhaId: true, donoId: true, sistemaId: true, dados: true },
+    select: { id: true, campanhaId: true, donoId: true, ehMonstro: true, sistemaId: true, dados: true },
   });
-  // Um inimigo só é ajustável por aqui se pertencer a esta campanha e ao
-  // mestre que está pedindo — as duas mesmas condições que valem pra
-  // "+ Adicionar ficha de inimigo" criar uma.
-  if (!personagem || personagem.campanhaId !== campanhaId || personagem.donoId !== usuario.id) {
+  // Um monstro só é ajustável por aqui se pertencer a esta campanha, ao
+  // mestre que está pedindo, e for mesmo do tipo monstro — as mesmas
+  // condições que valem pra "+ Criar ficha de monstro" criar uma. Uma
+  // ficha de personagem do mestre (`ehMonstro` desligado) cai fora daqui.
+  if (
+    !personagem ||
+    personagem.campanhaId !== campanhaId ||
+    personagem.donoId !== usuario.id ||
+    !personagem.ehMonstro
+  ) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

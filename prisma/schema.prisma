@@ -148,6 +148,11 @@ model Personagem {
   /// ficha, um UUID, é o segredo do link, como em "qualquer um com o link"
   /// do Google Docs. Nunca dá direito de editar: só o dono salva.
   compartilhado Boolean @default(false)
+  /// Só tem sentido pra ficha criada pelo mestre dentro de uma campanha
+  /// (`campanhaId` preenchido e dono é o mestre): diz se ela abre na ficha
+  /// de monstro (bestiário) do sistema ou na ficha de personagem completa.
+  /// Fora desse caso — ficha de jogador comum — o valor é ignorado.
+  ehMonstro    Boolean  @default(false)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
