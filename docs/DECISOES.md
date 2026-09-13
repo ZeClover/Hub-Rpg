@@ -5642,6 +5642,52 @@ do Total da Perícia, e (na Ficha de Monstro) o bônus avulso permanecendo
 fixo ao trocar pra Calamidade. `tsc --noEmit`, `npm run lint`, `npm run
 build` e os 298 testes automáticos continuam limpos.
 
+## 128. Sistema do Sávio — Passiva ganha os mesmos efeitos separados da Habilidade; Capanga trava Passiva de verdade (13/09/2026)
+
+Dois problemas que o Zé viu ao usar a Ficha de Monstro, com print: uma
+Passiva "Força padrão" só deixava marcar UM efeito combinado "Dano/Cura/
+Movimento/RD/Vantagem" — igual a Habilidade era antes da decisão #123,
+que separou isso em checkboxes independentes pra Habilidade mas deixou
+Passiva pra trás. "Quando vc escolhe vantagem tbm tem como vc buffar seu
+dano, mas ainda não tem essa opção" — não dava pra ter Dano E Vantagem na
+mesma Passiva, só um ou outro.
+
+**Passiva ganha a mesma separação de efeitos que Habilidade tem.**
+`EFEITOS_PASSIVA` deixou de ser um único `danoCuraMovRDVant` e virou
+cinco checkboxes independentes — Dano, Cura, Movimento, RD e Vantagem/
+Desvantagem (Alcance continua à parte, como já era) — todos usando o
+mesmo valor fixo de `TABELA_PASSIVA_EVOLUCAO` (que não muda: os números
+da tabela sempre foram os mesmos pra Dano/Cura/Movimento/RD/Vantagem,
+só a apresentação que forçava escolher um grupo só). Vantagem ganhou o
+sistema completo de apontar pra Perícia que a Habilidade já tinha —
+`periciasAlvo` (lista, não empilha na mesma Perícia) e `tipoBonus` (Soma
+soma sozinho no Total; Dado só avisa o dado pra rolar na hora) — antes
+Passiva só tinha `periciaAlvo` (uma só) e nem tinha a opção Dado. Migrado
+`bonusPassivasPericia`/nova `avisosDadoPassivaPericia`, `passivaLinha` e
+os handlers de perícia-alvo, tudo espelhando exatamente o padrão que já
+existe pra Habilidade (`data-hab-pericia-add/remover` → `data-pas-
+pericia-add/remover`). Refeito na ficha comum e na Ficha de Monstro (essa
+com o sufixo "×N" da Dificuldade nos valores mostrados, igual já rolava
+pra Habilidade).
+
+**Capanga trava Passiva de verdade, não só zera o número esperado.**
+A decisão #126 já fazia `passivasEsperadas` retornar 0 pro Capanga, mas
+a aba Passivas continuava mostrando a lista e o botão "+ Nova Passiva"
+normalmente — só o texto "0 esperadas" mudava, mas nada impedia de
+criar uma. Agora, com Capanga, a aba Passivas mostra só um aviso
+("Capanga não tem Passiva — regra da Dificuldade, não é só limite
+zerado") e esconde lista e botão de adicionar; se o Monstro já tinha
+Passiva cadastrada antes de virar Capanga, elas ficam guardadas nos
+dados (não apaga nada) mas o aviso deixa claro que não valem enquanto a
+Dificuldade for essa.
+
+Testado com Playwright nas duas fichas: Dano e Vantagem marcados juntos
+na mesma Passiva sem um desmarcar o outro, Perícia recebendo o bônus da
+Vantagem automaticamente, valor escalando com o sufixo "×2" em Boss, e (só
+na Ficha de Monstro) Capanga escondendo lista/botão e mostrando o aviso,
+com persistência de tudo depois de recarregar. `tsc --noEmit`, `npm run
+lint`, `npm run build` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
