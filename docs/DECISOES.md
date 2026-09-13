@@ -5600,6 +5600,48 @@ Sanidade máxima igual em todos os tiers, persistência depois de recarregar.
 `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
 automáticos continuam limpos.
 
+## 127. Sistema do Sávio — três correções: custo de PE, Passiva com Nível interno, bônus avulso na Perícia (13/09/2026)
+
+Três correções do Zé, aplicadas na ficha comum e espelhadas na Ficha de
+Monstro (decisão #126), já que as duas compartilham a mesma lógica.
+
+**1. Custo de PE não acompanhava o Nível da Habilidade.** `custoPe` era
+preenchido uma vez na criação (custo do Nível 1) e nunca mais mudava
+sozinho — mudar o Nível só atualizava o texto de referência "custo padrão
+pro Nível X", não o campo de verdade que `gastarPe()` usa. Agora, ao
+mudar o Nível, `custoPe` é recalculado pro novo Nível (já considerando a
+metade da Segunda Ascensão) — nova função `custoPeDefault(p, nivel)`,
+compartilhada entre o texto de referência e o handler de mudança de
+Nível. Continua editável à mão depois, pra quem quiser um valor diferente
+combinado com a mesa.
+
+**2. Nível interno da Passiva não contava como gasto.** Uma Passiva pode
+evoluir do Nível interno 0 ao 2 (mesmo truque de desvantagem das
+Habilidades), mas o "Você tem X de Y esperadas" só contava
+`p.passivas.length` — uma Passiva no Nível interno 2 custava o mesmo que
+uma no Nível 0. Nova função `passivasUsadas(p)` = soma de `1 + nivelInterno`
+de cada Passiva (Nível 0 gasta 1, Nível 1 gasta 2, Nível 2 gasta 3) —
+substituída em todo lugar que mostrava a contagem de uso (aba Passivas e
+o resumo de "Nova Passiva disponível" do Level Up guiado).
+
+**3. Nova seção "Outros bônus e vantagens" na aba Perícias.** Não existia
+lugar pra registrar um bônus solto que não vem de Passiva nem Habilidade
+— item mágico, condição de cena, algo que a mesa concedeu. Nova lista
+`p.periciaBonusExtra` (cada um: nome/motivo livre, Perícia alvo, valor
+numérico com sinal), soma sozinha no Total da Perícia
+(`bonusExtraPericia`) e mostra uma nota ao lado da Perícia lembrando de
+onde veio o bônus. Na Ficha de Monstro, esse bônus NÃO escala com a
+Dificuldade — é um valor final que quem preenche já escolhe direto,
+diferente de Dano/Vantagem que a ficha calcula sozinha a partir de uma
+fórmula.
+
+Testado com Playwright nas duas fichas: custo de PE mudando com o Nível
+(1→2, 3→8, 5→20 PE) e continuando editável à mão, contagem de Passivas
+usadas subindo com o Nível interno, bônus avulso somando e sendo removido
+do Total da Perícia, e (na Ficha de Monstro) o bônus avulso permanecendo
+fixo ao trocar pra Calamidade. `tsc --noEmit`, `npm run lint`, `npm run
+build` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

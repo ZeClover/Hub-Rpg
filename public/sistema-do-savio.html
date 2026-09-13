@@ -373,6 +373,14 @@ const TABELA_HABILIDADE = [
 // Custo padrão de PE por Nível de Habilidade — referência (a mesa pode
 // ajustar caso a Habilidade seja aprimorada com desvantagens, fatia futura).
 const CUSTO_PE_HABILIDADE = {1:2, 2:5, 3:8, 4:12, 5:20};
+// Custo padrão de PE pro Nível de uma Habilidade, já com a metade da
+// Segunda Ascensão aplicada (Nível 1 a 3). Usado tanto no texto de
+// referência quanto pra recalcular `custoPe` sozinho quando o Nível muda.
+function custoPeDefault(p, nivel){
+  const base = CUSTO_PE_HABILIDADE[nivel] ?? null;
+  const meiaCusto = p.ascensao.segunda && nivel <= 3;
+  return base !== null && meiaCusto ? Math.ceil(base/2) : base;
+}
 
 // Efeitos que uma Habilidade pode combinar — cada um lê uma coluna
 // diferente de TABELA_HABILIDADE. Escolher mais de um ao mesmo tempo
@@ -838,6 +846,10 @@ function novoPersonagem(nome){
     // Escolha do traço "Reflexos ou Fortitude" do Combatente (some xd4
     // na Perícia escolhida) — vazio até o jogador escolher.
     combatenteBonusPericia: '',
+    // Outros bônus/vantagens soltos (item mágico, condição de cena, algo
+    // que a mesa concedeu) — cada um: {nome, periciaId, valor}. Some
+    // sozinho no Total da Perícia escolhida, igual Passiva/Habilidade.
+    periciaBonusExtra: [],
     // Contador do traço "X vezes por cena: reduz à metade o custo de PE"
     // (Suporte/Combatente/Guerreiro Mágico) — zera manualmente a cada
     // cena nova, não tem detector de cena automático.
@@ -990,10 +1002,15 @@ function avisosDadoPericia(p, periciaId){
 // Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
 // (5 se for treinada, senão 0) + bônus fixo de Passivas apontadas pra
 // ela — mesma fórmula do limite de treináveis, só que perícia a perícia.
+// Bônus soltos que o jogador cadastra à mão (item mágico, condição de
+// cena, o que a mesa conceder) — cada um mira uma Perícia só.
+function bonusExtraPericia(p, periciaId){
+  return (p.periciaBonusExtra||[]).filter(b => b.periciaId === periciaId).reduce((t,b) => t + (Number(b.valor)||0), 0);
+}
 function periciaTotal(p, per){
   const atributo = atributoEfetivo(p, periciaAtributoId(p, per));
   const bonusTreino = p.pericias[per.id] ? 5 : 0;
-  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id);
+  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id) + bonusExtraPericia(p, per.id);
 }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
@@ -1116,6 +1133,12 @@ function passivasEsperadas(p){
   // Marcos em Nível 5, 10, 15, 20... (não 6, 11, 16 — a contagem não usa
   // o mesmo deslocamento -1 que PV/PE por Nível usam).
   return 2 + Math.floor(p.nivel/5) + passivasBonusSabedoria(p) + bonusInato;
+}
+// Cada Passiva gasta 1 vaga na base, +1 vaga por Nível interno que ela já
+// evoluiu (subir o Nível interno é uma Passiva "a mais gasta", igual uma
+// nova Habilidade custa Nível — regra do Zé).
+function passivasUsadas(p){
+  return (p.passivas||[]).reduce((t, h) => t + 1 + (h.nivelInterno||0), 0);
 }
 
 // PV da Imersão Espiritual (Segunda Ascensão): Nível × Sabedoria efetiva.
@@ -1757,7 +1780,7 @@ function telaResumoNivel(p, resumo){
       <button id="btAddHabilidade" class="destaque">+ Nova Habilidade</button>
     </div>` : ''}
     ${ganhouPassiva ? `<div class="cartao">
-      <h3 style="font-size:16px;margin-bottom:10px">✨ Nova Passiva disponível! (${p.passivas.length}/${depois.passivasEsperadas})</h3>
+      <h3 style="font-size:16px;margin-bottom:10px">✨ Nova Passiva disponível! (${passivasUsadas(p)}/${depois.passivasEsperadas})</h3>
       ${p.passivas.map((h,i) => passivaLinha(h,i)).join('')}
       <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>
     </div>` : ''}
@@ -1810,9 +1833,10 @@ const AJUDA_ABAS = {
     treinadas</strong>.</p>
     <p class="mini" style="margin-top:8px">O Total de cada perícia é
     <strong>Atributo + (Nível ÷ 4, arredondado pra cima) + 5 se for
-    treinada</strong> (ou +0 no lugar do 5, se não for). Marcar o
-    checkbox ao lado da perícia é o que conta ela como treinada — o Total
-    à direita já soma tudo sozinho.</p>`,
+    treinada</strong> (ou +0 no lugar do 5, se não for), mais o que vier de
+    Passiva, Habilidade e do card <strong>Outros bônus e vantagens</strong>
+    no fim da aba. Marcar o checkbox ao lado da perícia é o que conta ela
+    como treinada — o Total à direita já soma tudo sozinho.</p>`,
 
   classe: `
     <p class="mini">A <strong>Especialização</strong> (Suporte, Combatente,
@@ -2043,8 +2067,32 @@ function abaPericias(p){
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
         <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
-      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}${(p.periciaBonusExtra||[]).filter(b=>b.periciaId===per.id).map(b => `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${Number(b.valor)||0} de ${esc(b.nome)||'bônus avulso'} (já somado no Total)</p>`).join('')}`;
     }).join('')}
+  </div>
+  ${abaPericiasBonusExtra(p)}`;
+}
+
+// Bônus/vantagens soltos que não vêm de Passiva/Habilidade nenhuma — item
+// mágico, condição de cena, o que a mesa conceder. Cada um mira uma
+// Perícia e soma sozinho no Total dela (bonusExtraPericia).
+function abaPericiasBonusExtra(p){
+  const lista = p.periciaBonusExtra || [];
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Outros bônus e vantagens</h3>
+    <p class="mini" style="margin-bottom:10px">Pra qualquer bônus que não
+      vem de Passiva nem Habilidade — item mágico, condição de cena, algo
+      que a mesa concedeu. Soma sozinho no Total da Perícia escolhida.</p>
+    ${lista.length ? lista.map((b,i) => `<div class="linha" style="gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <input data-pbextra-nome="${i}" value="${esc(b.nome)}" placeholder="Nome ou motivo" style="flex:2;min-width:140px">
+      <select data-pbextra-pericia="${i}" style="flex:2;min-width:140px">
+        <option value="">— escolher Perícia —</option>
+        ${PERICIAS.map(per => `<option value="${per.id}" ${b.periciaId===per.id?'selected':''}>${per.livre ? (p.oficios[per.id]||per.nome) : per.nome}</option>`).join('')}
+      </select>
+      <input type="number" data-pbextra-valor="${i}" value="${b.valor||0}" style="flex:1;min-width:80px" title="Valor (pode ser negativo)">
+      <button data-pbextra-remover="${i}" class="perigo">Remover</button>
+    </div>`).join('') : `<p class="mini">Nenhum bônus avulso ainda.</p>`}
+    <button id="btnAddPericiaBonusExtra">+ Bônus</button>
   </div>`;
 }
 
@@ -2145,9 +2193,8 @@ function limiteTracoPorCena(p){
 }
 
 function habilidadeLinha(h, i, p){
-  const custoBase = CUSTO_PE_HABILIDADE[h.nivel] ?? null;
+  const custoFinal = custoPeDefault(p, h.nivel);
   const meiaCusto = p.ascensao.segunda && h.nivel <= 3; // bônus universal da Segunda Ascensão
-  const custoFinal = custoBase !== null && meiaCusto ? Math.ceil(custoBase/2) : custoBase;
   const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
   const contagemEfeitos = habilidadeContagemEfeitos(h);
   const nivelEfetivo = habilidadeNivelEfetivo(h);
@@ -2521,11 +2568,12 @@ function passivaLinha(h, i){
 function abaPassivas(p){
   return `<div class="cartao">
     <p class="mini">Começa com 2 Passivas; ganha +1 a cada 5 Níveis (mais os
-      bônus de Sabedoria 5/10). Você tem ${p.passivas.length} de
-      ${passivasEsperadas(p)} esperadas. Cada uma pode evoluir do Nível
+      bônus de Sabedoria 5/10). Você tem ${passivasUsadas(p)} de
+      ${passivasEsperadas(p)} esperadas${p.passivas.length!==passivasUsadas(p) ? ` (${p.passivas.length} Passiva${p.passivas.length===1?'':'s'}, contando o Nível interno de cada)` : ''}. Cada uma pode evoluir do Nível
       interno 0 até o 2, com o mesmo truque de desvantagens autoimpostas
       das Habilidades — o Nível 1 e o Nível 2 valem exatamente o que uma
-      Habilidade Nível 1 e Nível 2 valem.</p>
+      Habilidade Nível 1 e Nível 2 valem, e cada Nível a mais conta como
+      mais uma Passiva gasta.</p>
     <table class="tabela-ref">
       <tr><th>Nível interno</th><th>Dano/Cura/Movimento/RD/Vantagem</th><th>Alcance</th></tr>
       ${TABELA_PASSIVA_EVOLUCAO.map(l => `<tr><td>${l.nivelInterno}</td><td>${l.danoCuraMovRDVant}</td><td>${l.alcance}</td></tr>`).join('')}
@@ -3220,6 +3268,20 @@ function ligarEventos(){
   const lutaAtributo = app.querySelector('[data-luta-atributo]');
   if(lutaAtributo) lutaAtributo.onchange = () => mudar(p => p.lutaAtributo = lutaAtributo.value);
 
+  const btnAddPericiaBonusExtra = app.querySelector('#btnAddPericiaBonusExtra');
+  if(btnAddPericiaBonusExtra) btnAddPericiaBonusExtra.onclick = () => mudar(p => {
+    if(!p.periciaBonusExtra) p.periciaBonusExtra = [];
+    p.periciaBonusExtra.push({nome:'', periciaId:'', valor:0});
+  });
+  app.querySelectorAll('[data-pbextra-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => { p.periciaBonusExtra[Number(el.dataset.pbextraNome)].nome = el.value; }, el));
+  app.querySelectorAll('[data-pbextra-pericia]').forEach(el =>
+    el.onchange = () => mudar(p => { p.periciaBonusExtra[Number(el.dataset.pbextraPericia)].periciaId = el.value; }));
+  app.querySelectorAll('[data-pbextra-valor]').forEach(el =>
+    el.onchange = () => mudar(p => { p.periciaBonusExtra[Number(el.dataset.pbextraValor)].valor = Number(el.value) || 0; }));
+  app.querySelectorAll('[data-pbextra-remover]').forEach(b =>
+    b.onclick = () => mudar(p => { p.periciaBonusExtra.splice(Number(b.dataset.pbextraRemover), 1); }));
+
   app.querySelectorAll('[data-arma]').forEach(el =>
     el[el.tagName==='SELECT'?'onchange':'oninput'] = () => {
       const mutador = p => p.arma[el.dataset.arma] = el.value;
@@ -3356,7 +3418,11 @@ function ligarEventos(){
   // redesenha nada (existe pra não perder o foco de campo de texto).
   app.querySelectorAll('[data-hab-nivel]').forEach(el =>
     el.onchange = () => mudar(p => {
-      p.habilidades[Number(el.dataset.habNivel)].nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
+      const h = p.habilidades[Number(el.dataset.habNivel)];
+      h.nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
+      // Custo de PE acompanha o Nível sozinho — continua editável depois,
+      // pra quem quiser um valor diferente combinado com a mesa.
+      h.custoPe = custoPeDefault(p, h.nivel) ?? h.custoPe;
     }));
   app.querySelectorAll('[data-hab-flag]').forEach(el =>
     el.onchange = () => mudar(p => {
