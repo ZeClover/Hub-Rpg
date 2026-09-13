@@ -5524,6 +5524,82 @@ selects, bônus de arma aparecendo no combo de Habilidade e no card de
 Combate, aba Regras com as duas sub-abas e conteúdo esperado. `tsc
 --noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
 
+## 126. Sistema do Sávio — stat de Movimento; Ficha de Monstro com 4 Dificuldades (13/09/2026)
+
+**Movimento vira stat de verdade.** O sistema nunca teve um número de
+Movimento (velocidade de deslocamento) na ficha — só existia "Movimento"
+como um dos efeitos de Habilidade. Pra dar base às regras de Dificuldade
+do Monstro (que mexem em Movimento), perguntei a fórmula ao Zé; ele
+decifrou de uma célula da planilha: `12 (Combatente/Guerreiro Mágico) ou
+9 (resto) + Destreza÷2 (arredondado pra baixo) + bônus avulso`. Nova
+função `movimentoBase(p)`, campo `p.bonus.movimento` (mesmo padrão de
+`p.bonus.pv/pe/sanidade`, sem input próprio — nenhum dos outros três tem
+um também), card novo no painel de derivados (grade virou `g5`) e entrada
+na aba Regras Gerais.
+
+**Ficha de Monstro do Sistema do Sávio.** Pedido do Zé, com uma condição
+explícita: "a criação deve ser do mesmo modo que a ficha comum", ao
+contrário dos outros três sistemas (cujo `fichaInimigo` é um bestiário
+simplificado, sem classes). Por isso a ficha de Monstro é um arquivo
+NOVO, `public/sistema-do-savio-inimigo.html` — cópia integral da ficha de
+personagem (mesmas abas, mesmas Especializações, Habilidades, Invocação
+etc.), e não um recorte. Chaves de armazenamento local trocadas
+(`savio_inimigo_fichas`, `hub_abas_savio_inimigo`) pra não misturar com
+os personagens da ficha comum no mesmo navegador. Registrado em
+`sistemas.ts`: `fichaInimigo: '/sistema-do-savio-inimigo.html'`,
+`campoVidaInimigo: ['atual','pv']` (mesmo caminho da ficha comum, já que
+a estrutura de dados é a mesma) — o que já liga sozinho os botões "Criar
+ficha de monstro"/Painel de Vida da decisão #124, sem precisar mexer
+neles.
+
+Campo novo `p.dificuldade` (Capanga/Inimigo/Boss/Calamidade, radio na aba
+Perfil, junto de uma explicação do que cada um faz) com uma regra por
+trás:
+
+- **O que nunca muda:** Sanidade máxima, máximo de Perícias treináveis,
+  máximo de Habilidades, e o bônus de Atributo dentro da Perícia (só a
+  parte de treino/Nível/Passiva/Habilidade da rolagem escala).
+- **O que escala por um multiplicador** (Capanga ×0,5, Inimigo ×1 — a
+  ficha comum, sem ajuste — Boss ×2, Calamidade ×10, sempre arredondado
+  pra baixo): PV, PE, a parte não-Atributo da rolagem de Perícia, e todo
+  "dano" que a ficha calcula — efeito Dano/Cura/Movimento(efeito)/RD/
+  Vantagem de Habilidade, combo de arma, os dois traços do Combatente
+  (dano desarmado, Reflexos/Fortitude), o traço de dano do Mestre das
+  Armas, a Cura grátis do Suporte, o limiar de dano de Força, e o PV da
+  Imersão Espiritual.
+- **Movimento** tem regra própria, fora do multiplicador: Capanga −3,
+  Boss +6, Calamidade dobra o total (Inimigo sem ajuste).
+- **Ação extra:** Boss ganha +1 Ação Bônus na base, Calamidade +1 Ação
+  Comum e +1 Ação Bônus — só texto de referência na descrição da
+  Dificuldade, porque o sistema não rastreia "ações por turno" em número
+  nenhum lugar (só limiares de Destreza soltos, iguais na ficha comum).
+- **Passivas:** só o Capanga muda — não tem nenhuma. Os outros três
+  tiers usam a contagem normal (`passivasEsperadas`), porque "máximo de
+  Habilidades" ficar igual não implica Passiva mudar — e o Zé só falou
+  "sem Passiva" pro Capanga.
+
+Como o sistema nunca simula rolagem de dado (convenção do projeto), um
+valor em dado (ex.: "2d12") escalado não vira outro dado — fica como
+está mais uma anotação "×2"/"×10" (`comSufixoDificuldade`), pro jogador
+multiplicar o resultado na hora de rolar. Valor fixo (ex.: bônus de
+classe, PV, PE) multiplica de verdade
+(`porDificuldade`/`Math.floor`).
+
+**Fora do escopo desta fatia** (decisão #26): Invocação e Elemental
+mantêm as próprias fórmulas sem escalar pela Dificuldade do hospedeiro —
+o pedido do Zé não falou deles, e escalar uma criatura com sistema de
+Nível próprio (1–7) pelo tier do hospedeiro merece pedido explícito antes
+de eu inventar a interação. Dano de Sanidade (tabela por Nível de
+personagem) também não escala — é uma referência rara, não o "dano
+principal" que as regras de Dificuldade descrevem.
+
+Testado com Playwright: PV/PE/Movimento nos 4 tiers batendo com a conta
+manual, Passivas=0 só no Capanga, Perícia escalando só a parte sem
+Atributo, sufixo "×10" aparecendo no efeito de Dano em Calamidade,
+Sanidade máxima igual em todos os tiers, persistência depois de recarregar.
+`tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

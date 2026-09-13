@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ficha — Sistema do Sávio</title>
+<title>Ficha de Monstro — Sistema do Sávio</title>
 <style>
 /* Mesma paleta-base do Hub RPG, com destaque em violeta pra diferenciar
    visualmente este sistema dos outros três (âmbar). */
@@ -158,7 +158,7 @@ body.compacto .abas{margin-bottom:14px}
 </head>
 <body>
 <div class="barra">
-  <span class="marca">Sistema do Sávio</span>
+  <span class="marca">Sistema do Sávio — Monstro</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--roxo);text-decoration:none;font-size:13px">← Fichas</a>
   <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
@@ -274,6 +274,52 @@ function bonusNumericoLimiar(p, id, tabelaFlat){
     const m = l.txt.match(new RegExp('\\+(\\d+) ' + tabelaFlat));
     return t + (m ? Number(m[1]) : 0);
   }, 0);
+}
+
+// Dificuldade do Monstro (ficha própria, nasce do mesmo jeito que a ficha
+// comum). Cada tier escala um conjunto fixo de números — dano de
+// Habilidade/arma/traços, PV, PE, a parte da Perícia que não vem do
+// Atributo, e Vantagem/Desvantagem — e mexe em Movimento e ação extra.
+// O que NÃO muda em nenhum tier: Sanidade máxima, máximo de Perícias
+// treináveis, máximo de Habilidades, e o bônus de Atributo na Perícia.
+const DIFICULDADES_MONSTRO = [
+  {id:'capanga',    nome:'Capanga',    multiplicador:0.5,
+    movimento:'-3', acaoExtra:'', semPassiva:true,
+    sobre:'Metade do dano/PV/PE/vantagens/rolagem de Perícia (sem contar o Atributo); Movimento −3; sem Passiva nenhuma.'},
+  {id:'inimigo',    nome:'Inimigo',    multiplicador:1,
+    movimento:'', acaoExtra:'', semPassiva:false,
+    sobre:'A ficha exatamente como a comum — sem nenhum ajuste.'},
+  {id:'boss',       nome:'Boss',       multiplicador:2,
+    movimento:'+6', acaoExtra:'+1 Ação Bônus na base', semPassiva:false,
+    sobre:'Dobro do dano/PV/PE/vantagens/rolagem de Perícia (sem contar o Atributo); Movimento +6; +1 Ação Bônus na base.'},
+  {id:'calamidade', nome:'Calamidade', multiplicador:10,
+    movimento:'×2', acaoExtra:'+1 Ação Comum e +1 Ação Bônus na base', semPassiva:false,
+    sobre:'10× o dano/PV/PE/vantagens/rolagem de Perícia (sem contar o Atributo); Movimento dobra; +1 Ação Comum e +1 Ação Bônus na base.'},
+];
+function dificuldadeMonstro(p){ return DIFICULDADES_MONSTRO.find(d => d.id === p.dificuldade) || DIFICULDADES_MONSTRO[1]; }
+function multiplicadorDificuldade(p){ return dificuldadeMonstro(p).multiplicador; }
+// Multiplica um número (PV, PE, bônus fixo de classe/traço) pela
+// Dificuldade — arredondado pra baixo, igual ao resto do sistema.
+function porDificuldade(p, valor){ return Math.floor(valor * multiplicadorDificuldade(p)); }
+// Pendura "×0.5"/"×2"/"×10" num texto de dado (ex.: "2d6") — o Hub não
+// simula rolagem, então dado escalado vira só uma anotação de referência
+// pro jogador multiplicar na hora de rolar. Some sozinho na Dificuldade
+// Inimigo (×1), que é a ficha comum sem ajuste nenhum.
+function comSufixoDificuldade(p, texto){
+  const m = multiplicadorDificuldade(p);
+  return m === 1 ? texto : `${texto} ×${m}`;
+}
+// Texto de limiar de Atributo (LIMIARES), ajustado à Dificuldade: o de
+// Força é dano (leva o sufixo ×N); os de PV/PE (Constituição/Inteligência)
+// alimentam pvMaximo/peMaximo, que já escalam — então o número aqui precisa
+// bater com o que realmente entra na conta. Sanidade (Carisma), Ação
+// (Destreza) e Passiva (Sabedoria) não escalam com Dificuldade nenhuma.
+function textoLimiarEscalado(p, id, txt){
+  if(id === 'forca') return comSufixoDificuldade(p, txt);
+  if(id === 'constituicao' || id === 'inteligencia'){
+    return txt.replace(/\+(\d+)/, (_, n) => `+${porDificuldade(p, Number(n))}`);
+  }
+  return txt;
 }
 
 // As duas tabelas de Perícia do documento original, cada uma ligada a um
@@ -427,14 +473,14 @@ function bonusClasseEfeitoHabilidade(p, h, chave){
   const vale = (espId === 'suporte' && chave === 'cura') ||
                (espId === 'guerreiro-magico' && (chave === 'dano' || chave === 'cura'));
   if(!vale) return 0;
-  return 2*h.nivel + maiorAtributo(p);
+  return porDificuldade(p, 2*h.nivel + maiorAtributo(p));
 }
 
 // Traço do Mestre das Armas ("Dano com arma e reforço"): enquanto empunha
 // uma arma, soma o maior Atributo a TODO dano causado com ela — inclusive
 // quando a Habilidade combina o dano dela com o da arma equipada.
 function bonusArmaMestreDasArmas(p, h){
-  return (p.especializacaoId === 'mestre-das-armas' && h.usaArma) ? maiorAtributo(p) : 0;
+  return (p.especializacaoId === 'mestre-das-armas' && h.usaArma) ? porDificuldade(p, maiorAtributo(p)) : 0;
 }
 
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
@@ -707,7 +753,7 @@ function carregarLayout(){
 // Guarda {id, oculta} na ordem escolhida; abas novas que a ficha ganhar
 // depois entram no fim, visíveis; abas removidas do sistema somem sozinhas
 // (não ficam "fantasmas" na lista).
-const CHAVE_ABAS = 'hub_abas_savio';
+const CHAVE_ABAS = 'hub_abas_savio_inimigo';
 function carregarPreferenciaAbas(){
   let salvas = [];
   try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ salvas = []; }
@@ -817,6 +863,10 @@ function novoPersonagem(nome){
       aliados: '', objetivo: '', descricao: '', historia: '',
     },
     nivel: 1,
+    // Dificuldade do Monstro — escala PV/PE/dano/vantagens/rolagem de
+    // Perícia (a parte que não vem do Atributo) e Movimento. Ver
+    // DIFICULDADES_MONSTRO.
+    dificuldade: 'inimigo',
     atributos: {forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0},
     especializacaoId: '',
     // pericias: {id: true/false} — treinada ou não. Ofício livre guarda o
@@ -985,7 +1035,7 @@ function avisosDadoPericia(p, periciaId){
     (h.periciasAlvo||[]).includes(periciaId) && (h.tipoBonus||'soma') === 'dado' &&
     habilidadeVantagemContaAgora(h) &&
     h.efeitos && h.efeitos.vantagem
-  ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
+  ).map(h => `${comSufixoDificuldade(p, TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0])} de ${esc(h.nome)||'(sem nome)'}`);
 }
 // Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
 // (5 se for treinada, senão 0) + bônus fixo de Passivas apontadas pra
@@ -993,7 +1043,10 @@ function avisosDadoPericia(p, periciaId){
 function periciaTotal(p, per){
   const atributo = atributoEfetivo(p, periciaAtributoId(p, per));
   const bonusTreino = p.pericias[per.id] ? 5 : 0;
-  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id);
+  // O bônus vindo do Atributo NÃO escala com a Dificuldade — só o resto da
+  // rolagem (treino, Nível, Passivas, Habilidades) escala.
+  const restante = bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id);
+  return atributo + porDificuldade(p, restante);
 }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
@@ -1008,7 +1061,8 @@ function pvMaximo(p){
   const con = atributoEfetivo(p,'constituicao');
   const base = esp ? esp.pvInicial + con : 10 + con;
   const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
-  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0);
+  const total = base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0);
+  return porDificuldade(p, total);
 }
 function peMaximo(p){
   const esp = especializacao(p);
@@ -1017,18 +1071,26 @@ function peMaximo(p){
   const total = base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'inteligencia','PE máximo') + (p.bonus.pe||0);
   // Arquétipo Prodígio (Primeira Ascensão): multiplicador de PE máximo ×1,5.
   const arq = arquetipo(p);
-  return arq && arq.id === 'prodigio' ? Math.round(total*1.5) : total;
+  const comProdigio = arq && arq.id === 'prodigio' ? Math.round(total*1.5) : total;
+  return porDificuldade(p, comProdigio);
 }
+// Sanidade máxima NÃO escala com a Dificuldade (regra explícita do Zé).
 function sanidadeMaxima(p){
   return 100 + bonusNumericoLimiar(p,'carisma','Sanidade máxima') + (p.bonus.sanidade||0);
 }
 // Movimento: 12 pra Combatente/Guerreiro Mágico, 9 pro resto (Suporte e
 // Mestre das Armas) — + metade da Destreza (arredondado pra baixo) + bônus
-// avulso que o mestre conceder.
+// avulso que o mestre conceder. A Dificuldade mexe nisso à parte do
+// multiplicador geral: Capanga -3, Boss +6, Calamidade dobra o total.
 function movimentoBase(p){
   const espId = p.especializacaoId;
   const base = (espId === 'combatente' || espId === 'guerreiro-magico') ? 12 : 9;
-  return base + Math.floor(atributoEfetivo(p,'destreza')/2) + (p.bonus.movimento||0);
+  const total = base + Math.floor(atributoEfetivo(p,'destreza')/2) + (p.bonus.movimento||0);
+  const dif = p.dificuldade;
+  if(dif === 'capanga') return total - 3;
+  if(dif === 'boss') return total + 6;
+  if(dif === 'calamidade') return total * 2;
+  return total;
 }
 
 /* --- Ativação de Habilidades --------------------------------------------
@@ -1110,6 +1172,8 @@ function passivasBonusSabedoria(p){
 }
 function habilidadesEsperadas(p){ return 2 + Math.max(0, p.nivel-1); }
 function passivasEsperadas(p){
+  // Capanga não tem Passiva nenhuma (regra explícita do Zé).
+  if(dificuldadeMonstro(p).semPassiva) return 0;
   const arq = arquetipo(p);
   // Arquétipo Inato (Primeira Ascensão): +2 Passivas além do máximo normal.
   const bonusInato = arq && arq.id === 'inato' ? 2 : 0;
@@ -1119,7 +1183,7 @@ function passivasEsperadas(p){
 }
 
 // PV da Imersão Espiritual (Segunda Ascensão): Nível × Sabedoria efetiva.
-function pvImersao(p){ return p.nivel * atributoEfetivo(p,'sabedoria'); }
+function pvImersao(p){ return porDificuldade(p, p.nivel * atributoEfetivo(p,'sabedoria')); }
 // PE gasto por round mantendo a Imersão ativa — base 10, ajustável em ±3
 // por "tier" (até 3 tiers pra cada lado, fortalecendo ou enfraquecendo).
 function peImersaoPorRound(p){ return 10 + (p.imersao.tiers||0)*3; }
@@ -1222,7 +1286,7 @@ function subirNivel(p){
 ------------------------------------------------------------------------- */
 
 const MODO_HUB = new URLSearchParams(location.search).get('id');
-const CHAVE = 'savio_fichas';
+const CHAVE = 'savio_inimigo_fichas';
 let falhouAoSalvar = false;
 
 function carregar(){
@@ -1581,7 +1645,7 @@ function blocoAtributos(p){
       <input id="c-attr-${a.id}" data-atributo="${a.id}" type="number" min="0" max="${cap}" value="${p.atributos[a.id]}">
       <p class="mini" style="margin-top:6px">${a.sobre}</p>
       ${bonusAsc ? `<p class="mini" style="color:var(--roxo-forte)">Efetivo: ${efetivo} (+${bonusAsc} da Ascensão, fora do teto)</p>` : ''}
-      ${limiaresAtivos(efetivo, a.id).map(l => `<p class="mini" style="color:var(--roxo-forte)">✓ ${l.txt}</p>`).join('')}
+      ${limiaresAtivos(efetivo, a.id).map(l => `<p class="mini" style="color:var(--roxo-forte)">✓ ${textoLimiarEscalado(p, a.id, l.txt)}</p>`).join('')}
     </div>`;
     }).join('')}
   </div>
@@ -1790,6 +1854,10 @@ const AJUDA_ABAS = {
     <strong>⭐ Subir de Nível</strong> recalcula tudo isso sozinho e, se
     abrir uma vaga nova de Habilidade ou Passiva, já leva pro Modo Guiado
     de evolução pra você registrar ali mesmo.</p>
+    <p class="mini" style="margin-top:8px"><strong>Dificuldade</strong> é o
+    que diferencia esta ficha da comum: escolha entre Capanga, Inimigo,
+    Boss ou Calamidade pra escalar dano/PV/PE/Vantagem/rolagem de Perícia e
+    ajustar o Movimento (veja a tabela na aba Regras).</p>
     <p class="mini" style="margin-top:8px">Aliados/Entes Queridos,
     Objetivo/Sonho, Descrição e História são ganchos de mesa — o Mestre
     normalmente usa essas respostas pra criar cenas específicas pra você.
@@ -1965,6 +2033,24 @@ function abaPerfil(p){
     <button id="btnLevelUp" class="destaque" style="margin-top:14px" title="Sobe 1 Nível: recalcula PV/PE, Reações, Habilidades/Passivas esperadas e o que cada Nível de Habilidade libera">⭐ Subir de Nível</button>
   </div>
   <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Dificuldade</h3>
+    <p class="mini" style="margin-bottom:10px">O resto da ficha é criado
+      exatamente como uma ficha de personagem comum — a Dificuldade só
+      escala o que esse Monstro entrega em combate (dano, PV, PE,
+      Vantagem/Desvantagem, e a parte da rolagem de Perícia que não vem do
+      Atributo) e o Movimento. Sanidade máxima, máximo de Perícias, máximo
+      de Habilidades e o bônus de Atributo na Perícia não mudam nunca.</p>
+    <div class="grade g2">
+      ${DIFICULDADES_MONSTRO.map(d => `<label class="linha-lista" style="cursor:pointer;display:block;margin-bottom:0">
+        <div class="linha">
+          <input type="radio" name="dificuldade" data-dificuldade="${d.id}" style="width:auto" ${p.dificuldade===d.id?'checked':''}>
+          <strong>${d.nome}</strong>
+        </div>
+        <p class="mini" style="margin:6px 0 0">${d.sobre}</p>
+      </label>`).join('')}
+    </div>
+  </div>
+  <div class="cartao">
     <label for="c-aliados">Aliados ou Entes Queridos</label>
     <textarea id="c-aliados" data-perfil="aliados" rows="2">${esc(p.perfil.aliados)}</textarea>
   </div>
@@ -2043,7 +2129,7 @@ function abaPericias(p){
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
         <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
-      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${comSufixoDificuldade(p, combatenteDadosReflexos(p)+'d4')} do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
     }).join('')}
   </div>`;
 }
@@ -2064,7 +2150,7 @@ function abaClasse(p){
   ${p.especializacaoId === 'suporte' ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Cura grátis</h3>
     <p class="mini">Ação bônus, <strong>ilimitada</strong> (não gasta PE nem
-      conta nos usos por cena abaixo): cura <strong>1d6 + ${maiorAtributo(p)}</strong>
+      conta nos usos por cena abaixo): cura <strong>${comSufixoDificuldade(p, '1d6')} + ${porDificuldade(p, maiorAtributo(p))}</strong>
       (seu maior Atributo) num aliado.</p>
   </div>
   <div class="cartao">
@@ -2094,14 +2180,14 @@ function abaClasse(p){
   ${p.especializacaoId === 'combatente' ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Dano desarmado</h3>
     <p class="mini">Ataque desarmado causa <strong>dano de arma Pequena
-      (${TAMANHOS_ARMA.find(t=>t.id==='pequena').dano}) + ${combatenteBonusDados(p)}d4</strong>
+      (${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id==='pequena').dano)}) + ${comSufixoDificuldade(p, combatenteBonusDados(p)+'d4')}</strong>
       (Nível÷4, arredondado pra baixo, mínimo 1d4) em qualquer tipo de
       dano.</p>
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Reflexos ou Fortitude</h3>
     <p class="mini" style="margin-bottom:10px">Escolha uma vez — a Perícia
-      escolhida ganha ${combatenteDadosReflexos(p)}d4 extra (some Nível ${p.nivel}÷5,
+      escolhida ganha ${comSufixoDificuldade(p, combatenteDadosReflexos(p)+'d4')} extra (some Nível ${p.nivel}÷5,
       arredondado pra cima, começando em 1d4 no Nível 1). Você pode
       transferir esse dado pra Luta por 2 PE, só naquele turno — a ficha
       não simula isso automaticamente, é você que rola o d4 extra na hora
@@ -2111,11 +2197,11 @@ function abaClasse(p){
       <option value="reflexos" ${p.combatenteBonusPericia==='reflexos'?'selected':''}>Reflexos</option>
       <option value="fortitude" ${p.combatenteBonusPericia==='fortitude'?'selected':''}>Fortitude</option>
     </select>
-    ${p.combatenteBonusPericia ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">+${combatenteDadosReflexos(p)}d4 em ${PERICIAS.find(per=>per.id===p.combatenteBonusPericia).nome} (aparece também na aba Perícias).</p>` : ''}
+    ${p.combatenteBonusPericia ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">+${comSufixoDificuldade(p, combatenteDadosReflexos(p)+'d4')} em ${PERICIAS.find(per=>per.id===p.combatenteBonusPericia).nome} (aparece também na aba Perícias).</p>` : ''}
   </div>` : ''}
   ${p.especializacaoId === 'mestre-das-armas' ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Dano com arma e reforço</h3>
-    <p class="mini">Enquanto empunha uma arma, soma <strong>+${maiorAtributo(p)}</strong>
+    <p class="mini">Enquanto empunha uma arma, soma <strong>+${porDificuldade(p, maiorAtributo(p))}</strong>
       (seu maior Atributo) a todo dano causado com ela.</p>
     <div class="linha" style="margin-top:8px;gap:8px">
       <button type="button" data-mda-reforco>Gastar 2 PE (reforçar um teste de ataque/defesa)</button>
@@ -2200,10 +2286,10 @@ function habilidadeLinha(h, i, p){
         ${efeitosEscolhidos.map(e => {
           const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
           const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
-          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
           return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
-          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}</div>
+          <div class="val" style="font-size:16px">${comSufixoDificuldade(p, linhaTabela[e.coluna])}${extraArma}</div>
           ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
           ${bonusArma ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusArma} do traço de Mestre das Armas (maior Atributo com arma equipada)</div>` : ''}
         </div>`;
@@ -2215,7 +2301,7 @@ function habilidadeLinha(h, i, p){
       ${h.efeitos && h.efeitos.vantagem ? (() => {
         const gatilho = h.tipo === 'imediata' ? '' : ' Só conta enquanto a Habilidade estiver Ativa.';
         return `<div style="margin-top:8px">
-        <label>Aplicar a Vantagem/Desvantagem (${linhaTabela.vantagem}) em quais Perícias? (opcional.${gatilho} Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
+        <label>Aplicar a Vantagem/Desvantagem (${comSufixoDificuldade(p, linhaTabela.vantagem)}) em quais Perícias? (opcional.${gatilho} Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
         ${(h.periciasAlvo||[]).length ? (h.periciasAlvo||[]).map((perId,pi) => {
           const per = PERICIAS.find(x=>x.id===perId);
           return `<div class="linha" style="margin-top:4px;align-items:center;gap:8px">
@@ -2231,11 +2317,11 @@ function habilidadeLinha(h, i, p){
           <button data-hab-pericia-add="${i}">+ Perícia</button>
         </div>
         ${(h.periciasAlvo||[]).length ? `<select data-hab-select="${i}|tipoBonus" style="margin-top:8px">
-          <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.vantagem)} em cada, entra no Total)</option>
-          <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
+          <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${porDificuldade(p, bonusFixoDoTexto(linhaTabela.vantagem))} em cada, entra no Total)</option>
+          <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${comSufixoDificuldade(p, linhaTabela.vantagem.split(' ou ')[0])} em cada, rola na hora)</option>
         </select>` : ''}
-        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${gatilho ? ' enquanto esta Habilidade estiver Ativa.' : '.'}</p>` : ''}
-        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias)${gatilho ? ' enquanto esta Habilidade estiver Ativa' : ''} — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
+        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${porDificuldade(p, bonusFixoDoTexto(linhaTabela.vantagem))} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${gatilho ? ' enquanto esta Habilidade estiver Ativa.' : '.'}</p>` : ''}
+        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${comSufixoDificuldade(p, linhaTabela.vantagem.split(' ou ')[0])} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias)${gatilho ? ' enquanto esta Habilidade estiver Ativa' : ''} — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
       </div>`; })() : ''}
     </div>
     <div class="linha" style="margin-top:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px">
@@ -2548,8 +2634,8 @@ function habilidadeResumoCombate(h, i, p){
     ...efeitosEscolhidos.map(e => {
       const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
       const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
-      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
-      return `${e.rotulo}: ${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
+      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+      return `${e.rotulo}: ${comSufixoDificuldade(p, linhaTabela[e.coluna])}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
     }),
   ].join(' · ');
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
@@ -2562,7 +2648,7 @@ function habilidadeResumoCombate(h, i, p){
       <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
       ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
       ${h.efeito ? `<p class="mini">${esc(h.efeito)}</p>` : ''}
-      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeVantagemContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
+      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${porDificuldade(p, bonusFixoDoTexto(linhaTabela.vantagem))}` : comSufixoDificuldade(p, linhaTabela.vantagem.split(' ou ')[0])} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeVantagemContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
         ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
           : h.ativa
@@ -2605,7 +2691,7 @@ function abaCombate(p){
           ${TAMANHOS_ARMA.map(t => `<option value="${t.id}" ${t.id===p.arma.tamanho?'selected':''}>${t.nome}</option>`).join('')}
         </select></div>
     </div>
-    <p class="mini" style="margin-top:8px">Dano ${tam.dano}${p.especializacaoId==='mestre-das-armas' ? `+${maiorAtributo(p)} (traço Mestre das Armas)` : ''} · esquiva: ${tam.esquiva}</p>
+    <p class="mini" style="margin-top:8px">Dano ${comSufixoDificuldade(p, tam.dano)}${p.especializacaoId==='mestre-das-armas' ? `+${porDificuldade(p, maiorAtributo(p))} (traço Mestre das Armas)` : ''} · esquiva: ${tam.esquiva}</p>
     <label for="c-arma-notas" style="margin-top:8px">Notas</label>
     <textarea id="c-arma-notas" data-arma="notas" rows="2">${esc(p.arma.notas)}</textarea>
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
@@ -2995,6 +3081,20 @@ function regrasHabilidadesConteudo(){
 
 function regrasGeraisConteudo(){
   return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Dificuldade do Monstro</h3>
+    <p class="mini" style="margin-bottom:8px">Criação idêntica à ficha
+      comum; a Dificuldade só escala dano, PV, PE, Vantagem/Desvantagem e a
+      parte da rolagem de Perícia que não vem do Atributo — mais um ajuste
+      de Movimento. Nunca muda: Sanidade máxima, máximo de Perícias, máximo
+      de Habilidades, bônus de Atributo na Perícia.</p>
+    <table class="tabela-ref">
+      <tr><th>Dificuldade</th><th>Multiplicador</th><th>Movimento</th><th>Ação extra</th></tr>
+      ${DIFICULDADES_MONSTRO.map(d => `<tr><td>${d.nome}</td><td>×${d.multiplicador}</td><td>${d.movimento||'—'}</td><td>${d.acaoExtra||'—'}</td></tr>`).join('')}
+    </table>
+    <p class="mini" style="margin-top:8px">Capanga não tem Passiva nenhuma
+      — é a única exceção à contagem normal de Passivas.</p>
+  </div>
+  <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Atributos</h3>
     <p class="mini" style="margin-bottom:8px">Seis Atributos, de 0 a 10
       (15 depois da Segunda Ascensão). Cada um tem dois limiares (5 e 10)
@@ -3309,6 +3409,8 @@ function ligarEventos(){
       // (e a Imersão que ela libera) num estado impossível.
       if(el.dataset.ascCheck === 'primeira' && !el.checked) p.ascensao.segunda = false;
     }));
+  app.querySelectorAll('[data-dificuldade]').forEach(el =>
+    el.onchange = () => mudar(p => { p.dificuldade = el.dataset.dificuldade; }));
   app.querySelectorAll('[data-asc-arquetipo]').forEach(el =>
     el.onchange = () => mudar(p => {
       p.ascensao.arquetipoId = el.dataset.ascArquetipo;

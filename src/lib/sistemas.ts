@@ -129,9 +129,9 @@ export const SISTEMAS: Sistema[] = [
     ficha: "/sistema-do-savio.html",
     situacao: "pronta",
     salvaNoHub: true,
-    fichaInimigo: null,
+    fichaInimigo: "/sistema-do-savio-inimigo.html",
     escudoMestre: null,
-    campoVidaInimigo: null,
+    campoVidaInimigo: ["atual", "pv"],
     grimorio: null,
   },
   {
