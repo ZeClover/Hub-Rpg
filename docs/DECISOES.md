@@ -5229,6 +5229,73 @@ recalcula do zero a cada render. `tsc --noEmit`, `npm run lint`, os 298
 testes automáticos e as checagens de Modo Guiado/Level Up/Ascensão do
 Sávio continuam passando.
 
+## 122. Sistema do Sávio — seis ajustes de Habilidades, Modo Guiado, layout e traços (12/09/2026)
+
+Pedido do Zé numa mensagem só, com seis partes — feito em ordem, cada
+uma testada antes de passar pra próxima.
+
+**1+2. Vantagem/Desvantagem aponta pra Perícia (Dado ou Soma), e não
+Dano/Cura.** Da decisão #119, o recurso de apontar o bônus de uma
+Habilidade Sustentada/Duradoura pra uma Perícia (Soma ou Dado) tinha
+sido implementado no efeito errado — Dano/Cura/Movimento/RD. O Zé
+corrigiu: é só no **Vantagem/Desvantagem**. Além disso, esclareceu a
+regra de empilhar: não dá pra apontar o mesmo bônus pra Perícia igual
+duas vezes, mas dá pra apontar pra Perícias **diferentes** com a mesma
+Habilidade — e isso conta como combinar mais de um efeito (mesma regra
+que já existia pra combinar Dano+Alcance, por exemplo: reduz o Nível
+efetivo em 1). `periciaAlvo` (um valor) virou `periciasAlvo` (lista);
+nova função `habilidadeContagemEfeitos(h)` conta 1 por efeito normal e
+`Math.max(1, periciasAlvo.length)` pro Vantagem/Desvantagem, alimentando
+o mesmo `habilidadeNivelEfetivo`. UI: lista de Perícias com botão
+"+ Perícia" (não deixa repetir a mesma) e um único Soma/Dado pra toda a
+Habilidade. Testado: Sustentada Nível 1 (efetivo 3) apontada pra duas
+Perícias cai pro efetivo 2 (combinando), e as duas Perícias recebem
+exatamente o bônus da linha 2 da tabela enquanto a Habilidade está
+Ativa.
+
+**3. Modo Guiado sem Perícias e sem Invocação.** Faltavam dois passos
+inteiros no fluxo de criação: Perícias (o jogador nunca via a tela de
+escolher perícia treinada durante a criação) e Invocação (não existia
+passo nenhum). Adicionados como passo 3 (Perícias) e passo 6 (Invocação,
+com texto deixando claro que é opcional e dá pra pular sem preencher
+nada) — o guiado foi de 5 pra 7 passos. Nenhuma função nova precisou de
+bind: `ligarEventos()` já religa tudo a cada render, então reaproveitar
+`abaPericias(p)`/`abaInvocacoes(p)` dentro do guiado funcionou sem
+código extra.
+
+**4. Habilidades colapsáveis, PE num badge.** Cada Habilidade na aba
+Habilidades virou um card que abre/fecha: fechado, mostra só nome, tipo/
+Nível e o custo de PE (`h.custoPe`) num badge arredondado no canto;
+clicar expande pro formulário completo de edição. Habilidade nova já
+nasce aberta. Estado de aberto/fechado é só de UI (`estado.habExpandidas`,
+um Set de índices) — não é salvo na ficha, e é reajustado ao remover uma
+Habilidade no meio da lista (os índices depois dela descem 1) pra não
+ficar com o card errado marcado como aberto.
+
+**5. Traço "Reflexos ou Fortitude" do Combatente virou escolhível.**
+Existia só como texto solto na lista de traços — sem lugar nenhum pra
+escolher. Adicionado `p.combatenteBonusPericia` (vazio/reflexos/
+fortitude) com um select na aba Especialização, só quando a
+Especialização é Combatente. Mostra o bônus calculado (`xd4`, x = Nível
+÷5 arredondado pra cima, mínimo 1) e um aviso na Perícia escolhida (aba
+Perícias) — igual ao padrão já usado pro aviso de Dado das Habilidades.
+A "transferência pra Luta por 2 PE" citada no traço fica só como texto
+explicativo: é uma decisão de um turno específico, não um estado
+persistente pra rastrear na ficha (mesma convenção do projeto: o Hub
+nunca simula rolagem, o jogador que lembra de rolar o dado extra na
+hora certa).
+
+**6. Elemental não tem PE próprio.** O Elemental mostrava um PE
+calculado com fórmula própria (base + porNível da Especialização dele),
+o que estava errado — ele gasta do PE do hospedeiro (o próprio
+personagem), não tem reserva independente. Removida a função
+`elementalPE(p)` (não sobrou nenhum outro uso) e o card "PE" da aba
+Elemental, substituído por uma nota explicando que o gasto sai do PE do
+hospedeiro.
+
+Testado cada item com Playwright antes de seguir pro próximo. `tsc
+--noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

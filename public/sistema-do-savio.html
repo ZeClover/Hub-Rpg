@@ -805,6 +805,9 @@ function novoPersonagem(nome){
     // o dano calculado, pra não ter que refazer conta toda vez na mesa —
     // cada um: {nome, dano, notas}.
     ataques: [],
+    // Escolha do traço "Reflexos ou Fortitude" do Combatente (some xd4
+    // na Perícia escolhida) — vazio até o jogador escolher.
+    combatenteBonusPericia: '',
     exaustoes: 0,
     // Reações usadas na rodada atual — zera sozinho a cada "⏭ Passar
     // Round". Só Habilidades marcadas como "reação" podem alimentar o
@@ -1098,12 +1101,6 @@ function elementalPV(p){
   const con = p.elemental.atributos.constituicao||0;
   const base = esp ? esp.pvInicial + con : 10 + con;
   const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
-  return base + porNivel*Math.max(0, p.elemental.nivel-1);
-}
-function elementalPE(p){
-  const esp = elementalEspecializacao(p);
-  const base = esp ? esp.peInicial : 15;
-  const porNivel = esp ? esp.pePorNivel : 5;
   return base + porNivel*Math.max(0, p.elemental.nivel-1);
 }
 function elementalSanidade(p){
@@ -1967,7 +1964,7 @@ function abaPericias(p){
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
         <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
-      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}`;
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteBonusDados(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}`;
     }).join('')}
   </div>`;
 }
@@ -1984,8 +1981,26 @@ function abaClasse(p){
     <ul style="margin:0;padding-left:20px">
       ${especializacao(p).tracos.map(t => `<li style="margin-bottom:6px">${t}</li>`).join('')}
     </ul>
+  </div>` : ''}
+  ${p.especializacaoId === 'combatente' ? `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Reflexos ou Fortitude</h3>
+    <p class="mini" style="margin-bottom:10px">Escolha uma vez — a Perícia
+      escolhida ganha ${combatenteBonusDados(p)}d4 extra (some Nível ${p.nivel}÷5,
+      arredondado pra cima, começando em 1d4 no Nível 1). Você pode
+      transferir esse dado pra Luta por 2 PE, só naquele turno — a ficha
+      não simula isso automaticamente, é você que rola o d4 extra na hora
+      certa.</p>
+    <select data-combatente-bonus>
+      <option value="" ${!p.combatenteBonusPericia?'selected':''}>— escolher —</option>
+      <option value="reflexos" ${p.combatenteBonusPericia==='reflexos'?'selected':''}>Reflexos</option>
+      <option value="fortitude" ${p.combatenteBonusPericia==='fortitude'?'selected':''}>Fortitude</option>
+    </select>
+    ${p.combatenteBonusPericia ? `<p class="mini" style="color:var(--roxo-forte);margin-top:8px">+${combatenteBonusDados(p)}d4 em ${PERICIAS.find(per=>per.id===p.combatenteBonusPericia).nome} (aparece também na aba Perícias).</p>` : ''}
   </div>` : ''}`;
 }
+// x = Nível÷5 arredondado pra cima, começando em 1 (o traço do Combatente
+// diz "começando em 1d4" já no Nível 1, não em 0).
+function combatenteBonusDados(p){ return Math.max(1, Math.ceil(p.nivel/5)); }
 
 function habilidadeLinha(h, i, p){
   const custoBase = CUSTO_PE_HABILIDADE[h.nivel] ?? null;
@@ -2228,11 +2243,12 @@ function abaElemental(p){
           ${ESPECIALIZACOES.map(e => `<option value="${e.id}" ${el.especializacaoId===e.id?'selected':''}>${e.nome}</option>`).join('')}
         </select></div>
     </div>
-    <div class="grade g3" style="margin-top:12px">
+    <div class="grade g2" style="margin-top:12px">
       <div class="derivado"><div class="rot">PV</div><div class="val">${elementalPV(p)}</div><div class="obs">${esp?esp.nome:'sem Especialização'}</div></div>
-      <div class="derivado"><div class="rot">PE</div><div class="val">${elementalPE(p)}</div></div>
       <div class="derivado"><div class="rot">Sanidade</div><div class="val">${elementalSanidade(p)}</div></div>
     </div>
+    <p class="mini" style="margin-top:10px">O Elemental não tem PE próprio — toda Habilidade dele
+      gasta do <strong>PE do hospedeiro</strong> (o seu, na aba Atributos).</p>
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Atributos (teto ${cap})</h3>
@@ -2727,6 +2743,8 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-especializacao]').forEach(el =>
     el.onchange = () => mudar(p => p.especializacaoId = el.dataset.especializacao));
+  app.querySelectorAll('[data-combatente-bonus]').forEach(el =>
+    el.onchange = () => mudar(p => p.combatenteBonusPericia = el.value));
 
   app.querySelectorAll('[data-pericia]').forEach(el =>
     el.onchange = () => mudar(p => p.pericias[el.dataset.pericia] = el.checked));
