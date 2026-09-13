@@ -321,7 +321,6 @@ const ESPECIALIZACOES = [
       'Nível/4 vezes por cena: reduz à metade o custo de PE de uma Habilidade usada num aliado.',
       '"Apoiar" vira ação bônus por 2 PE (normalmente é ação completa).',
       'Toda Habilidade de cura/efeito ganha +2×Nível da Habilidade + maior atributo (a cura grátis acima não conta esse bônus).',
-      'Ao despertar (pós-Ascensão): a cura grátis vira ação livre, e o bônus de +2×Nível dobra.',
     ]},
   {id:'combatente', nome:'Combatente', pvInicial:40, pvPorNivel:'10 + CON', peInicial:10, pePorNivel:5,
     resumo:'Luta corpo a corpo pura — golpe, resistência e adrenalina.',
@@ -329,7 +328,6 @@ const ESPECIALIZACOES = [
       'Ataques desarmados causam dano de arma pequena + xd4 (x = Nível/4) em qualquer dano.',
       'Nível/2 (da maior entre Força/Constituição) vezes por cena: reduz à metade o custo de PE pra "aprimorar" uma Habilidade.',
       'Escolhe Reflexos ou Fortitude pra somar xd4 (x = Nível/5, começando em 1d4) — pode transferir esse dado pra Luta por 2 PE no turno.',
-      'Ao despertar: a cada 10 de dano sofrido num round, ganha +1 dado de dano no próximo ataque.',
     ]},
   {id:'mestre-das-armas', nome:'Mestre das Armas', pvInicial:20, pvPorNivel:'5 + CON', peInicial:15, pePorNivel:8,
     resumo:'Vive de equipamento — arma, engenhoca e Gadgets.',
@@ -340,7 +338,6 @@ const ESPECIALIZACOES = [
       'Único que pode ocupar TODOS os encaixes de arma/equipamento (o normal é 1 arma + 1 item especial).',
       'Todo item que fabrica ganha Gadgets (mods, máx. 5 por item; começa com 2 no Nível 1, +1 por Nível). Cada Gadget usado dá +3 num teste, no máx. 4 Gadgets empilhados por rolagem.',
       'Em tempo de descanso, fabrica/aprimora armas — item dado de presente ganha Gadgets = Nível/4.',
-      'Ao despertar: soma a perícia Fluxo em toda rolagem de efeito (dano, cura etc).',
     ]},
   {id:'guerreiro-magico', nome:'Guerreiro Mágico', pvInicial:25, pvPorNivel:'5 + CON', peInicial:20, pePorNivel:10,
     resumo:'Equilíbrio entre Fluxo e Habilidades — versátil.',
@@ -348,7 +345,6 @@ const ESPECIALIZACOES = [
       'Nível/4 vezes por cena: reduz à metade o custo de PE de uma Habilidade.',
       'Toda Habilidade de dano ou cura ganha +2×Nível da Habilidade + maior atributo.',
       'Por 5 PE, pode rolar Fluxo no lugar de qualquer perícia que não seja Luta/Pontaria.',
-      'Ao despertar: Habilidades passam a custar Ação Bônus em vez de Ação Principal.',
     ]},
 ];
 
@@ -383,11 +379,19 @@ const CUSTO_PE_HABILIDADE = {1:2, 2:5, 3:8, 4:12, 5:20};
 // reduz o Nível efetivo (o Nível usado pra calcular o bônus) em 1 pra
 // todos os efeitos escolhidos, regra do documento — em vez de deixar a
 // mesa cruzar a tabela na mão, a ficha já calcula e mostra o número certo.
+// Dano/Cura/Movimento/RD eram um único efeito ("marca a caixa, não diz o
+// quê") — separados em quatro pra dar pra saber se uma Habilidade É de
+// Cura, de Dano etc. (precisa pra automatizar traços como "Toda
+// Habilidade de cura ganha +2×Nível+maior atributo"). O número que sai da
+// tabela é o mesmo pros quatro; só muda o que ele representa.
 const EFEITOS_HABILIDADE = [
-  {chave:'danoCuraMovRD', rotulo:'Dano / Cura / Movimento / RD', coluna:'danoCuraMovRD'},
-  {chave:'alcance',       rotulo:'Alcance',                      coluna:'alcance'},
-  {chave:'duracao',       rotulo:'Duração de efeito',            coluna:'duracao'},
-  {chave:'vantagem',      rotulo:'Vantagem/Desvantagem',         coluna:'vantagem'},
+  {chave:'dano',      rotulo:'Dano',                  coluna:'danoCuraMovRD'},
+  {chave:'cura',      rotulo:'Cura',                  coluna:'danoCuraMovRD'},
+  {chave:'movimento', rotulo:'Movimento',             coluna:'danoCuraMovRD'},
+  {chave:'rd',        rotulo:'RD (Redução de Dano)',  coluna:'danoCuraMovRD'},
+  {chave:'alcance',   rotulo:'Alcance',                coluna:'alcance'},
+  {chave:'duracao',   rotulo:'Duração de efeito',      coluna:'duracao'},
+  {chave:'vantagem',  rotulo:'Vantagem/Desvantagem',   coluna:'vantagem'},
 ];
 function habilidadeEfeitosEscolhidos(h){
   return EFEITOS_HABILIDADE.filter(e => h.efeitos && h.efeitos[e.chave]);
@@ -506,12 +510,18 @@ const BONUS_IMERSAO = [
 // dado de dano/cura padrão e quantas Passivas/Habilidades a invocação pode
 // ter — a mesa desenha o conteúdo delas com esse orçamento, igual o resto
 // do sistema é "livre com tabela de referência" em vez de catálogo fechado.
+// Dano/cura sempre em d8 (só o tanto de dados sobe); efeito/bônus sempre
+// em d6 com o fixo equivalente (dados × 3, o "ou" da tabela pro jogador
+// que preferir número fixo). Pool/PV/Passivas/Habilidades seguem a mesma
+// progressão de sempre, só estendida até o Nível 7.
 const INVOCACAO_NIVEIS = [
-  {nivel:1, poolAtributos:6,  pvFormula:'2×CON + 10',  pvCalc:con=>2*con+10,   dano:'1d4',  bonus:'+1d6 ou +3',  periciaBonus:5, passivas:1, habilidades:3},
-  {nivel:2, poolAtributos:10, pvFormula:'3×CON + 20',  pvCalc:con=>3*con+20,   dano:'1d8',  bonus:'+2d6 ou +6',  periciaBonus:5, passivas:2, habilidades:6},
-  {nivel:3, poolAtributos:14, pvFormula:'4×CON + 40',  pvCalc:con=>4*con+40,   dano:'2d6',  bonus:'+3d6 ou +9',  periciaBonus:8, passivas:3, habilidades:9},
-  {nivel:4, poolAtributos:18, pvFormula:'5×CON + 80',  pvCalc:con=>5*con+80,   dano:'3d10', bonus:'+4d6 ou +12', periciaBonus:8, passivas:4, habilidades:12},
-  {nivel:5, poolAtributos:22, pvFormula:'6×CON + 200', pvCalc:con=>6*con+200,  dano:'4d12', bonus:'+6d6 ou +18', periciaBonus:8, passivas:5, habilidades:15},
+  {nivel:1, poolAtributos:6,  pvFormula:'2×CON + 10',  pvCalc:con=>2*con+10,   dano:'1d4', bonus:'+1d6 ou +3',  periciaBonus:5, passivas:1, habilidades:3},
+  {nivel:2, poolAtributos:10, pvFormula:'3×CON + 20',  pvCalc:con=>3*con+20,   dano:'1d8', bonus:'+2d6 ou +6',  periciaBonus:5, passivas:2, habilidades:6},
+  {nivel:3, poolAtributos:14, pvFormula:'4×CON + 40',  pvCalc:con=>4*con+40,   dano:'2d8', bonus:'+3d6 ou +9',  periciaBonus:8, passivas:3, habilidades:9},
+  {nivel:4, poolAtributos:18, pvFormula:'5×CON + 80',  pvCalc:con=>5*con+80,   dano:'3d8', bonus:'+4d6 ou +12', periciaBonus:8, passivas:4, habilidades:12},
+  {nivel:5, poolAtributos:22, pvFormula:'6×CON + 200', pvCalc:con=>6*con+200,  dano:'4d8', bonus:'+6d6 ou +18', periciaBonus:8, passivas:5, habilidades:15},
+  {nivel:6, poolAtributos:26, pvFormula:'7×CON + 200', pvCalc:con=>7*con+200,  dano:'6d8', bonus:'+7d6 ou +21', periciaBonus:8, passivas:6, habilidades:18},
+  {nivel:7, poolAtributos:30, pvFormula:'8×CON + 200', pvCalc:con=>8*con+200,  dano:'7d8', bonus:'+10d6 ou +30', periciaBonus:8, passivas:7, habilidades:21},
 ];
 function invocacaoNivelInfo(nivel){ return INVOCACAO_NIVEIS.find(n => n.nivel === nivel) || INVOCACAO_NIVEIS[0]; }
 
@@ -917,32 +927,39 @@ function bonusPassivasPericia(p, periciaId){
     return total + bonusFixoDoTexto(passivaEvolucaoInfo(pas).danoCuraMovRDVant);
   }, 0);
 }
-// Soma dos bônus "Soma" de Habilidades Sustentadas/Duradouras apontadas
-// pra essa Perícia — diferente de Passiva, só conta enquanto a Habilidade
-// está Ativa (é um Buff que liga/desliga, não um bônus permanente), e só
-// no modo "Soma" (modo "Dado" não dá pra somar num número fixo — vira um
-// aviso de texto na própria Perícia em vez de entrar na conta). Só o
-// efeito Vantagem/Desvantagem pode apontar pra Perícia (Dano/Cura/
-// Movimento/RD não — aquele é sempre situacional, na hora do golpe).
+// Imediata não fica "Ativa" (é instantânea) — então o bônus dela em
+// Perícia conta sempre que existir, igual uma Passiva. Sustentada e
+// Duradoura são Buffs de liga/desliga: só contam enquanto Ativas.
+function habilidadeVantagemContaAgora(h){
+  return h.tipo === 'imediata' ? true : !!h.ativa;
+}
+// Soma dos bônus "Soma" de Habilidades apontadas pra essa Perícia —
+// diferente de Passiva, Sustentada/Duradoura só conta enquanto a
+// Habilidade está Ativa (é um Buff que liga/desliga, não um bônus
+// permanente), e só no modo "Soma" (modo "Dado" não dá pra somar num
+// número fixo — vira um aviso de texto na própria Perícia em vez de
+// entrar na conta). Só o efeito Vantagem/Desvantagem pode apontar pra
+// Perícia (Dano/Cura/Movimento/RD não — aquele é sempre situacional, na
+// hora do golpe).
 function bonusHabilidadesPericia(p, periciaId){
   return (p.habilidades||[]).reduce((total, h) => {
     if(!(h.periciasAlvo||[]).includes(periciaId)) return total;
     if((h.tipoBonus||'soma') !== 'soma') return total;
-    if(h.tipo !== 'sustentada' && h.tipo !== 'duradoura') return total;
-    if(!h.ativa) return total;
+    if(!habilidadeVantagemContaAgora(h)) return total;
     if(!h.efeitos || !h.efeitos.vantagem) return total;
     const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
     return total + bonusFixoDoTexto(linhaTabela.vantagem);
   }, 0);
 }
-// Habilidades Sustentadas/Duradouras, Ativas, apontando pra essa Perícia
-// no modo "Dado" — não somam no Total, só viram um aviso de texto (o
-// jogador rola o dado extra na hora, igual golpe/magia em outros sistemas
-// do Hub nunca simula rolagem).
+// Habilidades apontando pra essa Perícia no modo "Dado" (e contando
+// agora, pela mesma regra de habilidadeVantagemContaAgora) — não somam
+// no Total, só viram um aviso de texto (o jogador rola o dado extra na
+// hora, igual golpe/magia em outros sistemas do Hub nunca simula
+// rolagem).
 function avisosDadoPericia(p, periciaId){
   return (p.habilidades||[]).filter(h =>
     (h.periciasAlvo||[]).includes(periciaId) && (h.tipoBonus||'soma') === 'dado' &&
-    (h.tipo === 'sustentada' || h.tipo === 'duradoura') && h.ativa &&
+    habilidadeVantagemContaAgora(h) &&
     h.efeitos && h.efeitos.vantagem
   ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
@@ -2059,8 +2076,10 @@ function habilidadeLinha(h, i, p){
           <div class="val" style="font-size:18px">${linhaTabela[e.coluna]}</div>
         </div>`).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
-      ${h.efeitos && h.efeitos.vantagem && (h.tipo === 'sustentada' || h.tipo === 'duradoura') ? `<div style="margin-top:8px">
-        <label>Aplicar a Vantagem/Desvantagem (${linhaTabela.vantagem}) em quais Perícias? (opcional — só conta enquanto a Habilidade estiver Ativa. Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
+      ${h.efeitos && h.efeitos.vantagem ? (() => {
+        const gatilho = h.tipo === 'imediata' ? '' : ' Só conta enquanto a Habilidade estiver Ativa.';
+        return `<div style="margin-top:8px">
+        <label>Aplicar a Vantagem/Desvantagem (${linhaTabela.vantagem}) em quais Perícias? (opcional.${gatilho} Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
         ${(h.periciasAlvo||[]).length ? (h.periciasAlvo||[]).map((perId,pi) => {
           const per = PERICIAS.find(x=>x.id===perId);
           return `<div class="linha" style="margin-top:4px;align-items:center;gap:8px">
@@ -2079,9 +2098,9 @@ function habilidadeLinha(h, i, p){
           <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.vantagem)} em cada, entra no Total)</option>
           <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
         </select>` : ''}
-        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} enquanto esta Habilidade estiver Ativa.</p>` : ''}
-        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias) enquanto esta Habilidade estiver Ativa — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
-      </div>` : ''}
+        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${gatilho ? ' enquanto esta Habilidade estiver Ativa.' : '.'}</p>` : ''}
+        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias)${gatilho ? ' enquanto esta Habilidade estiver Ativa' : ''} — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
+      </div>`; })() : ''}
     </div>
     <div class="linha" style="margin-top:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px">
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
@@ -2151,7 +2170,7 @@ function invocacaoLinha(inv, i){
       <button data-inv-remover="${i}" class="perigo">Remover</button>
     </div>
     <div class="grade g2">
-      <div><label>Nível (1–5, vem da Habilidade usada)</label>
+      <div><label>Nível (1–7, vem da Habilidade usada; misturar 2 Habilidades sobe pro degrau seguinte, até o 7)</label>
         <select data-inv-nivel="${i}">
           ${INVOCACAO_NIVEIS.map(n => `<option value="${n.nivel}" ${n.nivel===inv.nivel?'selected':''}>Nível ${n.nivel}</option>`).join('')}
         </select></div>
@@ -2398,7 +2417,7 @@ function habilidadeResumoCombate(h, i){
       <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
       ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
       ${h.efeito ? `<p class="mini">${esc(h.efeito)}</p>` : ''}
-      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${h.ativa?'':' (só enquanto Ativa)'}</p>` : ''}
+      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeVantagemContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
         ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
           : h.ativa
@@ -2919,7 +2938,7 @@ function ligarEventos(){
     }, el));
   app.querySelectorAll('[data-inv-nivel]').forEach(el =>
     el.onchange = () => mudar(p => {
-      p.invocacoes[Number(el.dataset.invNivel)].nivel = Math.max(1, Math.min(5, Number(el.value) || 1));
+      p.invocacoes[Number(el.dataset.invNivel)].nivel = Math.max(1, Math.min(7, Number(el.value) || 1));
     }));
   app.querySelectorAll('[data-inv-num]').forEach(el =>
     el.onchange = () => mudar(p => {
