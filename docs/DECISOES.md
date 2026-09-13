@@ -5476,6 +5476,54 @@ item especial do Sistema do Sávio; a parte de campanha (Next.js) não tem
 banco de teste neste ambiente, então foi conferida por leitura de código
 nas duas pontas (rota + tela) mais o build de produção passando.
 
+## 125. Sistema do Sávio — Arquétipo não repete Atributo, traço de arma do Mestre das Armas, aba Regras (13/09/2026)
+
+Três pedidos do Zé nesta mensagem (um quarto, a ficha de Monstro, ficou
+pra decisão à parte por ser bem maior).
+
+**1. Arquétipo Esforçado/Estudioso não deixa repetir Atributo.** Os dois
+Arquétipos da Primeira Ascensão que dão +2 num Atributo e +1 noutro
+deixavam escolher o MESMO Atributo nos dois campos (ex.: +2 Força e +1
+Força), o que não é a regra. Corrigido filtrando cada `<select>` pra
+excluir o valor já escolhido no outro campo — a opção simplesmente some
+da lista, então fica impossível escolher a mesma duas vezes (não é só um
+aviso).
+
+**2. Traço "Dano com arma equipada" do Mestre das Armas passou a valer em
+Habilidade também.** O card da aba Especialização já dizia "soma o maior
+Atributo a todo dano causado com arma", mas isso só aparecia como texto
+solto — não entrava no cálculo em lugar nenhum. Agora entra em dois
+lugares: (1) o combo "Ataque com arma equipada" de uma Habilidade (dano
+da Habilidade + dano da arma) soma o maior Atributo junto ao dado de dano
+da arma, pro Mestre das Armas; (2) o próprio card "Dano" da aba Combate
+(o ataque cru com a arma equipada, fora de Habilidade nenhuma) também
+mostra esse bônus agora. Nova função `bonusArmaMestreDasArmas(p, h)`,
+usada nos dois pontos que já montavam o texto do combo de arma
+(`habilidadeLinha` e `habilidadeResumoCombate`).
+
+**3. Aba Regras, com duas sub-abas.** Pedido: "uma aba com todas as
+regras do sistema, separado em sub abas de regras de habilidades e
+regras (assim como na planilha)". Nova aba `regras` (penúltima, antes de
+Notas), com uma barra de sub-abas por cima do conteúdo
+(`estado.subAbaRegras`, só de navegação — não salva na ficha):
+"Regras de Habilidades" (Tipo de Habilidade, tabela de bônus por Nível,
+Nível efetivo, Vantagem/Desvantagem numa Perícia, combo de arma, custo de
+PE, Reação, bônus automático de classe) e "Regras Gerais" (Atributos e
+limiares, Perícias, PV/PE/Sanidade por Especialização, traços de cada
+Especialização, Ascensão/Arquétipos, Invocação, Elemental, peso do
+Inventário, Combate/Descanso). É só consulta — todo o conteúdo lê direto
+das mesmas constantes que o resto da ficha usa (`TABELA_HABILIDADE`,
+`ESPECIALIZACOES`, `ARQUETIPOS`, `INVOCACAO_NIVEIS` etc.), então nunca
+desalinha do que as outras abas calculam. Texto de Ajuda (❓) da aba
+Inventário também atualizado — estava descrevendo a regra antiga de "1
+arma + 1 item especial", de antes da decisão #124 mudar pra peso e
+categorias.
+
+Testado com Playwright: seleção de Atributo duplicado bloqueada nos dois
+selects, bônus de arma aparecendo no combo de Habilidade e no card de
+Combate, aba Regras com as duas sub-abas e conteúdo esperado. `tsc
+--noEmit`, `npm run lint` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -430,6 +430,13 @@ function bonusClasseEfeitoHabilidade(p, h, chave){
   return 2*h.nivel + maiorAtributo(p);
 }
 
+// Traço do Mestre das Armas ("Dano com arma e reforço"): enquanto empunha
+// uma arma, soma o maior Atributo a TODO dano causado com ela — inclusive
+// quando a Habilidade combina o dano dela com o da arma equipada.
+function bonusArmaMestreDasArmas(p, h){
+  return (p.especializacaoId === 'mestre-das-armas' && h.usaArma) ? maiorAtributo(p) : 0;
+}
+
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
 // truque de desvantagens autoimpostas das Habilidades). O Nível interno 0
 // é um valor próprio, mais fraco que qualquer Habilidade; os Níveis 1 e 2
@@ -1277,6 +1284,9 @@ const estado = {
   // Habilidades — transitório, não é salvo na ficha, zera ao trocar de
   // personagem. Uma Habilidade nova sempre nasce aberta.
   habExpandidas: new Set(),
+  // Sub-aba ativa dentro da aba Regras ("habilidades" ou "gerais") — só de
+  // navegação, não é salvo na ficha.
+  subAbaRegras: 'habilidades',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1351,6 +1361,7 @@ const ABAS = [
   {id:'combate',     nome:'Combate'},
   {id:'inventario',  nome:'Inventário'},
   {id:'ascensao',    nome:'Ascensão'},
+  {id:'regras',      nome:'Regras'},
   {id:'notas',       nome:'Notas'},
 ];
 
@@ -1417,7 +1428,7 @@ function render(){
             ${AJUDA_ABAS[estado.aba] || '<p class="mini">Sem ajuda cadastrada pra esta aba ainda.</p>'}
           </div>` : '')
         + painelDerivados(p)
-        + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, inventario:abaInventario, ascensao:abaAscensao, notas:abaNotas}[estado.aba])(p);
+        + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, classe:abaClasse, habilidades:abaHabilidades, invocacoes:abaInvocacoes, elemental:abaElemental, passivas:abaPassivas, combate:abaCombate, inventario:abaInventario, ascensao:abaAscensao, regras:abaRegras, notas:abaNotas}[estado.aba])(p);
 
   const chaveTela = estado.modoGuiado ? `guiado:${estado.passoGuiado}` : estado.nivelUpResumo ? 'levelup' : `aba:${estado.aba}`;
   app.classList.remove('entra');
@@ -1902,11 +1913,24 @@ const AJUDA_ABAS = {
 
   inventario: `
     <p class="mini">Itens gerais que o personagem carrega — a
-    <strong>Arma</strong> continua na aba Combate (só 1 arma + 1 item
-    especial equipados ao mesmo tempo, exceto Mestre das Armas). Marque
-    <strong>Equipado</strong> no item que está em uso agora; o resto fica
-    guardado, sem efeito mecânico automático — quem decide o bônus de um
-    item especial é a mesa.</p>`,
+    <strong>Arma</strong> continua na aba Combate. Cada item gasta
+    <strong>peso × quantidade</strong> dos seus pontos de peso
+    (5 + 2×Força); passar do total só avisa (fica vermelho), não trava.
+    Todo item é <strong>Comum</strong> ou <strong>Especial</strong> — Especial
+    ainda escolhe entre Item ou Equipamento, e aí sim tem limite de verdade:
+    1 de cada categoria, ou 3 de cada pro Mestre das Armas (que também é
+    quem ganha o campo de Gadgets em item Especial). Marque
+    <strong>Equipado</strong> no item em uso agora; quem decide o efeito de
+    um item especial é a mesa.</p>`,
+
+  regras: `
+    <p class="mini">Referência rápida das fórmulas do sistema, separada em
+    duas sub-abas: <strong>Regras de Habilidades</strong> (Nível, Tipo,
+    Efeitos, Alcance/Duração, Nível efetivo, Vantagem/Desvantagem) e
+    <strong>Regras Gerais</strong> (Atributos, Perícias, PV/PE/Sanidade,
+    Especializações, Ascensão, Invocação, Elemental, Inventário, Combate).
+    É só consulta — não tem nada pra preencher aqui, os números batem com
+    o que as outras abas já calculam sozinhas.</p>`,
 
   notas: `
     <p class="mini">Rascunho livre — sem regra nenhuma por trás. Use pra
@@ -2162,11 +2186,13 @@ function habilidadeLinha(h, i, p){
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => {
           const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
-          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano} da arma` : '';
+          const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
+          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
           return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
           <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}</div>
           ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
+          ${bonusArma ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusArma} do traço de Mestre das Armas (maior Atributo com arma equipada)</div>` : ''}
         </div>`;
         }).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
@@ -2508,8 +2534,9 @@ function habilidadeResumoCombate(h, i, p){
     `Duração ${linhaTabela.duracao}`,
     ...efeitosEscolhidos.map(e => {
       const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
-      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano} da arma` : '';
-      return `${e.rotulo}: ${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}`;
+      const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
+      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+      return `${e.rotulo}: ${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
     }),
   ].join(' · ');
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
@@ -2565,7 +2592,7 @@ function abaCombate(p){
           ${TAMANHOS_ARMA.map(t => `<option value="${t.id}" ${t.id===p.arma.tamanho?'selected':''}>${t.nome}</option>`).join('')}
         </select></div>
     </div>
-    <p class="mini" style="margin-top:8px">Dano ${tam.dano} · esquiva: ${tam.esquiva}</p>
+    <p class="mini" style="margin-top:8px">Dano ${tam.dano}${p.especializacaoId==='mestre-das-armas' ? `+${maiorAtributo(p)} (traço Mestre das Armas)` : ''} · esquiva: ${tam.esquiva}</p>
     <label for="c-arma-notas" style="margin-top:8px">Notas</label>
     <textarea id="c-arma-notas" data-arma="notas" rows="2">${esc(p.arma.notas)}</textarea>
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
@@ -2751,7 +2778,7 @@ function abaAscensao(p){
         <div><label for="c-asc-bonus1">Atributo que recebe +2</label>
           <select id="c-asc-bonus1" data-asc-bonus="1">
             <option value="">— escolha —</option>
-            ${arq.atributosElegiveis.map(id => {
+            ${arq.atributosElegiveis.filter(id => id !== p.ascensao.bonusAtributo2).map(id => {
               const a = ATRIBUTOS.find(x=>x.id===id);
               return `<option value="${id}" ${p.ascensao.bonusAtributo1===id?'selected':''}>${a.nome}</option>`;
             }).join('')}
@@ -2759,12 +2786,14 @@ function abaAscensao(p){
         <div><label for="c-asc-bonus2">Atributo que recebe +1</label>
           <select id="c-asc-bonus2" data-asc-bonus="2">
             <option value="">— escolha —</option>
-            ${arq.atributosElegiveis.map(id => {
+            ${arq.atributosElegiveis.filter(id => id !== p.ascensao.bonusAtributo1).map(id => {
               const a = ATRIBUTOS.find(x=>x.id===id);
               return `<option value="${id}" ${p.ascensao.bonusAtributo2===id?'selected':''}>${a.nome}</option>`;
             }).join('')}
           </select></div>
-      </div>` : ''}
+      </div>
+      <p class="mini" style="margin-top:6px">Não dá pra escolher o mesmo Atributo nos dois — cada opção já
+        escolhida no outro campo some da lista.</p>` : ''}
     ${arq ? `<label class="checagem" style="margin-top:12px">
         <input type="checkbox" data-asc-check="passivaUsadaSessao" ${p.ascensao.passivaUsadaSessao?'checked':''}>
         "${arq.passivaNome}" já foi usada nesta sessão
@@ -2842,6 +2871,206 @@ function abaAscensao(p){
   </div>` : ''}`;
 }
 
+// Aba Regras: referência pura (nada pra preencher), separada em duas
+// sub-abas como na planilha original — Regras de Habilidades e Regras
+// Gerais. Lê direto das mesmas constantes que o resto da ficha usa
+// (TABELA_HABILIDADE, ESPECIALIZACOES, etc.), então nunca desalinha do
+// que as outras abas calculam.
+function abaRegras(){
+  const sub = estado.subAbaRegras || 'habilidades';
+  return `<div class="abas" style="margin-bottom:14px">
+    <button data-regras-sub="habilidades" aria-current="${sub==='habilidades'}">Regras de Habilidades</button>
+    <button data-regras-sub="gerais" aria-current="${sub==='gerais'}">Regras Gerais</button>
+  </div>
+  ${sub === 'habilidades' ? regrasHabilidadesConteudo() : regrasGeraisConteudo()}`;
+}
+
+function regrasHabilidadesConteudo(){
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Tipo da Habilidade</h3>
+    <table class="tabela-ref">
+      <tr>${TIPOS_HABILIDADE.map(t => `<th>${t.nome}</th>`).join('')}</tr>
+      <tr>${TIPOS_HABILIDADE.map(t => `<td style="text-align:left">${t.sobre}</td>`).join('')}</tr>
+    </table>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Tabela de bônus por Nível</h3>
+    <p class="mini" style="margin-bottom:8px">O jogador escolhe um ou mais
+      efeitos (Dano, Cura, Movimento, RD, Vantagem/Desvantagem) pra dar à
+      Habilidade; cada um usa o valor da coluna correspondente, no Nível
+      efetivo dela (não necessariamente o Nível que você digitou — veja
+      abaixo). Alcance e Duração não são escolha: toda Habilidade já tem
+      os dois, do Nível efetivo dela.</p>
+    <table class="tabela-ref">
+      <tr><th>Nível</th><th>Dano/Cura/Movimento/RD</th><th>Alcance</th><th>Duração</th><th>Vantagem/Desvantagem</th></tr>
+      ${TABELA_HABILIDADE.map(l => `<tr><td>${l.nivel}</td><td>${l.danoCuraMovRD}</td><td>${l.alcance}</td><td>${l.duracao}</td><td>${l.vantagem}</td></tr>`).join('')}
+    </table>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Nível efetivo</h3>
+    <p class="mini">O Nível que conta pra tabela acima não é sempre o Nível
+      que você digitou:</p>
+    <ul class="mini" style="margin:8px 0 0 18px">
+      <li><strong>Sustentada:</strong> começa 2 Níveis acima (já nasce com
+        2 desvantagens embutidas — precisa de concentração e só buffa você
+        mesmo).</li>
+      <li><strong>Combinar mais de um efeito</strong> na mesma Habilidade
+        (ex.: Dano + Movimento, ou Vantagem/Desvantagem em mais de uma
+        Perícia) reduz 1 Nível efetivo — pouco importa quantos efeitos a
+        mais, o desconto é sempre −1.</li>
+      <li>O resultado final fica travado entre 1 e 5.</li>
+    </ul>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Vantagem/Desvantagem numa Perícia</h3>
+    <p class="mini">O efeito Vantagem/Desvantagem pode ser anexado a uma ou
+      mais Perícias (nunca duas vezes na MESMA Perícia — isso não empilha).
+      Cada Perícia extra apontada conta como mais um efeito combinado (veja
+      Nível efetivo acima). Escolha entre:</p>
+    <ul class="mini" style="margin:8px 0 0 18px">
+      <li><strong>Soma:</strong> o valor fixo do bônus (ex.: "+6" de
+        "+1d12 ou +6") soma sozinho no Total da Perícia.</li>
+      <li><strong>Dado:</strong> a ficha só avisa o dado (ex.: "1d12") perto
+        da Perícia — o Hub não simula rolagem, quem rola é você.</li>
+    </ul>
+    <p class="mini" style="margin-top:6px">Numa Habilidade <strong>Imediata</strong>
+      o bônus conta sempre que ela é usada (é instantânea, não fica
+      "ativa"). Numa <strong>Sustentada</strong> ou <strong>Duradoura</strong>
+      só conta enquanto ela estiver Ativa.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Ataque com arma equipada</h3>
+    <p class="mini">Uma Habilidade com o efeito Dano pode marcar "Ataque com
+      arma equipada": soma o dado de dano da arma (aba Combate) ao dado de
+      dano da Habilidade. Mestre das Armas soma também o maior Atributo
+      nesse combo (traço de classe — veja Regras Gerais).</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Ativar, desativar, custo de PE</h3>
+    <table class="tabela-ref" style="margin-bottom:10px">
+      <tr><th>Nível</th>${Object.keys(CUSTO_PE_HABILIDADE).map(n => `<th>${n}</th>`).join('')}</tr>
+      <tr><th>Custo de PE</th>${Object.values(CUSTO_PE_HABILIDADE).map(c => `<td>${c}</td>`).join('')}</tr>
+    </table>
+    <ul class="mini" style="margin:0 0 0 18px">
+      <li><strong>Imediata:</strong> usa e acabou, desconta o custo na hora.</li>
+      <li><strong>Sustentada:</strong> desconta o custo ao ativar, e metade
+        do custo a cada round seguinte (⏭ Passar Round, aba Combate) — some
+        sozinha se faltar PE.</li>
+      <li><strong>Duradoura:</strong> desconta o custo ao ativar e dura um
+        número fixo de rounds (coluna Duração da tabela, no Nível efetivo);
+        desliga sozinha ao zerar.</li>
+      <li>Segunda Ascensão dá metade do custo de PE pra Habilidade de Nível
+        1 a 3 (arredondado pra cima).</li>
+    </ul>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Reação</h3>
+    <p class="mini">Uma Habilidade marcada "de Reação" só ativa como reação
+      (nunca como ação comum) — alimenta o Contra-Atacar. Reações por round:
+      <strong>2, ou Nível÷3 arredondado pra cima (o que for maior)</strong>.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Bônus automático de classe no efeito</h3>
+    <p class="mini">Algumas Especializações somam um bônus fixo direto no
+      efeito da Habilidade, sem precisar marcar nada:</p>
+    <ul class="mini" style="margin:8px 0 0 18px">
+      <li><strong>Suporte:</strong> efeito Cura ganha +(2×Nível da Habilidade + maior Atributo).</li>
+      <li><strong>Guerreiro Mágico:</strong> efeito Dano ou Cura ganha +(2×Nível da Habilidade + maior Atributo).</li>
+    </ul>
+  </div>`;
+}
+
+function regrasGeraisConteudo(){
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Atributos</h3>
+    <p class="mini" style="margin-bottom:8px">Seis Atributos, de 0 a 10
+      (15 depois da Segunda Ascensão). Cada um tem dois limiares (5 e 10)
+      que ligam um bônus fixo sozinhos, sem fórmula contínua:</p>
+    <table class="tabela-ref">
+      <tr><th>Atributo</th><th>Pra que serve</th><th>Limiar 5</th><th>Limiar 10</th></tr>
+      ${ATRIBUTOS.map(a => {
+        const lim = LIMIARES[a.id] || [];
+        return `<tr><td>${a.nome} (${a.abrev})</td><td style="text-align:left">${a.sobre}</td><td>${lim[0]?lim[0].txt:'—'}</td><td>${lim[1]?lim[1].txt:'—'}</td></tr>`;
+      }).join('')}
+    </table>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Perícias</h3>
+    <p class="mini">Total da Perícia = Atributo (com bônus de Ascensão) +
+      5 se treinada + Nível÷4 (arredondado pra cima) + bônus de Passivas/
+      Habilidades apontadas pra ela. Perícias treináveis:
+      <strong>2 + Inteligência + Nível÷4</strong> (arredondado pra cima) —
+      a ficha só avisa se passar disso, não trava.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">PV, PE e Sanidade</h3>
+    <p class="mini">PV e PE dependem da Especialização escolhida (base +
+      por Nível, cada uma com a sua fórmula — veja a tabela abaixo).
+      Sanidade máxima é sempre <strong>100</strong> + limiares de Carisma.
+      Arquétipo Prodígio multiplica o PE máximo por ×1,5.</p>
+    <table class="tabela-ref">
+      <tr><th>Especialização</th><th>PV inicial</th><th>PV por Nível</th><th>PE inicial</th><th>PE por Nível</th></tr>
+      ${ESPECIALIZACOES.map(e => `<tr><td>${e.nome}</td><td>${e.pvInicial}</td><td>${e.pvPorNivel}</td><td>${e.peInicial}</td><td>${e.pePorNivel}</td></tr>`).join('')}
+    </table>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Passivas e Habilidades por Nível</h3>
+    <p class="mini">Passivas: começa com 2, +1 a cada 5 Níveis (5, 10, 15,
+      20...) — Sabedoria e o Arquétipo Inato dão passivas extras.
+      Habilidades: começa com 2, +1 por Nível.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Especializações (traços)</h3>
+    ${ESPECIALIZACOES.map(e => `<div style="margin-bottom:10px">
+      <strong>${e.nome}</strong>
+      <ul class="mini" style="margin:4px 0 0 18px">${(e.tracos||[]).map(t => `<li>${t}</li>`).join('')}</ul>
+    </div>`).join('')}
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Ascensão</h3>
+    <p class="mini" style="margin-bottom:8px"><strong>Primeira Ascensão:</strong>
+      escolhe um Arquétipo — cada um dá um bônus fixo e uma Passiva de uso
+      único por sessão. Esforçado e Estudioso dão +2 num Atributo e +1
+      noutro (nunca no mesmo).</p>
+    ${ARQUETIPOS.map(a => `<p class="mini" style="margin:4px 0"><strong>${a.nome}:</strong> ${a.bonus}</p>`).join('')}
+    <p class="mini" style="margin-top:8px"><strong>Segunda Ascensão:</strong>
+      teto de Atributo sobe pra 15, metade do custo de PE em Habilidade de
+      Nível 1 a 3, e libera a Imersão Espiritual (transformação narrativa).</p>
+    <p class="mini" style="margin-top:8px"><strong>Embate de Fluxo:</strong>
+      em vez de rolar uma Perícia, role Nível × maior Atributo + 1d100.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Invocação (Nível 1 a 7)</h3>
+    <p class="mini" style="margin-bottom:8px">Sobe de Nível misturando 2
+      Habilidades diferentes; segue a mesma progressão de PV/dano/bônus até
+      o Nível 7.</p>
+    <table class="tabela-ref">
+      <tr><th>Nível</th><th>Pool de Atributos</th><th>PV</th><th>Dano</th><th>Bônus</th></tr>
+      ${INVOCACAO_NIVEIS.map(n => `<tr><td>${n.nivel}</td><td>${n.poolAtributos}</td><td>${n.pvFormula}</td><td>${n.dano}</td><td>${n.bonus}</td></tr>`).join('')}
+    </table>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Elemental</h3>
+    <p class="mini">Não tem PE próprio — todo gasto sai do PE do
+      hospedeiro (o próprio personagem).</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Inventário e peso</h3>
+    <p class="mini">Carrega até <strong>5 + 2×Força</strong> pontos de
+      peso; cada item gasta peso×quantidade (só aviso, não trava). Item
+      Especial (Item ou Equipamento) tem limite travado de verdade: 1 de
+      cada categoria, ou 3 de cada pro Mestre das Armas.</p>
+  </div>
+  <div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">Combate</h3>
+    <p class="mini">"Passar Round" avança o tempo pras Habilidades ativas
+      (Duradoura conta 1 round a menos, Sustentada cobra metade do PE).
+      Reações por round: 2, ou Nível÷3 arredondado pra cima (o maior).
+      Descanso Curto recupera 50% de PV/PE/Sanidade, Descanso Longo 100%
+      — nunca diminui, só sobe até o alvo.</p>
+  </div>`;
+}
+
 function abaNotas(p){
   return `<div class="cartao">
     <label for="c-anotacoes">Anotações livres</label>
@@ -2856,6 +3085,8 @@ function ligarEventos(){
 
   app.querySelectorAll('[data-aba]').forEach(b =>
     b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+  app.querySelectorAll('[data-regras-sub]').forEach(b =>
+    b.onclick = () => { estado.subAbaRegras = b.dataset.regrasSub; render(); });
 
   const btAjudaAba = app.querySelector('#btAjudaAba');
   if(btAjudaAba) btAjudaAba.onclick = () => { estado.mostrarAjuda = !estado.mostrarAjuda; render(); };
