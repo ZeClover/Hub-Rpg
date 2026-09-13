@@ -392,11 +392,22 @@ const EFEITOS_HABILIDADE = [
 function habilidadeEfeitosEscolhidos(h){
   return EFEITOS_HABILIDADE.filter(e => h.efeitos && h.efeitos[e.chave]);
 }
+// Conta quantos "efeitos" a Habilidade está combinando, pro desconto de
+// Nível efetivo — normalmente 1 por tipo marcado, mas Vantagem/Desvantagem
+// apontada pra mais de uma Perícia conta como mais de um efeito (regra do
+// Zé: não pode empilhar na MESMA Perícia, mas apontar pra Perícias
+// diferentes com a mesma Habilidade é como dar mais de um efeito a ela).
+function habilidadeContagemEfeitos(h){
+  return habilidadeEfeitosEscolhidos(h).reduce((total, e) => {
+    if(e.chave === 'vantagem') return total + Math.max(1, (h.periciasAlvo||[]).length);
+    return total + 1;
+  }, 0);
+}
 // Nível efetivo: sobe 2 se for Sustentada (ela já nasce com duas desvantagens
 // embutidas — gasto contínuo de PE e precisar de concentração) e cai 1 se a
 // Habilidade combina mais de um efeito. As duas contas se somam.
 function habilidadeNivelEfetivo(h){
-  const n = habilidadeEfeitosEscolhidos(h).length;
+  const n = habilidadeContagemEfeitos(h);
   let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0);
   nivel -= (n > 1 ? 1 : 0);
   return Math.max(1, Math.min(5, nivel));
@@ -907,16 +918,18 @@ function bonusPassivasPericia(p, periciaId){
 // pra essa Perícia — diferente de Passiva, só conta enquanto a Habilidade
 // está Ativa (é um Buff que liga/desliga, não um bônus permanente), e só
 // no modo "Soma" (modo "Dado" não dá pra somar num número fixo — vira um
-// aviso de texto na própria Perícia em vez de entrar na conta).
+// aviso de texto na própria Perícia em vez de entrar na conta). Só o
+// efeito Vantagem/Desvantagem pode apontar pra Perícia (Dano/Cura/
+// Movimento/RD não — aquele é sempre situacional, na hora do golpe).
 function bonusHabilidadesPericia(p, periciaId){
   return (p.habilidades||[]).reduce((total, h) => {
-    if(h.periciaAlvo !== periciaId) return total;
+    if(!(h.periciasAlvo||[]).includes(periciaId)) return total;
     if((h.tipoBonus||'soma') !== 'soma') return total;
     if(h.tipo !== 'sustentada' && h.tipo !== 'duradoura') return total;
     if(!h.ativa) return total;
-    if(!h.efeitos || !h.efeitos.danoCuraMovRD) return total;
+    if(!h.efeitos || !h.efeitos.vantagem) return total;
     const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
-    return total + bonusFixoDoTexto(linhaTabela.danoCuraMovRD);
+    return total + bonusFixoDoTexto(linhaTabela.vantagem);
   }, 0);
 }
 // Habilidades Sustentadas/Duradouras, Ativas, apontando pra essa Perícia
@@ -925,10 +938,10 @@ function bonusHabilidadesPericia(p, periciaId){
 // do Hub nunca simula rolagem).
 function avisosDadoPericia(p, periciaId){
   return (p.habilidades||[]).filter(h =>
-    h.periciaAlvo === periciaId && (h.tipoBonus||'soma') === 'dado' &&
+    (h.periciasAlvo||[]).includes(periciaId) && (h.tipoBonus||'soma') === 'dado' &&
     (h.tipo === 'sustentada' || h.tipo === 'duradoura') && h.ativa &&
-    h.efeitos && h.efeitos.danoCuraMovRD
-  ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].danoCuraMovRD.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
+    h.efeitos && h.efeitos.vantagem
+  ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
 // Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
 // (5 se for treinada, senão 0) + bônus fixo de Passivas apontadas pra
@@ -1229,6 +1242,10 @@ const estado = {
   // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
   // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
   mostrarAjuda: false,
+  // habExpandidas: quais Habilidades (por índice) estão abertas na aba
+  // Habilidades — transitório, não é salvo na ficha, zera ao trocar de
+  // personagem. Uma Habilidade nova sempre nasce aberta.
+  habExpandidas: new Set(),
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 
@@ -1521,7 +1538,7 @@ function blocoAtributos(p){
 
 function telaGuiada(p){
   const passo = estado.passoGuiado;
-  const totalPassos = 5;
+  const totalPassos = 7;
   const cabecalho = `
     <div class="cartao" style="text-align:center">
       <p class="mini" style="text-transform:uppercase;letter-spacing:.1em">Modo Guiado — Passo ${passo} de ${totalPassos}</p>
@@ -1571,7 +1588,23 @@ function telaGuiada(p){
   if(passo === 3){
     return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">3. Habilidades iniciais</h2>
+      <h2 style="font-size:18px">3. Perícias</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Marque as Perícias treinadas — dá pra mudar depois, a qualquer
+        hora, na aba Perícias.
+      </p>
+    </div>
+    ${abaPericias(p)}
+    <div class="linha" style="justify-content:space-between;margin-top:14px">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
+  if(passo === 4){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">4. Habilidades iniciais</h2>
       <p class="mini" style="margin:6px 0 16px">
         Todo personagem começa com <strong>2 Habilidades</strong> — livres
         de verdade: você desenha o efeito usando a tabela de bônus por
@@ -1585,10 +1618,10 @@ function telaGuiada(p){
     </div>`;
   }
 
-  if(passo === 4){
+  if(passo === 5){
     return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">4. Passivas iniciais</h2>
+      <h2 style="font-size:18px">5. Passivas iniciais</h2>
       <p class="mini" style="margin:6px 0 16px">
         Todo personagem também começa com <strong>2 Passivas</strong> —
         sempre ativas, sem precisar gastar PE nem ação pra usar.
@@ -1601,15 +1634,32 @@ function telaGuiada(p){
     </div>`;
   }
 
+  if(passo === 6){
+    return cabecalho + `
+    <div class="cartao">
+      <h2 style="font-size:18px">6. Invocação (opcional)</h2>
+      <p class="mini" style="margin:6px 0 16px">
+        Só preencha se seu personagem já começa com uma Invocação —
+        invocar consome uma Habilidade na hora de jogar, então não é
+        obrigatório ter uma agora. Se não for usar, pode ir direto pro
+        próximo passo sem adicionar nada.
+      </p>
+    </div>
+    ${abaInvocacoes(p)}
+    <div class="linha" style="justify-content:space-between;margin-top:14px">
+      <button id="btGuiadoAnterior">← Voltar</button>
+      <button id="btGuiadoProximo" class="destaque">Próximo →</button>
+    </div>`;
+  }
+
   return cabecalho + `
     <div class="cartao">
-      <h2 style="font-size:18px">5. Pronto pra jogar!</h2>
+      <h2 style="font-size:18px">7. Pronto pra jogar!</h2>
       <p class="mini" style="margin:6px 0 14px">
         ${esc(p.perfil.nome || 'Seu personagem')} já tem o essencial —
-        atributos, especialização, Habilidades e Passivas iniciais.
-        Perícias você distribui aos poucos, jogando — o sistema do Sávio é
-        livre de propósito. Cada aba tem um botão <strong>❓ Ajuda</strong>
-        explicando o que ela faz, se precisar.
+        atributos, especialização, Perícias, Habilidades e Passivas
+        iniciais. Cada aba tem um botão <strong>❓ Ajuda</strong> explicando
+        o que ela faz, se precisar.
       </p>
     </div>
     ${painelDerivados(p)}
@@ -1733,13 +1783,15 @@ const AJUDA_ABAS = {
     Sustentada com Alcance + Duração juntos vira Nível efetivo 4 (3 +2 da
     Sustentada, −1 por combinar 2 efeitos).</p>
     <p class="mini" style="margin-top:8px">Uma Habilidade <strong>Sustentada
-    ou Duradoura</strong> com o efeito Dano/Cura/Movimento/RD marcado pode
-    apontar esse bônus pra uma <strong>Perícia</strong> específica, igual
-    Passiva — só que aqui você escolhe entre <strong>Soma</strong> (o valor
-    fixo entra automático no Total da Perícia, só enquanto a Habilidade
-    estiver Ativa) ou <strong>Dado</strong> (a ficha não soma nada, só
-    deixa um aviso do dado extra do lado da Perícia pra você lembrar de
-    rolar na hora).</p>`,
+    ou Duradoura</strong> com o efeito <strong>Vantagem/Desvantagem</strong>
+    marcado pode apontar esse bônus pra uma ou mais <strong>Perícias</strong>
+    — você escolhe entre <strong>Soma</strong> (o valor fixo entra automático
+    no Total da Perícia, só enquanto a Habilidade estiver Ativa) ou
+    <strong>Dado</strong> (a ficha não soma nada, só deixa um aviso do dado
+    extra do lado da Perícia pra você lembrar de rolar na hora). Não dá pra
+    empilhar o bônus na MESMA Perícia — mas apontar pra Perícias diferentes
+    com a mesma Habilidade conta como combinar mais de um efeito (reduz o
+    Nível efetivo, igual combinar Dano + Alcance).</p>`,
 
   invocacoes: `
     <p class="mini">Invocar <strong>consome uma das suas Habilidades</strong>
@@ -1940,10 +1992,28 @@ function habilidadeLinha(h, i, p){
   const meiaCusto = p.ascensao.segunda && h.nivel <= 3; // bônus universal da Segunda Ascensão
   const custoFinal = custoBase !== null && meiaCusto ? Math.ceil(custoBase/2) : custoBase;
   const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
+  const contagemEfeitos = habilidadeContagemEfeitos(h);
   const nivelEfetivo = habilidadeNivelEfetivo(h);
   const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
+  const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
+  const expandida = estado.habExpandidas.has(i);
+
+  const cabecalhoCompacto = `<div class="topo" data-hab-toggle="${i}" style="cursor:pointer;user-select:none">
+    <div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+      <strong>${esc(h.nome)||'(sem nome)'}</strong>
+      <span class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}</span>
+    </div>
+    <span class="mini" style="white-space:nowrap;padding:2px 10px;border:1px solid var(--borda);border-radius:999px">${h.custoPe||0} PE</span>
+    <span class="mini" style="margin-left:8px">${expandida?'▲':'▼'}</span>
+  </div>`;
+
+  if(!expandida){
+    return `<div class="linha-lista" style="padding:10px 14px">${cabecalhoCompacto}</div>`;
+  }
+
   return `<div class="linha-lista">
-    <div class="topo">
+    ${cabecalhoCompacto}
+    <div class="topo" style="margin-top:10px">
       <input data-hab-campo="${i}|nome" value="${esc(h.nome)}" placeholder="Nome da Habilidade" style="flex:1">
       <button data-hab-remover="${i}" class="perigo">Remover</button>
     </div>
@@ -1967,27 +2037,35 @@ function habilidadeLinha(h, i, p){
           <input type="checkbox" data-hab-efeito="${i}|${e.chave}" ${h.efeitos&&h.efeitos[e.chave]?'checked':''}> ${e.rotulo}
         </label>`).join('')}
       </div>
-      ${h.tipo === 'sustentada' && efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${efeitosEscolhidos.length} efeitos (−1): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : efeitosEscolhidos.length > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${efeitosEscolhidos.length} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
+      ${h.tipo === 'sustentada' && contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${contagemEfeitos} efeitos (−1): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${contagemEfeitos} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
           <div class="val" style="font-size:18px">${linhaTabela[e.coluna]}</div>
         </div>`).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
-      ${h.efeitos && h.efeitos.danoCuraMovRD && (h.tipo === 'sustentada' || h.tipo === 'duradoura') ? `<div style="margin-top:8px">
-        <label>Aplicar o Dano/Cura/Movimento/RD (${linhaTabela.danoCuraMovRD}) em qual Perícia? (opcional — só conta enquanto a Habilidade estiver Ativa)</label>
-        <div class="grade g2">
-          <select data-hab-select="${i}|periciaAlvo">
-            <option value="">— nenhuma, é situacional —</option>
-            ${PERICIAS.filter(per=>!per.livre).map(per => `<option value="${per.id}" ${h.periciaAlvo===per.id?'selected':''}>${per.nome}</option>`).join('')}
+      ${h.efeitos && h.efeitos.vantagem && (h.tipo === 'sustentada' || h.tipo === 'duradoura') ? `<div style="margin-top:8px">
+        <label>Aplicar a Vantagem/Desvantagem (${linhaTabela.vantagem}) em quais Perícias? (opcional — só conta enquanto a Habilidade estiver Ativa. Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
+        ${(h.periciasAlvo||[]).length ? (h.periciasAlvo||[]).map((perId,pi) => {
+          const per = PERICIAS.find(x=>x.id===perId);
+          return `<div class="linha" style="margin-top:4px;align-items:center;gap:8px">
+            <span class="mini" style="flex:1">${per ? per.nome : perId}</span>
+            <button data-hab-pericia-remover="${i}|${pi}" class="perigo">Remover</button>
+          </div>`;
+        }).join('') : ''}
+        <div class="linha" style="margin-top:6px;gap:8px">
+          <select data-hab-pericia-nova="${i}" style="flex:1">
+            <option value="">— escolher Perícia —</option>
+            ${PERICIAS.filter(per=>!per.livre && !(h.periciasAlvo||[]).includes(per.id)).map(per => `<option value="${per.id}">${per.nome}</option>`).join('')}
           </select>
-          ${h.periciaAlvo ? `<select data-hab-select="${i}|tipoBonus">
-            <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.danoCuraMovRD)}, entra no Total)</option>
-            <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.danoCuraMovRD.split(' ou ')[0]}, rola na hora)</option>
-          </select>` : ''}
+          <button data-hab-pericia-add="${i}">+ Perícia</button>
         </div>
-        ${h.periciaAlvo && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.danoCuraMovRD)} soma no Total de ${PERICIAS.find(per=>per.id===h.periciaAlvo).nome} enquanto esta Habilidade estiver Ativa.</p>` : ''}
-        ${h.periciaAlvo && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.danoCuraMovRD.split(' ou ')[0]} aparece junto de ${PERICIAS.find(per=>per.id===h.periciaAlvo).nome} (aba Perícias) enquanto esta Habilidade estiver Ativa — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
+        ${(h.periciasAlvo||[]).length ? `<select data-hab-select="${i}|tipoBonus" style="margin-top:8px">
+          <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.vantagem)} em cada, entra no Total)</option>
+          <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
+        </select>` : ''}
+        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} enquanto esta Habilidade estiver Ativa.</p>` : ''}
+        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias) enquanto esta Habilidade estiver Ativa — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
       </div>` : ''}
     </div>
     <div class="linha" style="margin-top:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px">
@@ -2304,7 +2382,7 @@ function habilidadeResumoCombate(h, i){
       <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
       ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
       ${h.efeito ? `<p class="mini">${esc(h.efeito)}</p>` : ''}
-      ${h.periciaAlvo ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.danoCuraMovRD)}` : linhaTabela.danoCuraMovRD.split(' ou ')[0]} em ${PERICIAS.find(per=>per.id===h.periciaAlvo).nome}${h.ativa?'':' (só enquanto Ativa)'}</p>` : ''}
+      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${h.ativa?'':' (só enquanto Ativa)'}</p>` : ''}
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
         ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
           : h.ativa
@@ -2769,14 +2847,46 @@ function ligarEventos(){
       if(!h.efeitos) h.efeitos = {};
       h.efeitos[chave] = el.checked;
     }));
+  app.querySelectorAll('[data-hab-toggle]').forEach(el =>
+    el.onclick = () => {
+      const i = Number(el.dataset.habToggle);
+      if(estado.habExpandidas.has(i)) estado.habExpandidas.delete(i);
+      else estado.habExpandidas.add(i);
+      render();
+    });
   app.querySelectorAll('[data-hab-remover]').forEach(b =>
-    b.onclick = () => mudar(p => p.habilidades.splice(Number(b.dataset.habRemover), 1)));
+    b.onclick = () => mudar(p => {
+      const idx = Number(b.dataset.habRemover);
+      p.habilidades.splice(idx, 1);
+      // Reajusta os índices marcados como expandidos — quem vinha depois
+      // do item removido desce 1, quem vinha antes fica igual.
+      const novoSet = new Set();
+      estado.habExpandidas.forEach(x => { if(x < idx) novoSet.add(x); else if(x > idx) novoSet.add(x-1); });
+      estado.habExpandidas = novoSet;
+    }));
   const addHab = document.getElementById('btAddHabilidade');
-  if(addHab) addHab.onclick = () => mudar(p => p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, periciaAlvo:'', tipoBonus:'soma', ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null}));
+  if(addHab) addHab.onclick = () => mudar(p => {
+    estado.habExpandidas.add(p.habilidades.length);
+    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
+  });
   app.querySelectorAll('[data-hab-select]').forEach(el =>
     el.onchange = () => mudar(p => {
       const [i, chave] = el.dataset.habSelect.split('|');
       p.habilidades[Number(i)][chave] = el.value;
+    }));
+  app.querySelectorAll('[data-hab-pericia-add]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const i = Number(b.dataset.habPericiaAdd);
+      const sel = app.querySelector(`[data-hab-pericia-nova="${i}"]`);
+      if(!sel || !sel.value) return;
+      const h = p.habilidades[i];
+      if(!h.periciasAlvo) h.periciasAlvo = [];
+      if(!h.periciasAlvo.includes(sel.value)) h.periciasAlvo.push(sel.value);
+    }));
+  app.querySelectorAll('[data-hab-pericia-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [i, pi] = b.dataset.habPericiaRemover.split('|');
+      p.habilidades[Number(i)].periciasAlvo.splice(Number(pi), 1);
     }));
   app.querySelectorAll('[data-hab-ativar]').forEach(b =>
     b.onclick = () => mudar(p => ativarHabilidade(p, p.habilidades[Number(b.dataset.habAtivar)])));
