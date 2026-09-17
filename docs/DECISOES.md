@@ -5688,6 +5688,62 @@ na Ficha de Monstro) Capanga escondendo lista/botão e mostrando o aviso,
 com persistência de tudo depois de recarregar. `tsc --noEmit`, `npm run
 lint`, `npm run build` e os 298 testes automáticos continuam limpos.
 
+## 129. Sistema do Sávio — cinco correções pontuais de Habilidade/Passiva/Level Up (17/09/2026)
+
+Lote de bugs que o Zé reportou numa mensagem só (parte de um pedido maior
+que também levantou mecânicas novas — custo de contagem de efeito
+personalizado, PV/PE extra de Habilidade/Passiva, Vantagem podendo
+buffar Dano — essas ficaram de fora por precisarem de regra explícita do
+Zé antes de codificar, decisão #17).
+
+**1. Passiva no Nível interno 0, modo "Dado", mostrava "+3" em vez de
+"1d6".** A string `'+3 ou 1d6'` tinha a ordem invertida em relação ao
+padrão usado em toda ficha (`TABELA_HABILIDADE` sempre bota o dado
+primeiro: `'+1d12 ou +6'`) — o código que extrai o "primeiro pedaço" pro
+modo Dado (`.split(' ou ')[0]`) pegava o número fixo por engano só nesse
+grau específico. Corrigido pra `'1d6 ou +3'`, sem mexer em nenhuma
+lógica — só a ordem da string.
+
+**2. Dano de arma contava sozinho mesmo sem arma equipada.** O combo
+"Ataque com arma equipada" de uma Habilidade usava sempre o Tamanho
+padrão da arma ("Média", 2d6) mesmo quando o campo Nome da arma (aba
+Combate) estava vazio — não existia checagem nenhuma de "tem arma de
+verdade". Nova função `armaEquipada(p)` (`!!p.arma.nome.trim()`), usada
+em todo lugar que soma dano de arma (combo de Habilidade nos dois
+lugares que mostram isso, e o traço do Mestre das Armas). Sem nome
+preenchido, aparece um aviso "Marcado 'com arma', mas não tem arma
+nomeada na aba Combate" em vez do bônus fantasma.
+
+**3. Aba Habilidades ganhou um mini-resumo no card fechado.** O card
+colapsado (decisão #122) só mostrava nome/tipo/Nível/custo de PE — pra
+ver o que a Habilidade fazia, precisava abrir. Agora mostra uma linha
+extra com os efeitos escolhidos e seus valores (ex.: "Dano: **+1d12 ou
++6**"), com o valor de Dano em negrito — sem precisar expandir o card.
+
+**4. Aba Combate: dano em negrito.** O resumo de combate de cada
+Habilidade (`habilidadeResumoCombate`) mostrava todos os efeitos com o
+mesmo peso visual; agora o valor do efeito Dano especificamente vem em
+`<strong>`, junto com o combo de arma quando marcado.
+
+**5. Level Up guiado não mostrava Movimento.** `snapshotNivelSavio` (o
+"antes/depois" que alimenta a tela de Level Up) ficou faltando desde a
+decisão #126 que criou o stat de Movimento — o resto (PV, PE, Reações,
+Pontos de Atributo, Perícias treináveis, Dano de Sanidade) já aparecia.
+Adicionado à comparação antes/depois.
+
+As quatro correções que dependiam de regra nova do Zé (efeito
+personalizado com custo de contagem próprio, PV/PE temporário de
+Habilidade e permanente de Passiva, item de Buff escolhendo Perícia ou
+Dano como alvo, Vantagem apontando pra "Dano" além de Perícia) ficaram
+pendentes — perguntei antes de inventar número/mecânica de jogo.
+
+Testado com Playwright nas duas fichas (comum e Monstro): modo Dado da
+Passiva mostrando "1d6", combo de arma sem bônus e com aviso quando sem
+arma nomeada, aparecendo corretamente ao nomear uma, mini-resumo e
+negrito no lugar certo, Movimento aparecendo no Level Up. `tsc --noEmit`,
+`npm run lint`, `npm run build` e os 298 testes automáticos continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

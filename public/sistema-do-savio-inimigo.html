@@ -402,6 +402,10 @@ const TAMANHOS_ARMA = [
   {id:'grande',    nome:'Grande',    dano:'4d6',  esquiva:'-1d6 pra esquivar'},
   {id:'especial',  nome:'Especial (combinar com o Mestre)', dano:'—', esquiva:'—'},
 ];
+// Só considera "com arma equipada" quando o jogador realmente nomeou uma
+// arma — sem isso, o Tamanho ficava sempre em "Média" por padrão e o combo
+// de Habilidade+arma mostrava 2d6 de graça pra quem nem tinha arma nenhuma.
+function armaEquipada(p){ return !!(p.arma && p.arma.nome && p.arma.nome.trim()); }
 
 // Tabela de bônus por Nível de Habilidade — o coração do sistema livre. O
 // jogador escolhe UM OU MAIS efeitos pra empilhar numa Habilidade; empilhar
@@ -499,7 +503,7 @@ function bonusArmaMestreDasArmas(p, h){
 // `valor` serve pra Dano/Cura/Movimento/RD/Vantagem por igual (mesmo
 // número nos três degraus, igual a TABELA_HABILIDADE já faz).
 const TABELA_PASSIVA_EVOLUCAO = [
-  {nivelInterno:0, valor:'+3 ou 1d6', alcance:'+3m'},
+  {nivelInterno:0, valor:'1d6 ou +3', alcance:'+3m'},
   {nivelInterno:1, valor:TABELA_HABILIDADE[0].danoCuraMovRD, alcance:TABELA_HABILIDADE[0].alcance},
   {nivelInterno:2, valor:TABELA_HABILIDADE[1].danoCuraMovRD, alcance:TABELA_HABILIDADE[1].alcance},
 ];
@@ -1307,6 +1311,7 @@ function snapshotNivelSavio(p){
     nivel: p.nivel,
     pv: pvMaximo(p),
     pe: peMaximo(p),
+    movimento: movimentoBase(p),
     reacoes: reacoesPorRound(p),
     habilidadesEsperadas: habilidadesEsperadas(p),
     passivasEsperadas: passivasEsperadas(p),
@@ -1856,6 +1861,7 @@ function telaResumoNivel(p, resumo){
       <h3>⭐ Subiu para o Nível ${depois.nivel}!</h3>
       ${linha('Pontos de Vida máximos', antes.pv, depois.pv)}
       ${linha('Pontos de Energia máximos', antes.pe, depois.pe)}
+      ${linha('Movimento', antes.movimento, depois.movimento)}
       ${linha('Reações por round', antes.reacoes, depois.reacoes)}
       ${linha('Pontos de Atributo disponíveis', antes.pontosAtributos, depois.pontosAtributos)}
       ${linha('Perícias treináveis', antes.periciasTreinadasLimite, depois.periciasTreinadasLimite)}
@@ -2314,10 +2320,17 @@ function habilidadeLinha(h, i, p){
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
   const expandida = estado.habExpandidas.has(i);
 
+  const resumoMini = efeitosEscolhidos.length
+    ? efeitosEscolhidos.map(e => `${e.rotulo}: ${e.chave==='dano' ? `<strong>${comSufixoDificuldade(p, linhaTabela[e.coluna])}</strong>` : comSufixoDificuldade(p, linhaTabela[e.coluna])}`).join(' · ')
+    : 'Nenhum efeito escolhido ainda';
+
   const cabecalhoCompacto = `<div class="topo" data-hab-toggle="${i}" style="cursor:pointer;user-select:none">
-    <div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-      <strong>${esc(h.nome)||'(sem nome)'}</strong>
-      <span class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}</span>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+        <strong>${esc(h.nome)||'(sem nome)'}</strong>
+        <span class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}</span>
+      </div>
+      <p class="mini" style="margin:4px 0 0">${resumoMini}</p>
     </div>
     <span class="mini" style="white-space:nowrap;padding:2px 10px;border:1px solid var(--borda);border-radius:999px">${h.custoPe||0} PE</span>
     <span class="mini" style="margin-left:8px">${expandida?'▲':'▼'}</span>
@@ -2358,13 +2371,14 @@ function habilidadeLinha(h, i, p){
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => {
           const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
-          const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
-          const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+          const bonusArma = (e.chave === 'dano' && armaEquipada(p)) ? bonusArmaMestreDasArmas(p, h) : 0;
+          const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
           return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
           <div class="val" style="font-size:16px">${comSufixoDificuldade(p, linhaTabela[e.coluna])}${extraArma}</div>
           ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
           ${bonusArma ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusArma} do traço de Mestre das Armas (maior Atributo com arma equipada)</div>` : ''}
+          ${e.chave === 'dano' && h.usaArma && !armaEquipada(p) ? `<div class="obs" style="color:var(--alerta)">Marcado "com arma", mas não tem arma nomeada na aba Combate</div>` : ''}
         </div>`;
         }).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
@@ -2737,9 +2751,10 @@ function habilidadeResumoCombate(h, i, p){
     `Duração ${linhaTabela.duracao}`,
     ...efeitosEscolhidos.map(e => {
       const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
-      const bonusArma = e.chave === 'dano' ? bonusArmaMestreDasArmas(p, h) : 0;
-      const extraArma = (e.chave === 'dano' && h.usaArma) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
-      return `${e.rotulo}: ${comSufixoDificuldade(p, linhaTabela[e.coluna])}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
+      const bonusArma = (e.chave === 'dano' && armaEquipada(p)) ? bonusArmaMestreDasArmas(p, h) : 0;
+      const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${comSufixoDificuldade(p, TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano)}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+      const valorTexto = `${comSufixoDificuldade(p, linhaTabela[e.coluna])}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
+      return `${e.rotulo}: ${e.chave === 'dano' ? `<strong>${valorTexto}</strong>` : valorTexto}`;
     }),
   ].join(' · ');
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
