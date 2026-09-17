@@ -406,6 +406,8 @@ const EFEITOS_HABILIDADE = [
   {chave:'movimento', rotulo:'Movimento',             coluna:'danoCuraMovRD'},
   {chave:'rd',        rotulo:'RD (Redução de Dano)',  coluna:'danoCuraMovRD'},
   {chave:'vantagem',  rotulo:'Vantagem/Desvantagem',   coluna:'vantagem'},
+  {chave:'pv',        rotulo:'PV temporário',         coluna:'danoCuraMovRD'},
+  {chave:'pe',        rotulo:'PE temporário',         coluna:'danoCuraMovRD'},
 ];
 function habilidadeEfeitosEscolhidos(h){
   return EFEITOS_HABILIDADE.filter(e => h.efeitos && h.efeitos[e.chave]);
@@ -415,19 +417,25 @@ function habilidadeEfeitosEscolhidos(h){
 // apontada pra mais de uma Perícia conta como mais de um efeito (regra do
 // Zé: não pode empilhar na MESMA Perícia, mas apontar pra Perícias
 // diferentes com a mesma Habilidade é como dar mais de um efeito a ela).
+// Efeitos PERSONALIZADOS (inventados pelo jogador, ex.: "Atordoamento")
+// entram na mesma soma com o custo que o próprio jogador declarou.
 function habilidadeContagemEfeitos(h){
-  return habilidadeEfeitosEscolhidos(h).reduce((total, e) => {
+  const fixos = habilidadeEfeitosEscolhidos(h).reduce((total, e) => {
     if(e.chave === 'vantagem') return total + Math.max(1, (h.periciasAlvo||[]).length);
     return total + 1;
   }, 0);
+  const personalizados = (h.efeitosPersonalizados||[]).reduce((total, ef) => total + Math.max(1, Number(ef.custo)||1), 0);
+  return fixos + personalizados;
 }
 // Nível efetivo: sobe 2 se for Sustentada (ela já nasce com duas desvantagens
-// embutidas — gasto contínuo de PE e precisar de concentração) e cai 1 se a
-// Habilidade combina mais de um efeito. As duas contas se somam.
+// embutidas — gasto contínuo de PE e precisar de concentração) e cai
+// (contagem de efeitos − 1) — o primeiro efeito é grátis, cada um a mais
+// desconta o próprio custo (normalmente 1; um efeito personalizado pode
+// custar mais, ex.: Atordoamento custo 2 já desconta 2 Níveis sozinho).
 function habilidadeNivelEfetivo(h){
   const n = habilidadeContagemEfeitos(h);
   let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0);
-  nivel -= (n > 1 ? 1 : 0);
+  nivel -= Math.max(0, n - 1);
   return Math.max(1, Math.min(5, nivel));
 }
 // Traço automático de Especialização que soma direto no efeito de uma
@@ -447,6 +455,19 @@ function bonusClasseEfeitoHabilidade(p, h, chave){
 // quando a Habilidade combina o dano dela com o da arma equipada.
 function bonusArmaMestreDasArmas(p, h){
   return (p.especializacaoId === 'mestre-das-armas' && h.usaArma) ? maiorAtributo(p) : 0;
+}
+
+// Vantagem/Desvantagem também pode mirar "Dano" (além de Perícia): soma o
+// valor fixo dela direto no efeito Dano da MESMA Habilidade, quando as
+// duas coisas estão marcadas — só no modo Soma e só enquanto valer agora
+// (mesma regra de habilidadeBonusContaAgora).
+function bonusVantagemDano(h){
+  if(!h.efeitos || !h.efeitos.vantagem || !h.efeitos.dano) return 0;
+  if(!h.vantagemBuffaDano) return 0;
+  if((h.tipoBonus||'soma') !== 'soma') return 0;
+  if(!habilidadeBonusContaAgora(h)) return 0;
+  const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
+  return bonusFixoDoTexto(linhaTabela.vantagem);
 }
 
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
@@ -478,6 +499,8 @@ const EFEITOS_PASSIVA = [
   {chave:'rd',        rotulo:'RD (Redução de Dano)'},
   {chave:'vantagem',  rotulo:'Vantagem/Desvantagem'},
   {chave:'alcance',   rotulo:'Alcance'},
+  {chave:'pv',        rotulo:'PV extra (permanente)'},
+  {chave:'pe',        rotulo:'PE extra (permanente)'},
 ];
 function passivaEfeitosEscolhidos(h){
   return EFEITOS_PASSIVA.filter(e => h.efeitos && h.efeitos[e.chave]);
@@ -990,10 +1013,11 @@ function avisosDadoPassivaPericia(p, periciaId){
     pas.efeitos && pas.efeitos.vantagem
   ).map(pas => `${passivaEvolucaoInfo(pas).valor.split(' ou ')[0]} de ${esc(pas.nome)||'(sem nome)'}`);
 }
-// Imediata não fica "Ativa" (é instantânea) — então o bônus dela em
-// Perícia conta sempre que existir, igual uma Passiva. Sustentada e
-// Duradoura são Buffs de liga/desliga: só contam enquanto Ativas.
-function habilidadeVantagemContaAgora(h){
+// Imediata não fica "Ativa" (é instantânea) — então qualquer bônus dela
+// (Vantagem numa Perícia, PV/PE extra) conta sempre que existir, igual
+// uma Passiva. Sustentada e Duradoura são Buffs de liga/desliga: só
+// contam enquanto Ativas.
+function habilidadeBonusContaAgora(h){
   return h.tipo === 'imediata' ? true : !!h.ativa;
 }
 // Soma dos bônus "Soma" de Habilidades apontadas pra essa Perícia —
@@ -1008,21 +1032,21 @@ function bonusHabilidadesPericia(p, periciaId){
   return (p.habilidades||[]).reduce((total, h) => {
     if(!(h.periciasAlvo||[]).includes(periciaId)) return total;
     if((h.tipoBonus||'soma') !== 'soma') return total;
-    if(!habilidadeVantagemContaAgora(h)) return total;
+    if(!habilidadeBonusContaAgora(h)) return total;
     if(!h.efeitos || !h.efeitos.vantagem) return total;
     const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
     return total + bonusFixoDoTexto(linhaTabela.vantagem);
   }, 0);
 }
 // Habilidades apontando pra essa Perícia no modo "Dado" (e contando
-// agora, pela mesma regra de habilidadeVantagemContaAgora) — não somam
+// agora, pela mesma regra de habilidadeBonusContaAgora) — não somam
 // no Total, só viram um aviso de texto (o jogador rola o dado extra na
 // hora, igual golpe/magia em outros sistemas do Hub nunca simula
 // rolagem).
 function avisosDadoPericia(p, periciaId){
   return (p.habilidades||[]).filter(h =>
     (h.periciasAlvo||[]).includes(periciaId) && (h.tipoBonus||'soma') === 'dado' &&
-    habilidadeVantagemContaAgora(h) &&
+    habilidadeBonusContaAgora(h) &&
     h.efeitos && h.efeitos.vantagem
   ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
@@ -1037,7 +1061,26 @@ function bonusExtraPericia(p, periciaId){
 function periciaTotal(p, per){
   const atributo = atributoEfetivo(p, periciaAtributoId(p, per));
   const bonusTreino = p.pericias[per.id] ? 5 : 0;
-  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id) + bonusExtraPericia(p, per.id);
+  return atributo + bonusTreino + Math.ceil(p.nivel/4) + bonusPassivasPericia(p, per.id) + bonusHabilidadesPericia(p, per.id) + bonusExtraPericia(p, per.id) + bonusItensPericia(p, per.id);
+}
+
+// PV/PE extra de Habilidade (efeitos 'pv'/'pe') — TEMPORÁRIO: só conta
+// enquanto a Habilidade "vale agora" (habilidadeBonusContaAgora). Usa o
+// mesmo valor fixo que já sai da tabela pro Nível efetivo dela.
+function bonusHabilidadesExtra(p, chave){
+  return (p.habilidades||[]).reduce((total, h) => {
+    if(!h.efeitos || !h.efeitos[chave]) return total;
+    if(!habilidadeBonusContaAgora(h)) return total;
+    const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
+    return total + bonusFixoDoTexto(linhaTabela.danoCuraMovRD);
+  }, 0);
+}
+// PV/PE extra de Passiva (efeitos 'pv'/'pe') — PERMANENTE, sempre conta.
+function bonusPassivasExtra(p, chave){
+  return (p.passivas||[]).reduce((total, pas) => {
+    if(!pas.efeitos || !pas.efeitos[chave]) return total;
+    return total + bonusFixoDoTexto(passivaEvolucaoInfo(pas).valor);
+  }, 0);
 }
 
 function especializacao(p){ return ESPECIALIZACOES.find(e => e.id === p.especializacaoId) || null; }
@@ -1052,7 +1095,8 @@ function pvMaximo(p){
   const con = atributoEfetivo(p,'constituicao');
   const base = esp ? esp.pvInicial + con : 10 + con;
   const porNivel = esp ? (Number(esp.pvPorNivel.match(/\d+/)[0]) + con) : con;
-  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0);
+  return base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'constituicao','PV temporário permanente') + (p.bonus.pv||0)
+    + bonusHabilidadesExtra(p,'pv') + bonusPassivasExtra(p,'pv');
 }
 function peMaximo(p){
   const esp = especializacao(p);
@@ -1061,7 +1105,8 @@ function peMaximo(p){
   const total = base + porNivel*Math.max(0, p.nivel-1) + bonusNumericoLimiar(p,'inteligencia','PE máximo') + (p.bonus.pe||0);
   // Arquétipo Prodígio (Primeira Ascensão): multiplicador de PE máximo ×1,5.
   const arq = arquetipo(p);
-  return arq && arq.id === 'prodigio' ? Math.round(total*1.5) : total;
+  const comProdigio = arq && arq.id === 'prodigio' ? Math.round(total*1.5) : total;
+  return comProdigio + bonusHabilidadesExtra(p,'pe') + bonusPassivasExtra(p,'pe');
 }
 function sanidadeMaxima(p){
   return 100 + bonusNumericoLimiar(p,'carisma','Sanidade máxima') + (p.bonus.sanidade||0);
@@ -2096,7 +2141,7 @@ function abaPericias(p){
             : `<span class="selo">${atr.abrev}</span>`}
         </label>
         <span class="mini" style="font-family:var(--fonte-titulo);color:var(--roxo-forte);font-size:15px">${periciaTotal(p, per)}</span>
-      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${avisosDadoPassivaPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPassivaPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}${(p.periciaBonusExtra||[]).filter(b=>b.periciaId===per.id).map(b => `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${Number(b.valor)||0} de ${esc(b.nome)||'bônus avulso'} (já somado no Total)</p>`).join('')}`;
+      </div>${per.obs ? `<p class="mini" style="margin:2px 0 6px">${per.obs}</p>` : ''}${avisosDadoPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${avisosDadoPassivaPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoPassivaPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${avisosDadoItemPericia(p, per.id).length ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">${avisosDadoItemPericia(p, per.id).join(', ')} (role junto, não está somado no Total)</p>` : ''}${p.combatenteBonusPericia === per.id ? `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${combatenteDadosReflexos(p)}d4 do traço Reflexos ou Fortitude do Combatente (role junto, não está somado no Total; dá pra transferir pra Luta por 2 PE no turno)</p>` : ''}${(p.periciaBonusExtra||[]).filter(b=>b.periciaId===per.id).map(b => `<p class="mini" style="margin:2px 0 6px;color:var(--roxo-forte)">+${Number(b.valor)||0} de ${esc(b.nome)||'bônus avulso'} (já somado no Total)</p>`).join('')}`;
     }).join('')}
   </div>
   ${abaPericiasBonusExtra(p)}`;
@@ -2221,6 +2266,27 @@ function limiteTracoPorCena(p){
   return 0;
 }
 
+// Efeitos personalizados (inventados pelo jogador, ex.: "Atordoamento")
+// além dos 5 fixos. Cada um declara o próprio custo em contagem de
+// efeitos — some no desconto de Nível efetivo junto com os fixos
+// (habilidadeContagemEfeitos). Não têm valor de tabela: é descrição
+// livre, a mesa decide o efeito de verdade.
+function habilidadeEfeitosPersonalizadosHtml(h, i){
+  const lista = h.efeitosPersonalizados || [];
+  return `<div style="margin-top:10px">
+    <label>Efeitos personalizados (inventados por você, ex.: "Atordoamento") — cada um soma o custo declarado no desconto de Nível efetivo</label>
+    ${lista.length ? lista.map((ef,ei) => `<div class="linha-lista" style="margin-top:6px">
+      <div class="linha" style="gap:8px;flex-wrap:wrap">
+        <input data-hab-efpers-nome="${i}|${ei}" value="${esc(ef.nome)}" placeholder="Nome do efeito" style="flex:2;min-width:140px">
+        <input type="number" min="1" data-hab-efpers-custo="${i}|${ei}" value="${ef.custo||1}" style="flex:1;min-width:70px" title="Custo em contagem de efeitos">
+        <button data-hab-efpers-remover="${i}|${ei}" class="perigo">Remover</button>
+      </div>
+      <textarea data-hab-efpers-descricao="${i}|${ei}" rows="2" placeholder="O que esse efeito faz (a mesa decide o resultado de verdade)" style="margin-top:6px">${esc(ef.descricao)}</textarea>
+    </div>`).join('') : ''}
+    <button data-hab-efpers-add="${i}" style="margin-top:6px">+ Efeito personalizado</button>
+  </div>`;
+}
+
 function habilidadeLinha(h, i, p){
   const custoFinal = custoPeDefault(p, h.nivel);
   const meiaCusto = p.ascensao.segunda && h.nivel <= 3; // bônus universal da Segunda Ascensão
@@ -2231,9 +2297,11 @@ function habilidadeLinha(h, i, p){
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
   const expandida = estado.habExpandidas.has(i);
 
-  const resumoMini = efeitosEscolhidos.length
-    ? efeitosEscolhidos.map(e => `${e.rotulo}: ${e.chave==='dano' ? `<strong>${linhaTabela[e.coluna]}</strong>` : linhaTabela[e.coluna]}`).join(' · ')
-    : 'Nenhum efeito escolhido ainda';
+  const resumoPartes = [
+    ...efeitosEscolhidos.map(e => `${e.rotulo}: ${e.chave==='dano' ? `<strong>${linhaTabela[e.coluna]}</strong>` : linhaTabela[e.coluna]}`),
+    ...(h.efeitosPersonalizados||[]).map(ef => `${esc(ef.nome)||'(efeito sem nome)'} (custo ${ef.custo||1})`),
+  ];
+  const resumoMini = resumoPartes.length ? resumoPartes.join(' · ') : 'Nenhum efeito escolhido ainda';
 
   const cabecalhoCompacto = `<div class="topo" data-hab-toggle="${i}" style="cursor:pointer;user-select:none">
     <div style="flex:1;min-width:0">
@@ -2278,21 +2346,28 @@ function habilidadeLinha(h, i, p){
           <input type="checkbox" data-hab-efeito="${i}|${e.chave}" ${h.efeitos&&h.efeitos[e.chave]?'checked':''}> ${e.rotulo}
         </label>`).join('')}
       </div>
-      ${h.tipo === 'sustentada' && contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${contagemEfeitos} efeitos (−1): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${contagemEfeitos} efeitos: Nível efetivo cai pra ${nivelEfetivo} (era ${h.nivel}).</p>` : ''}
+      ${h.tipo === 'sustentada' && contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${contagemEfeitos} efeitos (−${contagemEfeitos-1}): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${contagemEfeitos} efeitos: Nível efetivo cai ${contagemEfeitos-1} (pra ${nivelEfetivo}, era ${h.nivel}).</p>` : ''}
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => {
           const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
           const bonusArma = (e.chave === 'dano' && armaEquipada(p)) ? bonusArmaMestreDasArmas(p, h) : 0;
           const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
+          const bonusVantDano = e.chave === 'dano' ? bonusVantagemDano(h) : 0;
+          const bonusItemDano = e.chave === 'dano' ? bonusItensDano(p) : 0;
           return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
-          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}</div>
+          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}${bonusVantDano ? ` + ${bonusVantDano}` : ''}${bonusItemDano ? ` + ${bonusItemDano}` : ''}</div>
           ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
           ${bonusArma ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusArma} do traço de Mestre das Armas (maior Atributo com arma equipada)</div>` : ''}
           ${e.chave === 'dano' && h.usaArma && !armaEquipada(p) ? `<div class="obs" style="color:var(--alerta)">Marcado "com arma", mas não tem arma nomeada na aba Combate</div>` : ''}
+          ${bonusVantDano ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusVantDano} da Vantagem/Desvantagem desta Habilidade</div>` : ''}
+          ${bonusItemDano ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusItemDano} de item Buff equipado (mira em Dano)</div>` : ''}
+          ${e.chave === 'dano' && h.efeitos.vantagem && h.vantagemBuffaDano && h.tipoBonus==='dado' ? `<div class="obs" style="color:var(--roxo-forte)">${linhaTabela.vantagem.split(' ou ')[0]} extra no Dano (role junto, a ficha não soma)</div>` : ''}
+          ${e.chave === 'dano' ? avisosDadoItemDano(p).map(txt => `<div class="obs" style="color:var(--roxo-forte)">${txt} extra no Dano (role junto, a ficha não soma)</div>`).join('') : ''}
         </div>`;
         }).join('')}
       </div>` : `<p class="mini">Marque ao menos um efeito pra calcular o bônus sozinho.</p>`}
+      ${habilidadeEfeitosPersonalizadosHtml(h, i)}
       ${h.efeitos && h.efeitos.dano ? `<label class="checagem" style="margin-top:8px;display:block">
         <input type="checkbox" data-hab-flag="${i}|usaArma" ${h.usaArma?'checked':''}> Ataque com arma equipada (some o dano da arma junto com o da Habilidade)
       </label>` : ''}
@@ -2314,7 +2389,10 @@ function habilidadeLinha(h, i, p){
           </select>
           <button data-hab-pericia-add="${i}">+ Perícia</button>
         </div>
-        ${(h.periciasAlvo||[]).length ? `<select data-hab-select="${i}|tipoBonus" style="margin-top:8px">
+        ${h.efeitos.dano ? `<label class="checagem" style="margin-top:8px;display:block">
+          <input type="checkbox" data-hab-flag="${i}|vantagemBuffaDano" ${h.vantagemBuffaDano?'checked':''}> Também aplicar no Dano desta Habilidade (soma junto, no modo Soma)
+        </label>` : ''}
+        ${(h.periciasAlvo||[]).length || h.vantagemBuffaDano ? `<select data-hab-select="${i}|tipoBonus" style="margin-top:8px">
           <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.vantagem)} em cada, entra no Total)</option>
           <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
         </select>` : ''}
@@ -2651,7 +2729,9 @@ function habilidadeResumoCombate(h, i, p){
       const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
       const bonusArma = (e.chave === 'dano' && armaEquipada(p)) ? bonusArmaMestreDasArmas(p, h) : 0;
       const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma` : '';
-      const valorTexto = `${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}`;
+      const bonusVantDano = e.chave === 'dano' ? bonusVantagemDano(h) : 0;
+      const bonusItemDano = e.chave === 'dano' ? bonusItensDano(p) : 0;
+      const valorTexto = `${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}${bonusVantDano ? ` +${bonusVantDano} (Vantagem)` : ''}${bonusItemDano ? ` +${bonusItemDano} (item)` : ''}`;
       return `${e.rotulo}: ${e.chave === 'dano' ? `<strong>${valorTexto}</strong>` : valorTexto}`;
     }),
   ].join(' · ');
@@ -2665,7 +2745,7 @@ function habilidadeResumoCombate(h, i, p){
       <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
       ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
       ${h.efeito ? `<p class="mini">${esc(h.efeito)}</p>` : ''}
-      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeVantagemContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
+      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeBonusContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
         ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
           : h.ativa
@@ -2708,7 +2788,8 @@ function abaCombate(p){
           ${TAMANHOS_ARMA.map(t => `<option value="${t.id}" ${t.id===p.arma.tamanho?'selected':''}>${t.nome}</option>`).join('')}
         </select></div>
     </div>
-    <p class="mini" style="margin-top:8px">Dano ${tam.dano}${p.especializacaoId==='mestre-das-armas' ? `+${maiorAtributo(p)} (traço Mestre das Armas)` : ''} · esquiva: ${tam.esquiva}</p>
+    <p class="mini" style="margin-top:8px">Dano ${tam.dano}${p.especializacaoId==='mestre-das-armas' ? `+${maiorAtributo(p)} (traço Mestre das Armas)` : ''}${bonusItensDano(p) ? `+${bonusItensDano(p)} (item Buff Equipado)` : ''} · esquiva: ${tam.esquiva}</p>
+    ${avisosDadoItemDano(p).length ? `<p class="mini" style="color:var(--roxo-forte)">${avisosDadoItemDano(p).join(', ')} (role junto, não está somado)</p>` : ''}
     <label for="c-arma-notas" style="margin-top:8px">Notas</label>
     <textarea id="c-arma-notas" data-arma="notas" rows="2">${esc(p.arma.notas)}</textarea>
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item
@@ -2821,6 +2902,7 @@ function abaInventario(p){
         <label for="c-iteminv-valor-${i}">Valor do efeito (ex.: 1d6, +2)</label>
         <input id="c-iteminv-valor-${i}" data-iteminv-valor="${i}" value="${esc(it.valorEfeito||'')}">
       </div>` : ''}
+      ${it.efeito === 'buff' ? itemBuffAlvoHtml(it, i) : ''}
       <div class="grade g2" style="margin-top:8px">
         <div><label for="c-iteminv-peso-${i}">Peso (por unidade)</label>
           <input id="c-iteminv-peso-${i}" type="number" min="0" step="0.5" data-iteminv-peso="${i}" value="${it.peso||0}"></div>
@@ -2852,6 +2934,73 @@ const EFEITOS_ITEM = [
   {id:'dano', nome:'Dano'},
   {id:'cura', nome:'Cura'},
 ];
+
+// Item de efeito Buff escolhe pra onde o valor dele vai — igual o sistema
+// de Vantagem/Desvantagem de Habilidade/Passiva (lista de Perícias-alvo +
+// Soma ou Dado), com "Dano" como destino extra (some no dano de arma/
+// Habilidade enquanto o item estiver Equipado, em vez de mirar Perícia).
+function itemBuffAlvoHtml(it, i){
+  const alvo = it.alvo || 'pericia';
+  return `<div style="margin-top:8px">
+    <label for="c-iteminv-alvo-${i}">Onde aplicar o Buff?</label>
+    <select id="c-iteminv-alvo-${i}" data-iteminv-alvo="${i}">
+      <option value="pericia" ${alvo==='pericia'?'selected':''}>Perícia</option>
+      <option value="dano" ${alvo==='dano'?'selected':''}>Dano (arma e Habilidades, enquanto Equipado)</option>
+    </select>
+    ${alvo === 'pericia' ? `
+      ${(it.periciasAlvo||[]).length ? (it.periciasAlvo||[]).map((perId,pi) => {
+        const per = PERICIAS.find(x=>x.id===perId);
+        return `<div class="linha" style="margin-top:4px;align-items:center;gap:8px">
+          <span class="mini" style="flex:1">${per ? per.nome : perId}</span>
+          <button data-iteminv-pericia-remover="${i}|${pi}" class="perigo">Remover</button>
+        </div>`;
+      }).join('') : ''}
+      <div class="linha" style="margin-top:6px;gap:8px">
+        <select data-iteminv-pericia-nova="${i}" style="flex:1">
+          <option value="">— escolher Perícia —</option>
+          ${PERICIAS.filter(per=>!per.livre && !(it.periciasAlvo||[]).includes(per.id)).map(per => `<option value="${per.id}">${per.nome}</option>`).join('')}
+        </select>
+        <button data-iteminv-pericia-add="${i}">+ Perícia</button>
+      </div>` : ''}
+    <select data-iteminv-select="${i}|tipoBonus" style="margin-top:8px">
+      <option value="soma" ${(it.tipoBonus||'soma')==='soma'?'selected':''}>Soma (entra automático no Total, só se "Valor do efeito" for um número fixo)</option>
+      <option value="dado" ${it.tipoBonus==='dado'?'selected':''}>Dado (só avisa, rola na hora)</option>
+    </select>
+    ${it.equipado ? '' : `<p class="mini" style="color:var(--alerta);margin-top:4px">Item não está Equipado — o Buff só vale quando "Equipado" estiver marcado.</p>`}
+  </div>`;
+}
+// Bônus "Soma" de itens Buff Equipados apontando pra essa Perícia.
+function bonusItensPericia(p, periciaId){
+  return (p.inventario||[]).reduce((total, it) => {
+    if(!it.equipado || it.efeito !== 'buff' || (it.alvo||'pericia') !== 'pericia') return total;
+    if(!(it.periciasAlvo||[]).includes(periciaId)) return total;
+    if((it.tipoBonus||'soma') !== 'soma') return total;
+    return total + bonusFixoDoTexto(it.valorEfeito||'');
+  }, 0);
+}
+// Itens Buff Equipados no modo "Dado" apontando pra essa Perícia — só
+// avisa, não soma.
+function avisosDadoItemPericia(p, periciaId){
+  return (p.inventario||[]).filter(it =>
+    it.equipado && it.efeito === 'buff' && (it.alvo||'pericia') === 'pericia' &&
+    (it.periciasAlvo||[]).includes(periciaId) && (it.tipoBonus||'soma') === 'dado'
+  ).map(it => `${(it.valorEfeito||'').split(' ou ')[0]} de ${esc(it.nome)||'(sem nome)'}`);
+}
+// Bônus "Soma" de itens Buff Equipados mirando Dano — some no dano de
+// arma e no efeito Dano de qualquer Habilidade.
+function bonusItensDano(p){
+  return (p.inventario||[]).reduce((total, it) => {
+    if(!it.equipado || it.efeito !== 'buff' || it.alvo !== 'dano') return total;
+    if((it.tipoBonus||'soma') !== 'soma') return total;
+    return total + bonusFixoDoTexto(it.valorEfeito||'');
+  }, 0);
+}
+// Itens Buff Equipados no modo "Dado" mirando Dano — só avisa.
+function avisosDadoItemDano(p){
+  return (p.inventario||[]).filter(it =>
+    it.equipado && it.efeito === 'buff' && it.alvo === 'dano' && (it.tipoBonus||'soma') === 'dado'
+  ).map(it => `${(it.valorEfeito||'').split(' ou ')[0]} de ${esc(it.nome)||'(sem nome)'}`);
+}
 
 // Quanto o personagem consegue carregar: 5 + 2×Força. Cada item gasta
 // peso×quantidade desses pontos (aumentar a quantidade multiplica o peso).
@@ -3352,7 +3501,7 @@ function ligarEventos(){
   const btnAddItemInventario = app.querySelector('#btnAddItemInventario');
   if(btnAddItemInventario) btnAddItemInventario.onclick = () => mudar(p => {
     if(!p.inventario) p.inventario = [];
-    p.inventario.push({nome:'', tipo:'comum', subtipo:null, efeito:'nulo', valorEfeito:'', peso:0, quantidade:1, notas:'', equipado:false, gadgets:0});
+    p.inventario.push({nome:'', tipo:'comum', subtipo:null, efeito:'nulo', valorEfeito:'', alvo:'pericia', periciasAlvo:[], tipoBonus:'soma', peso:0, quantidade:1, notas:'', equipado:false, gadgets:0});
   });
   app.querySelectorAll('[data-iteminv-nome]').forEach(el =>
     el.oninput = () => mudarSemRedesenhar(p => { p.inventario[Number(el.dataset.iteminvNome)].nome = el.value; }, el));
@@ -3402,6 +3551,27 @@ function ligarEventos(){
     el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvPeso)].peso = Math.max(0, Number(el.value)||0); }));
   app.querySelectorAll('[data-iteminv-qtd]').forEach(el =>
     el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvQtd)].quantidade = Math.max(1, Number(el.value)||1); }));
+  app.querySelectorAll('[data-iteminv-alvo]').forEach(el =>
+    el.onchange = () => mudar(p => { p.inventario[Number(el.dataset.iteminvAlvo)].alvo = el.value; }));
+  app.querySelectorAll('[data-iteminv-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, chave] = el.dataset.iteminvSelect.split('|');
+      p.inventario[Number(i)][chave] = el.value;
+    }));
+  app.querySelectorAll('[data-iteminv-pericia-add]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const i = Number(b.dataset.iteminvPericiaAdd);
+      const sel = app.querySelector(`[data-iteminv-pericia-nova="${i}"]`);
+      if(!sel || !sel.value) return;
+      const it = p.inventario[i];
+      if(!it.periciasAlvo) it.periciasAlvo = [];
+      if(!it.periciasAlvo.includes(sel.value)) it.periciasAlvo.push(sel.value);
+    }));
+  app.querySelectorAll('[data-iteminv-pericia-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [i, pi] = b.dataset.iteminvPericiaRemover.split('|');
+      p.inventario[Number(i)].periciasAlvo.splice(Number(pi), 1);
+    }));
 
   // Ataques prontos (Combate)
   const btnAddAtaque = app.querySelector('#btnAddAtaque');
@@ -3513,7 +3683,7 @@ function ligarEventos(){
   const addHab = document.getElementById('btAddHabilidade');
   if(addHab) addHab.onclick = () => mudar(p => {
     estado.habExpandidas.add(p.habilidades.length);
-    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', usaArma:false, ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
+    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, efeitosPersonalizados:[], periciasAlvo:[], tipoBonus:'soma', usaArma:false, vantagemBuffaDano:false, ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
   });
   app.querySelectorAll('[data-hab-select]').forEach(el =>
     el.onchange = () => mudar(p => {
@@ -3533,6 +3703,34 @@ function ligarEventos(){
     b.onclick = () => mudar(p => {
       const [i, pi] = b.dataset.habPericiaRemover.split('|');
       p.habilidades[Number(i)].periciasAlvo.splice(Number(pi), 1);
+    }));
+  app.querySelectorAll('[data-hab-efpers-add]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const h = p.habilidades[Number(b.dataset.habEfpersAdd)];
+      if(!h.efeitosPersonalizados) h.efeitosPersonalizados = [];
+      h.efeitosPersonalizados.push({nome:'', custo:1, descricao:''});
+    }));
+  app.querySelectorAll('[data-hab-efpers-nome]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, ei] = el.dataset.habEfpersNome.split('|');
+      p.habilidades[Number(i)].efeitosPersonalizados[Number(ei)].nome = el.value;
+    }, el));
+  app.querySelectorAll('[data-hab-efpers-descricao]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [i, ei] = el.dataset.habEfpersDescricao.split('|');
+      p.habilidades[Number(i)].efeitosPersonalizados[Number(ei)].descricao = el.value;
+    }, el));
+  // Custo usa onchange (redesenha a tela) — o desconto de Nível efetivo
+  // mostrado logo acima depende dele.
+  app.querySelectorAll('[data-hab-efpers-custo]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [i, ei] = el.dataset.habEfpersCusto.split('|');
+      p.habilidades[Number(i)].efeitosPersonalizados[Number(ei)].custo = Math.max(1, Number(el.value) || 1);
+    }));
+  app.querySelectorAll('[data-hab-efpers-remover]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [i, ei] = b.dataset.habEfpersRemover.split('|');
+      p.habilidades[Number(i)].efeitosPersonalizados.splice(Number(ei), 1);
     }));
   app.querySelectorAll('[data-hab-ativar]').forEach(b =>
     b.onclick = () => mudar(p => ativarHabilidade(p, p.habilidades[Number(b.dataset.habAtivar)])));

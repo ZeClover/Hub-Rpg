@@ -5744,6 +5744,74 @@ negrito no lugar certo, Movimento aparecendo no Level Up. `tsc --noEmit`,
 `npm run lint`, `npm run build` e os 298 testes automáticos continuam
 limpos.
 
+## 130. Sistema do Sávio — efeito personalizado com custo próprio, PV/PE extra, Vantagem buffando Dano, item Buff mirando Perícia ou Dano (17/09/2026)
+
+As quatro mecânicas novas deixadas pendentes na decisão #129 — cada uma
+dependia de uma regra que só o Zé podia fechar (decisão #17). Perguntei
+antes de codificar; todas as quatro respostas escolhidas foram a opção
+"(Recomendado)".
+
+**1. Efeito personalizado com custo próprio.** Além dos 5 efeitos fixos
+(Dano/Cura/Movimento/RD/Vantagem), toda Habilidade agora tem uma lista
+de `efeitosPersonalizados` (nome + descrição livre + "custo" numérico
+que o próprio jogador declara — ex.: "Atordoamento", custo 2). Regra
+escolhida: **custo = desconto direto**. `habilidadeContagemEfeitos`
+soma o custo de cada efeito personalizado à contagem dos fixos, e
+`habilidadeNivelEfetivo` muda de "cai 1 se combinar mais de um efeito"
+pra "cai (contagem total − 1)" — o primeiro efeito é sempre grátis, cada
+efeito a mais desconta o próprio custo (normalmente 1, mas um efeito
+personalizado pode custar mais). Isso muda também o desconto dos 5
+efeitos fixos combinados entre si (antes sempre −1, agora escala com
+quantos são combinados) — avisei antes de perguntar, o Zé confirmou ao
+escolher a opção recomendada.
+
+**2. PV/PE extra de Habilidade (temporário) e Passiva (permanente).**
+Novos efeitos `pv`/`pe` em `EFEITOS_HABILIDADE` e `EFEITOS_PASSIVA`.
+Regra escolhida: **mesmo valor da tabela** — reaproveita o número que já
+sai de `TABELA_HABILIDADE`/`TABELA_PASSIVA_EVOLUCAO` pro Nível/Nível
+interno daquela Habilidade/Passiva, sem inventar fórmula nova.
+`bonusHabilidadesExtra`/`bonusPassivasExtra` somam esse valor em
+`pvMaximo`/`peMaximo`. Habilidade só conta enquanto
+`habilidadeBonusContaAgora` (Imediata sempre; Sustentada/Duradoura só
+enquanto Ativa — por isso a função virou genérica, veio da decisão
+#129/#127); Passiva conta sempre.
+
+**3. Vantagem/Desvantagem pode buffar o próprio Dano.** Regra escolhida:
+**soma no Dano da própria Habilidade** — quando uma Habilidade marca
+Dano E Vantagem/Desvantagem juntos, um novo checkbox
+("Também aplicar no Dano desta Habilidade") liga `h.vantagemBuffaDano`;
+com ele marcado e o modo Soma escolhido, `bonusVantagemDano(h)` soma o
+valor fixo da Vantagem direto no efeito de Dano da mesma Habilidade (some
+com o dano de arma e o bônus de classe já existentes). Só no modo Soma —
+no modo Dado o extra já aparece como aviso de texto de qualquer forma.
+
+**4. Item de efeito Buff escolhe Perícia ou Dano como alvo.** Regra
+escolhida: **igual ao sistema de Vantagem** — todo item com efeito
+"Buff" ganha `alvo` ('pericia' ou 'dano'), e o modo Perícia reusa a mesma
+UI de Habilidade/Passiva (lista de `periciasAlvo` + Soma/Dado). Miradar
+"Dano" soma no dano de arma e no efeito Dano de qualquer Habilidade,
+sempre condicionado a `it.equipado` (por isso não reaproveitei o
+`periciaBonusExtra` da decisão #127 — aquele bônus avulso não sabe se
+algo está equipado). Funções novas: `bonusItensPericia`,
+`avisosDadoItemPericia`, `bonusItensDano`, `avisosDadoItemDano`.
+
+**Na Ficha de Monstro:** PV/PE extra e o bônus Soma de Vantagem→Dano
+escalam com a Dificuldade (igual todo o resto de PV/PE/Dano/Vantagem —
+Boss dobra, Capanga reduz à metade etc.), porque usam o mesmo valor
+numérico de tabela que já escala em todo lugar. Item Buff, porém, **não
+escala** — segue a mesma regra do bônus avulso de Perícia (decisão
+#127): é um valor final que a mesa já digita pronto pro Monstro
+específico, não um número de referência pra multiplicar.
+
+Testado com Playwright nas duas fichas: efeito personalizado mudando o
+desconto de Nível efetivo (3 efeitos combinados → cai 2), PV/PE subindo
+com Habilidade ativa/Passiva e escalando ×2 no Boss, checkbox de
+Vantagem→Dano aparecendo só quando Dano+Vantagem estão marcados juntos e
+somando certo (inclusive escalado), item Buff trocando entre Perícia e
+Dano, respeitando Equipado e sem escalar com Dificuldade, e persistência
+depois de recarregar a página. `node --check` validou a sintaxe dos dois
+arquivos (não passam por `tsc`/eslint, são HTML estático em `public/`).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
