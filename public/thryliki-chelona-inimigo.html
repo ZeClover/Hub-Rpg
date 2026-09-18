@@ -271,6 +271,7 @@ const estado = {
   carregandoHub: !!MODO_HUB,
   erroHub: null, // 'nao-encontrado' | null
   ehDono: false,
+  podeEditar: false,
 };
 if(!MODO_HUB && estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
 const atual = () => estado.inimigos.find(i => i.id === estado.atualId) || null;
@@ -286,6 +287,7 @@ async function iniciarModoHub(){
     estado.inimigos = [inimigo];
     estado.atualId = inimigo.id;
     estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
@@ -296,7 +298,7 @@ async function iniciarModoHub(){
 }
 
 function mudar(mudanca){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const inimigo = atual(); if(!inimigo) return;
   mudanca(inimigo);
   inimigo.atualizadoEm = Date.now();
@@ -304,7 +306,7 @@ function mudar(mudanca){
 }
 let debounce = null;
 function mudarSemRedesenhar(mudanca, elemento){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const inimigo = atual(); if(!inimigo) return;
   mudanca(inimigo);
   inimigo.atualizadoEm = Date.now();
@@ -353,7 +355,7 @@ function render(){
   // Ficha salva antes da fatia de Fases de Chefe não tem este campo.
   if(!inimigo.fasesChefe) inimigo.fasesChefe = [];
 
-  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const somenteLeitura = MODO_HUB && !estado.podeEditar;
   const alerta = somenteLeitura
     ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(inimigo.nome)}</strong>. Só quem é dono edita.</div>`
     : falhouAoSalvar

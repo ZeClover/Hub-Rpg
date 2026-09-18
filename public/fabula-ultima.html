@@ -2211,6 +2211,7 @@ const estado = {
   // é dono" — senão o interruptor de compartilhar apareceria numa ficha
   // que nem carregou direito.
   ehDono: false,
+  podeEditar: false,
   compartilhado: false,
   // nivelUpResumo: resumo transitório do último "+1 Nível" numa classe
   // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
@@ -2244,6 +2245,7 @@ async function iniciarModoHub(){
     estado.fichas = [p];
     estado.atualId = p.id;
     estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
     estado.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -2266,7 +2268,7 @@ function alternarCompartilhado(valor){
 }
 
 function mudar(mudanca){
-  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
+  if(MODO_HUB && !estado.podeEditar) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -2320,7 +2322,7 @@ function render(){
     return;
   }
 
-  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const somenteLeitura = MODO_HUB && !estado.podeEditar;
 
   // Se a aba ativa foi escondida (painel de Aparência), pousa na primeira
   // aba visível em vez de deixar o conteúdo sem botão aceso.
@@ -4143,7 +4145,7 @@ function ligarEventos(){
    quando o campo afeta algum número. */
 let debounce;
 function mudarSemRedesenhar(mudanca, elemento){
-  if(MODO_HUB && !estado.ehDono) return; // defesa extra: modo leitura não edita
+  if(MODO_HUB && !estado.podeEditar) return; // defesa extra: modo leitura não edita
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();

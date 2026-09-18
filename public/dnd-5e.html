@@ -12328,6 +12328,7 @@ const estado = {
   carregandoHub: !!MODO_HUB,
   erroHub: null,
   ehDono: false,
+  podeEditar: false,
   compartilhado: false,
   // modoGuiado/passoGuiado: tela alternativa de criação passo a passo — não
   // é dado do personagem, só um jeito diferente de mostrar os mesmos campos.
@@ -12349,6 +12350,7 @@ async function iniciarModoHub(){
     estado.fichas = [p];
     estado.atualId = p.id;
     estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
     estado.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -12370,7 +12372,7 @@ function alternarCompartilhado(valor){
 }
 
 function mudar(mudanca){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -12379,7 +12381,7 @@ function mudar(mudanca){
 
 let debounce = null;
 function mudarSemRedesenhar(mudanca, elemento){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -12429,7 +12431,7 @@ function render(){
     return;
   }
 
-  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const somenteLeitura = MODO_HUB && !estado.podeEditar;
   const alerta = somenteLeitura
     ? `<div class="ok">Modo leitura — você está vendo a ficha de
        <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`

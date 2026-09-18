@@ -7337,6 +7337,7 @@ const estado = {
   carregando: !!MODO_HUB,
   erro: null, // 'nao-encontrado' | null
   ehDono: false,
+  podeEditar: false,
 };
 
 async function iniciarModoHub(){
@@ -7347,6 +7348,7 @@ async function iniciarModoHub(){
     const dados = personagem.dados;
     estado.inimigo = (dados && dados.nome) ? dados : novoInimigo();
     estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erro = 'nao-encontrado';
@@ -7357,7 +7359,7 @@ async function iniciarModoHub(){
 }
 
 function mudar(mudanca){
-  if(!estado.ehDono) return;
+  if(!estado.podeEditar) return;
   mudanca(estado.inimigo);
   salvarNoHub();
   render();
@@ -7620,7 +7622,7 @@ function render(){
   }
 
   const p = estado.inimigo;
-  const somenteLeitura = !estado.ehDono;
+  const somenteLeitura = !estado.podeEditar;
 
   app.innerHTML = `
     ${falhouAoSalvarHub ? `<div class="aviso"><strong>Não consegui salvar no Hub.</strong> Confira sua internet.</div>` : ''}

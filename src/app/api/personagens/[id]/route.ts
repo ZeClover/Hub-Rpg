@@ -9,14 +9,39 @@ type Contexto = { params: Promise<{ id: string }> };
 /*
   Uma ficha específica: ler, salvar e apagar.
 
-  Em qualquer um dos três verbos, a mesma pergunta é feita primeiro — o
-  personagem existe e é desta pessoa? — antes de tocar em qualquer dado.
-  Devolvemos 404 tanto para "não existe" quanto para "não é seu": dizer
-  "403, mas existe" revelaria que a ficha de outra pessoa está ali.
+  Ler e salvar (PATCH) usam a mesma checagem, `campanhasComoMestreDe` +
+  `podeAcessarPersonagem` (decisão #131: mestre da campanha pode editar a
+  ficha do jogador, não só ler). Apagar é mais estrito — só o dono, nunca o
+  mestre (`buscarSeFoiDono`) — perder a ficha de vez não é uma decisão que a
+  mesa deveria poder tomar pelo jogador.
 */
+async function campanhasComoMestreDe(idDoUsuario: string) {
+  return (
+    await banco.participacao.findMany({
+      where: { usuarioId: idDoUsuario, papel: "MESTRE" },
+      select: { campanhaId: true },
+    })
+  ).map((c) => c.campanhaId);
+}
+
 async function buscarSeFoiDono(id: string, idDoUsuario: string) {
   const personagem = await banco.personagem.findUnique({ where: { id } });
-  if (!personagem || !podeAcessarPersonagem(idDoUsuario, personagem)) return null;
+  if (!personagem || personagem.donoId !== idDoUsuario) return null;
+  return personagem;
+}
+
+/*
+  Buscar com direito de editar: dono sempre, ou mestre da campanha à qual a
+  ficha está ligada (decisão #131). A lista de campanhas-como-mestre só é
+  buscada quando quem pergunta não é a própria dona — a escrita mais comum
+  (dono editando a própria ficha) não paga essa consulta extra.
+*/
+async function buscarSeFoiDonoOuMestre(id: string, idDoUsuario: string) {
+  const personagem = await banco.personagem.findUnique({ where: { id } });
+  if (!personagem) return null;
+  const ehDono = personagem.donoId === idDoUsuario;
+  const campanhasComoMestre = ehDono ? [] : await campanhasComoMestreDe(idDoUsuario);
+  if (!podeAcessarPersonagem(idDoUsuario, personagem, campanhasComoMestre)) return null;
   return personagem;
 }
 
@@ -42,20 +67,16 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
-  // `ehDono` (o que a ficha usa pra decidir se edita ou só lê) é sempre
-  // estrito: só a própria dona é dona, mestre nenhum entra aqui. A pergunta
-  // "dá pra ler mesmo assim?" é separada, e é ela que decide o 404.
+  // `ehDono` é sempre estrito (só a própria dona) — controla ações que
+  // continuam exclusivas do dono na tela (compartilhar, importar JSON).
+  // `podeEditar` é o que decide se a ficha abre editável ou só de leitura
+  // (decisão #131: dono OU mestre da campanha, os dois editam).
   const usuario = await usuarioAtual();
   const ehDono = usuario ? personagem.donoId === usuario.id : false;
 
   const campanhasComoMestre =
     usuario && !ehDono && personagem.campanhaId
-      ? (
-          await banco.participacao.findMany({
-            where: { usuarioId: usuario.id, papel: "MESTRE" },
-            select: { campanhaId: true },
-          })
-        ).map((c) => c.campanhaId)
+      ? await campanhasComoMestreDe(usuario.id)
       : [];
 
   const podeLer = usuario
@@ -73,6 +94,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
       dados: personagem.dados,
       compartilhado: personagem.compartilhado,
       ehDono,
+      podeEditar: podeLer,
     },
   });
 }
@@ -84,14 +106,19 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const { id } = await params;
-  const existente = await buscarSeFoiDono(id, usuario.id);
+  const existente = await buscarSeFoiDonoOuMestre(id, usuario.id);
   if (!existente) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
   const corpo = await requisicao.json().catch(() => null);
   const temDados = corpo && typeof corpo.dados === "object" && corpo.dados !== null;
-  const temCompartilhado = corpo && typeof corpo.compartilhado === "boolean";
+  // Compartilhar é do dono — o mestre edita a ficha, mas não decide se o
+  // link de leitura dela fica público. Um PATCH de mestre com só esse campo
+  // (a tela dele nem mostra esse controle) cai no 400 de "nada pra
+  // atualizar" logo abaixo, em vez de mudar o compartilhamento em silêncio.
+  const ehDono = existente.donoId === usuario.id;
+  const temCompartilhado = ehDono && corpo && typeof corpo.compartilhado === "boolean";
   if (!temDados && !temCompartilhado) {
     return NextResponse.json({ erro: "dados ou compartilhado é obrigatório" }, { status: 400 });
   }

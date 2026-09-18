@@ -4236,6 +4236,7 @@ const state = {
   // é dono" — senão o interruptor de compartilhar apareceria numa ficha que
   // nem carregou direito.
   ehDono: false,
+  podeEditar: false,
   compartilhado: false,
   // Resumo transitório do último Level Up — só de exibição, não é salvo na
   // ficha (some ao trocar de aba ou ao fechar).
@@ -4277,6 +4278,7 @@ async function iniciarModoHub(){
     state.roster = [p];
     state.personagemId = p.id;
     state.ehDono = !!personagem.ehDono;
+    state.podeEditar = !!personagem.podeEditar;
     state.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -5613,7 +5615,7 @@ function renderAll(){
     return;
   }
 
-  const somenteLeitura = MODO_HUB && !state.ehDono;
+  const somenteLeitura = MODO_HUB && !state.podeEditar;
 
   // Se a aba ativa foi escondida (painel de Aparência), pousa na primeira
   // aba visível em vez de deixar o conteúdo sem botão aceso.
@@ -5733,7 +5735,7 @@ function renderPanel(){
 }
 
 function onFieldChange(){
-  if(MODO_HUB && !state.ehDono) return; // defesa extra: modo leitura não edita
+  if(MODO_HUB && !state.podeEditar) return; // defesa extra: modo leitura não edita
   persistir();
   renderFichaCard();
   renderRosterBar();

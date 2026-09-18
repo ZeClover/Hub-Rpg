@@ -3230,6 +3230,7 @@ const estado = {
   carregandoHub: !!MODO_HUB,
   erroHub: null,
   ehDono: false,
+  podeEditar: false,
   compartilhado: false,
   // construtorFormula: rascunho do Construtor de Fórmula (Simbologia
   // Arcana) — não é dado do personagem, só some ao trocar de ficha ou
@@ -3287,6 +3288,7 @@ async function iniciarModoHub(){
     estado.fichas = [p];
     estado.atualId = p.id;
     estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
     estado.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -3308,7 +3310,7 @@ function alternarCompartilhado(valor){
 }
 
 function mudar(mudanca){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -3317,7 +3319,7 @@ function mudar(mudanca){
 
 let debounce = null;
 function mudarSemRedesenhar(mudanca, elemento){
-  if(MODO_HUB && !estado.ehDono) return;
+  if(MODO_HUB && !estado.podeEditar) return;
   const p = atual(); if(!p) return;
   mudanca(p);
   p.atualizadoEm = Date.now();
@@ -3415,7 +3417,7 @@ function render(){
   if(p.atual.intervalosUsados === undefined) p.atual.intervalosUsados = 0;
   if(p.atual.primeirosSocorrosUsado === undefined) p.atual.primeirosSocorrosUsado = false;
 
-  const somenteLeitura = MODO_HUB && !estado.ehDono;
+  const somenteLeitura = MODO_HUB && !estado.podeEditar;
 
   // Se a aba ativa foi escondida (painel de Aparência), pousa na primeira
   // aba visível em vez de deixar o conteúdo sem botão aceso.

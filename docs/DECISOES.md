@@ -5812,6 +5812,98 @@ Dano, respeitando Equipado e sem escalar com Dificuldade, e persistência
 depois de recarregar a página. `node --check` validou a sintaxe dos dois
 arquivos (não passam por `tsc`/eslint, são HTML estático em `public/`).
 
+## 131. Mestre pode editar a ficha do jogador (18/09/2026)
+
+O Zé reportou que "o mestre não consegue mexer na ficha do player" — uma
+reclamação, não um pedido de mecânica nova, mas que reverte uma decisão
+tomada duas vezes de propósito (#50, "nunca pode editar a ficha de um
+jogador — só ler", reforçada na #46). Perguntei antes de mexer numa
+permissão do servidor: a escolha foi **edição completa** — o mestre passa
+a poder editar qualquer campo da ficha do jogador ligada à campanha dele,
+igual o próprio dono edita.
+
+**O que mudou no servidor.** `src/lib/dono-personagem.ts`
+(`podeAcessarPersonagem`) já calculava corretamente "dono OU mestre da
+campanha" — só o comentário dizia "nunca editar". A mudança de verdade foi
+na rota `PATCH /api/personagens/[id]`: trocou `buscarSeFoiDono` (só dono)
+por `buscarSeFoiDonoOuMestre` (dono ou mestre), reaproveitando a mesma
+`podeAcessarPersonagem`. `DELETE` continua exigindo o dono — apagar a
+ficha de vez não é decisão que a mesa deveria poder tomar pelo jogador,
+o Zé não pediu isso. `GET` passou a devolver `podeEditar` (dono OU
+mestre) ao lado do `ehDono` estrito (só a dona) que já existia.
+
+**Compartilhar continua do dono.** O link de leitura pública (decisão
+#46/#9) é uma decisão de privacidade da própria pessoa, não do mestre —
+um PATCH de mestre com o campo `compartilhado` é ignorado (a tela dele
+nem mostra esse controle).
+
+**Nas dez fichas do Hub** (Sistema do Sávio, SAO, Fabula Ultima, Thrylikí
+Chelóna, Kaizoku no Sho e D&D 5e — jogador e/ou inimigo, onde existir),
+o `somenteLeitura`/guarda de escrita que checava `estado.ehDono` (ou
+`state.ehDono` no Kaizoku) passou a checar o novo `estado.podeEditar`.
+`ehDono` continua existindo e controlando só o que é mesmo exclusivo da
+dona: o interruptor de Compartilhar e o botão de Importar JSON (uma
+sobrescrita completa da ficha — decisão de manter isso restrito ao dono
+por prudência, não foi pedido explícito).
+
+Testado: os testes de `dono-personagem.test.ts` continuam passando sem
+mudança (a lógica de `podeAcessarPersonagem` já estava certa, só o uso
+dela na rota que mudou). `tsc --noEmit`, `npm run lint` e os 298 testes
+automáticos ficaram limpos. `node --check` validou a sintaxe das dez
+fichas HTML depois do replace de `ehDono` por `podeEditar` nos guards de
+escrita.
+
+## 132. Sistema do Sávio — três correções: dano desarmado do Combatente, Vantagem virou Buff geral de Dano, Habilidade Inata (18/09/2026)
+
+Terceiro lote de correções/pedidos do Zé sobre o sistema, depois da
+decisão #130.
+
+**1. Dano de arma + traço de Combatente parou de somar.** A decisão #129
+corrigiu o combo "Ataque com arma equipada" pra não somar dano de arma
+fantasma quando não tinha arma nomeada — mas isso também tirou, sem
+querer, o dano desarmado do traço do Combatente (decisão #123: dano de
+arma Pequena + Nível÷4 d4), que até então "colava" por acidente naquele
+mesmo bônus. Nova função `danoDesarmadoTexto(p)`: quando uma Habilidade
+marca "Ataque com arma equipada" e o personagem é Combatente sem arma
+nomeada, o combo agora soma o dano desarmado de verdade em vez de nada —
+o aviso de "arma não nomeada" só aparece pras outras Especializações.
+
+**2. Vantagem/Desvantagem virou Buff de Dano em geral, não só da própria
+Habilidade.** A decisão #130 só deixava a Vantagem de uma Habilidade
+somar no Dano dela mesma, exigindo que a própria Habilidade também
+marcasse Dano — uma Habilidade de puro Buff (só Vantagem, pra apoiar,
+sem nenhum efeito de Dano nela) não conseguia bufar nada. Removida essa
+exigência: o checkbox "Também aplicar no Dano" aparece em qualquer
+Habilidade com Vantagem marcada, e o bônus agora soma no dano de arma
+equipada E no efeito Dano de QUALQUER Habilidade (nova função agregada
+`bonusHabilidadesDano(p)`, que soma o bônus de todas as Habilidades de
+Buff ativas) — igual o item de efeito Buff mirando "Dano" (decisão
+#130) já fazia.
+
+**3. Passivas ganharam "Habilidade Inata".** Novo checkbox na Passiva —
+"Habilidade Inata (traço racial/de origem — não conta no número máximo
+de Passivas)" (`h.inata`). `passivasUsadas(p)` ignora por completo uma
+Passiva marcada assim (nem a vaga base, nem o Nível interno dela entram
+na conta) — diferente do Arquétipo Inato (Primeira Ascensão, decisão
+existente) que dá +2 vagas *a mais*; aqui a Passiva simplesmente não
+gasta vaga nenhuma, pensada pra traço de raça/origem que o personagem já
+nasce com. Não interage com a trava de Capanga (decisão #128, "Capanga
+não tem Passiva nenhuma") — essa trava continua bloqueando a aba inteira
+pra Capanga, Inata ou não, porque não foi pedido mexer nisso.
+
+**Na Ficha de Monstro:** dano desarmado do Combatente e o novo
+`bonusHabilidadesDano` escalam com a Dificuldade (mesmo padrão de sempre
+— `comSufixoDificuldade`/`porDificuldade`); Habilidade Inata funciona
+igual, sem escalar (é só uma contagem, não um número de jogo).
+
+Testado com Playwright nas duas fichas: combo de Combatente mostrando o
+dano desarmado sem arma e voltando a mostrar dano de arma normal ao
+nomear uma; Habilidade só de Vantagem (sem Dano) conseguindo bufar o
+dano de arma e aparecendo escalado ×2 no Boss; Passiva Inata saindo da
+conta de `passivasUsadas` assim que marcada. `tsc --noEmit`, `npm run
+lint`, `npm test` (298) e `node --check` nos dois arquivos continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
