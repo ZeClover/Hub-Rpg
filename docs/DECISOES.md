@@ -6282,6 +6282,24 @@ normais, e tudo sobrevive a um recarregamento de página. Suíte completa
 de testes anteriores (Clã, Classe, Antecedente, Jutsu, multi-personagem)
 sem regressão. `tsc --noEmit` e `npm run lint` seguem limpos.
 
+## 141. Naruto 5e — Catálogo de Jutsu, Rank B do Não-Elemental (18/09/2026)
+
+Continuação da decisão #139 (Rank C), retomando o "finaliza" pedido pelo
+Zé depois do Modo Guiado (decisão #140). As 34 jutsu do Ninjutsu
+Não-Elemental Rank B entraram no `JUTSU_CATALOGO`, mesmo padrão — fecha
+quatro dos seis ranks do Não-Elemental (161 das ~1400 entradas totais).
+
+Este rank trouxe vários jutsu com efeito de escolha múltipla (Dom do
+Ápice e Maldição da Presa, cada um com 5 variações bestiais diferentes) —
+resumidos como "escolhe uma entre 5 opções" em vez de listar as cinco,
+mesma lógica de compressão já usada pra Vantagem Elemental nos ranks
+anteriores. Também vieram vários Kinjutsu (jutsu proibidos, que custam
+Dados de Vida ou têm consequência séria) do Medical-Nin.
+
+Testado com Playwright: catálogo mostra 162 opções (1 placeholder + 161
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores (incluindo o Modo Guiado) sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1765,8 +1765,14 @@ passando.
       pego pelo teste automatizado (cortava a tela de resumo final) e
       corrigido. Testado com Playwright percorrendo os 8 passos; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Rank B do Não-Elemental**
+      (18/09/2026) — decisão #141. As 34 jutsu do Rank B entraram no
+      catálogo, fechando quatro dos seis ranks do Não-Elemental (161 de
+      ~1400 no total). Vários Kinjutsu do Medical-Nin e jutsu com escolha
+      múltipla (5 bênçãos bestiais, resumidas em vez de listadas). Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1273 jutsu: Não-Elemental B/A/S, as 5 Naturezas elementais,
+      Jutsu (~1239 jutsu: Não-Elemental A/S, as 5 Naturezas elementais,
       Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe,
       mecânica de cada opção de subclasse, Ficha de Inimigo/Bingo Book,
