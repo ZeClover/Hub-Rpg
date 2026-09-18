@@ -10,6 +10,7 @@ import { AdicionarInimigo } from "./adicionar-inimigo";
 import { CriarPersonagem } from "./criar-personagem";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
+import { IdentidadeCampanha } from "./identidade-campanha";
 import { ManualDoMestre } from "./manual-mestre";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
@@ -42,6 +43,9 @@ export default async function PaginaCampanha({
       id: true,
       nome: true,
       sistemaId: true,
+      capaUrl: true,
+      descricao: true,
+      tags: true,
       sistema: { select: { chave: true, nome: true } },
     },
   });
@@ -94,8 +98,33 @@ export default async function PaginaCampanha({
       >
         ← Campanhas
       </Link>
+      {campanha.capaUrl && (
+        // eslint-disable-next-line @next/next/no-img-element -- capa é uma URL externa qualquer, não um asset otimizável pelo Next.
+        <img
+          src={campanha.capaUrl}
+          alt=""
+          className="mt-4 h-40 w-full rounded-lg border border-borda object-cover"
+        />
+      )}
       <h1 className="mt-3 font-titulo text-3xl">{campanha.nome}</h1>
       <p className="mt-2 text-sm text-texto-suave">{campanha.sistema.nome}</p>
+      {campanha.descricao && (
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-texto-suave">
+          {campanha.descricao}
+        </p>
+      )}
+      {campanha.tags.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {campanha.tags.map((tag) => (
+            <li
+              key={tag}
+              className="rounded-full border border-borda px-3 py-0.5 text-xs text-texto-suave"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {souMestre && (
         <Link
@@ -119,6 +148,9 @@ export default async function PaginaCampanha({
           manualMestre={manualMestre}
           escudoMestre={escudoMestre}
           grimorio={grimorio}
+          capaUrl={campanha.capaUrl ?? ""}
+          descricao={campanha.descricao ?? ""}
+          tags={campanha.tags}
         />
       ) : (
         <VisaoDoJogador
@@ -151,6 +183,9 @@ function VisaoDoMestre({
   manualMestre,
   escudoMestre,
   grimorio,
+  capaUrl,
+  descricao,
+  tags,
 }: {
   campanhaId: string;
   nome: string;
@@ -163,6 +198,9 @@ function VisaoDoMestre({
   manualMestre: string;
   escudoMestre: string | null;
   grimorio: string | null;
+  capaUrl: string;
+  descricao: string;
+  tags: string[];
 }) {
   const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
@@ -204,6 +242,13 @@ function VisaoDoMestre({
         )}
         <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
       </section>
+
+      <IdentidadeCampanha
+        campanhaId={campanhaId}
+        capaUrlInicial={capaUrl}
+        descricaoInicial={descricao}
+        tagsIniciais={tags.join(", ")}
+      />
 
       <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
 

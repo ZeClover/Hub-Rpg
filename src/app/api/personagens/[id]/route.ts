@@ -119,8 +119,18 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   // atualizar" logo abaixo, em vez de mudar o compartilhamento em silêncio.
   const ehDono = existente.donoId === usuario.id;
   const temCompartilhado = ehDono && corpo && typeof corpo.compartilhado === "boolean";
-  if (!temDados && !temCompartilhado) {
-    return NextResponse.json({ erro: "dados ou compartilhado é obrigatório" }, { status: 400 });
+  // Status/avatar/banner são organizacionais (decisão #134) — não fazem
+  // parte da ficha em si, então seguem a mesma permissão de `dados`: dono
+  // ou mestre da campanha, os dois já editam a ficha inteira.
+  const STATUS_VALIDOS = ["ATIVO", "RESERVA", "APOSENTADO", "MORTO", "ARQUIVADO"];
+  const temStatus = typeof corpo?.status === "string" && STATUS_VALIDOS.includes(corpo.status);
+  const temAvatar = typeof corpo?.avatarUrl === "string" || corpo?.avatarUrl === null;
+  const temBanner = typeof corpo?.bannerUrl === "string" || corpo?.bannerUrl === null;
+  if (!temDados && !temCompartilhado && !temStatus && !temAvatar && !temBanner) {
+    return NextResponse.json(
+      { erro: "dados, compartilhado, status, avatarUrl ou bannerUrl é obrigatório" },
+      { status: 400 },
+    );
   }
 
   // O nome da ficha segue o que a pessoa digitou dentro dela — não precisa
@@ -139,8 +149,19 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
     data: {
       ...(temDados ? { dados: corpo.dados, nome } : {}),
       ...(temCompartilhado ? { compartilhado: corpo.compartilhado } : {}),
+      ...(temStatus ? { status: corpo.status } : {}),
+      ...(temAvatar ? { avatarUrl: corpo.avatarUrl } : {}),
+      ...(temBanner ? { bannerUrl: corpo.bannerUrl } : {}),
     },
-    select: { id: true, nome: true, compartilhado: true, atualizadoEm: true },
+    select: {
+      id: true,
+      nome: true,
+      compartilhado: true,
+      status: true,
+      avatarUrl: true,
+      bannerUrl: true,
+      atualizadoEm: true,
+    },
   });
 
   return NextResponse.json({ personagem });

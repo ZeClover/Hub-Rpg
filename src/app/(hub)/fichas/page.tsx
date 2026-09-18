@@ -4,19 +4,38 @@ import { usuarioAtual } from "@/lib/usuario";
 
 import { CriarFicha } from "./criar-ficha";
 import { BotaoExcluir } from "./excluir-ficha";
+import { FavoritarSistema } from "./favoritar-sistema";
+import { AvatarFicha, EditarImagemFicha, StatusFicha } from "./organizacao-ficha";
 
 export default async function Fichas() {
   // O layout do Hub já garantiu que existe alguém logado.
   const usuario = (await usuarioAtual())!;
 
-  const personagens = await banco.personagem.findMany({
-    where: { donoId: usuario.id },
-    orderBy: { atualizadoEm: "desc" },
-    select: {
-      id: true,
-      nome: true,
-      sistema: { select: { chave: true, nome: true } },
-    },
+  const [personagens, dadosUsuario] = await Promise.all([
+    banco.personagem.findMany({
+      where: { donoId: usuario.id },
+      orderBy: { atualizadoEm: "desc" },
+      select: {
+        id: true,
+        nome: true,
+        status: true,
+        avatarUrl: true,
+        bannerUrl: true,
+        sistema: { select: { chave: true, nome: true } },
+      },
+    }),
+    banco.usuario.findUnique({
+      where: { id: usuario.id },
+      select: { sistemasFavoritos: true },
+    }),
+  ]);
+  const favoritos = new Set(dadosUsuario?.sistemasFavoritos ?? []);
+  // Favoritos primeiro (decisão #134); dentro de cada grupo, mesma ordem de
+  // sempre (a ordem que os sistemas aparecem em `SISTEMAS`).
+  const sistemasOrdenados = [...SISTEMAS].sort((a, b) => {
+    const aFav = favoritos.has(a.chave) ? 0 : 1;
+    const bFav = favoritos.has(b.chave) ? 0 : 1;
+    return aFav - bFav;
   });
 
   return (
@@ -45,13 +64,24 @@ export default async function Fichas() {
                 key={personagem.id}
                 className="flex items-start gap-3 rounded-lg border border-borda bg-superficie p-5 transition hover:border-ambar/40"
               >
-                {url ? (
-                  <a href={url} className="min-w-0 flex-1">
-                    {conteudo}
-                  </a>
-                ) : (
-                  <div className="min-w-0 flex-1 opacity-60">{conteudo}</div>
-                )}
+                <AvatarFicha nome={personagem.nome} avatarUrl={personagem.avatarUrl} />
+                <div className="min-w-0 flex-1">
+                  {url ? (
+                    <a href={url} className="block">
+                      {conteudo}
+                    </a>
+                  ) : (
+                    <div className="opacity-60">{conteudo}</div>
+                  )}
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
+                    <StatusFicha id={personagem.id} statusInicial={personagem.status} />
+                    <EditarImagemFicha
+                      id={personagem.id}
+                      avatarUrlInicial={personagem.avatarUrl}
+                      bannerUrlInicial={personagem.bannerUrl}
+                    />
+                  </div>
+                </div>
                 <BotaoExcluir id={personagem.id} nome={personagem.nome} />
               </li>
             );
@@ -63,13 +93,16 @@ export default async function Fichas() {
 
       <h2 className="mt-14 font-titulo text-xl">Sistemas do Hub</h2>
       <ul className="mt-4 space-y-3">
-        {SISTEMAS.map((sistema) => (
+        {sistemasOrdenados.map((sistema) => (
           <li
             key={sistema.chave}
             className="rounded-lg border border-borda bg-superficie p-5 opacity-80"
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <p className="font-titulo text-lg">{sistema.nome}</p>
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+              <div className="flex items-center gap-2">
+                <FavoritarSistema chave={sistema.chave} favoritoInicial={favoritos.has(sistema.chave)} />
+                <p className="font-titulo text-lg">{sistema.nome}</p>
+              </div>
               <span
                 className={
                   sistema.situacao === "pronta"

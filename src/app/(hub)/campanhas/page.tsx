@@ -15,7 +15,14 @@ export default async function Campanhas() {
     select: {
       papel: true,
       campanha: {
-        select: { id: true, nome: true, sistema: { select: { nome: true } } },
+        select: {
+          id: true,
+          nome: true,
+          capaUrl: true,
+          descricao: true,
+          tags: true,
+          sistema: { select: { nome: true } },
+        },
       },
     },
   });
@@ -35,16 +42,41 @@ export default async function Campanhas() {
               key={campanha.id}
               className="rounded-lg border border-borda bg-superficie p-5 transition hover:border-ambar/40"
             >
-              <Link href={`/campanhas/${campanha.id}`} className="block">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <p className="font-titulo text-lg">{campanha.nome}</p>
-                  <span className="shrink-0 text-xs text-texto-suave">
-                    {campanha.sistema.nome}
-                  </span>
+              <Link href={`/campanhas/${campanha.id}`} className="flex gap-4">
+                {campanha.capaUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element -- capa é uma URL externa qualquer, não um asset otimizável pelo Next.
+                  <img
+                    src={campanha.capaUrl}
+                    alt=""
+                    className="h-16 w-16 shrink-0 rounded object-cover"
+                  />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <p className="font-titulo text-lg">{campanha.nome}</p>
+                    <span className="shrink-0 text-xs text-texto-suave">
+                      {campanha.sistema.nome}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-texto-suave">
+                    {papel === "MESTRE" ? "Você é o mestre" : "Você é jogador"}
+                  </p>
+                  {campanha.descricao && (
+                    <p className="mt-1 truncate text-xs text-texto-suave">{campanha.descricao}</p>
+                  )}
+                  {campanha.tags.length > 0 && (
+                    <ul className="mt-2 flex flex-wrap gap-1.5">
+                      {campanha.tags.map((tag) => (
+                        <li
+                          key={tag}
+                          className="rounded-full border border-borda px-2 py-0.5 text-[10px] text-texto-suave"
+                        >
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <p className="mt-1 text-xs text-texto-suave">
-                  {papel === "MESTRE" ? "Você é o mestre" : "Você é jogador"}
-                </p>
               </Link>
             </li>
           ))}

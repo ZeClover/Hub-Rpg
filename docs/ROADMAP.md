@@ -1677,6 +1677,63 @@ passando.
       Combate. Testado com Playwright em cada fatia; `tsc`, lint, build e
       os 298 testes automáticos continuam limpos
 
+### Hub — melhorias organizacionais (pedido do Zé de 53 ideias, 18/09/2026)
+
+Pedido grande, dividido em etapas (decisão #26 — uma fatia por vez);
+regra explícita do próprio pedido: sem motor de rolagem de dados, sem
+refazer nada que já funciona (fichas, Mesa ao Vivo, Campanha Livre,
+edição do mestre, múltiplas fichas por jogador, etc.).
+
+- [x] **Etapa 1 — pequenas melhorias de organização** (18/09/2026) —
+      decisão #134.
+  - **Painel (`/painel`) melhorado, não recriado**: continua a mesma
+    página, agora mostrando campanhas recentes (com o papel em cada
+    uma), fichas recentes, a próxima sessão marcada (lê o modelo
+    `Sessao`, que já existia no schema mas não tinha NENHUM uso em
+    código — confirmado antes de mexer) e atalhos pra `/fichas` e
+    `/campanhas`. Removido o parágrafo desatualizado "seus personagens
+    ainda vivem no navegador", falso desde a decisão #42
+  - **Identidade da campanha**: campos novos `capaUrl`/`descricao`/
+    `tags` em `Campanha` — só o mestre edita (`IdentidadeCampanha`,
+    mesmo padrão de salvar sozinho do Manual do Mestre), mas aparecem
+    pra qualquer participante, na página da campanha e na lista
+    `/campanhas`
+  - **Status do personagem**: campo `status` (Ativo/Reserva/
+    Aposentado/Morto/Arquivado) em `Personagem`, puramente
+    organizacional — não muda PV, condição nem nada dentro da ficha.
+    Seletor em `/fichas`, editável por dono ou mestre da campanha
+    (mesma permissão de `dados`, decisão #131)
+  - **Avatar/banner do personagem**: campos `avatarUrl`/`bannerUrl` —
+    link externo, igual o Hub já faz pro avatar da conta Google
+    (`Usuario.avatarUrl`); não inventada nenhuma hospedagem de imagem
+    própria (custo zero, decisão #5). Editor colapsável em `/fichas`
+  - **Sistemas favoritos**: `Usuario.sistemasFavoritos` (não
+    localStorage — acompanha a conta em qualquer aparelho). Estrela em
+    cada sistema na lista de `/fichas`; favoritos ordenam primeiro
+  - Migração `0013_identidade_campanha_status_personagem.sql` —
+    só colunas novas com default, nada muda pra dado existente.
+    `tsc`, lint, `next build` e os 298 testes automáticos continuam
+    limpos
+- [ ] **Etapa 2 — Sessões** (planejada): interface pra usar o modelo
+      `Sessao` de verdade (número, data, horário, resumo, participantes,
+      mudanças importantes) e confirmação de presença (Vou/Talvez/Não
+      vou)
+- [ ] **Etapa 3 — Comunicação** (planejada): chat da campanha, avisos
+      fixados, enquetes, notificações internas
+- [ ] **Etapa 4 — Mesa ao Vivo compartilhada** (planejada): iniciativa e
+      HP visíveis aos jogadores (só leitura), modo espectador, HP rápido
+      de inimigo com mais opções, condição em massa, relógio simples
+- [ ] **Demais ideias do pedido** (mover/copiar ficha, companheiros/
+      pets, veículos genéricos, grupos/equipes, inventário e cofre
+      compartilhados, bibliotecas pessoais de item/NPC, templates,
+      contador de inimigos, cards compartilháveis, exportar PDF, campos
+      personalizados da campanha, conquistas da campanha, mestre
+      auxiliar, página `/sistemas`, sandbox de ficha/combate, prévia do
+      Level Up, atalhos de teclado, PWA, offline parcial, QR Code,
+      código curto de convite, abas na página da campanha, página geral
+      do personagem) — fica pra quando as etapas anteriores estiverem
+      no ar e o Zé confirmar a ordem das próximas
+
 ---
 
 ## Fora de escopo

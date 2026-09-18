@@ -5942,6 +5942,84 @@ automáticos continuam limpos. Não criei teste de banco pra este lote
 (nenhuma rota de API deste módulo tinha teste automático antes — só as
 funções puras de permissão, que não mudaram de comportamento aqui).
 
+## 134. Hub — Etapa 1 de melhorias organizacionais (18/09/2026)
+
+O Zé trouxe um pedido grande — 53 ideias numeradas, agrupadas em 21 áreas,
+com regras explícitas: não reconstruir o Hub, não mexer no que já
+funciona (fichas, Mesa ao Vivo, Campanha Livre, múltiplas fichas por
+jogador, edição do mestre), sem motor de rolagem de dados nesta
+expansão, e dividir em etapas em vez de fazer tudo de uma vez — a mesma
+disciplina que já era regra do projeto (decisão #26). Antes de tocar em
+qualquer coisa, conferi o que já existia: `Sessao` está no schema desde
+o início mas **zero linhas de código usam ela** (nenhuma rota, nenhuma
+tela); `/painel` é uma página real, só que rasa (uma contagem e um
+parágrafo desatualizado); `Campanha`/`Personagem` não tinham nenhum dos
+campos de identidade/organização pedidos.
+
+Esta é a Etapa 1 (das 4 que propus, refletidas no ROADMAP) — pequenas
+melhorias de organização, sem nenhuma peça que dependa de UI ainda não
+construída:
+
+**1. Painel melhorado, não recriado.** Mesma página (`/painel`), mesma
+rota — agora mostra campanhas recentes (com o papel — mestre ou
+jogador — em cada uma), fichas recentes, a próxima sessão marcada (já
+lendo `Sessao` de verdade, mesmo sem nenhuma tela ainda criar uma — a
+seção só aparece quando existir) e atalhos pra `/fichas` e
+`/campanhas`. Removido o parágrafo "seus personagens ainda vivem no
+navegador de cada aparelho" — falso desde a decisão #42, quando as
+fichas passaram a salvar na conta.
+
+**2. Identidade da campanha.** `Campanha` ganhou `capaUrl` (link
+externo), `descricao` e `tags` (lista de texto). Diferente do Manual do
+Mestre (decisão #13, só o mestre lê), estes três são **públicos pra
+quem já vê a campanha** — mestre edita (`IdentidadeCampanha`, mesmo
+padrão de salvar sozinho com debounce), mas aparecem pra jogador também,
+na página da campanha e na lista `/campanhas`.
+
+**3. Status do personagem.** Novo enum `StatusPersonagem` (Ativo,
+Reserva, Aposentado, Morto, Arquivado) — **organizacional só**: não
+mexe em PV, condição, nem nada dentro da ficha, é só pra separar nas
+listas do Hub quem ainda está em jogo. Editável em `/fichas` por quem
+já edita a ficha (dono ou mestre da campanha, decisão #131) — a rota
+`PATCH /api/personagens/[id]` ganhou esse campo ao lado de `dados` e
+`compartilhado`.
+
+**4. Avatar e banner do personagem.** `avatarUrl`/`bannerUrl`, os dois
+link externo — o Hub não ganhou hospedagem de imagem própria (custo
+zero, decisão #5), mesma solução que já valia pro avatar da conta
+Google (`Usuario.avatarUrl`, preenchido pelo próprio login, nunca por
+upload). Editor colapsável ("Imagem") em `/fichas`, pra não poluir a
+lista por padrão.
+
+**5. Sistemas favoritos.** `Usuario.sistemasFavoritos` — na conta, não
+no navegador, porque a mesma pessoa abre o Hub de mais de um aparelho.
+Estrela (★/☆) em cada sistema da lista "Sistemas do Hub"; favoritos
+ordenam primeiro. Rota nova `PATCH /api/usuario/favoritos`, validando
+que a chave é um sistema que existe de verdade em `SISTEMAS` — sem essa
+checagem, um valor errado ficava preso no array pra sempre, sem
+ninguém conseguir tirar.
+
+**Migração `0013_identidade_campanha_status_personagem.sql`** — só
+colunas novas com valor padrão (`ATIVO`, `{}`, `null`), idempotente
+(`IF NOT EXISTS`/`DO $$ ... EXCEPTION WHEN duplicate_object`). Nenhum
+dado existente muda de comportamento.
+
+**Fora desta etapa, de propósito** (fica pro Zé confirmar a ordem antes
+de eu começar): sessões de verdade (interface pro modelo `Sessao`,
+confirmação de presença), chat/avisos/enquetes/notificações, iniciativa
+e HP compartilhados com jogador na Mesa ao Vivo, modo espectador,
+mover/copiar ficha, companheiros/pets, veículos, grupos/equipes,
+inventário e cofre compartilhados, bibliotecas pessoais, templates,
+cards compartilháveis, exportar PDF, sandbox, PWA/offline, QR Code,
+código curto de convite, página `/sistemas`, abas na página da
+campanha, página geral do personagem — a lista inteira está no
+ROADMAP, dividida em Etapas 2-4 mais "demais ideias".
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos. Sem teste de banco novo (as rotas de
+campanha/personagem já não tinham teste automático antes desta etapa —
+só a lógica pura de permissão, que não mudou aqui).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

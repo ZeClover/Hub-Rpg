@@ -31,3 +31,48 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
   await banco.campanha.delete({ where: { id: campanhaId } });
   return NextResponse.json({ ok: true });
 }
+
+/*
+  Identidade da campanha (decisão #134): capa, descrição e tags — só o
+  mestre edita, mas os três campos aparecem pra qualquer participante (não
+  são segredo como o Manual do Mestre). `tags` sempre substitui a lista
+  inteira, mais simples que um diff de adicionar/remover item por item.
+*/
+export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
+  const usuario = await usuarioAtual();
+  if (!usuario) {
+    return NextResponse.json({ erro: "não autenticado" }, { status: 401 });
+  }
+
+  const { id: campanhaId } = await params;
+  const participacao = await banco.participacao.findUnique({
+    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
+  });
+  if (participacao?.papel !== "MESTRE") {
+    return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  }
+
+  const corpo = await requisicao.json().catch(() => null);
+  const temCapa = typeof corpo?.capaUrl === "string" || corpo?.capaUrl === null;
+  const temDescricao = typeof corpo?.descricao === "string" || corpo?.descricao === null;
+  const temTags =
+    Array.isArray(corpo?.tags) && corpo.tags.every((t: unknown) => typeof t === "string");
+  if (!temCapa && !temDescricao && !temTags) {
+    return NextResponse.json(
+      { erro: "capaUrl, descricao ou tags é obrigatório" },
+      { status: 400 },
+    );
+  }
+
+  const campanha = await banco.campanha.update({
+    where: { id: campanhaId },
+    data: {
+      ...(temCapa ? { capaUrl: corpo.capaUrl } : {}),
+      ...(temDescricao ? { descricao: corpo.descricao } : {}),
+      ...(temTags ? { tags: corpo.tags as string[] } : {}),
+    },
+    select: { id: true, capaUrl: true, descricao: true, tags: true },
+  });
+
+  return NextResponse.json({ campanha });
+}

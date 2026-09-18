@@ -41,6 +41,17 @@ enum SituacaoCampanha {
   ENCERRADA
 }
 
+/// Estado organizacional do personagem dentro do Hub — não mexe em nada
+/// dentro da ficha (PV, condições, etc.), é só pra separar "quem eu ainda
+/// jogo" de "quem ficou pra trás" nas listas (decisão #134).
+enum StatusPersonagem {
+  ATIVO
+  RESERVA
+  APOSENTADO
+  MORTO
+  ARQUIVADO
+}
+
 // ---------------------------------------------------------------------------
 // Identidade
 // ---------------------------------------------------------------------------
@@ -48,11 +59,15 @@ enum SituacaoCampanha {
 /// Espelho do usuário autenticado. O id é o mesmo que o serviço de login
 /// atribui, para não existirem duas identidades da mesma pessoa.
 model Usuario {
-  id        String   @id @db.Uuid
-  email     String   @unique
-  nome      String?
-  avatarUrl String?
-  criadoEm  DateTime @default(now())
+  id                String   @id @db.Uuid
+  email             String   @unique
+  nome              String?
+  avatarUrl         String?
+  criadoEm          DateTime @default(now())
+  /// Chaves de `SISTEMAS` (src/lib/sistemas.ts) marcadas como favoritas por
+  /// esta pessoa — decisão #134. Fica na conta, não no navegador, porque a
+  /// mesma pessoa abre o Hub de mais de um aparelho.
+  sistemasFavoritos String[] @default([])
 
   participacoes Participacao[]
   personagens   Personagem[]
@@ -82,17 +97,24 @@ model Sistema {
 
 /// Uma mesa. Aponta para um sistema e tem um mestre e vários jogadores.
 model Campanha {
-  id        String           @id @default(uuid()) @db.Uuid
-  nome      String
-  slug      String           @unique
-  sistemaId String           @db.Uuid
-  situacao  SituacaoCampanha @default(PLANEJADA)
-  criadoEm  DateTime         @default(now())
+  id           String           @id @default(uuid()) @db.Uuid
+  nome         String
+  slug         String           @unique
+  sistemaId    String           @db.Uuid
+  situacao     SituacaoCampanha @default(PLANEJADA)
+  criadoEm     DateTime         @default(now())
   /// Anotações livres do mestre — plano de sessão, NPCs, segredos do enredo.
   /// Nunca sai do servidor para quem não é mestre desta campanha (decisão
   /// #13): a rota que a lê nem chega a fazer a consulta se quem pergunta
   /// não for mestre.
   manualMestre String?
+  /// Identidade da campanha (decisão #134) — capa/descrição/tags são só
+  /// exibição, públicas pra quem já vê a campanha (mestre e jogadores
+  /// ligados); não guardam nada sensível, por isso não passam pela mesma
+  /// trava do `manualMestre`.
+  capaUrl      String?
+  descricao    String?
+  tags         String[]         @default([])
 
   sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   participacoes Participacao[]
@@ -134,27 +156,36 @@ model Participacao {
 /// `campanhaId` é opcional: dá para ter uma ficha avulsa, fora de mesa
 /// nenhuma — que é como quase toda ficha nasce.
 model Personagem {
-  id           String   @id @default(uuid()) @db.Uuid
-  sistemaId    String   @db.Uuid
-  donoId       String   @db.Uuid
-  campanhaId   String?  @db.Uuid
-  nome         String
-  dados        Json     @default("{}")
+  id            String           @id @default(uuid()) @db.Uuid
+  sistemaId     String           @db.Uuid
+  donoId        String           @db.Uuid
+  campanhaId    String?          @db.Uuid
+  nome          String
+  dados         Json             @default("{}")
   /// Versão do formato de `dados`, para migrar fichas antigas quando o
   /// módulo do sistema mudar de estrutura.
-  versaoFicha  Int      @default(1)
+  versaoFicha   Int              @default(1)
   /// Link de leitura: com isto ligado, qualquer pessoa com a URL da ficha
   /// (dono ou não, logada ou não) consegue ABRIR em modo leitura — o id da
   /// ficha, um UUID, é o segredo do link, como em "qualquer um com o link"
   /// do Google Docs. Nunca dá direito de editar: só o dono salva.
-  compartilhado Boolean @default(false)
+  compartilhado Boolean          @default(false)
   /// Só tem sentido pra ficha criada pelo mestre dentro de uma campanha
   /// (`campanhaId` preenchido e dono é o mestre): diz se ela abre na ficha
   /// de monstro (bestiário) do sistema ou na ficha de personagem completa.
   /// Fora desse caso — ficha de jogador comum — o valor é ignorado.
-  ehMonstro    Boolean  @default(false)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  ehMonstro     Boolean          @default(false)
+  /// Organizacional só (decisão #134) — nunca é lido pela ficha nem muda
+  /// nenhuma conta dela. Serve pra separar, nas listas do Hub, quem ainda
+  /// está em jogo de quem não está mais.
+  status        StatusPersonagem @default(ATIVO)
+  /// Imagem própria do personagem — link externo (o Hub não hospeda
+  /// arquivo, mesma solução já usada pro avatar da conta Google em
+  /// `Usuario.avatarUrl`). `bannerUrl` é opcional mesmo quando há avatar.
+  avatarUrl     String?
+  bannerUrl     String?
+  criadoEm      DateTime         @default(now())
+  atualizadoEm  DateTime         @updatedAt
 
   sistema  Sistema   @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   dono     Usuario   @relation(fields: [donoId], references: [id], onDelete: Cascade)
