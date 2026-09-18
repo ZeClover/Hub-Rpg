@@ -1714,10 +1714,27 @@ edição do mestre, múltiplas fichas por jogador, etc.).
     só colunas novas com default, nada muda pra dado existente.
     `tsc`, lint, `next build` e os 298 testes automáticos continuam
     limpos
-- [ ] **Etapa 2 — Sessões** (planejada): interface pra usar o modelo
-      `Sessao` de verdade (número, data, horário, resumo, participantes,
-      mudanças importantes) e confirmação de presença (Vou/Talvez/Não
-      vou)
+- [x] **Etapa 2 — Sessões** (18/09/2026) — decisão #135.
+  - **Sessão**: modelo `Sessao` (existia no schema desde o início, zero
+    uso em código — confirmado antes de mexer) ganhou tela e rotas de
+    verdade: número (automático), data+horário (um campo `DateTime`
+    só), resumo público, mudanças importantes (campo novo,
+    `mudancasImportantes`) e notas do mestre (`notasMestre`, nunca sai
+    do servidor pra jogador — decisão #13). Mestre marca, edita e apaga
+    sessão; jogador só lê os campos públicos
+  - **Confirmação de presença**: tabela nova `SessaoPresenca`
+    (Vou/Talvez/Não vou), uma resposta por pessoa por sessão, cada um
+    só responde pela própria conta. A mesma resposta também serve de
+    registro de quem esteve na sessão depois que ela já rolou — não
+    criado um segundo conceito de presença separado
+  - Rotas novas: `POST .../sessoes`, `PATCH`/`DELETE
+    .../sessoes/[sessaoId]` (mestre), `PATCH
+    .../sessoes/[sessaoId]/presenca` (qualquer participante). Sem rota
+    de leitura própria — lista de sessões chega junto da página da
+    campanha, igual `manualMestre` já fazia
+  - Migração `0014_sessoes_e_presenca.sql` — coluna nova em `sessoes` e
+    tabela nova `sessoes_presencas`, idempotente. `tsc`, lint, `next
+    build` e os 298 testes automáticos continuam limpos
 - [ ] **Etapa 3 — Comunicação** (planejada): chat da campanha, avisos
       fixados, enquetes, notificações internas
 - [ ] **Etapa 4 — Mesa ao Vivo compartilhada** (planejada): iniciativa e

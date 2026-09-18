@@ -14,6 +14,7 @@ import { IdentidadeCampanha } from "./identidade-campanha";
 import { ManualDoMestre } from "./manual-mestre";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
+import { Sessoes, type SessaoView } from "./sessoes";
 
 /*
   A campanha em si. O que aparece muda conforme quem está olhando:
@@ -87,6 +88,38 @@ export default async function PaginaCampanha({
       )?.manualMestre ?? ""
     : "";
 
+  // Sessões (decisão #135): `notasMestre` segue a mesma regra do Manual do
+  // Mestre — a consulta que busca esse campo só roda quando quem pergunta
+  // já é confirmadamente mestre.
+  const [sessoesBase, notasPorSessao] = await Promise.all([
+    banco.sessao.findMany({
+      where: { campanhaId: id },
+      orderBy: { numero: "desc" },
+      select: {
+        id: true,
+        numero: true,
+        data: true,
+        resumoPublico: true,
+        mudancasImportantes: true,
+        presencas: { select: { usuarioId: true, resposta: true } },
+      },
+    }),
+    souMestre
+      ? banco.sessao.findMany({ where: { campanhaId: id }, select: { id: true, notasMestre: true } })
+      : Promise.resolve([]),
+  ]);
+  const notasMap = new Map(notasPorSessao.map((s) => [s.id, s.notasMestre]));
+  const sessoes: SessaoView[] = sessoesBase.map((s) => ({
+    ...s,
+    data: s.data.toISOString(),
+    notasMestre: notasMap.get(s.id) ?? null,
+  }));
+  const pessoas = participacoes.map((p) => ({
+    usuarioId: p.usuarioId,
+    nome: p.usuario.nome ?? p.usuario.email,
+  }));
+  const agoraMs = new Date().getTime();
+
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
 
@@ -151,6 +184,9 @@ export default async function PaginaCampanha({
           capaUrl={campanha.capaUrl ?? ""}
           descricao={campanha.descricao ?? ""}
           tags={campanha.tags}
+          sessoes={sessoes}
+          pessoas={pessoas}
+          agoraMs={agoraMs}
         />
       ) : (
         <VisaoDoJogador
@@ -165,6 +201,9 @@ export default async function PaginaCampanha({
             orderBy: { atualizadoEm: "desc" },
           })}
           grimorio={grimorio}
+          sessoes={sessoes}
+          pessoas={pessoas}
+          agoraMs={agoraMs}
         />
       )}
     </main>
@@ -186,6 +225,9 @@ function VisaoDoMestre({
   capaUrl,
   descricao,
   tags,
+  sessoes,
+  pessoas,
+  agoraMs,
 }: {
   campanhaId: string;
   nome: string;
@@ -201,6 +243,9 @@ function VisaoDoMestre({
   capaUrl: string;
   descricao: string;
   tags: string[];
+  sessoes: SessaoView[];
+  pessoas: { usuarioId: string; nome: string }[];
+  agoraMs: number;
 }) {
   const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
@@ -251,6 +296,15 @@ function VisaoDoMestre({
       />
 
       <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
+
+      <Sessoes
+        campanhaId={campanhaId}
+        sessoes={sessoes}
+        souMestre
+        meuUsuarioId={idDoMestre}
+        pessoas={pessoas}
+        agoraMs={agoraMs}
+      />
 
       <section className="mt-8">
         <h2 className="font-titulo text-xl">Jogadores</h2>
@@ -383,6 +437,9 @@ function VisaoDoJogador({
   meusPersonagens,
   minhasFichasDoSistema,
   grimorio,
+  sessoes,
+  pessoas,
+  agoraMs,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -391,35 +448,51 @@ function VisaoDoJogador({
   meusPersonagens: { id: string; nome: string }[];
   minhasFichasDoSistema: { id: string; nome: string }[];
   grimorio: string | null;
+  sessoes: SessaoView[];
+  pessoas: { usuarioId: string; nome: string }[];
+  agoraMs: number;
 }) {
   return (
-    <section className="mt-10 rounded-lg border border-borda bg-superficie p-6">
-      <p className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
-        {convidado ? "Você foi convidado" : "Suas fichas nesta campanha"}
-      </p>
-      {ficha ? (
-        <EntrarNaCampanha
-          campanhaId={campanhaId}
-          ficha={ficha}
-          minhasFichas={minhasFichasDoSistema}
-          meusPersonagens={meusPersonagens}
-        />
-      ) : (
-        <p className="mt-3 text-sm text-texto-suave">
-          O sistema desta campanha ainda não tem ficha própria no Hub.
+    <>
+      <section className="mt-10 rounded-lg border border-borda bg-superficie p-6">
+        <p className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
+          {convidado ? "Você foi convidado" : "Suas fichas nesta campanha"}
         </p>
+        {ficha ? (
+          <EntrarNaCampanha
+            campanhaId={campanhaId}
+            ficha={ficha}
+            minhasFichas={minhasFichasDoSistema}
+            meusPersonagens={meusPersonagens}
+          />
+        ) : (
+          <p className="mt-3 text-sm text-texto-suave">
+            O sistema desta campanha ainda não tem ficha própria no Hub.
+          </p>
+        )}
+        {grimorio && (
+          <a
+            href={grimorio}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
+          >
+            📖 Abrir Grimório (aprenda o sistema)
+          </a>
+        )}
+        {!convidado && <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />}
+      </section>
+
+      {!convidado && (
+        <Sessoes
+          campanhaId={campanhaId}
+          sessoes={sessoes}
+          souMestre={false}
+          meuUsuarioId={meuUsuarioId}
+          pessoas={pessoas}
+          agoraMs={agoraMs}
+        />
       )}
-      {grimorio && (
-        <a
-          href={grimorio}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
-        >
-          📖 Abrir Grimório (aprenda o sistema)
-        </a>
-      )}
-      {!convidado && <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />}
-    </section>
+    </>
   );
 }

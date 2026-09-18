@@ -6020,6 +6020,59 @@ automáticos continuam limpos. Sem teste de banco novo (as rotas de
 campanha/personagem já não tinham teste automático antes desta etapa —
 só a lógica pura de permissão, que não mudou aqui).
 
+## 135. Hub — Etapa 2 de melhorias organizacionais: Sessões e confirmação de presença (18/09/2026)
+
+Segunda fatia do pedido de 53 ideias (decisão #134) — "Sim segue" foi a
+confirmação do Zé pra avançar. Auditoria antes de tocar em código:
+`Sessao` já existia no schema desde o início, mas com zero linhas de
+código usando ela (confirmado na decisão #134) — então esta etapa
+construiu a tela e as rotas do zero, sem risco de colidir com nada que
+já funcionava.
+
+**1. Sessão.** Modelo `Sessao` ampliado: já tinha `numero`, `data`
+(data e horário juntos — não existe campo horário separado),
+`resumoPublico` e `notasMestre` (só o mestre lê, decisão #13); ganhou
+`mudancasImportantes` (o que mudou de importante na campanha, tipo
+"Fulano morreu" ou "grupo achou a Espada X" — público como o resumo,
+só separado pra destacar melhor na tela). O mestre marca sessão
+(número é automático — sempre o próximo, trava `@@unique([campanhaId,
+numero])` nunca colide), edita e apaga; jogador só lê os campos
+públicos.
+
+**2. Confirmação de presença.** Tabela nova `SessaoPresenca`
+(Vou/Talvez/Não vou) — uma linha por pessoa por sessão
+(`@@unique([sessaoId, usuarioId])`), cada um responde só pela própria
+conta (o corpo da requisição não aceita `usuarioId` de outra pessoa).
+Depois que a sessão já rolou, a mesma resposta também serve de registro
+de quem esteve nela — não criei um segundo conceito de "presença de
+verdade" separado da resposta dada, porque seria duplicar dado sem
+necessidade. Mestre vê o resumo de quem respondeu o quê (com nome);
+jogador só confirma a própria.
+
+**Rotas novas:** `POST /api/campanhas/[id]/sessoes` (criar, só mestre),
+`PATCH`/`DELETE /api/campanhas/[id]/sessoes/[sessaoId]` (editar/apagar,
+só mestre) e `PATCH
+.../sessoes/[sessaoId]/presenca` (responder presença, qualquer
+participante). Sem rota de leitura própria — a lista de sessões chega
+junto com a página da campanha (Server Component), do mesmo jeito que
+`manualMestre` e `personagensDaCampanha` já chegavam, pra não duplicar
+caminho de leitura à toa.
+
+**Migração `0014_sessoes_e_presenca.sql`** — coluna nova em `sessoes`
+(`mudancasImportantes`) e tabela nova `sessoes_presencas`, idempotente
+(`IF NOT EXISTS`/`DO $$ ... EXCEPTION WHEN duplicate_object`, inclusive
+pras chaves estrangeiras, que não têm `IF NOT EXISTS` nativo).
+
+**Fora desta etapa, de propósito:** chat, avisos fixados, enquetes,
+notificações internas (Etapa 3); iniciativa e HP compartilhados com
+jogador na Mesa ao Vivo, modo espectador, relógio de sessão (Etapa 4) —
+lista completa no ROADMAP.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos. Sem teste de banco novo, mesmo critério
+da Etapa 1 (rotas de campanha não tinham teste automático de banco
+antes; a lógica pura de permissão que já tinha teste não mudou).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

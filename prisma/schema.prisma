@@ -52,6 +52,13 @@ enum StatusPersonagem {
   ARQUIVADO
 }
 
+/// Confirmação de presença numa sessão (decisão #135).
+enum RespostaPresenca {
+  VOU
+  TALVEZ
+  NAO_VOU
+}
+
 // ---------------------------------------------------------------------------
 // Identidade
 // ---------------------------------------------------------------------------
@@ -69,8 +76,9 @@ model Usuario {
   /// mesma pessoa abre o Hub de mais de um aparelho.
   sistemasFavoritos String[] @default([])
 
-  participacoes Participacao[]
-  personagens   Personagem[]
+  participacoes   Participacao[]
+  personagens     Personagem[]
+  sessaoPresencas SessaoPresenca[]
 
   @@map("usuarios")
 }
@@ -197,19 +205,46 @@ model Personagem {
   @@map("personagens")
 }
 
-/// Um encontro jogado.
+/// Um encontro jogado (marcado ou já rolado). Antes da decisão #135 este
+/// modelo existia no schema, mas nenhuma rota nem tela usava ele.
 model Sessao {
-  id            String   @id @default(uuid()) @db.Uuid
-  campanhaId    String   @db.Uuid
-  numero        Int
-  data          DateTime
-  resumoPublico String?
+  id                  String   @id @default(uuid()) @db.Uuid
+  campanhaId          String   @db.Uuid
+  numero              Int
+  /// Data e horário juntos — não existe campo "horário" separado, o
+  /// horário já mora aqui dentro.
+  data                DateTime
+  resumoPublico       String?
+  /// O que mudou de importante na campanha nesta sessão (ex.: "Fulano
+  /// morreu", "grupo achou a Espada X") — público como `resumoPublico`,
+  /// só separado pra ficar fácil de destacar na tela.
+  mudancasImportantes String?
   /// Só o mestre da campanha lê este campo (decisão #13).
-  notasMestre   String?
-  criadoEm      DateTime @default(now())
+  notasMestre         String?
+  criadoEm            DateTime @default(now())
 
-  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  campanha  Campanha         @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  presencas SessaoPresenca[]
 
   @@unique([campanhaId, numero])
   @@map("sessoes")
+}
+
+/// Confirmação de presença de uma pessoa numa sessão (decisão #135) —
+/// Vou/Talvez/Não vou. Depois que a sessão já rolou, a mesma linha também
+/// serve de registro de quem esteve nela — não existe um segundo conceito
+/// de "presença de verdade" separado da resposta dada.
+model SessaoPresenca {
+  id           String           @id @default(uuid()) @db.Uuid
+  sessaoId     String           @db.Uuid
+  usuarioId    String           @db.Uuid
+  resposta     RespostaPresenca
+  respondidoEm DateTime         @updatedAt
+
+  sessao  Sessao  @relation(fields: [sessaoId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([sessaoId, usuarioId])
+  @@index([usuarioId])
+  @@map("sessoes_presencas")
 }
