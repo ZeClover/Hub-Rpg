@@ -147,6 +147,19 @@ export const SISTEMAS: Sistema[] = [
     campoVidaInimigo: ["atual", "pv"],
     grimorio: "/thryliki-chelona-grimorio.html",
   },
+  {
+    chave: "naruto-5e",
+    nome: "Naruto 5e",
+    descricao:
+      "Homebrew de fã baseado em D&D 5ª Edição, ambientado no universo Naruto. Chassi: atributos, perícias, chakra e derivados — clãs, classes e jutsu ainda vêm.",
+    ficha: "/naruto-5e.html",
+    situacao: "em-construcao",
+    salvaNoHub: false,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+    grimorio: null,
+  },
 ];
 
 // Sistemas onde dá pra criar ficha pela conta (usada em "+ Criar ficha" e na

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — Naruto 5e</title>
+<style>
+/* Mesma paleta do Hub RPG: fundo escuro em tom quente, destaque em âmbar. */
+:root{
+  --fundo:#0b0a08; --superficie:#15120d; --superficie-alta:#1e1a13;
+  --borda:#2c2519; --texto:#f3ede2; --suave:#a1937d;
+  --ambar:#e0a234; --ambar-forte:#f5bf5c; --alerta:#9c3746;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+a{color:var(--ambar-forte)}
+
+.barra{
+  position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap;
+  align-items:center; gap:10px; padding:10px 16px;
+  background:var(--superficie); border-bottom:1px solid var(--borda);
+}
+.marca{font-family:Georgia,serif; font-size:12px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--ambar)}
+.cresce{flex:1}
+
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{
+  background:transparent; border:1px solid var(--borda); border-radius:8px;
+  padding:6px 12px; cursor:pointer; transition:border-color .15s,color .15s,transform .12s;
+}
+button:hover{border-color:var(--suave)}
+button:not(:disabled):active{transform:scale(.95)}
+button.destaque{border-color:rgba(224,162,52,.4); background:rgba(224,162,52,.1); color:var(--ambar-forte)}
+button.destaque:hover{background:rgba(224,162,52,.2)}
+button.perigo{border-color:rgba(156,55,70,.5); color:var(--alerta)}
+button:disabled{opacity:.4; cursor:default}
+input,select,textarea{
+  background:var(--superficie-alta); border:1px solid var(--borda);
+  border-radius:8px; padding:7px 10px; width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:rgba(224,162,52,.6)}
+textarea{resize:vertical}
+label{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--suave); margin-bottom:5px; font-family:Georgia,serif}
+
+main{max-width:960px; margin:0 auto; padding:20px 16px 80px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.abas button[aria-current="true"]{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.cartao{background:var(--superficie); border:1px solid var(--borda);
+  border-radius:12px; padding:18px; margin-bottom:14px}
+.cartao h2{font-size:17px; margin-bottom:12px}
+.cartao h3{font-size:14px; color:var(--ambar-forte); margin:14px 0 8px}
+.grade{display:grid; gap:14px}
+@media(min-width:640px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g6{grid-template-columns:repeat(6,1fr)} }
+
+.campo{margin-bottom:12px}
+.linha{display:flex; align-items:center; gap:8px}
+.linha .cresce{flex:1}
+
+.estat{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:var(--superficie-alta); border:1px solid var(--borda); border-radius:10px;
+  padding:10px 8px;
+}
+.estat .num{font-size:24px; font-weight:700; font-family:Georgia,serif}
+.estat .rot{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--suave)}
+.estat .mod{font-size:13px; color:var(--ambar-forte)}
+
+table.lista{width:100%; border-collapse:collapse; font-size:14px}
+table.lista th{text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--suave); padding:6px 8px; border-bottom:1px solid var(--borda)}
+table.lista td{padding:6px 8px; border-bottom:1px solid var(--borda); vertical-align:middle}
+table.lista tr:last-child td{border-bottom:none}
+.check{width:18px; height:18px; cursor:pointer}
+
+.pill{display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px;
+  border:1px solid var(--borda); color:var(--suave)}
+.pill.on{border-color:rgba(224,162,52,.5); color:var(--ambar-forte)}
+
+.aviso{font-size:13px; color:var(--suave); font-style:italic}
+.rolagem{font-family:Georgia,serif; font-size:13px; color:var(--ambar-forte); min-width:70px; text-align:right}
+
+.referencia{font-size:13.5px; color:var(--suave)}
+.referencia b{color:var(--texto)}
+.referencia ul{margin:6px 0; padding-left:20px}
+
+footer{max-width:960px; margin:0 auto; padding:0 16px 40px; color:var(--suave); font-size:12px}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <span class="marca">Hub RPG · Naruto 5e</span>
+  <div class="cresce"></div>
+  <select id="seletorPersonagem"></select>
+  <button id="btnNovo">+ Novo</button>
+  <button id="btnDuplicar">Duplicar</button>
+  <button id="btnExportar">Exportar</button>
+  <button id="btnImportar">Importar</button>
+  <button id="btnExcluir" class="perigo">Excluir</button>
+  <a href="/fichas">← Fichas</a>
+</div>
+
+<main>
+  <div class="abas" role="tablist"></div>
+  <div id="conteudo"></div>
+</main>
+
+<footer>
+  Homebrew de fã (Naruto 5e, comunidade), baseado em Dungeons &amp; Dragons 5ª
+  Edição. O Hub codifica só a mecânica em números — nada de texto, arte ou
+  fluff do livro. Ficha salva neste navegador (localStorage); Modo Hub
+  (salvar na conta) fica para uma fatia futura.
+</footer>
+
+<input type="file" id="arquivoImportar" accept="application/json" hidden>
+
+<script>
+/* ---------- Matemática base (mesma convenção usada em dnd-5e.html) ---------- */
+function modAtributo(valor){ return Math.floor((valor - 10) / 2); }
+function fmtMod(mod){ return mod >= 0 ? `+${mod}` : `${mod}`; }
+function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+function uid(){ return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+/*
+  Bônus de Proficiência do Naruto 5e é DIFERENTE do D&D 5e padrão: começa em
+  +3 (não +2) e sobe a cada 3 níveis, não a cada 4. Tabela conferida linha a
+  linha no livro (Character Advancement, cap. "Ambições & Antecedentes").
+*/
+function bonusProficiencia(nivel){
+  const n = clamp(nivel || 1, 1, 20);
+  return 3 + Math.floor((n - 1) / 3);
+}
+function metadeProfArredondada(nivel){ return Math.floor(bonusProficiencia(nivel) / 2); }
+
+const XP_POR_NIVEL = [0,0,50,75,100,150,200,350,475,600,725,850,1000,1200,1400,1600,1800,2100,2400,2700,3000];
+
+/* Dado de Vida/Chakra: valor fixo por nível (regra padrão do livro, não
+   rolada) — no 1º nível vale o dado cheio + mod; nos seguintes, a média do
+   dado arredondada para cima + mod, exatamente como o exemplo do próprio
+   livro (3d12 = 21, ou seja 7 por nível, contando o 1º). */
+const DADOS = ['d6','d8','d10','d12'];
+function faceDado(dado){ return Number(String(dado||'d8').replace(/\D/g,'')) || 8; }
+function mediaDadoArredondada(dado){ return Math.ceil((faceDado(dado) + 1) / 2); }
+function totalPorDado(dado, nivel, mod){
+  const n = clamp(nivel || 1, 1, 20);
+  return n * (mediaDadoArredondada(dado) + mod);
+}
+
+/* ---------- Catálogos (chassi — clãs/classes/jutsu completos são fatias futuras) ---------- */
+const ATRIBUTOS = [
+  {id:'forca', nome:'Força'},
+  {id:'destreza', nome:'Destreza'},
+  {id:'constituicao', nome:'Constituição'},
+  {id:'inteligencia', nome:'Inteligência'},
+  {id:'sabedoria', nome:'Sabedoria'},
+  {id:'carisma', nome:'Carisma'},
+];
+function atributo(id){ return ATRIBUTOS.find(a => a.id === id) || null; }
+
+/* As 21 perícias do livro: Arcana virou Ninshou, e Controle de Chakra,
+   Ilusões, Artes Marciais e Ofício são as quatro perícias novas (Religião
+   saiu). Lista e atributo de cada uma conferidos no capítulo "Using Ability
+   Scores". */
+const PERICIAS = [
+  {id:'atletismo', nome:'Atletismo', atributo:'forca'},
+  {id:'artesMarciais', nome:'Artes Marciais', atributo:'forca'},
+  {id:'acrobacia', nome:'Acrobacia', atributo:'destreza'},
+  {id:'prestidigitacao', nome:'Prestidigitação', atributo:'destreza'},
+  {id:'furtividade', nome:'Furtividade', atributo:'destreza'},
+  {id:'controleChakra', nome:'Controle de Chakra', atributo:'constituicao'},
+  {id:'oficio', nome:'Ofício', atributo:'inteligencia'},
+  {id:'historia', nome:'História', atributo:'inteligencia'},
+  {id:'investigacao', nome:'Investigação', atributo:'inteligencia'},
+  {id:'natureza', nome:'Natureza', atributo:'inteligencia'},
+  {id:'ninshou', nome:'Ninshou', atributo:'inteligencia'},
+  {id:'adestrarAnimais', nome:'Adestrar Animais', atributo:'sabedoria'},
+  {id:'ilusoes', nome:'Ilusões', atributo:'sabedoria'},
+  {id:'intuicao', nome:'Intuição', atributo:'sabedoria'},
+  {id:'medicina', nome:'Medicina', atributo:'sabedoria'},
+  {id:'percepcao', nome:'Percepção', atributo:'sabedoria'},
+  {id:'sobrevivencia', nome:'Sobrevivência', atributo:'sabedoria'},
+  {id:'enganacao', nome:'Enganação', atributo:'carisma'},
+  {id:'intimidacao', nome:'Intimidação', atributo:'carisma'},
+  {id:'atuacao', nome:'Atuação', atributo:'carisma'},
+  {id:'persuasao', nome:'Persuasão', atributo:'carisma'},
+];
+function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
+
+/* Antecedentes (cap. "Ambições & Antecedentes") — mecânica traduzida e
+   resumida pelo Hub, sem copiar o texto do livro (Naruto 5e é fã-feito
+   sobre D&D 5e, então nem o fluff é nosso pra reaproveitar). */
+const ANTECEDENTES = [
+  {id:'animador', nome:'Animador', pericias:['acrobacia','atuacao'],
+    traco:'Sempre acha onde se apresentar em troca de pouso e comida; vira figura conhecida nos lugares onde já atuou.',
+    sugestao:['inteligencia','carisma']},
+  {id:'genio', nome:'Gênio', pericias:['ninshou','artesMarciais','ilusoes'], escolhaDupla:true,
+    traco:'Ao encarar um desafio novo, sempre tira uma pista de como ele funciona (ou não funciona) já na primeira tentativa, passando ou falhando.',
+    sugestao:['inteligencia','sabedoria']},
+  {id:'esforcado', nome:'Trabalhador Esforçado', pericias:['acrobacia','atletismo'],
+    traco:'Conecta fácil com quem tem a mesma disciplina; consegue audiência citando estratégias e livros que estudou.',
+    sugestao:['forca','destreza']},
+  {id:'eremita', nome:'Eremita', pericias:['adestrarAnimais','historia'],
+    traco:'Guarda uma descoberta importante feita no isolamento — uma verdade sobre o mundo ou sobre o chakra.',
+    sugestao:['constituicao','sabedoria']},
+  {id:'lider', nome:'Líder', pericias:['historia','enganacao'], variantePersuasao:true,
+    traco:'Estranhos param você achando que já te viram antes; gente em apuro se abre fácil, e você é tratado como alguém de status.',
+    sugestao:['inteligencia','carisma']},
+  {id:'nobre', nome:'Nobre', pericias:['persuasao','intuicao'],
+    traco:'Bem recebido em alta sociedade; consegue audiência com nobres ou oficiais citando o nome do clã ou da família.',
+    sugestao:['sabedoria','carisma']},
+  {id:'estudante', nome:'Estudante', pericias:['acrobacia','ninshou','artesMarciais','ilusoes'], escolhaSegunda:true,
+    traco:'O nome do mestre que te treinou abre portas com outros shinobi e escolas — inclusive pouso em templos e mosteiros.',
+    sugestao:['destreza','inteligencia']},
+  {id:'viajante', nome:'Viajante', pericias:['intuicao','percepcao'],
+    traco:'Sua origem distante desperta curiosidade e simpatia de estudiosos e curiosos por onde passa.',
+    sugestao:['forca','sabedoria']},
+  {id:'encrenqueiro', nome:'Encrenqueiro', pericias:['enganacao','prestidigitacao'],
+    traco:'Escapa de gafes sociais que estragariam um acordo — mas por pena alheia, não porque acreditam em você.',
+    sugestao:['forca','carisma']},
+  {id:'orfao', nome:'Órfão de Rua', pericias:['prestidigitacao','furtividade'],
+    traco:'Conhece os atalhos da cidade onde cresceu: fora de combate, você e quem você guia se deslocam pela cidade ao dobro da velocidade normal.',
+    sugestao:['destreza','carisma']},
+];
+function antecedente(id){ return ANTECEDENTES.find(a => a.id === id) || null; }
+
+/* Vantagem Elemental (cap. Combate) — ciclo fixo de superioridade entre as
+   5 naturezas. Quem usa o elemento superior tem vantagem no ataque ou no
+   teste de Clash contra o elemento inferior. */
+const CICLO_ELEMENTOS = ['Fogo','Vento','Raio','Terra','Água'];
+function elementoSuperior(atacante, alvo){
+  if(!atacante || !alvo || atacante === alvo) return 'neutro';
+  const i = CICLO_ELEMENTOS.indexOf(atacante);
+  if(i === -1) return 'neutro';
+  const proximo = CICLO_ELEMENTOS[(i + 1) % CICLO_ELEMENTOS.length];
+  if(proximo === alvo) return 'vantagem';
+  const anterior = CICLO_ELEMENTOS[(i + CICLO_ELEMENTOS.length - 1) % CICLO_ELEMENTOS.length];
+  if(anterior === alvo) return 'desvantagem';
+  return 'neutro';
+}
+
+/* Condições — o livro é explícito que o capítulo de Combate é "quase
+   idêntico" ao D&D 5e, mudando tipo de dano e adicionando Clash/Vantagem
+   Elemental, sem reescrever as condições. Por isso o Hub reaproveita aqui a
+   mesma lista (já traduzida como mecânica, não texto do livro) que already
+   existe em D&amp;D 5e, copiada pro módulo do Naruto 5e por inteiro — decisão
+   #17 quer cada sistema com sua própria cópia, não uma lista compartilhada. */
+const CONDICOES = [
+  {nome:'Agarrado', efeito:'Deslocamento vira 0 e não recebe bônus de deslocamento. Termina se quem agarrou for incapacitado ou afastado.'},
+  {nome:'Amedrontado', efeito:'Desvantagem em testes de atributo e ataques enquanto a fonte do medo estiver visível; não pode se aproximar dela.'},
+  {nome:'Atordoado', efeito:'Incapacitado, não se move, fala só com dificuldade. Falha automática em resistência de Força/Destreza. Ataques contra a criatura têm vantagem.'},
+  {nome:'Cego', efeito:'Falha automática em testes que dependam de visão. Ataques contra a criatura têm vantagem; os dela sofrem desvantagem.'},
+  {nome:'Derrubado', efeito:'Só se move rastejando (ou gasta metade do deslocamento pra levantar). Desvantagem nos próprios ataques. Ataque contra ela tem vantagem a até 1,5m, desvantagem de mais longe.'},
+  {nome:'Enfeitiçado', efeito:'Não pode atacar nem alvejar quem a enfeitiçou com efeitos nocivos; quem a enfeitiçou tem vantagem em interação social com ela.'},
+  {nome:'Envenenado', efeito:'Desvantagem em ataques e testes de atributo.'},
+  {nome:'Impedido', efeito:'Deslocamento vira 0. Ataques contra a criatura têm vantagem, os dela sofrem desvantagem. Desvantagem em resistência de Destreza.'},
+  {nome:'Incapacitado', efeito:'Não realiza ações nem reações.'},
+  {nome:'Inconsciente', efeito:'Incapacitada, derrubada, larga o que segurava, não percebe o ambiente. Falha automática em resistência de Força/Destreza. Ataques a até 1,5m acertam automaticamente e são críticos.'},
+  {nome:'Invisível', efeito:'Não pode ser vista sem sentido especial. Ataques contra ela sofrem desvantagem; os dela têm vantagem.'},
+  {nome:'Paralisado', efeito:'Incapacitada, não se move nem fala. Falha automática em resistência de Força/Destreza. Ataques a até 1,5m acertam automaticamente e são críticos.'},
+  {nome:'Petrificado', efeito:'Vira substância sólida, incapacitada, não percebe o ambiente. Resistência a todo dano; imune a veneno e doença.'},
+  {nome:'Surdo', efeito:'Falha automática em testes que dependam de audição.'},
+  {nome:'Exaustão', efeito:'6 níveis cumulativos: 1-desvantagem em testes; 2-deslocamento pela metade; 3-desvantagem em ataques/resistências; 4-PV máx pela metade; 5-deslocamento 0; 6-morte.'},
+];
+
+const RANKS_JUTSU = [
+  {rank:'E', equivalente:'Truque (nível 0)'},
+  {rank:'D', equivalente:'Nível 1–2'},
+  {rank:'C', equivalente:'Nível 3–4'},
+  {rank:'B', equivalente:'Nível 5–6'},
+  {rank:'A', equivalente:'Nível 7–8'},
+  {rank:'S', equivalente:'Nível 9'},
+];
+
+/* ---------- Estado / persistência (localStorage — Modo Hub é fatia futura) ---------- */
+const CHAVE_LISTA = 'hub_naruto5e_lista';
+
+function personagemPadrao(nome){
+  return {
+    id: uid(),
+    nome: nome || 'Novo Personagem',
+    jogador: '',
+    cla: '',
+    classe: '',
+    antecedenteId: '',
+    antecedenteBonusAtributo: '',
+    nivel: 1,
+    xp: 0,
+    ambicao: '', drive: '', metas: '', medos: '',
+    vontadeFogo: 1,
+    atributos: {forca:10, destreza:10, constituicao:10, inteligencia:10, sabedoria:10, carisma:10},
+    salvamentosProficientes: {},
+    periciasProficientes: {},
+    recursos: {
+      dadoVida:'d8', dadoChakra:'d8',
+      pvAtualDelta: 0, pvTemp: 0,
+      chakraAtualDelta: 0, chakraTemp: 0,
+      bonusArmadura: 0, defesaManual: null,
+      ryo: 0,
+    },
+    naturezaPrincipal: '',
+    tipoTaijutsu: 'forca',
+    tipoGenjutsu: 'sabedoria',
+    jutsus: [],
+    equipamento: [],
+    anotacoes: '',
+  };
+}
+
+function carregarLista(){
+  try{
+    const bruto = JSON.parse(localStorage.getItem(CHAVE_LISTA) || '[]');
+    return Array.isArray(bruto) ? bruto : [];
+  }catch(e){ return []; }
+}
+function salvarLista(lista){
+  try{ localStorage.setItem(CHAVE_LISTA, JSON.stringify(lista)); }catch(e){ /* aba anônima etc. */ }
+}
+
+let lista = carregarLista();
+let idAtual = lista[0] ? lista[0].id : null;
+let abaAtual = 'perfil';
+
+if(lista.length === 0){
+  const p = personagemPadrao('Meu Personagem');
+  lista = [p];
+  idAtual = p.id;
+  salvarLista(lista);
+}
+
+function personagemAtual(){ return lista.find(p => p.id === idAtual) || lista[0]; }
+function salvar(){ salvarLista(lista); atualizarSeletor(); }
+
+/* ---------- Derivados ---------- */
+function valorAtributo(p, id){ return p.atributos[id] ?? 10; }
+function modFinal(p, id){ return modAtributo(valorAtributo(p, id)); }
+function prof(p){ return bonusProficiencia(p.nivel); }
+
+function pvMaximo(p){ return totalPorDado(p.recursos.dadoVida, p.nivel, modFinal(p,'constituicao')); }
+function pvAtual(p){ return clamp(pvMaximo(p) + p.recursos.pvAtualDelta, 0, pvMaximo(p)); }
+function chakraMaximo(p){ return totalPorDado(p.recursos.dadoChakra, p.nivel, modFinal(p,'constituicao')); }
+function chakraAtual(p){ return clamp(chakraMaximo(p) + p.recursos.chakraAtualDelta, 0, chakraMaximo(p)); }
+
+/* CA = 10 + mod Destreza + metade do bônus de proficiência (arredondado
+   pra baixo) + bônus de armadura — fórmula própria do Naruto 5e, diferente
+   do D&D 5e puro. Conferida no capítulo de Equipamento. */
+function defesa(p){
+  if(p.recursos.defesaManual != null && p.recursos.defesaManual !== '') return Number(p.recursos.defesaManual);
+  return 10 + modFinal(p,'destreza') + metadeProfArredondada(p.nivel) + Number(p.recursos.bonusArmadura || 0);
+}
+/* Iniciativa também soma metade do bônus de proficiência — outra diferença
+   confirmada em relação ao D&D 5e padrão (lá é só o mod de Destreza). */
+function bonusIniciativa(p){ return modFinal(p,'destreza') + metadeProfArredondada(p.nivel); }
+
+/* Perícia sem proficiência fica só no modificador (regra normal); teste de
+   resistência sem proficiência ainda soma metade do bônus de proficiência
+   (arredondado pra baixo) — regra própria do Naruto 5e, conferida no
+   capítulo de Combate. */
+function totalPericia(p, periciaId){
+  const per = pericia(periciaId);
+  const m = modFinal(p, per.atributo);
+  return m + (p.periciasProficientes[periciaId] ? prof(p) : 0);
+}
+function totalSalvamento(p, atributoId){
+  const m = modFinal(p, atributoId);
+  return m + (p.salvamentosProficientes[atributoId] ? prof(p) : metadeProfArredondada(p.nivel));
+}
+
+function xpParaProximoNivel(p){
+  const n = clamp(p.nivel, 1, 19);
+  return XP_POR_NIVEL[n + 1];
+}
+
+/* CD e bônus de ataque de Jutsu — o tipo de Ninjutsu sempre usa
+   Inteligência; Taijutsu e Genjutsu variam por classe (ainda não
+   catalogada no Hub), por isso o atributo de cada um é escolhido na
+   ficha em vez de fixo. */
+function cdJutsu(p, atributoId){ return 8 + prof(p) + modFinal(p, atributoId); }
+function ataqueJutsu(p, atributoId){ return prof(p) + modFinal(p, atributoId); }
+
+function rolarD20(){ return 1 + Math.floor(Math.random() * 20); }
+function rolarETotal(mod){ const d = rolarD20(); return {dado:d, total:d+mod}; }
+
+/* ---------- Interface ---------- */
+const ABAS = [
+  {id:'perfil', nome:'Perfil'},
+  {id:'atributos', nome:'Atributos'},
+  {id:'pericias', nome:'Perícias'},
+  {id:'recursos', nome:'Recursos'},
+  {id:'jutsu', nome:'Jutsu'},
+  {id:'regras', nome:'Regras'},
+  {id:'notas', nome:'Notas'},
+];
+
+function el(tag, attrs, ...filhos){
+  const e = document.createElement(tag);
+  for(const k in (attrs||{})){
+    const v = attrs[k];
+    /* null/undefined/false = "sem este atributo" (ex.: checked/selected
+       condicionais) — setAttribute(k, null) marcaria o atributo como
+       presente mesmo assim, deixando toda checkbox/opção "marcada". */
+    if(v == null || v === false) continue;
+    if(k === 'class') e.className = v;
+    else if(k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if(k === 'html') e.innerHTML = v;
+    else e.setAttribute(k, v);
+  }
+  for(const f of filhos.flat()){
+    if(f == null) continue;
+    e.appendChild(typeof f === 'string' ? document.createTextNode(f) : f);
+  }
+  return e;
+}
+
+function campoTexto(rotulo, valor, onInput, tipo){
+  const input = el('input', {type: tipo || 'text', value: valor ?? '', oninput: e => onInput(e.target.value)});
+  return el('div', {class:'campo'}, el('label', {}, rotulo), input);
+}
+function campoArea(rotulo, valor, onInput){
+  const t = el('textarea', {rows:3, oninput: e => onInput(e.target.value)});
+  t.value = valor ?? '';
+  return el('div', {class:'campo'}, el('label', {}, rotulo), t);
+}
+function campoSelect(rotulo, valor, opcoes, onChange){
+  const s = el('select', {onchange: e => onChange(e.target.value)});
+  for(const [v, txt] of opcoes) s.appendChild(el('option', {value:v, selected: v===valor ? 'selected' : null}, txt));
+  return el('div', {class:'campo'}, el('label', {}, rotulo), s);
+}
+
+function renderAbas(){
+  const barra = document.querySelector('.abas');
+  barra.innerHTML = '';
+  for(const a of ABAS){
+    barra.appendChild(el('button', {
+      'aria-current': a.id === abaAtual ? 'true' : 'false',
+      onclick: () => { abaAtual = a.id; render(); },
+    }, a.nome));
+  }
+}
+
+function renderPerfil(p){
+  const c1 = el('div', {class:'cartao'},
+    el('h2', {}, 'Identidade'),
+    el('div', {class:'grade g2'},
+      campoTexto('Nome do personagem', p.nome, v => { p.nome = v; salvar(); render(); }),
+      campoTexto('Jogador(a)', p.jogador, v => { p.jogador = v; salvar(); }),
+      campoTexto('Clã', p.cla, v => { p.cla = v; salvar(); }),
+      campoTexto('Classe', p.classe, v => { p.classe = v; salvar(); }),
+    ),
+    el('p', {class:'aviso'}, 'Clã e Classe ainda são texto livre — os catálogos completos (Compêndio de Estudos da Tsunade e Compêndio de Observação do Orochimaru) entram em fatias futuras.'),
+    el('div', {class:'grade g3'},
+      campoTexto('Nível (1–20)', p.nivel, v => { p.nivel = clamp(Number(v)||1,1,20); salvar(); render(); }, 'number'),
+      campoTexto('XP atual', p.xp, v => { p.xp = Math.max(0, Number(v)||0); salvar(); render(); }, 'number'),
+      el('div', {class:'campo'}, el('label',{}, 'XP p/ o próximo nível'), el('p', {}, String(xpParaProximoNivel(p)))),
+    ),
+  );
+
+  const opcoesAntecedente = [['', '— nenhum —'], ...ANTECEDENTES.map(a => [a.id, a.nome])];
+  const ant = antecedente(p.antecedenteId);
+  const c2 = el('div', {class:'cartao'},
+    el('h2', {}, 'Antecedente'),
+    campoSelect('Antecedente', p.antecedenteId, opcoesAntecedente, v => { p.antecedenteId = v; salvar(); render(); }),
+  );
+  if(ant){
+    c2.appendChild(el('p', {class:'referencia'},
+      el('b', {}, 'Perícias: '), ant.pericias.map(id => pericia(id).nome).join(' / '),
+      ant.escolhaDupla ? ' (escolha 2)' : (ant.escolhaSegunda ? ' (Acrobacia + escolha 1)' : (ant.variantePersuasao ? ' (ou Persuasão no lugar de Enganação)' : ''))));
+    c2.appendChild(el('p', {class:'referencia'}, ant.traco));
+    c2.appendChild(campoSelect('Bônus do antecedente: +1 em', p.antecedenteBonusAtributo,
+      [['', '— escolher —'], ...ATRIBUTOS.map(a => [a.id, a.nome + (ant.sugestao.includes(a.id) ? ' (recomendado)' : '')])],
+      v => { p.antecedenteBonusAtributo = v; salvar(); render(); }));
+    c2.appendChild(el('p', {class:'aviso'}, 'Ou, no lugar do bônus de atributo, um Talento — catálogo ainda fora do Hub; anote a escolha em Notas.'));
+  }
+
+  const c3 = el('div', {class:'cartao'},
+    el('h2', {}, 'Vontade de Fogo'),
+    el('p', {class:'referencia'}, 'Recurso de até 3 pontos por sessão. Gasta 1 para: vantagem ou +5 num ataque/teste/resistência, uma reação extra, sucesso automático numa resistência contra a morte, alterar levemente a cena a seu favor, ou repassar o ponto a outro jogador.'),
+    el('div', {class:'linha'},
+      el('button', {onclick: () => { p.vontadeFogo = clamp(p.vontadeFogo - 1, 0, 3); salvar(); render(); }}, '−'),
+      el('span', {class:'estat'}, el('span',{class:'num'}, String(p.vontadeFogo)), el('span',{class:'rot'},'Vontade de Fogo')),
+      el('button', {onclick: () => { p.vontadeFogo = clamp(p.vontadeFogo + 1, 0, 3); salvar(); render(); }}, '+'),
+    ),
+  );
+
+  const c4 = el('div', {class:'cartao'},
+    el('h2', {}, 'Ambição, Drive, Metas e Medos'),
+    campoArea('Ambição (o grande objetivo)', p.ambicao, v => { p.ambicao = v; salvar(); }),
+    campoArea('Drive (o que empurra você)', p.drive, v => { p.drive = v; salvar(); }),
+    campoArea('Metas atuais (curto prazo)', p.metas, v => { p.metas = v; salvar(); }),
+    campoArea('Medos', p.medos, v => { p.medos = v; salvar(); }),
+  );
+
+  return [c1, c2, c3, c4];
+}
+
+function renderAtributos(p){
+  const grade = el('div', {class:'grade g3'});
+  for(const a of ATRIBUTOS){
+    const valor = valorAtributo(p, a.id);
+    const mod = modAtributo(valor);
+    const wrap = el('div', {class:'cartao'},
+      el('div', {class:'estat'},
+        el('span', {class:'rot'}, a.nome),
+        el('input', {type:'number', style:'width:70px;text-align:center;font-size:20px', value:valor,
+          oninput: e => { p.atributos[a.id] = clamp(Number(e.target.value)||10, 1, 30); salvar(); render(); }}),
+        el('span', {class:'mod'}, fmtMod(mod)),
+      ),
+    );
+    grade.appendChild(wrap);
+  }
+
+  const salvamentos = el('div', {class:'cartao'},
+    el('h2', {}, 'Testes de Resistência'),
+    el('p', {class:'aviso'}, 'Sem proficiência ainda soma metade do bônus de proficiência (arredondado pra baixo) — diferente do D&D 5e puro.'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Atributo'), el('th',{},'Proficiente'), el('th',{},'Total'), el('th',{},''))),
+      el('tbody', {}, ...ATRIBUTOS.map(a => {
+        const total = totalSalvamento(p, a.id);
+        const resultado = el('span', {class:'rolagem'}, '');
+        return el('tr', {},
+          el('td', {}, a.nome),
+          el('td', {}, el('input', {type:'checkbox', class:'check', checked: !!p.salvamentosProficientes[a.id] || null,
+            onchange: e => { p.salvamentosProficientes[a.id] = e.target.checked; salvar(); render(); }})),
+          el('td', {}, fmtMod(total)),
+          el('td', {},
+            el('button', {onclick: () => { const r = rolarETotal(total); resultado.textContent = `d20(${r.dado}) = ${fmtMod(r.total).replace('+','')}`; }}, 'Rolar'),
+            resultado,
+          ),
+        );
+      })),
+    ),
+  );
+
+  const info = el('div', {class:'cartao'},
+    el('h2', {}, 'Geração dos atributos'),
+    el('p', {class:'referencia'},
+      'Array padrão: 15, 14, 13, 12, 11, 10 — mesma distribuição do D&D 5e. ',
+      'Ou role 4d6 (descarte o menor) seis vezes. Ou compra de pontos: 30 pontos, custo 8→0, 9→1, 10→2, 11→3, 12→4, 13→5, 14→7, teto de 15 antes de bônus de clã/antecedente.'),
+  );
+
+  return [el('div', {class:'grade g6', style:'margin-bottom:14px'}, ...grade.children), salvamentos, info];
+}
+
+function renderPericias(p){
+  const linhas = PERICIAS.map(per => {
+    const total = totalPericia(p, per.id);
+    const resultado = el('span', {class:'rolagem'}, '');
+    return el('tr', {},
+      el('td', {}, per.nome),
+      el('td', {}, atributo(per.atributo).nome.slice(0,3).toUpperCase()),
+      el('td', {}, el('input', {type:'checkbox', class:'check', checked: !!p.periciasProficientes[per.id] || null,
+        onchange: e => { p.periciasProficientes[per.id] = e.target.checked; salvar(); render(); }})),
+      el('td', {}, fmtMod(total)),
+      el('td', {},
+        el('button', {onclick: () => { const r = rolarETotal(total); resultado.textContent = `d20(${r.dado}) = ${fmtMod(r.total).replace('+','')}`; }}, 'Rolar'),
+        resultado,
+      ),
+    );
+  });
+  return [el('div', {class:'cartao'},
+    el('h2', {}, 'Perícias'),
+    el('p', {class:'aviso'}, '21 perícias do Naruto 5e: Arcana virou Ninshou; Controle de Chakra, Ilusões, Artes Marciais e Ofício são novas (Religião saiu).'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Perícia'), el('th',{},'Atr.'), el('th',{},'Prof.'), el('th',{},'Total'), el('th',{},''))),
+      el('tbody', {}, ...linhas),
+    ),
+  )];
+}
+
+function renderRecursos(p){
+  const pv = pvMaximo(p), pvA = pvAtual(p);
+  const ck = chakraMaximo(p), ckA = chakraAtual(p);
+
+  const cartaoRecurso = (titulo, atual, maximo, temp, onDelta, onTemp) => el('div', {class:'cartao'},
+    el('h2', {}, titulo),
+    el('div', {class:'linha'},
+      el('button', {onclick: () => onDelta(-1)}, '−1'),
+      el('div', {class:'estat cresce'}, el('span',{class:'num'}, `${atual} / ${maximo}`), el('span',{class:'rot'}, 'atual / máximo')),
+      el('button', {onclick: () => onDelta(1)}, '+1'),
+    ),
+    el('div', {class:'linha', style:'margin-top:8px'},
+      el('div', {class:'campo cresce'}, el('label',{},'Dano/cura (+ cura, − dano)'),
+        (() => { const i = el('input', {type:'number', value:0}); i._ref = true;
+          return el('div', {class:'linha'}, i, el('button', {onclick: () => { onDelta(Number(i.value)||0); i.value = 0; }}, 'Aplicar')); })()),
+      el('div', {class:'campo', style:'width:110px'}, el('label',{},'Temporário'),
+        el('input', {type:'number', value:temp, oninput: e => onTemp(Number(e.target.value)||0)})),
+    ),
+  );
+
+  const recPV = cartaoRecurso('Pontos de Vida (PV)', pvA, pv, p.recursos.pvTemp,
+    (delta) => { p.recursos.pvAtualDelta = clamp(p.recursos.pvAtualDelta + delta, -pv, 0); salvar(); render(); },
+    (v) => { p.recursos.pvTemp = Math.max(0, v); salvar(); render(); });
+  const recChakra = cartaoRecurso('Pontos de Chakra', ckA, ck, p.recursos.chakraTemp,
+    (delta) => { p.recursos.chakraAtualDelta = clamp(p.recursos.chakraAtualDelta + delta, -ck, 0); salvar(); render(); },
+    (v) => { p.recursos.chakraTemp = Math.max(0, v); salvar(); render(); });
+
+  const dados = el('div', {class:'cartao'},
+    el('h2', {}, 'Dados de recurso'),
+    el('p', {class:'aviso'}, 'Vêm da Classe (ainda não catalogada) — escolha manual por enquanto.'),
+    el('div', {class:'grade g2'},
+      campoSelect('Dado de Vida', p.recursos.dadoVida, DADOS.map(d => [d,d]), v => { p.recursos.dadoVida = v; salvar(); render(); }),
+      campoSelect('Dado de Chakra', p.recursos.dadoChakra, DADOS.map(d => [d,d]), v => { p.recursos.dadoChakra = v; salvar(); render(); }),
+    ),
+  );
+
+  const defesaCartao = el('div', {class:'cartao'},
+    el('h2', {}, 'Defesa e Iniciativa'),
+    el('div', {class:'grade g3'},
+      el('div', {class:'estat'}, el('span',{class:'num'}, String(defesa(p))), el('span',{class:'rot'},'Defesa (CA)')),
+      el('div', {class:'estat'}, el('span',{class:'num'}, fmtMod(bonusIniciativa(p))), el('span',{class:'rot'},'Iniciativa')),
+      el('div', {class:'estat'}, el('span',{class:'num'}, String(prof(p))), el('span',{class:'rot'},'Bônus de Proficiência')),
+    ),
+    el('div', {class:'grade g2', style:'margin-top:10px'},
+      campoTexto('Bônus de armadura (manual)', p.recursos.bonusArmadura, v => { p.recursos.bonusArmadura = Number(v)||0; salvar(); render(); }, 'number'),
+      campoTexto('Defesa manual (sobrepõe o cálculo, opcional)', p.recursos.defesaManual ?? '', v => { p.recursos.defesaManual = v === '' ? null : Number(v); salvar(); render(); }, 'number'),
+    ),
+    el('p', {class:'aviso'}, 'Defesa = 10 + mod. Destreza + metade do bônus de proficiência (arred. p/ baixo) + armadura. Vestir armadura sem proficiência dá desvantagem em Força/Destreza e em testes de conjuração de Jutsu.'),
+  );
+
+  const ryo = el('div', {class:'cartao'},
+    el('h2', {}, 'Carteira'),
+    campoTexto('Ryo', p.recursos.ryo, v => { p.recursos.ryo = Math.max(0, Number(v)||0); salvar(); render(); }, 'number'),
+    el('p', {class:'aviso'}, 'Moeda única do Naruto 5e (≈ 1 Ryo = 1 peça de ouro do D&D 5e).'),
+  );
+
+  return [recPV, recChakra, defesaCartao, dados, ryo];
+}
+
+function renderJutsu(p){
+  const linhas = p.jutsus.map((j, i) => el('tr', {},
+    el('td', {}, el('input', {value:j.nome, oninput: e => { j.nome = e.target.value; salvar(); }})),
+    el('td', {}, el('select', {onchange: e => { j.tipo = e.target.value; salvar(); }},
+      ...['Ninjutsu','Taijutsu','Genjutsu','Bukijutsu'].map(t => el('option', {value:t, selected: t===j.tipo?'selected':null}, t)))),
+    el('td', {}, el('select', {onchange: e => { j.rank = e.target.value; salvar(); }},
+      ...RANKS_JUTSU.map(r => el('option', {value:r.rank, selected: r.rank===j.rank?'selected':null}, r.rank)))),
+    el('td', {}, el('input', {value:j.notas||'', oninput: e => { j.notas = e.target.value; salvar(); }})),
+    el('td', {}, el('button', {class:'perigo', onclick: () => { p.jutsus.splice(i,1); salvar(); render(); }}, '×')),
+  ));
+
+  const info = el('div', {class:'cartao'},
+    el('h2', {}, 'CD e ataque de Jutsu'),
+    el('p', {class:'aviso'}, 'Ninjutsu sempre usa Inteligência. Taijutsu e Genjutsu variam por classe (ainda não catalogada) — escolha o atributo usado pela sua classe.'),
+    el('div', {class:'grade g2'},
+      el('div', {class:'estat'}, el('span',{class:'rot'},'Ninjutsu (Inteligência)'),
+        el('span', {class:'num'}, `CD ${cdJutsu(p,'inteligencia')} · +${ataqueJutsu(p,'inteligencia')}`)),
+      el('div', {class:'estat'}, el('span',{class:'rot'},'Taijutsu'),
+        el('span', {class:'num'}, `CD ${cdJutsu(p,p.tipoTaijutsu)} · +${ataqueJutsu(p,p.tipoTaijutsu)}`)),
+    ),
+    el('div', {class:'grade g2', style:'margin-top:10px'},
+      campoSelect('Atributo de Taijutsu da sua classe', p.tipoTaijutsu, [['forca','Força'],['destreza','Destreza']], v => { p.tipoTaijutsu = v; salvar(); render(); }),
+      campoSelect('Atributo de Genjutsu da sua classe', p.tipoGenjutsu, [['sabedoria','Sabedoria'],['carisma','Carisma']], v => { p.tipoGenjutsu = v; salvar(); render(); }),
+    ),
+    el('div', {class:'estat', style:'margin-top:10px; max-width:260px'}, el('span',{class:'rot'},'Genjutsu'),
+      el('span', {class:'num'}, `CD ${cdJutsu(p,p.tipoGenjutsu)} · +${ataqueJutsu(p,p.tipoGenjutsu)}`)),
+  );
+
+  const natureza = el('div', {class:'cartao'},
+    el('h2', {}, 'Natureza elemental'),
+    campoSelect('Natureza principal', p.naturezaPrincipal, [['', '— nenhuma —'], ...CICLO_ELEMENTOS.map(n => [n,n])], v => { p.naturezaPrincipal = v; salvar(); render(); }),
+  );
+
+  const lista = el('div', {class:'cartao'},
+    el('h2', {}, 'Jutsu conhecidos'),
+    el('p', {class:'aviso'}, 'Catálogo oficial (Compêndio de Jutsu da Jiraiya) ainda fora do Hub — cadastre aqui os jutsu do seu personagem à mão.'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
+      el('tbody', {}, ...linhas),
+    ),
+    el('button', {class:'destaque', style:'margin-top:10px', onclick: () => { p.jutsus.push({nome:'Novo jutsu', tipo:'Ninjutsu', rank:'E', notas:''}); salvar(); render(); }}, '+ Jutsu'),
+  );
+
+  return [info, natureza, lista];
+}
+
+function renderRegras(p){
+  const tabelaProf = el('div', {class:'cartao'},
+    el('h2', {}, 'Bônus de Proficiência por Nível'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, ...[...Array(20)].map((_,i) => el('th',{}, String(i+1))))),
+      el('tbody', {}, el('tr', {}, ...[...Array(20)].map((_,i) => el('td',{}, fmtMod(bonusProficiencia(i+1)))))),
+    ),
+  );
+
+  let resultadoElemento = null;
+  const wrapResultado = el('p', {class:'referencia'}, '');
+  const selAtq = el('select', {}); const selAlvo = el('select', {});
+  for(const el2 of [selAtq, selAlvo]) for(const e of CICLO_ELEMENTOS) el2.appendChild(el('option',{value:e}, e));
+  function atualizarElemento(){
+    const r = elementoSuperior(selAtq.value, selAlvo.value);
+    wrapResultado.textContent = r === 'vantagem' ? `${selAtq.value} é superior a ${selAlvo.value}: vantagem no ataque ou no Clash.`
+      : r === 'desvantagem' ? `${selAlvo.value} é superior a ${selAtq.value}: é o alvo que rola com vantagem.`
+      : 'Nenhuma vantagem entre essas duas naturezas.';
+  }
+  selAtq.onchange = atualizarElemento; selAlvo.onchange = atualizarElemento; selAlvo.selectedIndex = 1;
+  atualizarElemento();
+
+  const elemento = el('div', {class:'cartao'},
+    el('h2', {}, 'Vantagem Elemental'),
+    el('p', {class:'referencia'}, 'Ciclo fixo: ', CICLO_ELEMENTOS.join(' > '), ' > Fogo (de novo). Quem usa a natureza superior rola com vantagem no ataque ou no teste de Clash contra a inferior.'),
+    el('div', {class:'linha'}, el('div',{class:'campo cresce'},el('label',{},'Sua natureza'),selAtq), el('div',{class:'campo cresce'},el('label',{},'Natureza do alvo'),selAlvo)),
+    wrapResultado,
+  );
+
+  const clash = el('div', {class:'cartao'},
+    el('h2', {}, 'Mecânica de Clash'),
+    el('p', {class:'referencia'}, 'Quando dois Jutsu com a palavra-chave Clash se cruzam no mesmo turno, os dois lados fazem um teste oposto em vez de resolver normalmente:'),
+    el('ul', {class:'referencia'},
+      el('li', {}, el('b',{},'Clash de Ninjutsu: '), 'Ninshou (Inteligência) vs Ninshou.'),
+      el('li', {}, el('b',{},'Clash de Taijutsu: '), 'Artes Marciais (Força, ou Destreza/Inteligência se a classe permitir) vs Artes Marciais.'),
+    ),
+  );
+
+  const jutsuRegras = el('div', {class:'cartao'},
+    el('h2', {}, 'Ranks de Jutsu'),
+    el('p', {class:'referencia'}, 'Jutsu usam Rank (E a S) em vez de nível de magia — mesma escala de poder do D&D 5e por trás:'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Rank'), el('th',{},'Equivale a'))),
+      el('tbody', {}, ...RANKS_JUTSU.map(r => el('tr', {}, el('td',{},r.rank), el('td',{},r.equivalente)))),
+    ),
+  );
+
+  const condicoes = el('div', {class:'cartao'},
+    el('h2', {}, 'Condições'),
+    el('p', {class:'aviso'}, 'O livro usa quase as mesmas condições do D&D 5e (só o capítulo de dano/Clash/Vantagem Elemental muda). Lista de referência:'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Condição'), el('th',{},'Efeito'))),
+      el('tbody', {}, ...CONDICOES.map(c => el('tr', {}, el('td',{}, c.nome), el('td',{}, c.efeito)))),
+    ),
+  );
+
+  return [tabelaProf, elemento, clash, jutsuRegras, condicoes];
+}
+
+function renderNotas(p){
+  const linhasEquip = p.equipamento.map((it, i) => el('tr', {},
+    el('td', {}, el('input', {value:it.nome, oninput: e => { it.nome = e.target.value; salvar(); }})),
+    el('td', {}, el('input', {value:it.notas||'', oninput: e => { it.notas = e.target.value; salvar(); }})),
+    el('td', {}, el('button', {class:'perigo', onclick: () => { p.equipamento.splice(i,1); salvar(); render(); }}, '×')),
+  ));
+
+  const equip = el('div', {class:'cartao'},
+    el('h2', {}, 'Equipamento'),
+    el('p', {class:'aviso'}, 'Tabelas de armas/armaduras/itens chakra ainda fora do Hub — inventário livre por enquanto.'),
+    el('table', {class:'lista'},
+      el('thead', {}, el('tr', {}, el('th',{},'Item'), el('th',{},'Notas'), el('th',{},''))),
+      el('tbody', {}, ...linhasEquip),
+    ),
+    el('button', {class:'destaque', style:'margin-top:10px', onclick: () => { p.equipamento.push({nome:'Novo item', notas:''}); salvar(); render(); }}, '+ Item'),
+  );
+
+  const notas = el('div', {class:'cartao'},
+    el('h2', {}, 'Anotações gerais'),
+    campoArea('Notas livres (talentos, traços de clã, poderes de classe, etc.)', p.anotacoes, v => { p.anotacoes = v; salvar(); }),
+  );
+
+  return [equip, notas];
+}
+
+function render(){
+  renderAbas();
+  const p = personagemAtual();
+  const cont = document.getElementById('conteudo');
+  cont.innerHTML = '';
+  const partes = {
+    perfil: renderPerfil, atributos: renderAtributos, pericias: renderPericias,
+    recursos: renderRecursos, jutsu: renderJutsu, regras: renderRegras, notas: renderNotas,
+  }[abaAtual](p);
+  for(const parte of partes) cont.appendChild(parte);
+}
+
+function atualizarSeletor(){
+  const s = document.getElementById('seletorPersonagem');
+  s.innerHTML = '';
+  for(const p of lista) s.appendChild(el('option', {value:p.id, selected: p.id===idAtual?'selected':null}, p.nome));
+}
+
+document.getElementById('seletorPersonagem').addEventListener('change', e => { idAtual = e.target.value; render(); });
+document.getElementById('btnNovo').addEventListener('click', () => {
+  const nome = prompt('Nome do novo personagem:', 'Novo Personagem');
+  if(nome == null) return;
+  const p = personagemPadrao(nome);
+  lista.push(p); idAtual = p.id; salvar(); render();
+});
+document.getElementById('btnDuplicar').addEventListener('click', () => {
+  const atual = personagemAtual();
+  const copia = JSON.parse(JSON.stringify(atual));
+  copia.id = uid(); copia.nome = atual.nome + ' (cópia)';
+  lista.push(copia); idAtual = copia.id; salvar(); render();
+});
+document.getElementById('btnExcluir').addEventListener('click', () => {
+  if(lista.length <= 1){ alert('Precisa sobrar ao menos um personagem.'); return; }
+  if(!confirm(`Excluir "${personagemAtual().nome}"? Isso não pode ser desfeito.`)) return;
+  lista = lista.filter(p => p.id !== idAtual);
+  idAtual = lista[0].id; salvar(); render();
+});
+document.getElementById('btnExportar').addEventListener('click', () => {
+  const p = personagemAtual();
+  const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `naruto5e-${(p.nome||'personagem').replace(/\s+/g,'-').toLowerCase()}.json`;
+  a.click();
+});
+document.getElementById('btnImportar').addEventListener('click', () => document.getElementById('arquivoImportar').click());
+document.getElementById('arquivoImportar').addEventListener('change', (e) => {
+  const arquivo = e.target.files[0];
+  if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    try{
+      const p = JSON.parse(leitor.result);
+      p.id = uid();
+      lista.push(p); idAtual = p.id; salvar(); render();
+    }catch(err){ alert('Arquivo inválido.'); }
+  };
+  leitor.readAsText(arquivo);
+  e.target.value = '';
+});
+
+atualizarSeletor();
+render();
+</script>
+</body>
+</html>

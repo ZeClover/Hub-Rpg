@@ -1676,6 +1676,35 @@ passando.
       inventado); Sistema do Sávio ganhou "Ataques prontos" na aba
       Combate. Testado com Playwright em cada fatia; `tsc`, lint, build e
       os 298 testes automáticos continuam limpos
+- [x] **Naruto 5e — chassi** (18/09/2026) — decisão #134. Homebrew de fã que
+      reveste D&D 5ª Edição com o universo Naruto. O material fonte (9
+      arquivos numa pasta do Drive) não é um livro só: Clãs vivem no
+      "Compêndio de Estudos da Tsunade", Classes no "Compêndio de
+      Observação do Orochimaru", Jutsu no "Compêndio de Jutsu do Jiraiya" —
+      nenhum dos três lido ainda. `public/naruto-5e.html`, localStorage
+      puro (Modo Hub fica pra depois, mesmo início do Sistema SAO). Cobre
+      o que está inteiro no livro principal: 6 atributos (mesmo array
+      padrão do D&D), 21 perícias (Ninshou no lugar de Arcana; Controle de
+      Chakra, Ilusões, Artes Marciais e Ofício são novas), Bônus de
+      Proficiência com curva própria (+3 a partir do nível 1, sobe a cada 3
+      níveis), Chakra como recurso paralelo ao PV, Defesa/Iniciativa com
+      fórmula própria (metade do bônus de proficiência entra na conta),
+      resistência sem proficiência somando metade do bônus (não fica em
+      +0), Vantagem Elemental (ciclo Fogo>Vento>Raio>Terra>Água), Clash
+      como referência, os 10 Antecedentes do livro com Vontade de Fogo,
+      moeda Ryo, e as condições do D&D 5e (o livro diz que o capítulo de
+      Combate é "quase idêntico"). Clã, Classe e Jutsu ficam texto livre
+      até as fatias que leem os três Compêndios. Bug pego pelo teste
+      automatizado: o helper de montar elementos confundia `null` com
+      "sem atributo" e todo checkbox nascia marcado — corrigido. Testado
+      com Playwright direto no arquivo; `tsc`, lint, build e os 298 testes
+      automáticos continuam limpos.
+- [ ] Naruto 5e — Clãs (Compêndio de Estudos da Tsunade), Classes
+      (Compêndio de Observação do Orochimaru), Jutsu (Compêndio de Jutsu
+      do Jiraiya), Equipamento/Itens Chakra, Talentos, Ficha de
+      Inimigo/Bingo Book, Escudo do Mestre/Kage Guide, Modo Hub — fatias
+      futuras (decisão #26), cada uma lendo o Compêndio correspondente
+      quando for a vez dela
 
 ---
 

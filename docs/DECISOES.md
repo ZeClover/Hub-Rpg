@@ -5942,6 +5942,103 @@ automáticos continuam limpos. Não criei teste de banco pra este lote
 (nenhuma rota de API deste módulo tinha teste automático antes — só as
 funções puras de permissão, que não mudaram de comportamento aqui).
 
+## 134. Naruto 5e vira sistema novo do Hub — chassi (18/09/2026)
+
+Pedido do Zé: trazer o **Naruto 5e**, um homebrew de fã que reveste as regras
+de D&D 5ª Edição com o universo Naruto, como sistema novo do Hub (decisão
+#17). Material fonte veio de uma pasta do Google Drive com 9 arquivos.
+
+**O material não é um livro só — são sete.** Ler o "Naruto 5e - Full
+Document.pdf" (17 MB, extraído inteiro pela ferramenta do Drive desta vez,
+sem o limite de página que travou o Fabula Ultima) mostrou que o próprio
+livro avisa: Clãs (30+ opções) moveram pro "Tsunade's Studies Compendium.pdf"
+(30 MB) e Classes (50+ opções) pro "Orochimaru's Observation
+Compendium.pdf" (41 MB) — cada um virou um livro à parte pra não inchar o
+manual principal. Sobram ainda: "Jiraiya's Jutsu Compendium.pdf" (catálogo
+de jutsu), "Naruto 5e - Bingo Book.pdf" (bestiário), "Official Naruto 5e
+Kage Guide.pdf" (livro do mestre), "- Chakra Enhanced Items -.pdf" (itens
+mágicos), "- Class Mod Guide -.pdf" (variantes de classe) e uma planilha
+"N5E Adversary Builder.xlsx" (calculadora de inimigo). Nenhum desses seis
+foi lido ainda — cada um vira a fonte de uma fatia futura.
+
+**Restrição de direito autoral, redobrada (decisão do CLAUDE.md sobre Fabula
+Ultima, mesma lógica).** Naruto 5e usa IP do Kishimoto/Shueisha **e** texto
+de regra da Wizards of the Coast (sob licença de conteúdo comunitário da
+DMs Guild) — nenhum dos dois é do Hub pra reproduzir. Tudo que entrou na
+ficha é mecânica reescrita em português, nunca frase traduzida do livro;
+nomes de traço/antecedente também foram parafraseados, não copiados.
+
+**Fatia 1 (esta) — o chassi numérico**, em `public/naruto-5e.html`
+(localStorage puro por enquanto, sem Modo Hub — mesmo ponto de partida que
+o Sistema SAO teve). Cobre só o que está inteiro no livro principal, sem
+depender dos Compêndios ainda não lidos:
+
+- **6 atributos**, mesmo array padrão do D&D 5e (15/14/13/12/11/10) e mesma
+  compra de pontos — conferido no capítulo de criação de personagem.
+- **21 perícias**: Arcana virou Ninshou; Controle de Chakra (a única
+  perícia de Constituição do jogo), Ilusões, Artes Marciais e Ofício são
+  as quatro novas; Religião saiu. Atributo de cada uma conferido na tabela
+  do livro ("Strength: Athletics, Martial Arts…").
+- **Bônus de Proficiência com curva própria**: começa em +3 (não +2) e sobe
+  a cada 3 níveis — tabela "Character Advancement" copiada linha a linha
+  (+3 níveis 1-3, +4 níveis 4-6, ... +9 níveis 19-20).
+- **Chakra como recurso paralelo ao PV**: mesmo Dado de Vida/Dado de Chakra
+  por classe, mesmo cálculo (fixo por nível, não rolado — a variante
+  "rolar o dado" existe no livro mas não é o padrão).
+- **Defesa e Iniciativa com fórmula própria**, diferente do D&D puro:
+  Defesa = 10 + Destreza + metade do bônus de proficiência (arred. p/
+  baixo) + armadura; Iniciativa = Destreza + metade do bônus de
+  proficiência (no D&D 5e é só o modificador de Destreza).
+- **Resistência sem proficiência não fica em +0**: soma metade do bônus de
+  proficiência arredondado pra baixo — regra explícita do livro, ausente
+  no D&D 5e.
+- **Vantagem Elemental**: ciclo fixo Fogo>Vento>Raio>Terra>Água>Fogo; quem
+  usa o elemento superior rola com vantagem no ataque ou no Clash.
+- **Mecânica de Clash** (referência): Ninjutsu clash é Ninshou×Ninshou,
+  Taijutsu clash é Artes Marciais×Artes Marciais — teste oposto em vez de
+  resolver o jutsu normalmente.
+- **Antecedentes**: os 10 do capítulo "Ambições & Antecedentes" (não move
+  pra nenhum Compêndio), cada um com 2 perícias, um traço parafraseado e
+  escolha entre +1 de atributo ou um Talento (catálogo de Talentos ainda
+  fora do Hub — fica anotado em Notas por enquanto).
+- **Vontade de Fogo**: o "inspiration" do sistema, até 3 pontos, com os
+  usos do livro resumidos como referência.
+- **Ryo**: moeda única (≈ 1 Ryo = 1 peça de ouro do D&D).
+- **Condições**: o livro é explícito que o capítulo de Combate é "quase
+  idêntico" ao D&D 5e fora de dano/Clash/Vantagem Elemental — por isso a
+  ficha reaproveita (copiada pro módulo do Naruto 5e, não importada de
+  `dnd-5e.html` — decisão #17 quer cada sistema com sua própria cópia) a
+  mesma lista de condições já traduzida como mecânica que o D&D 5e do Hub
+  usa.
+
+**Clã, Classe e Jutsu ficam texto livre por enquanto** — os catálogos reais
+vivem nos três Compêndios ainda não lidos. CD/ataque de Jutsu já calculam
+(Ninjutsu sempre por Inteligência; Taijutsu e Genjutsu com o atributo
+escolhido à mão, já que variam por classe), e existe uma lista solta de
+"Jutsu conhecidos" pra anotar à mão, do mesmo jeito que o SAO começou com
+"golpe em branco" antes do catálogo existir.
+
+**Registrado em `src/lib/sistemas.ts`** como `situacao: "em-construcao"` e
+`salvaNoHub: false` — não entra em "+ Criar ficha" nem como opção de
+campanha até ganhar Modo Hub numa fatia futura, mesmo mecanismo que já
+existe pros outros sistemas.
+
+**Bug pego pelo teste automatizado no caminho**: o helper `el()` que monta
+os elementos da ficha usava `element.setAttribute(chave, valor)` mesmo
+quando `valor` era `null` (pra "sem checked"/"sem selected" condicional) —
+`setAttribute(k, null)` vira a string `"null"`, e por presença de atributo
+(não pelo texto) todo checkbox nascia marcado. Corrigido pulando a
+chamada quando o valor é `null`/`undefined`/`false`.
+
+Testado com Playwright direto no arquivo (sem precisar do `next dev`):
+troca de aba, edição de atributo recalculando PV/Chakra/Defesa/Iniciativa/
+Bônus de Proficiência em dois níveis diferentes, checkbox de perícia
+mudando o total (só depois da correção acima), rolagem de d20, seleção de
+antecedente mostrando o traço certo, Vantagem Elemental calculando o ciclo,
+Novo/Duplicar/Excluir personagem, dano aplicado no PV, e tudo sobrevivendo
+a um recarregamento de página (localStorage). `tsc --noEmit`, `npm run
+lint`, `npm run build` e os 298 testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
