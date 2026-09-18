@@ -195,6 +195,107 @@ const PERICIAS = [
 ];
 function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 
+/* Clãs (Compêndio de Estudos da Tsunade) — mecânica traduzida e resumida
+   pelo Hub. O compêndio lista mais de 30 clãs, mas a extração do PDF parou
+   no meio (mesma trava que já tinha acontecido com o Fabula Ultima): só os
+   primeiros 15, em ordem alfabética até Hyūga, vieram completos. O resto
+   (Iburi em diante) entra numa fatia futura, quando o resto do PDF chegar.
+   Quando o clã dá bônus "ou" num atributo/afinidade, o texto conta as
+   opções — a ficha não impõe escolha automática no atributo (mesmo
+   princípio do bônus de Antecedente: fica como referência pro jogador
+   aplicar à mão no campo de Atributos). */
+const CLAS = [
+  {id:'aburame', nome:'Aburame', bonus:'+2 Inteligência, +1 Sabedoria', velocidade:9,
+    pericias:['natureza','adestrarAnimais'],
+    traco:'Fala com insetos (idioma extra) e começa sabendo 1 Ninjutsu D-Rank exclusivo do clã, sem contar nos jutsu conhecidos.'},
+  {id:'akimichi', nome:'Akimichi', bonus:'+2 Constituição, +1 Força', velocidade:9,
+    pericias:['atletismo','sobrevivencia'],
+    traco:'Converte um recurso próprio do clã (Calorias) em Chakra pra ativar os jutsu do clã — mecânica completa fica pra quando o catálogo de jutsu do clã entrar no Hub.'},
+  {id:'bakuton', nome:'Bakuton (Liberação Explosiva)', bonus:'+2 Constituição, +1 Inteligência', velocidade:9,
+    pericias:['controleChakra'],
+    traco:'Perícia extra à escolha entre Ninshou ou Artes Marciais. Começa com afinidade elemental de Terra ou Raio (escolha) — base dos jutsu de Liberação Explosiva do clã.'},
+  {id:'chinoike', nome:'Chinoike (Arquitetos de Sangue)', bonus:'+2 Sabedoria ou Inteligência, +1 Destreza', velocidade:9,
+    pericias:['ilusoes'],
+    traco:'Perícia extra à escolha entre Controle de Chakra ou Ninshou. Começa com afinidade de Água — clã que manipula o próprio sangue pra construir armas e estruturas.'},
+  {id:'fuma', nome:'Fūma', bonus:'+2 Destreza, +1 Sabedoria', velocidade:9,
+    pericias:['percepcao','artesMarciais'],
+    traco:'Proficiência com todas as armas à distância simples e marciais, e com armas que podem ser arremessadas.'},
+  {id:'fuushin', nome:'Fūshin', bonus:'+2 Inteligência, +1 Destreza', velocidade:9,
+    pericias:['ninshou','controleChakra'],
+    traco:'Afinidade de Vento de nascença; conta a Inteligência como +2 mais alta só pra liberar jutsu de Vento de rank B ou maior.'},
+  {id:'futton', nome:'Futton (Liberação Ebulição)', bonus:'+2 Inteligência ou Força, +1 Constituição', velocidade:9,
+    pericias:['artesMarciais'],
+    traco:'Perícia extra à escolha entre Ninshou ou Atletismo. Começa com afinidade de Água ou Fogo (escolha) — base da Liberação Ebulição do clã.'},
+  {id:'genwa', nome:'Genwa', bonus:'+2 Inteligência, +1 Destreza', velocidade:9,
+    pericias:['ninshou','prestidigitacao'],
+    traco:'Idioma extra "Fala-Máquina" (entende e se comunica com máquinas). Afinidade de Raio de nascença.'},
+  {id:'hanami', nome:'Hanami', bonus:'+2 Força, +1 Sabedoria ou Inteligência', velocidade:9,
+    pericias:['artesMarciais','medicina'],
+    traco:'Pode aprender jutsu com a palavra-chave Médico mesmo sem ser de uma classe médica.'},
+  {id:'hatake', nome:'Hatake', bonus:'+2 Inteligência, +1 Carisma', velocidade:10.5,
+    pericias:['ninshou','percepcao'],
+    traco:'Afinidade de Raio de nascença; reduz o requisito de atributo pra aprender e lançar jutsu de Raio.'},
+  {id:'hebi', nome:'Hebi (Cobra)', bonus:'+2 Força ou Destreza, +1 Constituição', velocidade:9,
+    pericias:['sobrevivencia','adestrarAnimais'],
+    traco:'Clã de mercenários que mistura lâmina e peçonha: proficiência com Katana, Espada Longa e Odachi, e com o Kit de Veneno.'},
+  {id:'hoshi', nome:'Hoshi', bonus:'+2 Constituição, +1 Inteligência', velocidade:9,
+    pericias:['controleChakra','ninshou'],
+    traco:'Aprende 1 Hijutsu D-Rank exclusivo do clã a mais, sem contar nos jutsu conhecidos.'},
+  {id:'hoshigaki', nome:'Hoshigaki', bonus:'+2 Constituição, +1 Força', velocidade:9,
+    pericias:['adestrarAnimais','atletismo'],
+    traco:'Visão no escuro até 9m; proficiência com armas pesadas (Machado Grande, Naginata, Odachi, Foice, Tetsubo); afinidade de Água com requisito de atributo reduzido.'},
+  {id:'hozuki', nome:'Hōzuki', bonus:'+2 Força, +1 Inteligência', velocidade:9,
+    pericias:['artesMarciais','controleChakra'],
+    traco:'Velocidade de natação 9m; afinidade de Água de nascença; não pode aprender nem usar Ninjutsu de Raio.'},
+  {id:'hyuga', nome:'Hyūga', bonus:'+2 Sabedoria, +1 Destreza', velocidade:9,
+    pericias:['percepcao','intuicao'],
+    traco:'Visão no escuro até 9m (Byakugan) e 1 Jutsu D-Rank exclusivo do clã a mais, sem contar nos jutsu conhecidos.'},
+];
+function cla(id){ return CLAS.find(c => c.id === id) || null; }
+
+/* Classes (Compêndio de Observação do Orochimaru) — mesma trava de extração
+   do PDF que os Clãs: o livro lista 11 classes (Genjutsu Specialist até
+   Science-Nin), mas só as 5 primeiras vieram completas antes do corte
+   (Scout-Nin em diante ficou de fora). CD/ataque de Ninjutsu/Genjutsu/
+   Taijutsu conferidos nas 5: são sempre Inteligência/Sabedoria/Força — por
+   isso esses viraram o padrão da aba Jutsu (que já permitia trocar à mão
+   pra quando uma classe futura usar outro atributo). Escolhas de perícia
+   "escolha N de..." ficam como texto de referência, não marcadas sozinhas
+   (é decisão do jogador, igual as escolhas "ou" dos Clãs). */
+const CLASSES = [
+  {id:'genjutsuSpecialist', nome:'Genjutsu Specialist', tier:'Baixo (2-3 recursos extras)',
+    dadoVida:'d6', dadoChakra:'d12', resistencias:['constituicao','sabedoria','carisma'],
+    proficiencias:'Armadura leve; armas simples; Kit de Disfarce e Kit de Veneno.',
+    periciaFixa:'ilusoes', periciasEscolha:'Escolha 3 entre Controle de Chakra, Enganação, História, Intuição, Intimidação, Investigação, Percepção, Persuasão, Furtividade.',
+    subclasses:{nome:'Voto de Genjutsu', opcoes:['Beguiler','Corrupt Thoughts','Illusionist','Layered Reality','Misty Distortionist','Time Slipper','Siren']},
+    traco:'Chakra Disruption: 1×/descanso, quando um Genjutsu seu afeta alguém, o próximo jutsu que essa criatura lançar fica mais caro em Chakra.'},
+  {id:'hunterNin', nome:'Hunter-Nin', tier:'Baixo (2-3 recursos extras)',
+    dadoVida:'d10', dadoChakra:'d8', resistencias:['destreza','inteligencia','sabedoria'],
+    proficiencias:'Armadura leve; quase todas as armas simples e várias marciais (Katana, Odachi, Foice etc.); Kit de Disfarce, Perícia Forense e Falsificação.',
+    periciaFixa:'furtividade', periciasEscolha:'Escolha 4 perícias quaisquer.',
+    subclasses:{nome:'Credo do Caçador', opcoes:['Blade Warden','Necrotic Hand','Grave Stalker','Arsenalist','Undertaker','Vice Agent','Void Walker','Wolves Legacy']},
+    traco:'Swift Response: ignora terreno difícil e soma o Bônus de Proficiência inteiro (não a metade) na Iniciativa.'},
+  {id:'intelligenceOperative', nome:'Intelligence Operative', tier:'Médio (1 recurso extra)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['destreza','inteligencia','carisma'],
+    proficiencias:'Armadura leve e média; armas simples, Fuma-Shuriken, Manoplas; 4 kits à escolha.',
+    periciaFixa:'investigacao', periciasEscolha:'Escolha 3 entre Controle de Chakra, Ofício, Ninshou, Persuasão, Ilusões, Intuição, Intimidação, História, Percepção, Artes Marciais.',
+    subclasses:{nome:'Estratégia Mestra', opcoes:['Azure Analyst','Calculated Strategist','Grave Controller','Interrogationist','Mastermind Strategist','Precognitive','Sensory','Shadowhand','Tactical Strategist']},
+    traco:'Strategic Timing: usa Inteligência no lugar de Destreza pra rolar Iniciativa.'},
+  {id:'medicalNin', nome:'Medical-Nin', tier:'Alto (0 recursos extras)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['forca','sabedoria','carisma'],
+    proficiencias:'Armadura leve e média; armas simples; Kit de Medicina e Kit de Veneno.',
+    periciaFixa:'medicina', periciasEscolha:'Controle de Chakra fixa, mais escolha 2 entre História, Intuição, Percepção, Ilusões, Ninshou.',
+    subclasses:{nome:'Preceito da Medicina', opcoes:['Adept Medic','Combat Medic','Transmuter']},
+    traco:'Medical Ninjutsu: jutsu com a palavra-chave Médico podem usar Sabedoria no ataque/dano/CD em vez de Inteligência.'},
+  {id:'ninjutsuSpecialist', nome:'Ninjutsu Specialist', tier:'Alto (0 recursos extras)',
+    dadoVida:'d6', dadoChakra:'d12', resistencias:['inteligencia','sabedoria','carisma'],
+    proficiencias:'Armadura leve; armas simples; Kit de Alquimista e Kit de Hacker.',
+    periciaFixa:'ninshou', periciasEscolha:'Escolha 4 entre Intuição, Investigação, História, Furtividade, Percepção, Controle de Chakra.',
+    subclasses:{nome:'Foco de Ninjutsu', opcoes:['Blaze Walker','Hijutsu Elitist','Sanguine Master','Scribe Master','Stone Crusher','Storm Terror','Summoner','The Professor','Trace Talent','Tsunami']},
+    traco:'Chakra Recovery: 1×/descanso curto, reduz à metade o custo do próximo Ninjutsu lançado.'},
+];
+function classeDoCatalogo(id){ return CLASSES.find(c => c.id === id) || null; }
+
 /* Antecedentes (cap. "Ambições & Antecedentes") — mecânica traduzida e
    resumida pelo Hub, sem copiar o texto do livro (Naruto 5e é fã-feito
    sobre D&D 5e, então nem o fluff é nosso pra reaproveitar). */
@@ -288,7 +389,9 @@ function personagemPadrao(nome){
     id: uid(),
     nome: nome || 'Novo Personagem',
     jogador: '',
+    claId: '',
     cla: '',
+    classeId: '',
     classe: '',
     antecedenteId: '',
     antecedenteBonusAtributo: '',
@@ -452,16 +555,63 @@ function renderPerfil(p){
     el('div', {class:'grade g2'},
       campoTexto('Nome do personagem', p.nome, v => { p.nome = v; salvar(); render(); }),
       campoTexto('Jogador(a)', p.jogador, v => { p.jogador = v; salvar(); }),
-      campoTexto('Clã', p.cla, v => { p.cla = v; salvar(); }),
-      campoTexto('Classe', p.classe, v => { p.classe = v; salvar(); }),
     ),
-    el('p', {class:'aviso'}, 'Clã e Classe ainda são texto livre — os catálogos completos (Compêndio de Estudos da Tsunade e Compêndio de Observação do Orochimaru) entram em fatias futuras.'),
     el('div', {class:'grade g3'},
       campoTexto('Nível (1–20)', p.nivel, v => { p.nivel = clamp(Number(v)||1,1,20); salvar(); render(); }, 'number'),
       campoTexto('XP atual', p.xp, v => { p.xp = Math.max(0, Number(v)||0); salvar(); render(); }, 'number'),
       el('div', {class:'campo'}, el('label',{}, 'XP p/ o próximo nível'), el('p', {}, String(xpParaProximoNivel(p)))),
     ),
   );
+
+  const opcoesCla = [['', '— outro (digitar abaixo) —'], ...CLAS.map(c => [c.id, c.nome])];
+  const claEscolhido = cla(p.claId);
+  const cCla = el('div', {class:'cartao'},
+    el('h2', {}, 'Clã'),
+    campoSelect('Clã', p.claId, opcoesCla, v => {
+      p.claId = v;
+      const c = cla(v);
+      if(c) for(const id of c.pericias) p.periciasProficientes[id] = true;
+      salvar(); render();
+    }),
+  );
+  if(claEscolhido){
+    cCla.appendChild(el('p', {class:'referencia'}, el('b',{},'Bônus recomendado: '), claEscolhido.bonus, ` · Deslocamento ${claEscolhido.velocidade}m`));
+    cCla.appendChild(el('p', {class:'referencia'}, el('b',{},'Perícias já marcadas: '), claEscolhido.pericias.map(id => pericia(id).nome).join(' / ')));
+    cCla.appendChild(el('p', {class:'referencia'}, claEscolhido.traco));
+    cCla.appendChild(el('p', {class:'aviso'}, 'Bônus de atributo é referência — some você mesmo no campo de Atributos (mesma lógica do bônus de Antecedente).'));
+  } else {
+    cCla.appendChild(campoTexto('Nome do clã (fora do catálogo por enquanto)', p.cla, v => { p.cla = v; salvar(); }));
+  }
+  cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com 15 dos ~38 clãs do Compêndio de Estudos da Tsunade — a extração do PDF parou em Hyūga. Os demais (Iburi em diante) entram quando o resto do livro chegar.`));
+
+  const opcoesClasse = [['', '— outro (digitar abaixo) —'], ...CLASSES.map(c => [c.id, c.nome])];
+  const classeEscolhida = classeDoCatalogo(p.classeId);
+  const cClasse = el('div', {class:'cartao'},
+    el('h2', {}, 'Classe'),
+    campoSelect('Classe', p.classeId, opcoesClasse, v => {
+      p.classeId = v;
+      const c = classeDoCatalogo(v);
+      if(c){
+        p.recursos.dadoVida = c.dadoVida;
+        p.recursos.dadoChakra = c.dadoChakra;
+        p.periciasProficientes[c.periciaFixa] = true;
+        for(const at of c.resistencias) p.salvamentosProficientes[at] = true;
+      }
+      salvar(); render();
+    }),
+  );
+  if(classeEscolhida){
+    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Tier de Jutsu: '), classeEscolhida.tier,
+      ` · Dado de Vida ${classeEscolhida.dadoVida} · Dado de Chakra ${classeEscolhida.dadoChakra}`));
+    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Resistências: '), classeEscolhida.resistencias.map(id => atributo(id).nome).join(' / '), ' (já marcadas)'));
+    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Perícia fixa: '), pericia(classeEscolhida.periciaFixa).nome, ' (já marcada). ', classeEscolhida.periciasEscolha));
+    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Proficiências: '), classeEscolhida.proficiencias));
+    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},`${classeEscolhida.subclasses.nome}: `), classeEscolhida.subclasses.opcoes.join(' / '), ' — só os nomes por enquanto, mecânica de cada uma é fatia futura.'));
+    cClasse.appendChild(el('p', {class:'referencia'}, classeEscolhida.traco));
+  } else {
+    cClasse.appendChild(campoTexto('Nome da classe (fora do catálogo por enquanto)', p.classe, v => { p.classe = v; salvar(); }));
+  }
+  cClasse.appendChild(el('p', {class:'aviso'}, 'Catálogo com 5 das 11 classes do Compêndio de Observação do Orochimaru — a extração do PDF parou no meio do Ninjutsu Specialist. Scout-Nin, Taijutsu/Weapon Specialist, Puppet Master, Cooking-Nin e Science-Nin entram quando o resto do livro chegar.'));
 
   const opcoesAntecedente = [['', '— nenhum —'], ...ANTECEDENTES.map(a => [a.id, a.nome])];
   const ant = antecedente(p.antecedenteId);
@@ -498,7 +648,7 @@ function renderPerfil(p){
     campoArea('Medos', p.medos, v => { p.medos = v; salvar(); }),
   );
 
-  return [c1, c2, c3, c4];
+  return [c1, cCla, cClasse, c2, c3, c4];
 }
 
 function renderAtributos(p){
@@ -604,7 +754,7 @@ function renderRecursos(p){
 
   const dados = el('div', {class:'cartao'},
     el('h2', {}, 'Dados de recurso'),
-    el('p', {class:'aviso'}, 'Vêm da Classe (ainda não catalogada) — escolha manual por enquanto.'),
+    el('p', {class:'aviso'}, 'Preenchidos sozinhos quando a Classe está no catálogo (aba Perfil); editáveis à mão pras classes que ainda não entraram.'),
     el('div', {class:'grade g2'},
       campoSelect('Dado de Vida', p.recursos.dadoVida, DADOS.map(d => [d,d]), v => { p.recursos.dadoVida = v; salvar(); render(); }),
       campoSelect('Dado de Chakra', p.recursos.dadoChakra, DADOS.map(d => [d,d]), v => { p.recursos.dadoChakra = v; salvar(); render(); }),
@@ -647,7 +797,7 @@ function renderJutsu(p){
 
   const info = el('div', {class:'cartao'},
     el('h2', {}, 'CD e ataque de Jutsu'),
-    el('p', {class:'aviso'}, 'Ninjutsu sempre usa Inteligência. Taijutsu e Genjutsu variam por classe (ainda não catalogada) — escolha o atributo usado pela sua classe.'),
+    el('p', {class:'aviso'}, 'Nas 5 classes já lidas, a fórmula é sempre a mesma: Ninjutsu por Inteligência, Genjutsu por Sabedoria, Taijutsu por Força — por isso esse é o padrão abaixo. O livro avisa que outra classe pode usar atributo diferente, então o seletor continua manual.'),
     el('div', {class:'grade g2'},
       el('div', {class:'estat'}, el('span',{class:'rot'},'Ninjutsu (Inteligência)'),
         el('span', {class:'num'}, `CD ${cdJutsu(p,'inteligencia')} · +${ataqueJutsu(p,'inteligencia')}`)),

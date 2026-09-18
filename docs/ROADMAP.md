@@ -1699,12 +1699,27 @@ passando.
       "sem atributo" e todo checkbox nascia marcado — corrigido. Testado
       com Playwright direto no arquivo; `tsc`, lint, build e os 298 testes
       automáticos continuam limpos.
-- [ ] Naruto 5e — Clãs (Compêndio de Estudos da Tsunade), Classes
-      (Compêndio de Observação do Orochimaru), Jutsu (Compêndio de Jutsu
-      do Jiraiya), Equipamento/Itens Chakra, Talentos, Ficha de
-      Inimigo/Bingo Book, Escudo do Mestre/Kage Guide, Modo Hub — fatias
-      futuras (decisão #26), cada uma lendo o Compêndio correspondente
-      quando for a vez dela
+- [x] **Naruto 5e — Clãs e Classes, parcial** (18/09/2026) — decisão #135.
+      Leu o Compêndio de Estudos da Tsunade e o de Observação do
+      Orochimaru — os dois bateram na mesma trava de extração de PDF
+      grande do Fabula Ultima, sem terminar. Entrou: 15 dos ~38 Clãs
+      (Aburame a Hyūga, com bônus recomendado, deslocamento, perícias
+      automáticas e traço) e 5 das 11 Classes (Genjutsu Specialist,
+      Hunter-Nin, Intelligence Operative, Medical-Nin, Ninjutsu
+      Specialist, com Dado de Vida/Chakra preenchendo sozinho, 3
+      resistências e perícia fixa marcadas, e nomes das subclasses de
+      cada uma). Confirmado nas 5 classes: Ninjutsu sempre por
+      Inteligência, Genjutsu por Sabedoria, Taijutsu por Força. Clã/Classe
+      fora do catálogo continuam texto livre. Testado com Playwright;
+      `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki) e Classes (Scout-Nin,
+      Taijutsu/Weapon Specialist, Puppet Master, Cooking-Nin,
+      Science-Nin), Jutsu (Compêndio de Jutsu do Jiraiya — ainda nem
+      aberto), Equipamento/Itens Chakra, Talentos, Guia de Modificação de
+      Classe, Ficha de Inimigo/Bingo Book, Escudo do Mestre/Kage Guide,
+      Modo Hub — fatias futuras (decisão #26); os PDFs que travam a
+      extração automática precisam vir recortados por trecho como anexo
+      no chat, mesmo caminho que fechou o Fabula Ultima
 
 ---
 

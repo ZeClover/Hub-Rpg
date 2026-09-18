@@ -6039,6 +6039,70 @@ Novo/Duplicar/Excluir personagem, dano aplicado no PV, e tudo sobrevivendo
 a um recarregamento de página (localStorage). `tsc --noEmit`, `npm run
 lint`, `npm run build` e os 298 testes automáticos continuam limpos.
 
+## 135. Naruto 5e — Clãs e Classes, parcial (18/09/2026)
+
+Continuação da decisão #134, pedido do Zé pra já avançar no que der: li o
+Compêndio de Estudos da Tsunade (Clãs) e o Compêndio de Observação do
+Orochimaru (Classes). Os dois bateram na **mesma trava de extração** que já
+tinha travado o Fabula Ultima (decisão registrada no ROADMAP) — a
+ferramenta do Drive para no meio de PDFs muito longos, sem avisar
+explicitamente desta vez (só some o conteúdo depois de um ponto):
+
+- **Tsunade (Clãs, 30 MB)**: sumário completo veio (confirma ~38 clãs no
+  total), mas o corpo do texto só veio inteiro até o clã **Hyūga** — 15
+  clãs de verdade, em ordem alfabética (Aburame até Hyūga). De Iburi em
+  diante, nada.
+- **Orochimaru (Classes, 41 MB)**: o livro lista **11 classes** (não mais
+  as 9 originais — Puppet Master, Cooking-Nin e Science-Nin foram
+  adicionadas depois). Vieram completas as 5 primeiras — Genjutsu
+  Specialist, Hunter-Nin, Intelligence Operative, Medical-Nin e Ninjutsu
+  Specialist (esta cortada bem no fim, no meio da lista de opções de
+  "Ninjutsu Focus"). De Scout-Nin em diante, nada.
+
+**O que entrou na ficha:**
+
+- **Catálogo de Clãs** (`CLAS`, 15 entradas): bônus de atributo recomendado,
+  deslocamento, perícias garantidas (marcadas sozinhas ao escolher o clã) e
+  o traço de destaque, parafraseado. Bônus de atributo fica só como texto
+  de referência — o jogador soma à mão no campo de Atributos, mesma lógica
+  já usada pro bônus de Antecedente (decisão #134), pra não duplicar
+  conta escondida.
+- **Catálogo de Classes** (`CLASSES`, 5 entradas): Dado de Vida, Dado de
+  Chakra (preenchem sozinhos os campos da aba Recursos), as 3 resistências
+  proficientes de cada classe (marcadas sozinhas — confirma a regra
+  "mínimo 3 saves" da decisão #134), perícia fixa (marcada sozinha) mais o
+  texto de "escolha N entre X/Y/Z" pro resto (isso fica com o jogador,
+  não são poucas opções fixas pra chutar uma), proficiências de
+  armadura/arma/kit como referência, e o nome das opções de subclasse
+  (Voto de Genjutsu, Credo do Caçador, Estratégia Mestra, Preceito da
+  Medicina, Foco de Ninjutsu) — só os nomes, a mecânica de cada uma é
+  fatia futura.
+- **Confirmado nas 5 classes lidas**: CD/ataque de Ninjutsu sempre por
+  Inteligência, Genjutsu sempre por Sabedoria, Taijutsu sempre por Força —
+  bate exatamente com o padrão que a ficha já tinha adotado "no escuro" na
+  decisão #134. Textos da aba Jutsu atualizados pra dizer que isso está
+  confirmado, não chutado, mantendo o seletor manual pro dia que uma
+  classe divergente aparecer (o próprio livro avisa que pode acontecer).
+- Clã e Classe fora do catálogo continuam como campo de texto livre (opção
+  "— outro —" no seletor), sem perder o que já foi digitado antes desta
+  fatia.
+
+**O que ainda não foi tocado**: os ~23 clãs restantes (Iburi a Yuki +
+"Bloodline Latents"/"Legacy Content"), as 6 classes restantes (Scout-Nin,
+Taijutsu Specialist, Weapon Specialist, Puppet Master, Cooking-Nin,
+Science-Nin), o catálogo de Jutsu inteiro (Compêndio de Jutsu do Jiraiya —
+nem aberto ainda), Itens de Chakra, Guia de Modificação de Classe, Bingo
+Book, Kage Guide e a planilha de Adversários. Pedido feito ao Zé: mandar
+esses PDFs recortados por trecho como anexo no chat (mesmo caminho que
+resolveu o Fabula Ultima) pra fechar o resto sem essa trava de extração.
+
+Testado com Playwright: escolher um Clã marca as perícias certas e mostra
+o traço; escolher uma Classe marca perícia fixa + as 3 resistências e
+ajusta os Dados de Vida/Chakra sozinho; tudo sobrevive a um recarregamento
+de página; os testes anteriores (aba Perícias, Antecedente, multi-
+personagem, dano no PV) continuam passando sem regressão. `tsc --noEmit` e
+`npm run lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
