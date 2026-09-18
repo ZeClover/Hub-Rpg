@@ -6300,6 +6300,21 @@ Testado com Playwright: catálogo mostra 162 opções (1 placeholder + 161
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores (incluindo o Modo Guiado) sem regressão.
 
+## 142. Naruto 5e — Catálogo de Jutsu, Rank A do Não-Elemental (18/09/2026)
+
+Continuação da decisão #141. As 24 jutsu do Ninjutsu Não-Elemental Rank A
+entraram no `JUTSU_CATALOGO` — falta só o Rank S pra fechar o Não-Elemental
+inteiro (185 das ~1400 entradas totais).
+
+Traz o Deus do Trovão Voador (a técnica de teleporte icônica da série) e a
+Técnica de Fissão, um Kinjutsu que divide o corpo do usuário em dois com
+risco real de dano permanente se o clone morrer antes de se fundirem de
+volta — mantido fiel ao livro, mecânica só, sem o fluff.
+
+Testado com Playwright: catálogo mostra 186 opções (1 placeholder + 185
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

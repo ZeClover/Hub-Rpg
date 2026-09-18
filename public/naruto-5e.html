@@ -425,11 +425,11 @@ const RANKS_JUTSU = [
    nas 341 páginas das duas partes que o Zé mandou, lidas locais com
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
-   original (decisão #17/#134 — nunca copiar texto do livro). Só o
-   Ninjutsu Não-Elemental Rank E, D, C e B estão completos por enquanto —
-   os outros ~1239 jutsu (Não-Elemental A/S, os 5 elementos, Genjutsu,
-   Taijutsu, Bukijutsu, Invocação) entram aos poucos, categoria por
-   categoria, mesmo ritmo dos Clãs/Classes. */
+   original (decisão #17/#134 — nunca copiar texto do livro). Só falta o
+   Rank S pra fechar o Ninjutsu Não-Elemental inteiro — os outros ~1215
+   jutsu (Não-Elemental S, os 5 elementos, Genjutsu, Taijutsu, Bukijutsu,
+   Invocação) entram aos poucos, categoria por categoria, mesmo ritmo dos
+   Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -756,6 +756,55 @@ const JUTSU_CATALOGO = [
     efeito:'Versão avançada dos Braços de Buda: como Ação Bônus, ataca de novo (8d8 de Concussão) ou, como Reação, reduz o dano recebido em 2d12 + mod. de Ninjutsu.'},
   {nome:'Santuário Particular de Tobirama', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'B', custo:'14 Chakra', alcance:'36m', duracao:'24 horas',
     efeito:'Protege uma área (cubo de 1,5m a 30m) contra até 2 efeitos à escolha: som, visão, sensores de chakra, teleporte ou viagem dimensional.'},
+
+  {nome:'Animar Objetos', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'19 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Até 10 objetos ganham vida e obedecem você (comandados por Ação Bônus) até chegarem a 0 PV ou o jutsu acabar.'},
+  {nome:'Arte de Imitação Animal: Gêmeos Oni', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca 2 Oni de tinta que atacam com seu bônus de Ninjutsu, comandados por Ação Bônus (cada um pode agir diferente).'},
+  {nome:'Arte Bestial: Predador', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'18 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Força/Destreza/Sabedoria mínimas 19, invisível pra Visão de Chakra, deslocamento +10×mod. de Força, salto dobrado, desarmado 2d6+For+Des, oportunidade com vantagem e até 3 ataques por ação.'},
+  {nome:'Coroa de Estrelas', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'18 Chakra', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'8 esferas de luz orbitam você; gasta uma por Ação Bônus pra atacar à distância (4d12 de Força) até acabarem.'},
+  {nome:'Excelentes Lanças de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Cone de 18m', duracao:'Instantâneo',
+    efeito:'Teste de Destreza ou 10d6 de dano (de Força, ou da sua Natureza elemental com efeito extra próprio dela).'},
+  {nome:'Técnica de Fissão', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Kinjutsu: divide seu corpo em dois — cada metade fica com metade do PV/Chakra máximo e age separadamente; se o clone morrer antes de se fundirem de novo, seu máximo cai pela metade permanentemente.'},
+  {nome:'Deus do Trovão Voador', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'Especial', alcance:'Especial', duracao:'Especial',
+    efeito:'Marca até 10 objetos ou pessoas com selos e teleporta você (e 1 aliado) até um deles por 5 de Chakra, como Ação Bônus.'},
+  {nome:'Juba de Leão: Inferno de Agulhas', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'15 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'+4 de Defesa e dispara agulhas de cabelo numa esfera de 4,5m ao redor: teste de Destreza ou 8d8 de dano Perfurante.'},
+  {nome:'Liberação Médica: Aura de Poder', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Pessoal (9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Aliados na aura ganham vantagem em resistências contra Ninjutsu; inimigos na aura sofrem desvantagem contra os seus.'},
+  {nome:'Liberação Médica: Boneco Baixa', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Toque', duracao:'10 minutos',
+    efeito:'Kinjutsu: absorve as memórias e jutsu de um morto recente; teste de Carisma por turno ou você age como ele agiria.'},
+  {nome:'Liberação Médica: Pluma Corrosiva', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'19 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Uma flor de ácido desabrocha: teste de Destreza numa área de 9m ou 12d6 de dano Ácido e 2 ranks de Corrosão; dissolve itens desprotegidos.'},
+  {nome:'Liberação Médica: Realidade Sombria', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra + 5 Dados de Vida', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: veste o manto do ceifador — Defesa vira sua CD de Ninjutsu (se maior) e uma arma espectral própria ataca 2× por ação; gasta Dados de Vida em vez de Chakra pra manter.'},
+  {nome:'Liberação Médica: Onda de Cura', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'19 Chakra', alcance:'Esfera de 9m', duracao:'Instantâneo',
+    efeito:'Cura até 200 PV divididos entre até 8 aliados, que ainda ganham resistência ao próximo dano que sofrerem.'},
+  {nome:'Liberação Médica: Sentir Emoção Negativa', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'16 Chakra', alcance:'30m', duracao:'Concentração, até 1 hora',
+    efeito:'Sente a intenção emocional de uma criatura à distância (inclusive intenção assassina); ela pode se esconder com um teste de Enganação.'},
+  {nome:'Liberação Médica: Regenerar', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'18 Chakra', alcance:'Toque', duracao:'1 hora',
+    efeito:'Cura 4d8+15 na hora, mais 1 PV por turno, e regenera membros decepados em 2 minutos.'},
+  {nome:'Liberação Médica: Ferrão de Escorpião', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'17 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Uma cauda de escorpião (alcance 4,5m) ataca 2× por ação, 4d8+mod. de dano de Veneno, arriscando Envenenar.'},
+  {nome:'Liberação Médica: Definhar', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Cubo de 13,5m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Constituição ou 10d8 de dano Necrótico e fica marcado, sofrendo mais dano Necrótico a cada dano recebido por 1 minuto.'},
+  {nome:'Invocação por Selo Reverso', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Marca até 6 aliados; teleporta qualquer um até você (ou você até eles) como Ação Bônus, a até 1,6km/90m de distância.'},
+  {nome:'Arte de Selamento: Gaiola de Força', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'19 Chakra', alcance:'30m', duracao:'1 hora',
+    efeito:'Cria uma prisão de chakra (jaula ou caixa de até 6m) que bloqueia passagem e jutsu; só sai por teleporte com sucesso num teste de Carisma.'},
+  {nome:'Arte de Selamento: Selo da Discórdia', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Toque', duracao:'Até disparar',
+    efeito:'Selo escondido com um de 3 efeitos à escolha (Morte: 10d10 Necrótico; Desespero: não consegue atacar por 1 min; Atordoamento: Atordoado por 1 min) numa esfera de 9m.'},
+  {nome:'Arte de Selamento: Estrelas Brilhantes, Golpe Voador', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Precisa saber Estrelas Ocas; cria 2 objetos-estrela (45 PV cada) que lançam Estrelas Ocas rank C sozinhos a cada turno.'},
+  {nome:'Arte de Selamento: Essência Amarrada', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'18m', duracao:'1 hora',
+    efeito:'Liga 2 criaturas (teste de Carisma): dano e cura de uma se repetem na outra até uma cair a 0 PV.'},
+  {nome:'Arte de Selamento: Espada de Tobirama', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'17 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Uma espada flutuante ataca (5d10 de Força + Selado) e se move 18m por Ação Bônus pra repetir o ataque.'},
+  {nome:'Toque da Morte', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Kinjutsu: rouba 10d6 de PV (e PV temporário) de uma criatura tocada; se isso zerar o PV dela, rouba temporariamente uma Natureza elemental e um jutsu dela.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1227,7 +1276,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental Rank E, D, C e B completos por enquanto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental Rank E, D, C, B e A completos — só falta o S) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

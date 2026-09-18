@@ -1771,8 +1771,13 @@ passando.
       ~1400 no total). Vários Kinjutsu do Medical-Nin e jutsu com escolha
       múltipla (5 bênçãos bestiais, resumidas em vez de listadas). Testado
       com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Rank A do Não-Elemental**
+      (18/09/2026) — decisão #142. As 24 jutsu do Rank A entraram no
+      catálogo — falta só o Rank S pra fechar o Não-Elemental inteiro
+      (185 de ~1400 no total). Traz o Deus do Trovão Voador e a Técnica
+      de Fissão. Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1239 jutsu: Não-Elemental A/S, as 5 Naturezas elementais,
+      Jutsu (~1215 jutsu: Não-Elemental S, as 5 Naturezas elementais,
       Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe,
       mecânica de cada opção de subclasse, Ficha de Inimigo/Bingo Book,
