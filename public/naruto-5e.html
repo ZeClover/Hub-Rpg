@@ -420,6 +420,49 @@ const RANKS_JUTSU = [
   {rank:'S', equivalente:'Nível 9'},
 ];
 
+/* Catálogo de Jutsu (Compêndio de Jutsu do Jiraiya — 1400 jutsu ao todo
+   nas 341 páginas das duas partes que o Zé mandou, lidas locais com
+   pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
+   direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
+   original (decisão #17/#134 — nunca copiar texto do livro). Só o
+   Ninjutsu Não-Elemental Rank E está completo por enquanto — os outros
+   ~1385 jutsu (Não-Elemental D/C/B/A/S, os 5 elementos, Genjutsu,
+   Taijutsu, Bukijutsu, Invocação) entram aos poucos, categoria por
+   categoria, mesmo ritmo dos Clãs/Classes. */
+const JUTSU_CATALOGO = [
+  {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
+    efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
+  {nome:'Movimento de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Aumenta seu deslocamento em 3m até o fim do próximo turno (mais nos níveis 5/11/17).'},
+  {nome:'Pulso de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Pulso que causa 2d4 de dano de Força (mais nos níveis 5/11/17) e derruba quem falhar num teste de Resistência de Força a até 1,5m.'},
+  {nome:'Golpe de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Cobre a arma de chakra; um ataque com ela causa +1d6 de dano extra (mais nos níveis 5/11/17).'},
+  {nome:'Defesa Reforçada', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Chakra na pele dá Resistência a dano de Concussão/Perfuração/Corte até o início do seu próximo turno.'},
+  {nome:'Resistência Reforçada', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação a um teste de resistência: reforça o corpo com chakra e soma +2 ao resultado.'},
+  {nome:'Perícia Reforçada', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação a um teste de perícia: soma +3 ao resultado. Só pode repetir depois de 10 minutos.'},
+  {nome:'Técnica de Fuga', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Enquanto agarrado ou impedido, rola Prestidigitação com vantagem no lugar do teste normal pra se soltar.'},
+  {nome:'Selo Entalhado a Dedo', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Toque', duracao:'Permanente',
+    efeito:'Grava palavras/símbolos (até 20 palavras) com calor de chakra na ponta do dedo — em estruturas sem causar dano, ou como cicatriz permanente numa criatura disposta.'},
+  {nome:'Estouro de Fogos', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Fogos de artifício numa faixa de 4,5m à frente; quem falhar um teste de Sabedoria dá vantagem no seu próximo ataque contra ele e ataca com desvantagem.'},
+  {nome:'Manto da Invisibilidade', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Puxa uma capa camuflada contra uma parede ou superfície; rola Furtividade com +1d4+1.'},
+  {nome:'Luz', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Toque', duracao:'1 hora',
+    efeito:'Um objeto tocado emite luz forte em 3m e fraca em mais 3m; cobrir o objeto bloqueia a luz.'},
+  {nome:'Reparo', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Conserta uma quebra ou rasgo pequeno (até 30cm) num objeto, sem deixar marca.'},
+  {nome:'Arte de Selamento: Formação de Fio de Luz', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'2 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria um fio de selamento até uma criatura vista; ela falha um teste de Carisma e tem o deslocamento dela e o seu reduzidos a 0. Vários usuários no mesmo alvo somam +1 na CD cada.'},
+  {nome:'Liberação Médica: Virtude', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'Toque', duracao:'1 rodada',
+    efeito:'Toca um aliado com pelo menos 1 PV e dá PV temporários (1d4 + mod. de Ninjutsu) até o fim do turno seguinte dele.'},
+];
+function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
+
 /* ---------- Estado / persistência (localStorage — Modo Hub é fatia futura) ---------- */
 const CHAVE_LISTA = 'hub_naruto5e_lista';
 
@@ -858,14 +901,27 @@ function renderJutsu(p){
     campoSelect('Natureza principal', p.naturezaPrincipal, [['', '— nenhuma —'], ...CICLO_ELEMENTOS.map(n => [n,n])], v => { p.naturezaPrincipal = v; salvar(); render(); }),
   );
 
+  const selCatalogo = el('select', {},
+    el('option', {value:''}, '— escolher do catálogo —'),
+    ...JUTSU_CATALOGO.map(j => el('option', {value:j.nome}, `${j.nome} (${j.rank}-Rank, ${j.custo})`)),
+  );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, 'Catálogo oficial (Compêndio de Jutsu da Jiraiya) ainda fora do Hub — cadastre aqui os jutsu do seu personagem à mão.'),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (só o Ninjutsu Não-Elemental Rank E está completo por enquanto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
     ),
-    el('button', {class:'destaque', style:'margin-top:10px', onclick: () => { p.jutsus.push({nome:'Novo jutsu', tipo:'Ninjutsu', rank:'E', notas:''}); salvar(); render(); }}, '+ Jutsu'),
+    el('div', {class:'linha', style:'margin-top:10px'},
+      selCatalogo,
+      el('button', {class:'destaque', onclick: () => {
+        const j = jutsuDoCatalogo(selCatalogo.value);
+        if(!j) return;
+        p.jutsus.push({nome:j.nome, tipo:j.tipo, rank:j.rank, notas:`${j.efeito} (Custo: ${j.custo} · Alcance: ${j.alcance} · Duração: ${j.duracao})`});
+        salvar(); render();
+      }}, '+ Do catálogo'),
+      el('button', {onclick: () => { p.jutsus.push({nome:'Novo jutsu', tipo:'Ninjutsu', rank:'E', notas:''}); salvar(); render(); }}, '+ Jutsu em branco'),
+    ),
   );
 
   return [info, natureza, lista];

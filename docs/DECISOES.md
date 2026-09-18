@@ -6150,6 +6150,58 @@ Constituição 10, resistência de Força marca sozinha. Testes anteriores
 (Clã, Antecedente, multi-personagem, dano no PV) continuam passando sem
 regressão. `tsc --noEmit` e `npm run lint` seguem limpos.
 
+## 137. Naruto 5e — Catálogo de Jutsu, início (18/09/2026)
+
+Continuação das decisões #134-#136. O Zé já tinha mandado o Compêndio de
+Jutsu do Jiraiya recortado em 2 partes (`ilovepdf_split.zip`) antes do
+pedido das Classes; lido local com `pymupdf` (341 páginas, texto bem
+mais limpo que a conversão do Drive).
+
+**Escopo real descoberto: 1400 jutsu.** Muito maior que Clãs (~38) ou
+Classes (11) — o compêndio cobre Ninjutsu Não-Elemental (6 ranks) + 5
+Naturezas elementais (Terra/Vento/Fogo/Água/Raio, cada uma com 5 ranks),
+Invocação (~20 tipos de animal), Genjutsu (6 ranks), Taijutsu (5 ranks) e
+Bukijutsu (5 ranks). Perguntei ao Zé que nível de detalhe ele queria pra
+essa fatia — resposta: **mecânica completa + 1 linha de efeito
+parafraseada por mim em cada jutsu** (não só nome/custo/alcance sem
+descrição, e não copiar a descrição do livro).
+
+**Escrevi um parser em Python** (`parse_jutsu.py`, guardado só no
+scratchpad da sessão, não faz parte do repositório) pra extrair os 1400
+jutsu automaticamente: nome, classificação, categoria/natureza, rank,
+tempo de conjuração, alcance, duração, componentes, custo, palavras-chave
+e a descrição original (que fica só de rascunho de trabalho — nunca vai
+pro Hub). **Dois bugs do parser corrigidos no caminho**: (1) o nome de
+cada jutsu vinha grudado com a linha "E-RANK:"/"D-RANK:" anterior porque o
+lookback de nome não sabia que aquela linha já tinha sido consumida por
+outra regra — corrigido detectando nome só por "linha inteira em CAIXA
+ALTA", não mais por proximidade; (2) rodar o parser com `| head` matava o
+processo por `SIGPIPE` antes dele terminar de gravar o JSON (o
+`Counter` de debug tem mais linhas que o `head` cortava), fazendo eu
+inspecionar repetidas vezes uma versão antiga e com bug do arquivo sem
+perceber — a lição fica registrada aqui pra não cair de novo: nunca
+pipar pra `head` um script Python que ainda vai escrever arquivo depois
+dos prints de debug.
+
+**O que entrou na ficha**: `JUTSU_CATALOGO`, com as 15 jutsu do Ninjutsu
+Não-Elemental Rank E (a categoria mais simples e mais cedo na progressão)
+— nome traduzido, custo, alcance, duração e uma frase de efeito escrita
+do zero por mim a partir da mecânica (nunca traduzindo a descrição do
+livro). Na aba Jutsu, o "+ Jutsu em branco" de sempre virou "+ Do
+catálogo" também: escolhe um jutsu da lista e a linha nasce com nome/
+tipo/rank preenchidos e o efeito + custo/alcance/duração já na coluna de
+notas, editável depois.
+
+**O que falta**: as outras ~1385 entradas (Não-Elemental D/C/B/A/S, as 5
+Naturezas, Genjutsu, Taijutsu, Bukijutsu, Invocação) — cada categoria
+vira sua própria fatia, mesmo ritmo dos Clãs/Classes, dado o volume.
+
+Testado com Playwright: catálogo aparece com as 15 opções, "+ Do
+catálogo" preenche nome/tipo/rank/notas corretamente, "+ Jutsu em
+branco" continua funcionando do lado. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte completa de testes anteriores (Clã, Classe,
+Antecedente, multi-personagem, dano no PV) sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

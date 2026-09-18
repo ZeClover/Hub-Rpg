@@ -1726,14 +1726,29 @@ passando.
       Science-Nin (adicionadas depois das 9 originais) ficam com Tier de
       Jutsu marcado como "não informado no livro", em vez de chutado.
       Testado com Playwright; `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), Jutsu (Compêndio de Jutsu
-      do Jiraiya — já em análise: mecânica + 1 linha de efeito por jutsu,
-      parafraseada, categoria por categoria), Equipamento/Itens Chakra,
-      Talentos, Guia de Modificação de Classe, mecânica de cada opção de
-      subclasse, Ficha de Inimigo/Bingo Book, Escudo do Mestre/Kage Guide,
-      Modo Hub — fatias futuras (decisão #26); PDF grande demais pra
-      ferramenta do Drive extrair inteiro → pedir recortado como anexo no
-      chat e ler local com `pymupdf` (decisão #136)
+- [x] **Naruto 5e — Catálogo de Jutsu, início** (18/09/2026) — decisão
+      #137. Compêndio de Jutsu do Jiraiya (341 páginas em 2 partes, anexo
+      no chat) lido local com `pymupdf`. Escopo real: **1400 jutsu** no
+      total — bem maior que Clãs/Classes. Zé escolheu o nível de detalhe:
+      mecânica completa + 1 linha de efeito parafraseada por jutsu (nunca
+      a descrição do livro). Escrito um parser em Python pra extrair as
+      1400 entradas automaticamente (nome/custo/alcance/duração/palavras-
+      chave/descrição original de rascunho); dois bugs do parser corrigidos
+      no caminho, incluindo rodar `| head` matando o processo por
+      `SIGPIPE` antes de gravar o arquivo — lição registrada na decisão.
+      Entrou o Ninjutsu Não-Elemental Rank E completo (15 jutsu) no
+      catálogo `JUTSU_CATALOGO` da ficha, com "+ Do catálogo" na aba Jutsu
+      preenchendo nome/tipo/rank/efeito sozinho. Testado com Playwright;
+      `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
+      Jutsu (~1385 jutsu: Não-Elemental D/C/B/A/S, as 5 Naturezas
+      elementais, Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por
+      categoria), Equipamento/Itens Chakra, Talentos, Guia de Modificação
+      de Classe, mecânica de cada opção de subclasse, Ficha de Inimigo/
+      Bingo Book, Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras
+      (decisão #26); PDF grande demais pra ferramenta do Drive extrair
+      inteiro → pedir recortado como anexo no chat e ler local com
+      `pymupdf` (decisão #136)
 
 ---
 
