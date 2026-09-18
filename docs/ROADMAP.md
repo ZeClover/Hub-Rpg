@@ -1740,8 +1740,17 @@ passando.
       catálogo `JUTSU_CATALOGO` da ficha, com "+ Do catálogo" na aba Jutsu
       preenchendo nome/tipo/rank/efeito sozinho. Testado com Playwright;
       `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Rank D do Não-Elemental**
+      (18/09/2026) — decisão #138. As 64 jutsu do Ninjutsu Não-Elemental
+      Rank D entraram no catálogo (mesmo padrão: mecânica do livro + 1
+      linha de efeito reescrita) — fecha os dois ranks mais básicos do
+      Não-Elemental (79 de ~1400 no total). Quase metade do rank (27 de
+      64) são jutsu de "Liberação Médica" do Medical-Nin. Efeitos que
+      variam por Natureza elemental ficam resumidos numa frase — o
+      detalhe de cada Natureza é da fatia dos 5 elementos, ainda não
+      feita. Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1385 jutsu: Não-Elemental D/C/B/A/S, as 5 Naturezas
+      Jutsu (~1321 jutsu: Não-Elemental C/B/A/S, as 5 Naturezas
       elementais, Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por
       categoria), Equipamento/Itens Chakra, Talentos, Guia de Modificação
       de Classe, mecânica de cada opção de subclasse, Ficha de Inimigo/

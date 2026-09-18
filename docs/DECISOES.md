@@ -6202,6 +6202,27 @@ branco" continua funcionando do lado. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte completa de testes anteriores (Clã, Classe,
 Antecedente, multi-personagem, dano no PV) sem regressão.
 
+## 138. Naruto 5e — Catálogo de Jutsu, Rank D do Não-Elemental (18/09/2026)
+
+Continuação da decisão #137: as 64 jutsu do Ninjutsu Não-Elemental Rank D
+entraram no `JUTSU_CATALOGO`, mesmo padrão (mecânica do livro + 1 linha de
+efeito reescrita pelo Hub). Fecha os dois ranks mais básicos do Não-
+Elemental (E completo desde #137, agora D também) — 79 das ~1400 entradas
+totais.
+
+Achado no caminho: quase metade deste rank (27 das 64) são jutsu
+"Liberação Médica" (cura, veneno, ácido, necrótico) — mecânica do
+Medical-Nin, categorizados como Não-Elemental porque não usam nenhuma
+Natureza. Os efeitos com ramificação por Natureza elemental (ex.: Flecha
+de Chakra, Estrelas Ocas, Escudo de Chakra) foram resumidos numa frase
+("efeito extra próprio dela") em vez de listar as 5 variações — o
+Hub deixa o detalhe de cada Natureza pra quando a fatia dos 5 elementos
+entrar, evitando duplicar a mesma informação em dois lugares.
+
+Testado com Playwright: catálogo mostra 80 opções (1 placeholder + 79
+jutsu, E+D), "+ Do catálogo" continua preenchendo certo. `tsc --noEmit`
+e `npm run lint` seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
