@@ -14,7 +14,7 @@ export function SairDaCampanha({
   const [saindo, setSaindo] = useState(false);
 
   async function sair() {
-    if (!confirm("Sair desta campanha? Sua ficha não é apagada, só solta.")) return;
+    if (!confirm("Sair desta campanha? Suas fichas não são apagadas, só soltam.")) return;
 
     setSaindo(true);
     const resposta = await fetch(`/api/campanhas/${campanhaId}/jogadores/${usuarioId}`, {

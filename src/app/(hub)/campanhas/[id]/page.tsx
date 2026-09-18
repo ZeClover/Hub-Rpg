@@ -126,7 +126,7 @@ export default async function PaginaCampanha({
           ficha={ficha}
           convidado={!minhaParticipacao}
           meuUsuarioId={usuario.id}
-          meuPersonagem={personagensDaCampanha.find((p) => p.donoId === usuario.id) ?? null}
+          meusPersonagens={personagensDaCampanha.filter((p) => p.donoId === usuario.id)}
           minhasFichasDoSistema={await banco.personagem.findMany({
             where: { donoId: usuario.id, sistemaId: campanha.sistemaId },
             select: { id: true, nome: true },
@@ -178,8 +178,9 @@ function VisaoDoMestre({
           {origem}/campanhas/{campanhaId}
         </p>
         <p className="mt-2 text-xs text-texto-suave">
-          Manda esse endereço pros seus jogadores. Cada um escolhe a ficha dele
-          ao abrir — só aparecem fichas do sistema desta campanha.
+          Manda esse endereço pros seus jogadores. Cada um escolhe a ficha (ou
+          fichas — dá pra ligar mais de uma) ao abrir — só aparecem fichas do
+          sistema desta campanha.
         </p>
         {escudoMestre && (
           <a
@@ -213,7 +214,7 @@ function VisaoDoMestre({
         ) : (
           <ul className="mt-4 space-y-3">
             {jogadores.map((jogador) => {
-              const personagem = personagensDaCampanha.find(
+              const personagens = personagensDaCampanha.filter(
                 (p) => p.donoId === jogador.usuarioId,
               );
               return (
@@ -225,17 +226,23 @@ function VisaoDoMestre({
                     <p className="font-titulo text-base">
                       {jogador.usuario.nome ?? jogador.usuario.email}
                     </p>
-                    {personagem ? (
-                      ficha ? (
-                        <a
-                          href={`${ficha}?id=${personagem.id}`}
-                          className="mt-1 inline-block text-sm text-ambar-forte underline underline-offset-2"
-                        >
-                          {personagem.nome}
-                        </a>
-                      ) : (
-                        <p className="mt-1 text-sm text-texto-suave">{personagem.nome}</p>
-                      )
+                    {personagens.length > 0 ? (
+                      <ul className="mt-1 space-y-0.5">
+                        {personagens.map((personagem) => (
+                          <li key={personagem.id}>
+                            {ficha ? (
+                              <a
+                                href={`${ficha}?id=${personagem.id}`}
+                                className="inline-block text-sm text-ambar-forte underline underline-offset-2"
+                              >
+                                {personagem.nome}
+                              </a>
+                            ) : (
+                              <p className="text-sm text-texto-suave">{personagem.nome}</p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
                     ) : (
                       <p className="mt-1 text-sm text-texto-suave">
                         Ainda não escolheu uma ficha.
@@ -328,7 +335,7 @@ function VisaoDoJogador({
   ficha,
   convidado,
   meuUsuarioId,
-  meuPersonagem,
+  meusPersonagens,
   minhasFichasDoSistema,
   grimorio,
 }: {
@@ -336,21 +343,21 @@ function VisaoDoJogador({
   ficha: string | null;
   convidado: boolean;
   meuUsuarioId: string;
-  meuPersonagem: { id: string; nome: string } | null;
+  meusPersonagens: { id: string; nome: string }[];
   minhasFichasDoSistema: { id: string; nome: string }[];
   grimorio: string | null;
 }) {
   return (
     <section className="mt-10 rounded-lg border border-borda bg-superficie p-6">
       <p className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
-        {convidado ? "Você foi convidado" : "Sua ficha nesta campanha"}
+        {convidado ? "Você foi convidado" : "Suas fichas nesta campanha"}
       </p>
       {ficha ? (
         <EntrarNaCampanha
           campanhaId={campanhaId}
           ficha={ficha}
           minhasFichas={minhasFichasDoSistema}
-          personagemAtualId={meuPersonagem?.id ?? null}
+          meusPersonagens={meusPersonagens}
         />
       ) : (
         <p className="mt-3 text-sm text-texto-suave">

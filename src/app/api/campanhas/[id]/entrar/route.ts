@@ -6,7 +6,7 @@ import { usuarioAtual } from "@/lib/usuario";
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
-  Entrar numa campanha usando uma ficha que já é sua.
+  Entrar numa campanha usando uma ficha que já é sua — ou ligar mais uma.
 
   O link de convite é só a URL da campanha (`/campanhas/[id]`) — não existe
   segredo separado, porque entrar não abre nada sozinho: exige estar logado
@@ -14,8 +14,10 @@ type Contexto = { params: Promise<{ id: string }> };
   mais estrito que o link de leitura das fichas (decisão #46), que é
   propositalmente "qualquer um com o link".
 
-  Só um personagem seu fica ligado à campanha por vez: entrar de novo com
-  outra ficha troca qual delas está lá, em vez de acumular.
+  Decisão #133: um jogador pode ter duas ou mais fichas na mesma campanha
+  (ex.: personagem principal + um companion) — chamar esta rota de novo com
+  outra ficha ACUMULA, não troca mais. Pra soltar uma ficha específica sem
+  sair da campanha inteira, existe `DELETE /campanhas/[id]/personagens/[id]`.
 */
 export async function POST(requisicao: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
@@ -51,12 +53,6 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
       where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
       create: { campanhaId, usuarioId: usuario.id, papel: "JOGADOR" },
       update: {},
-    }),
-    // Solta qualquer outra ficha sua que estivesse ligada a esta campanha —
-    // só uma por jogador de cada vez.
-    banco.personagem.updateMany({
-      where: { campanhaId, donoId: usuario.id, id: { not: personagemId } },
-      data: { campanhaId: null },
     }),
     banco.personagem.update({
       where: { id: personagemId },

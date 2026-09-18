@@ -16,7 +16,7 @@ export function RemoverJogador({
   const [removendo, setRemovendo] = useState(false);
 
   async function remover() {
-    if (!confirm(`Tirar ${nome} desta campanha? A ficha dele não é apagada, só solta.`)) return;
+    if (!confirm(`Tirar ${nome} desta campanha? As fichas dele não são apagadas, só soltam.`)) return;
 
     setRemovendo(true);
     const resposta = await fetch(`/api/campanhas/${campanhaId}/jogadores/${usuarioId}`, {

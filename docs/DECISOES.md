@@ -5904,6 +5904,44 @@ conta de `passivasUsadas` assim que marcada. `tsc --noEmit`, `npm run
 lint`, `npm test` (298) e `node --check` nos dois arquivos continuam
 limpos.
 
+## 133. Um jogador pode ter mais de uma ficha na mesma campanha (18/09/2026)
+
+Pedido do Zé: "coloca possibilidade que você pode colocar duas ou mais
+fichas na mesma campanha". Antes disso, `POST /campanhas/[id]/entrar`
+tinha uma trava explícita — "só um personagem seu fica ligado à campanha
+por vez: entrar de novo com outra ficha troca qual delas está lá" — útil
+pra um personagem principal + um companion, um segundo personagem depois
+que o primeiro morreu sem perder o registro do antigo, etc.
+
+**O que mudou.** `POST /campanhas/[id]/entrar` parou de soltar as outras
+fichas do jogador na campanha antes de ligar a nova — agora acumula. Não
+precisou de migração: o schema (`Personagem.campanhaId`) nunca teve trava
+nenhuma impedindo duas fichas do mesmo dono apontarem pra mesma campanha,
+só a rota que impunha isso.
+
+**Nova rota pra soltar UMA ficha específica.** Como agora "sair da
+campanha" (solta todas as fichas do jogador, decisão #10) e "soltar uma
+ficha, mantendo as outras" são coisas diferentes, criei `DELETE
+/campanhas/[id]/personagens/[personagemId]`. Quem pode: o dono da ficha,
+ou o mestre da campanha (mesma extensão de permissão da decisão #131 —
+já que o mestre edita a ficha do jogador, faz sentido ele também poder
+tirá-la da mesa). Sempre 404 pra quem não pode, nunca 403 (decisão #13).
+
+**Nas telas.** A tela do jogador (`EntrarNaCampanha`) virou uma lista das
+fichas já ligadas (cada uma com "Soltar") mais um seletor pra adicionar
+outra — o seletor só oferece fichas do sistema certo que ainda não estão
+nesta campanha. A lista de jogadores que o mestre vê também virou lista
+de fichas por jogador, não uma só. O Painel de Vida da Mesa ao Vivo
+(decisão #46) já buscava por `campanhaId`, sem presumir uma ficha por
+jogador — não precisou mudar nada lá. `remover jogador`/`sair da
+campanha` (que soltam TODAS as fichas de um jogador de uma vez) também já
+usavam `updateMany`, sem mudança necessária.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos. Não criei teste de banco pra este lote
+(nenhuma rota de API deste módulo tinha teste automático antes — só as
+funções puras de permissão, que não mudaram de comportamento aqui).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
