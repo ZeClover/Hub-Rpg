@@ -6223,6 +6223,24 @@ Testado com Playwright: catálogo mostra 80 opções (1 placeholder + 79
 jutsu, E+D), "+ Do catálogo" continua preenchendo certo. `tsc --noEmit`
 e `npm run lint` seguem limpos; suíte de testes anteriores sem regressão.
 
+## 139. Naruto 5e — Catálogo de Jutsu, Rank C do Não-Elemental (18/09/2026)
+
+Continuação da decisão #138: as 48 jutsu do Ninjutsu Não-Elemental Rank C
+entraram no `JUTSU_CATALOGO`, mesmo padrão (mecânica do livro + 1 linha de
+efeito reescrita). Fecha os três primeiros ranks do Não-Elemental (E, D e
+C) — 127 das ~1400 entradas totais.
+
+Este rank trouxe o **Rasengan** (a técnica mais famosa do Naruto) e mais
+20 jutsu de "Liberação Médica" — o Medical-Nin segue sendo a classe com
+mais entradas catalogadas até aqui. Mesma decisão de #138 pros efeitos
+que ramificam por Natureza elemental (Rasengan, Esfera de Chakra): fica
+resumido numa frase, sem repetir as 5 variações que a fatia dos elementos
+vai detalhar depois.
+
+Testado com Playwright: catálogo mostra 128 opções (1 placeholder + 127
+jutsu, E+D+C), "+ Do catálogo" continua preenchendo certo. `tsc --noEmit`
+e `npm run lint` seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

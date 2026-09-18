@@ -1749,14 +1749,19 @@ passando.
       variam por Natureza elemental ficam resumidos numa frase — o
       detalhe de cada Natureza é da fatia dos 5 elementos, ainda não
       feita. Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Rank C do Não-Elemental**
+      (18/09/2026) — decisão #139. As 48 jutsu do Rank C entraram no
+      catálogo, fechando os três primeiros ranks do Não-Elemental (127 de
+      ~1400 no total). Traz o Rasengan e mais 20 jutsu de Liberação
+      Médica. Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1321 jutsu: Não-Elemental C/B/A/S, as 5 Naturezas
-      elementais, Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por
-      categoria), Equipamento/Itens Chakra, Talentos, Guia de Modificação
-      de Classe, mecânica de cada opção de subclasse, Ficha de Inimigo/
-      Bingo Book, Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras
-      (decisão #26); PDF grande demais pra ferramenta do Drive extrair
-      inteiro → pedir recortado como anexo no chat e ler local com
+      Jutsu (~1273 jutsu: Não-Elemental B/A/S, as 5 Naturezas elementais,
+      Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por categoria),
+      Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe,
+      mecânica de cada opção de subclasse, Ficha de Inimigo/Bingo Book,
+      Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
+      #26); PDF grande demais pra ferramenta do Drive extrair inteiro →
+      pedir recortado como anexo no chat e ler local com
       `pymupdf` (decisão #136)
 
 ---
