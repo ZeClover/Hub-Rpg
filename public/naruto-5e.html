@@ -253,15 +253,18 @@ const CLAS = [
 ];
 function cla(id){ return CLAS.find(c => c.id === id) || null; }
 
-/* Classes (Compêndio de Observação do Orochimaru) — mesma trava de extração
-   do PDF que os Clãs: o livro lista 11 classes (Genjutsu Specialist até
-   Science-Nin), mas só as 5 primeiras vieram completas antes do corte
-   (Scout-Nin em diante ficou de fora). CD/ataque de Ninjutsu/Genjutsu/
-   Taijutsu conferidos nas 5: são sempre Inteligência/Sabedoria/Força — por
-   isso esses viraram o padrão da aba Jutsu (que já permitia trocar à mão
-   pra quando uma classe futura usar outro atributo). Escolhas de perícia
-   "escolha N de..." ficam como texto de referência, não marcadas sozinhas
-   (é decisão do jogador, igual as escolhas "ou" dos Clãs). */
+/* Classes (Compêndio de Observação do Orochimaru) — as 11 completas. As 5
+   primeiras vieram pelo Google Drive (trava de extração no meio do
+   Ninjutsu Specialist); Zé mandou o PDF recortado em 6 partes como anexo
+   pra fechar as 6 que faltavam (Scout-Nin a Science-Nin). CD/ataque de
+   Ninjutsu/Genjutsu/Taijutsu conferidos nas 11: são SEMPRE Inteligência/
+   Sabedoria/Força, sem exceção — por isso isso virou o padrão fixo da aba
+   Jutsu (o seletor manual continua existindo só por segurança, caso
+   Talentos/Modificações de Classe abram uma exceção no futuro). Escolhas
+   de perícia "escolha N de..." ficam como texto de referência, não
+   marcadas sozinhas (é decisão do jogador, igual as escolhas "ou" dos
+   Clãs). `periciaFixa: null` marca as 2 classes (Scout-Nin, Science-Nin)
+   cujas 4 perícias são todas de escolha, sem nenhuma fixa. */
 const CLASSES = [
   {id:'genjutsuSpecialist', nome:'Genjutsu Specialist', tier:'Baixo (2-3 recursos extras)',
     dadoVida:'d6', dadoChakra:'d12', resistencias:['constituicao','sabedoria','carisma'],
@@ -293,6 +296,42 @@ const CLASSES = [
     periciaFixa:'ninshou', periciasEscolha:'Escolha 4 entre Intuição, Investigação, História, Furtividade, Percepção, Controle de Chakra.',
     subclasses:{nome:'Foco de Ninjutsu', opcoes:['Blaze Walker','Hijutsu Elitist','Sanguine Master','Scribe Master','Stone Crusher','Storm Terror','Summoner','The Professor','Trace Talent','Tsunami']},
     traco:'Chakra Recovery: 1×/descanso curto, reduz à metade o custo do próximo Ninjutsu lançado.'},
+  {id:'scoutNin', nome:'Scout-Nin', tier:'Médio (1 recurso extra)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['forca','constituicao','inteligencia'],
+    proficiencias:'Armadura leve, média e pesada; todas as armas simples e marciais; 2 kits à escolha.',
+    periciaFixa:null, periciasEscolha:'Escolha 4 entre Ninshou, Ilusões, Artes Marciais, Intuição, Investigação, Natureza, Acrobacia, Atletismo, História, Furtividade, Percepção, Medicina, Controle de Chakra.',
+    subclasses:{nome:'Técnica de Batedor', opcoes:['Arbiter Scout','Assault Scout','Cloning Scout','Barrier Scout','Elemental Scout','Pathfinder Scout','Phantom Scout','Tactical Scout','Trickster Scout']},
+    traco:'Deft Explorer (Canny): ganha proficiência — ou Maestria, se já for proficiente — numa perícia à escolha; evolui em Mobilidade (nível 6) e Resistência a cansaço (nível 11).'},
+  {id:'taijutsuSpecialist', nome:'Taijutsu Specialist', tier:'Baixo (2-3 recursos extras)',
+    dadoVida:'d12', dadoChakra:'d6', resistencias:['forca','destreza','carisma'],
+    proficiencias:'Armadura leve e média; armas simples + Braceletes de Combate, Garras de Ferro, Nunchaku, Tonfa, Manoplas, Fio de Batalha; Kit de Disfarce e Kit de Armadilheiro.',
+    periciaFixa:'artesMarciais', periciasEscolha:'Escolha 3 entre Acrobacia, Controle de Chakra, História, Intuição, Investigação, Natureza, Furtividade, Percepção, Medicina.',
+    subclasses:{nome:'Estilo de Taijutsu', opcoes:['Disturbance','Ironclad','Nin-Tai','Righteous Fury','Ruin','Stancer','Talent & Focus','Passionate Flame']},
+    traco:'Martial Defense: sem armadura, Defesa = 10 + Proficiência + Destreza; a partir do nível 5, "encaixes de guarda" imitam selos de armadura menores.'},
+  {id:'weaponSpecialist', nome:'Weapon Specialist', tier:'Baixo (2-3 recursos extras)',
+    dadoVida:'d10', dadoChakra:'d8', resistencias:['forca','destreza','constituicao'],
+    proficiencias:'Armadura leve, média e pesada; todas as armas simples e marciais; Kit de Armadilheiro, Veneno, Ferreiro de Armas e Ferreiro de Armaduras.',
+    periciaFixa:'artesMarciais', periciasEscolha:'Escolha 3 entre Acrobacia, Atletismo, Ofício, História, Intimidação, Percepção, Prestidigitação, Furtividade, Sobrevivência.',
+    subclasses:{nome:'Forma de Arma', opcoes:['Battle Dancer','Gungnir Piercer','Obsidian Hammer','Phantom Blade','Primal Weapon','Ranger','Samurai','Slayer']},
+    traco:'Weapon Focus: escolhe um tipo de arma (ex.: katana) que ganha +1 em ataque/dano e um traço bônus — vale também pro Bukijutsu lançado com essa arma.'},
+  {id:'puppetMaster', nome:'Puppet Master', tier:'Não informado no livro (classe adicionada depois das 9 originais)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['forca','constituicao','inteligencia'],
+    proficiencias:'Armadura leve e média; armas simples, Fio de Batalha, Bestas de mão e pesadas, Fuma-Shuriken; Kit de Ferreiro de Armaduras e de Armas.',
+    periciaFixa:'oficio', periciasEscolha:'Escolha 3 entre Controle de Chakra, Enganação, História, Intuição, Intimidação, Investigação, Ninshou, Percepção, Natureza, Prestidigitação, Furtividade.',
+    subclasses:{nome:'Técnica de Marionete', opcoes:['Preto — Puppeteer','Azul — Warmaster','Verde — Marionettist','Roxo — Juggernaut','Vermelho — Performer','Branco — Weaver']},
+    traco:'Chakra Threads: aprende de graça o Ninjutsu Chakra Hands, que vira fio de chakra sem custo de Chakra nem de ação, com 10 minutos de duração e capacidade de carga multiplicada pelo Bônus de Proficiência.'},
+  {id:'cookingNin', nome:'Cooking-Nin', tier:'Não informado no livro (classe adicionada depois das 9 originais)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['constituicao','carisma','inteligencia'],
+    proficiencias:'Armadura leve e média; armas simples; Kit de Culinária e Kit de Veneno.',
+    periciaFixa:'sobrevivencia', periciasEscolha:'Escolha 3 entre Atletismo, Ofício, Enganação, História, Intuição, Intimidação, Investigação, Medicina, Natureza, Percepção, Prestidigitação.',
+    subclasses:{nome:'Foco Culinário', opcoes:['Battle Cook','Entremetier Chef','Patissier Chef','Herbalist','Fry Cooks','Gastrochemist','Show Cook','Sour Taste','Heat Master']},
+    traco:'Cooking Tool Infusion: uma ferramenta de cozinha (ex.: frigideira) vira arma que causa dano igual ao Dado de Cozinha da classe.'},
+  {id:'scienceNin', nome:'Science-Nin', tier:'Não informado no livro (classe adicionada depois das 9 originais)',
+    dadoVida:'d8', dadoChakra:'d10', resistencias:['destreza','constituicao','inteligencia'],
+    proficiencias:'Armadura leve e média; armas simples e todas as Ferramentas Ninja Científicas; 3 kits à escolha.',
+    periciaFixa:null, periciasEscolha:'Escolha 4 entre Ninshou, Intuição, Investigação, Natureza, Ofício, Atletismo, História, Furtividade, Percepção, Medicina, Controle de Chakra.',
+    subclasses:{nome:'Investigação Científica', opcoes:['S.N.B Specialist','Shinobi-Ware','Spyware','Technobi','Ninjaneer','Mad Scientist','Grenadier','Mech Crafter','Titan','Storm Rider','Elemental Innovationist','W.o.W (Armas Maravilhosas)']},
+    traco:'Shinobi of Science: em testes opostos de Inteligência contra outra Inteligência, conta com uma Maestria a mais (ou vantagem, se já tiver o máximo de Maestria).'},
 ];
 function classeDoCatalogo(id){ return CLASSES.find(c => c.id === id) || null; }
 
@@ -594,7 +633,7 @@ function renderPerfil(p){
       if(c){
         p.recursos.dadoVida = c.dadoVida;
         p.recursos.dadoChakra = c.dadoChakra;
-        p.periciasProficientes[c.periciaFixa] = true;
+        if(c.periciaFixa) p.periciasProficientes[c.periciaFixa] = true;
         for(const at of c.resistencias) p.salvamentosProficientes[at] = true;
       }
       salvar(); render();
@@ -604,14 +643,16 @@ function renderPerfil(p){
     cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Tier de Jutsu: '), classeEscolhida.tier,
       ` · Dado de Vida ${classeEscolhida.dadoVida} · Dado de Chakra ${classeEscolhida.dadoChakra}`));
     cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Resistências: '), classeEscolhida.resistencias.map(id => atributo(id).nome).join(' / '), ' (já marcadas)'));
-    cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Perícia fixa: '), pericia(classeEscolhida.periciaFixa).nome, ' (já marcada). ', classeEscolhida.periciasEscolha));
+    cClasse.appendChild(el('p', {class:'referencia'},
+      classeEscolhida.periciaFixa ? [el('b',{},'Perícia fixa: '), pericia(classeEscolhida.periciaFixa).nome, ' (já marcada). '] : el('b',{},'Sem perícia fixa. '),
+      classeEscolhida.periciasEscolha));
     cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},'Proficiências: '), classeEscolhida.proficiencias));
     cClasse.appendChild(el('p', {class:'referencia'}, el('b',{},`${classeEscolhida.subclasses.nome}: `), classeEscolhida.subclasses.opcoes.join(' / '), ' — só os nomes por enquanto, mecânica de cada uma é fatia futura.'));
     cClasse.appendChild(el('p', {class:'referencia'}, classeEscolhida.traco));
   } else {
     cClasse.appendChild(campoTexto('Nome da classe (fora do catálogo por enquanto)', p.classe, v => { p.classe = v; salvar(); }));
   }
-  cClasse.appendChild(el('p', {class:'aviso'}, 'Catálogo com 5 das 11 classes do Compêndio de Observação do Orochimaru — a extração do PDF parou no meio do Ninjutsu Specialist. Scout-Nin, Taijutsu/Weapon Specialist, Puppet Master, Cooking-Nin e Science-Nin entram quando o resto do livro chegar.'));
+  cClasse.appendChild(el('p', {class:'aviso'}, 'As 11 classes do Compêndio de Observação do Orochimaru estão catalogadas. Mecânica de cada opção de subclasse (as "Voto de Genjutsu", "Técnica de Batedor" etc.) ainda é fatia futura — por enquanto só os nomes.'));
 
   const opcoesAntecedente = [['', '— nenhum —'], ...ANTECEDENTES.map(a => [a.id, a.nome])];
   const ant = antecedente(p.antecedenteId);
@@ -797,7 +838,7 @@ function renderJutsu(p){
 
   const info = el('div', {class:'cartao'},
     el('h2', {}, 'CD e ataque de Jutsu'),
-    el('p', {class:'aviso'}, 'Nas 5 classes já lidas, a fórmula é sempre a mesma: Ninjutsu por Inteligência, Genjutsu por Sabedoria, Taijutsu por Força — por isso esse é o padrão abaixo. O livro avisa que outra classe pode usar atributo diferente, então o seletor continua manual.'),
+    el('p', {class:'aviso'}, 'Confirmado nas 11 classes do livro: a fórmula é sempre a mesma — Ninjutsu por Inteligência, Genjutsu por Sabedoria, Taijutsu por Força. O seletor abaixo continua manual só de segurança, pro dia que um Talento ou Modificação de Classe abrir exceção.'),
     el('div', {class:'grade g2'},
       el('div', {class:'estat'}, el('span',{class:'rot'},'Ninjutsu (Inteligência)'),
         el('span', {class:'num'}, `CD ${cdJutsu(p,'inteligencia')} · +${ataqueJutsu(p,'inteligencia')}`)),

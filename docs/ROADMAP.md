@@ -1712,14 +1712,28 @@ passando.
       Inteligência, Genjutsu por Sabedoria, Taijutsu por Força. Clã/Classe
       fora do catálogo continuam texto livre. Testado com Playwright;
       `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki) e Classes (Scout-Nin,
-      Taijutsu/Weapon Specialist, Puppet Master, Cooking-Nin,
-      Science-Nin), Jutsu (Compêndio de Jutsu do Jiraiya — ainda nem
-      aberto), Equipamento/Itens Chakra, Talentos, Guia de Modificação de
-      Classe, Ficha de Inimigo/Bingo Book, Escudo do Mestre/Kage Guide,
-      Modo Hub — fatias futuras (decisão #26); os PDFs que travam a
-      extração automática precisam vir recortados por trecho como anexo
-      no chat, mesmo caminho que fechou o Fabula Ultima
+- [x] **Naruto 5e — as 11 Classes completas** (18/09/2026) — decisão #136.
+      Zé mandou o Compêndio do Orochimaru recortado em 6 partes como anexo
+      no chat, lido localmente com `pymupdf` (ferramenta nova desta sessão
+      — texto bem mais limpo que a conversão do Drive, e sem limite de
+      página). Fechou as 6 classes que faltavam: Scout-Nin, Taijutsu
+      Specialist, Weapon Specialist, Puppet Master, Cooking-Nin,
+      Science-Nin — mesma profundidade das 5 primeiras (Dado de Vida/
+      Chakra, resistências, proficiências, perícia fixa ou "sem perícia
+      fixa" nas duas que não têm, nomes de subclasse). Confirmado nas 11
+      classes sem exceção: Ninjutsu/Genjutsu/Taijutsu sempre usam
+      Inteligência/Sabedoria/Força. Puppet Master, Cooking-Nin e
+      Science-Nin (adicionadas depois das 9 originais) ficam com Tier de
+      Jutsu marcado como "não informado no livro", em vez de chutado.
+      Testado com Playwright; `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), Jutsu (Compêndio de Jutsu
+      do Jiraiya — já em análise: mecânica + 1 linha de efeito por jutsu,
+      parafraseada, categoria por categoria), Equipamento/Itens Chakra,
+      Talentos, Guia de Modificação de Classe, mecânica de cada opção de
+      subclasse, Ficha de Inimigo/Bingo Book, Escudo do Mestre/Kage Guide,
+      Modo Hub — fatias futuras (decisão #26); PDF grande demais pra
+      ferramenta do Drive extrair inteiro → pedir recortado como anexo no
+      chat e ler local com `pymupdf` (decisão #136)
 
 ---
 

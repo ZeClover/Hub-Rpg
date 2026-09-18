@@ -6103,6 +6103,53 @@ de página; os testes anteriores (aba Perícias, Antecedente, multi-
 personagem, dano no PV) continuam passando sem regressão. `tsc --noEmit` e
 `npm run lint` seguem limpos.
 
+## 136. Naruto 5e — as 11 Classes completas (18/09/2026)
+
+Continuação das decisões #134/#135. O Zé mandou o Compêndio de Observação
+do Orochimaru (Classes) recortado em 6 partes como anexo no chat — mesmo
+caminho que já tinha fechado o Fabula Ultima — pra superar a trava de
+extração do Google Drive que tinha deixado a decisão #135 com só 5 das 11
+classes.
+
+**Ferramenta nova nesta sessão: `pymupdf` (Python) local.** Instalado via
+`pip install pymupdf` pra ler o PDF direto no disco, sem passar pela
+ferramenta do Drive (que tem limite de tamanho de token na resposta). Os
+PDFs enviados como anexo no chat não têm esse limite — deu pra extrair as
+6 partes inteiras (322 páginas juntas) de uma vez, com texto muito mais
+limpo que a conversão da ferramenta do Drive (linhas normais, sem o
+embaralhamento de layout em duas colunas que atrapalhou a leitura dos
+Clãs). Esse caminho (anexo no chat + `pymupdf` local) vira o método padrão
+pra qualquer PDF grande a partir de agora — melhor que pedir recorte por
+capítulo, porque não tem limite de página nenhum.
+
+**As 6 classes que faltavam** (Scout-Nin, Taijutsu Specialist, Weapon
+Specialist, Puppet Master, Cooking-Nin, Science-Nin) entraram no catálogo
+`CLASSES` com a mesma profundidade das 5 primeiras: Dado de Vida/Chakra,
+3 resistências, proficiências de armadura/arma/kit, perícia fixa (quando
+existe — Scout-Nin e Science-Nin não têm nenhuma perícia fixa, é "escolha
+4" as 4), e nome das opções de subclasse (Técnica de Batedor, Estilo de
+Taijutsu, Forma de Arma, Técnica de Marionete, Foco Culinário, Investigação
+Científica).
+
+**Confirmado nas 11 classes, sem exceção**: CD/ataque de Ninjutsu sempre
+por Inteligência, Genjutsu sempre por Sabedoria, Taijutsu sempre por
+Força. Isso já valia como "confirmado nas 5" na decisão #135; agora é
+"confirmado no livro inteiro" — o texto da aba Jutsu foi atualizado pra
+refletir isso (o seletor manual continua existindo só como segurança,
+caso Talentos ou o Guia de Modificação de Classe abram uma exceção).
+
+**Tier de Jutsu**: Puppet Master, Cooking-Nin e Science-Nin não estavam na
+lista original de 9 classes do livro básico que definia Alto/Médio/Baixo
+Jutsu Tier (foram adicionadas depois) — em vez de chutar, o campo `tier`
+delas diz explicitamente "Não informado no livro" (não inventado).
+
+Testado com Playwright: as 11 classes aparecem no seletor, Scout-Nin e
+Science-Nin mostram "Sem perícia fixa" corretamente (as outras mostram a
+fixa), Taijutsu Specialist (d12/d6) calcula PV=7 e Chakra=4 no nível 1 com
+Constituição 10, resistência de Força marca sozinha. Testes anteriores
+(Clã, Antecedente, multi-personagem, dano no PV) continuam passando sem
+regressão. `tsc --noEmit` e `npm run lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
