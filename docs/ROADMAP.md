@@ -1776,11 +1776,18 @@ passando.
       catálogo — falta só o Rank S pra fechar o Não-Elemental inteiro
       (185 de ~1400 no total). Traz o Deus do Trovão Voador e a Técnica
       de Fissão. Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Ninjutsu Não-Elemental 100% completo** (18/09/2026) —
+      decisão #143. As 17 jutsu do Rank S fecharam os 6 ranks do Ninjutsu
+      Não-Elemental (202 jutsu) — primeira categoria inteira do Compêndio
+      de Jiraiya catalogada. Traz Selo da Morte do Ceifador, Destruição do
+      Mundo Impuro e Portão do Além, sempre só como mecânica. Testado com
+      Playwright; `tsc`, lint, build e os 298 testes automáticos do
+      projeto continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1215 jutsu: Não-Elemental S, as 5 Naturezas elementais,
-      Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por categoria),
-      Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe,
-      mecânica de cada opção de subclasse, Ficha de Inimigo/Bingo Book,
+      Jutsu (~1198 jutsu: as 5 Naturezas elementais, Genjutsu, Taijutsu,
+      Bukijutsu, Invocação — categoria por categoria), Equipamento/Itens
+      Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
+      opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
       #26); PDF grande demais pra ferramenta do Drive extrair inteiro →
       pedir recortado como anexo no chat e ler local com

@@ -6315,6 +6315,30 @@ Testado com Playwright: catálogo mostra 186 opções (1 placeholder + 185
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 143. Naruto 5e — Ninjutsu Não-Elemental 100% completo (18/09/2026)
+
+Continuação da decisão #142: as 17 jutsu do Rank S entraram no
+`JUTSU_CATALOGO`, fechando **os 6 ranks do Ninjutsu Não-Elemental** (202
+jutsu) — a primeira categoria inteira do Compêndio de Jiraiya 100%
+catalogada, com mecânica + efeito parafraseado em todas.
+
+Traz técnicas bem conhecidas da série, sempre como mecânica pura: Selo da
+Morte do Ceifador (o jutsu que mata o próprio usuário junto do alvo,
+selando as duas almas), Destruição do Mundo Impuro (prende a alma de quem
+morre num caixão pra reanimar depois) e Portão do Além (ritual coletivo de
+1 ano com 10+ conjuradores). Vários Kinjutsu de altíssimo custo/risco do
+Medical-Nin também fecharam aqui (Genocídio, Praga, Fim Iminente).
+
+**Próxima categoria**: as 5 Naturezas elementais (Terra, Vento, Fogo,
+Água, Raio) já foram parseadas junto no mesmo `parse_jutsu.py` — ficam
+pra uma fatia futura, uma de cada vez, mesmo ritmo. Depois vêm Genjutsu,
+Taijutsu, Bukijutsu e Invocação.
+
+Testado com Playwright: catálogo mostra 203 opções (1 placeholder + 202
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem) sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

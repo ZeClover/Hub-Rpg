@@ -425,9 +425,9 @@ const RANKS_JUTSU = [
    nas 341 páginas das duas partes que o Zé mandou, lidas locais com
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
-   original (decisão #17/#134 — nunca copiar texto do livro). Só falta o
-   Rank S pra fechar o Ninjutsu Não-Elemental inteiro — os outros ~1215
-   jutsu (Não-Elemental S, os 5 elementos, Genjutsu, Taijutsu, Bukijutsu,
+   original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
+   Não-Elemental está 100% completo (todos os 6 ranks); os outros ~1198
+   jutsu (5 Naturezas elementais, Genjutsu, Taijutsu, Bukijutsu,
    Invocação) entram aos poucos, categoria por categoria, mesmo ritmo dos
    Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -805,6 +805,41 @@ const JUTSU_CATALOGO = [
     efeito:'Uma espada flutuante ataca (5d10 de Força + Selado) e se move 18m por Ação Bônus pra repetir o ataque.'},
   {nome:'Toque da Morte', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'A', custo:'20 Chakra', alcance:'Toque', duracao:'Instantâneo',
     efeito:'Kinjutsu: rouba 10d6 de PV (e PV temporário) de uma criatura tocada; se isso zerar o PV dela, rouba temporariamente uma Natureza elemental e um jutsu dela.'},
+
+  {nome:'Campo de Distorção de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'30 Chakra', alcance:'Pessoal (esfera de 3m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Esfera que suprime Ninjutsu e Genjutsu (e itens de chakra) dentro dela — nada disso funciona nem pode ser lançado enquanto estiver na área.'},
+  {nome:'Liberação Médica: Força de 1000', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: versão suprema da Força de 100 — salto e deslocamento muito maiores, vantagem em Força/Destreza/Constituição, regenera PV por turno, desarmado +3d10; ao acabar, ganha 5 ranks de Exaustão.'},
+  {nome:'Semiplano', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'35 Chakra', alcance:'9m', duracao:'1 hora',
+    efeito:'Cria uma porta pra uma sala vazia de 9m fora do plano material; quem ficar lá dentro quando o jutsu acabar fica preso.'},
+  {nome:'Deus do Trovão Voador: Trovão Guia', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'22 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Quem cruzar um ponto marcado no ar é teleportado até um selo seu a até 16km de distância — o selo usado se desfaz.'},
+  {nome:'Formação dos Quatro Yang', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'30 Chakra', alcance:'Até 18m', duracao:'Concentração',
+    efeito:'Com mais 3 usuários do mesmo jutsu em pontos diferentes, sela uma área inteira numa dimensão isolada — só sai com o mesmo jutsu ou outros de teleporte específicos.'},
+  {nome:'Liberação Médica: Sangue em Ácido', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'50 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Teste de Constituição ou 10d12+40 de dano Ácido, virando Corroído permanente que continua causando dano por hora até ser tratado.'},
+  {nome:'Liberação Médica: Genocídio', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'50 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: ataque de chakra Necrótico que nunca erra contra um alvo do clã escolhido (10d10+50 de dano), e se espalha em cadeia por todo mundo do mesmo clã ou linhagem.'},
+  {nome:'Liberação Médica: Curar', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'50 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Cura até 300 PV divididos entre vários alvos e remove qualquer doença ou condição — só pode lançar de novo depois de um descanso completo.'},
+  {nome:'Liberação Médica: Fim Iminente', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'35 Chakra', alcance:'12m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: mata na hora quem tiver 80 PV ou menos; entre 81 e 100 PV, teste de Constituição ou fica aleijado permanentemente (deslocamento travado em 3m, desvantagem em Força/Destreza).'},
+  {nome:'Liberação Médica: Praga', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'100 Chakra', alcance:'Pessoal (1,6km)', duracao:'Permanente',
+    efeito:'Kinjutsu: nuvem tóxica permanente que Envenena (5 ranks, quase impossível de remover) todo mundo na área, exceto até 10 escolhidos — cresce 1,6km por mês até ser dissipada.'},
+  {nome:'Liberação Médica: Divindade Suprema do Veneno', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'25 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca um escorpião gigante de veneno que age no próprio turno, usando seu bônus e CD de Ninjutsu.'},
+  {nome:'Mudança de Plano', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'24 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Teleporta você e até 8 aliados tocando você pra um local com um selo seu previamente colocado.'},
+  {nome:'Quebra de Realidade', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'24 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma ou o alvo não pode usar Reações e sofre um efeito aleatório diferente a cada turno até o jutsu acabar.'},
+  {nome:'Selo da Morte do Ceifador', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'Especial', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: invoca o ceifador pra matar você e um alvo Agarrado/Incapacitado ao mesmo tempo, selando as duas almas — nenhum dos dois pode ser revivido depois.'},
+  {nome:'Arte de Selamento: Portão do Além', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'Especial (138 Chakra, ritual com 10+ conjuradores)', alcance:'3m', duracao:'Permanente',
+    efeito:'Kinjutsu: um ritual de 1 ano com pelo menos 10 conjuradores abre um portão de mão dupla pro além, por onde espíritos podem possuir corpos.'},
+  {nome:'Arte de Selamento: Destruição do Mundo Impuro', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'45 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: ataque à distância causa 18d10 de dano Necrótico; se matar o alvo, prende a alma num caixão e permite reanimar um construto morto-vivo dela depois.'},
+  {nome:'Arte de Selamento: Vazio', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'Especial (30 Chakra)', alcance:'300m', duracao:'Concentração, até 1 minuto',
+    efeito:'Esfera de 9m puxa objetos e criaturas pro centro (teste de Carisma) e causa 10d10 de dano de Força a quem entrar nela, prendendo-os lá dentro.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1276,7 +1311,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental Rank E, D, C, B e A completos — só falta o S) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo, os 6 ranks) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
