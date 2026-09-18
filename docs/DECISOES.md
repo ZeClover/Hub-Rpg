@@ -6241,6 +6241,47 @@ Testado com Playwright: catálogo mostra 128 opções (1 placeholder + 127
 jutsu, E+D+C), "+ Do catálogo" continua preenchendo certo. `tsc --noEmit`
 e `npm run lint` seguem limpos; suíte de testes anteriores sem regressão.
 
+## 140. Naruto 5e — Modo Guiado (18/09/2026)
+
+Pedido do Zé: "mete bala, finaliza e cria o modo guiado pq esse sistema
+nem eu sei direito" — ele não conhece o Naruto 5e de cabeça (diferente do
+Fabula Ultima/D&D, que já joga), então criar um personagem clicando pelas
+abas soltas exigia saber a ordem certa e o que cada peça significa. Segue
+o mesmo padrão que SAO/Thrylikí/Kaizoku/Sistema do Sávio já têm.
+
+**Oito passos**, cada um com um parágrafo curto explicando o conceito
+antes do campo: (1) Boas-vindas + Identidade — o que são Clã/Classe/
+Antecedente/PV/Chakra; (2) Clã; (3) Classe; (4) Atributos — reaproveita a
+aba inteira (grade de atributos + tabela de resistências); (5) Perícias e
+Antecedente; (6) PV/Chakra/Defesa — reaproveita a aba Recursos inteira;
+(7) Primeiros Jutsu — reaproveita a aba Jutsu inteira, explicando Rank/
+Custo/atributo de conjuração; (8) resumo final com os números prontos do
+personagem e um lembrete rápido de Vantagem Elemental/Clash/Bônus de
+Proficiência.
+
+**Sem duplicar lógica**: os blocos de Clã, Classe e Antecedente que já
+existiam dentro de `renderPerfil` viraram funções próprias (`blocoCla`,
+`blocoClasse`, `blocoAntecedente`) chamadas tanto pela ficha normal quanto
+pelo Modo Guiado — e os passos 4, 6 e 7 simplesmente chamam
+`renderAtributos`/`renderRecursos`/`renderJutsu` de novo, então qualquer
+correção futura nesses lugares vale pros dois modos automaticamente (não
+existe uma segunda cópia da lógica de atributos/recursos/jutsu só pro
+Guiado). Estado do Modo Guiado (`modoGuiado`/`passoGuiado`) não é salvo no
+personagem — reseta ao trocar de ficha pelo seletor, igual o padrão do
+SAO.
+
+**Bug de off-by-one pego pelo teste automatizado**: `TOTAL_PASSOS_GUIADO`
+estava em 7 mas o desenho tinha 8 telas — o botão "Próximo" virava "Ver
+ficha completa" um passo cedo demais, pulando a tela de resumo final
+inteira sem nunca aparecer. Corrigido pra 8.
+
+Testado com Playwright: percorre os 8 passos escolhendo Clã e Classe,
+confirma que a escolha persiste ao voltar um passo, chega no resumo final
+citando o clã/classe escolhidos, "Ver ficha completa" volta pras abas
+normais, e tudo sobrevive a um recarregamento de página. Suíte completa
+de testes anteriores (Clã, Classe, Antecedente, Jutsu, multi-personagem)
+sem regressão. `tsc --noEmit` e `npm run lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

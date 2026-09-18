@@ -1754,6 +1754,17 @@ passando.
       catálogo, fechando os três primeiros ranks do Não-Elemental (127 de
       ~1400 no total). Traz o Rasengan e mais 20 jutsu de Liberação
       Médica. Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Modo Guiado** (18/09/2026) — decisão #140. Pedido do
+      Zé: ele não conhece o sistema de cabeça, então criar personagem
+      pelas abas soltas não dava pra saber a ordem/o que cada peça faz.
+      8 passos com explicação em cada um (Identidade → Clã → Classe →
+      Atributos → Perícias/Antecedente → PV/Chakra/Defesa → Primeiros
+      Jutsu → resumo final), reaproveitando os mesmos blocos/abas de
+      sempre — nenhuma lógica duplicada, o Guiado só reorganiza com
+      texto explicativo na frente. Bug de off-by-one no total de passos
+      pego pelo teste automatizado (cortava a tela de resumo final) e
+      corrigido. Testado com Playwright percorrendo os 8 passos; `tsc` e
+      lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
       Jutsu (~1273 jutsu: Não-Elemental B/A/S, as 5 Naturezas elementais,
       Genjutsu, Taijutsu, Bukijutsu, Invocação — categoria por categoria),

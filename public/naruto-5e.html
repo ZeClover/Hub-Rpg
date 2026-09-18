@@ -101,6 +101,7 @@ footer{max-width:960px; margin:0 auto; padding:0 16px 40px; color:var(--suave); 
   <span class="marca">Hub RPG · Naruto 5e</span>
   <div class="cresce"></div>
   <select id="seletorPersonagem"></select>
+  <button id="btModoGuiado" title="Criação passo a passo, explicando o sistema">🧭 Modo Guiado</button>
   <button id="btnNovo">+ Novo</button>
   <button id="btnDuplicar">Duplicar</button>
   <button id="btnExportar">Exportar</button>
@@ -739,6 +740,14 @@ function salvarLista(lista){
 let lista = carregarLista();
 let idAtual = lista[0] ? lista[0].id : null;
 let abaAtual = 'perfil';
+/* Modo Guiado: tela alternativa de criação passo a passo, pra quem não
+   conhece o sistema de cor (Naruto 5e ainda não tem Grimório no Hub).
+   Não fica salvo no personagem — é só um jeito de navegar pela mesma
+   ficha, reaproveitando os blocos de sempre (blocoCla/blocoClasse/
+   blocoAntecedente). Fecha sozinho ao trocar de personagem. */
+let modoGuiado = false;
+let passoGuiado = 1;
+const TOTAL_PASSOS_GUIADO = 8;
 
 if(lista.length === 0){
   const p = personagemPadrao('Meu Personagem');
@@ -857,20 +866,10 @@ function renderAbas(){
   }
 }
 
-function renderPerfil(p){
-  const c1 = el('div', {class:'cartao'},
-    el('h2', {}, 'Identidade'),
-    el('div', {class:'grade g2'},
-      campoTexto('Nome do personagem', p.nome, v => { p.nome = v; salvar(); render(); }),
-      campoTexto('Jogador(a)', p.jogador, v => { p.jogador = v; salvar(); }),
-    ),
-    el('div', {class:'grade g3'},
-      campoTexto('Nível (1–20)', p.nivel, v => { p.nivel = clamp(Number(v)||1,1,20); salvar(); render(); }, 'number'),
-      campoTexto('XP atual', p.xp, v => { p.xp = Math.max(0, Number(v)||0); salvar(); render(); }, 'number'),
-      el('div', {class:'campo'}, el('label',{}, 'XP p/ o próximo nível'), el('p', {}, String(xpParaProximoNivel(p)))),
-    ),
-  );
-
+/* Blocos reaproveitados entre a ficha normal (renderPerfil) e o Modo
+   Guiado (renderGuiado) — mesma receita da decisão #134: um bloco só,
+   chamado dos dois lugares, pra nunca ficar dessincronizado. */
+function blocoCla(p){
   const opcoesCla = [['', '— outro (digitar abaixo) —'], ...CLAS.map(c => [c.id, c.nome])];
   const claEscolhido = cla(p.claId);
   const cCla = el('div', {class:'cartao'},
@@ -891,7 +890,10 @@ function renderPerfil(p){
     cCla.appendChild(campoTexto('Nome do clã (fora do catálogo por enquanto)', p.cla, v => { p.cla = v; salvar(); }));
   }
   cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com 15 dos ~38 clãs do Compêndio de Estudos da Tsunade — a extração do PDF parou em Hyūga. Os demais (Iburi em diante) entram quando o resto do livro chegar.`));
+  return cCla;
+}
 
+function blocoClasse(p){
   const opcoesClasse = [['', '— outro (digitar abaixo) —'], ...CLASSES.map(c => [c.id, c.nome])];
   const classeEscolhida = classeDoCatalogo(p.classeId);
   const cClasse = el('div', {class:'cartao'},
@@ -922,7 +924,10 @@ function renderPerfil(p){
     cClasse.appendChild(campoTexto('Nome da classe (fora do catálogo por enquanto)', p.classe, v => { p.classe = v; salvar(); }));
   }
   cClasse.appendChild(el('p', {class:'aviso'}, 'As 11 classes do Compêndio de Observação do Orochimaru estão catalogadas. Mecânica de cada opção de subclasse (as "Voto de Genjutsu", "Técnica de Batedor" etc.) ainda é fatia futura — por enquanto só os nomes.'));
+  return cClasse;
+}
 
+function blocoAntecedente(p){
   const opcoesAntecedente = [['', '— nenhum —'], ...ANTECEDENTES.map(a => [a.id, a.nome])];
   const ant = antecedente(p.antecedenteId);
   const c2 = el('div', {class:'cartao'},
@@ -939,6 +944,26 @@ function renderPerfil(p){
       v => { p.antecedenteBonusAtributo = v; salvar(); render(); }));
     c2.appendChild(el('p', {class:'aviso'}, 'Ou, no lugar do bônus de atributo, um Talento — catálogo ainda fora do Hub; anote a escolha em Notas.'));
   }
+  return c2;
+}
+
+function renderPerfil(p){
+  const c1 = el('div', {class:'cartao'},
+    el('h2', {}, 'Identidade'),
+    el('div', {class:'grade g2'},
+      campoTexto('Nome do personagem', p.nome, v => { p.nome = v; salvar(); render(); }),
+      campoTexto('Jogador(a)', p.jogador, v => { p.jogador = v; salvar(); }),
+    ),
+    el('div', {class:'grade g3'},
+      campoTexto('Nível (1–20)', p.nivel, v => { p.nivel = clamp(Number(v)||1,1,20); salvar(); render(); }, 'number'),
+      campoTexto('XP atual', p.xp, v => { p.xp = Math.max(0, Number(v)||0); salvar(); render(); }, 'number'),
+      el('div', {class:'campo'}, el('label',{}, 'XP p/ o próximo nível'), el('p', {}, String(xpParaProximoNivel(p)))),
+    ),
+  );
+
+  const cCla = blocoCla(p);
+  const cClasse = blocoClasse(p);
+  const c2 = blocoAntecedente(p);
 
   const c3 = el('div', {class:'cartao'},
     el('h2', {}, 'Vontade de Fogo'),
@@ -1237,11 +1262,115 @@ function renderNotas(p){
   return [equip, notas];
 }
 
+/* Modo Guiado — cria o personagem passo a passo, explicando cada conceito
+   do sistema (pedido do Zé: "esse sistema nem eu sei direito"). Reaproveita
+   os mesmos blocos/abas de sempre (blocoCla, blocoClasse, blocoAntecedente,
+   renderAtributos, renderRecursos, renderJutsu) — nunca duplica a lógica,
+   só reorganiza em passos com texto de explicação na frente. */
+function cartaoExplicacao(titulo, texto){
+  return el('div', {class:'cartao'}, el('h2', {}, titulo), el('p', {class:'referencia'}, texto));
+}
+
+function renderGuiado(p){
+  const cabecalho = el('div', {class:'cartao', style:'text-align:center'},
+    el('p', {class:'aviso', style:'text-transform:uppercase;letter-spacing:.14em;margin:0'},
+      `Modo Guiado — Passo ${passoGuiado} de ${TOTAL_PASSOS_GUIADO}`),
+    el('div', {class:'linha', style:'justify-content:center;gap:6px;margin-top:10px'},
+      ...Array.from({length: TOTAL_PASSOS_GUIADO}, (_, i) => i + 1).map(n =>
+        el('span', {style:`display:inline-block;width:26px;height:4px;border-radius:2px;background:${n<=passoGuiado?'var(--ambar)':'var(--borda)'}`})),
+    ),
+  );
+
+  let corpo;
+  if(passoGuiado === 1){
+    corpo = [
+      cartaoExplicacao('1. Bem-vindo ao Naruto 5e',
+        'Naruto 5e é um homebrew de fã que reveste as regras de D&D 5ª Edição com o universo Naruto. Um personagem tem um Clã (como a "raça" do D&D — dá bônus de atributo e um traço especial), uma Classe (define seu papel e os dois recursos que você gasta em combate: PV, sua vida, e Chakra, o "combustível" dos Jutsu) e um Antecedente (de onde ele veio antes de virar shinobi). Vamos passar por cada peça, uma de cada vez.'),
+      el('div', {class:'cartao'},
+        el('h2', {}, 'Identidade'),
+        campoTexto('Nome do personagem', p.nome, v => { p.nome = v; salvar(); render(); }),
+        campoTexto('Jogador(a)', p.jogador, v => { p.jogador = v; salvar(); }),
+      ),
+    ];
+  } else if(passoGuiado === 2){
+    corpo = [
+      cartaoExplicacao('2. Escolha um Clã',
+        'O Clã é de onde sua família vem. Ele sugere um bônus de atributo (+2 num, +1 noutro — você mesmo soma isso lá na aba Atributos), já marca 1-2 Perícias de graça, define seu deslocamento e dá um traço especial só dele (às vezes ligado a uma Natureza elemental, como Água ou Raio). Se o clã que você quer ainda não estiver na lista, digite o nome mesmo assim — o resto ainda funciona.'),
+      blocoCla(p),
+    ];
+  } else if(passoGuiado === 3){
+    corpo = [
+      cartaoExplicacao('3. Escolha uma Classe',
+        'A Classe é o seu papel na equipe — o livro chama de "Especialista em Ninjutsu", "Caçador", "Médico-Nin" etc. Ela decide: o tamanho do seu Dado de Vida e Dado de Chakra (quanto de PV/Chakra você ganha por nível), 3 Resistências em que você é bom, 1 Perícia garantida (algumas classes não têm nenhuma fixa, só escolhas), e mais pra frente, uma Subclasse — por enquanto só o nome de cada uma está na ficha.'),
+      blocoClasse(p),
+    ];
+  } else if(passoGuiado === 4){
+    corpo = [
+      cartaoExplicacao('4. Atributos',
+        'Os 6 atributos de sempre (Força, Destreza, Constituição, Inteligência, Sabedoria, Carisma) funcionam como no D&D. O jeito mais simples é usar o array padrão — 15, 14, 13, 12, 11, 10 — distribuindo um valor em cada atributo abaixo. Depois de distribuir, some à mão o bônus do seu Clã (passo 2) e, se quiser, o bônus do Antecedente (próximo passo). As Resistências que sua Classe já marcou aparecem destacadas na tabela debaixo dos atributos.'),
+      ...renderAtributos(p),
+    ];
+  } else if(passoGuiado === 5){
+    corpo = [
+      cartaoExplicacao('5. Perícias e Antecedente',
+        'O Antecedente conta a história de antes da vida shinobi (Estudante, Órfão de Rua, Nobre...) e dá 2 Perícias mais um traço narrativo. Escolha um abaixo. As Perícias que seu Clã e sua Classe já garantiram aparecem marcadas sozinhas na aba Perícias — dá uma olhada lá depois pra ver o total de cada uma.'),
+      blocoAntecedente(p),
+    ];
+  } else if(passoGuiado === 6){
+    corpo = [
+      cartaoExplicacao('6. PV, Chakra e Defesa',
+        'PV (Pontos de Vida) e Chakra já calculam sozinhos a partir do Dado de Vida/Chakra da sua Classe, seu Nível e o modificador de Constituição — role de dano/cura normalmente durante o jogo. Defesa (a "CA" do sistema) soma Destreza + metade do seu Bônus de Proficiência + armadura; Iniciativa funciona parecido. Ryo é a moeda do jogo (bem parecida com peça de ouro do D&D).'),
+      ...renderRecursos(p),
+    ];
+  } else if(passoGuiado === 7){
+    corpo = [
+      cartaoExplicacao('7. Primeiros Jutsu',
+        'Jutsu são as "magias" do sistema: cada um tem um Rank (E é o mais fraco, S o mais forte) e custa Chakra pra lançar. Ninjutsu usa Inteligência, Genjutsu usa Sabedoria e Taijutsu usa Força — sempre, em qualquer classe do livro. No nível 1, escolha alguns Jutsu de Rank E do catálogo abaixo (o catálogo completo ainda está sendo montado — Rank E, D e C do Ninjutsu comum já estão prontos).'),
+      ...renderJutsu(p),
+    ];
+  } else {
+    const c = cla(p.claId), cl = classeDoCatalogo(p.classeId);
+    corpo = [
+      el('div', {class:'cartao'},
+        el('h2', {}, 'Pronto pra jogar!'),
+        el('p', {class:'referencia'},
+          `${p.nome || 'Seu personagem'} é um shinobi`,
+          c ? ` do clã ${c.nome}` : '', cl ? `, ${cl.nome}` : '', `, nível ${p.nivel}.`),
+        el('p', {class:'referencia'}, `PV ${pvAtual(p)}/${pvMaximo(p)} · Chakra ${chakraAtual(p)}/${chakraMaximo(p)} · Defesa ${defesa(p)} · Iniciativa ${fmtMod(bonusIniciativa(p))}.`),
+      ),
+      cartaoExplicacao('Pra lembrar na mesa',
+        'Chakra é gasto pra lançar Jutsu, não regenera sozinho em combate (só em descanso). Vantagem Elemental e a mecânica de Clash (dois Jutsu se cruzando) estão na aba Regras, com uma calculadora e uma tabela de referência — vale a pena dar uma olhada antes da primeira sessão. Bônus de Proficiência começa em +3 (não +2 como no D&D) e sobe a cada 3 níveis.'),
+    ];
+  }
+
+  const nav = el('div', {class:'linha', style:'justify-content:space-between;margin-top:4px'},
+    passoGuiado > 1
+      ? el('button', {onclick: () => { passoGuiado -= 1; render(); }}, '← Voltar')
+      : el('div', {}),
+    passoGuiado < TOTAL_PASSOS_GUIADO
+      ? el('button', {class:'destaque', onclick: () => { passoGuiado += 1; render(); }}, 'Próximo →')
+      : el('button', {class:'destaque', onclick: () => { modoGuiado = false; render(); }}, '📋 Ver ficha completa'),
+  );
+
+  return [cabecalho, ...corpo, nav];
+}
+
 function render(){
-  renderAbas();
   const p = personagemAtual();
   const cont = document.getElementById('conteudo');
   cont.innerHTML = '';
+  const abasEl = document.querySelector('.abas');
+  const btModoGuiado = document.getElementById('btModoGuiado');
+  btModoGuiado.textContent = modoGuiado ? '📋 Ver ficha completa' : '🧭 Modo Guiado';
+  btModoGuiado.className = modoGuiado ? 'destaque' : '';
+
+  if(modoGuiado){
+    abasEl.innerHTML = '';
+    for(const parte of renderGuiado(p)) cont.appendChild(parte);
+    return;
+  }
+
+  renderAbas();
   const partes = {
     perfil: renderPerfil, atributos: renderAtributos, pericias: renderPericias,
     recursos: renderRecursos, jutsu: renderJutsu, regras: renderRegras, notas: renderNotas,
@@ -1255,7 +1384,12 @@ function atualizarSeletor(){
   for(const p of lista) s.appendChild(el('option', {value:p.id, selected: p.id===idAtual?'selected':null}, p.nome));
 }
 
-document.getElementById('seletorPersonagem').addEventListener('change', e => { idAtual = e.target.value; render(); });
+document.getElementById('seletorPersonagem').addEventListener('change', e => { idAtual = e.target.value; modoGuiado = false; render(); });
+document.getElementById('btModoGuiado').addEventListener('click', () => {
+  modoGuiado = !modoGuiado;
+  passoGuiado = 1;
+  render();
+});
 document.getElementById('btnNovo').addEventListener('click', () => {
   const nome = prompt('Nome do novo personagem:', 'Novo Personagem');
   if(nome == null) return;
