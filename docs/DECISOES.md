@@ -6615,6 +6615,30 @@ Testado com Playwright: catálogo mostra 421 opções (1 placeholder + 420
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 158. Naruto 5e — Liberação de Fogo 100% completa (19/09/2026)
+
+Continuação da decisão #157: as 6 jutsu do Rank S fecharam os 6 ranks
+da Liberação de Fogo (75 jutsu) — quarta categoria inteira do Compêndio
+de Jiraiya 100% catalogada (depois do Ninjutsu Não-Elemental, da
+Liberação de Terra e da Liberação de Vento). Total: 426 das ~1400
+entradas do Compêndio.
+
+Rank final traz Bênção da Fênix, o primeiro jutsu de sacrifício
+permanente do sistema: transfere todo o PV/Chakra máximo de quem lança
+pra um aliado (zerando o próprio pra sempre, sem forma de recuperar) —
+e Alvorada, cujas condições só terminam com um jutsu de remoção de
+condição de Rank S ou esperar, sem outra saída.
+
+**Próxima categoria**: Água ou Raio (as 2 últimas Naturezas elementais,
+74 jutsu cada), seguindo o mesmo ritmo rank-por-rank; depois Genjutsu,
+Taijutsu, Bukijutsu e Invocação.
+
+Testado com Playwright: catálogo mostra 427 opções (1 placeholder + 426
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
