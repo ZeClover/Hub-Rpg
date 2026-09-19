@@ -8,33 +8,16 @@
 -- tocada, e as duas últimas alterações são no-op se já tiverem rodado
 -- antes.
 
-ALTER TABLE "campanhas"
-  ADD COLUMN IF NOT EXISTS "codigoConvite" text;
+ALTER TABLE "campanhas" ADD COLUMN IF NOT EXISTS "codigoConvite" text;
 
--- Um código aleatório de 6 caracteres pra quem está sem, ou cujo código
--- colidiu com o de outra campanha (alfabeto sem 0/O/1/I, pra não
--- confundir na hora de digitar de novo). O valor é montado por seis
--- `substr` concatenados direto na cláusula, sem passar por nenhuma
--- subconsulta: uma subconsulta sem referência à linha de fora vira um
--- "initplan" no Postgres e é calculada UMA VEZ só pra todo o UPDATE, não
--- uma vez por linha — foi exatamente esse o defeito da primeira versão
--- desta migração, que deu a campanhas diferentes o mesmo código
--- ("JFGE5Y" duplicado) e travou a criação do índice único lá embaixo.
-UPDATE "campanhas"
-SET "codigoConvite" =
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1) ||
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1) ||
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1) ||
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1) ||
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1) ||
-  substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (floor(random() * 32) + 1)::int, 1)
-WHERE "codigoConvite" IS NULL
-   OR "codigoConvite" IN (
-     SELECT "codigoConvite" FROM "campanhas" GROUP BY "codigoConvite" HAVING count(*) > 1
-   );
+-- Um código por linha, hash do id de cada campanha misturado com dois
+-- valores que mudam a cada execução (random(), clock_timestamp()) — como
+-- o `id` de cada campanha entra na conta, o Postgres não tem como tratar
+-- isto como uma conta só pra todo o UPDATE (o defeito das duas tentativas
+-- anteriores). Tudo numa linha só de propósito, pra sobreviver a
+-- qualquer editor que corte ou quebre a query em pontos inesperados.
+UPDATE "campanhas" SET "codigoConvite" = upper(substr(md5(random()::text || clock_timestamp()::text || id::text), 1, 6)) WHERE "codigoConvite" IS NULL OR "codigoConvite" IN (SELECT "codigoConvite" FROM "campanhas" GROUP BY "codigoConvite" HAVING count(*) > 1);
 
-ALTER TABLE "campanhas"
-  ALTER COLUMN "codigoConvite" SET NOT NULL;
+ALTER TABLE "campanhas" ALTER COLUMN "codigoConvite" SET NOT NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS "campanhas_codigoConvite_key"
-  ON "campanhas" ("codigoConvite");
+CREATE UNIQUE INDEX IF NOT EXISTS "campanhas_codigoConvite_key" ON "campanhas" ("codigoConvite");

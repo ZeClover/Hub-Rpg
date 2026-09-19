@@ -6228,7 +6228,7 @@ código curto.
 precisou de um backfill de verdade: toda campanha já existente ganhou
 um código aleatório de 6 caracteres antes da trava `NOT NULL` + `UNIQUE`
 entrar. Idempotente: campanha com código único não é tocada rodando de
-novo. Duas versões quebraram antes de chegar na de verdade:
+novo. Três versões quebraram antes de chegar na de verdade:
 
 1. A primeira usava um bloco `DO $$ ... END $$` em PL/pgSQL com laço,
    que o SQL Editor do Supabase do Zé recusou ("unterminated
@@ -6240,16 +6240,23 @@ novo. Duas versões quebraram antes de chegar na de verdade:
    `UPDATE`**, não uma vez por linha. Resultado: toda campanha sem
    código ganhou o **mesmo** código, e a criação do índice único falhou
    acusando a duplicata.
+3. A terceira tirou a subconsulta (seis `substr(...) || substr(...)`
+   direto na cláusula `SET`, cada um com sua própria chamada de
+   `random()`) mas manteve várias linhas parecidas — e o SQL Editor do
+   Zé voltou a acusar erro de sintaxe num ponto que não batia com o
+   arquivo, sinal de que alguma coisa no caminho (o editor, ou como o
+   texto foi colado) estava cortando ou reaproveitando conteúdo de uma
+   tentativa anterior no meio da query.
 
-A versão final monta os 6 caracteres com `substr(...) || substr(...)`
-direto na cláusula `SET`, sem nenhuma subconsulta — assim cada linha
-força uma chamada de `random()` própria, garantida pela semântica normal
-de `UPDATE` (o mesmo motivo por que `UPDATE t SET x = random()` já
-funciona certo). A migração também ficou preparada pra corrigir sozinha
-o estado que a versão 2 deixou no banco do Zé: o `WHERE` pega tanto
-quem está com `codigoConvite` nulo quanto quem está com um código
-repetido, então rodar o arquivo de novo resolve as duplicatas que já
-existirem, sem precisar de nenhum passo manual.
+A versão final não deixou margem pra isso: as quatro instruções da
+migração cabem cada uma numa linha só, sem bloco, sem laço, sem
+subconsulta na cláusula `SET`, e sem repetir linhas parecidas. O código
+sai de `md5(random()::text || clock_timestamp()::text || id::text)` —
+como o `id` de cada campanha entra na conta, não tem como o Postgres
+tratar isso como uma única conta pro `UPDATE` inteiro. Continua
+corrigindo sozinha o estado que a tentativa 2 deixou no banco do Zé (o
+`WHERE` pega tanto quem está com `codigoConvite` nulo quanto quem está
+com um código repetido).
 
 **Dependência nova:** `qrcode` (MIT, gera a imagem inteiramente no
 navegador — não é um serviço rodando, não fere a decisão #5). Rodei
