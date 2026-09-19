@@ -426,11 +426,10 @@ const RANKS_JUTSU = [
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
-   Não-Elemental está 100% completo (todos os 6 ranks). Liberação de
-   Terra com Ranks D, C, B e A prontos (69 de 75 jutsu) — falta só o S
-   dela, mais Vento/Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e
-   Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
-   dos Clãs/Classes. */
+   Não-Elemental e Liberação de Terra estão 100% completos (todos os 6
+   ranks de cada, 277 jutsu) — faltam Vento/Fogo/Água/Raio, Genjutsu,
+   Taijutsu, Bukijutsu e Invocação, entrando aos poucos, categoria por
+   categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -983,6 +982,19 @@ const JUTSU_CATALOGO = [
     efeito:'Campo de espinhos de pedra numa área de 10,5m: teste de Destreza ou 10d8 de dano de Terra (metade se passar); vira terreno difícil com desvantagem em Percepção lá dentro.'},
   {nome:'Liberação de Terra: Agulha de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'18 Chakra', alcance:'27m', duracao:'Instantâneo',
     efeito:'Lança fininha e velocíssima de terra (27m de comprimento): teste de Destreza ou 9d10 de dano de Terra, 4 ranks de Contusão e cai Derrubado (metade do dano e sem efeitos extras se passar).'},
+
+  {nome:'Liberação de Terra: Endurecimento de Ossos de Diamante', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'25 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Seus ossos viram diamante: regenera 20 PV no início de cada turno e ganha resistência a todo tipo de dano, menos Raio.'},
+  {nome:'Liberação de Terra: Queda de Meteoro', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'30 Chakra', alcance:'1,6km', duracao:'Instantâneo',
+    efeito:'Kinjutsu: escolhe até 4 pontos visíveis a até 1,6km; cada um recebe um meteoro (esfera de 9m): teste de Destreza ou 10d10 de dano de Concussão + 10d10 de Terra, ficando Atordoado e Derrubado (metade do dano se passar) — cada criatura só é atingida por um meteoro.'},
+  {nome:'Liberação de Terra: Queda da Lua', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'Especial (35 ou 70 Chakra)', alcance:'1,6km', duracao:'Especial',
+    efeito:'Kinjutsu: gasta 35 ou 70 Chakra (não pode ser reduzido) pra formar um construto de terra gigantesco no céu e deixá-lo cair — com 35, esmaga uma esfera de 9m (22d12 de dano de Terra pra quem não escapar, mais onda de choque de 12d6+12d6 em volta); com 70, dobra pra uma esfera de 18m (30d12 de dano, onda de choque de 15d6+15d6).'},
+  {nome:'Liberação de Terra: Cilindro de Assimilação Parcial', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'25 Chakra', alcance:'Pessoal (7,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cilindro de partículas de terra (3m de diâmetro, 7,5m de comprimento) que desintegra molecularmente quem estiver dentro: teste de Destreza ou 14d10 de dano de Força — abaixo de metade dos PV perde um membro (à sua escolha), e a 0 PV vira pó e morre.'},
+  {nome:'Liberação de Terra: Cubo de Assimilação de Partículas', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'25 Chakra', alcance:'Toque (arremesso até 9m)', duracao:'Instantâneo',
+    efeito:'Cubo de partículas de terra que desintegra molecularmente ao acertar: Ataque de Ninjutsu corpo a corpo ou à distância (até 9m) causando 16d12 de dano de Força — abaixo de metade dos PV perde um membro (à sua escolha), e a 0 PV vira pó e morre.'},
+  {nome:'Liberação de Terra: Estilhaço de Estrela', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'30 Chakra', alcance:'1,6km', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: um construto de terra em forma de estrela cai do céu e se estilhaça numa área de 36m: teste de Força ou fica Atordoado, sofrendo 9d8 de dano de Terra no início e no fim de cada turno até conseguir um teste de Força pra encerrar o efeito.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1454,7 +1466,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

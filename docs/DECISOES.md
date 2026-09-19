@@ -6414,6 +6414,32 @@ jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
 sem regressão.
 
+## 148. Naruto 5e — Liberação de Terra 100% completa (19/09/2026)
+
+Continuação da decisão #147: as 6 jutsu do Rank S entraram no
+`JUTSU_CATALOGO`, fechando **os 6 ranks da Liberação de Terra** (75
+jutsu) — a segunda categoria inteira do Compêndio de Jiraiya 100%
+catalogada (depois do Ninjutsu Não-Elemental, decisão #143). Total:
+277 das ~1400 entradas do Compêndio.
+
+Rank final com 3 Kinjutsu pesados (Queda de Meteoro, Queda da Lua —
+que cai em duas intensidades, 35 ou 70 Chakra, sem redução de custo
+possível — e Estilhaço de Estrela) e duas técnicas de desintegração
+molecular (Cilindro e Cubo de Assimilação de Partículas, que matam
+instantaneamente ao zerar os PV do alvo). Mantida a regra de nunca
+copiar o texto do livro mesmo nos jutsu mais extremos — dano e condição
+ficam fiéis à mecânica, a narração do "como" é sempre reescrita.
+
+**Próxima categoria**: Vento, Fogo, Água ou Raio (as outras 4 Naturezas
+elementais), seguindo o mesmo ritmo rank-por-rank; depois Genjutsu,
+Taijutsu, Bukijutsu e Invocação.
+
+Testado com Playwright: catálogo mostra 278 opções (1 placeholder + 277
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

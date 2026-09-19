@@ -1803,8 +1803,14 @@ passando.
       catálogo (69 de 75 jutsu de Terra; 271 de ~1400 no total) — falta
       só o S pra fechar Terra inteira. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Liberação de Terra 100% completa** (19/09/2026) —
+      decisão #148. As 6 jutsu do Rank S fecharam os 6 ranks da
+      Liberação de Terra (75 jutsu) — segunda categoria inteira do
+      Compêndio de Jiraiya catalogada (277 de ~1400 no total). Testado
+      com Playwright; `tsc`, lint, build e os 298 testes automáticos do
+      projeto continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1129 jutsu: Terra S, Vento/Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1123 jutsu: Vento/Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
