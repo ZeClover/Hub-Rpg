@@ -6969,6 +6969,25 @@ Testado com Playwright: catálogo mostra 702 opções (1 placeholder + 701
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 175. Naruto 5e — Catálogo de Jutsu, início do Genjutsu Rank C (19/09/2026)
+
+Continuação da decisão #174. O Rank C do Genjutsu tem 60 jutsu — segue
+o mesmo padrão do Rank D, entrando em lotes (dessa vez 3 de ~20). Este
+primeiro lote (20 jutsu, de "Aparição Abominável" a "Visões Falsas")
+entrou no `JUTSU_CATALOGO` — 721 das ~1400 entradas totais (20 de 60
+jutsu de Genjutsu Rank C; 147 de 268 de Genjutsu no total).
+
+Traz mais 6 variações da família "Corrupção" (Sementes Malignas,
+Crueldade, Ódio, Hostilidade, Repulsa, Malignidade) — três delas (Ódio,
+Hostilidade, Repulsa) compartilham a mesma estrutura exata, mudando só
+qual resistência (Constituição/Destreza/Força) vira teste de habilidade
+comum, então usei o mesmo resumo compacto do lote 1 do Rank D pra essas
+três.
+
+Testado com Playwright: catálogo mostra 722 opções (1 placeholder + 721
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

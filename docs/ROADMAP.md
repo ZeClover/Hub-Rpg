@@ -1939,9 +1939,14 @@ passando.
       inteiro (111 jutsu, o maior de qualquer rank do Compêndio) — com
       o Rank E, Genjutsu está com 127 de 268 jutsu feitos (701 de ~1400
       no total). Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Genjutsu Rank C (lote
+      1 de 3)** (19/09/2026) — decisão #175. 20 dos 60 jutsu do Rank C
+      entraram no catálogo (147 de 268 de Genjutsu; 721 de ~1400 no
+      total). Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~699 jutsu: Genjutsu C/B/A/S (140), Taijutsu (175),
-      Bukijutsu (383), Invocação — categoria por categoria),
+      Jutsu (~679 jutsu: Genjutsu C restante (40) + B/A/S (80),
+      Taijutsu (175), Bukijutsu (383), Invocação — categoria por
+      categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
