@@ -1839,10 +1839,16 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       — um atalho só, de propósito, não um sistema geral de comandos.
       Sem migração. `tsc`, lint, `next build` e os 302 testes
       automáticos continuam limpos
+- [x] **Cards compartilháveis de personagem e campanha** (19/09/2026)
+      — decisão #146. `GerarCard`, compartilhado entre `/fichas` e a
+      página da campanha, desenha um PNG com Canvas API (sem lib nova)
+      só com campos já públicos ali. Resolve o caso de avatar/capa sem
+      cabeçalho CORS "sujar" o canvas: gera de novo sem a imagem em vez
+      de falhar. Sem migração. `tsc`, lint, `next build` e os 302
+      testes automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
-      compartilhados, biblioteca pessoal de item, cards compartilháveis,
-      exportar PDF, mestre
+      compartilhados, biblioteca pessoal de item, exportar PDF, mestre
       auxiliar, sandbox de ficha/combate, prévia do Level Up, PWA,
       offline parcial, QR Code do link compartilhável da ficha, página
       geral do personagem) — fica pra quando o Zé confirmar a ordem das

@@ -2,12 +2,13 @@ import { banco } from "@/lib/banco";
 import { ROTULO_SITUACAO, SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
+import { GerarCard } from "../gerar-card";
 import { CriarFicha } from "./criar-ficha";
 import { CriarNpc } from "./criar-npc";
 import { BotaoExcluir } from "./excluir-ficha";
 import { FavoritarSistema } from "./favoritar-sistema";
 import { MoverOuCopiarFicha } from "./mover-ou-copiar-ficha";
-import { AvatarFicha, EditarImagemFicha, StatusFicha } from "./organizacao-ficha";
+import { AvatarFicha, EditarImagemFicha, ROTULO_STATUS, StatusFicha } from "./organizacao-ficha";
 
 type Personagem = {
   id: string;
@@ -192,6 +193,20 @@ function CartaoFicha({
             personagemId={personagem.id}
             campanhaAtualNome={personagem.campanha?.nome ?? null}
             candidatas={candidatas}
+          />
+        </div>
+        <div className="mt-2">
+          <GerarCard
+            dados={{
+              titulo: personagem.nome,
+              subtitulo: personagem.sistema.nome,
+              linhas: [
+                ROTULO_STATUS[personagem.status] ?? personagem.status,
+                personagem.campanha ? `Em ${personagem.campanha.nome}` : "Ficha avulsa",
+              ],
+              imagemUrl: personagem.avatarUrl,
+            }}
+            nomeArquivo={personagem.nome}
           />
         </div>
       </div>

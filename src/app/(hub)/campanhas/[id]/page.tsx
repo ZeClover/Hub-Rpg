@@ -17,6 +17,7 @@ import { DuplicarInimigo } from "./duplicar-inimigo";
 import { Enquetes, type EnqueteView } from "./enquetes";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
+import { GerarCard } from "../../gerar-card";
 import { IdentidadeCampanha } from "./identidade-campanha";
 import { ManualDoMestre } from "./manual-mestre";
 import { QrCode } from "./qr-code";
@@ -226,6 +227,18 @@ export default async function PaginaCampanha({
           ))}
         </ul>
       )}
+
+      <div className="mt-3">
+        <GerarCard
+          dados={{
+            titulo: campanha.nome,
+            subtitulo: campanha.sistema.nome,
+            linhas: [campanha.descricao ?? "", campanha.tags.join(" · ")].filter(Boolean),
+            imagemUrl: campanha.capaUrl,
+          }}
+          nomeArquivo={campanha.nome}
+        />
+      </div>
 
       {minhaParticipacao && (
         <Link

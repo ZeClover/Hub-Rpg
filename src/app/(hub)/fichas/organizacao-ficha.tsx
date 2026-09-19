@@ -9,7 +9,7 @@ import { useState } from "react";
   a fonte de verdade das regras); é só o que ajuda a separar, na lista, quem
   ainda está em jogo de quem não está mais, e dar uma cara pra cada ficha.
 */
-const ROTULO_STATUS: Record<string, string> = {
+export const ROTULO_STATUS: Record<string, string> = {
   ATIVO: "Ativo",
   RESERVA: "Reserva",
   APOSENTADO: "Aposentado",

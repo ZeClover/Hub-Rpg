@@ -6515,6 +6515,38 @@ Sem migração, sem rota nova — só um hook de cliente e uma linha de
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 146. Hub — Cards compartilháveis de personagem e campanha (19/09/2026)
+
+Nona fatia do backlog de "demais ideias" (decisão #134), ideias
+#87/#88 do pedido original. Gera uma imagem PNG resumindo um
+personagem ou uma campanha, pra compartilhar fora do Hub.
+
+**Feito com Canvas API do navegador, sem lib nova** (custo zero,
+decisão #5): componente `GerarCard`, compartilhado entre `/fichas` e a
+página da campanha. Só entra campo que já é público na tela onde o
+botão aparece — nome, sistema, status, campanha (personagem) / nome,
+sistema, descrição, tags (campanha) — nunca nada de mestre nem dado
+interno da ficha.
+
+**Problema resolvido: imagem externa sem CORS "suja" o canvas.**
+Avatar/capa são links externos (decisão #134) — se o servidor de onde
+vêm não manda cabeçalho CORS, o navegador deixa a imagem CARREGAR
+normalmente, mas recusa depois exportar o canvas pra PNG
+(`SecurityError`, canvas "contaminado"). Em vez de falhar pro usuário
+sem explicação, `GerarCard` tenta gerar com a imagem e, se
+`toDataURL()` lançar esse erro, gera de novo sem ela — sempre entrega
+alguma imagem, com ou sem avatar/capa.
+
+**Onde aparece:** botão "Gerar card" por ficha em `/fichas` (ao lado de
+Mover/Copiar); botão na página da campanha, junto do cabeçalho
+(nome/capa/descrição/tags) — visível pra qualquer participante, porque
+esse cabeçalho já era público pra quem quer que já visse a campanha.
+
+Sem migração, sem rota nova, sem dependência nova.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
