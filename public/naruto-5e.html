@@ -427,7 +427,7 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental está 100% completo (todos os 6 ranks). Liberação de
-   Terra com Ranks D e C prontos (45 de 75 jutsu) — faltam B/A/S dela,
+   Terra com Ranks D, C e B prontos (59 de 75 jutsu) — faltam A/S dela,
    mais Vento/Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação,
    entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
    Classes. */
@@ -933,6 +933,35 @@ const JUTSU_CATALOGO = [
     efeito:'Ergue uma parede de pedra (um construto de terra com 5d6+5 PV, RD 4 contra tudo menos Raio) na frente de um aliado, dando cobertura total; se o dano superar os PV da parede, o excedente passa pro alvo e ela é destruída — continua existindo até ser destruída.'},
   {nome:'Liberação de Terra: Palma Giratória', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'Pessoal (cubo de 13,5m)', duracao:'Instantâneo',
     efeito:'Racha uma área de terra (cubo de 13,5m) em terreno difícil permanente (só desfaz com o mesmo jutsu); se for fina o bastante pode desabar, e jutsu de Terra lançado ali dá -1d4 nos testes de resistência contra ele.'},
+
+  {nome:'Liberação de Terra: Colapso da Formiga-Leão', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'12 Chakra', alcance:'18m (cubo de 6m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Área de 6m vira um funil que suga tudo pro centro: quem começa o turno lá dentro testa Força ou sofre 5d8 de dano de Terra e 2 ranks de Contusão (metade se passar); terreno difícil, sem Disparada nem Ação Bônus enquanto estiver dentro.'},
+  {nome:'Liberação de Terra: Pântano Sem Fundo', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'13 Chakra', alcance:'36m (cubo de 18m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Poça de lama numa área de 18m (terreno difícil, sem Disparada nem água líquida): quem está dentro testa Força a cada turno — 3 falhas seguidas afundam a criatura até ela ser sugada pra baixo e começar a sufocar; um sucesso reverte a última falha.'},
+  {nome:'Liberação de Terra: Calcita: Poder', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'12 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Amplifica os jutsu de um aliado: +3d8 de dano 1×/turno, nunca em desvantagem em Clash, CD +2 — e jutsu de Terra dele custam 2 Chakra a menos.'},
+  {nome:'Liberação de Terra: Berço de Jade', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'13 Chakra', alcance:'9m', duracao:'1 rodada',
+    efeito:'Reação: reveste um aliado perto de jade cristalizado bem na hora do impacto, reduzindo o dano recebido em 10d6 (resistente a Frio, vulnerável a Raio) até o início do turno dele.'},
+  {nome:'Liberação de Terra: Cristalização: Weiss', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'12 Chakra', alcance:'22,5m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Constituição a cada turno enquanto o alvo cristaliza aos poucos: falhas acumuladas dão Fragilizado, depois Agarrado, Restrito, Atordoado e por fim Petrificado por 24h; 3 sucessos encerram o jutsu e dão imunidade por 24h.'},
+  {nome:'Liberação de Terra: Cúpula da Prisão de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'6m (esfera de 3m de raio)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cúpula de terra (construto de terra com CA igual à sua CD, 40 PV, regenera 2d8/turno) prende quem estiver dentro (teste de Destreza limita o movimento) e drena 2d10+mod. de Chakra deles por turno, metade transferida pra você.'},
+  {nome:'Liberação de Terra: Muralha de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'12 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ergue uma muralha de pedra (1,5m de espessura, 9m de comprimento, 7,5m de altura; construto de terra com CA igual à sua CD, 10d6+10 PV, RD 6 contra tudo menos Raio) empurrando quem estiver no caminho pra um dos lados.'},
+  {nome:'Liberação de Terra: Lança de Pele de Ferro', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: Ataque de Ninjutsu corpo a corpo com o braço endurecido feito pedra: 10d6 de dano de Terra e marca de petrificação — 3 falhas em Constituição durante o próximo minuto petrificam o alvo por 24h (3 sucessos encerram o efeito).'},
+  {nome:'Liberação de Terra: Domínio de Lápis-Lazúli', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'Pessoal (cubo de 28,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria um domínio com muralhas de lápis-lazúli nas bordas (CA igual à sua CD, PV = 10× sua Proficiência) sem gastar Chakra pra manter; jutsu de Terra lançados dentro custam 2 a menos; quem não for poupado por você testa Força ou fica Fragilizado e sem concentração em jutsu que não seja de Terra até o fim do próximo turno.'},
+  {nome:'Liberação de Terra: Presa de Lazurita', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'24m', duracao:'Instantâneo',
+    efeito:'Cria um construto de terra em forma de fera com presas que investe contra o alvo: Ataque de Ninjutsu corpo a corpo causando 3d10 de dano Perfurante + 3d10 de Terra — depois o construto vira um obstáculo fixo de 1,5m no ambiente.'},
+  {nome:'Liberação de Terra: Rocha do Mausoléu', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'11 Chakra', alcance:'18m (cubo de 6m)', duracao:'Instantâneo',
+    efeito:'Arremessa um pedregulho gigante numa área de 6m: teste de Força ou 8d6 de dano de Terra e 2 ranks de Contusão (metade se passar).'},
+  {nome:'Liberação de Terra: Técnica do Sanduíche', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'11 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Dois construtos de terra gigantes se fecham como um sanduíche sobre o alvo e quem estiver a 1,5m dele: teste de Força ou 6d6 de dano de Terra e Contundido (metade se passar) — os construtos ficam no lugar depois.'},
+  {nome:'Liberação de Terra: Broto de Bambu de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'4 lanças de pedra convergem de direções diferentes num único alvo: Ataque de Ninjutsu causando 6d10 de dano de Terra; a área de 6m ao redor vira terreno difícil onde não dá pra usar Disparada, Esquiva ou Desengajar.'},
+  {nome:'Liberação de Terra: Rocha Impassível', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Sela 2 proficiências de perícia (ou 1 de resistência) numa pedra, perdendo-as temporariamente; quem segurar a pedra com uma mão ganha essas proficiências, mas não pode fazer Selos de Mão com essa mão.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1404,7 +1433,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

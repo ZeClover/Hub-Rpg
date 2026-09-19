@@ -1793,8 +1793,13 @@ passando.
       (19/09/2026) — decisão #145. As 19 jutsu do Rank C entraram no
       catálogo (45 de 75 jutsu de Terra; 247 de ~1400 no total). Testado
       com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank B**
+      (19/09/2026) — decisão #146. As 14 jutsu do Rank B entraram no
+      catálogo (59 de 75 jutsu de Terra; 261 de ~1400 no total) — falta
+      só A e S pra fechar Terra inteira. Testado com Playwright; `tsc` e
+      lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1153 jutsu: Terra B/A/S, Vento/Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1139 jutsu: Terra A/S, Vento/Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

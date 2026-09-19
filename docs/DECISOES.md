@@ -6374,6 +6374,27 @@ jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
 sem regressão.
 
+## 146. Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank B (19/09/2026)
+
+Continuação da decisão #145, pedido do Zé de seguir sem parar ("vai até
+acabar") pelo backlog do catálogo. As 14 jutsu do Rank B da Liberação de
+Terra entraram no `JUTSU_CATALOGO` — fecha 3 dos 6 ranks dessa natureza
+(59 das 75 jutsu de Terra; 261 das ~1400 entradas totais do Compêndio).
+Falta só A e S pra fechar Terra inteira.
+
+Traz o primeiro Kinjutsu de Terra (Lança de Pele de Ferro, que petrifica
+o alvo em 3 falhas de Constituição) e mais um jutsu que usa mecânica de
+"Clash sem desvantagem" pra amplificar aliados (Calcita: Poder). Mantido
+o termo "construto de terra" em todos os jutsu que criam ou dependem de
+um (Cúpula da Prisão de Terra, Muralha de Terra, Domínio de Lápis-Lazúli,
+Presa de Lazurita, Rocha do Mausoléu, Técnica do Sanduíche), consistente
+com os ranks anteriores.
+
+Testado com Playwright: catálogo mostra 262 opções (1 placeholder + 261
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
+sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
