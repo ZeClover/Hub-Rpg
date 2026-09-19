@@ -6504,6 +6504,24 @@ Testado com Playwright: catálogo mostra 336 opções (1 placeholder + 335
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 152. Naruto 5e — Catálogo de Jutsu, Liberação de Vento Rank A (19/09/2026)
+
+Continuação da decisão #151. As 10 jutsu do Rank A da Liberação de
+Vento entraram no `JUTSU_CATALOGO` — fecha 4 dos 6 ranks dessa natureza
+(68 das 74 jutsu de Vento; 345 das ~1400 entradas totais). Falta só o
+Rank S pra fechar Vento inteira.
+
+Traz Brisa Fragmentadora, um Kinjutsu que escala de intensidade
+conforme o Chakra investido na hora (20/30/40, cada um com dano e
+efeito maiores) — mesmo padrão de "custo variável por vontade do
+jogador" já visto em Queda da Lua (Terra, decisão #148). Olho da
+Tempestade traz uma cúpula que muda de elemento bloqueado conforme é
+atingida, em cadeia (Raio → Fogo → Vento).
+
+Testado com Playwright: catálogo mostra 346 opções (1 placeholder + 345
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

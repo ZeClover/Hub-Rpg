@@ -427,8 +427,8 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental e Liberação de Terra estão 100% completos (todos os 6
-   ranks de cada, 277 jutsu). Liberação de Vento com Ranks D, C e B
-   prontos (58 de 74 jutsu) — faltam A/S dela, mais Fogo/Água/Raio,
+   ranks de cada, 277 jutsu). Liberação de Vento com Ranks D, C, B e A
+   prontos (68 de 74 jutsu) — falta só o S dela, mais Fogo/Água/Raio,
    Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
    categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -1115,6 +1115,27 @@ const JUTSU_CATALOGO = [
     efeito:'Ataque de Ninjutsu à distância: 5d10 de dano de Vento e 1 rank de Laceração.'},
   {nome:'Liberação de Vento: Surto da Wyvern', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
     efeito:'Sem gastar Chakra pra manter: 1×/turno, quando um jutsu elemental seu causa dano, o alvo testa Força ou sofre um efeito extra conforme o elemento (Contundido, +3d8 de Vento e Sangramento, Queimado, Resfriado ou Chocado).'},
+
+  {nome:'Liberação de Vento: Rede de Lançamento', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'19 Chakra', alcance:'Pessoal (cone de 18m)', duracao:'Instantâneo',
+    efeito:'Onda cortante num cone de 18m: teste de Força ou 7d8 de dano de Vento, arremessado 18m, Derrubado, 1 rank de Laceração e Redemoinho (metade do dano e nada mais se passar).'},
+  {nome:'Liberação de Vento: Tempestade do Desafio', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'20 Chakra', alcance:'27m (raio de 9m)', duracao:'1 minuto',
+    efeito:'Selo no chão cria uma aura (9m de raio) que dá a até 4 aliados vantagem em Força/Destreza/Sabedoria, jutsu de Vento Rank B ou menor custando 2 Chakra a menos e +dano de Vento igual ao seu mod. de Ninjutsu em Taijutsu/Bukijutsu 1×/turno; o selo tem CA igual à sua CD e PV = 2× sua CD — se for destruído, o jutsu acaba.'},
+  {nome:'Liberação de Vento: Bala de Vento Perfurante', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'19 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 7d10 de dano de Vento, 3 ranks de Laceração e empurra o alvo 7,5m.'},
+  {nome:'Liberação de Vento: Olho da Tempestade', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'20 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cúpula de vento opaca (18m de raio) que isola tudo lá dentro — atravessar exige teste de Força ou 8d8 de dano de Vento e ser arremessado 9m; nada penetra de fora, e conforme a parede é atingida por Água ou Fogo, ela passa a bloquear jutsu puros de Raio, Fogo ou Vento (um de cada vez, em cadeia).'},
+  {nome:'Liberação de Vento: Lâmina da Presa do Leão', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'19 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Invoca uma fera feita de chakra de Vento que ataca (Ataque de Ninjutsu corpo a corpo) um número de alvos igual ao seu modificador de Ninjutsu: 2d8 de dano de Vento cada, e teste de Constituição ou 2 ranks de Laceração e Redemoinho.'},
+  {nome:'Liberação de Vento: Queda Sem Fim', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'15 Chakra', alcance:'Pessoal', duracao:'Concentração, 1 minuto',
+    efeito:'Ganha 18m de voo (54m se usar Disparada) e controle total de direção.'},
+  {nome:'Liberação de Vento: Fôlego Sem Fim', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'15 Chakra', alcance:'Pessoal', duracao:'10 horas',
+    efeito:'Não precisa respirar por 10 horas — imune a sufocamento e afogamento.'},
+  {nome:'Liberação de Vento: Brisa Fragmentadora', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'Especial (20, 30 ou 40 Chakra)', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: Ataque de Ninjutsu corpo a corpo cuja força escala com o Chakra gasto — 20 Chakra causa 20d4 de dano de Vento (2 ranks de Laceração e Redemoinho), 30 causa 30d4 (4 ranks), 40 causa 40d4 (6 ranks); quem chega a 0 PV é bissectado.'},
+  {nome:'Liberação de Vento: Ondas Seriais de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'16 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância em até 3 alvos: 8d6 de dano de Vento e 1 rank de Laceração cada.'},
+  {nome:'Liberação de Vento: Muralha de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'15 Chakra', alcance:'9m', duracao:'1 rodada',
+    efeito:'Protege um aliado até o início do seu próximo turno: todo ataque contra ele rola 1d20, e em 8 ou mais o vento denso desvia o golpe automaticamente.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1586,7 +1607,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
