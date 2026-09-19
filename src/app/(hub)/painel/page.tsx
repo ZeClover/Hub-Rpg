@@ -161,6 +161,12 @@ export default async function Painel() {
         >
           + Criar campanha
         </Link>
+        <Link
+          href="/sistemas"
+          className="rounded border border-borda bg-superficie px-4 py-2 text-sm text-texto transition hover:border-ambar/40 hover:text-ambar-forte"
+        >
+          Ver sistemas
+        </Link>
       </section>
     </main>
   );

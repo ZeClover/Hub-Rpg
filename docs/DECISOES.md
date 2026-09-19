@@ -6356,6 +6356,34 @@ mais complexo que este `CREATE TYPE`/`ADD CONSTRAINT` de sempre).
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 141. Hub — Página própria /sistemas (19/09/2026)
+
+Quarta fatia do backlog de "demais ideias" (decisão #134), ideia #119 do
+pedido original. Auditoria antes de mexer: `/fichas` já tinha uma seção
+"Sistemas do Hub" (favoritar + ver situação), mas sem link nenhum pro
+Grimório ou Escudo do Mestre — aqueles só apareciam de dentro de uma
+campanha já criada, então não dava pra conhecer um sistema antes de
+entrar numa mesa dele.
+
+**O que foi feito.** Página nova `/sistemas`, linkada no cabeçalho (ao
+lado de Fichas e Campanhas) e como atalho no painel. Lista todo
+`SISTEMAS`, com nome, descrição, situação (Pronta/Em construção/
+Planejada), a mesma estrela de favorito de `/fichas` (componente
+`FavoritarSistema` reaproveitado, não duplicado) e — a parte nova —
+links pro Grimório e Escudo do Mestre de cada sistema, quando existirem,
+mais um link "+ Criar ficha" pra quem já tem ficha própria no Hub.
+
+**Não substituiu nada.** A seção "Sistemas do Hub" dentro de `/fichas`
+continua exatamente como estava — ela serve pra favoritar rápido
+enquanto navega as próprias fichas; a página nova é o lugar de
+referência mais completo, sem sobrepor a função da outra.
+
+Sem migração — nenhum campo novo, só uma página que lê dados que já
+existiam (`SISTEMAS` em código, `Usuario.sistemasFavoritos` no banco).
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1800,15 +1800,22 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       Livre). Migração `0018_campos_personalizados_e_conquistas.sql`
       — só tabelas novas. `tsc`, lint, `next build` e os 302 testes
       automáticos continuam limpos
+- [x] **Página própria /sistemas** (19/09/2026) — decisão #141. Lista
+      todo `SISTEMAS` com descrição, situação, favorito (reaproveita
+      `FavoritarSistema` de `/fichas`) e links pro Grimório/Escudo do
+      Mestre de cada um — antes só apareciam de dentro de uma campanha
+      já criada. Linkada no cabeçalho e no painel; não substituiu a
+      seção de `/fichas`, que continua servindo pra favoritar rápido.
+      Sem migração. `tsc`, lint, `next build` e os 302 testes
+      automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,
       contador de inimigos, cards compartilháveis, exportar PDF, mestre
-      auxiliar, página `/sistemas`, sandbox de ficha/combate, prévia do
-      Level Up, atalhos de teclado, PWA, offline parcial, QR Code do
-      link compartilhável da ficha, abas na página da campanha, página
-      geral do personagem) — fica pra quando o Zé confirmar a ordem das
-      próximas
+      auxiliar, sandbox de ficha/combate, prévia do Level Up, atalhos de
+      teclado, PWA, offline parcial, QR Code do link compartilhável da
+      ficha, abas na página da campanha, página geral do personagem) —
+      fica pra quando o Zé confirmar a ordem das próximas
 
 ---
 

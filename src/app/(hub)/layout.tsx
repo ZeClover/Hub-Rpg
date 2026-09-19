@@ -43,6 +43,9 @@ export default async function LayoutDoHub({
             <Link href="/campanhas" className="transition hover:text-texto">
               Campanhas
             </Link>
+            <Link href="/sistemas" className="transition hover:text-texto">
+              Sistemas
+            </Link>
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
