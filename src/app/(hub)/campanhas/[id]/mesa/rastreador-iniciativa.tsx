@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useAtalhoTeclado } from "@/lib/use-atalho-teclado";
+
 type Combatente = { id: string; nome: string; condicao: string };
 type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: number };
 
@@ -158,6 +160,11 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
     setSelecionados(new Set());
   }
 
+  // Atalho de teclado (decisão #145, ideia #127) — "N" avança o turno sem
+  // precisar mirar no botão toda hora; só dispara fora de campo de texto
+  // (garantido pelo próprio hook), e só quando tem alguém na ordem.
+  useAtalhoTeclado("n", proximo, combatentes.length > 0);
+
   return (
     <section className="mt-10">
       <h2 className="font-titulo text-xl">Ordem de iniciativa</h2>
@@ -176,6 +183,11 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
         >
           Próximo turno →
         </button>
+        {combatentes.length > 0 && (
+          <span className="text-xs text-texto-suave" title="Atalho de teclado">
+            (atalho: N)
+          </span>
+        )}
         {combatentes.length > 0 && (
           <button
             type="button"

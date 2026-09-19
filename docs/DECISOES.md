@@ -6489,6 +6489,32 @@ componente — só onde cada um aparece na tela.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 145. Hub — Atalho de teclado na Mesa ao Vivo (19/09/2026)
+
+Oitava fatia do backlog de "demais ideias" (decisão #134), ideia #127
+do pedido original — "atalhos de teclado (não ativar durante digitação
+em input/textarea)". Auditoria antes de mexer: nenhum atalho global
+existia no Hub, só `onKeyDown` local em campos de texto (Enter pra
+enviar) — sem conflito com o que segue.
+
+**Hook novo, genérico:** `useAtalhoTeclado(tecla, aoAcionar, ativo?)` em
+`src/lib/` — ignora o disparo sempre que o foco está num `input`,
+`textarea`, `select` ou qualquer elemento `contentEditable`, exatamente
+a exigência do pedido. Recebe a tecla como texto (`"n"`) e chama o
+callback quando ela é apertada fora de campo de texto.
+
+**Onde entrou:** só um atalho, de propósito — não um sistema geral de
+comandos. "N" avança o turno da Ordem de Iniciativa na Mesa ao Vivo
+(`RastreadorDeIniciativa`, mestre), a ação mais repetida da tela
+durante um combate. Só ativo quando existe alguém na ordem; dica visual
+"(atalho: N)" ao lado do botão "Próximo turno", pra não ficar escondido.
+
+Sem migração, sem rota nova — só um hook de cliente e uma linha de
+`useAtalhoTeclado` no componente que já existia.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
