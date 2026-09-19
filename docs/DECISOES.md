@@ -6227,13 +6227,29 @@ código curto.
 **Migração `0017_codigo_convite.sql`** — a única desta iniciativa que
 precisou de um backfill de verdade: toda campanha já existente ganhou
 um código aleatório de 6 caracteres antes da trava `NOT NULL` + `UNIQUE`
-entrar. Idempotente: campanha que já tem código não é tocada rodando de
-novo. A primeira versão usava um bloco `DO $$ ... END $$` em PL/pgSQL
-com laço, que quebrou no SQL Editor do Supabase do Zé ("unterminated
-dollar-quoted string") — reescrita como um `UPDATE` set-based, sem laço
-nem bloco: com o tamanho de campanha que este projeto tem, a chance de
-colisão em 32^6 combinações é desprezível, e se acontecer mesmo assim a
-trava `UNIQUE` recusa na hora em vez de deixar passar.
+entrar. Idempotente: campanha com código único não é tocada rodando de
+novo. Duas versões quebraram antes de chegar na de verdade:
+
+1. A primeira usava um bloco `DO $$ ... END $$` em PL/pgSQL com laço,
+   que o SQL Editor do Supabase do Zé recusou ("unterminated
+   dollar-quoted string").
+2. A segunda trocou o laço por um `UPDATE` com uma subconsulta
+   (`SELECT string_agg(...) FROM generate_series(1,6)`) — só que essa
+   subconsulta não referenciava nenhuma coluna da linha de fora, então o
+   Postgres a tratou como "initplan": calculada **uma vez só pra todo o
+   `UPDATE`**, não uma vez por linha. Resultado: toda campanha sem
+   código ganhou o **mesmo** código, e a criação do índice único falhou
+   acusando a duplicata.
+
+A versão final monta os 6 caracteres com `substr(...) || substr(...)`
+direto na cláusula `SET`, sem nenhuma subconsulta — assim cada linha
+força uma chamada de `random()` própria, garantida pela semântica normal
+de `UPDATE` (o mesmo motivo por que `UPDATE t SET x = random()` já
+funciona certo). A migração também ficou preparada pra corrigir sozinha
+o estado que a versão 2 deixou no banco do Zé: o `WHERE` pega tanto
+quem está com `codigoConvite` nulo quanto quem está com um código
+repetido, então rodar o arquivo de novo resolve as duplicatas que já
+existirem, sem precisar de nenhum passo manual.
 
 **Dependência nova:** `qrcode` (MIT, gera a imagem inteiramente no
 navegador — não é um serviço rodando, não fere a decisão #5). Rodei
