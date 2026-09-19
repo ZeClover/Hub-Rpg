@@ -6440,6 +6440,33 @@ automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
 regressão.
 
+## 149. Naruto 5e — Catálogo de Jutsu, início da Liberação de Vento (19/09/2026)
+
+Continuação da decisão #148, terceira Natureza elemental (74 jutsu ao
+todo). As 24 jutsu do Rank D da Liberação de Vento entraram no
+`JUTSU_CATALOGO` — 301 das ~1400 entradas totais do Compêndio.
+
+Achado no `jutsu_parsed.json`: 2 jutsu de Vento (Movimento do
+Redemoinho e Contragolpe) saíram do `parse_jutsu.py` com o campo de
+rank vazio ou corrompido, porque o parser assume que o cabeçalho
+"X-RANK:" sempre aparece intacto antes de cada bloco — nesses dois
+casos o texto ao redor saiu emendado. Conferi o rank correto olhando a
+posição de cada um no `.txt` original entre os cabeçalhos "C-RANK:" e
+"B-RANK:" (ambos vão entrar nos ranks C e B respectivamente, quando
+chegar a vez deles) — não afeta os 24 do Rank D já catalogados aqui,
+mas fica registrado pra não perder essas duas entradas nem duplicá-las
+mais pra frente.
+
+Vento introduz a condição "Redemoinho" (Swirl no livro), que amplifica
+outras condições elementais em quem já estiver afetado — não achei o
+texto que define a mecânica completa dela nos PDFs que tenho (deve
+estar num capítulo de regras que ainda não foi lido), então por ora ela
+aparece só citada nos "efeito" como gatilho, sem a regra detalhada.
+
+Testado com Playwright: catálogo mostra 302 opções (1 placeholder + 301
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

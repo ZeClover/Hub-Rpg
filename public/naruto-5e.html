@@ -427,7 +427,8 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental e Liberação de Terra estão 100% completos (todos os 6
-   ranks de cada, 277 jutsu) — faltam Vento/Fogo/Água/Raio, Genjutsu,
+   ranks de cada, 277 jutsu). Liberação de Vento com o Rank D pronto
+   (24 jutsu) — faltam C/B/A/S dela, mais Fogo/Água/Raio, Genjutsu,
    Taijutsu, Bukijutsu e Invocação, entrando aos poucos, categoria por
    categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -995,6 +996,55 @@ const JUTSU_CATALOGO = [
     efeito:'Cubo de partículas de terra que desintegra molecularmente ao acertar: Ataque de Ninjutsu corpo a corpo ou à distância (até 9m) causando 16d12 de dano de Força — abaixo de metade dos PV perde um membro (à sua escolha), e a 0 PV vira pó e morre.'},
   {nome:'Liberação de Terra: Estilhaço de Estrela', tipo:'Ninjutsu', categoria:'Terra', rank:'S', custo:'30 Chakra', alcance:'1,6km', duracao:'Concentração, até 1 minuto',
     efeito:'Kinjutsu: um construto de terra em forma de estrela cai do céu e se estilhaça numa área de 36m: teste de Força ou fica Atordoado, sofrendo 9d8 de dano de Terra no início e no fim de cada turno até conseguir um teste de Força pra encerrar o efeito.'},
+
+  {nome:'Liberação de Vento: Bala de Ar', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'2 Ataques de Ninjutsu à distância (no mesmo alvo ou em alvos diferentes): 2d8 de dano de Vento cada.'},
+  {nome:'Liberação de Vento: Dança das Correntes de Ar', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'3 Chakra', alcance:'Pessoal (esfera de 3m)', duracao:'1 minuto',
+    efeito:'Nuvem de poeira de 3m de raio ao seu redor: cobertura total entre dentro e fora, e quem não for você vê tudo com desvantagem (mesmo com Visão de Chakra) e como se estivesse em penumbra.'},
+  {nome:'Liberação de Vento: Vento Borrado', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'Seu corpo fica borrado: o ataque que ativou o jutsu rola 2d20 e fica com o pior, e até o início do seu próximo turno inimigos têm desvantagem pra te acertar (a menos que não dependam de visão).'},
+  {nome:'Liberação de Vento: Rajadas Golpeantes', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 4d4 de dano de Vento e teste de Força ou é empurrado 6m, cai Derrubado, ganha 1 rank de Sangramento e causa Redemoinho.'},
+  {nome:'Liberação de Vento: Vendaval Coletivo', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'4,5m', duracao:'1 minuto',
+    efeito:'Aliado que respira esse vento não precisa mais respirar, ignora 2 ranks de Exaustão e cura 1d4 a mais sempre que se cura por jutsu Médico.'},
+  {nome:'Liberação de Vento: Brisa de Contra-Ataque', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'Bolha de ar comprimido absorve 3d8 de dano antes de estourar (Raio causa metade do dano à bolha, Fogo o dobro) até o início do seu próximo turno.'},
+  {nome:'Liberação de Vento: Vento de Poeira', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal (cone de 4,5m)', duracao:'Instantâneo',
+    efeito:'Sopra uma nuvem de poeira num cone de 4,5m: teste de Sabedoria ou causa Redemoinho e deixa Cego até o fim do turno seguinte.'},
+  {nome:'Liberação de Vento: Queda de Pena', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Reduz sua queda em 18m por rodada; se aterrissar antes do jutsu acabar, não sofre dano de queda e cai de pé.'},
+  {nome:'Liberação de Vento: Palma do Vendaval', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo: 3d6 de dano de Vento e teste de Força ou é empurrado 6m e causa Redemoinho.'},
+  {nome:'Liberação de Vento: Bater de Asas do Grifo', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal (6m)', duracao:'Instantâneo',
+    efeito:'Rajada de vento numa área de 6m ao redor: teste de Força ou fica Contundido, Derrubado e causa Redemoinho — quem estiver concentrado em mais de um jutsu perde a concentração em todos menos um.'},
+  {nome:'Liberação de Vento: Rugido do Leão', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'+4,5m de deslocamento, +2 em ataques de Ninjutsu, e jutsu de Vento com alcance de 1,5m ou mais ganham +3m de alcance.'},
+  {nome:'Liberação de Vento: Vórtice da Palma', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Pessoal (cone de 3m)', duracao:'Instantâneo',
+    efeito:'Vórtice cortante num cone de 3m: teste de Destreza ou 3d6 de dano de Vento e é puxado 1,5m pra perto (metade se passar); quem já estiver sob condição elemental testa em desvantagem e sofre 3d8+mod. do tipo da condição em vez do dano de Vento.'},
+  {nome:'Liberação de Vento: Tufão Passageiro', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal (esfera de 4,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Campo de vento de 4,5m de raio que te acompanha: ensurdece quem entrar, apaga chamas desprotegidas, vira terreno difícil pra outros e dispersa gases/neblina — ataques à distância que cruzam a área sofrem desvantagem.'},
+  {nome:'Liberação de Vento: Redemoinho do Pavão', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Rajada numa linha de 9m: teste de Força ou 2d6 de dano de Vento, cai Derrubado, ganha 1 rank de Sangramento e causa Redemoinho (metade do dano e nada mais se passar).'},
+  {nome:'Liberação de Vento: Vendaval Furioso', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'18m (raio de 4,5m)', duracao:'Instantâneo',
+    efeito:'Torrente de vento vertical numa área de 4,5m: teste de Força ou é arremessado 9m pra cima (sofrendo dano de queda ao voltar), ficando Atordoado, Derrubado e causando Redemoinho.'},
+  {nome:'Liberação de Vento: Vórtice Furioso', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'+1d4 em testes e resistências de Força/Destreza, +4,5m de deslocamento e ataques corpo a corpo somam +1d6 de dano de Vento.'},
+  {nome:'Liberação de Vento: Fôlego Renovado', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Recupera 2d6 + seu modificador de Ninjutsu em PV.'},
+  {nome:'Liberação de Vento: Ondas de Ar Cortantes', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 3d8 de dano de Vento e 1 rank de Sangramento.'},
+  {nome:'Liberação de Vento: Vendaval Cortante', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Campo de vento hostil (6m de raio) que castiga quem fizer Selos de Mão dentro: 2d6 de dano de Vento e teste de Constituição ou Sangramento; pode mover o campo até 9m por Ação Bônus.'},
+  {nome:'Liberação de Vento: Vendaval de Apoio', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação: usa seu modificador de Ninjutsu no lugar de Força, Destreza ou Constituição num teste de resistência contra Ninjutsu ou Taijutsu.'},
+  {nome:'Liberação de Vento: Bomba de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Lançado junto de um Redemoinho que atinge alguém com condição elemental: espalha 2 ranks de todas as condições elementais dessa criatura pra quem estiver a até 6m dela.'},
+  {nome:'Liberação de Vento: Chuva de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'Especial (28 Chakra)', alcance:'27m (cilindro de 6m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cilindro de vento cortante sem ar (18m de altura, 6m de diâmetro): quem começa o turno lá dentro testa Destreza (2d6 de dano Cortante + 2d6 de Vento, metade se passar) e Constituição (começa a sufocar); terreno difícil, sem bônus de deslocamento. Lançado em Combinação, o dano e o tamanho crescem com o maior Carisma do grupo.'},
+  {nome:'Liberação de Vento: Redemoinho Violento', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'3 Chakra', alcance:'Pessoal (cone de 9m)', duracao:'Instantâneo',
+    efeito:'Rajada de vento num cone de 9m: teste de Força ou 2d6 de dano de Vento, empurrado 9m, cai Derrubado e causa Redemoinho (metade do dano e nada mais se passar); dispersa gases e neblina.'},
+  {nome:'Liberação de Vento: Golpe do Zéfiro', tipo:'Ninjutsu', categoria:'Vento', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'+3m de deslocamento e movimento não provoca Ataque de Oportunidade no turno em que lançar; uma vez, pode dar vantagem a um dos seus ataques — se acertar, soma +2d8 de dano de Vento e encerra o jutsu.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1466,7 +1516,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

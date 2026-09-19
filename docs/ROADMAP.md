@@ -1809,8 +1809,13 @@ passando.
       Compêndio de Jiraiya catalogada (277 de ~1400 no total). Testado
       com Playwright; `tsc`, lint, build e os 298 testes automáticos do
       projeto continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início da Liberação de Vento**
+      (19/09/2026) — decisão #149. As 24 jutsu do Rank D da Liberação
+      de Vento entraram no catálogo (301 de ~1400 no total) — terceira
+      Natureza elemental. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1123 jutsu: Vento/Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1099 jutsu: Vento C/B/A/S, Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
