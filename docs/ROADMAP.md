@@ -1862,8 +1862,12 @@ passando.
       de Água entraram no catálogo (451 de ~1400 no total) — quinta
       Natureza elemental. Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Água Rank C**
+      (19/09/2026) — decisão #160. As 21 jutsu do Rank C entraram no
+      catálogo (46 de 74 jutsu de Água; 472 de ~1400 no total). Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~949 jutsu: Água C/B/A/S, Raio, Genjutsu,
+      Jutsu (~928 jutsu: Água B/A/S, Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

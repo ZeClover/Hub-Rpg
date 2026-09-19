@@ -6661,6 +6661,25 @@ Testado com Playwright: catálogo mostra 452 opções (1 placeholder + 451
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 160. Naruto 5e — Catálogo de Jutsu, Liberação de Água Rank C (19/09/2026)
+
+Continuação da decisão #159. As 21 jutsu do Rank C da Liberação de
+Água entraram no `JUTSU_CATALOGO` — fecha 2 dos 6 ranks dessa natureza
+(46 das 74 jutsu de Água; 472 das ~1400 entradas totais).
+
+Traz Espelho Celestial da Dor, primeiro jutsu do sistema que vincula
+duas criaturas pra dividir dano/cura/condições entre si — mecânica
+que abre espaço pra jogadas táticas interessantes (aplicar o vínculo
+num inimigo frágil perto de um aliado tanque, por exemplo). Rugido de
+Atlântida introduz a condição "Molhado" como amplificador de outros
+elementos (Fogo vira vapor cegante, Raio se espalha, Vento contamina
+vizinhos) — outro padrão de "resposta por elemento" como o já visto em
+Onda de Choque de Pressão (Vento, decisão #150).
+
+Testado com Playwright: catálogo mostra 473 opções (1 placeholder + 472
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
