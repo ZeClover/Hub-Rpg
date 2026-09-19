@@ -7049,6 +7049,26 @@ Testado com Playwright: catálogo mostra 785 opções (1 placeholder + 784
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 179. Naruto 5e — Genjutsu Rank B 100% completo (19/09/2026)
+
+Continuação da decisão #178. Segundo e último lote do Rank B de
+Genjutsu (23 jutsu, de "Cisão Mental" a "Palavra do Perdido") entrou no
+`JUTSU_CATALOGO` — 807 das ~1400 entradas totais. Com isso, Genjutsu
+tem os Ranks E, D, C e B inteiros catalogados (233 de 268 jutsu) —
+faltam só A e S (35 jutsu) pra fechar a categoria inteira.
+
+Este lote trouxe o segundo Kinjutsu de Genjutsu ("Palavra do Perdido",
+que junto com "Comando do Encontrado" do lote anterior forma um par
+temático Achado/Perdido do livro) e o "Selo da Língua Amaldiçoada", uma
+Arte de Selamento que também é Kinjutsu — mesmo tratamento das
+anteriores, prefixo "Kinjutsu:" dentro do "efeito". Atualizei os dois
+textos de referência de completude do arquivo pra refletir Ranks
+E/D/C/B 100% prontos.
+
+Testado com Playwright: catálogo mostra 808 opções (1 placeholder + 807
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
