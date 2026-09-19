@@ -6923,6 +6923,30 @@ Testado com Playwright: catálogo mostra 661 opções (1 placeholder + 660
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 173. Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 4 de 5) (19/09/2026)
+
+Continuação da decisão #172. Quarto lote do Rank D de Genjutsu (24
+jutsu, de "Visão Dolorosa" a "Marionetes das Trevas") entrou no
+`JUTSU_CATALOGO` — 684 das ~1400 entradas totais (94 de 111 jutsu do
+Rank D, 110 de 268 de Genjutsu no total). Falta só o 5º e último lote
+pra fechar o Rank D inteiro.
+
+Traz a família "Psiônica" completa (20 variações, cada uma com um nome
+de efeito curto e "!" — Garantia, Trava Mental, Confusão, Corte,
+Atraso, Dreno, Expor Fraqueza, Futuro Falso, Fortaleza, Transferência
+Hostil, Meditar, Enxaqueca, Mente em Branco, Onda Psíquica, Pulso,
+Anular Alcance, Pensamentos Compartilhados, Choque, Golpe, Suprimir
+Foco) — telepatia e dano psíquico com regras próprias entre si, sem
+estrutura compartilhada única (diferente de Frenesi/Lótus/Noite), então
+cada uma ganhou texto de "efeito" independente. Duas delas usam uma
+condição nova pro Hub ("Dazed" no original, ainda sem tradução prévia
+no catálogo) — chamei de "Zonzo" pra não confundir com "Ofuscado"
+(Dazzled) nem "Atordoado" (Stunned), que já são usados noutros jutsu.
+
+Testado com Playwright: catálogo mostra 685 opções (1 placeholder + 684
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

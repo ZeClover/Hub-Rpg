@@ -1928,8 +1928,14 @@ passando.
       Ácido") que fazia o app carregar os dados errados ao escolher um
       dos dois no catálogo. Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 4 de 5)**
+      (19/09/2026) — decisão #173. Mais 24 jutsu do Rank D entraram no
+      catálogo, incluindo a família PSIÔNICA completa (94 de 111 jutsu
+      do Rank D; 110 de 268 de Genjutsu; 684 de ~1400 no total) — falta
+      só o 5º e último lote do Rank D. Testado com Playwright; `tsc` e
+      lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~740 jutsu: Genjutsu D restante (41) + C/B/A/S (140),
+      Jutsu (~716 jutsu: Genjutsu D restante (17) + C/B/A/S (140),
       Taijutsu (175), Bukijutsu (383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
