@@ -1783,10 +1783,16 @@ passando.
       Mundo Impuro e Portão do Além, sempre só como mecânica. Testado com
       Playwright; `tsc`, lint, build e os 298 testes automáticos do
       projeto continuam limpos.
+- [x] **Naruto 5e — início da Liberação de Terra** (19/09/2026) — decisão
+      #144. As 26 jutsu do Rank D da Liberação de Terra entraram no
+      catálogo (228 de ~1400 no total) — primeira das 5 Naturezas
+      elementais. Traz o "Quake Shard" (construto de pedra reaproveitado
+      por outros jutsu de Terra). Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1198 jutsu: as 5 Naturezas elementais, Genjutsu, Taijutsu,
-      Bukijutsu, Invocação — categoria por categoria), Equipamento/Itens
-      Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
+      Jutsu (~1172 jutsu: Terra C/B/A/S, Vento/Fogo/Água/Raio, Genjutsu,
+      Taijutsu, Bukijutsu, Invocação — categoria por categoria),
+      Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
       #26); PDF grande demais pra ferramenta do Drive extrair inteiro →

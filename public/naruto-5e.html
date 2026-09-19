@@ -426,10 +426,10 @@ const RANKS_JUTSU = [
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
-   Não-Elemental está 100% completo (todos os 6 ranks); os outros ~1198
-   jutsu (5 Naturezas elementais, Genjutsu, Taijutsu, Bukijutsu,
-   Invocação) entram aos poucos, categoria por categoria, mesmo ritmo dos
-   Clãs/Classes. */
+   Não-Elemental está 100% completo (todos os 6 ranks). Liberação de
+   Terra com o Rank D pronto (26 jutsu) — faltam C/B/A/S dela, mais Vento/
+   Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos
+   poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -840,6 +840,59 @@ const JUTSU_CATALOGO = [
     efeito:'Kinjutsu: ataque à distância causa 18d10 de dano Necrótico; se matar o alvo, prende a alma num caixão e permite reanimar um construto morto-vivo dela depois.'},
   {nome:'Arte de Selamento: Vazio', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'S', custo:'Especial (30 Chakra)', alcance:'300m', duracao:'Concentração, até 1 minuto',
     efeito:'Esfera de 9m puxa objetos e criaturas pro centro (teste de Carisma) e causa 10d10 de dano de Força a quem entrar nela, prendendo-os lá dentro.'},
+
+  {nome:'Liberação de Terra: Espinho Agonizante', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque à distância com estilhaços de pedra: 3d8 de dano de Terra e teste de Força ou ganha 1 rank de Contusão.'},
+  {nome:'Liberação de Terra: Caixão de Rocha', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Destreza ou o alvo fica Agarrado e Restrito dentro de um caixão de pedra (25 PV, resistente a Frio, vulnerável a Raio); testa Força a cada turno pra sair.'},
+  {nome:'Liberação de Terra: Pele de Rocha', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reduz todo dano recebido (menos Raio) em 1d6+4 até o início do seu próximo turno.'},
+  {nome:'Liberação de Terra: Estandarte Dominus', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Pessoal (3m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Encanta a sua arma e a de aliados perto: +1d4 de dano de Terra (2×/turno) e +3 de redução de dano (menos Raio) enquanto a arma estiver empunhada.'},
+  {nome:'Liberação de Terra: Calcita: Força', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'A Força do alvo vira 18; os ataques dele somam +1d6 de dano de Terra 1×/turno, e você sempre sabe o estado dele mesmo sem vê-lo.'},
+  {nome:'Liberação de Terra: Rio de Lama', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Cone de 9m', duracao:'Instantâneo',
+    efeito:'Teste de Força ou é arrastado até o fim do cone, caindo Derrubado, desarmado e com deslocamento reduzido.'},
+  {nome:'Liberação de Terra: Rancor da Espinha de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Detritos de pedra flutuam ao redor: metade de cobertura contra ataques à distância; até 3m ao redor vira terreno difícil pra quem você escolher.'},
+  {nome:'Liberação de Terra: Emaranhado de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Arcos de pedra numa área de 6m viram terreno difícil (fica mesmo depois de parar a concentração) e testam Força pra prender alvos à sua escolha.'},
+  {nome:'Liberação de Terra: Garra de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Uma mão de terra ataca (teste de Força): 2d6 de dano e Agarra/Restringe o alvo, travando uma das mãos dele; pode mover a mão ou esmagar de novo (mais 2d6) por Ação Bônus.'},
+  {nome:'Liberação de Terra: Tremor de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'3 Chakra', alcance:'18m (cubo de 6m)', duracao:'Instantâneo',
+    efeito:'Teste de Destreza ou 2d8 de dano de Terra e cai Derrubado; o chão vira terreno difícil.'},
+  {nome:'Liberação de Terra: Peitoral Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'1 hora',
+    efeito:'Sem armadura, Defesa vira 13 + Inteligência ou Constituição + metade da Proficiência, com +3 de redução de dano (menos Raio).'},
+  {nome:'Liberação de Terra: Gênese Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Especial',
+    efeito:'Um fragmento de terra floresce quando ativado: teste de Força numa área de 3m ou 2d6+mod. de dano de Terra; a flor pode levantar até 3 criaturas 18m no ar.'},
+  {nome:'Liberação de Terra: Isótoma Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Aliados perto de um construto de terra seu ganham +1 de Defesa (mais nos ranks B e S).'},
+  {nome:'Liberação de Terra: Ressonância Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Inimigos perto de um construto de terra seu testam Força ou perdem 1 de Defesa (mais nos ranks B e S).'},
+  {nome:'Liberação de Terra: Geolocalização', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'10 minutos',
+    efeito:'Sentido sísmico num raio de 9m, detectando quem se move sob o chão onde você está.'},
+  {nome:'Liberação de Terra: Gemas Douradas', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Cria 2 gemas que reforçam o próximo jutsu de Terra que você lançar (mais PV de construto, mais PV temporário, ou +1 dado de dano).'},
+  {nome:'Liberação de Terra: Técnica do Caçador de Cabeças', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'3 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Puxa o alvo pro chão (teste de Destreza, com desvantagem se ele não percebeu você) deixando só a cabeça de fora, Restrito até escapar com Atletismo.'},
+  {nome:'Liberação de Terra: Devoção de Jade', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'5 Chakra', alcance:'Pessoal (3m)', duracao:'1 minuto',
+    efeito:'Aliados perto ganham 4d6 de PV temporário e resistência a dano físico enquanto ainda tiverem esse PV temporário.'},
+  {nome:'Liberação de Terra: Chuva de Jade', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'Especial (28 Chakra)', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Linha de estilhaços de pedra: teste de Destreza ou 6d6 de dano de Terra; lançado junto com outros conjuradores (Combinação), o dano aumenta.'},
+  {nome:'Liberação de Terra: Tela de Jade', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'Especial (28 Chakra)', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Duas colunas de terra criam uma parede que bloqueia ataques vindos de um lado (PV = 2× sua CD de Ninjutsu) e reforça seus ataques que passam pelo outro lado.'},
+  {nome:'Liberação de Terra: Movimento de Toupeira', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Ganha deslocamento de escavação de 9m; sabe quantas pessoas estão na superfície logo acima de você.'},
+  {nome:'Liberação de Terra: Onda de Lama', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Cone de 6m', duracao:'Instantâneo',
+    efeito:'Teste de Força ou 3d6 de dano de Terra e 1 rank de Contusão.'},
+  {nome:'Liberação de Terra: Técnica da Rocha Ascendente', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'2 Ataques de Ninjutsu à distância (2d8 cada) com pedaços de pedra que viram obstáculos e terreno difícil depois.'},
+  {nome:'Liberação de Terra: Shuriken de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'3 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque à distância com pedras em forma de shuriken: 4d6 de dano de Terra e 1 rank de Contusão.'},
+  {nome:'Liberação de Terra: Punho de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Um braço vira pedra: ataque desarmado soma +2d6 de dano de Terra (1×/turno), mas essa mão não consegue fazer Selos.'},
+  {nome:'Liberação de Terra: Maré Tectônica', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Especial', duracao:'Instantâneo',
+    efeito:'Onda de terremoto ao redor de você e até 2 construtos seus: teste de Força numa área de 6m ou 2d8 de dano de Terra, caindo Derrubado e Contundido.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1311,7 +1364,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo, os 6 ranks) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

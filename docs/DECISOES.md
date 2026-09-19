@@ -6339,6 +6339,23 @@ jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
 automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem) sem regressão.
 
+## 144. Naruto 5e — Catálogo de Jutsu, início da Liberação de Terra (19/09/2026)
+
+Continuação da decisão #143, primeira categoria elemental (das 5:
+Terra/Vento/Fogo/Água/Raio, 75 jutsu cada uma na Liberação de Terra
+especificamente). As 26 jutsu do Rank D da Liberação de Terra entraram no
+`JUTSU_CATALOGO`, mesmo padrão de sempre — 228 das ~1400 entradas totais.
+
+Terra tem uma marca registrada mecânica que apareceu bastante neste rank:
+o "Quake Shard" (construto/obstáculo de pedra que vira alvo destacável e
+terreno difícil) — vários jutsu criam um e depois outros jutsu (Gemas
+Douradas, Isótoma/Ressonância Geo) referenciam esses construtos já
+existentes pra dar bônus a aliados ou penalidade a inimigos por perto.
+
+Testado com Playwright: catálogo mostra 229 opções (1 placeholder + 228
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
