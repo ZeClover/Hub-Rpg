@@ -7027,6 +7027,28 @@ Testado com Playwright: catálogo mostra 762 opções (1 placeholder + 761
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 178. Naruto 5e — Catálogo de Jutsu, início do Genjutsu Rank B (19/09/2026)
+
+Continuação da decisão #177. O Rank B do Genjutsu tem 46 jutsu, entrando
+em 2 lotes (~23 cada). Este primeiro lote (23 jutsu, de "Bênção" a
+"Dominação de Memória") entrou no `JUTSU_CATALOGO` — 784 das ~1400
+entradas totais (23 de 46 jutsu de Genjutsu Rank B; 210 de 268 de
+Genjutsu no total).
+
+Traz a família "Frenesi" de Rank B (3 variações: Lâminas, Explosão,
+Gargalhada — mais fortes e menos parecidas entre si que as 10 variações
+de cor do Rank D, cada uma com efeito totalmente próprio) e mais uma
+versão "Negra" do Campo de Lótus (mesmo formato "Especial" do Campo de
+Lótus Venenoso, com tiers de 11/22/33/44 Chakra em vez de 8/16/24/32).
+"Dominação de Memória" é o primeiro Kinjutsu (técnica proibida) do
+catálogo de Genjutsu — segui o padrão já usado em Ninjutsu de marcar
+isso com um prefixo "Kinjutsu:" dentro do "efeito", já que o campo
+`tipo` só aceita os 4 valores fixos do sistema.
+
+Testado com Playwright: catálogo mostra 785 opções (1 placeholder + 784
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

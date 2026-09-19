@@ -1953,9 +1953,13 @@ passando.
       inteiro (60 jutsu) — Genjutsu tem agora os Ranks E, D e C 100%
       prontos (187 de 268 jutsu; 761 de ~1400 no total), faltando só
       B/A/S. Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Genjutsu Rank B (lote
+      1 de 2)** (19/09/2026) — decisão #178. 23 dos 46 jutsu do Rank B
+      entraram no catálogo (210 de 268 de Genjutsu; 784 de ~1400 no
+      total). Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~639 jutsu: Genjutsu B/A/S (80), Taijutsu (175), Bukijutsu
-      (383), Invocação — categoria por categoria),
+      Jutsu (~616 jutsu: Genjutsu B restante (23) + A/S (35), Taijutsu
+      (175), Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
