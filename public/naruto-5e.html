@@ -428,7 +428,7 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra e Liberação de Vento estão 100%
    completos (todos os 6 ranks de cada, 351 jutsu). Liberação de Fogo
-   com Ranks D e C prontos (45 de 75 jutsu) — faltam B/A/S dela, mais
+   com Ranks D, C e B prontos (59 de 75 jutsu) — faltam A/S dela, mais
    Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos
    poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -1241,6 +1241,35 @@ const JUTSU_CATALOGO = [
     efeito:'Feixe de fogo concentrado numa linha de 4,5m de largura por 36m: teste de Destreza ou 11d8+11 de dano de Fogo e 3 ranks de Queimado (metade e sem condições se passar) — quem chega a 0 PV vira cinzas. Em Combinação, o dano cresce por conjurador extra e o dado de dano sobe conforme o maior Carisma do grupo.'},
   {nome:'Liberação de Fogo: Brasa de Fogo Branco', tipo:'Ninjutsu', categoria:'Fogo', rank:'C', custo:'9 Chakra', alcance:'Pessoal', duracao:'1 minuto',
     efeito:'Seus jutsu de Fogo repetem ataques que rolarem 1 a 5 e dados de dano que rolarem 1 ou 2, ficando com o segundo resultado — pode usar isso um número de vezes igual ao seu bônus de Proficiência antes do jutsu acabar.'},
+
+  {nome:'Liberação de Fogo: Chama do Alquimista', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'12 Chakra', alcance:'Pessoal (cone de 18m)', duracao:'Instantâneo',
+    efeito:'Cone de 18m de chama incolor: teste de Constituição ou Queimado e Fragilizado enquanto durar a queimadura.'},
+  {nome:'Liberação de Fogo: Movimento de Explosão Controlada', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'10 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'+9m de deslocamento sem provocar Ataque de Oportunidade, e ganha voo igual ao seu deslocamento (precisa aterrissar em superfície sólida ou cai).'},
+  {nome:'Liberação de Fogo: Fogo Cruzado', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'Especial (77 Chakra)', alcance:'75m', duracao:'Instantâneo',
+    efeito:'4 feixes de calor (1,5m de largura, 18m de comprimento) disparam em direções diferentes de um ponto escolhido: teste de Destreza ou 12d6+12 de dano de Fogo e 3 ranks de Queimado (metade se passar). Em Combinação, o dano cresce por conjurador extra e a largura cresce com o maior Carisma do grupo.'},
+  {nome:'Liberação de Fogo: Pó ao Pó', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Só funciona num alvo já Queimado: teste de Constituição ou sofre o dobro do dano máximo da condição na hora (triplo se errar por 5+, quádruplo se errar por 10+).'},
+  {nome:'Liberação de Fogo: Fruto da Chama Eterna', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Gema que cura quem a comer (Ação Bônus, ou alimentada em alguém morto há menos de 1 minuto): rola todos os Dados de Vida e cura o resultado + seu Dado de Chakra — só funciona 1 vez por descanso longo, depois disso causa dano de Fogo inevitável em vez de curar.'},
+  {nome:'Liberação de Fogo: Muralha de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Ergue uma parede de fogo (até 18m de comprimento, 6m de altura): teste de Destreza ao surgir ou 5d10+5 de dano de Fogo (metade se passar); um dos lados (à sua escolha) continua causando 5d10+5 a quem terminar o turno a até 3m dele ou dentro da parede.'},
+  {nome:'Liberação de Fogo: Grande Gaiola de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'36m (cubo de 9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: gaiola de fogo numa área de 9m (gasta seu turno inteiro pra lançar) — quem tenta sair testa Destreza (5d10+5 de dano), Constituição (2 ranks de Exaustão) e Força (empurrado 9m pra dentro), precisando passar em pelo menos 2 dos 3 pra escapar.'},
+  {nome:'Liberação de Fogo: Grande Bomba de Chama', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'13 Chakra', alcance:'Pessoal (linha de 36m)', duracao:'Instantâneo',
+    efeito:'Jato de fogo azul numa linha de 3m de largura por 36m (quem estiver a 1,5m de você testa Força ou é empurrado 3m): teste de Destreza ou 9d6+9 de dano de Fogo e 2 ranks de Queimado (metade se passar); deixa um rastro de fogo que se espalha por 1 minuto.'},
+  {nome:'Liberação de Fogo: Sol Ardente', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Globo de fogo branco que você pode mover 9m por ação: quem começa o turno a até 6m testa Constituição ou fica Queimado, e quem usa metal sofre 9d4+9 de dano de Fogo por turno de contato.'},
+  {nome:'Liberação de Fogo: Chama Celestial', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'12 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Ataque desarmado (Ataque de Ninjutsu corpo a corpo): além dos efeitos normais, causa 6d12+6 de dano de Fogo e teste de Constituição ou 2 ranks de Queimado e cai Derrubado.'},
+  {nome:'Liberação de Fogo: Investidura das Chamas', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'Chamas cobrem seu corpo por até 10 minutos: imunidade a Fogo/Vento, resistência a Concussão/Perfurante/Cortante, vulnerabilidade a Frio, +4,5m de deslocamento, e inimigos a até 3m sofrem 2d10 de dano de Fogo por turno; por Ação Bônus, dispara uma linha de fogo (4,5m): teste de Destreza ou 4d12+4 de dano de Fogo e Queimado (metade se passar).'},
+  {nome:'Liberação de Fogo: Pironado', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'12 Chakra', alcance:'Pessoal (raio de 1,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Arma em chamas gira ao seu redor (raio de 1,5m): quem entra ou começa o turno ali testa Destreza ou sofre o dano da arma + 6d6+6 de Fogo e fica Queimado (metade do dano e nada mais se passar).'},
+  {nome:'Liberação de Fogo: Queda de Estrela', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'Especial (77 Chakra)', alcance:'150m', duracao:'Concentração, até 1 minuto',
+    efeito:'Concentra um mini-sol a 1,6km de altura que você pode atrasar até 3 turnos antes de deixar cair — quanto mais atrasa, maior o raio e o dano (de 18m/12d8+12 sem atraso até 48m/50d8+50 com 3 turnos): teste de Constituição ou o dano de Fogo cheio e 3 ranks de Queimado (metade se passar). Em Combinação, o dano cresce por conjurador extra e o dado sobe conforme o maior Carisma do grupo.'},
+  {nome:'Liberação de Fogo: Raio Solar', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'Pessoal (linha de 18m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Feixe de luz branca e quente numa linha de 1,5m de largura por 18m: teste de Constituição ou 6d10+6 de dano de Fogo e Cego até o fim do seu próximo turno (metade do dano e nada mais se passar) — pode disparar um novo feixe a cada turno enquanto durar.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1712,7 +1741,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos; Liberação de Fogo com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos; Liberação de Fogo com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

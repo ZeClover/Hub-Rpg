@@ -6580,6 +6580,23 @@ Testado com Playwright: catálogo mostra 397 opções (1 placeholder + 396
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 156. Naruto 5e — Catálogo de Jutsu, Liberação de Fogo Rank B (19/09/2026)
+
+Continuação da decisão #155. As 14 jutsu do Rank B da Liberação de
+Fogo entraram no `JUTSU_CATALOGO` — fecha 3 dos 6 ranks dessa natureza
+(59 das 75 jutsu de Fogo; 410 das ~1400 entradas totais).
+
+Traz Queda de Estrela e Fogo Cruzado, dois Kinjutsu de Combinação de
+77 Chakra cada (empatando com Polegar da Destruição de Vento, decisão
+#151, como os jutsu de maior custo fixo catalogados até agora). Queda
+de Estrela introduz mecânica de "atraso opcional" — quanto mais turnos
+o jogador espera pra ativar, maior o dano, mas todos os conjuradores
+precisam manter concentração enquanto isso.
+
+Testado com Playwright: catálogo mostra 411 opções (1 placeholder + 410
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
