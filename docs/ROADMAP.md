@@ -1814,8 +1814,12 @@ passando.
       de Vento entraram no catálogo (301 de ~1400 no total) — terceira
       Natureza elemental. Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Vento Rank C**
+      (19/09/2026) — decisão #150. As 20 jutsu do Rank C entraram no
+      catálogo (44 de 74 jutsu de Vento; 321 de ~1400 no total). Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1099 jutsu: Vento C/B/A/S, Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1079 jutsu: Vento B/A/S, Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

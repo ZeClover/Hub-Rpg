@@ -6467,6 +6467,25 @@ Testado com Playwright: catálogo mostra 302 opções (1 placeholder + 301
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 150. Naruto 5e — Catálogo de Jutsu, Liberação de Vento Rank C (19/09/2026)
+
+Continuação da decisão #149. As 20 jutsu do Rank C da Liberação de
+Vento entraram no `JUTSU_CATALOGO` — fecha 2 dos 6 ranks dessa natureza
+(44 das 74 jutsu de Vento; 321 das ~1400 entradas totais). Inclui
+Movimento do Redemoinho, uma das duas entradas com rank corrompido no
+JSON citadas na decisão #149 — confirmado como Rank C ao localizar sua
+posição no `.txt` original entre os cabeçalhos "C-RANK:" e "B-RANK:".
+
+Traz Campo de Vácuo, um Kinjutsu de Combinação que remove todo o ar de
+uma área e apaga jutsu de Fogo/Raio que tentem entrar nela, e Onda de
+Choque de Pressão, que amplifica o jutsu de um aliado com um efeito
+diferente pra cada elemento (o mesmo padrão de "resposta por elemento"
+que times de jogadores vão precisar decorar aos poucos).
+
+Testado com Playwright: catálogo mostra 322 opções (1 placeholder + 321
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
