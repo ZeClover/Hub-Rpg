@@ -7007,6 +7007,26 @@ Testado com Playwright: catálogo mostra 742 opções (1 placeholder + 741
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 177. Naruto 5e — Genjutsu Rank C 100% completo (19/09/2026)
+
+Continuação da decisão #176. Terceiro e último lote do Rank C de
+Genjutsu (20 jutsu, de "Delírio de Poder" a "Zona de Verdade") entrou
+no `JUTSU_CATALOGO` — 761 das ~1400 entradas totais. Com isso, Genjutsu
+tem os Ranks E, D e C inteiros catalogados (187 de 268 jutsu) — faltam
+só B, A e S (80 jutsu ao todo) pra fechar a categoria inteira.
+
+Dois jutsu deste lote (Delírio de Poder e Sugestão) têm campos
+"Especial" no livro (custo ou duração variável conforme a situação, sem
+número fixo) — mantive os campos como estão no original e expliquei a
+mecânica variável dentro do "efeito", mesmo padrão já usado pro Campo
+de Lótus Venenoso do lote anterior. Atualizei os dois textos de
+referência de completude do arquivo pra refletir Ranks E/D/C 100%
+prontos.
+
+Testado com Playwright: catálogo mostra 762 opções (1 placeholder + 761
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
