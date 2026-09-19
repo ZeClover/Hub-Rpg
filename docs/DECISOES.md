@@ -6894,6 +6894,35 @@ Testado com Playwright: catálogo mostra 637 opções (1 placeholder + 636
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 172. Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 3 de 5) (19/09/2026)
+
+Continuação da decisão #171. Terceiro lote do Rank D de Genjutsu (24
+jutsu, de "Mentiras Perdidas" a "Mordida nos Calcanhares") entrou no
+`JUTSU_CATALOGO` — 660 das ~1400 entradas totais (70 de 111 jutsu do
+Rank D, 86 de 268 de Genjutsu no total).
+
+Traz as famílias "Lótus" (11 variações de "pétalas": Ansiosas, Amargas,
+Calmantes, Dançantes, Furiosas, Sombrias, Culpadas, em Pânico, de
+Repulsa, Vergonhosas) e "Noite" (10 variações: 5 de "Escuridão/Luz/
+Sentimentos/Reações/Vingança Amarga(s)" e 5 de "Dor/Visão/Pensamentos/
+Toque/Palavras Gélido(a)(s)") — cada uma muda o efeito mecânico de
+verdade na falha (mesmo padrão de tratamento do lote 2: texto completo
+por variante, só a estrutura do teste de resistência se repete).
+
+De quebra, corrigido um bug de dados encontrado por acaso: duas entradas
+de Ninjutsu Não-Elemental (decisões bem anteriores) tinham o mesmo nome
+"Liberação Médica: Raio Ácido" só porque os originais em inglês (ACID
+BEAM e ACIDIC BOLT) foram traduzidos pra "Raio" nos dois — como o Hub
+busca jutsu do catálogo pelo nome (`jutsuDoCatalogo`), duas entradas com
+nome igual faziam o app sempre carregar os dados da primeira (Rank D)
+mesmo escolhendo a segunda (Rank C) no menu. Renomeei a de Rank C pra
+"Liberação Médica: Disparo Ácido" (ACIDIC BOLT), mantendo os efeitos —
+que já estavam certos — intactos.
+
+Testado com Playwright: catálogo mostra 661 opções (1 placeholder + 660
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

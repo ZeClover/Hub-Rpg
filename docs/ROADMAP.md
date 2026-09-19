@@ -1919,8 +1919,17 @@ passando.
       catálogo, incluindo a família FRENZY completa (46 de 111 jutsu do
       Rank D; 62 de 268 de Genjutsu; 636 de ~1400 no total). Testado com
       Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 3 de 5)**
+      (19/09/2026) — decisão #172. Mais 24 jutsu do Rank D entraram no
+      catálogo, incluindo as famílias LÓTUS e NOITE completas (70 de 111
+      jutsu do Rank D; 86 de 268 de Genjutsu; 660 de ~1400 no total). De
+      quebra, corrigido um nome duplicado pré-existente no Não-Elemental
+      ("Liberação Médica: Raio Ácido" duplicado, um virou "Disparo
+      Ácido") que fazia o app carregar os dados errados ao escolher um
+      dos dois no catálogo. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~764 jutsu: Genjutsu D restante (65) + C/B/A/S (140),
+      Jutsu (~740 jutsu: Genjutsu D restante (41) + C/B/A/S (140),
       Taijutsu (175), Bukijutsu (383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
