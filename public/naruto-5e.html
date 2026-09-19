@@ -427,9 +427,10 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental está 100% completo (todos os 6 ranks). Liberação de
-   Terra com o Rank D pronto (26 jutsu) — faltam C/B/A/S dela, mais Vento/
-   Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos
-   poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
+   Terra com Ranks D e C prontos (45 de 75 jutsu) — faltam B/A/S dela,
+   mais Vento/Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação,
+   entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
+   Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -893,6 +894,45 @@ const JUTSU_CATALOGO = [
     efeito:'Um braço vira pedra: ataque desarmado soma +2d6 de dano de Terra (1×/turno), mas essa mão não consegue fazer Selos.'},
   {nome:'Liberação de Terra: Maré Tectônica', tipo:'Ninjutsu', categoria:'Terra', rank:'D', custo:'4 Chakra', alcance:'Especial', duracao:'Instantâneo',
     efeito:'Onda de terremoto ao redor de você e até 2 construtos seus: teste de Força numa área de 6m ou 2d8 de dano de Terra, caindo Derrubado e Contundido.'},
+
+  {nome:'Liberação de Terra: Calcita: Rapidez', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'A Destreza do alvo vira 20, ganha proficiência em testes de Destreza e +6m de deslocamento (mais nos ranks acima).'},
+  {nome:'Liberação de Terra: Ascensão Cristalizada', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Armadura de chakra de Terra: Defesa do alvo vira sua CD de Ninjutsu + Destreza, ganha PV temporário igual à sua CD de Ninjutsu e redução de dano igual ao seu modificador de Ninjutsu.'},
+  {nome:'Liberação de Terra: Rocha Negra', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'7 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria um construto de terra negro que cega tudo num raio de 4,5m (dentro e fora); só quem toca a estrutura enxerga através dela — se a estrutura for destruída, o jutsu acaba.'},
+  {nome:'Liberação de Terra: Clone de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'Especial (8 Chakra)', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'Clone sólido de terra (também um construto de terra, 20 PV, imune a Genjutsu/Psíquico/Veneno, resistente a Concussão/Terra/Frio, vulnerável a Raio) que ataca 2× por ação com sua arma (1d8 de Terra) e pode lançar ninjutsu de Terra que você conhece através dele.'},
+  {nome:'Liberação de Terra: Bala do Dragão de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'7 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'2 Ataques de Ninjutsu à distância contra alvos diferentes: 8d4 de dano de Terra e teste de Constituição ou ganha rank de Contusão.'},
+  {nome:'Liberação de Terra: Lanças de Fluxo de Terra', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'7 Chakra', alcance:'18m (cubo de 3m)', duracao:'Instantâneo',
+    efeito:'Lanças de pedra brotam do chão numa área de 3m: teste de Destreza ou 3d12 de dano de Terra (metade se passar); vira terreno difícil até ser limpo.'},
+  {nome:'Liberação de Terra: Progenitor Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'18m', duracao:'Especial',
+    efeito:'Cria até 3 fragmentos brilhantes de terra (8 Chakra cada) e os arremessa; ao detoná-los como Ação Bônus, cada alvo perto testa Destreza ou sofre 4d8 de dano de Terra e fica Atordoado — perto de vários fragmentos ao mesmo tempo, o dano soma e pode virar Petrificação.'},
+  {nome:'Liberação de Terra: Lâmina Geo', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Transforma uma pedra numa arma de chakra de Terra à sua escolha: 2d6 (ou 2d8 se for de duas mãos) + seu modificador de Ninjutsu em dano de Terra; perde um dado se outra pessoa a empunhar.'},
+  {nome:'Liberação de Terra: Guia da Resistência', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Selo de chakra de Terra dá ao alvo resistência a dano Concussão/Perfurante/Cortante ou imunidade a Frio, com vulnerabilidade a Raio.'},
+  {nome:'Liberação de Terra: Núcleo de Terra Móvel', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'6 Chakra', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Fortalece um construto de terra seu (+2d10+mod. de PV, reduz dano recebido em 1d8+3, +2d6 de dano de Terra 1×/turno) ou, sem construto por perto, molda o terreno numa área de 4,5m.'},
+  {nome:'Liberação de Terra: Lobo de Lama', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca 2 lobos de lama (construtos de terra, CA 11+seu mod., 25 PV, 12m de deslocamento) que atacam por Ação Bônus usando seu bônus/CD de Ninjutsu.'},
+  {nome:'Liberação de Terra: Presa da Broca Dilacerante', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo com uma broca de pedra no braço: 5d6 de dano de Terra e 2 ranks de Contusão — acerto crítico triplica os dados em vez de dobrar.'},
+  {nome:'Liberação de Terra: Tanque de Rocha', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo: você se lança rolando como uma esfera de pedra até o espaço do alvo, causando 4d8 de dano de Terra e teste de Força ou cai Derrubado e Contundido.'},
+  {nome:'Liberação de Terra: Armadura de Areia', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'7 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Camada de areia te dá 20 PV temporário; enquanto durar, resistência a Concussão/Perfurante/Cortante/Frio/Terra (Raio ignora a proteção).'},
+  {nome:'Liberação de Terra: Amarra do Caixão de Areia', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'4,5m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Destreza ou o alvo fica Atordoado e suspenso no ar dentro de um casulo de areia (dano de outras fontes reduzido à metade); como ação você pode esmagá-lo (5d12 de dano de Terra) e ele testa Força no fim do turno pra escapar.'},
+  {nome:'Liberação de Terra: Tempestade de Areia', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'8 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Redemoinho de areia e poeira ao redor de um construto de terra seu (3m de raio, 4,5m de altura): quem começa o turno dentro testa Força ou sofre 4d6 de dano de Terra e cai Derrubado.'},
+  {nome:'Liberação de Terra: Onda Tectônica', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'Pessoal (cone de 7,5m)', duracao:'1 rodada',
+    efeito:'Cone de 7,5m de fragmentos cristalinos de terra explodindo: teste de Força ou rola 1d4+2 vezes seu modificador de Ninjutsu em dano de Terra e fica Contundido (metade do dano se passar).'},
+  {nome:'Liberação de Terra: Terra-Escudo', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'7 Chakra', alcance:'18m', duracao:'1 rodada',
+    efeito:'Ergue uma parede de pedra (um construto de terra com 5d6+5 PV, RD 4 contra tudo menos Raio) na frente de um aliado, dando cobertura total; se o dano superar os PV da parede, o excedente passa pro alvo e ela é destruída — continua existindo até ser destruída.'},
+  {nome:'Liberação de Terra: Palma Giratória', tipo:'Ninjutsu', categoria:'Terra', rank:'C', custo:'9 Chakra', alcance:'Pessoal (cubo de 13,5m)', duracao:'Instantâneo',
+    efeito:'Racha uma área de terra (cubo de 13,5m) em terreno difícil permanente (só desfaz com o mesmo jutsu); se for fina o bastante pode desabar, e jutsu de Terra lançado ali dá -1d4 nos testes de resistência contra ele.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1364,7 +1404,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

@@ -1789,8 +1789,12 @@ passando.
       elementais. Traz o "Quake Shard" (construto de pedra reaproveitado
       por outros jutsu de Terra). Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank C**
+      (19/09/2026) — decisão #145. As 19 jutsu do Rank C entraram no
+      catálogo (45 de 75 jutsu de Terra; 247 de ~1400 no total). Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1172 jutsu: Terra C/B/A/S, Vento/Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1153 jutsu: Terra B/A/S, Vento/Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

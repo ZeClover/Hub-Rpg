@@ -6356,6 +6356,24 @@ Testado com Playwright: catálogo mostra 229 opções (1 placeholder + 228
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 145. Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank C (19/09/2026)
+
+Continuação da decisão #144. As 19 jutsu do Rank C da Liberação de Terra
+entraram no `JUTSU_CATALOGO` — fecha 2 dos 6 ranks dessa natureza (45 das
+75 jutsu de Terra; 247 das ~1400 entradas totais do Compêndio).
+
+Este rank reforça o padrão de construtos ("construto de terra", termo já
+usado desde o Rank D pra o que o livro chama de "Quake Shard"): vários
+jutsu novos criam um construto (Clone de Terra, Lobo de Lama, Terra-Escudo)
+e outros dependem de um construto já existente pra funcionar (Núcleo de
+Terra Móvel, Tempestade de Areia) — mantive o mesmo termo em português em
+todos pra não criar sinônimo à toa dentro do catálogo.
+
+Testado com Playwright: catálogo mostra 248 opções (1 placeholder + 247
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
+sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
