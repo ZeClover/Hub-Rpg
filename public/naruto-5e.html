@@ -428,8 +428,8 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de
    Fogo e Liberação de Água estão 100% completos (todos os 6 ranks de
-   cada, 500 jutsu). Liberação de Raio com Ranks D e C prontos (45 de
-   74 jutsu, última Natureza elemental) — faltam B/A/S dela, mais
+   cada, 500 jutsu). Liberação de Raio com Ranks D, C e B prontos (58
+   de 74 jutsu, última Natureza elemental) — faltam A/S dela, mais
    Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
    categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -1550,6 +1550,33 @@ const JUTSU_CATALOGO = [
     efeito:'Alvos Chocados testam resistência contra seus jutsu de Raio com penalidade igual aos ranks de Chocado que tiverem.'},
   {nome:'Liberação de Raio: Bomba de Trovão', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'Pessoal (9m)', duracao:'Instantâneo',
     efeito:'Detona todos os alvos Chocados numa área de 9m: teste de Constituição ou dano de Raio conforme os ranks de Chocado (de 3d8 a 7d8, metade se passar); quem estiver a até 3m de um Chocado também testa Destreza pra metade do dano — a condição Chocado acaba em todos, independente do resultado.'},
+
+  {nome:'Liberação de Raio: Banquete do Trovão', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'12 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Descarga numa linha de 3m de largura por 18m (vira terreno difícil): teste de Destreza ou 6d6 de dano de Raio, 1 rank de Chocado e Fragilizado (metade se passar) — Sobrecarga: vira um cone de 18m (só pode usar de novo depois de recarregar com 1 Dado de Chakra ou descansar).'},
+  {nome:'Liberação de Raio: Fera de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'11 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca uma fera de raio (construto, CA 11+seu mod., 30 PV, 13,5m de deslocamento) comandada por Ação Bônus.'},
+  {nome:'Liberação de Raio: Raio Encadeado', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'13 Chakra', alcance:'45m', duracao:'Instantâneo',
+    efeito:'Um raio salta do primeiro alvo pra até 3 outros dentro de 9m dele: teste de Destreza ou 6d10 de dano de Raio (metade se passar) — Sobrecarga: cada alvo ganha 1 rank de Chocado por alvo anterior que já tiver falhado.'},
+  {nome:'Liberação de Raio: Falsa Escuridão', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'14 Chakra', alcance:'Pessoal (cone de 9m)', duracao:'Instantâneo',
+    efeito:'Onda de raio num cone de 9m: teste de Constituição ou 10d4 de dano de Raio e Cego por 1 minuto (metade e sem cegueira se passar; pode testar de novo a cada turno) — Sobrecarga: também fica Surdo e ganha 2 ranks de Concussão.'},
+  {nome:'Liberação de Raio: Amarra de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'14 Chakra', alcance:'1,6km', duracao:'Concentração, até 1 hora',
+    efeito:'Selos formam uma barreira triangular de raio (60 PV, CA 13) com gatilho à sua escolha: quem estiver dentro não consegue moldar Chakra, e forçar a saída exige teste de Constituição CD 16 ou 5d8 de dano de Raio (metade se passar).'},
+  {nome:'Liberação de Raio: Lírio de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'11 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Flor de raio detona numa área de 9m: teste de Destreza (5d8 de dano e 2 ranks de Chocado, ou 1 rank se passar) e teste de Sabedoria (Cego até o fim do turno seguinte se falhar) — Sobrecarga: escolhe só um dos dois testes pra decidir o efeito.'},
+  {nome:'Liberação de Raio: Lança de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'12 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Feixe de raio numa linha de 18m: teste de Destreza ou 10d6 de dano de Raio (metade se passar) — Sobrecarga: quem falhar também fica Incapacitado até o fim do turno seguinte.'},
+  {nome:'Liberação de Raio: Transmissão de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'11 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Teleporta até um alvo Chocado a até 36m, com vantagem no primeiro ataque corpo a corpo contra ele — se ele morrer, pode teleportar de novo pra outro Chocado a até 18m (até 2 vezes por turno).'},
+  {nome:'Liberação de Raio: Penitência', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'14 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Reanima alguém morto há menos de 1 minuto: teste de Ninshou contra CD (15+1 por rodada morto) — no sucesso, volta com 1 PV e PV temporário (6d10) por 1 minuto, com Força/Destreza/Inteligência virando 20 e todo dano que causa virando Raio inevitável; ao acabar o PV temporário, fica inconsciente por 24h — só funciona 1 vez por descanso completo.'},
+  {nome:'Liberação de Raio: Tempestade Furiosa', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'13 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Envolve um aliado em raio: os jutsu dele somam +3d8 de dano de Raio 1×/turno, ganha resistência a Terra, +6m de deslocamento, vantagem em Destreza e vantagem em testes de concentração.'},
+  {nome:'Liberação de Raio: Armadura de Investida', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'13 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Armadura de raio (nunca perde a concentração por dano): +6m de deslocamento, +2 de Defesa e +2 no primeiro ataque corpo a corpo de cada turno.'},
+  {nome:'Liberação de Raio: Choques Tenazes', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'11 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Ataque de Ninjutsu à distância: 5d10 de dano de Raio e teste de Constituição ou Chocado e Atordoado — Sobrecarga: quem estiver a até 3m do alvo também testa (5d8 de dano de Raio ou metade).'},
+  {nome:'Liberação de Raio: Tempestade de Trovões', tipo:'Ninjutsu', categoria:'Raio', rank:'B', custo:'14 Chakra', alcance:'75m', duracao:'Concentração, até 1 minuto',
+    efeito:'Nuvem de tempestade cobrindo 75m: quem estiver embaixo testa Destreza no fim do turno ou sofre 4d6 de dano de Raio e fica Chocado (metade se passar).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2021,7 +2048,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos; Liberação de Raio com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos; Liberação de Raio com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

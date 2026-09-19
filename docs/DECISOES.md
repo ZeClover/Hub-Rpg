@@ -6772,6 +6772,22 @@ Testado com Playwright: catálogo mostra 546 opções (1 placeholder + 545
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 166. Naruto 5e — Catálogo de Jutsu, Liberação de Raio Rank B (19/09/2026)
+
+Continuação da decisão #165. As 13 jutsu do Rank B da Liberação de
+Raio entraram no `JUTSU_CATALOGO` — fecha 3 dos 6 ranks dessa natureza
+(58 das 74 jutsu de Raio; 558 das ~1400 entradas totais).
+
+Traz Penitência, o segundo jutsu de ressureição temporária do sistema
+(depois de Chama Implacável, Fogo, decisão #157) — mas este devolve a
+vida por 1 minuto renovável via PV temporário, terminando em
+inconsciência de 24h em vez de morte permanente. Amarra de Raio
+introduz o primeiro "gatilho customizável" de Fuinjutsu deste rank.
+
+Testado com Playwright: catálogo mostra 559 opções (1 placeholder + 558
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
