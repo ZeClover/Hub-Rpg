@@ -7069,6 +7069,30 @@ Testado com Playwright: catálogo mostra 808 opções (1 placeholder + 807
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 180. Naruto 5e — Genjutsu Rank A 100% completo (19/09/2026)
+
+Continuação da decisão #179. O Rank A do Genjutsu (22 jutsu, pequeno o
+bastante pra caber num lote só) entrou inteiro no `JUTSU_CATALOGO` — de
+"Sol Negro" a "Quebra-Vontades", 829 das ~1400 entradas totais.
+Genjutsu chega a 255 de 268 jutsu (só falta o Rank S, 13 jutsu, pra
+fechar a categoria inteira).
+
+Traz o terceiro e quarto Kinjutsu de Genjutsu ("Geas" e "Clone Mental")
+— este último com um formato de custo bem diferente de tudo que já
+entrou ("20 Chakra por semana, por 52 semanas seguidas", já que é um
+ritual de um ano inteiro pra cultivar uma cópia de segurança da própria
+consciência, não um jutsu de combate). Também traz "Dominar Pessoa" e
+"Aparência", que codificam mecânicas equivalentes às magias "Dominate
+Person" e "Seeming" do D&D 5e (creditadas na decisão #5/#17 como base
+do sistema de combate do livro) — sem copiar nenhum texto do D&D nem
+do Compêndio, só a mecânica traduzida pro Hub. Atualizei os dois textos
+de referência de completude do arquivo pra refletir Ranks E/D/C/B/A
+100% prontos.
+
+Testado com Playwright: catálogo mostra 830 opções (1 placeholder + 829
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
