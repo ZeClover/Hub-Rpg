@@ -1886,8 +1886,12 @@ passando.
       de Raio entraram no catálogo (525 de ~1400 no total) — sexta e
       última Natureza elemental. Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Raio Rank C**
+      (19/09/2026) — decisão #165. As 20 jutsu do Rank C entraram no
+      catálogo (45 de 74 jutsu de Raio; 545 de ~1400 no total). Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~875 jutsu: Raio C/B/A/S, Genjutsu,
+      Jutsu (~855 jutsu: Raio B/A/S, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

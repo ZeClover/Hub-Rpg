@@ -6756,6 +6756,22 @@ Testado com Playwright: catálogo mostra 526 opções (1 placeholder + 525
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 165. Naruto 5e — Catálogo de Jutsu, Liberação de Raio Rank C (19/09/2026)
+
+Continuação da decisão #164. As 20 jutsu do Rank C da Liberação de
+Raio entraram no `JUTSU_CATALOGO` — fecha 2 dos 6 ranks dessa natureza
+(45 das 74 jutsu de Raio; 545 das ~1400 entradas totais).
+
+Traz Chidori/Raikiri, a técnica mais icônica da série (mantida com o
+nome original em japonês, já que são só nomes próprios — a mecânica
+codificada é inteiramente original do livro homebrew, sem copiar
+descrição). Bastão de Raio é o primeiro jutsu do sistema com 4 opções
+de uso diferentes (ação, ação, ação bônus, reação) numa arma só.
+
+Testado com Playwright: catálogo mostra 546 opções (1 placeholder + 545
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

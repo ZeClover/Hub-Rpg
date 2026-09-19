@@ -428,10 +428,10 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de
    Fogo e Liberação de Água estão 100% completos (todos os 6 ranks de
-   cada, 500 jutsu). Liberação de Raio com o Rank D pronto (25 jutsu,
-   última Natureza elemental) — faltam C/B/A/S dela, mais Genjutsu,
-   Taijutsu, Bukijutsu e Invocação, entrando aos poucos, categoria por
-   categoria, mesmo ritmo dos Clãs/Classes. */
+   cada, 500 jutsu). Liberação de Raio com Ranks D e C prontos (45 de
+   74 jutsu, última Natureza elemental) — faltam B/A/S dela, mais
+   Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
+   categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1509,6 +1509,47 @@ const JUTSU_CATALOGO = [
     efeito:'Descarga numa esfera de 4,5m: teste de Destreza ou 2d10 de dano de Raio e Chocado (metade se passar) — Sobrecarga: +3m de raio.'},
   {nome:'Liberação de Raio: Garra de Trovão', tipo:'Ninjutsu', categoria:'Raio', rank:'D', custo:'4 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
     efeito:'Garras de raio nas mãos: Ataque de Ninjutsu corpo a corpo (ação) causando 2d6+mod. de dano de Raio (d8 se o alvo estiver Chocado) — Sobrecarga: +1 na faixa de crítico contra alvos Chocados.'},
+
+  {nome:'Liberação de Raio: Réplica', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'Especial', alcance:'Especial', duracao:'Instantâneo',
+    efeito:'Reação a causar dano de Raio: relança o último jutsu (no mesmo alvo ou área) pelo dobro do custo.'},
+  {nome:'Liberação de Raio: Chidori', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'8 Chakra', alcance:'1,5m', duracao:'Concentração, até 1 minuto',
+    efeito:'Concentra Raio numa mão (não segura nada, mas ainda faz Selos): no turno seguinte, Ataque de Ninjutsu corpo a corpo causando 5d10 de dano de Raio (+1 na faixa de crítico) e encerra o jutsu — Sobrecarga: vira "Raikiri", com +6m de deslocamento, +1d4 pra acertar e dado de dano maior em crítico; a partir do Rank B, ataca na mesma hora em vez de esperar o turno seguinte.'},
+  {nome:'Liberação de Raio: Choque Vital', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'7 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'5 PV + PV temporário (4d8) por 1 minuto; enquanto durar, +3m de deslocamento e +2 em testes de Destreza — se o alvo estava morrendo, ganha uma Ação Bônus extra até o fim do turno seguinte.'},
+  {nome:'Liberação de Raio: Corrente Elétrica', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'Pessoal (9m)', duracao:'Instantâneo',
+    efeito:'Descarga numa área de 9m ao seu redor: teste de Constituição ou 4d6 de dano de Raio e 1 rank de Chocado (metade se passar) — Sobrecarga: também impede Selos de Mão até o fim do turno seguinte.'},
+  {nome:'Liberação de Raio: Presa de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'30m', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria nuvens de tempestade; por ação, faz um raio cair num ponto (1,5m de raio): teste de Destreza ou 3d10 de dano de Raio (metade se passar) — Sobrecarga: também reduz o deslocamento do alvo a 1,5m até o fim do turno seguinte.'},
+  {nome:'Liberação de Raio: Lampejo de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'6 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Sua próxima arma arremessável soma +1d8 de dano de Raio — Sobrecarga: esse dano ignora redução de dano e PV temporário.'},
+  {nome:'Liberação de Raio: Manto do Rei Relâmpago', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'8 Chakra', alcance:'Pessoal (6m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Aura de 6m que te acompanha: aliados escolhidos somam +1d6 de dano de Raio 1×/turno em ataques de arma, Taijutsu ou Bukijutsu.'},
+  {nome:'Liberação de Raio: Ligre de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'7 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 4d8 + seu modificador de dano de Raio e teste de Constituição ou 1 rank de Chocado — contra alvo já Chocado, o ataque tem vantagem e ignora cobertura — Sobrecarga: atinge mais um alvo.'},
+  {nome:'Liberação de Raio: Bastão de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria uma lança de raio (alcance de 3m, sem gastar Chakra pra manter) com opções por ação: atacar corpo a corpo (4d10 de dano de Raio), arremessar (5d6+mod., depois explode numa área de 6m causando 3d8 a mais, encerrando o jutsu), ou por Ação Bônus recarregar o próximo jutsu de Raio (custo pela metade, +mod. de dano, encerrando o jutsu), ou por Reação girar a lança pra +1d6 de Defesa e metade disso em testes de Força/Destreza até o próximo turno.'},
+  {nome:'Liberação de Raio: Corda de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'6 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Ataque de Ninjutsu à distância: acerto deixa o alvo Restrito e Chocado, sofrendo seu modificador de Ninjutsu em dano de Raio por turno — ele testa Força (ação) pra se soltar; você precisa segurar a corda com uma mão o tempo todo.'},
+  {nome:'Liberação de Raio: Passo de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'8 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Teleporta você (e um aliado disposto a até 1,5m, se houver espaço) — um estrondo atinge quem estiver a até 3m de onde você saiu e chegou: teste de Constituição ou 3d10 de dano de Raio (metade se passar).'},
+  {nome:'Liberação de Raio: Gancho de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'6 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 4d8 de dano de Raio e arremessa o alvo 6m pro alto (sem dano de queda a menos que caia de mais alto) — Sobrecarga: o próximo jutsu de Raio que lançar até o fim do turno soma +2 dados de dano.'},
+  {nome:'Liberação de Raio: Muralha de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'Especial (50 Chakra)', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Ergue uma muralha de raio (até 27m de comprimento, 18m de altura; ou um anel de 12m de diâmetro; PV = soma da CD de Ninjutsu de todos os conjuradores, resistente a Terra, vulnerável a Vento): ao surgir e sempre que alguém entrar ou terminar o turno a até 3m dela, teste de Destreza/Constituição ou 8d8 de dano de Raio e Chocado (metade e nada mais se passar). Em Combinação, o dano cresce e os PV crescem com o maior Carisma do grupo.'},
+  {nome:'Liberação de Raio: Superaceleração', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'+6m de deslocamento, vantagem em testes e resistências de Destreza, e +1d4 em testes de Percepção por 1 minuto.'},
+  {nome:'Liberação de Raio: Redirecionar Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'Especial', alcance:'Especial', duracao:'Instantâneo',
+    efeito:'Ao ser alvo de um jutsu de Raio, gasta Chakra igual ao custo dele: ganha resistência a Raio até o próximo turno e testa Ataque de Ninjutsu contra o ataque/CD original — se vencer, redireciona o ataque pra outro alvo à sua escolha, causando metade do dano original.'},
+  {nome:'Liberação de Raio: Teia de Aranha', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'18m (cubo de 4,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Teia de raio numa área de 4,5m: quem entrar ou começar o turno lá testa Constituição ou ganha 1 rank de Chocado — quem já estiver Chocado e começar o turno ali fica Incapacitado até o fim do turno — Sobrecarga: também causa 3d12 de dano de Raio pra quem estiver Chocado.'},
+  {nome:'Liberação de Raio: Falcão Estático', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'7 Chakra', alcance:'36m (cubo de 4,5m)', duracao:'Instantâneo',
+    efeito:'Pássaro de raio explode numa área de 4,5m no alvo: teste de Constituição ou 6d6 de dano de Raio e 1 rank de Chocado (metade se passar) — Sobrecarga: quem ficar Chocado precisa testar Constituição (Controle de Chakra) a cada turno ou mal consegue se mover.'},
+  {nome:'Liberação de Raio: Arma Estática', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'7 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Encanta uma arma (nunca perde a concentração por dano): +1 pra acertar e soma um dado extra de dano de Raio a cada acerto.'},
+  {nome:'Liberação de Raio: Surto', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'7 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Alvos Chocados testam resistência contra seus jutsu de Raio com penalidade igual aos ranks de Chocado que tiverem.'},
+  {nome:'Liberação de Raio: Bomba de Trovão', tipo:'Ninjutsu', categoria:'Raio', rank:'C', custo:'9 Chakra', alcance:'Pessoal (9m)', duracao:'Instantâneo',
+    efeito:'Detona todos os alvos Chocados numa área de 9m: teste de Constituição ou dano de Raio conforme os ranks de Chocado (de 3d8 a 7d8, metade se passar); quem estiver a até 3m de um Chocado também testa Destreza pra metade do dano — a condição Chocado acaba em todos, independente do resultado.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1980,7 +2021,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos; Liberação de Raio com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos; Liberação de Raio com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
