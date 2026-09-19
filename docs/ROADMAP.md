@@ -1857,8 +1857,13 @@ passando.
       Compêndio de Jiraiya catalogada (426 de ~1400 no total). Testado
       com Playwright; `tsc`, lint, build e os 298 testes automáticos do
       projeto continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início da Liberação de Água**
+      (19/09/2026) — decisão #159. As 25 jutsu do Rank D da Liberação
+      de Água entraram no catálogo (451 de ~1400 no total) — quinta
+      Natureza elemental. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~974 jutsu: Água/Raio, Genjutsu,
+      Jutsu (~949 jutsu: Água C/B/A/S, Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

@@ -6639,6 +6639,28 @@ automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
 regressão.
 
+## 159. Naruto 5e — Catálogo de Jutsu, início da Liberação de Água (19/09/2026)
+
+Continuação da decisão #158, quinta Natureza elemental (74 jutsu ao
+todo). As 25 jutsu do Rank D da Liberação de Água entraram no
+`JUTSU_CATALOGO` — 451 das ~1400 entradas totais do Compêndio.
+
+Achado no `jutsu_parsed.json`: 1 jutsu de Água ("Heavenly Mirror of
+Hope") saiu com o campo de rank corrompido, mesmo problema documentado
+na decisão #149 pra Vento. Conferi a posição no `.txt` original e é
+Rank B — fica registrado pra entrar no rank certo quando chegar a vez
+dele, sem duplicar.
+
+Água introduz um padrão mecânico novo que nenhuma Natureza anterior
+tinha: quase todo jutsu deste rank ganha um bônus condicional "se usado
+perto de uma fonte de água suficiente" (custo reduzido ou efeito
+extra) — mantive essa condição resumida em cada "efeito" porque é
+mecânica central da Natureza, não descrição de sabor.
+
+Testado com Playwright: catálogo mostra 452 opções (1 placeholder + 451
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

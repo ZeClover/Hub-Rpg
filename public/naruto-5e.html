@@ -427,8 +427,9 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de
-   Fogo estão 100% completos (todos os 6 ranks de cada, 426 jutsu) —
-   faltam Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando
+   Fogo estão 100% completos (todos os 6 ranks de cada, 426 jutsu).
+   Liberação de Água com o Rank D pronto (25 jutsu) — faltam C/B/A/S
+   dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando
    aos poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
@@ -1303,6 +1304,57 @@ const JUTSU_CATALOGO = [
     efeito:'Kinjutsu: escolhe até 4 pontos visíveis a até 1,6km; cada um recebe uma esfera de fogo (6m de raio, contorna esquinas): teste de Destreza ou 22d8+22 de dano de Fogo (metade se passar) — cada criatura só é atingida por uma explosão.'},
   {nome:'Liberação de Fogo: Bênção da Fênix', tipo:'Ninjutsu', categoria:'Fogo', rank:'S', custo:'Especial', alcance:'Toque', duracao:'Permanente',
     efeito:'Kinjutsu: toca um aliado e transfere pra ele seus PV e Chakra máximos (mais PV/Chakra temporário igual ao máximo dele), remove todas as condições e dá vantagem em tudo por 1 minuto — depois disso, seus próprios PV e Chakra máximos viram 0 pra sempre, sem jeito de recuperar.'},
+
+  {nome:'Liberação de Água: Investida do Golfinho', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'4,5m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo com uma fera aquática: 3d6 de dano de Frio e teste de Constituição ou 1 rank de Resfriado (perto de água, custa 2 Chakra a menos ou alcance vira 13,5m).'},
+  {nome:'Liberação de Água: Gotas Encorajadoras: Sede', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Aliado bebe água de Chakra: ganha PV temporário igual à sua CD de Ninjutsu, cura uma condição (Sangramento/Queimado/Resfriado/Atordoado/Envenenado) e ganha uma Ação Bônus especial (Disparada, Esconder-se, Desengajar ou Esquivar) até o fim do próprio turno seguinte.'},
+  {nome:'Liberação de Água: Águas Curativas', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Cura 2d8 de PV (perto de água, custa 2 Chakra a menos ou também remove Sangramento/Queimado/Envenenado/Chocado).'},
+  {nome:'Liberação de Água: Névoa Oculta', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'Pessoal (esfera de 9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Névoa numa esfera de 9m onde não se enxerga além de 1,5m (desvantagem em Percepção e ataques por visão); marca um alvo que você sempre enxerga dentro da névoa, sem desvantagem contra ele (perto de água, custa 2 Chakra a menos ou marca mais um alvo).'},
+  {nome:'Liberação de Água: Asas de Louva-a-Deus', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Ganha 9m de voo até o fim do turno (pousa suavemente se ainda estiver no ar quando acabar).'},
+  {nome:'Liberação de Água: Enxame de Piranhas', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'3 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Enxame de piranhas de água: Ataque de Ninjutsu corpo a corpo (2d4 de dano de Frio + 2d4 Perfurante) e teste de Constituição ou 1 rank de Resfriado (Sangramento também se errar por 5+); pode mover 9m (18m debaixo d\'água) e atacar de novo por Ação Bônus (perto de água, custa 2 Chakra a menos ou soma +1d4 de cada dano).'},
+  {nome:'Liberação de Água: Esfera de Água Sensorial', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'1,5m', duracao:'Concentração, até 1 dia',
+    efeito:'Esfera de água que detecta movimento numa área de 75m sempre que alguém perturbar uma fonte de água (poças, chuva, etc.) — perto de água, custa 2 Chakra a menos ou dobra o alcance pra 150m.'},
+  {nome:'Liberação de Água: Mandíbula de Tubarão', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Mãos viram mandíbulas de tubarão: Ataque de Ninjutsu corpo a corpo (ação) causando 3d8 de dano de Frio e teste de Força ou fica Agarrado, sofrendo 1d8 por turno enquanto agarrado — debaixo d\'água, ganha 18m de nadar e ataca com vantagem (perto de água, custa 2 Chakra a menos ou vira crítico automático se passar da CA por 10+).'},
+  {nome:'Liberação de Água: Arma de Xarope de Amido', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 1 rank de Lentidão até o fim do turno seguinte do alvo (perto de água, custa 2 Chakra a menos ou atinge mais um alvo).'},
+  {nome:'Liberação de Água: Malho do Tsunami', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'3m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo: 3d6 de dano de Frio e teste de Constituição ou Resfriado — se o alvo já tiver uma condição elemental, o teste vem com -2 em desvantagem e o dado de dano sobe um passo (perto de água, custa 2 Chakra a menos ou o dado de dano sobe um passo também).'},
+  {nome:'Liberação de Água: Massa de Água Viscosa', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Escudo de água num aliado: reduz o dano recebido em 4 (6 se for Fogo) — perto de água, custa 2 Chakra a menos ou também dá +1 de Defesa.'},
+  {nome:'Liberação de Água: Camuflagem de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Concentração, até 10 minutos',
+    efeito:'Torna um aliado invisível (com tudo que carrega) até ele atacar, lançar jutsu ou interagir com alguém.'},
+  {nome:'Liberação de Água: Garras de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'2 Ataques de Ninjutsu corpo a corpo: 2d6 de dano de Frio cada e teste de Constituição ou 1 rank de Sangramento (perto de água, custa 2 Chakra a menos ou soma mais 1 ataque).'},
+  {nome:'Liberação de Água: Formação de Água: Poça', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'3 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Cria uma poça de água (uso como fonte de água pra até 2 jutsu de Água Rank C ou menor antes de secar).'},
+  {nome:'Liberação de Água: Lâmina de Palma de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 4d8 de dano de Frio — se o alvo se mover antes do seu próximo turno, explode causando 1d6 de Frio nele e em quem estiver a até 1,5m (perto de água, custa 2 Chakra a menos ou soma mais 1 dado de dano).'},
+  {nome:'Liberação de Água: Investida do Pilar de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ignora cobertura: teste de Destreza ou 3d10 de dano de Frio e Resfriado (metade e nada mais se passar) — perto de água, custa 2 Chakra a menos ou também atinge quem estiver a até 1,5m do alvo.'},
+  {nome:'Liberação de Água: Purificação/Putrefação da Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'3 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Purifica (vira água potável) ou putrefaz (vira veneno) até 38 litros de líquido — em fontes especiais, precisa de um teste de Ninshou.'},
+  {nome:'Liberação de Água: Armadilha Selante de Água: Submersão', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'36m', duracao:'10 minutos',
+    efeito:'Alvo totalmente submerso testa Força ou fica Restrito (sem afogar, sem conseguir fazer Selos de Mão), repetindo o teste no fim de cada turno pra escapar.'},
+  {nome:'Liberação de Água: Escudo de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'+2 de Defesa até o início do seu próximo turno e reduz o próximo dano recebido em 4 — contra Fogo pode iniciar um Clash com +1d4 (perto de água, custa 2 Chakra a menos ou o primeiro Clash vem com vantagem).'},
+  {nome:'Liberação de Água: Shuriken de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'3 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 4d4 de dano de Frio (crítico vira d8) — perto de água, custa 2 Chakra a menos ou soma mais 1 ataque.'},
+  {nome:'Liberação de Água: Chicote de Água', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo: 2d6 de dano de Frio, puxa o alvo 3m mais perto e teste de Constituição ou 1 rank de Resfriado (perto de água, custa 2 Chakra a menos ou também ganha Contusão se falhar).'},
+  {nome:'Liberação de Água: Torrente da Baleia', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'Especial (28 Chakra)', alcance:'Pessoal (raio de 4,5m)', duracao:'1 minuto',
+    efeito:'Cria uma barreira de água (área de 4,5m, 24d6 PV, resistente a Fogo, vulnerável a Terra) que bloqueia toda passagem e ataque por 1 minuto (não pode ser encerrada antes por vontade própria). Em Combinação, os PV crescem por conjurador extra e o dado de PV sobe conforme o maior Carisma do grupo.'},
+  {nome:'Liberação de Água: Sussurro', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Até 3 aliados ganham seu modificador de Ninjutsu em testes de Percepção, vantagem em resistências contra efeitos sonoros, e +seu modificador no primeiro teste contra Genjutsu Auditivo (aí o jutsu acaba).'},
+  {nome:'Liberação de Água: Onda de Bolhas Selvagem', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'5 Chakra', alcance:'Pessoal (cone de 4,5m)', duracao:'Instantâneo',
+    efeito:'Cone de bolhas escorregadias (4,5m): teste de Destreza ou cai Derrubado — dura 1 minuto ou até ser lavado.'},
+  {nome:'Liberação de Água: Onda de Água Selvagem', tipo:'Ninjutsu', categoria:'Água', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 2d8 de dano de Frio e empurra o alvo 3m (perto de água, custa 2 Chakra a menos ou também testa Constituição contra Resfriado).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1774,7 +1826,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
