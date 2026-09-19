@@ -1833,8 +1833,13 @@ passando.
       Compêndio de Jiraiya catalogada (351 de ~1400 no total). Testado
       com Playwright; `tsc`, lint, build e os 298 testes automáticos do
       projeto continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início da Liberação de Fogo**
+      (19/09/2026) — decisão #154. As 25 jutsu do Rank D da Liberação
+      de Fogo entraram no catálogo (376 de ~1400 no total) — quarta
+      Natureza elemental. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1049 jutsu: Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1024 jutsu: Fogo C/B/A/S, Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

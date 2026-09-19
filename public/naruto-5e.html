@@ -427,8 +427,9 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra e Liberação de Vento estão 100%
-   completos (todos os 6 ranks de cada, 351 jutsu) — faltam Fogo/Água/
-   Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
+   completos (todos os 6 ranks de cada, 351 jutsu). Liberação de Fogo
+   com o Rank D pronto (25 jutsu) — faltam C/B/A/S dela, mais Água/Raio,
+   Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
    categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
@@ -1148,6 +1149,57 @@ const JUTSU_CATALOGO = [
     efeito:'Aliados numa área de 13,5m ganham +9m de deslocamento a cada turno, +3 em ataques de Ninjutsu/Taijutsu, PV temporário igual à sua CD de Ninjutsu por turno, +4,5m de alcance e +3d8 de dano de Vento 1×/turno em Taijutsu de curto alcance, imunidade a Atordoado/Fragilizado e resistência a Raio.'},
   {nome:'Liberação de Vento: Explosão de Tornado', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
     efeito:'Cilindro de vento centrado em você (27m de raio, 36m de altura, terreno difícil até pra voadores): quem começa o turno lá dentro testa Força ou é sugado pro centro, fica Restrito e causa Redemoinho — todos lá dentro (menos você) sofrem 8d10 de dano de Vento no início dos seus turnos.'},
+
+  {nome:'Liberação de Fogo: Absorver Calor', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação a um ataque: ganha resistência ao dano recebido, e quem acertou corpo a corpo a até 3m sofre 6 de dano de Fogo até o início do seu próximo turno (se o dano recebido foi de Fogo, ganha +5 de redução de dano de Fogo também; falha se o dano for de Frio).'},
+  {nome:'Liberação de Fogo: Nuvem de Cinzas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'9m (nuvem de 9m)', duracao:'Instantâneo',
+    efeito:'Nuvem de cinzas de 9m que dura até 10 minutos: quem estiver dentro tem desvantagem em ataques e é tratado como em escuridão total, e ataques à distância não enxergam alvos lá dentro.'},
+  {nome:'Liberação de Fogo: Brasa Flamejante', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'2 Ataques de Ninjutsu à distância (no mesmo alvo ou em alvos diferentes): 3d4+3 de dano de Fogo cada — se um alvo Queimado for atingido pelos dois, sofre o dano da condição na hora.'},
+  {nome:'Liberação de Fogo: Mãos Flamejantes', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Pessoal (cone de 4,5m)', duracao:'Instantâneo',
+    efeito:'Lençol de chamas num cone de 4,5m: teste de Destreza ou 5d4+5 de dano de Fogo (metade se passar); incendeia objetos inflamáveis soltos na área.'},
+  {nome:'Liberação de Fogo: Fogo Azul', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'1 rodada',
+    efeito:'Protege um aliado até o início do turno seguinte dele: reduz o dano de ataques à distância em 2d4+2, e ataques corpo a corpo em 2d4+2 além de causar 3d6+3 de dano de Fogo em quem acertou (1×/turno) — dano de Frio apaga o jutsu na hora.'},
+  {nome:'Liberação de Fogo: Aranha Carmesim', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca uma aranha de fogo de tamanho médio que age por Ação Bônus sob seu comando.'},
+  {nome:'Liberação de Fogo: Lanterna do Demônio', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'3 Chakra', alcance:'Pessoal (1,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Chamas com rostos de demônio ao seu redor iluminam 6m (mais 3m de penumbra); reação quando alguém chega a até 1,5m: teste de Destreza ou pega fogo (Queimado).'},
+  {nome:'Liberação de Fogo: Chama Irrompente', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'3 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ponto de calor sob o alvo (ignora cobertura): teste de Destreza ou 3d8+3 de dano de Fogo, virando 2 ranks de Queimado se errar por 5 ou mais.'},
+  {nome:'Liberação de Fogo: Bola de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'18m (esfera de 4,5m)', duracao:'Instantâneo',
+    efeito:'Esfera de fogo de 4,5m de raio: teste de Destreza ou 4d6+4 de dano de Fogo (metade se passar); incendeia objetos inflamáveis soltos.'},
+  {nome:'Liberação de Fogo: Raio de Chama', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 3d10+3 de dano de Fogo; incendeia objeto inflamável atingido.'},
+  {nome:'Liberação de Fogo: Manto de Chamas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Concentração, até 10 minutos',
+    efeito:'Nunca perde a concentração por dano; encanta uma arma (ou mais, por Ação Bônus) com +1d8+1 de dano de Fogo 2×/turno, iluminando 6m ao redor.'},
+  {nome:'Liberação de Fogo: Golpe de Chamas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Coluna de fogo vertical (3m de raio, 6m de altura): teste de Destreza ou 3d6+3 de dano de Fogo e 1 rank de Queimado (metade do dano se passar).'},
+  {nome:'Liberação de Fogo: Chicote de Chamas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'Pessoal (6m)', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo a até 6m: 2d10+2 de dano de Fogo e teste de Destreza ou é puxado 3m — se terminar a até 1,5m de você, cai Derrubado e pega fogo (Queimado).'},
+  {nome:'Liberação de Fogo: Fogo da Raposa', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'3 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 hora',
+    efeito:'Chama inofensiva na mão que ilumina 6m; como ação, pode atirá-la (Ataque de Ninjutsu à distância a 9m) fazendo o alvo brilhar — enquanto brilha, ataques corpo a corpo contra ele têm vantagem.'},
+  {nome:'Liberação de Fogo: Fogo Verde', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Marca um alvo: os testes de resistência dele contra jutsu de Fogo sofrem -1d4, e 1×/turno seus ataques de Fogo nele somam +1d6+1 de dano extra.'},
+  {nome:'Liberação de Fogo: Rejeição do Fogo Infernal', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'Pessoal (esfera de 4,5m)', duracao:'Instantâneo',
+    efeito:'Reação ao ser atingido: explosão de fogo numa esfera de 4,5m — teste de Destreza ou 3d8+3 de dano de Fogo (metade se passar).'},
+  {nome:'Liberação de Fogo: Chamas Apaixonadas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'O alvo rola 2 Dados de Vida (gasta 1) e cura o resultado + seu modificador de Ninjutsu, ganhando resistência a Fogo até o fim do seu próximo turno.'},
+  {nome:'Liberação de Fogo: Fogo da Fênix', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'3 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'3 Ataques de Ninjutsu à distância no mesmo alvo: 1d6+1 de dano de Fogo cada — acertando com 2 ou mais, o alvo testa Constituição ou pega 1 rank de Queimado.'},
+  {nome:'Liberação de Fogo: Chamas Reacendidas', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Estabiliza um alvo morrendo, que rola 3 Dados de Vida (gasta 2) e cura o resultado + seu modificador de Ninjutsu, ganhando resistência a Fogo até o fim do seu próximo turno.'},
+  {nome:'Liberação de Fogo: Lança Sanguínea', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu corpo a corpo: 3d6+3 de dano de Fogo — se o alvo já estava Queimado, ganha mais 1 rank; se estava Resfriado, a condição é encerrada causando de uma vez todo o dano acumulado dela.'},
+  {nome:'Liberação de Fogo: Raio Abrasador', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'8 raios de fogo, até 2 no mesmo alvo (ou até 8 alvos diferentes): Ataque de Ninjutsu à distância causando 2d4+2 de dano de Fogo cada — acertando 2 no mesmo alvo, ele testa Constituição ou pega fogo (Queimado).'},
+  {nome:'Liberação de Fogo: Fagulha', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'3 Chakra', alcance:'1,5m', duracao:'Instantâneo',
+    efeito:'Brasa jogada em material inflamável solto pega fogo sozinha (fora do seu controle) e evapora água que não venha de um jutsu de Água Rank D ou maior — se apaga sozinha depois de 10 minutos.'},
+  {nome:'Liberação de Fogo: Metais Temperados', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Deixa uma arma incandescente por 1 minuto: +1 em ataque e dano, dado de dano sobe um passo — no fim do efeito, a arma fica quebradiça e se quebra.'},
+  {nome:'Liberação de Fogo: Fogo Branco', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Sem gastar Chakra pra manter: seus jutsu de Fogo sempre forçam teste de Constituição (Queimado no fracasso), e quem pegar Queimado assim só apaga com um teste de Destreza (Sobrevivência) CD 20.'},
+  {nome:'Liberação de Fogo: Fogo Selvagem', tipo:'Ninjutsu', categoria:'Fogo', rank:'D', custo:'5 Chakra', alcance:'13,5m', duracao:'Instantâneo',
+    efeito:'Teste de Destreza ou 2d12+2 de dano de Fogo e 1 rank de Queimado (metade do dano se passar) — se já estava Queimado, sofre o dano da condição na hora e 3d12+3 em vez do normal.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1619,7 +1671,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos; Liberação de Fogo com o Rank D pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

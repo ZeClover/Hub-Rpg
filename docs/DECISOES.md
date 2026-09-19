@@ -6545,6 +6545,24 @@ automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
 regressão.
 
+## 154. Naruto 5e — Catálogo de Jutsu, início da Liberação de Fogo (19/09/2026)
+
+Continuação da decisão #153, quarta Natureza elemental (75 jutsu ao
+todo, sem problemas de rank corrompido no parser desta vez). As 25
+jutsu do Rank D da Liberação de Fogo entraram no `JUTSU_CATALOGO` —
+376 das ~1400 entradas totais do Compêndio.
+
+Fogo introduz a condição "Queimado" (Burned) como sua marca registrada
+— vários jutsu deste rank já interagem com ela (Lança Sanguínea agrava
+quem já está Queimado; Fogo Branco força todo jutsu de Fogo que você
+lançar a testar contra ela). Também traz os primeiros jutsu de cura por
+Fogo do sistema (Chamas Apaixonadas e Chamas Reacendidas, ambos gastam
+Dados de Vida do próprio alvo, igual à cura em D&D 5e).
+
+Testado com Playwright: catálogo mostra 377 opções (1 placeholder + 376
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
