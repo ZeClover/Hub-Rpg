@@ -6451,6 +6451,44 @@ decisão #124.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 144. Hub — Abas na página da campanha (19/09/2026)
+
+Sétima fatia do backlog de "demais ideias" (decisão #134), ideia #134
+do pedido original — "melhorar a página da campanha com abas/seções
+conforme os módulos forem existindo, não criar seção vazia à toa". A
+pré-condição da própria ideia só ficou verdadeira agora: depois das
+decisões #135-#143, a página tinha crescido pra 11 seções empilhadas
+(convite, identidade, manual do mestre, sessões, avisos, enquetes,
+campos personalizados, conquistas, chat, jogadores, fichas) — hora de
+organizar, não de esperar mais.
+
+**Componente novo, genérico:** `Abas` — recebe uma lista de
+`{id, rotulo, conteudo}` e só monta o painel ativo (as outras abas nem
+renderizam) — importa porque Chat e o futuro Painel de Vida fazem
+polling sozinhos, então uma aba fechada não deveria continuar pedindo
+dado à toa. Nenhum componente de seção mudou por dentro: é pura
+reorganização de apresentação, os mesmos componentes de sempre, só
+agrupados diferente.
+
+**Mestre:** o que fica sempre visível (fora de aba) é só o bloco de
+convite/código/QR — a ação que mais precisa estar à mão assim que a
+página abre. As outras quatro abas: **Geral** (identidade, manual do
+mestre, campos personalizados, conquistas), **Sessões**, **Comunicação**
+(avisos, enquetes, chat), **Grupo** (jogadores, fichas de personagem e
+monstro).
+
+**Jogador:** o bloco de entrar/sair da campanha continua sempre visível
+(quem ainda não escolheu ficha precisa ver isso na hora, não atrás de
+aba). Três abas: **Geral** (campos personalizados, conquistas),
+**Sessões**, **Comunicação** (avisos, enquetes, chat) — só aparecem
+quando a pessoa já não é mais convidada, mesma regra de antes.
+
+Sem migração, sem rota nova, sem mudança de comportamento em nenhum
+componente — só onde cada um aparece na tela.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

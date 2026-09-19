@@ -6,6 +6,7 @@ import { banco } from "@/lib/banco";
 import { SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
+import { Abas } from "./abas";
 import { AdicionarInimigo } from "./adicionar-inimigo";
 import { Avisos, type AvisoView } from "./avisos";
 import { CamposPersonalizados, type CampoView } from "./campos-personalizados";
@@ -402,159 +403,187 @@ function VisaoDoMestre({
         <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
       </section>
 
-      <IdentidadeCampanha
-        campanhaId={campanhaId}
-        capaUrlInicial={capaUrl}
-        descricaoInicial={descricao}
-        tagsIniciais={tags.join(", ")}
-      />
-
-      <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
-
-      <Sessoes
-        campanhaId={campanhaId}
-        sessoes={sessoes}
-        souMestre
-        meuUsuarioId={idDoMestre}
-        pessoas={pessoas}
-        agoraMs={agoraMs}
-      />
-
-      <Avisos campanhaId={campanhaId} avisos={avisos} souMestre />
-
-      <Enquetes
-        campanhaId={campanhaId}
-        enquetes={enquetes}
-        souMestre
-        meuUsuarioId={idDoMestre}
-      />
-
-      <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre />
-
-      <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre />
-
-      <Chat campanhaId={campanhaId} meuUsuarioId={idDoMestre} />
-
-      <section className="mt-8">
-        <h2 className="font-titulo text-xl">Jogadores</h2>
-        {jogadores.length === 0 ? (
-          <p className="mt-3 text-sm text-texto-suave">Ninguém entrou ainda.</p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {jogadores.map((jogador) => {
-              const personagens = personagensDaCampanha.filter(
-                (p) => p.donoId === jogador.usuarioId,
-              );
-              return (
-                <li
-                  key={jogador.usuarioId}
-                  className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-5"
-                >
-                  <div>
-                    <p className="font-titulo text-base">
-                      {jogador.usuario.nome ?? jogador.usuario.email}
-                    </p>
-                    {personagens.length > 0 ? (
-                      <ul className="mt-1 space-y-0.5">
-                        {personagens.map((personagem) => (
-                          <li key={personagem.id}>
-                            {ficha ? (
-                              <a
-                                href={`${ficha}?id=${personagem.id}`}
-                                className="inline-block text-sm text-ambar-forte underline underline-offset-2"
-                              >
-                                {personagem.nome}
-                              </a>
-                            ) : (
-                              <p className="text-sm text-texto-suave">{personagem.nome}</p>
-                            )}
+      <Abas
+        abas={[
+          {
+            id: "geral",
+            rotulo: "Geral",
+            conteudo: (
+              <>
+                <IdentidadeCampanha
+                  campanhaId={campanhaId}
+                  capaUrlInicial={capaUrl}
+                  descricaoInicial={descricao}
+                  tagsIniciais={tags.join(", ")}
+                />
+                <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
+                <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre />
+                <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre />
+              </>
+            ),
+          },
+          {
+            id: "sessoes",
+            rotulo: "Sessões",
+            conteudo: (
+              <Sessoes
+                campanhaId={campanhaId}
+                sessoes={sessoes}
+                souMestre
+                meuUsuarioId={idDoMestre}
+                pessoas={pessoas}
+                agoraMs={agoraMs}
+              />
+            ),
+          },
+          {
+            id: "comunicacao",
+            rotulo: "Comunicação",
+            conteudo: (
+              <>
+                <Avisos campanhaId={campanhaId} avisos={avisos} souMestre />
+                <Enquetes
+                  campanhaId={campanhaId}
+                  enquetes={enquetes}
+                  souMestre
+                  meuUsuarioId={idDoMestre}
+                />
+                <Chat campanhaId={campanhaId} meuUsuarioId={idDoMestre} />
+              </>
+            ),
+          },
+          {
+            id: "grupo",
+            rotulo: "Grupo",
+            conteudo: (
+              <>
+                <section>
+                  <h2 className="font-titulo text-xl">Jogadores</h2>
+                  {jogadores.length === 0 ? (
+                    <p className="mt-3 text-sm text-texto-suave">Ninguém entrou ainda.</p>
+                  ) : (
+                    <ul className="mt-4 space-y-3">
+                      {jogadores.map((jogador) => {
+                        const personagens = personagensDaCampanha.filter(
+                          (p) => p.donoId === jogador.usuarioId,
+                        );
+                        return (
+                          <li
+                            key={jogador.usuarioId}
+                            className="flex items-start justify-between gap-3 rounded-lg border border-borda bg-superficie p-5"
+                          >
+                            <div>
+                              <p className="font-titulo text-base">
+                                {jogador.usuario.nome ?? jogador.usuario.email}
+                              </p>
+                              {personagens.length > 0 ? (
+                                <ul className="mt-1 space-y-0.5">
+                                  {personagens.map((personagem) => (
+                                    <li key={personagem.id}>
+                                      {ficha ? (
+                                        <a
+                                          href={`${ficha}?id=${personagem.id}`}
+                                          className="inline-block text-sm text-ambar-forte underline underline-offset-2"
+                                        >
+                                          {personagem.nome}
+                                        </a>
+                                      ) : (
+                                        <p className="text-sm text-texto-suave">
+                                          {personagem.nome}
+                                        </p>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="mt-1 text-sm text-texto-suave">
+                                  Ainda não escolheu uma ficha.
+                                </p>
+                              )}
+                            </div>
+                            <RemoverJogador
+                              campanhaId={campanhaId}
+                              usuarioId={jogador.usuarioId}
+                              nome={jogador.usuario.nome ?? jogador.usuario.email}
+                            />
                           </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mt-1 text-sm text-texto-suave">
-                        Ainda não escolheu uma ficha.
-                      </p>
-                    )}
-                  </div>
-                  <RemoverJogador
-                    campanhaId={campanhaId}
-                    usuarioId={jogador.usuarioId}
-                    nome={jogador.usuario.nome ?? jogador.usuario.email}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </section>
 
-      <section className="mt-8">
-        <h2 className="font-titulo text-xl">Fichas de personagem e monstro</h2>
-        <p className="mt-2 text-sm text-texto-suave">
-          Fichas suas, criadas já dentro desta campanha — os jogadores não
-          veem esta lista.
-        </p>
+                <section className="mt-8">
+                  <h2 className="font-titulo text-xl">Fichas de personagem e monstro</h2>
+                  <p className="mt-2 text-sm text-texto-suave">
+                    Fichas suas, criadas já dentro desta campanha — os jogadores
+                    não veem esta lista.
+                  </p>
 
-        <h3 className="mt-5 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
-          Personagens
-        </h3>
-        {personagensDoMestre.length > 0 && (
-          <ul className="mt-3 space-y-2">
-            {personagensDoMestre.map((personagem) => (
-              <li key={personagem.id}>
-                {ficha ? (
-                  <a
-                    href={`${ficha}?id=${personagem.id}`}
-                    className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
-                  >
-                    {personagem.nome}
-                  </a>
-                ) : (
-                  <span className="text-sm text-texto">{personagem.nome}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-        {ficha ? (
-          <CriarPersonagem campanhaId={campanhaId} ficha={ficha} />
-        ) : (
-          <p className="mt-3 text-sm text-texto-suave">
-            O sistema desta campanha ainda não tem ficha própria no Hub.
-          </p>
-        )}
+                  <h3 className="mt-5 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
+                    Personagens
+                  </h3>
+                  {personagensDoMestre.length > 0 && (
+                    <ul className="mt-3 space-y-2">
+                      {personagensDoMestre.map((personagem) => (
+                        <li key={personagem.id}>
+                          {ficha ? (
+                            <a
+                              href={`${ficha}?id=${personagem.id}`}
+                              className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
+                            >
+                              {personagem.nome}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-texto">{personagem.nome}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {ficha ? (
+                    <CriarPersonagem campanhaId={campanhaId} ficha={ficha} />
+                  ) : (
+                    <p className="mt-3 text-sm text-texto-suave">
+                      O sistema desta campanha ainda não tem ficha própria no Hub.
+                    </p>
+                  )}
 
-        <h3 className="mt-6 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
-          Monstros
-        </h3>
-        {monstros.length > 0 && (
-          <ul className="mt-3 space-y-2">
-            {monstros.map((monstro) => (
-              <li key={monstro.id} className="flex flex-wrap items-center gap-3">
-                {fichaInimigo ? (
-                  <a
-                    href={`${fichaInimigo}?id=${monstro.id}`}
-                    className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
-                  >
-                    {monstro.nome}
-                  </a>
-                ) : (
-                  <span className="text-sm text-texto">{monstro.nome}</span>
-                )}
-                <DuplicarInimigo campanhaId={campanhaId} personagemId={monstro.id} />
-              </li>
-            ))}
-          </ul>
-        )}
-        {fichaInimigo ? (
-          <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
-        ) : (
-          <p className="mt-3 text-sm text-texto-suave">
-            O sistema desta campanha ainda não tem ficha de monstro própria no Hub.
-          </p>
-        )}
-      </section>
+                  <h3 className="mt-6 font-titulo text-xs uppercase tracking-[0.2em] text-texto-suave">
+                    Monstros
+                  </h3>
+                  {monstros.length > 0 && (
+                    <ul className="mt-3 space-y-2">
+                      {monstros.map((monstro) => (
+                        <li key={monstro.id} className="flex flex-wrap items-center gap-3">
+                          {fichaInimigo ? (
+                            <a
+                              href={`${fichaInimigo}?id=${monstro.id}`}
+                              className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
+                            >
+                              {monstro.nome}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-texto">{monstro.nome}</span>
+                          )}
+                          <DuplicarInimigo campanhaId={campanhaId} personagemId={monstro.id} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {fichaInimigo ? (
+                    <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
+                  ) : (
+                    <p className="mt-3 text-sm text-texto-suave">
+                      O sistema desta campanha ainda não tem ficha de monstro própria no Hub.
+                    </p>
+                  )}
+                </section>
+              </>
+            ),
+          },
+        ]}
+      />
     </>
   );
 }
@@ -625,31 +654,50 @@ function VisaoDoJogador({
       </section>
 
       {!convidado && (
-        <>
-          <Sessoes
-            campanhaId={campanhaId}
-            sessoes={sessoes}
-            souMestre={false}
-            meuUsuarioId={meuUsuarioId}
-            pessoas={pessoas}
-            agoraMs={agoraMs}
-          />
-
-          <Avisos campanhaId={campanhaId} avisos={avisos} souMestre={false} />
-
-          <Enquetes
-            campanhaId={campanhaId}
-            enquetes={enquetes}
-            souMestre={false}
-            meuUsuarioId={meuUsuarioId}
-          />
-
-          <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre={false} />
-
-          <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre={false} />
-
-          <Chat campanhaId={campanhaId} meuUsuarioId={meuUsuarioId} />
-        </>
+        <Abas
+          abas={[
+            {
+              id: "geral",
+              rotulo: "Geral",
+              conteudo: (
+                <>
+                  <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre={false} />
+                  <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre={false} />
+                </>
+              ),
+            },
+            {
+              id: "sessoes",
+              rotulo: "Sessões",
+              conteudo: (
+                <Sessoes
+                  campanhaId={campanhaId}
+                  sessoes={sessoes}
+                  souMestre={false}
+                  meuUsuarioId={meuUsuarioId}
+                  pessoas={pessoas}
+                  agoraMs={agoraMs}
+                />
+              ),
+            },
+            {
+              id: "comunicacao",
+              rotulo: "Comunicação",
+              conteudo: (
+                <>
+                  <Avisos campanhaId={campanhaId} avisos={avisos} souMestre={false} />
+                  <Enquetes
+                    campanhaId={campanhaId}
+                    enquetes={enquetes}
+                    souMestre={false}
+                    meuUsuarioId={meuUsuarioId}
+                  />
+                  <Chat campanhaId={campanhaId} meuUsuarioId={meuUsuarioId} />
+                </>
+              ),
+            },
+          ]}
+        />
       )}
     </>
   );

@@ -1826,14 +1826,21 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       monstro linkava pra ficha de JOGADOR (`/fichas` não sabia
       `ehMonstro`). Sem migração. `tsc`, lint, `next build` e os 302
       testes automáticos continuam limpos
+- [x] **Abas na página da campanha** (19/09/2026) — decisão #144.
+      Componente genérico `Abas` (só monta o painel ativo). Mestre: bloco
+      de convite sempre visível + abas Geral/Sessões/Comunicação/Grupo.
+      Jogador: bloco de entrar/sair sempre visível + abas Geral/Sessões/
+      Comunicação. Pura reorganização de apresentação — nenhum
+      componente de seção mudou por dentro. Sem migração. `tsc`, lint,
+      `next build` e os 302 testes automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, biblioteca pessoal de item, cards compartilháveis,
       exportar PDF, mestre
       auxiliar, sandbox de ficha/combate, prévia do Level Up, atalhos de
       teclado, PWA, offline parcial, QR Code do link compartilhável da
-      ficha, abas na página da campanha, página geral do personagem) —
-      fica pra quando o Zé confirmar a ordem das próximas
+      ficha, página geral do personagem) — fica pra quando o Zé
+      confirmar a ordem das próximas
 
 ---
 
