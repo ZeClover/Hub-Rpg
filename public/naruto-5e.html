@@ -428,8 +428,8 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de
    Fogo estão 100% completos (todos os 6 ranks de cada, 426 jutsu).
-   Liberação de Água com Ranks D, C e B prontos (59 de 74 jutsu) —
-   faltam A/S dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e
+   Liberação de Água com Ranks D, C, B e A prontos (68 de 74 jutsu) —
+   falta só o S dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e
    Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
    dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -1426,6 +1426,25 @@ const JUTSU_CATALOGO = [
     efeito:'Duas brocas de água giram no alvo: teste de Destreza ou 8d6 de dano de Frio, Derrubado e Atordoado (metade e nada mais se passar) — perto de água, custa 2 Chakra a menos ou atinge mais um alvo.'},
   {nome:'Liberação de Água: Agulhas de Água da Morte', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'13 Chakra', alcance:'Toque', duracao:'Instantâneo',
     efeito:'Reação a um ataque corpo a corpo: teste de Destreza ou 8d10 de dano de Frio e -4,5m de deslocamento no atacante (metade se passar) — perto de água, custa 2 Chakra a menos ou também atinge outros inimigos a até 4,5m de você.'},
+
+  {nome:'Liberação de Água: Permeação Ácida', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'20 Chakra', alcance:'Pessoal (4,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Bolhas de água ácida te seguem numa área de 4,5m: inimigos lá dentro têm o deslocamento pela metade e testam Destreza ao entrar ou começar o turno ou sofrem 8d8 de dano de Frio e 2 ranks de Corrosão.'},
+  {nome:'Liberação de Água: Agulhas de Chuva Caindo', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'19 Chakra', alcance:'36m (cubo de 27m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria uma nuvem de tempestade (cubo de 27m); por Ação Bônus, chove agulhas cortantes num ponto (raio de 1,5m): teste de Destreza ou 10d6 de dano de Frio (metade se passar) — em tempestade natural, controla a tempestade existente com +1d6 de dano e custo de manutenção menor.'},
+  {nome:'Liberação de Água: Grande Presa da Hidra', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'18 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Manifesta 9 cabeças de hidra de água: cada cabeça pode atacar (Ataque de Ninjutsu à distância, 8d8 de dano de Frio, gasta 1 cabeça), proteger com Reação (5d8 de PV temporário contra um ataque, gasta 1 cabeça), ou 3 cabeças de uma vez dão imunidade total a um efeito que pediria teste de Força/Destreza/Constituição até o fim do turno.'},
+  {nome:'Liberação de Água: Grande Bala de Tubarão', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'20 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Tubarão gigantesco em linha reta: Ataque de Ninjutsu à distância no alvo principal (10d8 de dano de Frio, 2 ranks de Resfriado) — quem mais estiver no caminho (linha de até 36m, 4,5m de largura) testa Destreza ou sofre 6d8 de dano de Frio e 1 rank de Resfriado (metade e nada mais se passar).'},
+  {nome:'Liberação de Água: Tigre da Chuva à Vontade', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'20 Chakra', alcance:'16km', duracao:'24 horas',
+    efeito:'Nuvens de chuva cobrindo 16km ao redor: sente todo movimento e atividade que a chuva tocar (sem saber a localização exata) por 24 horas.'},
+  {nome:'Liberação de Água: Tridente', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Tridente de água vibrante (sem gastar Chakra pra manter, nunca perde a concentração por dano): 2 Ataques de Ninjutsu corpo a corpo por ação (alcance de 3m, +1 na faixa de crítico), 10d6 de dano de Frio — alvo com 3+ ranks de Resfriado também ganha Fragilizado igual (perto de água, custa 2 Chakra a menos ou ataca esses alvos com vantagem).'},
+  {nome:'Liberação de Água: Dragão de Água', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'20 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Um dragão de água investe contra o alvo: Ataque de Ninjutsu à distância causando 14d6 de dano de Frio e teste de Constituição ou Atordoado e Derrubado até o fim do turno seguinte (perto de água, custa 2 Chakra a menos ou o dado de dano vira d8).'},
+  {nome:'Liberação de Água: Muralha de Formação de Água', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'18 Chakra', alcance:'9m (esfera de 1,5m)', duracao:'Instantâneo',
+    efeito:'Reação: protege você ou um aliado a até 9m com uma redoma de água giratória (20d6 PV até o início do próximo turno), protegendo também quem estiver a até 1,5m dele — perto de água, custa 2 Chakra a menos ou o raio de proteção dobra pra 3m.'},
+  {nome:'Liberação de Água: Onda Cortante de Água', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'19 Chakra', alcance:'Pessoal (cone de 18m)', duracao:'Instantâneo',
+    efeito:'Jato de água pressurizada num cone de 18m: teste de Destreza ou 8d10 de dano de Frio (perto de água, custa 2 Chakra a menos ou também testa Constituição contra 2 ranks de Resfriado).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1897,7 +1916,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

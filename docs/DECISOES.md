@@ -6699,6 +6699,21 @@ Testado com Playwright: catálogo mostra 486 opções (1 placeholder + 485
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 162. Naruto 5e — Catálogo de Jutsu, Liberação de Água Rank A (19/09/2026)
+
+Continuação da decisão #161. As 9 jutsu do Rank A da Liberação de
+Água entraram no `JUTSU_CATALOGO` — fecha 4 dos 6 ranks dessa natureza
+(68 das 74 jutsu de Água; 494 das ~1400 entradas totais). Falta só o
+Rank S pra fechar Água inteira.
+
+Traz Grande Presa da Hidra, primeiro jutsu com um "pool" de recursos
+gastável (9 cabeças) que alimenta múltiplas opções diferentes (ataque,
+defesa, imunidade total) em vez de um efeito fixo por turno.
+
+Testado com Playwright: catálogo mostra 495 opções (1 placeholder + 494
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
