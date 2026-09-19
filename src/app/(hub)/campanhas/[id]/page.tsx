@@ -235,10 +235,25 @@ export default async function PaginaCampanha({
           meuUsuarioId={usuario.id}
           meusPersonagens={personagensDaCampanha.filter((p) => p.donoId === usuario.id)}
           minhasFichasDoSistema={await banco.personagem.findMany({
-            where: { donoId: usuario.id, sistemaId: campanha.sistemaId },
+            // `campanhaId: null` de propósito (decisão #139): sem isto, uma
+            // ficha já ligada a OUTRA campanha aparecia aqui como
+            // "disponível" e o botão "Adicionar" a arrancava de lá em
+            // silêncio, sem aviso nenhum. Mover ficha de campanha agora é
+            // uma ação explícita própria, em `/fichas`.
+            where: { donoId: usuario.id, sistemaId: campanha.sistemaId, campanhaId: null },
             select: { id: true, nome: true },
             orderBy: { atualizadoEm: "desc" },
           })}
+          temFichasEmOutraCampanha={
+            (await banco.personagem.count({
+              where: {
+                donoId: usuario.id,
+                sistemaId: campanha.sistemaId,
+                campanhaId: { not: null },
+                NOT: { campanhaId: campanha.id },
+              },
+            })) > 0
+          }
           grimorio={grimorio}
           sessoes={sessoes}
           pessoas={pessoas}
@@ -507,6 +522,7 @@ function VisaoDoJogador({
   meuUsuarioId,
   meusPersonagens,
   minhasFichasDoSistema,
+  temFichasEmOutraCampanha,
   grimorio,
   sessoes,
   pessoas,
@@ -520,6 +536,7 @@ function VisaoDoJogador({
   meuUsuarioId: string;
   meusPersonagens: { id: string; nome: string }[];
   minhasFichasDoSistema: { id: string; nome: string }[];
+  temFichasEmOutraCampanha: boolean;
   grimorio: string | null;
   sessoes: SessaoView[];
   pessoas: { usuarioId: string; nome: string }[];
@@ -539,6 +556,7 @@ function VisaoDoJogador({
             ficha={ficha}
             minhasFichas={minhasFichasDoSistema}
             meusPersonagens={meusPersonagens}
+            temFichasEmOutraCampanha={temFichasEmOutraCampanha}
           />
         ) : (
           <p className="mt-3 text-sm text-texto-suave">

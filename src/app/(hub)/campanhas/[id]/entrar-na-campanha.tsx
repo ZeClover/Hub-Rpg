@@ -16,11 +16,13 @@ export function EntrarNaCampanha({
   ficha,
   minhasFichas,
   meusPersonagens,
+  temFichasEmOutraCampanha,
 }: {
   campanhaId: string;
   ficha: string;
   minhasFichas: { id: string; nome: string }[];
   meusPersonagens: { id: string; nome: string }[];
+  temFichasEmOutraCampanha: boolean;
 }) {
   const roteador = useRouter();
   const idsJaLigados = new Set(meusPersonagens.map((p) => p.id));
@@ -120,6 +122,14 @@ export function EntrarNaCampanha({
                 : "Entrar com esta ficha"}
           </button>
         </div>
+      ) : minhasFichas.length === 0 && temFichasEmOutraCampanha ? (
+        <p className="mt-3 text-sm text-texto-suave">
+          Suas fichas desse sistema já estão ligadas a outra campanha.{" "}
+          <Link href="/fichas" className="text-ambar-forte underline underline-offset-2">
+            Vai em Fichas
+          </Link>{" "}
+          se quiser mover ou copiar uma pra cá.
+        </p>
       ) : minhasFichas.length === 0 ? (
         <p className="mt-3 text-sm text-texto-suave">
           Você ainda não tem nenhuma ficha desse sistema.{" "}

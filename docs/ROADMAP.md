@@ -1782,7 +1782,17 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       seção de convite do mestre. Migração `0017_codigo_convite.sql`
       (com backfill pras campanhas já existentes). `tsc`, lint, `next
       build` e os 302 testes automáticos continuam limpos
-- [ ] **Demais ideias do pedido** (mover/copiar ficha, companheiros/
+- [x] **Mover e copiar personagem entre campanhas compatíveis**
+      (19/09/2026) — decisão #139. Mover reaproveita a rota
+      `POST /campanhas/[id]/entrar` que já existia (decisão #133), só
+      ganhou um jeito de chamar escolhendo o destino em `/fichas`.
+      Copiar é rota nova (`POST /personagens/[id]/copiar`, só dono),
+      cria ficha nova com os mesmos dados — nunca converte entre
+      sistemas. De brinde: corrigido um bug real achado na auditoria
+      (o seletor "Adicionar outra ficha" da campanha podia arrancar uma
+      ficha de outra campanha em silêncio). Sem migração. `tsc`, lint,
+      `next build` e os 302 testes automáticos continuam limpos
+- [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,
       contador de inimigos, cards compartilháveis, exportar PDF, campos

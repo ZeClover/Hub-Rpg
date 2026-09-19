@@ -6275,6 +6275,50 @@ Fica pra uma fatia própria.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 139. Hub — Mover e copiar personagem entre campanhas compatíveis (19/09/2026)
+
+Segunda fatia do backlog de "demais ideias" (decisão #134), ideias
+#26/#27 do pedido original: "mover e copiar personagem entre campanhas
+compatíveis, nunca converter entre sistemas".
+
+**Bug encontrado na auditoria, corrigido junto.** O seletor "Adicionar
+outra ficha" da tela da campanha (`EntrarNaCampanha`) buscava
+`banco.personagem.findMany({ donoId, sistemaId })` sem filtrar
+`campanhaId: null` — uma ficha já ligada a OUTRA campanha aparecia ali
+como "disponível", e clicar em "Adicionar" arrancava ela de lá em
+silêncio (a rota `POST /entrar` só sobrescreve `campanhaId`, sem avisar
+de onde a ficha estava antes). Corrigido filtrando só fichas realmente
+avulsas nesse seletor; mover ficha de campanha agora é uma ação
+separada e explícita, com o "de onde" e "pra onde" visíveis na tela.
+
+**1. Mover.** Nenhuma rota nova: `POST /campanhas/[id]/entrar` (decisão
+#133) já faz exatamente "trocar pra que campanha esta ficha aponta" —
+só faltava um jeito de chamar isso escolhendo o destino de fora da
+página da campanha de origem. Ação nova em `/fichas`, por ficha: mostra
+em qual campanha ela está (se estiver) e, se a pessoa participa de
+outra campanha do mesmo sistema, deixa escolher e mover pra lá.
+
+**2. Copiar.** Rota nova `POST /api/personagens/[id]/copiar` — só o
+dono (mesma trava do DELETE, nunca o mestre), cria uma ficha nova com
+os mesmos `dados`, a original nunca muda. `campanhaId` no corpo é
+opcional: null copia avulsa, um id de campanha do mesmo sistema já liga
+lá (criando a Participacao se faltar, igual `entrar` já faz). Nunca
+converte pra outro sistema — a rota recusa se a campanha de destino for
+de um sistema diferente. `compartilhado` não é copiado (a cópia nasce
+fechada) nem `status` (nasce Ativo).
+
+**Onde aparece:** as duas ações moram em `/fichas`, por ficha, junto do
+seletor de status e do editor de imagem — só quando existe pelo menos
+uma campanha candidata (mesmo sistema, a própria pessoa já participa).
+Sem candidata, não aparece nada além de "Em [campanha]" quando a ficha
+já está em alguma.
+
+Sem migração — nenhum campo novo, só reorganização de consultas e uma
+rota nova reaproveitando o modelo que já existia.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

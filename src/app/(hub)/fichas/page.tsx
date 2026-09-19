@@ -5,13 +5,14 @@ import { usuarioAtual } from "@/lib/usuario";
 import { CriarFicha } from "./criar-ficha";
 import { BotaoExcluir } from "./excluir-ficha";
 import { FavoritarSistema } from "./favoritar-sistema";
+import { MoverOuCopiarFicha } from "./mover-ou-copiar-ficha";
 import { AvatarFicha, EditarImagemFicha, StatusFicha } from "./organizacao-ficha";
 
 export default async function Fichas() {
   // O layout do Hub já garantiu que existe alguém logado.
   const usuario = (await usuarioAtual())!;
 
-  const [personagens, dadosUsuario] = await Promise.all([
+  const [personagens, dadosUsuario, minhasParticipacoes] = await Promise.all([
     banco.personagem.findMany({
       where: { donoId: usuario.id },
       orderBy: { atualizadoEm: "desc" },
@@ -21,12 +22,22 @@ export default async function Fichas() {
         status: true,
         avatarUrl: true,
         bannerUrl: true,
+        sistemaId: true,
+        campanhaId: true,
+        campanha: { select: { nome: true } },
         sistema: { select: { chave: true, nome: true } },
       },
     }),
     banco.usuario.findUnique({
       where: { id: usuario.id },
       select: { sistemasFavoritos: true },
+    }),
+    // Pra "Mover"/"Copiar" (decisão #139): campanhas do mesmo sistema onde
+    // a própria pessoa já participa (mestre ou jogador), sejam candidatas
+    // pra cada ficha.
+    banco.participacao.findMany({
+      where: { usuarioId: usuario.id },
+      select: { campanha: { select: { id: true, nome: true, sistemaId: true } } },
     }),
   ]);
   const favoritos = new Set(dadosUsuario?.sistemasFavoritos ?? []);
@@ -79,6 +90,19 @@ export default async function Fichas() {
                       id={personagem.id}
                       avatarUrlInicial={personagem.avatarUrl}
                       bannerUrlInicial={personagem.bannerUrl}
+                    />
+                  </div>
+                  <div className="mt-2">
+                    <MoverOuCopiarFicha
+                      personagemId={personagem.id}
+                      campanhaAtualNome={personagem.campanha?.nome ?? null}
+                      candidatas={minhasParticipacoes
+                        .map((p) => p.campanha)
+                        .filter(
+                          (c) =>
+                            c.sistemaId === personagem.sistemaId &&
+                            c.id !== personagem.campanhaId,
+                        )}
                     />
                   </div>
                 </div>
