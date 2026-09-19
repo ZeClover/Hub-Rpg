@@ -426,10 +426,9 @@ const RANKS_JUTSU = [
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
-   Não-Elemental e Liberação de Terra estão 100% completos (todos os 6
-   ranks de cada, 277 jutsu). Liberação de Vento com Ranks D, C, B e A
-   prontos (68 de 74 jutsu) — falta só o S dela, mais Fogo/Água/Raio,
-   Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
+   Não-Elemental, Liberação de Terra e Liberação de Vento estão 100%
+   completos (todos os 6 ranks de cada, 351 jutsu) — faltam Fogo/Água/
+   Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
    categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
@@ -1136,6 +1135,19 @@ const JUTSU_CATALOGO = [
     efeito:'Ataque de Ninjutsu à distância em até 3 alvos: 8d6 de dano de Vento e 1 rank de Laceração cada.'},
   {nome:'Liberação de Vento: Muralha de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'A', custo:'15 Chakra', alcance:'9m', duracao:'1 rodada',
     efeito:'Protege um aliado até o início do seu próximo turno: todo ataque contra ele rola 1d20, e em 8 ou mais o vento denso desvia o golpe automaticamente.'},
+
+  {nome:'Liberação de Vento: Colisão de Um Milhão de Lâminas', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'25 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Uma esfera gigantesca de lâminas de vento desaba sobre o alvo: teste de Destreza ou 34d6 de dano de Vento, 5 ranks de Laceração e Redemoinho (metade do dano e Sangramento se passar).'},
+  {nome:'Liberação de Vento: Onda de Contragolpe', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'28 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Reação a um jutsu vindo contra você: Ataque de Ninjutsu à distância contra a CD de Ninjutsu de quem lançou — se vencer, ele sofre o próprio dano e efeitos do jutsu; se perder, você ganha resistência ao dano dele.'},
+  {nome:'Liberação de Vento: Vento em Leque', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'30 Chakra', alcance:'Pessoal (cone de 36m)', duracao:'Instantâneo',
+    efeito:'Rajada devastadora num cone de 36m: teste de Força em desvantagem ou é arremessado 36m pra trás (triplica o dano de queda se bater numa estrutura no caminho).'},
+  {nome:'Liberação de Vento: Furacão do Desastre', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'Especial (138 Chakra)', alcance:'Pessoal (raio de 36m)', duracao:'1 minuto',
+    efeito:'Kinjutsu: gera um furacão categoria 6 (75m de altura, 36m de raio) que se move sozinho em direção aleatória a cada turno e não pode ser interrompido por 1 minuto — quem estiver na área testa Força ou é arremessado 75m pro alto (12d8 de dano de Vento e Restrito), repetindo o teste a cada turno pra escapar; estruturas são destruídas automaticamente. Em Combinação, o dano e o raio crescem com o maior Carisma do grupo.'},
+  {nome:'Liberação de Vento: Tempestade em Espiral', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'20 Chakra', alcance:'Pessoal (raio de 13,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Aliados numa área de 13,5m ganham +9m de deslocamento a cada turno, +3 em ataques de Ninjutsu/Taijutsu, PV temporário igual à sua CD de Ninjutsu por turno, +4,5m de alcance e +3d8 de dano de Vento 1×/turno em Taijutsu de curto alcance, imunidade a Atordoado/Fragilizado e resistência a Raio.'},
+  {nome:'Liberação de Vento: Explosão de Tornado', tipo:'Ninjutsu', categoria:'Vento', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Cilindro de vento centrado em você (27m de raio, 36m de altura, terreno difícil até pra voadores): quem começa o turno lá dentro testa Força ou é sugado pro centro, fica Restrito e causa Redemoinho — todos lá dentro (menos você) sofrem 8d10 de dano de Vento no início dos seus turnos.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1607,7 +1619,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

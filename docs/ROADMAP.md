@@ -1827,8 +1827,14 @@ passando.
       catálogo (68 de 74 jutsu de Vento; 345 de ~1400 no total) — falta
       só o S pra fechar Vento inteira. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Liberação de Vento 100% completa** (19/09/2026) —
+      decisão #153. As 6 jutsu do Rank S fecharam os 6 ranks da
+      Liberação de Vento (74 jutsu) — terceira categoria inteira do
+      Compêndio de Jiraiya catalogada (351 de ~1400 no total). Testado
+      com Playwright; `tsc`, lint, build e os 298 testes automáticos do
+      projeto continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1055 jutsu: Vento S, Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1049 jutsu: Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

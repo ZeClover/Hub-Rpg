@@ -6522,6 +6522,29 @@ Testado com Playwright: catálogo mostra 346 opções (1 placeholder + 345
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 153. Naruto 5e — Liberação de Vento 100% completa (19/09/2026)
+
+Continuação da decisão #152: as 6 jutsu do Rank S fecharam os 6 ranks
+da Liberação de Vento (74 jutsu) — terceira categoria inteira do
+Compêndio de Jiraiya 100% catalogada (depois do Ninjutsu Não-Elemental
+e da Liberação de Terra). Total: 351 das ~1400 entradas do Compêndio.
+
+Rank final traz Furacão do Desastre (Kinjutsu de Combinação de 138
+Chakra, o maior custo catalogado até agora, gera um furacão categoria 6
+autônomo que se move sozinho e não pode ser dissipado por 1 minuto) e
+Onda de Contragolpe, versão Rank S de Contragolpe (decisão #151) que
+devolve o próprio jutsu inimigo contra quem lançou.
+
+**Próxima categoria**: Fogo (75 jutsu), Água ou Raio (74 jutsu cada) —
+as 3 Naturezas elementais restantes — seguindo o mesmo ritmo
+rank-por-rank; depois Genjutsu, Taijutsu, Bukijutsu e Invocação.
+
+Testado com Playwright: catálogo mostra 352 opções (1 placeholder + 351
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
