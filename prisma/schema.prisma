@@ -118,24 +118,30 @@ model Sistema {
 
 /// Uma mesa. Aponta para um sistema e tem um mestre e vários jogadores.
 model Campanha {
-  id           String           @id @default(uuid()) @db.Uuid
-  nome         String
-  slug         String           @unique
-  sistemaId    String           @db.Uuid
-  situacao     SituacaoCampanha @default(PLANEJADA)
-  criadoEm     DateTime         @default(now())
+  id              String           @id @default(uuid()) @db.Uuid
+  nome            String
+  slug            String           @unique
+  sistemaId       String           @db.Uuid
+  situacao        SituacaoCampanha @default(PLANEJADA)
+  criadoEm        DateTime         @default(now())
   /// Anotações livres do mestre — plano de sessão, NPCs, segredos do enredo.
   /// Nunca sai do servidor para quem não é mestre desta campanha (decisão
   /// #13): a rota que a lê nem chega a fazer a consulta se quem pergunta
   /// não for mestre.
-  manualMestre String?
+  manualMestre    String?
   /// Identidade da campanha (decisão #134) — capa/descrição/tags são só
   /// exibição, públicas pra quem já vê a campanha (mestre e jogadores
   /// ligados); não guardam nada sensível, por isso não passam pela mesma
   /// trava do `manualMestre`.
-  capaUrl      String?
-  descricao    String?
-  tags         String[]         @default([])
+  capaUrl         String?
+  descricao       String?
+  tags            String[]         @default([])
+  /// Espelho da ordem de iniciativa da Mesa ao Vivo (decisão #137) — o
+  /// mestre continua controlando tudo do próprio navegador (localStorage,
+  /// decisão #46); isto aqui só existe pra jogador conseguir ver a mesma
+  /// ordem em modo leitura. Formato livre (`{combatentes, vezDe, rodada}`),
+  /// null enquanto o mestre nunca abriu a Mesa ao Vivo desta campanha.
+  iniciativaAtual Json?
 
   sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   participacoes Participacao[]

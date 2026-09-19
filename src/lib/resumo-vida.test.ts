@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { escreverNoCaminho, lerResumoVida, vidaComDelta } from "./resumo-vida.ts";
+import { escreverNoCaminho, lerResumoVida, vidaComDelta, vidaDefinida } from "./resumo-vida.ts";
 
 test("lê um resumoVida válido", () => {
   const dados = { resumoVida: { atual: 12, maxima: 20, rotulo: "PV" } };
-  assert.deepEqual(lerResumoVida(dados), { atual: 12, maxima: 20, rotulo: "PV" });
+  assert.deepEqual(lerResumoVida(dados), { atual: 12, maxima: 20, rotulo: "PV", derrotado: false });
+});
+
+test("lê derrotado quando presente", () => {
+  const dados = { resumoVida: { atual: 0, maxima: 20, rotulo: "PV", derrotado: true } };
+  assert.deepEqual(lerResumoVida(dados), { atual: 0, maxima: 20, rotulo: "PV", derrotado: true });
 });
 
 test("ficha sem resumoVida devolve null", () => {
@@ -31,6 +36,21 @@ test("vidaComDelta subtrai sem passar de zero", () => {
 test("vidaComDelta dentro da faixa aplica o delta cheio", () => {
   const resumo = { atual: 10, maxima: 20, rotulo: "PV" };
   assert.equal(vidaComDelta(resumo, -4), 6);
+});
+
+test("vidaDefinida trava no teto da máxima", () => {
+  const resumo = { atual: 10, maxima: 20, rotulo: "PV" };
+  assert.equal(vidaDefinida(resumo, 99), 20);
+});
+
+test("vidaDefinida trava no piso zero", () => {
+  const resumo = { atual: 10, maxima: 20, rotulo: "PV" };
+  assert.equal(vidaDefinida(resumo, -5), 0);
+});
+
+test("vidaDefinida dentro da faixa usa o valor pedido", () => {
+  const resumo = { atual: 10, maxima: 20, rotulo: "PV" };
+  assert.equal(vidaDefinida(resumo, 7), 7);
 });
 
 test("escreverNoCaminho grava num campo já existente", () => {

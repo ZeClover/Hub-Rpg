@@ -5,18 +5,22 @@ import { banco } from "@/lib/banco";
 import { SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
+import { IniciativaEspectador } from "./iniciativa-espectador";
 import { PainelDeVida } from "./painel-de-vida";
 import { RastreadorDeIniciativa } from "./rastreador-iniciativa";
+import { RelogioDeSessao } from "./relogio-de-sessao";
 
 /*
   Mesa ao Vivo (decisão #46): a tela que o mestre abre durante a sessão,
   separada da tela de organização da campanha. Reúne o que se usa na hora
-  de jogar — vida de todo mundo acompanhada sozinha, e ordem de
-  iniciativa — em vez de misturar com convite, jogadores e Manual do
-  Mestre, que são coisas de "antes/depois da sessão".
+  de jogar — vida de todo mundo acompanhada sozinha, ordem de iniciativa
+  e (decisão #137) um modo espectador pro jogador acompanhar em leitura.
 
-  Só o mestre entra: mesma trava de sempre, 404 pra quem não é (decisão
-  #13) — nem revela que a campanha existe pra quem não devia estar aqui.
+  Só participante entra (mestre ou jogador já ligado à campanha) — quem
+  não é nem isso recebe 404, não 403, mesma trava de sempre (decisão
+  #13), pra nem revelar que a campanha existe. Jogador nunca edita nada
+  aqui, só olha: vida (sem os inimigos — isso é informação de mestre) e
+  a ordem de iniciativa que o mestre está controlando.
 */
 export default async function PaginaMesaAoVivo({
   params,
@@ -35,7 +39,8 @@ export default async function PaginaMesaAoVivo({
   const participacao = await banco.participacao.findUnique({
     where: { campanhaId_usuarioId: { campanhaId: id, usuarioId: usuario.id } },
   });
-  if (participacao?.papel !== "MESTRE") notFound();
+  if (!participacao) notFound();
+  const souMestre = participacao.papel === "MESTRE";
 
   const sistemaDef = SISTEMAS.find((s) => s.chave === campanha.sistema.chave);
 
@@ -48,18 +53,33 @@ export default async function PaginaMesaAoVivo({
         ← {campanha.nome}
       </Link>
       <h1 className="mt-3 font-titulo text-3xl">Mesa ao vivo</h1>
-      <p className="mt-2 text-sm text-texto-suave">
-        Vida de jogadores e inimigos, acompanhada sozinha, e a ordem de
-        iniciativa da cena. Só você vê esta tela.
-      </p>
+      {souMestre ? (
+        <p className="mt-2 text-sm text-texto-suave">
+          Vida de jogadores e inimigos, acompanhada sozinha, e a ordem de
+          iniciativa da cena. Só você edita esta tela.
+        </p>
+      ) : (
+        <p className="mt-2 text-sm text-texto-suave">
+          Modo espectador — acompanhe a vida do grupo e a ordem de
+          iniciativa que o mestre está controlando.
+        </p>
+      )}
 
       <PainelDeVida
         campanhaId={id}
         fichaJogador={sistemaDef?.ficha ?? null}
         fichaInimigo={sistemaDef?.fichaInimigo ?? null}
+        mostrarInimigos={souMestre}
       />
 
-      <RastreadorDeIniciativa campanhaId={id} />
+      {souMestre ? (
+        <>
+          <RastreadorDeIniciativa campanhaId={id} />
+          <RelogioDeSessao campanhaId={id} />
+        </>
+      ) : (
+        <IniciativaEspectador campanhaId={id} />
+      )}
     </main>
   );
 }

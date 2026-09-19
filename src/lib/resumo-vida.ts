@@ -12,6 +12,12 @@ export type ResumoVida = {
   atual: number;
   maxima: number;
   rotulo: string;
+  /// Marca rápida do Painel de Vida (decisão #137) — "esse inimigo já era",
+  /// independente do número de vida (tem sistema que trata "derrotado" e
+  /// "zero" como coisas diferentes). Nunca é escrito pela própria ficha,
+  /// só por aqui; por isso é opcional — toda ficha salva antes desta
+  /// decisão simplesmente não tem o campo, o que aqui já significa "não".
+  derrotado?: boolean;
 };
 
 /*
@@ -24,16 +30,21 @@ export function lerResumoVida(dados: unknown): ResumoVida | null {
   if (typeof dados !== "object" || dados === null) return null;
   const resumo = (dados as Record<string, unknown>).resumoVida;
   if (typeof resumo !== "object" || resumo === null) return null;
-  const { atual, maxima, rotulo } = resumo as Record<string, unknown>;
+  const { atual, maxima, rotulo, derrotado } = resumo as Record<string, unknown>;
   if (typeof atual !== "number" || typeof maxima !== "number" || typeof rotulo !== "string") {
     return null;
   }
-  return { atual, maxima, rotulo };
+  return { atual, maxima, rotulo, derrotado: derrotado === true };
 }
 
 /// Aplica um ajuste (positivo ou negativo) sem deixar a vida sair de [0, máxima].
 export function vidaComDelta(resumo: ResumoVida, delta: number): number {
   return Math.max(0, Math.min(resumo.maxima, resumo.atual + delta));
+}
+
+/// Trava um valor absoluto (do botão "Definir") na mesma faixa [0, máxima].
+export function vidaDefinida(resumo: ResumoVida, valor: number): number {
+  return Math.max(0, Math.min(resumo.maxima, valor));
 }
 
 /*

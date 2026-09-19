@@ -1754,9 +1754,27 @@ edição do mestre, múltiplas fichas por jogador, etc.).
   - Migração `0015_chat_avisos_enquetes_notificacoes.sql` — só tabelas
     novas. `tsc`, lint, `next build` e os 298 testes automáticos
     continuam limpos
-- [ ] **Etapa 4 — Mesa ao Vivo compartilhada** (planejada): iniciativa e
-      HP visíveis aos jogadores (só leitura), modo espectador, HP rápido
-      de inimigo com mais opções, condição em massa, relógio simples
+- [x] **Etapa 4 — Mesa ao Vivo compartilhada** (19/09/2026) — decisão
+      #137.
+  - **Modo espectador**: `/campanhas/[id]/mesa` abre pra jogador
+    também (não só mestre), em modo leitura — vida do grupo (sem os
+    inimigos, isso continua de mestre) e ordem de iniciativa, sem
+    nenhum controle de edição
+  - **Iniciativa visível ao jogador**: coluna `Campanha.iniciativaAtual`
+    espelha (debounced, best-effort) o que o mestre já controla via
+    localStorage — ele continua sendo a única fonte de verdade,
+    servidor nunca manda nada de volta pro rastreador dele
+  - **Condição em massa**: seleciona vários combatentes na Ordem de
+    Iniciativa e aplica a mesma condição de uma vez
+  - **HP rápido de inimigo melhorado**: `PATCH .../vida/[id]` ganhou
+    `definir`/`zerar`/`restaurar`/`derrotado` além do `delta` que já
+    existia; os botões novos ficam atrás de "Mais opções", os quatro
+    de sempre continuam onde estavam
+  - **Relógio de sessão**: cronômetro simples (começar/pausar/zerar),
+    só do mestre, sem relação com a rodada de combate
+  - Migração `0016_iniciativa_compartilhada.sql` — uma coluna nova.
+    `tsc`, lint, `next build` e os 302 testes automáticos (298 + 4
+    novos) continuam limpos
 - [ ] **Demais ideias do pedido** (mover/copiar ficha, companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,

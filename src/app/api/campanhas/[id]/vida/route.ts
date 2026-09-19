@@ -7,12 +7,16 @@ import { usuarioAtual } from "@/lib/usuario";
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
-  Lista de vida da campanha, pro Painel de Vida da Mesa ao Vivo — só o
-  mestre lê (mesma trava de sempre: 404 pra quem não é mestre, não 403,
-  decisão #13). Jogadores entram como leitura (é a própria ficha de cada
-  um que decide o número, o mestre só acompanha); monstros entram também
-  com o `dados` inteiro, porque são do próprio mestre e o painel precisa
-  disso pra montar o ajuste de vida sem outra ida ao servidor.
+  Lista de vida da campanha, pro Painel de Vida da Mesa ao Vivo. Qualquer
+  participante lê (decisão #137 abriu isto pra jogador também, em modo
+  espectador — antes era só o mestre); quem não é participante nem chega
+  a existir pra esta rota (404, não 403, decisão #13). A resposta nunca
+  teve nada de privado dentro — só `{id, nome, resumoVida}` — então abrir
+  a leitura pro jogador não vaza nada que o mestre não quisesse mostrar.
+
+  Monstros só aparecem pra quem é o mestre-dono deles (continuam fora da
+  visão do jogador, é informação de mestre por natureza, não por regra
+  nova); jogador vê só o grupo "jogadores".
 
   Uma ficha de PERSONAGEM criada pelo mestre (`ehMonstro` desligado) entra
   no grupo de jogadores, não no de monstros — ela usa a mesma ficha de
@@ -29,9 +33,10 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
   const participacao = await banco.participacao.findUnique({
     where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
   });
-  if (participacao?.papel !== "MESTRE") {
+  if (!participacao) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
+  const souMestre = participacao.papel === "MESTRE";
 
   const personagens = await banco.personagem.findMany({
     where: { campanhaId },
@@ -39,12 +44,14 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
   });
 
   const jogadores = personagens
-    .filter((p) => !(p.donoId === usuario.id && p.ehMonstro))
+    .filter((p) => !(p.ehMonstro && (souMestre ? p.donoId === usuario.id : true)))
     .map((p) => ({ id: p.id, nome: p.nome, resumoVida: lerResumoVida(p.dados) }));
 
-  const inimigos = personagens
-    .filter((p) => p.donoId === usuario.id && p.ehMonstro)
-    .map((p) => ({ id: p.id, nome: p.nome, resumoVida: lerResumoVida(p.dados) }));
+  const inimigos = souMestre
+    ? personagens
+        .filter((p) => p.donoId === usuario.id && p.ehMonstro)
+        .map((p) => ({ id: p.id, nome: p.nome, resumoVida: lerResumoVida(p.dados) }))
+    : [];
 
   return NextResponse.json({ jogadores, inimigos });
 }

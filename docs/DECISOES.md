@@ -6128,6 +6128,78 @@ seguem o mesmo critério das etapas anteriores (permissão simples,
 verificada manualmente pelo padrão 404-não-403 já usado em toda rota de
 campanha).
 
+## 137. Hub — Etapa 4 de melhorias organizacionais: Mesa ao Vivo compartilhada (19/09/2026)
+
+Quarta e última fatia do pedido de 53 ideias (decisão #134) antes do
+resto do backlog. Auditoria antes de tocar em código, na própria Mesa ao
+Vivo (decisão #46): o Painel de Vida já existia, só de mestre
+(`GET /api/campanhas/[id]/vida`, 404 pra quem não é mestre) com ajuste
+rápido só por delta (`-5/-1/+1/+5`); a Ordem de Iniciativa já existia,
+mas **inteira dentro do navegador do mestre** (`localStorage`, decisão
+#46 original) — nenhuma linha de banco, nenhuma rota. Nada foi refeito:
+as duas telas continuam sendo as mesmas, só ganharam extensões.
+
+**1. Mesa ao Vivo compartilhada com o jogador ("modo espectador").**
+`/campanhas/[id]/mesa` deixou de dar 404 pra jogador — agora é 404 só pra
+quem nem é participante da campanha (mesma trava de sempre, decisão
+#13). Jogador vê a mesma tela em modo leitura: vida do grupo (sem a
+seção de inimigos — isso continua sendo só do mestre) e a ordem de
+iniciativa, sem nenhum botão de editar. `GET /api/campanhas/[id]/vida`
+foi só relaxado (continuava sem nada privado na resposta, sempre foi só
+`{id, nome, resumoVida}`); o `PATCH` que ajusta vida continua 100%
+mestre.
+
+**2. Iniciativa visível ao jogador, mestre continua controlando.**
+Coluna nova `Campanha.iniciativaAtual` (JSON) — o
+`RastreadorDeIniciativa` do mestre continua sendo a única fonte de
+verdade (localStorage, sem mudança de comportamento nenhuma pra ele),
+só passou a espelhar (debounced, "best effort": se a rede falhar, o
+mestre nem percebe) o estado inteiro pro servidor a cada mudança. Um
+componente novo, `IniciativaEspectador`, faz polling de leitura pro
+jogador — nunca o caminho contrário, o servidor nunca manda nada de
+volta pro rastreador do mestre.
+
+**3. Condição em massa na Mesa ao Vivo.** No próprio
+`RastreadorDeIniciativa` (mestre): marcar vários combatentes com
+checkbox e aplicar a mesma condição de uma vez (uma explosão que atinge
+três inimigos, por exemplo), em vez de digitar a mesma coisa três
+vezes. Sem tabela nova — já viaja dentro do mesmo JSON de iniciativa.
+
+**4. HP rápido de inimigo, melhorado (não recriado).** A rota
+`PATCH /api/campanhas/[id]/vida/[personagemId]` aceitava só `{ delta }`;
+ganhou `{ definir }` (valor absoluto, travado em [0, máxima]),
+`{ zerar: true }`, `{ restaurar: true }` e `{ derrotado }` (marca
+independente do número — tem sistema que trata "derrotado" e "zero"
+como coisas diferentes). Os quatro botões de delta rápido (`-5/-1/+1/+5`)
+continuam exatamente onde estavam; os novos ficam atrás de um "Mais
+opções" pra não poluir o painel. `ResumoVida` ganhou o campo opcional
+`derrotado?: boolean` — como é opcional, toda ficha salva antes desta
+decisão simplesmente não tem o campo, o que já significa "não".
+
+**5. Relógio de sessão.** Cronômetro simples (começar/pausar/zerar) na
+Mesa ao Vivo, só do mestre, só no navegador dele (mesmo padrão de
+localStorage da iniciativa) — tempo real de mesa, sem nenhuma relação
+com "rodada" de combate, que continua sendo só da Ordem de Iniciativa.
+
+**Migração `0016_iniciativa_compartilhada.sql`** — uma coluna nova com
+valor padrão nulo. Nenhuma campanha existente muda de comportamento.
+
+**Limitação conhecida, aceita conscientemente:** se o mestre abrir a
+própria ficha de um inimigo marcado como `derrotado` e salvá-la, a
+ficha recalcula `resumoVida` do zero e a marca some (o número de vida
+não muda, só a marca visual). Não vale a pena mexer em nenhuma ficha de
+sistema pra preservar um campo que é só do Hub — seria exatamente o
+tipo de espalhamento que a decisão #17 pede pra evitar.
+
+Com esta etapa, as quatro fatias sugeridas pro pedido de 53 ideias estão
+no ar (decisão #134 → #137). O que sobrou é o backlog de "demais
+ideias" do ROADMAP — nenhuma começa sem o Zé confirmar qual entra a
+seguir.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos (298 + 4 novos, cobrindo o campo `derrotado` e
+`vidaDefinida` em `resumo-vida.ts`) continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

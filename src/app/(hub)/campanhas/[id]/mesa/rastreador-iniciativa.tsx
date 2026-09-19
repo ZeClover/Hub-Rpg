@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Combatente = { id: string; nome: string; condicao: string };
 type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: number };
@@ -8,10 +8,14 @@ type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: numb
 const ESTADO_VAZIO: EstadoIniciativa = { combatentes: [], vezDe: 0, rodada: 1 };
 
 /*
-  Ordem de turno da cena. Fica só no navegador do mestre (localStorage) —
-  não é informação de personagem nem precisa sincronizar com ninguém, e
-  assim não pede nenhuma rota nova nem gasta nada do banco (decisão #5).
-  Cada campanha guarda a própria lista, pela chave.
+  Ordem de turno da cena. Continua controlada só pelo navegador do mestre
+  (localStorage) — o mestre não perde nada disso mudando de máquina no meio
+  da sessão porque isso nunca foi pensado pra isso, é a mesma limitação de
+  sempre. A novidade da decisão #137 é espelhar (debounced, "best effort":
+  se falhar, o mestre nem percebe, a ordem local continua valendo) pro
+  servidor a cada mudança, só pra jogador conseguir ver a mesma ordem em
+  modo leitura (`VisaoEspectadorMesa`) — nunca o contrário, o servidor
+  nunca manda estado de volta pra cá.
 */
 function chaveArmazenamento(campanhaId: string) {
   return `mesa-iniciativa:${campanhaId}`;
@@ -39,6 +43,9 @@ function lerEstadoSalvo(campanhaId: string): EstadoIniciativa {
 export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
   const [estado, setEstado] = useState<EstadoIniciativa>(() => lerEstadoSalvo(campanhaId));
   const [nomeNovo, setNomeNovo] = useState("");
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
+  const [condicaoEmMassa, setCondicaoEmMassa] = useState("");
+  const temporizadorSync = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { combatentes, vezDe, rodada } = estado;
 
   useEffect(() => {
@@ -48,6 +55,25 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
       // localStorage indisponível (aba privada, navegador restrito) — a
       // sessão continua, só não persiste entre recarregamentos.
     }
+  }, [campanhaId, estado]);
+
+  // Espelha pro servidor 1.2s depois da última mudança, pra não mandar uma
+  // requisição por tecla digitada na condição — só a foto final da pausa.
+  useEffect(() => {
+    if (temporizadorSync.current) clearTimeout(temporizadorSync.current);
+    temporizadorSync.current = setTimeout(() => {
+      fetch(`/api/campanhas/${campanhaId}/iniciativa`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(estado),
+      }).catch(() => {
+        // Best effort — jogador só deixa de ver a ordem atualizada por um
+        // instante, a Mesa ao Vivo do mestre não depende disso pra nada.
+      });
+    }, 1200);
+    return () => {
+      if (temporizadorSync.current) clearTimeout(temporizadorSync.current);
+    };
   }, [campanhaId, estado]);
 
   function adicionar() {
@@ -72,6 +98,12 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
             : 0;
       return { ...e, combatentes: nova, vezDe: vez };
     });
+    setSelecionados((atual) => {
+      if (!atual.has(id)) return atual;
+      const nova = new Set(atual);
+      nova.delete(id);
+      return nova;
+    });
   }
 
   function mover(id: string, direcao: -1 | 1) {
@@ -92,6 +124,27 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
     }));
   }
 
+  function alternarSelecao(id: string) {
+    setSelecionados((atual) => {
+      const nova = new Set(atual);
+      if (nova.has(id)) nova.delete(id);
+      else nova.add(id);
+      return nova;
+    });
+  }
+
+  function aplicarCondicaoEmMassa() {
+    if (selecionados.size === 0) return;
+    setEstado((e) => ({
+      ...e,
+      combatentes: e.combatentes.map((c) =>
+        selecionados.has(c.id) ? { ...c, condicao: condicaoEmMassa } : c,
+      ),
+    }));
+    setCondicaoEmMassa("");
+    setSelecionados(new Set());
+  }
+
   function proximo() {
     setEstado((e) => {
       if (e.combatentes.length === 0) return e;
@@ -102,13 +155,15 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
 
   function limpar() {
     setEstado(ESTADO_VAZIO);
+    setSelecionados(new Set());
   }
 
   return (
     <section className="mt-10">
       <h2 className="font-titulo text-xl">Ordem de iniciativa</h2>
       <p className="mt-2 text-sm text-texto-suave">
-        Só nesta tela, no seu navegador — não salva na conta.
+        Controlada aqui, no seu navegador — os jogadores só acompanham em
+        modo leitura, você continua no comando.
       </p>
 
       <div className="mt-4 flex items-center gap-3">
@@ -132,6 +187,31 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
         )}
       </div>
 
+      {combatentes.length > 1 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-borda bg-fundo p-3">
+          <span className="text-xs text-texto-suave">
+            {selecionados.size === 0
+              ? "Marque quem foi atingido por um efeito em grupo…"
+              : `${selecionados.size} selecionado(s):`}
+          </span>
+          <input
+            value={condicaoEmMassa}
+            onChange={(e) => setCondicaoEmMassa(e.target.value)}
+            placeholder="condição pra todos os selecionados"
+            disabled={selecionados.size === 0}
+            className="min-w-0 flex-1 rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto focus:border-ambar/60 focus:outline-none disabled:opacity-50"
+          />
+          <button
+            type="button"
+            onClick={aplicarCondicaoEmMassa}
+            disabled={selecionados.size === 0}
+            className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1 text-xs text-ambar-forte transition hover:bg-ambar/20 disabled:opacity-50"
+          >
+            Aplicar a todos
+          </button>
+        </div>
+      )}
+
       {combatentes.length === 0 ? (
         <p className="mt-4 text-sm text-texto-suave">Ninguém na ordem ainda.</p>
       ) : (
@@ -143,6 +223,15 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
                 indice === vezDe ? "border-ambar/60 bg-ambar/10" : "border-borda bg-superficie"
               }`}
             >
+              {combatentes.length > 1 && (
+                <input
+                  type="checkbox"
+                  checked={selecionados.has(c.id)}
+                  onChange={() => alternarSelecao(c.id)}
+                  aria-label={`Selecionar ${c.nome} pra condição em massa`}
+                  className="h-4 w-4"
+                />
+              )}
               <span className="w-6 text-center text-xs text-texto-suave">{indice + 1}</span>
               <span className="font-titulo text-sm">{c.nome}</span>
               <input

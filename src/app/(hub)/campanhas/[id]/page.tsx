@@ -193,12 +193,12 @@ export default async function PaginaCampanha({
         </ul>
       )}
 
-      {souMestre && (
+      {minhaParticipacao && (
         <Link
           href={`/campanhas/${campanha.id}/mesa`}
           className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
         >
-          Abrir Mesa ao vivo →
+          {souMestre ? "Abrir Mesa ao vivo →" : "Acompanhar Mesa ao vivo →"}
         </Link>
       )}
 
