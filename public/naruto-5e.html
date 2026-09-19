@@ -427,10 +427,10 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental e Liberação de Terra estão 100% completos (todos os 6
-   ranks de cada, 277 jutsu). Liberação de Vento com Ranks D e C prontos
-   (44 de 74 jutsu) — faltam B/A/S dela, mais Fogo/Água/Raio, Genjutsu,
-   Taijutsu, Bukijutsu e Invocação, entrando aos poucos, categoria por
-   categoria, mesmo ritmo dos Clãs/Classes. */
+   ranks de cada, 277 jutsu). Liberação de Vento com Ranks D, C e B
+   prontos (58 de 74 jutsu) — faltam A/S dela, mais Fogo/Água/Raio,
+   Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
+   categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1086,6 +1086,35 @@ const JUTSU_CATALOGO = [
     efeito:'+1 de Defesa, +6m de deslocamento, vantagem em resistência de Destreza, e ganha uma ação especial todo turno pra fazer um ataque extra, Desengajar ou usar um objeto.'},
   {nome:'Liberação de Vento: Cavaleiro do Vento', tipo:'Ninjutsu', categoria:'Vento', rank:'C', custo:'9 Chakra', alcance:'Toque', duracao:'1 minuto',
     efeito:'Dá 9m de voo (sempre flutuando a pelo menos 1,5m do chão, sem dano de queda), mas precisa terminar o turno perto do chão — a partir do Rank A deixa de precisar disso.'},
+
+  {nome:'Liberação de Vento: 10.000 Lâminas Cortantes', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal (esfera de 9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cúpula de lâminas de vento (9m de raio) que vira terreno difícil até pra voadores: quem entrar ou começar o turno lá dentro testa Força ou sofre 5d10 de dano de Vento, é arremessado 6m em direção aleatória, cai Derrubado e causa Redemoinho (metade do dano se passar).'},
+  {nome:'Liberação de Vento: Contragolpe', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação a um jutsu prestes a te acertar: teste de Ninjutsu contra a CD de rank do jutsu (13 + o rank dele) — se vencer, anula o efeito e devolve o dano e os efeitos pro conjurador original; se perder, leva o dano normalmente.'},
+  {nome:'Liberação de Vento: Brisas Estimadas', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'12 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Sopra ar misturado com chakra Médico em alguém morto há menos de 1 minuto ou morrendo: teste de Constituição (+2d4) contra CD 15+1 por rodada morto — no sucesso, volta com 1 PV e PV temporário igual a 3× sua CD de Ninjutsu por 10 minutos.'},
+  {nome:'Liberação de Vento: Vento da Montanha Divina', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'13 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 8d6 de dano de Vento e 2 ranks de Sangramento — se passar por uma fonte de fogo no caminho, pega fogo e soma +5d4 de dano de Fogo.'},
+  {nome:'Liberação de Vento: Lâmina do Vendaval', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Traça uma linha cortante entre dois pontos visíveis: quem estiver na linha (ou a 1,5m dela) testa Destreza ou sofre 6d8 de dano de Vento, 3 ranks de Sangramento e Redemoinho (metade do dano e nada mais se passar).'},
+  {nome:'Liberação de Vento: Grande Doninha da Foice', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal (cone de 13,5m)', duracao:'Instantâneo',
+    efeito:'Rajada cortante num cone de 13,5m: teste de Força ou 7d6 de dano de Vento, arremessado 7,5m, Derrubado, 1 rank de Laceração, Redemoinho e sem Reações até o fim do turno seguinte (dano dobrado contra objetos e estruturas).'},
+  {nome:'Liberação de Vento: Garras do Grifo', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria garras de vento nas mãos (sem gastar Chakra pra manter): 2 Ataques de Ninjutsu corpo a corpo por ação, alcance de 3m, 3d8 + seu modificador de dano de Vento.'},
+  {nome:'Liberação de Vento: Surto de Rajada', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal (13,5m)', duracao:'Instantâneo',
+    efeito:'Explosão de pressão de ar numa área de 13,5m: teste de Força ou é arremessado até a borda e ganha 3 ranks de Contusão; usado como Reação a um ataque, reduz o dano recebido em 5d6+15 (Anula se zerar o dano); em Clash contra Fogo, seu teste tem vantagem e, se vencer, soma +4d8 de dano de Vento e teste de Constituição ou Queimado.'},
+  {nome:'Liberação de Vento: Vendaval em Camadas', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'12 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Barreira de vento ao seu redor (30 PV, regenera 3d6/turno, vulnerável a Fogo, resistente a Raio) que dá desvantagem a ataques à distância contra você.'},
+  {nome:'Liberação de Vento: Polegar da Destruição', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'Especial (77 Chakra)', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: invoca um tornado gigantesco (36m de altura, 9m de largura) — Ataque de Ninjutsu à distância causando 10d8 de dano de Vento no alvo, e quem estiver a até 18m (menos os conjuradores) testa Força ou é sugado pro olho da tempestade e arremessado no chão. Em Combinação, o dano cresce por conjurador extra e a altura cresce com o maior Carisma do grupo.'},
+  {nome:'Liberação de Vento: Lâmina de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'12 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Nunca perde a concentração por dano; sua arma (ou ataque desarmado) soma +3d6 de dano de Vento 2×/turno, ganha +3m de alcance, e você pode usar seu modificador de Ninjutsu no lugar de Força ou Destreza pra acertar e causar dano.'},
+  {nome:'Liberação de Vento: Grande Esfera de Vácuo', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'13 Chakra', alcance:'36m', duracao:'Concentração, 1 minuto',
+    efeito:'3 esferas de vento (9m de diâmetro) onde o deslocamento vira 0 e não dá pra respirar: teste de Força pra recuperar metade do deslocamento, e teste de Constituição no início/fim do turno ou ganha 2 ranks de Exaustão (recupera 2 ranks no sucesso; tudo se cura ao sair ou o jutsu acabar).'},
+  {nome:'Liberação de Vento: Cortador de Vento', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 5d10 de dano de Vento e 1 rank de Laceração.'},
+  {nome:'Liberação de Vento: Surto da Wyvern', tipo:'Ninjutsu', categoria:'Vento', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Sem gastar Chakra pra manter: 1×/turno, quando um jutsu elemental seu causa dano, o alvo testa Força ou sofre um efeito extra conforme o elemento (Contundido, +3d8 de Vento e Sangramento, Queimado, Resfriado ou Chocado).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1557,7 +1586,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e Liberação de Terra 100% completos; Liberação de Vento com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

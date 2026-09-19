@@ -6486,6 +6486,24 @@ Testado com Playwright: catálogo mostra 322 opções (1 placeholder + 321
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 151. Naruto 5e — Catálogo de Jutsu, Liberação de Vento Rank B (19/09/2026)
+
+Continuação da decisão #150. As 14 jutsu do Rank B da Liberação de
+Vento entraram no `JUTSU_CATALOGO` — fecha 3 dos 6 ranks dessa natureza
+(58 das 74 jutsu de Vento; 335 das ~1400 entradas totais). Inclui
+Contragolpe, a segunda entrada com rank corrompido citada na decisão
+#149 — confirmado como Rank B pela posição no `.txt` original.
+
+Contragolpe é o primeiro jutsu de "contra-mágica" catalogado: em vez de
+resistir a um jutsu inimigo, você testa Ninjutsu contra a CD de rank
+dele e, se vencer, devolve o próprio efeito pro conjurador original.
+Polegar da Destruição (Kinjutsu de 77 Chakra) invoca um tornado de 36m
+de altura — o maior jutsu de área catalogado até agora fora dos ranks S.
+
+Testado com Playwright: catálogo mostra 336 opções (1 placeholder + 335
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
