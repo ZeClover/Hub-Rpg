@@ -12,6 +12,7 @@ import { CamposPersonalizados, type CampoView } from "./campos-personalizados";
 import { Chat } from "./chat";
 import { Conquistas, type ConquistaView } from "./conquistas";
 import { CriarPersonagem } from "./criar-personagem";
+import { DuplicarInimigo } from "./duplicar-inimigo";
 import { Enquetes, type EnqueteView } from "./enquetes";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
@@ -530,7 +531,7 @@ function VisaoDoMestre({
         {monstros.length > 0 && (
           <ul className="mt-3 space-y-2">
             {monstros.map((monstro) => (
-              <li key={monstro.id}>
+              <li key={monstro.id} className="flex flex-wrap items-center gap-3">
                 {fichaInimigo ? (
                   <a
                     href={`${fichaInimigo}?id=${monstro.id}`}
@@ -541,6 +542,7 @@ function VisaoDoMestre({
                 ) : (
                   <span className="text-sm text-texto">{monstro.nome}</span>
                 )}
+                <DuplicarInimigo campanhaId={campanhaId} personagemId={monstro.id} />
               </li>
             ))}
           </ul>

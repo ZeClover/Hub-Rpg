@@ -1808,10 +1808,18 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       seção de `/fichas`, que continua servindo pra favoritar rápido.
       Sem migração. `tsc`, lint, `next build` e os 302 testes
       automáticos continuam limpos
+- [x] **Contador de grupos de inimigos iguais** (19/09/2026) — decisão
+      #142. `POST /personagens/[id]/copiar` ganhou `quantidade` (1-20) —
+      botão "Duplicar" na lista de Monstros da campanha; cada cópia
+      nasce "Nome (cópia N)" com PV independente. Painel de Vida agrupa
+      quem tem o mesmo nome base num item colapsável ("Goblin ×5
+      (vivos: 3)") — pura convenção de nome, sem coluna nova. Sem
+      migração. `tsc`, lint, `next build` e os 302 testes automáticos
+      continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,
-      contador de inimigos, cards compartilháveis, exportar PDF, mestre
+      cards compartilháveis, exportar PDF, mestre
       auxiliar, sandbox de ficha/combate, prévia do Level Up, atalhos de
       teclado, PWA, offline parcial, QR Code do link compartilhável da
       ficha, abas na página da campanha, página geral do personagem) —

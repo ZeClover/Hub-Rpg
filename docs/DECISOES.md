@@ -6384,6 +6384,37 @@ existiam (`SISTEMAS` em código, `Usuario.sistemasFavoritos` no banco).
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 142. Hub — Contador de grupos de inimigos iguais (19/09/2026)
+
+Quinta fatia do backlog de "demais ideias" (decisão #134), ideia #69 do
+pedido original. Sem tabela nova: reaproveita a rota de copiar ficha
+(decisão #139) e a mesma convenção de nome "(cópia)" que ela já usava.
+
+**1. Duplicar N vezes.** `POST /personagens/[id]/copiar` ganhou
+`quantidade` opcional (1 a 20) — cria várias cópias de uma vez, cada
+uma com PV independente (é assim que "5 goblins" tem que funcionar: um
+pode morrer sem os outros quatro sumirem). Com `quantidade > 1`, cada
+cópia nasce como "Nome (cópia 1)", "Nome (cópia 2)"… em vez de repetir
+"Nome (cópia)" cinco vezes — é esse número que deixa o agrupamento
+visual (item 2) reconhecer "isto tudo é a mesma coisa". Botão "Duplicar"
+novo na lista de Monstros da campanha (visão do mestre), ao lado de
+cada ficha.
+
+**2. Agrupamento no Painel de Vida.** O Painel de Vida da Mesa ao Vivo
+agora agrupa inimigos com o mesmo nome base (tirando o sufixo "(cópia
+N)" — pura convenção de string, nenhum campo novo) num item colapsável:
+"Goblin ×5 (vivos: 3)". Abrindo o grupo, cada instância aparece com sua
+própria barra de vida e os mesmos botões de ajuste rápido de sempre —
+nada mudou em como o PV de cada um é lido ou ajustado, só a lista
+"Jogadores" continua sem agrupar (não faz sentido pra fichas de
+personagem, cada jogador é único).
+
+Sem migração — nenhuma coluna nova, só uma convenção de nome e uma
+função de agrupamento no cliente.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

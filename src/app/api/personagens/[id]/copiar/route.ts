@@ -17,10 +17,19 @@ type Contexto = { params: Promise<{ id: string }> };
   faltar, igual `POST /campanhas/[id]/entrar` já faz) — nunca converte
   pra outro sistema, exatamente como o pedido original marcou.
 
+  `quantidade` no corpo é opcional (decisão #142, ideia #69 — "contador
+  de grupos de inimigos iguais"): cria várias cópias de uma vez, útil pra
+  botar "5 goblins iguais" na campanha sem repetir a ação cinco vezes.
+  Cada monstro continua sendo uma ficha própria, com PV independente — só
+  o nome vira "Nome (cópia N)", pra o Painel de Vida da Mesa ao Vivo
+  conseguir agrupar visualmente quem tem o mesmo nome base.
+
   `compartilhado` e `status` não são copiados: a cópia nasce fechada
   (ninguém tem o link dela ainda) e ativa, começando do zero nesses dois
   pontos organizacionais em vez de herdar da original.
 */
+const QUANTIDADE_MAXIMA = 20;
+
 export async function POST(requisicao: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
   if (!usuario) {
@@ -35,6 +44,14 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
 
   const corpo = await requisicao.json().catch(() => null);
   const campanhaId = typeof corpo?.campanhaId === "string" ? corpo.campanhaId : null;
+  const quantidadeBruta = typeof corpo?.quantidade === "number" ? corpo.quantidade : 1;
+  if (!Number.isInteger(quantidadeBruta) || quantidadeBruta < 1 || quantidadeBruta > QUANTIDADE_MAXIMA) {
+    return NextResponse.json(
+      { erro: `quantidade precisa ser um número inteiro entre 1 e ${QUANTIDADE_MAXIMA}` },
+      { status: 400 },
+    );
+  }
+  const quantidade = quantidadeBruta;
 
   if (campanhaId) {
     const campanha = await banco.campanha.findUnique({ where: { id: campanhaId } });
@@ -49,20 +66,28 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
     }
   }
 
-  const [copia] = await banco.$transaction([
-    banco.personagem.create({
-      data: {
-        sistemaId: original.sistemaId,
-        donoId: usuario.id,
-        campanhaId,
-        nome: `${original.nome} (cópia)`,
-        dados: original.dados as Prisma.InputJsonValue,
-        ehMonstro: original.ehMonstro,
-        avatarUrl: original.avatarUrl,
-        bannerUrl: original.bannerUrl,
-      },
-      select: { id: true, nome: true },
-    }),
+  const nomeCopia = (indice: number) =>
+    quantidade === 1 ? `${original.nome} (cópia)` : `${original.nome} (cópia ${indice})`;
+
+  // As criações vêm sempre primeiro no array — o upsert de participação
+  // (quando existe) é sempre o último resultado, por isso `slice(0,
+  // quantidade)` pega só as cópias de verdade, nunca o resultado dele.
+  const resultados = await banco.$transaction([
+    ...Array.from({ length: quantidade }, (_, indice) =>
+      banco.personagem.create({
+        data: {
+          sistemaId: original.sistemaId,
+          donoId: usuario.id,
+          campanhaId,
+          nome: nomeCopia(indice + 1),
+          dados: original.dados as Prisma.InputJsonValue,
+          ehMonstro: original.ehMonstro,
+          avatarUrl: original.avatarUrl,
+          bannerUrl: original.bannerUrl,
+        },
+        select: { id: true, nome: true },
+      }),
+    ),
     ...(campanhaId
       ? [
           banco.participacao.upsert({
@@ -73,6 +98,10 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
         ]
       : []),
   ]);
+  const copias = resultados.slice(0, quantidade) as { id: string; nome: string }[];
 
-  return NextResponse.json({ personagem: copia }, { status: 201 });
+  return NextResponse.json(
+    quantidade === 1 ? { personagem: copias[0] } : { personagens: copias },
+    { status: 201 },
+  );
 }

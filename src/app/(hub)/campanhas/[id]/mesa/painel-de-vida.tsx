@@ -118,6 +118,7 @@ export function PainelDeVida({
               personagens={dados.inimigos}
               ficha={fichaInimigo}
               onAjustar={ajustar}
+              agrupar
             />
           )}
         </>
@@ -126,19 +127,47 @@ export function PainelDeVida({
   );
 }
 
+// Tira o sufixo que `POST /personagens/[id]/copiar` bota em cada cópia
+// ("Goblin (cópia)", "Goblin (cópia 2)"…) pra achar o nome base — é assim
+// que o Painel de Vida sabe que são "o mesmo bicho" pra agrupar (decisão
+// #142, ideia #69). Sem campo novo no banco: é só convenção de nome.
+function nomeBase(nome: string): string {
+  return nome.replace(/\s*\(cópia(?:\s+\d+)?\)$/i, "");
+}
+
+function agruparPorNomeBase(personagens: Personagem[]): Personagem[][] {
+  const grupos = new Map<string, Personagem[]>();
+  for (const p of personagens) {
+    const chave = nomeBase(p.nome);
+    const grupo = grupos.get(chave);
+    if (grupo) grupo.push(p);
+    else grupos.set(chave, [p]);
+  }
+  return Array.from(grupos.values());
+}
+
+function estaVivo(p: Personagem): boolean {
+  if (!p.resumoVida) return true;
+  return !p.resumoVida.derrotado && p.resumoVida.atual > 0;
+}
+
 function GrupoDeCartoes({
   titulo,
   vazio,
   personagens,
   ficha,
   onAjustar,
+  agrupar,
 }: {
   titulo: string;
   vazio: string;
   personagens: Personagem[];
   ficha: string | null;
   onAjustar?: (personagemId: string, corpo: CorpoAjuste) => void;
+  agrupar?: boolean;
 }) {
+  const grupos = agrupar ? agruparPorNomeBase(personagens) : personagens.map((p) => [p]);
+
   return (
     <div className="mt-4">
       <p className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
@@ -148,56 +177,86 @@ function GrupoDeCartoes({
         <p className="mt-2 text-sm text-texto-suave">{vazio}</p>
       ) : (
         <ul className="mt-3 space-y-3">
-          {personagens.map((p) => (
-            <li
-              key={p.id}
-              className="rounded-lg border border-borda bg-superficie p-4"
-            >
-              <div className="flex items-center justify-between gap-3">
-                {ficha ? (
-                  <a
-                    href={`${ficha}?id=${p.id}`}
-                    className="font-titulo text-base text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
-                  >
-                    {p.nome}
-                  </a>
-                ) : (
-                  <span className="font-titulo text-base">{p.nome}</span>
-                )}
-                <div className="flex items-center gap-2">
-                  {p.resumoVida?.derrotado && (
-                    <span className="rounded-full border border-segredo/40 px-2 py-0.5 text-xs text-segredo">
-                      Derrotado
-                    </span>
-                  )}
-                  {p.resumoVida && (
-                    <span className="text-sm text-texto-suave">
-                      {p.resumoVida.rotulo} {p.resumoVida.atual}/{p.resumoVida.maxima}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {p.resumoVida ? (
-                <BarraDeVida resumo={p.resumoVida} />
-              ) : (
-                <p className="mt-2 text-xs text-texto-suave">
-                  Vida ainda não calculada — abra a ficha uma vez pra preencher.
-                </p>
-              )}
-
-              {onAjustar && p.resumoVida && (
-                <AjusteRapido
-                  personagemId={p.id}
-                  derrotado={p.resumoVida.derrotado ?? false}
-                  onAjustar={onAjustar}
-                />
-              )}
-            </li>
-          ))}
+          {grupos.map((grupo) =>
+            grupo.length === 1 ? (
+              <CartaoPersonagem key={grupo[0].id} p={grupo[0]} ficha={ficha} onAjustar={onAjustar} />
+            ) : (
+              <li
+                key={nomeBase(grupo[0].nome)}
+                className="rounded-lg border border-borda bg-superficie p-4"
+              >
+                <details>
+                  <summary className="cursor-pointer font-titulo text-base text-texto hover:text-ambar-forte">
+                    {nomeBase(grupo[0].nome)} ×{grupo.length} (vivos:{" "}
+                    {grupo.filter(estaVivo).length})
+                  </summary>
+                  <ul className="mt-3 space-y-3">
+                    {grupo.map((p) => (
+                      <CartaoPersonagem key={p.id} p={p} ficha={ficha} onAjustar={onAjustar} />
+                    ))}
+                  </ul>
+                </details>
+              </li>
+            ),
+          )}
         </ul>
       )}
     </div>
+  );
+}
+
+function CartaoPersonagem({
+  p,
+  ficha,
+  onAjustar,
+}: {
+  p: Personagem;
+  ficha: string | null;
+  onAjustar?: (personagemId: string, corpo: CorpoAjuste) => void;
+}) {
+  return (
+    <li className="rounded-lg border border-borda bg-superficie p-4">
+      <div className="flex items-center justify-between gap-3">
+        {ficha ? (
+          <a
+            href={`${ficha}?id=${p.id}`}
+            className="font-titulo text-base text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
+          >
+            {p.nome}
+          </a>
+        ) : (
+          <span className="font-titulo text-base">{p.nome}</span>
+        )}
+        <div className="flex items-center gap-2">
+          {p.resumoVida?.derrotado && (
+            <span className="rounded-full border border-segredo/40 px-2 py-0.5 text-xs text-segredo">
+              Derrotado
+            </span>
+          )}
+          {p.resumoVida && (
+            <span className="text-sm text-texto-suave">
+              {p.resumoVida.rotulo} {p.resumoVida.atual}/{p.resumoVida.maxima}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {p.resumoVida ? (
+        <BarraDeVida resumo={p.resumoVida} />
+      ) : (
+        <p className="mt-2 text-xs text-texto-suave">
+          Vida ainda não calculada — abra a ficha uma vez pra preencher.
+        </p>
+      )}
+
+      {onAjustar && p.resumoVida && (
+        <AjusteRapido
+          personagemId={p.id}
+          derrotado={p.resumoVida.derrotado ?? false}
+          onAjustar={onAjustar}
+        />
+      )}
+    </li>
   );
 }
 
