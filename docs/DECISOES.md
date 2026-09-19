@@ -6873,6 +6873,27 @@ Testado com Playwright: catálogo mostra 613 opções (1 placeholder + 612
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 171. Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 2 de 5) (19/09/2026)
+
+Continuação da decisão #170. Segundo lote do Rank D de Genjutsu (24
+jutsu, de "Palavras Distantes" a "Cegueira à Luz") entrou no
+`JUTSU_CATALOGO` — 636 das ~1400 entradas totais (46 de 111 jutsu do
+Rank D, 62 de 268 de Genjutsu no total).
+
+Traz a família "Frenesi" completa (10 variações: Preto, Azul, Ciano,
+Verde, Magenta, Laranja, Roxo, Vermelho, Prata, Amarelo) — diferente da
+família "Corrupção" do lote anterior, aqui cada cor muda de verdade o
+efeito mecânico na falha e na falha crítica (uma dá Derrubado, outra dá
+Enfurecido, outra desliga a concentração automaticamente etc.), então
+cada uma ganhou seu próprio texto de "efeito" completo em vez do resumo
+compacto usado pra "Corrupção" — só a estrutura comum (teste de
+Sabedoria, sucesso crítico dá imunidade a novos Frenesi por 10 minutos)
+se repete entre elas.
+
+Testado com Playwright: catálogo mostra 637 opções (1 placeholder + 636
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
