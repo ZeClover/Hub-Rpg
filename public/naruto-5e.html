@@ -428,12 +428,10 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O
    Ninjutsu Não-Elemental e as 5 Naturezas elementais (Terra, Vento,
    Fogo, Água, Raio) estão 100% completos (todos os 6 ranks de cada,
-   574 jutsu). Genjutsu com o Rank E completo e o Rank D em andamento
-   (110 de 268 jutsu; Rank D é o maior de todos com 111 jutsu, entrando
-   em lotes menores — 94 de 111 feitos, lote 4 de 5 trouxe a família
-   PSIÔNICA inteira, só falta o 5º e último lote) — faltam C/B/A/S dela,
-   mais Taijutsu, Bukijutsu e Invocação, entrando aos poucos, categoria
-   por categoria, mesmo ritmo dos Clãs/Classes. */
+   574 jutsu). Genjutsu com os Ranks E e D 100% completos (127 de 268
+   jutsu; Rank D foi o maior de todos, 111 jutsu em 5 lotes) — faltam
+   C/B/A/S dela, mais Taijutsu, Bukijutsu e Invocação, entrando aos
+   poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1835,6 +1833,40 @@ const JUTSU_CATALOGO = [
     efeito:'Alvo hostil em até 18m sob efeito de algum bônus de jutsu testa Inteligência: sucesso resiste; falha suprime, à sua escolha, um dos bônus que ele ganha de jutsu (ataque, dano, Defesa ou testes) enquanto durar; falha crítica suprime todos esses bônus de uma vez. Em ranks mais altos: +3 de custo e +1 alvo por rank acima de D.'},
   {nome:'Marionetes das Trevas', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
     efeito:'Como Ação Bônus ao lançar (e em turnos seguintes enquanto mantiver a concentração), comanda uma sombra ilusória pra atacar: Ataque de Genjutsu corpo a corpo em até 18m — acerto causa 2d10 de dano Psíquico e o alvo testa Inteligência ou fica Zonzo até o início do seu próximo turno. Em ranks mais altos: +3 de custo e +1 alvo por rank acima de D.'},
+  {nome:'Santuário', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'1 minuto',
+    efeito:'Protege um alvo disposto em até 9m: quem tentar atacá-lo ou mirar nele com um jutsu precisa passar antes num teste de Sabedoria, ou é forçado a escolher outro alvo (ou perder a ação) — não protege contra efeitos em área. O jutsu acaba se o alvo protegido atacar ou lançar um jutsu que afete outra criatura. Em ranks mais altos: +3 de custo e +1 alvo por rank acima de D.'},
+  {nome:'Arte de Selamento: Delírios', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Selo de chakra marca um alvo em até 18m, que testa Carisma: na falha, fica hipnotizado por visões dos próprios desejos e, no início de cada turno, refaz a resistência — Atordoado até o fim do turno se falhar de novo (um sucesso encerra o jutsu; sofrer dano também força nova resistência); outra criatura que tocar o alvo pode tentar um teste de Sabedoria (Ilusão) contra sua CD pra encerrar o efeito à força. Em ranks mais altos: +3 de custo por rank acima de D; no Rank B afeta 2 alvos, e no Rank S, 3.'},
+  {nome:'Arte de Selamento: Sonhos Bons', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Selo de chakra marca um alvo disposto em até 18m; como Ação Bônus, o mergulha num sono acelerado que deixa gastar Dados de Vida pra recuperar PV, como um descanso curto (mas sem recuperar talentos ou recursos que um descanso curto normalmente restauraria). Em ranks mais altos: +3 de custo e +1 alvo por rank acima de D.'},
+  {nome:'Semblante de Pavor', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'Pessoal (raio de 6m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Seu rosto vira uma monstruosidade sem face; enquanto durar, ninguém a até 6m de você consegue se aproximar de boa vontade sem passar num teste de Sabedoria no início do turno (construtos e mortos-vivos são imunes) — você ganha vantagem em resistências contra Medo. Em ranks mais altos: +3 de custo e +1,5m de raio por rank acima de D.'},
+  {nome:'Mordida da Sombra', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Ataque de Genjutsu à distância em até 18m: acerto causa 4d6 + mod. de Genjutsu de dano Psíquico e reduz o deslocamento do alvo em 3m até o início do seu próximo turno (nenhum bônus de deslocamento funciona enquanto durar a redução). Em ranks mais altos: +3 de custo, +1 alvo, +1d6 de dano e mais 1,5m de redução no deslocamento por rank acima de D.'},
+  {nome:'Imagem Silenciosa', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 10 minutos',
+    efeito:'Cria a imagem de um objeto, criatura ou fenômeno visível (até um cubo de 4,5m) num ponto a até 18m — é só imagem, sem som ou cheiro. Como ação, pode mover a imagem por até 18m, ajustando a aparência pra parecer natural (por exemplo, fazendo uma criatura "andar"). Qualquer interação física revela a ilusão e encerra o jutsu na hora.'},
+  {nome:'Silhueta', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'3 Chakra', alcance:'30m', duracao:'Concentração, até 10 minutos',
+    efeito:'Cria um teatro de sombras numa superfície de até 9m² a até 30m, sem ponto de origem único (usa as sombras naturais do ambiente); só vê o espetáculo um número de criaturas igual ao seu modificador de Genjutsu. As figuras não fazem som, mas podem dançar, correr, lutar etc., geralmente baseadas em criaturas que você já viu.'},
+  {nome:'Canção Sussurrada', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 10 minutos',
+    efeito:'Cantarola ou repete uma frase; aliados dispostos a até 9m se sentem revigorados. Enquanto durar, não custa Chakra pra manter — só uma Ação Bônus a cada turno seguinte. Quem começar o turno no alcance ganha vantagem em resistências contra Genjutsu sonoros, e esses Genjutsu deixam de pegá-los desprevenidos.'},
+  {nome:'Canção dos Ancestrais', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (raio de 6m)', duracao:'Concentração, até 10 minutos',
+    efeito:'Canta uma melodia estranha e incompreensível; quem começar o turno num raio de 6m ao seu redor testa Inteligência (enquanto durar, não custa Chakra pra manter — só uma Ação Bônus a cada turno seguinte): sucesso resiste; falha ganha a condição Loucura até o fim do turno seguinte; falha crítica ganha Loucura por 1d4 dos próprios turnos. Em ranks mais altos: +3 de custo e +1,5m de raio por rank acima de D.'},
+  {nome:'Eco Silencioso e Cegante', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'Pessoal (cone de 9m)', duracao:'Instantâneo',
+    efeito:'Grito silencioso e enganoso num cone de 9m à sua frente; alvos à sua escolha testam Sabedoria: sucesso crítico resiste; sucesso resiste à maior parte do efeito mas fica Surdo até o fim do turno seguinte; falha sofre 2d6 de dano Psíquico e fica Cego (refazendo a resistência no fim de cada turno pra encerrar); falha crítica é igual, mas também sofre mais 4d6 de dano Psíquico no turno em que falhar e outros 4d6 no início do seu próximo turno.'},
+  {nome:'Sobressalto', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Alvo em até 27m (imune se for imune a Amedrontado) testa Carisma: sucesso resiste; falha se assusta e perde a concentração no jutsu de maior custo que estiver mantendo; falha crítica perde a concentração em todos os jutsu que estiver mantendo. Em ranks mais altos: +3 de custo e +1 alvo por rank acima de D.'},
+  {nome:'Película Mental', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Barreira psíquica: sempre que for sofrer dano Psíquico, reduz em 3d6; além disso, ganha +1d4 em resistências contra Genjutsu enquanto durar. Em ranks mais altos: +3 de custo e mais 1d6 de redução por rank acima de D.'},
+  {nome:'Rejeição de Pensamento', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'27m (raio de 3m)', duracao:'Instantâneo',
+    efeito:'Escolhe um ponto a até 27m onde uma explosão psíquica atinge tudo num raio de 3m; alvos testam Sabedoria: sucesso resiste; falha sofre 4d6 de dano Psíquico; falha crítica sofre 4d6 de dano Psíquico e ganha 1 rank de Ofuscado. Em ranks mais altos: +3 de custo e +1d6 de dano por rank acima de D.'},
+  {nome:'Riso Descontrolado', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Alvo em até 9m com Inteligência maior que 4 testa Sabedoria (com vantagem se tiver Sabedoria 15 ou mais; o jutsu acaba na hora se ele sofrer dano): sucesso crítico resiste; sucesso resiste à maior parte do efeito mas fica sem Reações até o início do turno seguinte; falha cai num ataque de riso, Derrubado e sem Reações (refazendo a resistência no fim de cada turno pra encerrar); falha crítica é igual, mas também fica Incapacitado.'},
+  {nome:'Rosto Comum', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Toque', duracao:'10 minutos',
+    efeito:'Aliado disposto tocado tem o rosto tornado completamente comum — enquanto durar, fica irreconhecível e impossível de apontar numa multidão. Quem tentar enxergar através da ilusão faz teste de Sabedoria (Intuição ou Ilusão) contra sua CD; se passar, fica imune a esse Genjutsu por 1 hora.'},
+  {nome:'Garra da Víbora', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (raio de 9m)', duracao:'1 minuto',
+    efeito:'Libera veneno inodoro no ar (gasta 1 carga do Kit de Veneno), afetando quem inalar num raio de 9m ao seu redor; alvos testam Sabedoria (o jutsu acaba na hora se o Envenenado causado por ele for curado): sucesso crítico resiste e fica imune por 24 horas; sucesso resiste; falha fica Envenenado por 1 minuto, vendo cobras ilusórias — no início de cada turno, teste de Sabedoria (Acrobacia) contra sua CD ou fica Restrito pelas cobras até o início do turno seguinte; falha crítica é igual, mas o teste vem em desvantagem e o Restrito dura enquanto o Envenenado durar.'},
+  {nome:'Armas das Trevas', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Conjura adagas de trevas e pavor (parecem Kunai) que pode arremessar a até 18m antes de se dissiparem; como ação, faz um Ataque de Genjutsu corpo a corpo ou à distância — acerto causa 5d4 de dano Psíquico (a adaga se desfaz e reaparece na sua mão depois do arremesso). Em ranks mais altos: +3 de custo por rank acima de D; do Rank C em diante, +1d4 de dano; no Rank B, dois ataques em vez de um; do Rank A em diante, soma seu modificador de Genjutsu ao dano; no Rank S, três ataques em vez de um.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2306,7 +2338,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com Rank E completo e Rank D em andamento) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com os Ranks E e D 100% completos, faltando C/B/A/S) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

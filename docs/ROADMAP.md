@@ -1934,10 +1934,14 @@ passando.
       do Rank D; 110 de 268 de Genjutsu; 684 de ~1400 no total) — falta
       só o 5º e último lote do Rank D. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Genjutsu Rank D 100% completo** (19/09/2026) —
+      decisão #174. Os 17 jutsu do último lote fecharam o Rank D
+      inteiro (111 jutsu, o maior de qualquer rank do Compêndio) — com
+      o Rank E, Genjutsu está com 127 de 268 jutsu feitos (701 de ~1400
+      no total). Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~716 jutsu: Genjutsu D restante (17) + C/B/A/S (140),
-      Taijutsu (175), Bukijutsu (383), Invocação — categoria por
-      categoria),
+      Jutsu (~699 jutsu: Genjutsu C/B/A/S (140), Taijutsu (175),
+      Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

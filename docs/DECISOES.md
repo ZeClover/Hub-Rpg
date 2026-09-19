@@ -6947,6 +6947,28 @@ Testado com Playwright: catálogo mostra 685 opções (1 placeholder + 684
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 174. Naruto 5e — Genjutsu Rank D 100% completo (19/09/2026)
+
+Continuação da decisão #173. Quinto e último lote do Rank D de Genjutsu
+(17 jutsu, de "Santuário" a "Armas das Trevas") entrou no
+`JUTSU_CATALOGO` — 701 das ~1400 entradas totais. Com isso, o Rank D
+inteiro (111 jutsu, o maior de qualquer categoria/rank do Compêndio)
+está catalogado, junto com o Rank E: Genjutsu tem 127 de 268 jutsu
+feitos (Ranks E e D 100%, faltam C/B/A/S).
+
+Este lote não teve uma família grande de variações (como Corrupção,
+Frenesi, Lótus, Noite ou Psiônica dos lotes anteriores) — são 17 jutsu
+soltos, cada um com efeito próprio. Introduz mais uma condição nova pro
+Hub ("madness" no original) traduzida como "Loucura", e usa duas vezes
+"Restrito" e "Envenenado" (condições já existentes) numa combinação
+nova. Atualizei os dois textos de referência de completude do arquivo
+(comentário acima do catálogo e o aviso da aba de Jutsu) pra refletir
+Ranks E e D 100% prontos.
+
+Testado com Playwright: catálogo mostra 702 opções (1 placeholder + 701
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
