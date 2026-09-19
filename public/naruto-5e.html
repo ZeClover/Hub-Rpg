@@ -428,10 +428,10 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de
    Fogo estão 100% completos (todos os 6 ranks de cada, 426 jutsu).
-   Liberação de Água com Ranks D e C prontos (46 de 74 jutsu) — faltam
-   B/A/S dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação,
-   entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
-   Classes. */
+   Liberação de Água com Ranks D, C e B prontos (59 de 74 jutsu) —
+   faltam A/S dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e
+   Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
+   dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1399,6 +1399,33 @@ const JUTSU_CATALOGO = [
     efeito:'Teste de Destreza ou fica Restrito dentro de uma bolha (CA igual à sua CD, 10 PV, vulnerável a Terra, intercepta dano dirigido ao alvo) — você precisa manter contato com ela; o preso testa Força no fim de cada turno pra escapar (perto de água, custa 2 Chakra a menos ou esse teste vem em desvantagem).'},
   {nome:'Liberação de Água: Trombeta de Água', tipo:'Ninjutsu', categoria:'Água', rank:'C', custo:'9 Chakra', alcance:'9m', duracao:'Instantâneo',
     efeito:'Ataque de Ninjutsu à distância: 4d10 de dano de Frio (perto de água, custa 2 Chakra a menos ou dobra o dano contra construtos e estruturas).'},
+
+  {nome:'Liberação de Água: Armadura de Poseidon', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'Veste uma armadura de água por até 10 minutos; totalmente submerso, ganha 36m de nado, respira embaixo d\'água, 18m de sentido sísmico, seus jutsu de Água somam +1 dado de dano (2 se o alvo estiver Resfriado) 1×/turno, e pode trocar um ataque de arma por um Ataque de Ninjutsu corpo a corpo (3d8+mod. de Frio) ou à distância (2d8+mod., alcance 18/36m).'},
+  {nome:'Liberação de Água: Absorção da Névoa Sangrenta', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'14 Chakra', alcance:'Pessoal (cubo de 13,5m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Custa 5 PV seus pra lançar: névoa vermelha numa área de 13,5m (visibilidade de só 1,5m) — você sempre sabe onde todos estão; quem não estiver no PV máximo perde Chakra no início do turno, e ninguém consegue curar PV ou remover Sangramento lá dentro.'},
+  {nome:'Liberação de Água: Profundeza', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'Especial (77 Chakra)', alcance:'Pessoal (esfera de 9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: cria esferas de água (9m de raio) onde os conjuradores e até 2 aliados escolhidos por cada um ganham 18m de nado e respiram normalmente (sem risco de afogar, e jutsu que lançarem lá dentro causam dano de Frio); quem mais estiver na área ao ser criada testa Destreza (ou é puxado 9m pro centro) e Constituição (ou começa a se afogar, sobrevivendo um número de rodadas igual ao seu mod. de Constituição antes de desmaiar). Em Combinação, o custo cai e o raio cresce com o maior Carisma do grupo.'},
+  {nome:'Liberação de Água: Onda de Choque Explosiva', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'14 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'1 minuto',
+    efeito:'Expele um oceano numa área de 18m (você fica em pé sobre ela): teste de Força ou 6d8 de dano de Frio e empurrado 9m submerso (com sucesso, flutua por cima e é empurrado 4,5m sem dano) — a água serve de fonte pra até 15 jutsu de Água.'},
+  {nome:'Liberação de Água: Espelho Celestial da Esperança', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'Especial', alcance:'Especial', duracao:'Instantâneo',
+    efeito:'Reação a um jutsu que iria te acertar: teste de Ninjutsu contra a CD de rank do jutsu (13 + o rank) — se vencer, gasta Chakra extra (o custo do jutsu do alvo + um bônus por rank) e reflete o jutsu de volta nele, como se ele mesmo fosse o alvo; se perder, o espelho se estilhaça e o jutsu acaba.'},
+  {nome:'Liberação de Água: Vórtice Aquático', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'12 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Redemoinho de água (6m de raio, terreno difícil): teste de Força ou 5d8 de dano de Frio e puxado 3m pro centro (metade se passar) — pode mover 9m por Ação Bônus (perto de água, custa 2 Chakra a menos ou quem já estiver Resfriado testa em desvantagem).'},
+  {nome:'Liberação de Água: Água Dolorosa', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'11 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Marca um alvo: jutsu de Água que causarem dano nele somam +seu nível de personagem 1×/turno, e testes dele contra Resfriado vêm com -1d8.'},
+  {nome:'Liberação de Água: Chuva Vermelha', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'13 Chakra', alcance:'27m (raio de 3m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Nuvem que chove numa área de 3m ao redor do alvo: quem estiver lá testa resistência contra jutsu de outros conjuradores com -1d4 (1×/turno cada) — pode mover a nuvem 12m por Ação Bônus.'},
+  {nome:'Liberação de Água: Gotas Reflexivas: Pingo', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'12 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Bolha protetora (5d8 + seu mod. de Ninjutsu em PV, resistente a Fogo, vulnerável a Terra) intercepta ataques até seu próximo turno; quem te acerta corpo a corpo sofre metade do próprio dano de volta em Frio (menos dano de Terra), e você tem vantagem em testes de resistência contra jutsu de área.'},
+  {nome:'Liberação de Água: Bomba de Tubarão', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'12 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Precisa de água por perto: invoca um tubarão construto (CA igual à sua CD, 30 PV, 12m de nado) comandado por você — pode Atacar (Ataque de Ninjutsu corpo a corpo, 8d8 de Frio, teste de Força ou fica Agarrado), Atrapalhar (Reação, desvantagem no ataque do alvo) ou Explodir (área de 4,5m, teste de Destreza ou 6d10 de Frio).'},
+  {nome:'Liberação de Água: Arco do Tsunami', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'14 Chakra', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'2 Ataques de Ninjutsu à distância por ação (alcance de 36m): 3d12 de dano de Frio e teste de Constituição ou Resfriado até o fim do turno seguinte (perto de água, custa 2 Chakra a menos ou também reduz o deslocamento do alvo em 4,5m).'},
+  {nome:'Liberação de Água: Presa de Água', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'11 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Duas brocas de água giram no alvo: teste de Destreza ou 8d6 de dano de Frio, Derrubado e Atordoado (metade e nada mais se passar) — perto de água, custa 2 Chakra a menos ou atinge mais um alvo.'},
+  {nome:'Liberação de Água: Agulhas de Água da Morte', tipo:'Ninjutsu', categoria:'Água', rank:'B', custo:'13 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Reação a um ataque corpo a corpo: teste de Destreza ou 8d10 de dano de Frio e -4,5m de deslocamento no atacante (metade se passar) — perto de água, custa 2 Chakra a menos ou também atinge outros inimigos a até 4,5m de você.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1870,7 +1897,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com Ranks D e C prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

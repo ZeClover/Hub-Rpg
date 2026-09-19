@@ -6680,6 +6680,25 @@ Testado com Playwright: catálogo mostra 473 opções (1 placeholder + 472
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 161. Naruto 5e — Catálogo de Jutsu, Liberação de Água Rank B (19/09/2026)
+
+Continuação da decisão #160. As 13 jutsu do Rank B da Liberação de
+Água entraram no `JUTSU_CATALOGO` — fecha 3 dos 6 ranks dessa natureza
+(59 das 74 jutsu de Água; 485 das ~1400 entradas totais). Inclui
+Espelho Celestial da Esperança, a entrada com rank corrompido citada
+na decisão #159 — confirmado como Rank B pela posição no `.txt`
+original (par de Espelho Celestial da Dor, Rank C, decisão #160).
+
+Profundeza é o primeiro Kinjutsu de Combinação que gerencia afogamento
+como mecânica própria (sobreviver rodadas = mod. de Constituição antes
+de desmaiar, depois dano por turno). Absorção da Névoa Sangrenta é o
+primeiro jutsu do sistema que custa PV do próprio conjurador, não só
+Chakra, pra ser lançado.
+
+Testado com Playwright: catálogo mostra 486 opções (1 placeholder + 485
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
