@@ -1881,8 +1881,13 @@ passando.
       categoria inteira do Compêndio de Jiraiya catalogada (500 de
       ~1400 no total, 35,7%). Testado com Playwright; `tsc`, lint,
       build e os 298 testes automáticos do projeto continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início da Liberação de Raio**
+      (19/09/2026) — decisão #164. As 25 jutsu do Rank D da Liberação
+      de Raio entraram no catálogo (525 de ~1400 no total) — sexta e
+      última Natureza elemental. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~900 jutsu: Raio, Genjutsu,
+      Jutsu (~875 jutsu: Raio C/B/A/S, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

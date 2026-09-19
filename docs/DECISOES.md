@@ -6737,6 +6737,25 @@ automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
 regressão.
 
+## 164. Naruto 5e — Catálogo de Jutsu, início da Liberação de Raio (19/09/2026)
+
+Continuação da decisão #163, sexta e última Natureza elemental (74
+jutsu ao todo, sem problemas de rank corrompido no parser). As 25
+jutsu do Rank D da Liberação de Raio entraram no `JUTSU_CATALOGO` —
+525 das ~1400 entradas totais do Compêndio.
+
+Raio introduz a mecânica "Sobrecarga": quase todo jutsu deste rank tem
+uma versão mais forte se o jogador gastar Ação Bônus ou Reação junto
+(velocidade vs. potência) — mantida em cada "efeito" porque é o
+diferencial mecânico central da Natureza, igual ao "perto de água" foi
+pra Água (decisão #159). Com Raio começado, as 6 Naturezas elementais
+do Compêndio de Jiraiya (Terra, Vento, Fogo, Água, Raio e o
+Não-Elemental) estão todas com pelo menos algum conteúdo catalogado.
+
+Testado com Playwright: catálogo mostra 526 opções (1 placeholder + 525
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
