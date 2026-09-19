@@ -426,12 +426,11 @@ const RANKS_JUTSU = [
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
-   Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de
-   Fogo e Liberação de Água estão 100% completos (todos os 6 ranks de
-   cada, 500 jutsu). Liberação de Raio com Ranks D, C, B e A prontos
-   (68 de 74 jutsu, última Natureza elemental) — falta só o S dela,
-   mais Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
-   categoria por categoria, mesmo ritmo dos Clãs/Classes. */
+   Ninjutsu Não-Elemental e as 5 Naturezas elementais (Terra, Vento,
+   Fogo, Água, Raio) estão 100% completos (todos os 6 ranks de cada,
+   574 jutsu) — faltam Genjutsu, Taijutsu, Bukijutsu e Invocação,
+   entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
+   Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1598,6 +1597,19 @@ const JUTSU_CATALOGO = [
     efeito:'Rajada de raio num cone de 9m: teste de Constituição ou 7d8 de dano de Raio, Incapacitado, Cego e Surdo até o fim do turno seguinte (metade e nada mais se passar) — Sobrecarga: quem falhar também ganha 2 ranks de Chocado.'},
   {nome:'Liberação de Raio: Quebra-Tempestade', tipo:'Ninjutsu', categoria:'Raio', rank:'A', custo:'Especial (20 Chakra)', alcance:'Especial', duracao:'Concentração, até 1 minuto',
     efeito:'Precisa ver nuvens de tempestade no céu: puxa a tempestade pro chão numa área de 36m (névoa opaca que cega até Visão de Chakra); sempre que alguém sofre dano de Raio lá dentro, um raio extra cai nele: teste de Destreza ou mais 6d6 de dano de Raio (metade se passar, só 1×/turno por criatura).'},
+
+  {nome:'Liberação de Raio: Grande Serpente de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'23 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Ataque de Ninjutsu à distância: 10d12 de dano de Raio, explodindo numa esfera de 9m — quem mais estiver perto testa Constituição ou fica Atordoado até o fim do seu próximo turno — Sobrecarga: atinge um segundo alvo.'},
+  {nome:'Liberação de Raio: Kirin', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'25 Chakra', alcance:'90m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: precisa de uma tempestade ativa acima de você e do alvo — puxa um raio gigante num cilindro de 6m de largura por 90m de altura: teste de Destreza ou 14d12 de dano de Raio e Atordoado por 1 minuto (metade e sem atordoamento se passar).'},
+  {nome:'Liberação de Raio: Modo Chakra de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Veste chakra de Raio pelo corpo (sem gastar Chakra pra manter, nunca perde a concentração por dano): +3 de Defesa, reduz todo dano recebido (menos Vento) em 8, +15m de deslocamento, e ataques corpo a corpo somam +3d10 de dano de Raio 2×/turno.'},
+  {nome:'Liberação de Raio: Trilho de Raio', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'35 Chakra', alcance:'Pessoal (linha de 150m)', duracao:'Instantâneo',
+    efeito:'Destrói um objeto metálico pra disparar um projétil de raio numa linha de 4,5m de largura por 150m: teste de Destreza (em desvantagem se Chocado) ou 12d10 de dano de Raio (16d10 se Chocado), Derrubado e Atordoado por 1 minuto (metade se passar); objetos e estruturas levam o dano máximo.'},
+  {nome:'Liberação de Raio: Quebra-Estrela', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'Especial (138 Chakra)', alcance:'160km', duracao:'Instantâneo',
+    efeito:'Kinjutsu de Combinação: todos os conjuradores fazem Ataque de Ninjutsu à distância no mesmo alvo (usa o melhor resultado) causando 50d12 de dano de Raio — todo mundo num raio de 1,6km testa Destreza em desvantagem ou sofre 50d8 de dano de Raio (metade se passar; estruturas levam o dobro). Em Combinação, o dano cresce com o maior Carisma do grupo.'},
+  {nome:'Liberação de Raio: Flecha do Estampido', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'27 Chakra', alcance:'45m', duracao:'Instantâneo',
+    efeito:'Flecha de raio explode num cilindro de 18m de largura por 30m de altura: teste de Destreza ou 15d10 de dano de Raio (ignora resistência a Raio), e teste de Constituição ou Atordoado até o fim do turno seguinte — Sobrecarga: a linha até o alvo também sofre 10d6 de dano de Raio (ignorando resistência, redução e PV temporário).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2069,7 +2081,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos; Liberação de Raio com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

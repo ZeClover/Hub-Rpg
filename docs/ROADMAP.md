@@ -1899,9 +1899,16 @@ passando.
       catálogo (68 de 74 jutsu de Raio; 568 de ~1400 no total) — falta
       só o S pra fechar Raio inteira. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Todo o Ninjutsu Elemental 100% completo**
+      (19/09/2026) — decisão #168. As 6 jutsu do Rank S fecharam a
+      Liberação de Raio (74 jutsu) — com isso, o Não-Elemental e as 5
+      Naturezas elementais (Terra, Vento, Fogo, Água, Raio) estão todos
+      100% catalogados (574 de ~1400 no total, 41%). Testado com
+      Playwright; `tsc`, lint, build e os 298 testes automáticos do
+      projeto continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~832 jutsu: Raio S, Genjutsu,
-      Taijutsu, Bukijutsu, Invocação — categoria por categoria),
+      Jutsu (~826 jutsu: Genjutsu (268), Taijutsu (175),
+      Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

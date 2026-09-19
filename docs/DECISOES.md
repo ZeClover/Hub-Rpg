@@ -6805,6 +6805,32 @@ Testado com Playwright: catálogo mostra 569 opções (1 placeholder + 568
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 168. Naruto 5e — Todo o Ninjutsu Elemental 100% completo (19/09/2026)
+
+Continuação da decisão #167: as 6 jutsu do Rank S fecharam os 6 ranks
+da Liberação de Raio (74 jutsu) — sexta e última Natureza elemental
+100% catalogada. Com isso, **todo o Ninjutsu do Compêndio de Jiraiya
+está completo**: os 6 ranks do Não-Elemental (202 jutsu) e das 5
+Naturezas elementais — Terra, Vento, Fogo, Água e Raio (74-75 jutsu
+cada) — somando 574 das ~1400 entradas totais (41%).
+
+Rank final traz Kirin (a técnica mais poderosa da série, que exige uma
+tempestade ativa no céu pra funcionar — condição ambiental mantida
+como mecânica, sem copiar a cena do livro) e Quebra-Estrela (Kinjutsu
+de Combinação de 138 Chakra e alcance de 160km, o maior alcance
+catalogado até agora).
+
+**Próxima categoria**: Genjutsu (268 jutsu, a maior categoria restante
+depois de Bukijutsu), seguido de Taijutsu (175), Bukijutsu (383) e
+Invocação (formato de dados ainda não parseado) — essas 4 categorias
+fecham o Compêndio de Jiraiya inteiro.
+
+Testado com Playwright: catálogo mostra 575 opções (1 placeholder + 574
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
