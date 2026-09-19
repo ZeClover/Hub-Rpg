@@ -425,12 +425,12 @@ const RANKS_JUTSU = [
    nas 341 páginas das duas partes que o Zé mandou, lidas locais com
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
-   original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
+   original (decisão #17/#134 — nunca copiar texto do livro). O
    Ninjutsu Não-Elemental e as 5 Naturezas elementais (Terra, Vento,
    Fogo, Água, Raio) estão 100% completos (todos os 6 ranks de cada,
-   574 jutsu) — faltam Genjutsu, Taijutsu, Bukijutsu e Invocação,
-   entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
-   Classes. */
+   574 jutsu). Genjutsu com o Rank E pronto (16 jutsu) — faltam D/C/B/
+   A/S dela, mais Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
+   categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1610,6 +1610,39 @@ const JUTSU_CATALOGO = [
     efeito:'Kinjutsu de Combinação: todos os conjuradores fazem Ataque de Ninjutsu à distância no mesmo alvo (usa o melhor resultado) causando 50d12 de dano de Raio — todo mundo num raio de 1,6km testa Destreza em desvantagem ou sofre 50d8 de dano de Raio (metade se passar; estruturas levam o dobro). Em Combinação, o dano cresce com o maior Carisma do grupo.'},
   {nome:'Liberação de Raio: Flecha do Estampido', tipo:'Ninjutsu', categoria:'Raio', rank:'S', custo:'27 Chakra', alcance:'45m', duracao:'Instantâneo',
     efeito:'Flecha de raio explode num cilindro de 18m de largura por 30m de altura: teste de Destreza ou 15d10 de dano de Raio (ignora resistência a Raio), e teste de Constituição ou Atordoado até o fim do turno seguinte — Sobrecarga: a linha até o alvo também sofre 10d6 de dano de Raio (ignorando resistência, redução e PV temporário).'},
+
+  {nome:'Afeto', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Vantagem em testes de Persuasão contra um alvo tocado (não hostil) enquanto durar — ele pode perceber a manipulação depois, se não combinar com a relação de vocês.'},
+  {nome:'Técnica do Clone', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria 2 duplicatas ilusórias a até 1,5m de você; por Reação, um ataque contra você rola 1d6 a menos (um clone "recebe o golpe" independente de acertar ou não) — o jutsu acaba quando os dois clones forem atingidos ou o tempo acabar; não engana quem tem Sentido Sensorial ou enxerga através de Genjutsu.'},
+  {nome:'Eco Distante', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'1 Chakra', alcance:'18m', duracao:'Até 1 minuto',
+    efeito:'Cria um som à distância (qualquer volume ou origem) que dura até 1 minuto ou até você dispensar.'},
+  {nome:'Dúvida', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Vantagem em testes de Intimidação contra um alvo tocado enquanto durar — ele pode perceber a manipulação depois, se não combinar com a relação de vocês.'},
+  {nome:'Codificar Pensamentos', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'8 horas',
+    efeito:'Grava uma memória, ideia ou mensagem sua (ou lida de outra mente, se estiver concentrado nisso) numa superfície, em forma de selos brilhantes que duram até 8 horas.'},
+  {nome:'Pensamentos Aprimorados', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'+2 num teste de Inteligência ou Sabedoria que você acabou de errar (pode virar sucesso) — só funciona 1 vez a cada 10 minutos.'},
+  {nome:'Explosão de Penas', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Ilusão de explodir em penas ao ser atingido corpo a corpo: rola 1d8 reduzindo o dano e se move 3m sem provocar Ataque de Oportunidade.'},
+  {nome:'Lampejo', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Clarão numa área de 1,5m: teste de Sabedoria ou o próximo ataque contra o alvo tem vantagem.'},
+  {nome:'Mensagem', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'36m', duracao:'1 rodada',
+    efeito:'Sussurra uma mensagem só pro alvo (que pode responder sussurrando de volta) — funciona através de obstáculos se você conhecer o alvo.'},
+  {nome:'Lasca Mental', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'1 Chakra', alcance:'18m', duracao:'1 rodada',
+    efeito:'Ataque de Genjutsu à distância: 1d6 de dano Psíquico e teste de Inteligência ou -1d4 no próximo teste de resistência do alvo até o fim do turno seguinte.'},
+  {nome:'Ilusão Menor', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'9m', duracao:'1 minuto',
+    efeito:'Cria um som ou a imagem de um objeto (até um cubo de 1,5m) que dura 1 minuto — não engana o tato, e um teste de Investigação ou Ilusão contra sua CD revela a farsa.'},
+  {nome:'Dor', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'A próxima vez que o alvo sofrer dano, soma +1d4 de dano Psíquico extra (aí o jutsu acaba).'},
+  {nome:'Liberação', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Toque', duracao:'Instantâneo',
+    efeito:'Remove um Genjutsu que você sabe estar afetando você ou um alvo tocado: teste de Ilusão em vantagem contra a CD do Genjutsu original.'},
+  {nome:'Transformar', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'1 Chakra', alcance:'Pessoal', duracao:'Concentração, até 10 minutos',
+    efeito:'Ilusão que muda sua aparência pra outra criatura, objeto ou animal do mesmo tamanho ou menor (puramente visual) — dá +4 em testes de Carisma pra enganar usando a nova forma (metade disso sem o Genjutsu Mudança de Voz ativo), 1×/rodada ou minuto.'},
+  {nome:'Golpe Certeiro', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'2 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'+2 no próximo ataque que você fizer — só funciona 1 vez por rodada.'},
+  {nome:'Mudança de Voz', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'1 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Imita com precisão a voz de alguém que você já ouviu — só é descoberto com um teste ativo pra perceber mentiras.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2081,7 +2114,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com o Rank E pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

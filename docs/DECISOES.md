@@ -6831,6 +6831,26 @@ automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
 (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
 regressão.
 
+## 169. Naruto 5e — Catálogo de Jutsu, início do Genjutsu (19/09/2026)
+
+Continuação da decisão #168, sétima categoria do Compêndio (268 jutsu
+ao todo, com os mesmos 6 ranks E-S do Ninjutsu Não-Elemental — as
+Naturezas elementais não têm Rank E, só Genjutsu e o Não-Elemental
+têm). As 16 jutsu do Rank E entraram no `JUTSU_CATALOGO` — 590 das
+~1400 entradas totais.
+
+Diferente dos jutsu elementais, os nomes do livro não têm prefixo de
+categoria (o livro chama só de "TRANSFORM", "CLONE TECHNIQUE" etc., sem
+"GENJUTSU: "), então o Hub também não inventou um prefixo artificial —
+mesmo padrão usado pro Ninjutsu Não-Elemental. Vários jutsu deste rank
+são utilitários de academia (Técnica do Clone, Transformar) em vez de
+combate direto, já que Genjutsu de baixo rank tende a ser mais sobre
+manipulação sutil do que dano.
+
+Testado com Playwright: catálogo mostra 591 opções (1 placeholder + 590
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

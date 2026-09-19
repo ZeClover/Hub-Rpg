@@ -1906,9 +1906,13 @@ passando.
       100% catalogados (574 de ~1400 no total, 41%). Testado com
       Playwright; `tsc`, lint, build e os 298 testes automáticos do
       projeto continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Genjutsu** (19/09/2026)
+      — decisão #169. As 16 jutsu do Rank E entraram no catálogo (590
+      de ~1400 no total) — sétima categoria do Compêndio. Testado com
+      Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~826 jutsu: Genjutsu (268), Taijutsu (175),
-      Bukijutsu (383), Invocação — categoria por categoria),
+      Jutsu (~810 jutsu: Genjutsu D/C/B/A/S (252 restantes), Taijutsu
+      (175), Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
