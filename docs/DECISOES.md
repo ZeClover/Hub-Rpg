@@ -6851,6 +6851,28 @@ Testado com Playwright: catálogo mostra 591 opções (1 placeholder + 590
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 170. Naruto 5e — Catálogo de Jutsu, Genjutsu Rank D (lote 1 de 5) (19/09/2026)
+
+Continuação da decisão #169. O Rank D do Genjutsu é o maior rank de
+qualquer categoria até agora (111 jutsu, mais que o dobro do maior
+lote anterior) — em vez de um só commit gigante, vai entrar em 5 lotes
+de ~20-25 jutsu, mesmo processo de sempre repetido por lote. Este
+primeiro lote (22 jutsu, de "Companheiro Animal" a "Detectar Intenção")
+entrou no `JUTSU_CATALOGO` — 612 das ~1400 entradas totais (38 de 268
+jutsu de Genjutsu).
+
+Traz a família "Corrupção" (9 variações: Ânimo, Aspereza, Audácia,
+Desdém, Inimizade, Fel, Insolência, Rancor, Temeridade), todas com a
+mesma estrutura de graus de sucesso (sucesso crítico dá imunidade
+temporária, falha e falha crítica escalam o efeito) — resumi essa
+estrutura de forma compacta em cada "efeito" em vez de repetir o texto
+inteiro, já que a mecânica de 4 graus é nova pro Hub (até agora só
+sucesso/falha binário).
+
+Testado com Playwright: catálogo mostra 613 opções (1 placeholder + 612
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

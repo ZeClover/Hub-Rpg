@@ -428,9 +428,11 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O
    Ninjutsu Não-Elemental e as 5 Naturezas elementais (Terra, Vento,
    Fogo, Água, Raio) estão 100% completos (todos os 6 ranks de cada,
-   574 jutsu). Genjutsu com o Rank E pronto (16 jutsu) — faltam D/C/B/
-   A/S dela, mais Taijutsu, Bukijutsu e Invocação, entrando aos poucos,
-   categoria por categoria, mesmo ritmo dos Clãs/Classes. */
+   574 jutsu). Genjutsu com o Rank E completo e o Rank D em andamento
+   (38 de 268 jutsu; Rank D é o maior de todos com 111 jutsu, entrando
+   em lotes menores) — faltam C/B/A/S dela, mais Taijutsu, Bukijutsu e
+   Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
+   dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1643,6 +1645,51 @@ const JUTSU_CATALOGO = [
     efeito:'+2 no próximo ataque que você fizer — só funciona 1 vez por rodada.'},
   {nome:'Mudança de Voz', tipo:'Genjutsu', categoria:'Genjutsu', rank:'E', custo:'1 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
     efeito:'Imita com precisão a voz de alguém que você já ouviu — só é descoberto com um teste ativo pra perceber mentiras.'},
+
+  {nome:'Companheiro Animal', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'3 Chakra', alcance:'9m', duracao:'Concentração, até 10 minutos',
+    efeito:'Teste de Carisma ou um animal fica Enfeitiçado e luta ao seu lado até chegar à metade dos PV (aí o jutsu acaba).'},
+  {nome:'Maldição', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Inimigos numa área de 9m testam Carisma: falha dá -1d4 em ataques, resistências e testes; falha crítica piora pra -1d6 e bloqueia bônus de jutsu de rank igual ou menor.'},
+  {nome:'Causar Medo', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Sabedoria a cada turno (imune para construtos e mortos-vivos): falha soma 1 rank de Medo de você (2 ranks e cai Derrubado na falha crítica); sucesso crítico encerra todo o Medo causado por este jutsu.'},
+  {nome:'Dissonância Encantadora', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Até 3 alvos testam Carisma (podem escolher falhar): na falha, suprime Enfeitiçado/Amedrontado neles ou os torna indiferentes a inimigos à sua escolha (até serem atacados).'},
+  {nome:'Manto de Sombras', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Aliado tocado ganha +1d4 pra se esconder de quem depende de visão — em penumbra ou escuridão, tentar identificar esse Genjutsu vem em desvantagem.'},
+  {nome:'Jato de Cores', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (cone de 4,5m)', duracao:'Instantâneo',
+    efeito:'Cone de luzes coloridas (4,5m): teste de Inteligência — sucesso dá só 1 rank de Ofuscado, falha deixa Cego até o fim do turno seguinte (na falha crítica, só percebe que não está realmente cego testando de novo a cada turno).'},
+  {nome:'Comando', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'1 rodada',
+    efeito:'Uma palavra de comando (Aproximar, Largar, Rastejar, Fugir ou Parar): teste de Sabedoria ou o alvo obedece no próprio turno seguinte (sem efeito em mortos-vivos ou comandos que causariam dano a ele).'},
+  {nome:'Duelo Compelido', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Sabedoria ou o alvo só quer lutar com você: -1d6 em ataques contra outros (ou, na falha crítica, incapaz de atacar qualquer outra pessoa) — acaba se você atacar outro alvo ou aceitar ajuda.'},
+  {nome:'Compreender Idiomas', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'3 Chakra', alcance:'Pessoal', duracao:'1 hora',
+    efeito:'Entende qualquer idioma falado por 1 hora; idiomas escritos também, se estiver tocando alguém que os entenda.'},
+  {nome:'Confiança', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'9m', duracao:'1 minuto',
+    efeito:'Até 3 aliados somam +2 em testes de atributo — o jutsu acaba no primeiro sucesso de cada um.'},
+  {nome:'Corrupção: Ânimo', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, bônus de dado em ataque/dano do alvo viram penalidade (na falha crítica, isso vale pra bônus de jutsu também).'},
+  {nome:'Corrupção: Aspereza', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, se o alvo lançar um jutsu que poupa aliados, precisa incluir 1 aliado como alvo também (na falha crítica, isso vale a cada jutsu enquanto durar).'},
+  {nome:'Corrupção: Audácia', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, ataques do alvo contra seus aliados perdem 1 dado de dano (2 dados na falha crítica).'},
+  {nome:'Corrupção: Desdém', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, toda vez que o alvo tentar interromper um jutsu com Reação, rola 1d20 e perde a Reação com 11 ou mais (6 ou mais na falha crítica).'},
+  {nome:'Corrupção: Inimizade', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'3 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, o alvo é forçado a gastar a Reação tentando interromper o jutsu de um aliado (uma vez, encerrando o jutsu); na falha crítica, isso vale pra todo jutsu de aliado enquanto durar.'},
+  {nome:'Corrupção: Fel', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, o alvo não consegue lançar jutsu em rank maior (gasta o Chakra mas o efeito fica no rank base); na falha crítica, é forçado a lançar sempre no rank máximo possível, do mesmo jeito.'},
+  {nome:'Corrupção: Insolência', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, bônus de dado de outros Genjutsu no alvo ficam pela metade (na falha crítica, não funcionam de jeito nenhum).'},
+  {nome:'Corrupção: Rancor', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade por 10 minutos): na falha, -2 em ataque e dano de Força ou Destreza (-4 na falha crítica).'},
+  {nome:'Corrupção: Temeridade', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'Concentração, até 1 minuto',
+    efeito:'Teste de Carisma (sucesso crítico dá imunidade até o turno seguinte do conjurador): na falha, o alvo perde bônus de deslocamento vindos de jutsu (testando de novo a cada turno); na falha crítica, isso também vale pra bônus de classe.'},
+  {nome:'Detectar Mal', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'4 Chakra', alcance:'18m', duracao:'10 minutos',
+    efeito:'Sabe se há alguém com intenção hostil a até 18m (sem saber a localização exata) por 10 minutos.'},
+  {nome:'Detectar Ilusões', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (3m)', duracao:'10 minutos',
+    efeito:'Sente Genjutsu de Rank D ou menor num raio de 3m — gasta a ação pra ver uma aura fraca no alvo afetado (não atravessa paredes, e não diz quantos ou de que rank).'},
+  {nome:'Detectar Intenção', tipo:'Genjutsu', categoria:'Genjutsu', rank:'D', custo:'3 Chakra', alcance:'9m', duracao:'Concentração, até 1 minuto',
+    efeito:'Se o alvo não perceber você, teste de Ilusão contra a Furtividade passiva dele revela a intenção mais imediata; se perceber, ele testa Sabedoria pra tentar esconder essa intenção.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2114,7 +2161,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com o Rank E pronto) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com Rank E completo e Rank D em andamento) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
