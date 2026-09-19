@@ -6788,6 +6788,23 @@ Testado com Playwright: catálogo mostra 559 opções (1 placeholder + 558
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 167. Naruto 5e — Catálogo de Jutsu, Liberação de Raio Rank A (19/09/2026)
+
+Continuação da decisão #166. As 10 jutsu do Rank A da Liberação de
+Raio entraram no `JUTSU_CATALOGO` — fecha 4 dos 6 ranks dessa natureza
+(68 das 74 jutsu de Raio; 568 das ~1400 entradas totais). Falta só o
+Rank S pra fechar Raio inteira.
+
+Traz Fazedor de Reis (Kinjutsu de Combinação de 110 Chakra que impõe
+uma penalidade pesada de "ressaca" até um descanso longo — mecânica de
+risco/recompensa nova no sistema) e Clone de Raio, versão elétrica do
+Clone de Terra (decisão #144) e Clone de Água (decisão #160), fechando
+o trio de clones elementais catalogados até agora.
+
+Testado com Playwright: catálogo mostra 569 opções (1 placeholder + 568
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
