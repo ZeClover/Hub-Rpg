@@ -428,9 +428,9 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental, Liberação de Terra e Liberação de Vento estão 100%
    completos (todos os 6 ranks de cada, 351 jutsu). Liberação de Fogo
-   com Ranks D, C e B prontos (59 de 75 jutsu) — faltam A/S dela, mais
-   Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando aos
-   poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
+   com Ranks D, C, B e A prontos (69 de 75 jutsu) — falta só o S dela,
+   mais Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação, entrando
+   aos poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -1270,6 +1270,27 @@ const JUTSU_CATALOGO = [
     efeito:'Concentra um mini-sol a 1,6km de altura que você pode atrasar até 3 turnos antes de deixar cair — quanto mais atrasa, maior o raio e o dano (de 18m/12d8+12 sem atraso até 48m/50d8+50 com 3 turnos): teste de Constituição ou o dano de Fogo cheio e 3 ranks de Queimado (metade se passar). Em Combinação, o dano cresce por conjurador extra e o dado sobe conforme o maior Carisma do grupo.'},
   {nome:'Liberação de Fogo: Raio Solar', tipo:'Ninjutsu', categoria:'Fogo', rank:'B', custo:'14 Chakra', alcance:'Pessoal (linha de 18m)', duracao:'Concentração, até 1 minuto',
     efeito:'Feixe de luz branca e quente numa linha de 1,5m de largura por 18m: teste de Constituição ou 6d10+6 de dano de Fogo e Cego até o fim do seu próximo turno (metade do dano e nada mais se passar) — pode disparar um novo feixe a cada turno enquanto durar.'},
+
+  {nome:'Liberação de Fogo: Fervor Flamejante', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Força e Destreza viram 20 (ou +2 se já forem 20); quem te acerta corpo a corpo sofre 15 de dano de Fogo espalhado a 3m; Taijutsu de jutsu somam +2d8+2 de dano de Fogo 2×/turno, e Taijutsu/Bukijutsu passam a causar dano de Fogo — no fim, ganha 4 ranks de Exaustão por 1 hora (só descanso remove) e não pode lançar de novo até descansar.'},
+  {nome:'Liberação de Fogo: Borboleta Carmesim', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'20 Chakra', alcance:'1,6km (cubo de 27m)', duracao:'Instantâneo',
+    efeito:'Enxame de projéteis de fogo numa área de 27m que explode no fim do seu próximo turno: teste de Destreza em desvantagem ou 9d10+9 de dano de Fogo e 2 ranks de Queimado (mesmo passando, ainda pega metade do dano e 1 rank de Queimado).'},
+  {nome:'Liberação de Fogo: Míssil de Fogo Retardado', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'19 Chakra', alcance:'27m', duracao:'Concentração, até 1 minuto',
+    efeito:'Uma esfera de luz fica na sua mão acumulando dano (começa em 12d8+12, +6d8+6 a cada turno que não detona); quando termina (por vontade, perda de concentração, ou Ataque de Ninjutsu à distância acertando um alvo) explode numa esfera de 6m: teste de Destreza ou sofre todo o dano acumulado (metade se passar).'},
+  {nome:'Liberação de Fogo: Devastação de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'19 Chakra', alcance:'Pessoal (cone de 36m)', duracao:'Instantâneo',
+    efeito:'Cone de fogo de até 36m (você escolhe o alcance): teste de Destreza ou 14d6+14 de dano de Fogo e 2 ranks de Queimado (metade se passar) — quem chega a 0 PV vira cinzas, e a área continua pegando fogo depois.'},
+  {nome:'Liberação de Fogo: Tempestade de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'20 Chakra', alcance:'36m', duracao:'Instantâneo',
+    efeito:'Até 10 cubos de 3m de fogo, encostados uns nos outros, no formato que você quiser: teste de Destreza ou 20d4+20 de dano de Fogo (metade se passar) — quem estiver em mais de um cubo só é afetado uma vez.'},
+  {nome:'Liberação de Fogo: Grande Absorção de Fogo', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'20 Chakra', alcance:'36m', duracao:'1 rodada',
+    efeito:'Absorve todo fogo numa área de 36m, apagando-o e curando 10 PV por cada cubo de 1,5m de fogo absorvido — ninguém consegue gerar fogo ali até o início do seu próximo turno.'},
+  {nome:'Liberação de Fogo: Ignição', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'18 Chakra', alcance:'18m', duracao:'Instantâneo',
+    efeito:'Incendeia instantaneamente tudo inflamável numa área de 18m (metal fica incandescente, tecido pega fogo): teste de Constituição ou 3 ranks de Queimado, com desvantagem no teste de Sobrevivência pra apagar.'},
+  {nome:'Liberação de Fogo: Nova', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'Especial (110 Chakra)', alcance:'75m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: esfera de fogo que puxa tudo num raio de 36m como um poço gravitacional (teste de Força ou é puxado 27m, 13,5m se passar); quem fica a até 9m dela testa Constituição ou sofre 50d4+50 de dano de Fogo (metade se passar) — quem chega a 0 PV vira cinzas. Em Combinação, o dano cresce por conjurador extra e o alcance/raio crescem com o maior Carisma do grupo.'},
+  {nome:'Liberação de Fogo: Chama Implacável', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'Especial (110 Chakra)', alcance:'Toque', duracao:'1 minuto',
+    efeito:'Kinjutsu: revive alguém morto há menos de 10 minutos com PV e Chakra cheios por 1 minuto — nesse tempo, todo dano que causa vira Fogo (ignorando resistência, tratando imunidade como resistência); ao fim do tempo (ou se cair a 0 PV de novo), vira cinzas pra sempre, sem chance de reanimação. Em Combinação, a duração aumenta conforme o número de conjuradores e o maior Carisma do grupo (podendo chegar a 1 hora ou até permanente).'},
+  {nome:'Liberação de Fogo: Explosão Solar', tipo:'Ninjutsu', categoria:'Fogo', rank:'A', custo:'19 Chakra', alcance:'45m', duracao:'Instantâneo',
+    efeito:'Luz solar ofuscante numa área de 18m: teste de Constituição ou 12d6+12 de dano de Fogo e Cego por 1 minuto (metade do dano e sem cegueira se passar).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1741,7 +1762,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos; Liberação de Fogo com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra e Liberação de Vento 100% completos; Liberação de Fogo com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

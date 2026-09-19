@@ -1846,8 +1846,13 @@ passando.
       (19/09/2026) — decisão #156. As 14 jutsu do Rank B entraram no
       catálogo (59 de 75 jutsu de Fogo; 410 de ~1400 no total). Testado
       com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Fogo Rank A**
+      (19/09/2026) — decisão #157. As 10 jutsu do Rank A entraram no
+      catálogo (69 de 75 jutsu de Fogo; 420 de ~1400 no total) — falta
+      só o S pra fechar Fogo inteira. Testado com Playwright; `tsc` e
+      lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~990 jutsu: Fogo A/S, Água/Raio, Genjutsu,
+      Jutsu (~980 jutsu: Fogo S, Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

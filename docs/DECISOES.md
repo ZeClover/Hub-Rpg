@@ -6597,6 +6597,24 @@ Testado com Playwright: catálogo mostra 411 opções (1 placeholder + 410
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 157. Naruto 5e — Catálogo de Jutsu, Liberação de Fogo Rank A (19/09/2026)
+
+Continuação da decisão #156. As 10 jutsu do Rank A da Liberação de
+Fogo entraram no `JUTSU_CATALOGO` — fecha 4 dos 6 ranks dessa natureza
+(69 das 75 jutsu de Fogo; 420 das ~1400 entradas totais). Falta só o
+Rank S pra fechar Fogo inteira.
+
+Traz Nova (Kinjutsu de Combinação de 110 Chakra, poço gravitacional que
+puxa e depois incinera) e Chama Implacável, o primeiro jutsu de
+ressureição temporária do sistema — devolve alguém morto há até 10
+minutos por 1 minuto de vida emprestada, período em que todo dano que
+causa vira Fogo e ignora resistências, terminando com a criatura virando
+cinzas de forma permanente e irreversível.
+
+Testado com Playwright: catálogo mostra 421 opções (1 placeholder + 420
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
