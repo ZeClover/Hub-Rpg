@@ -6988,6 +6988,25 @@ Testado com Playwright: catálogo mostra 722 opções (1 placeholder + 721
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 176. Naruto 5e — Catálogo de Jutsu, Genjutsu Rank C (lote 2 de 3) (19/09/2026)
+
+Continuação da decisão #175. Segundo lote do Rank C de Genjutsu (20
+jutsu, de "Fuga das Pétalas" a "Campo de Lótus Venenoso") entrou no
+`JUTSU_CATALOGO` — 741 das ~1400 entradas totais (40 de 60 jutsu de
+Genjutsu Rank C; 167 de 268 de Genjutsu no total).
+
+O último jutsu do lote ("Campo de Lótus Venenoso") tem um formato
+diferente de todos os outros até agora: custo, alcance e duração são
+literalmente "Especial" no livro, porque o efeito muda de tier em tier
+conforme quanto Chakra é investido de uma vez (8/16/24/32), sem ranks
+tradicionais. Mantive os três campos como "Especial" (copiando a
+mecânica do livro) e descrevi os quatro tiers dentro do "efeito", sem
+inventar uma estrutura de rank que o jutsu não tem no original.
+
+Testado com Playwright: catálogo mostra 742 opções (1 placeholder + 741
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

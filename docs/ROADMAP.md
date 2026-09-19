@@ -1943,8 +1943,13 @@ passando.
       1 de 3)** (19/09/2026) — decisão #175. 20 dos 60 jutsu do Rank C
       entraram no catálogo (147 de 268 de Genjutsu; 721 de ~1400 no
       total). Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Genjutsu Rank C (lote 2 de 3)**
+      (19/09/2026) — decisão #176. Mais 20 jutsu do Rank C entraram no
+      catálogo (40 de 60 jutsu do Rank C; 167 de 268 de Genjutsu; 741 de
+      ~1400 no total). Testado com Playwright; `tsc` e lint continuam
+      limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~679 jutsu: Genjutsu C restante (40) + B/A/S (80),
+      Jutsu (~659 jutsu: Genjutsu C restante (20) + B/A/S (80),
       Taijutsu (175), Bukijutsu (383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
