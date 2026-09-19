@@ -7,7 +7,10 @@ import { SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
 import { AdicionarInimigo } from "./adicionar-inimigo";
+import { Avisos, type AvisoView } from "./avisos";
+import { Chat } from "./chat";
 import { CriarPersonagem } from "./criar-personagem";
+import { Enquetes, type EnqueteView } from "./enquetes";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { IdentidadeCampanha } from "./identidade-campanha";
@@ -120,6 +123,37 @@ export default async function PaginaCampanha({
   }));
   const agoraMs = new Date().getTime();
 
+  // Avisos e enquetes (decisão #136): sem campo de mestre nenhum aqui, então
+  // — diferente do Manual do Mestre e das notas de sessão — a mesma consulta
+  // serve pra mestre e jogador.
+  const [avisosBase, enquetesBase] = await Promise.all([
+    banco.aviso.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "desc" },
+      select: { id: true, texto: true, fixado: true, criadoEm: true },
+    }),
+    banco.enquete.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "desc" },
+      select: {
+        id: true,
+        pergunta: true,
+        opcoes: true,
+        encerrada: true,
+        criadoEm: true,
+        votos: { select: { usuarioId: true, opcaoIndex: true } },
+      },
+    }),
+  ]);
+  const avisos: AvisoView[] = avisosBase.map((a) => ({
+    ...a,
+    criadoEm: a.criadoEm.toISOString(),
+  }));
+  const enquetes: EnqueteView[] = enquetesBase.map((e) => ({
+    ...e,
+    criadoEm: e.criadoEm.toISOString(),
+  }));
+
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
 
@@ -187,6 +221,8 @@ export default async function PaginaCampanha({
           sessoes={sessoes}
           pessoas={pessoas}
           agoraMs={agoraMs}
+          avisos={avisos}
+          enquetes={enquetes}
         />
       ) : (
         <VisaoDoJogador
@@ -204,6 +240,8 @@ export default async function PaginaCampanha({
           sessoes={sessoes}
           pessoas={pessoas}
           agoraMs={agoraMs}
+          avisos={avisos}
+          enquetes={enquetes}
         />
       )}
     </main>
@@ -228,6 +266,8 @@ function VisaoDoMestre({
   sessoes,
   pessoas,
   agoraMs,
+  avisos,
+  enquetes,
 }: {
   campanhaId: string;
   nome: string;
@@ -246,6 +286,8 @@ function VisaoDoMestre({
   sessoes: SessaoView[];
   pessoas: { usuarioId: string; nome: string }[];
   agoraMs: number;
+  avisos: AvisoView[];
+  enquetes: EnqueteView[];
 }) {
   const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
@@ -305,6 +347,17 @@ function VisaoDoMestre({
         pessoas={pessoas}
         agoraMs={agoraMs}
       />
+
+      <Avisos campanhaId={campanhaId} avisos={avisos} souMestre />
+
+      <Enquetes
+        campanhaId={campanhaId}
+        enquetes={enquetes}
+        souMestre
+        meuUsuarioId={idDoMestre}
+      />
+
+      <Chat campanhaId={campanhaId} meuUsuarioId={idDoMestre} />
 
       <section className="mt-8">
         <h2 className="font-titulo text-xl">Jogadores</h2>
@@ -440,6 +493,8 @@ function VisaoDoJogador({
   sessoes,
   pessoas,
   agoraMs,
+  avisos,
+  enquetes,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -451,6 +506,8 @@ function VisaoDoJogador({
   sessoes: SessaoView[];
   pessoas: { usuarioId: string; nome: string }[];
   agoraMs: number;
+  avisos: AvisoView[];
+  enquetes: EnqueteView[];
 }) {
   return (
     <>
@@ -484,14 +541,27 @@ function VisaoDoJogador({
       </section>
 
       {!convidado && (
-        <Sessoes
-          campanhaId={campanhaId}
-          sessoes={sessoes}
-          souMestre={false}
-          meuUsuarioId={meuUsuarioId}
-          pessoas={pessoas}
-          agoraMs={agoraMs}
-        />
+        <>
+          <Sessoes
+            campanhaId={campanhaId}
+            sessoes={sessoes}
+            souMestre={false}
+            meuUsuarioId={meuUsuarioId}
+            pessoas={pessoas}
+            agoraMs={agoraMs}
+          />
+
+          <Avisos campanhaId={campanhaId} avisos={avisos} souMestre={false} />
+
+          <Enquetes
+            campanhaId={campanhaId}
+            enquetes={enquetes}
+            souMestre={false}
+            meuUsuarioId={meuUsuarioId}
+          />
+
+          <Chat campanhaId={campanhaId} meuUsuarioId={meuUsuarioId} />
+        </>
       )}
     </>
   );

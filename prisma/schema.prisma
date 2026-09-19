@@ -59,6 +59,14 @@ enum RespostaPresenca {
   NAO_VOU
 }
 
+/// De onde veio a notificação (decisão #136) — só pra escolher o ícone/rótulo
+/// na tela; o texto de verdade já vem pronto no campo `texto` de `Notificacao`.
+enum TipoNotificacao {
+  SESSAO_MARCADA
+  AVISO_NOVO
+  ENQUETE_NOVA
+}
+
 // ---------------------------------------------------------------------------
 // Identidade
 // ---------------------------------------------------------------------------
@@ -79,6 +87,11 @@ model Usuario {
   participacoes   Participacao[]
   personagens     Personagem[]
   sessaoPresencas SessaoPresenca[]
+  mensagensChat   MensagemChat[]
+  avisos          Aviso[]
+  enquetes        Enquete[]
+  enqueteVotos    EnqueteVoto[]
+  notificacoes    Notificacao[]
 
   @@map("usuarios")
 }
@@ -128,6 +141,10 @@ model Campanha {
   participacoes Participacao[]
   personagens   Personagem[]
   sessoes       Sessao[]
+  mensagensChat MensagemChat[]
+  avisos        Aviso[]
+  enquetes      Enquete[]
+  notificacoes  Notificacao[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -247,4 +264,100 @@ model SessaoPresenca {
   @@unique([sessaoId, usuarioId])
   @@index([usuarioId])
   @@map("sessoes_presencas")
+}
+
+// ---------------------------------------------------------------------------
+// Comunicação (decisão #136)
+// ---------------------------------------------------------------------------
+
+/// Uma mensagem do chat simples da campanha. Sem edição nem exclusão — é
+/// um histórico de conversa, não um documento pra lapidar.
+model MensagemChat {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  autorId    String   @db.Uuid
+  texto      String
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  autor    Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId, criadoEm])
+  @@map("mensagens_chat")
+}
+
+/// Aviso fixado no mural da campanha — só o mestre publica (é o quadro de
+/// avisos da mesa, não um mural aberto). `fixado` decide se aparece no topo;
+/// não fixado não significa escondido, só não prioritário.
+model Aviso {
+  id           String   @id @default(uuid()) @db.Uuid
+  campanhaId   String   @db.Uuid
+  autorId      String   @db.Uuid
+  texto        String
+  fixado       Boolean  @default(false)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  autor    Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId])
+  @@map("avisos")
+}
+
+/// Enquete simples — o mestre pergunta, qualquer participante vota (uma vez,
+/// pode trocar de ideia até a enquete fechar), o mestre encerra quando quiser
+/// contar como definitivo. Sem prazo automático: fechar é sempre uma ação
+/// explícita do mestre.
+model Enquete {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  autorId    String   @db.Uuid
+  pergunta   String
+  opcoes     String[]
+  encerrada  Boolean  @default(false)
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha      @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  autor    Usuario       @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  votos    EnqueteVoto[]
+
+  @@index([campanhaId])
+  @@map("enquetes")
+}
+
+/// Um voto — `opcaoIndex` aponta pra posição em `Enquete.opcoes` (enquete
+/// simples não precisa de tabela de opções à parte). Uma linha por pessoa
+/// por enquete; votar de novo troca a resposta em vez de somar outro voto.
+model EnqueteVoto {
+  id         String @id @default(uuid()) @db.Uuid
+  enqueteId  String @db.Uuid
+  usuarioId  String @db.Uuid
+  opcaoIndex Int
+
+  enquete Enquete @relation(fields: [enqueteId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([enqueteId, usuarioId])
+  @@map("enquetes_votos")
+}
+
+/// Notificação interna simples — sem push nem e-mail (custo zero, decisão
+/// #5), só uma lista dentro do próprio Hub. `texto` já vem pronto no momento
+/// em que a notificação nasce, pra continuar fazendo sentido mesmo se a
+/// sessão/aviso/enquete que a gerou for editado ou apagado depois.
+model Notificacao {
+  id         String          @id @default(uuid()) @db.Uuid
+  usuarioId  String          @db.Uuid
+  campanhaId String          @db.Uuid
+  tipo       TipoNotificacao
+  texto      String
+  lida       Boolean         @default(false)
+  criadoEm   DateTime        @default(now())
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, lida])
+  @@map("notificacoes")
 }

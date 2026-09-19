@@ -1735,8 +1735,25 @@ edição do mestre, múltiplas fichas por jogador, etc.).
   - Migração `0014_sessoes_e_presenca.sql` — coluna nova em `sessoes` e
     tabela nova `sessoes_presencas`, idempotente. `tsc`, lint, `next
     build` e os 298 testes automáticos continuam limpos
-- [ ] **Etapa 3 — Comunicação** (planejada): chat da campanha, avisos
-      fixados, enquetes, notificações internas
+- [x] **Etapa 3 — Comunicação** (19/09/2026) — decisão #136.
+  - **Chat simples da campanha**: tabela `MensagemChat`, sem edição nem
+    exclusão. Qualquer participante lê e escreve; busca sozinho por
+    polling (a cada 6s), sem WebSocket nem processo à parte (custo
+    zero, decisão #5)
+  - **Avisos fixados**: tabela `Aviso` — mestre publica/edita/apaga/
+    fixa-desfixa; jogador só lê. Fixado só decide a ordem, não esconde
+    o resto
+  - **Enquetes**: tabelas `Enquete`/`EnqueteVoto` — mestre pergunta,
+    qualquer participante vota (pode trocar até fechar), só mestre
+    encerra (sem reabrir). Contagem de votos pública pra todo mundo
+  - **Notificações internas**: tabela `Notificacao` + sino no
+    cabeçalho de toda tela logada (não só na campanha). Sem push nem
+    e-mail (custo zero). Gerada automaticamente quando: sessão nova é
+    marcada, aviso novo é publicado, ou enquete nova é criada — pra
+    todo mundo da campanha menos quem fez a ação
+  - Migração `0015_chat_avisos_enquetes_notificacoes.sql` — só tabelas
+    novas. `tsc`, lint, `next build` e os 298 testes automáticos
+    continuam limpos
 - [ ] **Etapa 4 — Mesa ao Vivo compartilhada** (planejada): iniciativa e
       HP visíveis aos jogadores (só leitura), modo espectador, HP rápido
       de inimigo com mais opções, condição em massa, relógio simples

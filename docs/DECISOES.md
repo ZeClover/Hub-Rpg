@@ -6073,6 +6073,61 @@ automáticos continuam limpos. Sem teste de banco novo, mesmo critério
 da Etapa 1 (rotas de campanha não tinham teste automático de banco
 antes; a lógica pura de permissão que já tinha teste não mudou).
 
+## 136. Hub — Etapa 3 de melhorias organizacionais: Chat, Avisos, Enquetes e Notificações internas (19/09/2026)
+
+Terceira fatia do pedido de 53 ideias (decisão #134). Auditoria antes de
+tocar em código: nenhum dos quatro conceitos (chat de campanha, mural de
+avisos, enquete, notificação interna) existia no schema nem em código —
+diferente de `Sessao` na Etapa 2, esta etapa nasceu inteira do zero.
+
+**1. Chat simples da campanha.** Tabela nova `MensagemChat` — sem edição
+nem exclusão, é histórico de conversa. Qualquer participante (mestre ou
+jogador já ligado à campanha) lê e escreve; quem só tem o link e ainda
+não entrou não vê nada. Diferente do resto da página, o chat **não**
+chega pela consulta do Server Component: o componente busca sozinho
+(`GET /api/campanhas/[id]/chat`) assim que monta e repete a cada 6
+segundos (polling simples com `setInterval`, sem WebSocket nem processo
+à parte — custo zero, decisão #5).
+
+**2. Avisos fixados.** Tabela nova `Aviso` — só o mestre publica, edita,
+apaga e fixa/desfixa; jogador só lê. `fixado` só decide se aparece no
+topo da lista, não esconde os demais.
+
+**3. Enquetes.** Tabelas novas `Enquete` e `EnqueteVoto` — o mestre
+pergunta (pergunta + lista de opções), qualquer participante vota uma
+vez por enquete (`upsert`: votar de novo troca a resposta, não soma
+outro voto) enquanto ela estiver aberta, e só o mestre encerra — sem
+reabrir depois. Contagem de votos é pública pra todo mundo: não é campo
+de mestre (decisão #13 não se aplica aqui), é o resultado que todo
+mundo está votando.
+
+**4. Notificações internas.** Tabela nova `Notificacao` — sem push nem
+e-mail (custo zero, decisão #5), só uma lista dentro do próprio Hub,
+com um sino no cabeçalho de todas as telas logadas (`layout.tsx`, não só
+na página da campanha, porque cobre qualquer mesa). Gerada
+automaticamente (helper `notificarParticipantes` em
+`src/lib/notificacoes.ts`) sempre que: uma sessão nova é marcada
+(reaproveitando a rota da Etapa 2), um aviso novo é publicado, ou uma
+enquete nova é criada — nos três casos, pra todo mundo da campanha menos
+quem fez a ação. O texto já vem pronto no momento em que a notificação
+nasce (não é montado na hora de exibir), pra continuar fazendo sentido
+mesmo se a sessão/aviso/enquete que a gerou for editado ou apagado
+depois.
+
+**Migração `0015_chat_avisos_enquetes_notificacoes.sql`** — só tabelas
+novas, idempotente (`IF NOT EXISTS`/`DO $$ ... EXCEPTION WHEN
+duplicate_object`). Nenhuma tabela ou coluna existente muda.
+
+**Fora desta etapa, de propósito:** iniciativa e HP compartilhados com
+jogador na Mesa ao Vivo, modo espectador, relógio de sessão (Etapa 4) —
+lista completa no ROADMAP.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos continuam limpos. Sem teste de banco novo — rotas novas
+seguem o mesmo critério das etapas anteriores (permissão simples,
+verificada manualmente pelo padrão 404-não-403 já usado em toda rota de
+campanha).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

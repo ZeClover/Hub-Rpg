@@ -1,9 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { notificarParticipantes } from "@/lib/notificacoes";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string }> };
+
+const FORMATADOR_DATA = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "long",
+  timeStyle: "short",
+});
 
 /*
   Criar uma sessão (decisão #135) — só o mestre. `numero` é automático:
@@ -51,6 +57,13 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
     },
     select: { id: true, numero: true, data: true },
   });
+
+  await notificarParticipantes(
+    campanhaId,
+    "SESSAO_MARCADA",
+    `Sessão ${sessao.numero} marcada para ${FORMATADOR_DATA.format(sessao.data)}.`,
+    usuario.id,
+  );
 
   return NextResponse.json({ sessao }, { status: 201 });
 }

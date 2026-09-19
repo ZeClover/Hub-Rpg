@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 
 import { usuarioAtual } from "@/lib/usuario";
 
+import { SinoNotificacoes } from "./sino-notificacoes";
+
 /*
   Moldura de tudo que exige estar logado.
 
@@ -44,6 +46,7 @@ export default async function LayoutDoHub({
           </nav>
 
           <div className="ml-auto flex items-center gap-3">
+            <SinoNotificacoes />
             {usuario.avatarUrl && (
               <Image
                 src={usuario.avatarUrl}
