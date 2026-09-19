@@ -150,14 +150,16 @@ model Campanha {
   /// null enquanto o mestre nunca abriu a Mesa ao Vivo desta campanha.
   iniciativaAtual Json?
 
-  sistema       Sistema        @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
-  participacoes Participacao[]
-  personagens   Personagem[]
-  sessoes       Sessao[]
-  mensagensChat MensagemChat[]
-  avisos        Aviso[]
-  enquetes      Enquete[]
-  notificacoes  Notificacao[]
+  sistema              Sistema              @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
+  participacoes        Participacao[]
+  personagens          Personagem[]
+  sessoes              Sessao[]
+  mensagensChat        MensagemChat[]
+  avisos               Aviso[]
+  enquetes             Enquete[]
+  notificacoes         Notificacao[]
+  camposPersonalizados CampoPersonalizado[]
+  conquistas           Conquista[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -373,4 +375,59 @@ model Notificacao {
 
   @@index([usuarioId, lida])
   @@map("notificacoes")
+}
+
+// ---------------------------------------------------------------------------
+// Extras da campanha (decisão #140)
+// ---------------------------------------------------------------------------
+
+/// O tipo escolhe qual dos três campos de valor vale — só um deles é
+/// preenchido por vez, os outros dois ficam nulos. `CONTADOR` e `NUMERO`
+/// guardam os dois em `valorNumero`; a diferença é só de interface (contador
+/// ganha botões de +1/-1 rápidos, número é um campo livre de digitar).
+enum TipoCampoPersonalizado {
+  TEXTO
+  NUMERO
+  CONTADOR
+  BOOLEANO
+}
+
+/// Campo livre que o mestre cria pra guardar algo que a campanha precisa
+/// acompanhar e não tem uma casa própria no Hub (clima da cena, ouro do
+/// grupo, "modo hardcore ligado" etc.) — só o mestre cria/edita/apaga, mas
+/// aparece pra qualquer participante, igual a identidade da campanha
+/// (decisão #134), porque não guarda nada sensível.
+model CampoPersonalizado {
+  id            String                 @id @default(uuid()) @db.Uuid
+  campanhaId    String                 @db.Uuid
+  nome          String
+  tipo          TipoCampoPersonalizado
+  valorTexto    String?
+  valorNumero   Float?
+  valorBooleano Boolean?
+  criadoEm      DateTime               @default(now())
+  atualizadoEm  DateTime               @updatedAt
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId])
+  @@map("campos_personalizados")
+}
+
+/// Marco que o mestre declara pra campanha ("o grupo derrotou o Dragão
+/// Vermelho") — sem nenhuma relação com as conquistas de Campanha Livre
+/// (aquelas vivem dentro do `dados` json da própria ficha daquele sistema,
+/// e não devem ser mexidas). Só o mestre publica/edita/apaga; qualquer
+/// participante lê, como um mural de "já rolou isso na nossa campanha".
+model Conquista {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  titulo     String
+  descricao  String?
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId])
+  @@map("conquistas_campanha")
 }

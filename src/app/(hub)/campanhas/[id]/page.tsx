@@ -8,7 +8,9 @@ import { usuarioAtual } from "@/lib/usuario";
 
 import { AdicionarInimigo } from "./adicionar-inimigo";
 import { Avisos, type AvisoView } from "./avisos";
+import { CamposPersonalizados, type CampoView } from "./campos-personalizados";
 import { Chat } from "./chat";
+import { Conquistas, type ConquistaView } from "./conquistas";
 import { CriarPersonagem } from "./criar-personagem";
 import { Enquetes, type EnqueteView } from "./enquetes";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
@@ -156,6 +158,34 @@ export default async function PaginaCampanha({
     criadoEm: e.criadoEm.toISOString(),
   }));
 
+  // Campos personalizados e conquistas (decisão #140): mesmo caso de
+  // avisos/enquetes, sem nada de mestre aqui — a mesma consulta serve pra
+  // mestre e jogador.
+  const [camposBase, conquistasBase] = await Promise.all([
+    banco.campoPersonalizado.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "asc" },
+      select: {
+        id: true,
+        nome: true,
+        tipo: true,
+        valorTexto: true,
+        valorNumero: true,
+        valorBooleano: true,
+      },
+    }),
+    banco.conquista.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "desc" },
+      select: { id: true, titulo: true, descricao: true, criadoEm: true },
+    }),
+  ]);
+  const campos: CampoView[] = camposBase;
+  const conquistas: ConquistaView[] = conquistasBase.map((c) => ({
+    ...c,
+    criadoEm: c.criadoEm.toISOString(),
+  }));
+
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
 
@@ -226,6 +256,8 @@ export default async function PaginaCampanha({
           agoraMs={agoraMs}
           avisos={avisos}
           enquetes={enquetes}
+          campos={campos}
+          conquistas={conquistas}
         />
       ) : (
         <VisaoDoJogador
@@ -260,6 +292,8 @@ export default async function PaginaCampanha({
           agoraMs={agoraMs}
           avisos={avisos}
           enquetes={enquetes}
+          campos={campos}
+          conquistas={conquistas}
         />
       )}
     </main>
@@ -287,6 +321,8 @@ function VisaoDoMestre({
   agoraMs,
   avisos,
   enquetes,
+  campos,
+  conquistas,
 }: {
   campanhaId: string;
   nome: string;
@@ -308,6 +344,8 @@ function VisaoDoMestre({
   agoraMs: number;
   avisos: AvisoView[];
   enquetes: EnqueteView[];
+  campos: CampoView[];
+  conquistas: ConquistaView[];
 }) {
   const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
@@ -389,6 +427,10 @@ function VisaoDoMestre({
         souMestre
         meuUsuarioId={idDoMestre}
       />
+
+      <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre />
+
+      <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre />
 
       <Chat campanhaId={campanhaId} meuUsuarioId={idDoMestre} />
 
@@ -529,6 +571,8 @@ function VisaoDoJogador({
   agoraMs,
   avisos,
   enquetes,
+  campos,
+  conquistas,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -543,6 +587,8 @@ function VisaoDoJogador({
   agoraMs: number;
   avisos: AvisoView[];
   enquetes: EnqueteView[];
+  campos: CampoView[];
+  conquistas: ConquistaView[];
 }) {
   return (
     <>
@@ -595,6 +641,10 @@ function VisaoDoJogador({
             souMestre={false}
             meuUsuarioId={meuUsuarioId}
           />
+
+          <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre={false} />
+
+          <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre={false} />
 
           <Chat campanhaId={campanhaId} meuUsuarioId={meuUsuarioId} />
         </>

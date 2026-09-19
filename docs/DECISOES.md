@@ -6319,6 +6319,43 @@ rota nova reaproveitando o modelo que já existia.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 140. Hub — Campos personalizados da campanha + Conquistas da campanha (19/09/2026)
+
+Terceira fatia do backlog de "demais ideias" (decisão #134), ideias #95
+e #103 do pedido original. Agrupadas porque são do mesmo formato:
+mestre gerencia, qualquer participante lê — mesmo padrão de Avisos
+(decisão #136), sem nada de mestre escondido dentro.
+
+**1. Campos personalizados.** Tabela nova `CampoPersonalizado` — o
+mestre cria um campo com nome e um de quatro tipos (Texto, Número,
+Contador, Sim/Não) pra acompanhar algo que a campanha precisa e não tem
+casa própria no Hub ("Ouro do grupo", "Clima da cena", "Modo hardcore
+ligado"). Contador e Número guardam o valor na mesma coluna
+(`valorNumero`) — a diferença é só de interface: Contador ganha botões
+de +1/-1 rápidos (rota aceita um atalho `{ delta }`), Número é um campo
+livre de digitar. Só o mestre cria/edita/apaga; qualquer participante
+lê o valor atual.
+
+**2. Conquistas da campanha.** Tabela nova `Conquista` (mapeada como
+`conquistas_campanha` no banco, de propósito, pra nunca confundir com
+as conquistas de Campanha Livre — aquelas vivem no `dados` json da
+própria ficha daquele sistema e não são tocadas aqui) — o mestre
+declara um marco ("o grupo derrotou o Dragão Vermelho"), com título e
+descrição opcional. Só o mestre publica/edita/apaga; qualquer
+participante lê, como um mural de "já rolou isso nesta campanha".
+
+**Onde aparecem:** as duas seções moram na página da campanha, entre
+Enquetes e Chat, pra mestre e jogador igual.
+
+**Migração `0018_campos_personalizados_e_conquistas.sql`** — só tabelas
+novas, idempotente (`IF NOT EXISTS`/`DO $$ ... EXCEPTION WHEN
+duplicate_object`, mesmo idioma simples das migrações 0013-0016 — o
+defeito da migração 0017 foi um bloco `DO` com laço e `DECLARE`, bem
+mais complexo que este `CREATE TYPE`/`ADD CONSTRAINT` de sempre).
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

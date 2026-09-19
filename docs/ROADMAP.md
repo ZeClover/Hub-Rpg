@@ -1792,11 +1792,18 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       (o seletor "Adicionar outra ficha" da campanha podia arrancar uma
       ficha de outra campanha em silêncio). Sem migração. `tsc`, lint,
       `next build` e os 302 testes automáticos continuam limpos
+- [x] **Campos personalizados da campanha + Conquistas da campanha**
+      (19/09/2026) — decisão #140. `CampoPersonalizado` (Texto/Número/
+      Contador/Sim-Não, mestre gerencia, todos leem) e `Conquista`
+      (marco que o mestre declara, tabela `conquistas_campanha` —
+      nome de propósito, nunca confundir com a conquista de Campanha
+      Livre). Migração `0018_campos_personalizados_e_conquistas.sql`
+      — só tabelas novas. `tsc`, lint, `next build` e os 302 testes
+      automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,
-      contador de inimigos, cards compartilháveis, exportar PDF, campos
-      personalizados da campanha, conquistas da campanha, mestre
+      contador de inimigos, cards compartilháveis, exportar PDF, mestre
       auxiliar, página `/sistemas`, sandbox de ficha/combate, prévia do
       Level Up, atalhos de teclado, PWA, offline parcial, QR Code do
       link compartilhável da ficha, abas na página da campanha, página
