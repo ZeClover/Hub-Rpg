@@ -7093,6 +7093,26 @@ Testado com Playwright: catálogo mostra 830 opções (1 placeholder + 829
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 181. Naruto 5e — Genjutsu 100% completo (19/09/2026)
+
+Continuação da decisão #180. O Rank S do Genjutsu (13 jutsu, o mais
+alto e mais raro da categoria) entrou inteiro no `JUTSU_CATALOGO` — de
+"Antipatia/Simpatia" a "Pior Medo", 842 das ~1400 entradas totais. Com
+isso, **Genjutsu está 100% catalogado** (268 jutsu, os 6 ranks E a S) —
+oitava categoria do Compêndio fechada, junto com o Ninjutsu
+Não-Elemental e as 5 Naturezas elementais.
+
+Traz mais 4 Kinjutsu ("Mente Fraca", "Prisão Mental", "Sonho Sem Fim" e
+"Canção do Sapo" — o Rank S concentra a maioria dos Kinjutsu de
+Genjutsu do livro, coerente com serem as técnicas mais poderosas e
+perigosas da categoria). Atualizei os dois textos de referência de
+completude do arquivo pra refletir Genjutsu inteiro pronto — a partir
+de agora, só falta comparar contra Taijutsu, Bukijutsu e Invocação.
+
+Testado com Playwright: catálogo mostra 843 opções (1 placeholder + 842
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

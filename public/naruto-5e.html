@@ -428,9 +428,9 @@ const RANKS_JUTSU = [
    original (decisão #17/#134 — nunca copiar texto do livro). O
    Ninjutsu Não-Elemental e as 5 Naturezas elementais (Terra, Vento,
    Fogo, Água, Raio) estão 100% completos (todos os 6 ranks de cada,
-   574 jutsu). Genjutsu com os Ranks E, D, C, B e A 100% completos (255
-   de 268 jutsu) — falta só o Rank S dela (13 jutsu) pra fechar a
-   categoria inteira, mais Taijutsu, Bukijutsu e Invocação, entrando aos
+   574 jutsu). Genjutsu 100% completo, os 6 ranks (E a S, 268 jutsu) —
+   oitava categoria fechada, junto com Não-Elemental e as 5 Naturezas
+   elementais. Faltam Taijutsu, Bukijutsu e Invocação, entrando aos
    poucos, categoria por categoria, mesmo ritmo dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
@@ -2123,6 +2123,32 @@ const JUTSU_CATALOGO = [
     efeito:'Até 3 aliados dispostos em até 27m: sempre que ganharem PV temporário de um Genjutsu, também recuperam PV normal igual a esse valor — se o Genjutsu que deu o PV temporário for Médico, o dado usado sobe 1 degrau e rerrola 1s e 2s (ficando com o segundo resultado).'},
   {nome:'Quebra-Vontades', tipo:'Genjutsu', categoria:'Genjutsu', rank:'A', custo:'Especial (20 Chakra)', alcance:'36m', duracao:'Concentração, até 1 minuto',
     efeito:'Alvo em até 36m testa Inteligência, Sabedoria ou Carisma (você escolhe qual no início e não muda depois) no começo de cada um dos próprios turnos: sucesso crítico resiste e fica imune até o fim do turno seguinte; sucesso resiste; falha reduz o atributo escolhido em 1d4 enquanto durar (chegar a 0 nesse atributo causa 14d8 + mod. de Genjutsu de dano Psíquico e encerra o jutsu; alguém a até 1,5m do alvo pode gastar a ação testando Sabedoria (Ilusão) contra sua CD pra quebrar o efeito na hora); falha crítica reduz o atributo em 1d6 em vez de 1d4. Em ranks mais altos: +3 de custo e +2 alvos por rank acima de A.'},
+  {nome:'Antipatia/Simpatia', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'28 Chakra', alcance:'18m', duracao:'10 dias',
+    efeito:'Escolhe um alvo (objeto ou criatura de tamanho enorme ou menor, ou uma área de até 60m de lado) a até 18m e um tipo de criatura inteligente (ex.: Sábios das Feras, Demônios, Humanos); escolhe Antipatia (repele) ou Simpatia (atrai) por 10 dias. Antipatia: quem for do tipo escolhido e vir o alvo ou chegar a até 18m dele testa Sabedoria ou fica Amedrontado enquanto puder vê-lo ou estiver nesse raio, gastando o movimento pra fugir pro lugar seguro mais próximo sem linha de visão. Simpatia: o mesmo tipo de criatura, ao ver o alvo ou chegar perto, testa Sabedoria ou gasta o movimento tentando se aproximar até tocar o alvo a cada turno — uma vez ali, não consegue se afastar de boa vontade (se o alvo a ferir, pode testar Sabedoria de novo pra se livrar). Em ambos os casos, quem terminar o turno longe do alvo e sem vê-lo testa Sabedoria pra reconhecer o efeito como ilusório e se livrar; também ganha uma nova chance a cada 24 horas, e um sucesso dá imunidade por 1 minuto.'},
+  {nome:'Olho de Águia', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'10 minutos',
+    efeito:'Você e quem escolher num raio de 18m ganham, por 10 minutos: Visão de Chakra de 36m, Visão no Escuro de 27m, Sentido Cego de 18m, Visão Verdadeira de 9m, e o alcance de ataques à distância dobrado.'},
+  {nome:'Mente Fraca', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'25 Chakra', alcance:'45m', duracao:'Instantâneo',
+    efeito:'Kinjutsu: ataca a mente de um alvo em até 45m, causando 8d6 de dano Psíquico e forçando um teste de Inteligência; na falha, Inteligência e Carisma do alvo caem pra 1 — não consegue lançar jutsu, ativar itens de chakra, entender idiomas nem se comunicar de forma inteligível (mas ainda reconhece e protege aliados). A cada 30 dias pode repetir o teste pra encerrar; uma Quebra de Genjutsu, Restauração ou Recuperação Mente-Corpo de rank A ou maior também encerram.'},
+  {nome:'Presença do Leão', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'10 minutos',
+    efeito:'Todo inimigo num raio de 18m ao seu redor testa Carisma: na falha, enquanto estiver no alcance e pelos 10 minutos, não consegue tirar críticos, sofre -5 em ataques e testes, não mantém concentração em mais de 1 jutsu, perde resistência/imunidade a Medo e fica vulnerável a dano Psíquico.'},
+  {nome:'Labirinto', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'28 Chakra', alcance:'18m', duracao:'Concentração, 10 minutos',
+    efeito:'Até 4 alvos em até 18m testam Sabedoria: na falha, a mente é banida pra um labirinto (o corpo cai Derrubado e fica fisicamente Atordoado, mas a mente continua ativa) enquanto durar ou até escapar. Em cada turno, tenta um teste de Inteligência (Investigação) — se for proficiente, um sucesso acha a saída e encerra na hora — ou de Sabedoria (Intuição) — se for proficiente, um sucesso dá vantagem na próxima resistência de Sabedoria no início do turno seguinte, encerrando no sucesso (sem proficiência em nenhum dos dois, faz um teste simples de Inteligência contra sua CD; nenhum desses testes ganha bônus de Especialização ou dobro de proficiência).'},
+  {nome:'Prisão Mental', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'22 Chakra', alcance:'36m', duracao:'Até 1 minuto',
+    efeito:'Kinjutsu: prende um alvo em até 36m numa cela ilusória que só ele percebe; testa Inteligência (sucesso automático se for imune a Enfeitiçado): no sucesso, sofre 5d10 de dano Psíquico e o jutsu acaba; na falha, sofre 5d10 de dano Psíquico e o espaço ao redor parece perigoso (fogo, lâminas flutuantes, presas — à sua escolha), ficando incapaz de ver ou ouvir além disso e Restrito enquanto durar. Se for movido pra fora da ilusão, atacar corpo a corpo através dela, ou colocar qualquer parte do corpo pra fora, sofre mais 10d10 de dano Psíquico e o jutsu acaba.'},
+  {nome:'Sonho Sem Fim', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'28 Chakra', alcance:'Toque', duracao:'Até ser dissipado',
+    efeito:'Kinjutsu: Ataque de Genjutsu corpo a corpo; no acerto, o alvo testa Sabedoria ou é preso num loop de sono ilusório que você criou, o corpo dormindo até ser libertado. No fim de cada dia, testa Sabedoria em desvantagem — um sucesso o aproxima de acordar, precisando de 5 sucessos seguidos pra realmente despertar (uma falha reseta a contagem). Só pode manter este jutsu ativo numa criatura por vez.'},
+  {nome:'Frenesi dos Coelhos', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Coelhos ilusórios raivosos te seguem e atacam quem você escolher num raio de 18m; como ação em cada turno, faz um Ataque de Genjutsu corpo a corpo contra até 4 alvos no alcance — acerto causa 27d4 de dano Psíquico e o alvo testa Carisma ou ganha 3 ranks de Medo de você por 1 minuto e fica Restrito até o fim do turno seguinte. Atacar um alvo já Restrito por este jutsu faz rerrolar todos os 1s no dano, ficando com o segundo resultado.'},
+  {nome:'Dança da Lesma', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'1 dia',
+    efeito:'Prepara um Selo de Chakra especial (o custo deste jutsu nunca pode ser reduzido); enquanto durar, sempre que for alvo de um jutsu ou arte que exija resistência com a palavra-chave Genjutsu, pode escolher passar automaticamente — o efeito hostil é transferido pro selo, e este jutsu então acaba.'},
+  {nome:'Jogo das Cobras', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'22 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Cobras ilusórias envolvem até 7 alvos em até 36m, que testam Sabedoria ou ficam Atordoados e ganham 2 ranks de Exaustão (acreditando não conseguir respirar); no fim de cada turno, testam de novo, ganhando mais 2 ranks de Exaustão a cada falha.'},
+  {nome:'Canção do Sapo', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Esfera de 9m de raio', duracao:'Permanente',
+    efeito:'Kinjutsu: canta uma melodia calma e poderosa numa esfera de 9m de raio; role 20d10 + mod. de Genjutsu + bônus de proficiência — esse total é quanto de PV o jutsu "cobre". Toda criatura que ouvir você e tiver PV atual abaixo desse total cai imediatamente num sono profundo, incapaz de acordar sozinha até ser libertada, atingida por outro jutsu que a acorde, ou morta.'},
+  {nome:'Espelho de Flor', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'10 minutos',
+    efeito:'Um chakra tóxico imperceptível enche um raio de 18m ao seu redor, influenciando sutilmente os sentidos e o julgamento de quem estiver lá. Role 4d20 e guarde os resultados; enquanto durar, sempre que alguém afetado rolar um d20, você pode gastar um desses resultados guardados pra substituir o resultado dele pelo seu.'},
+  {nome:'Pior Medo', tipo:'Genjutsu', categoria:'Genjutsu', rank:'S', custo:'30 Chakra', alcance:'36m (esfera de 9m)', duracao:'Concentração, até 1 minuto',
+    efeito:'Cria criaturas ilusórias dos piores medos de cada um, visíveis só pra quem as tem, numa esfera de 9m de raio centrada num ponto a até 36m; alvos testam Sabedoria: na falha, ganham 5 ranks de Medo enquanto durar. No fim de cada turno de quem estiver Amedrontado assim, testa Sabedoria de novo ou sofre 8d10 de dano Psíquico (um sucesso encerra o jutsu só pra essa criatura).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2594,7 +2620,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental e as 5 Naturezas elementais 100% completos; Genjutsu com os Ranks E, D, C, B e A 100% completos, faltando só o S) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais e Genjutsu 100% completos; faltam Taijutsu, Bukijutsu e Invocação) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
