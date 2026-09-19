@@ -6395,6 +6395,25 @@ jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
 sem regressão.
 
+## 147. Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank A (19/09/2026)
+
+Continuação da decisão #146, mesmo "vai até acabar". As 10 jutsu do Rank
+A da Liberação de Terra entraram no `JUTSU_CATALOGO` — fecha 4 dos 6
+ranks dessa natureza (69 das 75 jutsu de Terra; 271 das ~1400 entradas
+totais do Compêndio). Falta só o Rank S pra fechar Terra inteira.
+
+Rank de alto poder: traz Floresta de Jade (jutsu Especial de 110 Chakra,
+pensado pra Combinação com vários conjuradores, custo cai por conjurador
+extra) e Quebra de Gravidade (inverte a gravidade numa área, jogando
+criaturas pra cima). Dragão de Pedra segue o mesmo padrão de bloco de
+estatística dos outros construtos grandes (Lobo de Lama, na decisão
+#145) — construto nomeado com estatísticas fixas em vez de dano direto.
+
+Testado com Playwright: catálogo mostra 272 opções (1 placeholder + 271
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores (Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu)
+sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

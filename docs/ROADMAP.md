@@ -1798,8 +1798,13 @@ passando.
       catálogo (59 de 75 jutsu de Terra; 261 de ~1400 no total) — falta
       só A e S pra fechar Terra inteira. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Liberação de Terra Rank A**
+      (19/09/2026) — decisão #147. As 10 jutsu do Rank A entraram no
+      catálogo (69 de 75 jutsu de Terra; 271 de ~1400 no total) — falta
+      só o S pra fechar Terra inteira. Testado com Playwright; `tsc` e
+      lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~1139 jutsu: Terra A/S, Vento/Fogo/Água/Raio, Genjutsu,
+      Jutsu (~1129 jutsu: Terra S, Vento/Fogo/Água/Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

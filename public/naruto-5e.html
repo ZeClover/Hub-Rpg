@@ -427,10 +427,10 @@ const RANKS_JUTSU = [
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
    Não-Elemental está 100% completo (todos os 6 ranks). Liberação de
-   Terra com Ranks D, C e B prontos (59 de 75 jutsu) — faltam A/S dela,
-   mais Vento/Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e Invocação,
-   entrando aos poucos, categoria por categoria, mesmo ritmo dos Clãs/
-   Classes. */
+   Terra com Ranks D, C, B e A prontos (69 de 75 jutsu) — falta só o S
+   dela, mais Vento/Fogo/Água/Raio, Genjutsu, Taijutsu, Bukijutsu e
+   Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
+   dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -962,6 +962,27 @@ const JUTSU_CATALOGO = [
     efeito:'4 lanças de pedra convergem de direções diferentes num único alvo: Ataque de Ninjutsu causando 6d10 de dano de Terra; a área de 6m ao redor vira terreno difícil onde não dá pra usar Disparada, Esquiva ou Desengajar.'},
   {nome:'Liberação de Terra: Rocha Impassível', tipo:'Ninjutsu', categoria:'Terra', rank:'B', custo:'14 Chakra', alcance:'Toque', duracao:'1 minuto',
     efeito:'Sela 2 proficiências de perícia (ou 1 de resistência) numa pedra, perdendo-as temporariamente; quem segurar a pedra com uma mão ganha essas proficiências, mas não pode fazer Selos de Mão com essa mão.'},
+
+  {nome:'Liberação de Terra: Peso Adicionado/Reduzido', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'19 Chakra', alcance:'1,5m', duracao:'Concentração, até 1 minuto',
+    efeito:'Toque em objeto/estrutura multiplica o peso por 10 (podendo desmoronar sob o próprio peso); num inimigo, ataque corpo a corpo dobra o peso dele (desloc. 0, testa Força pra livrar-se); num aliado, zera o peso dele e dá 18m de voo sem gastar Chakra pra manter.'},
+  {nome:'Liberação de Terra: Calcita: Tenacidade', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'20 Chakra', alcance:'Toque', duracao:'Concentração, até 1 minuto',
+    efeito:'Dá a um aliado 4 de redução de dano e vantagem em testes de Força/Constituição; você pode gastar Reação pra encerrar uma condição causada por outro jutsu nele, ou pra curá-lo em 7d8+20 PV se cair a 0 (encerra o jutsu).'},
+  {nome:'Liberação de Terra: Arcano de Cristal', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'20 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Aliados perto de você ou de um construto de terra seu ganham uma armadura de chakra: PV temporário igual a 3× sua CD de Ninjutsu, imunidade a Frio, resistência a Concussão/Perfurante/Cortante (vulnerável a Raio).'},
+  {nome:'Liberação de Terra: Quebra de Gravidade', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'20 Chakra', alcance:'30m', duracao:'Concentração, até 1 minuto',
+    efeito:'Cilindro de 15m de diâmetro e 30m de altura onde tudo que não estiver preso começa a "cair" pra cima; testa Força pra se segurar em algo fixo (senão sobe até o topo e fica lá até o jutsu acabar, quando todos caem de volta).'},
+  {nome:'Liberação de Terra: Endurecimento de Pedra-Ferro', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'15 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Veste uma armadura de pedra: nunca perde a concentração por dano, e reduz todo dano recebido (menos Raio) em 10 (mais nos ranks acima).'},
+  {nome:'Liberação de Terra: Floresta de Jade', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'Especial (110 Chakra)', alcance:'Pessoal (esfera de 36m)', duracao:'Instantâneo',
+    efeito:'Selamento gigantesco que faz brotar estalagmites de pedra, jade e lápis-lazúli: testes de Força/Destreza/Constituição ou o alvo cai Derrubado e Contundido (5 ranks), sofre 7d10+7d10 de dano Perfurante/Terra e fica Envenenado — a área vira terreno difícil (visibilidade de só 3m) até ser destruída ou passar 1 ano; em Combinação, o custo cai e os efeitos pioram conforme o maior Carisma do grupo.'},
+  {nome:'Liberação de Terra: Rastro de Estrelas Cadentes', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'18 Chakra', alcance:'90m', duracao:'Concentração, até 1 minuto',
+    efeito:'Mantém fragmentos de terra flutuando acima de você; como Ação, Ação Bônus ou Reação, bombardeia um ponto visível: teste de Destreza ou 9d8 de dano de Terra (metade se passar) — cada bombardeio adicional no mesmo turno reduz o dado de dano (9d6, depois 9d4).'},
+  {nome:'Liberação de Terra: Dragão de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'20 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca um dragão gigante de pedra (construto de terra, CA 13+seu mod., 150 PV, 12m de deslocamento) que age no fim do seu turno usando seu bônus/CD de Ninjutsu.'},
+  {nome:'Liberação de Terra: Floresta de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'19 Chakra', alcance:'Pessoal (cubo de 10,5m)', duracao:'Instantâneo',
+    efeito:'Campo de espinhos de pedra numa área de 10,5m: teste de Destreza ou 10d8 de dano de Terra (metade se passar); vira terreno difícil com desvantagem em Percepção lá dentro.'},
+  {nome:'Liberação de Terra: Agulha de Pedra', tipo:'Ninjutsu', categoria:'Terra', rank:'A', custo:'18 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Lança fininha e velocíssima de terra (27m de comprimento): teste de Destreza ou 9d10 de dano de Terra, 4 ranks de Contusão e cai Derrubado (metade do dano e sem efeitos extras se passar).'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1433,7 +1454,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D, C e B prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental 100% completo; Liberação de Terra com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
