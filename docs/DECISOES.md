@@ -6714,6 +6714,29 @@ Testado com Playwright: catálogo mostra 495 opções (1 placeholder + 494
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 163. Naruto 5e — Liberação de Água 100% completa, catálogo passa de 500 jutsu (19/09/2026)
+
+Continuação da decisão #162: as 6 jutsu do Rank S fecharam os 6 ranks
+da Liberação de Água (74 jutsu) — quinta categoria inteira do
+Compêndio de Jiraiya 100% catalogada (depois do Ninjutsu Não-Elemental
+e das Liberações de Terra, Vento e Fogo). O catálogo passa a marca de
+500 jutsu exatos, num total de ~1400 do Compêndio inteiro (35,7%).
+
+Rank final traz Convergência dos Céus de Água (controla toda água num
+raio de 36m e ganha 3 ações extras de uma vez) e Leão de Água Supremo
+(primeiro construto em que o próprio conjurador pode se fundir pra
+ganhar cobertura total).
+
+**Próxima categoria**: Raio, a última Natureza elemental (74 jutsu);
+depois Genjutsu, Taijutsu, Bukijutsu e Invocação fecham o Compêndio
+inteiro.
+
+Testado com Playwright: catálogo mostra 501 opções (1 placeholder + 500
+jutsu). `tsc --noEmit`, `npm run lint`, `npm run build` e os 298 testes
+automáticos do projeto continuam limpos; suíte de testes do Naruto 5e
+(Clã, Classe, Antecedente, Modo Guiado, multi-personagem, jutsu) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

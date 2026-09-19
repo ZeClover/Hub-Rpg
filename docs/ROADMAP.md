@@ -1875,8 +1875,14 @@ passando.
       catálogo (68 de 74 jutsu de Água; 494 de ~1400 no total) — falta
       só o S pra fechar Água inteira. Testado com Playwright; `tsc` e
       lint continuam limpos.
+- [x] **Naruto 5e — Liberação de Água 100% completa, catálogo passa
+      de 500 jutsu** (19/09/2026) — decisão #163. As 6 jutsu do Rank S
+      fecharam os 6 ranks da Liberação de Água (74 jutsu) — quinta
+      categoria inteira do Compêndio de Jiraiya catalogada (500 de
+      ~1400 no total, 35,7%). Testado com Playwright; `tsc`, lint,
+      build e os 298 testes automáticos do projeto continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~906 jutsu: Água S, Raio, Genjutsu,
+      Jutsu (~900 jutsu: Raio, Genjutsu,
       Taijutsu, Bukijutsu, Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

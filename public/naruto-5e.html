@@ -426,10 +426,9 @@ const RANKS_JUTSU = [
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
    direto do livro; "efeito" é reescrito pelo Hub, nunca a descrição
    original (decisão #17/#134 — nunca copiar texto do livro). O Ninjutsu
-   Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de
-   Fogo estão 100% completos (todos os 6 ranks de cada, 426 jutsu).
-   Liberação de Água com Ranks D, C, B e A prontos (68 de 74 jutsu) —
-   falta só o S dela, mais Raio, Genjutsu, Taijutsu, Bukijutsu e
+   Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de
+   Fogo e Liberação de Água estão 100% completos (todos os 6 ranks de
+   cada, 500 jutsu) — faltam Raio, Genjutsu, Taijutsu, Bukijutsu e
    Invocação, entrando aos poucos, categoria por categoria, mesmo ritmo
    dos Clãs/Classes. */
 const JUTSU_CATALOGO = [
@@ -1445,6 +1444,19 @@ const JUTSU_CATALOGO = [
     efeito:'Reação: protege você ou um aliado a até 9m com uma redoma de água giratória (20d6 PV até o início do próximo turno), protegendo também quem estiver a até 1,5m dele — perto de água, custa 2 Chakra a menos ou o raio de proteção dobra pra 3m.'},
   {nome:'Liberação de Água: Onda Cortante de Água', tipo:'Ninjutsu', categoria:'Água', rank:'A', custo:'19 Chakra', alcance:'Pessoal (cone de 18m)', duracao:'Instantâneo',
     efeito:'Jato de água pressurizada num cone de 18m: teste de Destreza ou 8d10 de dano de Frio (perto de água, custa 2 Chakra a menos ou também testa Constituição contra 2 ranks de Resfriado).'},
+
+  {nome:'Liberação de Água: Afogar', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'30 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: até 7 alvos testam Constituição ou têm a respiração invertida (quem respira ar só respira água, e vice-versa) — quem ficar sem conseguir respirar no ambiente começa a se afogar, sobrevivendo um número de rodadas igual ao seu mod. de Constituição antes de cair a 0 PV e morrer.'},
+  {nome:'Liberação de Água: Tsunami de Vórtice Gigante', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'25 Chakra', alcance:'Pessoal (cone de 36m)', duracao:'Instantâneo',
+    efeito:'Ciclone de água devastador num cone de 36m: teste de Força ou 15d10 de dano de Frio, 3 ranks de Concussão, 3 ranks de Resfriado, arrastado até o fim do cone, Derrubado e Atordoado até o fim do turno seguinte (metade do dano se passar).'},
+  {nome:'Liberação de Água: Dança da Grande Prisão de Água', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'Concentração, até 10 minutos',
+    efeito:'Esfera de água de 18m de raio centrada em você (se move com você): quem estiver dentro testa Força ou fica preso lá dentro, debaixo d\'água (só escapa alcançando a borda se passar no teste).'},
+  {nome:'Liberação de Água: Chuva do Rancor', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'30 Chakra', alcance:'Pessoal (raio de 16km)', duracao:'Concentração, até 1 hora',
+    efeito:'Chuva cobrindo 16km ao redor (você escolhe até 5 criaturas imunes): todo mundo mais dentro da área tem o custo de Chakra dobrado por até 1 hora.'},
+  {nome:'Liberação de Água: Convergência dos Céus de Água', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'22 Chakra', alcance:'Pessoal (raio de 18m)', duracao:'Concentração, até 10 minutos',
+    efeito:'Controla toda água num raio de 36m: jutsu de Água Rank A ou menor custam metade — ganha ações extras: Broca de Água (Ataque de Ninjutsu à distância, 10d12 de dano de Frio), Armadura de Água (Reação a um acerto, 30 PV temporário até o próximo turno) e Correntes de Água (teste de Força ou fica Restrito e Incapacitado, repetindo o teste a cada turno pra se soltar).'},
+  {nome:'Liberação de Água: Leão de Água Supremo', tipo:'Ninjutsu', categoria:'Água', rank:'S', custo:'25 Chakra', alcance:'36m', duracao:'Concentração, até 1 minuto',
+    efeito:'Invoca um construto de água gigantesco (usa seu bônus/CD de Ninjutsu, rola iniciativa própria) — por Ação Bônus, você pode se fundir com a cabeça dele (tocando-o) e ganhar cobertura total contra tudo de fora enquanto estiver fundido.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -1916,7 +1928,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento e Liberação de Fogo 100% completos; Liberação de Água com Ranks D, C, B e A prontos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, Liberação de Terra, Liberação de Vento, Liberação de Fogo e Liberação de Água 100% completos) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
