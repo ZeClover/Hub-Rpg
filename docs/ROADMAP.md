@@ -1775,16 +1775,23 @@ edição do mestre, múltiplas fichas por jogador, etc.).
   - Migração `0016_iniciativa_compartilhada.sql` — uma coluna nova.
     `tsc`, lint, `next build` e os 302 testes automáticos (298 + 4
     novos) continuam limpos
+- [x] **Código curto de convite + QR Code do convite** (19/09/2026) —
+      decisão #138. `Campanha.codigoConvite` (6 caracteres, mesma porta
+      que o link de sempre); formulário "Tem um código de convite?" em
+      `/campanhas`; QR Code gerado no navegador (pacote `qrcode`) na
+      seção de convite do mestre. Migração `0017_codigo_convite.sql`
+      (com backfill pras campanhas já existentes). `tsc`, lint, `next
+      build` e os 302 testes automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (mover/copiar ficha, companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
       compartilhados, bibliotecas pessoais de item/NPC, templates,
       contador de inimigos, cards compartilháveis, exportar PDF, campos
       personalizados da campanha, conquistas da campanha, mestre
       auxiliar, página `/sistemas`, sandbox de ficha/combate, prévia do
-      Level Up, atalhos de teclado, PWA, offline parcial, QR Code,
-      código curto de convite, abas na página da campanha, página geral
-      do personagem) — fica pra quando as etapas anteriores estiverem
-      no ar e o Zé confirmar a ordem das próximas
+      Level Up, atalhos de teclado, PWA, offline parcial, QR Code do
+      link compartilhável da ficha, abas na página da campanha, página
+      geral do personagem) — fica pra quando o Zé confirmar a ordem das
+      próximas
 
 ---
 

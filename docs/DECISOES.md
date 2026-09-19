@@ -6200,6 +6200,53 @@ Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos (298 + 4 novos, cobrindo o campo `derrotado` e
 `vidaDefinida` em `resumo-vida.ts`) continuam limpos.
 
+## 138. Hub — Código curto de convite + QR Code (19/09/2026)
+
+Primeira fatia do backlog de "demais ideias" do pedido de 53 ideias
+(decisão #134), depois de fechar as quatro etapas sugeridas. Como o
+backlog restante é grande e heterogêneo, escolhi começar pela peça mais
+contida e de menor risco — convite de campanha — em vez de abrir várias
+frentes maiores (mover ficha, inventário compartilhado, etc.) de uma
+vez; essas continuam esperando confirmação do Zé sobre a ordem.
+
+**1. Código curto de convite.** `Campanha.codigoConvite` — 6 caracteres
+(alfabeto sem `0/O/1/I`, pra não confundir na hora de digitar de novo),
+único, gerado na criação da campanha. É a mesma porta que o link de
+convite de sempre (decisão #46: quem tem, entra — não é mais nem menos
+secreto), só mais fácil de falar em voz alta ou digitar numa tela
+pequena. Rota nova `POST /api/campanhas/codigo` resolve código → id da
+campanha; formulário novo em `/campanhas` ("Tem um código de convite?")
+manda pra lá direto.
+
+**2. QR Code do convite.** Componente `QrCode`, gerado no próprio
+navegador (pacote `qrcode`, sem serviço externo, sem custo) — útil pra
+projetar numa tela ou escanear com o celular numa sessão presencial.
+Aparece na mesma seção "Link de convite" da tela do mestre, ao lado do
+código curto.
+
+**Migração `0017_codigo_convite.sql`** — a única desta iniciativa que
+precisou de um backfill de verdade: toda campanha já existente ganhou
+um código gerado ali mesmo (laço em PL/pgSQL que tenta de novo em caso
+de colisão) antes da trava `NOT NULL` + `UNIQUE` entrar. Idempotente:
+campanha que já tem código não é tocada rodando de novo.
+
+**Dependência nova:** `qrcode` (MIT, gera a imagem inteiramente no
+navegador — não é um serviço rodando, não fere a decisão #5). Rodei
+`npm audit` antes de aceitar: as 7 vulnerabilidades que aparecem no
+projeto são todas de dependências que já existiam antes (Prisma,
+Next.js, `js-yaml`), nenhuma do `qrcode` — sinalizei a mais grave
+(RCE crítico do Next.js, corrigido na 16.3.5) separadamente pro Zé, por
+ser assunto de infraestrutura, não desta fatia.
+
+**Fora desta fatia, de propósito:** QR Code do link compartilhável da
+FICHA (ideia #132) — parecido em espírito, mas mexe em ~10 arquivos de
+ficha (`public/*.html`) em vez de um lugar só, e nenhum deles hoje sequer
+mostra o link de leitura pro dono ver (só o interruptor "Compartilhar").
+Fica pra uma fatia própria.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

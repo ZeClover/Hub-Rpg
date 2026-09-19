@@ -136,6 +136,13 @@ model Campanha {
   capaUrl         String?
   descricao       String?
   tags            String[]         @default([])
+  /// Código curto de convite (decisão #138) — mesma coisa que o link de
+  /// convite (o próprio `id` da campanha), só mais fácil de falar em voz
+  /// alta ou digitar numa tela pequena. Não é mais nem menos secreto que o
+  /// link: quem tem o código consegue exatamente o que quem tem o link
+  /// consegue (decisão #46 tratava o link como "qualquer um com o link do
+  /// Google Docs" — isto aqui é a mesma porta, só com uma chave mais curta).
+  codigoConvite   String           @unique
   /// Espelho da ordem de iniciativa da Mesa ao Vivo (decisão #137) — o
   /// mestre continua controlando tudo do próprio navegador (localStorage,
   /// decisão #46); isto aqui só existe pra jogador conseguir ver a mesma

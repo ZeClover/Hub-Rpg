@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { gerarCodigoConviteUnico } from "@/lib/codigo-convite";
 import { usuarioAtual } from "@/lib/usuario";
 
 /*
@@ -37,12 +38,14 @@ export async function POST(requisicao: NextRequest) {
   }
 
   const id = randomUUID();
+  const codigoConvite = await gerarCodigoConviteUnico();
   const campanha = await banco.campanha.create({
     data: {
       id,
       slug: id,
       nome,
       sistemaId: sistema.id,
+      codigoConvite,
       participacoes: {
         create: { usuarioId: usuario.id, papel: "MESTRE" },
       },

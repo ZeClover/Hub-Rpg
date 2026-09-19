@@ -15,6 +15,7 @@ import { EntrarNaCampanha } from "./entrar-na-campanha";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { IdentidadeCampanha } from "./identidade-campanha";
 import { ManualDoMestre } from "./manual-mestre";
+import { QrCode } from "./qr-code";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
 import { Sessoes, type SessaoView } from "./sessoes";
@@ -50,6 +51,7 @@ export default async function PaginaCampanha({
       capaUrl: true,
       descricao: true,
       tags: true,
+      codigoConvite: true,
       sistema: { select: { chave: true, nome: true } },
     },
   });
@@ -218,6 +220,7 @@ export default async function PaginaCampanha({
           capaUrl={campanha.capaUrl ?? ""}
           descricao={campanha.descricao ?? ""}
           tags={campanha.tags}
+          codigoConvite={campanha.codigoConvite}
           sessoes={sessoes}
           pessoas={pessoas}
           agoraMs={agoraMs}
@@ -263,6 +266,7 @@ function VisaoDoMestre({
   capaUrl,
   descricao,
   tags,
+  codigoConvite,
   sessoes,
   pessoas,
   agoraMs,
@@ -283,6 +287,7 @@ function VisaoDoMestre({
   capaUrl: string;
   descricao: string;
   tags: string[];
+  codigoConvite: string;
   sessoes: SessaoView[];
   pessoas: { usuarioId: string; nome: string }[];
   agoraMs: number;
@@ -307,6 +312,19 @@ function VisaoDoMestre({
           fichas — dá pra ligar mais de uma) ao abrir — só aparecem fichas do
           sistema desta campanha.
         </p>
+
+        <p className="mt-4 font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
+          Ou código curto
+        </p>
+        <p className="mt-2 inline-block rounded border border-borda bg-fundo px-3 py-2 font-titulo text-lg tracking-widest text-texto">
+          {codigoConvite}
+        </p>
+        <p className="mt-1 text-xs text-texto-suave">
+          Mais fácil de falar em voz alta ou digitar numa tela pequena — quem
+          tem o código entra em &quot;Campanhas&quot; e digita ali.
+        </p>
+        <QrCode valor={`${origem}/campanhas/${campanhaId}`} />
+
         {escudoMestre && (
           <a
             href={escudoMestre}

@@ -4,6 +4,7 @@ import { banco } from "@/lib/banco";
 import { usuarioAtual } from "@/lib/usuario";
 
 import { CriarCampanha } from "./criar-campanha";
+import { EntrarComCodigo } from "./entrar-com-codigo";
 
 export default async function Campanhas() {
   // O layout do Hub já garantiu que existe alguém logado.
@@ -84,6 +85,7 @@ export default async function Campanhas() {
       )}
 
       <CriarCampanha />
+      <EntrarComCodigo />
     </main>
   );
 }
