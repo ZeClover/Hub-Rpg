@@ -156,6 +156,15 @@ export const SISTEMAS_COM_HUB = SISTEMAS.filter(
     sistema.ficha !== null && sistema.salvaNoHub,
 );
 
+// Sistemas onde dá pra criar ficha de NPC/monstro AVULSA pela conta (decisão
+// #143, ideias #64/#65/#66 — biblioteca pessoal e templates reutilizáveis) —
+// precisa ter arquivo de ficha de inimigo E saber salvar no Hub, mesma
+// exigência de `SISTEMAS_COM_HUB` só que pro bestiário.
+export const SISTEMAS_COM_BESTIARIO = SISTEMAS.filter(
+  (sistema): sistema is Sistema & { fichaInimigo: string } =>
+    sistema.fichaInimigo !== null && sistema.salvaNoHub,
+);
+
 export const ROTULO_SITUACAO: Record<Sistema["situacao"], string> = {
   pronta: "Pronta",
   "em-construcao": "Em construção",

@@ -6415,6 +6415,42 @@ função de agrupamento no cliente.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 143. Hub — Biblioteca pessoal de NPCs/monstros + templates reutilizáveis (19/09/2026)
+
+Sexta fatia do backlog de "demais ideias" (decisão #134), ideias
+#64/#65/#66 do pedido original. Auditoria antes de mexer: com Mover e
+Copiar já prontos (decisão #139), boa parte do que "template
+reutilizável" pede já existia — só faltavam duas peças: dar pra criar
+um monstro/NPC **avulso** (sem campanha, servindo de template limpo pra
+copiar depois) e um lugar pra ver todos eles juntos, sem se misturar com
+fichas de personagem.
+
+**Bug encontrado na auditoria, corrigido junto.** A lista de `/fichas`
+não sabia se uma ficha era `ehMonstro` — toda ficha, inclusive as de
+monstro que um mestre criou dentro de uma campanha, linkava pra
+`sistema.ficha` (a ficha de JOGADOR). Abrir um monstro por ali abria a
+tela errada. Corrigido junto com a mudança que já precisava selecionar
+`ehMonstro` de qualquer jeito.
+
+**1. Criar NPC/monstro avulso.** `POST /api/personagens` ganhou
+`ehMonstro` opcional (decisão #143) — sem campanha nenhuma, é o
+template. Novo componente "+ Criar NPC/Monstro" em `/fichas`, restrito
+aos sistemas com ficha de inimigo própria (`SISTEMAS_COM_BESTIARIO`,
+novo em `sistemas.ts`, espelhando `SISTEMAS_COM_HUB`).
+
+**2. Biblioteca separada.** `/fichas` ganhou uma segunda seção "NPCs e
+monstros", separada da lista de fichas de personagem — mesmo cartão,
+mesmas ações (status, imagem, Mover/Copiar, excluir), só filtrado por
+`ehMonstro`. "Copiar" (decisão #139) já era exatamente o "instanciar
+template numa campanha" que a ideia pedia — nenhuma rota nova precisou
+ser criada pra isso, só exposta num lugar novo.
+
+Sem migração — nenhum campo novo; `ehMonstro` já existia desde a
+decisão #124.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -43,6 +43,11 @@ export async function POST(requisicao: NextRequest) {
   if (typeof sistemaChave !== "string") {
     return NextResponse.json({ erro: "sistemaChave é obrigatório" }, { status: 400 });
   }
+  // Ficha avulsa de NPC/monstro (decisão #143, ideias #64/#65/#66) — mesma
+  // ficha, mesma tabela, só nasce sem campanha nenhuma: é o "template" que
+  // depois se copia (decisão #139) pra dentro de qualquer campanha do
+  // sistema certo, sem duplicar o conceito de biblioteca/template à toa.
+  const ehMonstro = corpo?.ehMonstro === true;
 
   const sistema = await banco.sistema.findUnique({ where: { chave: sistemaChave } });
   if (!sistema) {
@@ -53,8 +58,9 @@ export async function POST(requisicao: NextRequest) {
     data: {
       sistemaId: sistema.id,
       donoId: usuario.id,
-      nome: "Novo Personagem",
+      nome: ehMonstro ? "Novo Monstro" : "Novo Personagem",
       dados: {},
+      ehMonstro,
     },
     select: { id: true, nome: true, dados: true },
   });

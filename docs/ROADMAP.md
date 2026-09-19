@@ -1816,10 +1816,20 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       (vivos: 3)") — pura convenção de nome, sem coluna nova. Sem
       migração. `tsc`, lint, `next build` e os 302 testes automáticos
       continuam limpos
+- [x] **Biblioteca pessoal de NPCs/monstros + templates reutilizáveis**
+      (19/09/2026) — decisão #143. `POST /api/personagens` ganhou
+      `ehMonstro` — dá pra criar NPC/monstro avulso (sem campanha), que
+      serve de template; "Copiar" (decisão #139) já era o "instanciar
+      numa campanha" que a ideia pedia, nenhuma rota nova precisou.
+      `/fichas` ganhou seção própria "NPCs e monstros", separada das
+      fichas de personagem. De brinde: corrigido bug real — todo
+      monstro linkava pra ficha de JOGADOR (`/fichas` não sabia
+      `ehMonstro`). Sem migração. `tsc`, lint, `next build` e os 302
+      testes automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (companheiros/
       pets, veículos genéricos, grupos/equipes, inventário e cofre
-      compartilhados, bibliotecas pessoais de item/NPC, templates,
-      cards compartilháveis, exportar PDF, mestre
+      compartilhados, biblioteca pessoal de item, cards compartilháveis,
+      exportar PDF, mestre
       auxiliar, sandbox de ficha/combate, prévia do Level Up, atalhos de
       teclado, PWA, offline parcial, QR Code do link compartilhável da
       ficha, abas na página da campanha, página geral do personagem) —
