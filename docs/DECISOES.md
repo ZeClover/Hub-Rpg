@@ -6226,9 +6226,14 @@ código curto.
 
 **Migração `0017_codigo_convite.sql`** — a única desta iniciativa que
 precisou de um backfill de verdade: toda campanha já existente ganhou
-um código gerado ali mesmo (laço em PL/pgSQL que tenta de novo em caso
-de colisão) antes da trava `NOT NULL` + `UNIQUE` entrar. Idempotente:
-campanha que já tem código não é tocada rodando de novo.
+um código aleatório de 6 caracteres antes da trava `NOT NULL` + `UNIQUE`
+entrar. Idempotente: campanha que já tem código não é tocada rodando de
+novo. A primeira versão usava um bloco `DO $$ ... END $$` em PL/pgSQL
+com laço, que quebrou no SQL Editor do Supabase do Zé ("unterminated
+dollar-quoted string") — reescrita como um `UPDATE` set-based, sem laço
+nem bloco: com o tamanho de campanha que este projeto tem, a chance de
+colisão em 32^6 combinações é desprezível, e se acontecer mesmo assim a
+trava `UNIQUE` recusa na hora em vez de deixar passar.
 
 **Dependência nova:** `qrcode` (MIT, gera a imagem inteiramente no
 navegador — não é um serviço rodando, não fere a decisão #5). Rodei
