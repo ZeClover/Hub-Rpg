@@ -6563,6 +6563,23 @@ Testado com Playwright: catálogo mostra 377 opções (1 placeholder + 376
 jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
 anteriores sem regressão.
 
+## 155. Naruto 5e — Catálogo de Jutsu, Liberação de Fogo Rank C (19/09/2026)
+
+Continuação da decisão #154. As 20 jutsu do Rank C da Liberação de
+Fogo entraram no `JUTSU_CATALOGO` — fecha 2 dos 6 ranks dessa natureza
+(45 das 75 jutsu de Fogo; 396 das ~1400 entradas totais).
+
+Traz Prisão Celestial, o primeiro jutsu do sistema que pune quem tenta
+lançar jutsu com Molde de Chakra (mecânica que ainda não catalogamos em
+detalhe — fica registrado que ela existe e vai precisar de atenção
+quando chegarmos nas regras nucleares do sistema). Armadilha Flamejante
+introduz armadilhas escondidas com gatilho livre (à escolha de quem
+lança), um padrão de jutsu "Fuinjutsu passivo" que ainda não tínhamos.
+
+Testado com Playwright: catálogo mostra 397 opções (1 placeholder + 396
+jutsu). `tsc --noEmit` e `npm run lint` seguem limpos; suíte de testes
+anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
