@@ -7625,6 +7625,34 @@ Testado com Playwright: catálogo mostra 1246 opções (1 placeholder +
 1245 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 203. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank B (lote 2 de ~5) (24/09/2026)
+
+Continuação da decisão #202. Mais 17 jutsu do Rank B de Bukijutsu, de
+"Quebra-Ossos" a "Apresentação de Dança: Terceiro Passo", entraram no
+`JUTSU_CATALOGO` — 1262 das ~1400 entradas totais (34 de 81 jutsu de
+Bukijutsu Rank B).
+
+Sete novos membros entraram na família "Sopro de [elemento]" (já
+existente desde os Ranks D/C): Cinzas: Fuligem, Poeira: Pacificador,
+Eco: Crescendo, Enoki: Erradicar, Chuva: Aguaceiro, Rosas: Futilidade,
+Céus: Tornado e Faíscas: Sobrecarga — todos seguindo o padrão de nomes
+próprios das técnicas de cada elemento já fixado, sem repetir os nomes
+das versões D/C da mesma família. Achamos duas inconsistências internas
+no texto original (não copiadas, só mencionadas aqui como nota de
+tradução): "Blunt Force Trauma" trocava "Bruised" por "Concussed" na
+cláusula de escala por rank — resolvido mantendo Machucado (a condição
+usada no efeito base) em vez de trocar pra Contundido no meio do texto;
+e "Breath of Skies: Twister" tinha o campo de alcance dizendo 30 pés
+mas o efeito descrito usando 60 pés — resolvido usando 18m (60 pés),
+consistente com as outras técnicas "Sopro de" de linha reta da mesma
+leva. "Bone Breaker" veio com a lista de ossos quebráveis cortada no
+meio (só Ombro e Canela sobreviveram na extração) — mantivemos só as
+duas opções presentes em vez de inventar as que faltam.
+
+Testado com Playwright: catálogo mostra 1263 opções (1 placeholder +
+1262 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
