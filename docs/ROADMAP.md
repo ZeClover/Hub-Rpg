@@ -2099,9 +2099,14 @@ passando.
       Bukijutsu, sem pendências de dados corrompidos neste rank — 1373
       de ~1400 no total. Testado com Playwright; `tsc` e lint
       continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank S (lote 1 de
+      2)** (24/09/2026) — decisão #211. Primeiros 13 jutsu do Rank S
+      de Bukijutsu, o mais raro e poderoso do jogo (13 de 25 no
+      total) — 1386 de ~1400 no total. Testado com Playwright; `tsc`
+      e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~27 jutsu: "Shadow Dancing Leaf" e "Stone Form"
-      pendentes, e Rank S de Bukijutsu inteiro — 25 jutsu — categoria
+      Jutsu (~14 jutsu: "Shadow Dancing Leaf" e "Stone Form"
+      pendentes, e lote 2 do Rank S de Bukijutsu — 12 jutsu — categoria
       por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

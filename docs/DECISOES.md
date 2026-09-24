@@ -7840,6 +7840,54 @@ Testado com Playwright: catálogo mostra 1374 opções (1 placeholder +
 1373 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 211. Naruto 5e — Bukijutsu Rank S, lote 1 de 2 (24/09/2026)
+
+Continuação das decisões #191-#210 (Bukijutsu Ranks D, C, B e A, todos
+100% completos). Primeiro lote do último rank de Bukijutsu — Rank S,
+o mais raro e poderoso do jogo. Treze jutsu (de "Annihilation" a
+"Living Force", ordem do JSON de origem) entraram no
+`JUTSU_CATALOGO` — 1386 das ~1400 entradas totais (13 de 25 jutsu do
+Rank S).
+
+A família "Fúria Contida" ganha "Rugido do Dragão" (Binding Fury:
+Dragon's Roar), seguindo a "Postura da Fúria Contida" e o mecanismo
+de pontos de Fúria já estabelecido nos ranks anteriores. A família
+"Sopro de..." ganha um elemento novo: "Sol" (Breath of Sun), com três
+membros já neste lote — "Arco-Íris Falso", "Sol Furioso" e "Miragem
+de Calor" (esta última exige estar sob efeito de uma das outras duas,
+que terminam ao lançá-la, e é Kinjutsu).
+
+"Devil Hunter" colidiria com "Caçador de Demônios" (Demon Hunter,
+Rank A, decisão #210) se traduzido literalmente — viraram jutsu
+nominalmente parecidos mas mecanicamente distintos (cone vs. esfera,
+escala de dano diferente), então o lado ainda não inserido (este)
+virou "Caçador de Diabos", seguindo a regra do projeto de trocar o
+nome do lado ainda não inserido. O texto original de "Devil Hunter"
+também trouxe uma inconsistência interna (anomalia "e"): mistura
+"Make one Melee Taijutsu Attack" com "on a failed save" no mesmo
+parágrafo, sem deixar claro se é ataque ou teste de resistência.
+Resolvido a favor do teste de resistência (Destreza, com meio dano no
+sucesso), coerente com o padrão da "Demon Hunter" (mesma família de
+sabor narrativo, ataque em área via teste de Destreza).
+
+"Detonating Rounds" introduziu uma pilha de marcadores ("Primed") que
+não é nenhuma das condições fixas do glossário do projeto — é um
+contador específico deste jutsu, do mesmo jeito que "pontos de Fúria"
+é específico da família Fúria Contida. Batizado de "Cevado" (rank de
+Cevado, munição cevada), evitando confundir com as condições formais
+da lista fixa.
+
+"Breath of Sun: Fake Rainbow" veio com o campo `castingTime` cortado
+pela extração do PDF ("1 Reaction, which you take when targeted by"
+— sem completar "by what"). Resolvido como reação a ser alvo de um
+ataque, coerente com o efeito defensivo do jutsu (nega bônus de
+proficiência em ataques contra o conjurador) e com o padrão de outras
+reações defensivas já traduzidas no catálogo.
+
+Testado com Playwright: catálogo mostra 1387 opções (1 placeholder +
+1386 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
