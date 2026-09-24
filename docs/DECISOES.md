@@ -7653,6 +7653,27 @@ Testado com Playwright: catálogo mostra 1263 opções (1 placeholder +
 1262 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 204. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank B (lote 3 de ~5) (24/09/2026)
+
+Continuação da decisão #203. Mais 17 jutsu do Rank B de Bukijutsu, de
+"Graça da Dançarina" a "Ataque em Chicote", entraram no
+`JUTSU_CATALOGO` — 1279 das ~1400 entradas totais (51 de 81 jutsu de
+Bukijutsu Rank B).
+
+A família "Andorinha Voadora" ganhou dois membros novos (Guarda em
+Rajada e Penúltimo Golpe). Mais nomes gregos consagrados em português
+entraram sem tradução literal do inglês, seguindo o mesmo padrão da
+decisão #202 (Apolo/Ártemis): Hélio e Selene (titãs do Sol e da Lua).
+"Ichimonji" ficou sem tradução por ser nome de golpe/escola histórica
+(mesmo padrão de Musashi, Nobunaga etc. já fixado). "Dano Necrótico"
+(Necrotic Damage), usado em "Presas de Píton", já era tipo de dano
+usado no Hub desde o Ninjutsu Não-Elemental — sem novidade aqui, só
+confirmando o tipo certo pra Bukijutsu.
+
+Testado com Playwright: catálogo mostra 1280 opções (1 placeholder +
+1279 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
