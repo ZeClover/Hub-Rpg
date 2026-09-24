@@ -7674,6 +7674,30 @@ Testado com Playwright: catálogo mostra 1280 opções (1 placeholder +
 1279 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 205. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank B (lote 4 de ~5) (24/09/2026)
+
+Continuação da decisão #204. Mais 17 jutsu do Rank B de Bukijutsu, de
+"Momento Letal" a "Dispersão de Almas", entraram no `JUTSU_CATALOGO` —
+1296 das ~1400 entradas totais (68 de 81 jutsu de Bukijutsu Rank B).
+
+A família "Rei Macaco" ganhou dois membros no padrão "Rei Macaco: X"
+já fixado no Rank C (Coroa e Dádiva). Duas novas variantes da família
+"Coração" (que exige uma arma de um grupo específico equipada)
+entraram — Coração da Haste (grupo Polearm) e Coração da Força (grupo
+Power) — fixando os termos "grupo Haste" pra armas de haste (lanças,
+alabardas etc.) e "grupo Força" pras armas pesadas de impacto, ao lado
+de "grupo Lâmina" e "grupo Munição" já usados no lote 1. "Oni" ficou
+sem tradução por ser criatura mitológica japonesa consagrada (mesmo
+tratamento de nomes próprios lendários já usado em lotes anteriores).
+"Recurve Stance" veio com `alcance` e `custo` vazios na extração —
+preenchidos como "Pessoal" e "11 Chakra" por analogia com as outras
+posturas de Rank B de custo parecido (nenhum dado foi inventado além
+disso; a mecânica descrita no livro permaneceu intacta).
+
+Testado com Playwright: catálogo mostra 1297 opções (1 placeholder +
+1296 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
