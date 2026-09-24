@@ -439,8 +439,10 @@ const RANKS_JUTSU = [
    383 jutsu no total, a maior de todas; Rank D dela está completo (113
    de 114 jutsu — só "Stone Form" fora, dados vazios na extração do
    PDF, decisão #196); Rank C dela também está completo (99 de 99
-   jutsu, decisão #201) — faltam os ranks B, A e S de Bukijutsu (269
-   jutsu) e Invocação pra fechar o Compêndio inteiro. */
+   jutsu, decisão #201) — faltam os ranks B, A e S de Bukijutsu (170
+   jutsu: 81+64+25) pra fechar o Compêndio inteiro. Não existe uma
+   categoria separada "Invocação" no PDF — jutsu de invocação estão
+   dentro das classificações já cobertas (Não-Elemental etc.). */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -3401,7 +3403,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu e Taijutsu 100% completos; Bukijutsu em andamento, falta Invocação) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu e Taijutsu 100% completos; Bukijutsu em andamento) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

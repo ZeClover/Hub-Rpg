@@ -7581,9 +7581,13 @@ de estados que se substituem. Mais nomes próprios lendários ficaram
 sem tradução (Tametomo, Tanuki — mitológico —, Tokugawa, Toriyama,
 Yasuke, Yoichi).
 
-Com isso, restam os ranks B, A e S de Bukijutsu (269 jutsu) e
-Invocação pra fechar o Compêndio inteiro — ficam pra fatias futuras,
-respeitando a decisão #26 de uma fatia por vez.
+Com isso, restam os ranks B, A e S de Bukijutsu (170 jutsu: 81+64+25)
+pra fechar o Compêndio inteiro — ficam pra fatias futuras, respeitando
+a decisão #26 de uma fatia por vez. (Correção: não existe uma
+categoria separada "Invocação" no PDF de origem — jutsu de invocação
+estão espalhados dentro das classificações já existentes, sobretudo
+Ninjutsu Não-Elemental, que já está 100% completo, então não é um
+item pendente à parte.)
 
 Testado com Playwright: catálogo mostra 1229 opções (1 placeholder +
 1228 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
