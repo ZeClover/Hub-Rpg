@@ -7200,6 +7200,37 @@ Testado com Playwright: catálogo mostra 919 opções (1 placeholder + 918
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 186. Naruto 5e — Taijutsu Rank C quase completo — 1 jutsu faltando por falha de extração (19/09/2026)
+
+Continuação da decisão #185. Segundo e último lote planejado do Rank C
+de Taijutsu (21 jutsu, de "Relâmpago Pulsante: Toque" a "Estalo em
+Redemoinho") entrou no `JUTSU_CATALOGO` — 939 das ~1400 entradas totais
+(43 de 44 jutsu de Taijutsu Rank C).
+
+O 44º jutsu do rank, "SHADOW DANCING LEAF", veio com todos os campos
+vazios na extração local com pymupdf (custo, alcance, duração e
+descrição em branco — só sobrou um fragmento truncado de tempo de
+conjuração, "1 Reaction which you take after casting a…"), sinal de que
+o texto real ficou perdido num corte de página ou coluna que o pymupdf
+não recuperou. Sem a descrição original, não dá pra codificar a
+mecânica sem inventar — decisão #17/#134 proíbe isso mesmo pra preencher
+buraco. Deixei esse jutsu de fora por enquanto; se o Zé conseguir
+reexportar ou re-fotografar essa página específica do Compêndio, entra
+num lote futuro avulso. Rank C fica então "quase 100%" (43/44) até essa
+página aparecer.
+
+Este lote também traz "Seikuken" e "Sola/Palma do Rakshasa" (jutsu que
+exigem estar numa Postura de Taijutsu ou de Clã pra funcionar — mesma
+mecânica de pré-requisito de antes, mas agora aceitando Posturas de Clã
+como o Punho Gentil), e "Andorinha Celestial Gêmea", o primeiro jutsu
+de "Combinação" do catálogo — só pode ser lançado com um segundo
+conjurador presente, com efeito extra baseado em qual dos dois tem
+maior Carisma.
+
+Testado com Playwright: catálogo mostra 940 opções (1 placeholder + 939
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

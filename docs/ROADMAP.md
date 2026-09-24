@@ -1991,9 +1991,15 @@ passando.
       1 de 2)** (19/09/2026) — decisão #185. 22 dos 44 jutsu do Rank C
       entraram no catálogo (918 de ~1400 no total). Testado com
       Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Taijutsu Rank C quase completo (43/44)** (19/09/2026)
+      — decisão #186. Mais 21 jutsu do Rank C entraram no catálogo (939
+      de ~1400 no total); falta só "Shadow Dancing Leaf", cujos dados
+      vieram vazios do PDF (provável corte de página) — pendente até o
+      Zé remandar essa página. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~482 jutsu: Taijutsu C restante (22) + B/A/S (77),
-      Bukijutsu (383), Invocação — categoria por categoria),
+      Jutsu (~461 jutsu: Taijutsu B/A/S (77) + "Shadow Dancing Leaf"
+      pendente, Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
