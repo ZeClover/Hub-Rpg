@@ -7527,6 +7527,26 @@ Testado com Playwright: catálogo mostra 1170 opções (1 placeholder +
 1169 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 199. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank C (lote 3 de ~5) (19/09/2026)
+
+Continuação da decisão #198. Mais 20 jutsu do Rank C de Bukijutsu, de
+"Performance de Dança: Gambito" a "Metal Pesado", entraram no
+`JUTSU_CATALOGO` — 1189 das ~1400 entradas totais (60 de 99 jutsu de
+Bukijutsu Rank C).
+
+Esse lote traz vários nomes próprios históricos/lendários mantidos
+como estão (Guan Yu, Fuma Kotaro, Draupnir), seguindo a mesma regra já
+usada com nomes próprios estrangeiros — sem tradução. "Grand Slam"
+ficou sem tradução por ser termo de esporte consagrado em português
+(mesma regra do "Boliche: Spare/Strike" do lote 1). Também apareceu a
+primeira referência à propriedade de armadura "Reinforced", traduzida
+como "propriedade Reforçada" (mesmo padrão de "propriedade Mortal" já
+fixado no lote 1 pra "Deadly").
+
+Testado com Playwright: catálogo mostra 1190 opções (1 placeholder +
+1189 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
