@@ -7593,6 +7593,38 @@ Testado com Playwright: catálogo mostra 1229 opções (1 placeholder +
 1228 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 202. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank B (lote 1 de ~5) (24/09/2026)
+
+Início do Rank B de Bukijutsu (81 jutsu ao todo, decisão #26 — uma
+fatia por vez, continuando de onde os Ranks D e C pararam nas decisões
+#196 e #201). Primeiro lote com 17 jutsu, de "Golpe Perfurante
+Decisivo" (1-Strike Piercing Blow) a "Flechas-Bomba" (Bomb Arrows),
+entrou no `JUTSU_CATALOGO` — 1245 das ~1400 entradas totais.
+
+Duas famílias de nomes gregos entraram pra ficar: "Flecha de Apolo" e
+"Flecha de Ártemis" usam a tradução consagrada em português dos nomes
+dos deuses (não é nome próprio estrangeiro pra preservar — é o
+mesmo padrão de "Guan Yu, Musashi..." só que pro grego, onde a língua
+já tem forma própria). Fixamos também os mapeamentos exatos das
+condições numéricas "Bruised" → Machucado e "Concussed" → Contundido,
+confirmados por precedente já existente em Taijutsu (ficavam ambíguos
+no glossário até agora, mas o próprio catálogo já usava esse par de
+forma consistente). Duas condições novas, sem nome fixo no livro
+("Uneasy" em Aura Abissal e "Demoralized" em Lâmina do Pecado:
+Orgulho), foram definidas como efeitos autocontidos dentro da própria
+entrada (mecânica original, não descrição do livro) em vez de criar
+uma condição nova genérica pro Hub. "Ammo Heart", "Blade Heart" e
+"Power Heart" — jutsu que exigem uma arma de um grupo específico
+equipada — viraram a família "Coração da Munição" / "Coração da
+Lâmina" (Power Heart fica pro próximo lote, ainda sem termo fixado
+pro grupo "Power"). O nome "AMMO HEART [NAME/ CHANGED]" teve a
+anotação entre colchetes descartada como ruído de OCR (anomalia (c) já
+descrita na tarefa), virando só "Ammo Heart" → "Coração da Munição".
+
+Testado com Playwright: catálogo mostra 1246 opções (1 placeholder +
+1245 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
