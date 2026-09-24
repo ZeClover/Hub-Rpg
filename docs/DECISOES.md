@@ -7754,6 +7754,32 @@ Testado com Playwright: catálogo mostra 1326 opções (1 placeholder +
 1325 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 208. Naruto 5e — Bukijutsu Rank A, lote 2 de ~4 (24/09/2026)
+
+Continuação da decisão #207. Segundo lote (16 jutsu, de "Chasing Fang"
+a "Fatal Blow") entrou no `JUTSU_CATALOGO` — 1341 das ~1400 entradas
+totais (32 de 64 jutsu do Rank A).
+
+"Crescent Moon Dance" e "Crescent Moon Shot" não usam o formato
+"Lua Crescente: X" da família já fixada no Rank C (Decapitação,
+Mutilação, Impacto, Penetração) — no livro original elas também vêm
+sem dois-pontos ("Crescent Moon Dance"/"Crescent Moon Shot", não
+"Crescent Moon: Dance"), então viraram jutsu autônomos "Dança da Lua
+Crescente" e "Tiro da Lua Crescente", sem entrar formalmente na
+família. "Dance Performance: Groove" manteve "Groove" sem tradução,
+mesmo tratamento já dado a "Flamenco" nessa família (termo de dança
+consagrado). "Collateral Damage" foi traduzido direto como "Dano
+Colateral" — mecânica de arremesso de inimigos contra outros, sem
+ligação com terrorismo/violência real que justificasse trocar o nome
+(diferente do caso de "Suicide Bombing" na decisão #206). "Fatal Blow"
+tem a mecânica de Chain mais complexa do lote: só pode ser lançado
+como Chain 1, 2 ou 3 (nunca solto), com dano e efeitos diferentes por
+Chain, e quebra a Chain atual ao concluir — preservada na íntegra.
+
+Testado com Playwright: catálogo mostra 1342 opções (1 placeholder +
+1341 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
