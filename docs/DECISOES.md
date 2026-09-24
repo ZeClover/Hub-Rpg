@@ -7410,6 +7410,30 @@ Testado com Playwright: catálogo mostra 1077 opções (1 placeholder +
 1076 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 194. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank D (lote 4 de 6) (19/09/2026)
+
+Continuação da decisão #193. Quarto lote do Rank D de Bukijutsu (20
+jutsu, de "Golpe Corta-Grama" a "Cauda do Rei Macaco") entrou no
+`JUTSU_CATALOGO` — 1096 das ~1400 entradas totais (80 de 114 jutsu de
+Bukijutsu Rank D).
+
+Duas famílias novas: "Ferramentas Manipuladas" (Manipulated Tools),
+jutsu de pergaminho de armas que invocam lâminas à distância (não
+precisam de arma equipada, ao contrário do resto do Bukijutsu até
+aqui), e "Rei Macaco" (Monkey King), referência à lenda chinesa de Sun
+Wukong (domínio público, sem risco de direito autoral) com uma Postura
+que muda de efeito dependendo de qual ação a descarrega (Ação, Ação
+Bônus ou Reação) — resolvido com uma lista dentro do próprio "efeito",
+já que o esquema não separa por tipo de ação. Também nasce o conceito
+de "Alcance Estendido" pra armas de haste compridas (tradução de
+"Reach X"), usado em "10 Mil Pelos do Rei Macaco" e "Cauda do Rei
+Macaco" — vou manter esse termo daqui pra frente sempre que o livro
+citar a propriedade Reach de uma arma.
+
+Testado com Playwright: catálogo mostra 1097 opções (1 placeholder +
+1096 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
