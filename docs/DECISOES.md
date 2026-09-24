@@ -7231,6 +7231,27 @@ Testado com Playwright: catálogo mostra 940 opções (1 placeholder + 939
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 187. Naruto 5e — Catálogo de Jutsu, início do Taijutsu Rank B (19/09/2026)
+
+Continuação da decisão #186. O Rank B do Taijutsu tem 38 jutsu, entrando
+em 2 lotes de ~19. Este primeiro lote (19 jutsu, de "Técnica da
+Pós-Imagem" a "Bala do Furacão da Folha") entrou no `JUTSU_CATALOGO` —
+958 das ~1400 entradas totais (19 de 38 jutsu de Taijutsu Rank B).
+
+Traz o segundo jutsu de "Combinação" do catálogo ("Onda de Força", que
+só pode ser lançado com um segundo conjurador por perto) e a
+continuação da cadeia "Fôlego Celestial" (5º nível, "Suspirar").
+"Asakujaku: Pavão da Manhã" e "Asakujaku: Pomba da Manhã" são
+Finalizadores bem específicos, cada um exigindo um pré-requisito
+diferente (o talento dos Oito Portões Internos ou a cadeia de Fôlego
+Celestial) — referências diretas às técnicas do Rock Lee e do Guy no
+anime. "Full House" segue a mesma linha de "Royal Flush" (decisão
+#186): nomes de pôquer mantidos como estão, sem tradução.
+
+Testado com Playwright: catálogo mostra 959 opções (1 placeholder + 958
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
