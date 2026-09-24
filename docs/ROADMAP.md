@@ -2044,9 +2044,13 @@ passando.
       1 de ~5)** (19/09/2026) — decisão #197. 20 dos 99 jutsu do Rank C
       de Bukijutsu entraram no catálogo — 1149 de ~1400 no total.
       Testado com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank C (lote 2 de
+      ~5)** (19/09/2026) — decisão #198. Mais 20 jutsu do Rank C de
+      Bukijutsu (40 de 99 no total) — 1169 de ~1400 no total. Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~251 jutsu: "Shadow Dancing Leaf" e "Stone Form"
-      pendentes, Bukijutsu Rank C (79 restantes de 99), Ranks B/A/S de
+      Jutsu (~231 jutsu: "Shadow Dancing Leaf" e "Stone Form"
+      pendentes, Bukijutsu Rank C (59 restantes de 99), Ranks B/A/S de
       Bukijutsu (269 no total), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

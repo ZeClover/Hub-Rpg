@@ -7505,6 +7505,28 @@ Testado com Playwright: catálogo mostra 1150 opções (1 placeholder +
 1149 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 198. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank C (lote 2 de ~5) (19/09/2026)
+
+Continuação da decisão #197. Mais 20 jutsu do Rank C de Bukijutsu, de
+"Sopro da Chuva: Chuvisco" a "Impacto do Cipreste", entraram no
+`JUTSU_CATALOGO` — 1169 das ~1400 entradas totais (40 de 99 jutsu de
+Bukijutsu Rank C).
+
+A condição "Lacerated" apareceu pela primeira vez no Compêndio neste
+lote (em "Sopro dos Céus: Tempestade", "Cara ou Coroa" e nos dois
+jutsu "Lua Crescente" de dano alto) — vira "Lacerado" no Hub,
+distinta de Sangramento (é um ferimento mais grave, com CD de cura por
+Medicina mais alta). Também ficou fixada a mecânica "Perfuração X"
+(pierce, em "Pensamento Esmagador") pra armadura ignorando parte da
+redução de dano, e "Boliche" ganhou nomes de esporte consagrados sem
+tradução (decisão já citada no lote 1) confirmados de novo aqui com
+"Cara ou Coroa" traduzindo o idioma equivalente em português pra
+"Coin Toss".
+
+Testado com Playwright: catálogo mostra 1170 opções (1 placeholder +
+1169 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
