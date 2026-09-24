@@ -1973,9 +1973,14 @@ passando.
       junto com Não-Elemental e as 5 Naturezas elementais (842 de ~1400
       no total, 60%). Testado com Playwright; `tsc` e lint continuam
       limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Taijutsu (lote 1 do
+      Rank D)** (19/09/2026) — decisão #182. 18 dos 54 jutsu do Rank D
+      de Taijutsu (o maior rank da categoria — Taijutsu não tem Rank E)
+      entraram no catálogo (860 de ~1400 no total). Testado com
+      Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~558 jutsu: Taijutsu (175), Bukijutsu (383), Invocação —
-      categoria por categoria),
+      Jutsu (~540 jutsu: Taijutsu D restante (36) + C/B/A/S (121),
+      Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

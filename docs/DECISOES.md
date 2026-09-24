@@ -7113,6 +7113,33 @@ Testado com Playwright: catálogo mostra 843 opções (1 placeholder + 842
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 182. Naruto 5e — Catálogo de Jutsu, início do Taijutsu (19/09/2026)
+
+Continuação da decisão #181. Nona categoria do Compêndio: Taijutsu, com
+175 jutsu no total. Diferente de Ninjutsu e Genjutsu, Taijutsu não tem
+Rank E — começa direto no D (54 jutsu, o maior rank da categoria),
+depois C (44), B (38), A (24) e S (15). Este primeiro lote (18 jutsu,
+de "Mil Anos de Dor" a "Combo Errático") entrou no `JUTSU_CATALOGO` —
+860 das ~1400 entradas totais.
+
+Taijutsu introduz mecânicas próprias que não existiam em Ninjutsu nem
+Genjutsu: golpes marcados como "Combo" que, ao acertar, liberam um
+"Finalizador" (outro Taijutsu) contra o mesmo alvo ignorando alcance e
+tempo de conjuração normais; golpes "Finalizador" que ficam bem mais
+fortes quando lançados depois de um Combo; e algumas técnicas que só
+podem ser usadas em certas "Posturas" (Punho de Dragão, Punho Bêbado).
+Nenhum desses são campos novos no `JUTSU_CATALOGO` — o esquema de dados
+não tem campo de palavra-chave — então documentei a mecânica dentro do
+próprio "efeito" de cada jutsu, do jeito que já era feito pra
+"Concentração" e "Clash" antes. "Mil Anos de Dor" é o famoso golpe
+cômico de dedo do Kakashi — mantive o nome popular da dublagem
+brasileira em vez de traduzir literalmente do inglês, já que o próprio
+Compêndio se baseia em golpes reconhecíveis do anime.
+
+Testado com Playwright: catálogo mostra 861 opções (1 placeholder + 860
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
