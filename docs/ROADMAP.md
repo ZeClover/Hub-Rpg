@@ -1982,9 +1982,14 @@ passando.
       (19/09/2026) — decisão #183. Mais 18 jutsu do Rank D entraram no
       catálogo (36 de 54 do Rank D; 878 de ~1400 no total). Testado com
       Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Taijutsu Rank D 100% completo** (19/09/2026) —
+      decisão #184. Os 18 jutsu do último lote fecharam o Rank D
+      inteiro (54 jutsu, o maior rank da categoria) — 896 de ~1400 no
+      total, faltando C/B/A/S de Taijutsu. Testado com Playwright; `tsc`
+      e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~522 jutsu: Taijutsu D restante (18) + C/B/A/S (121),
-      Bukijutsu (383), Invocação — categoria por categoria),
+      Jutsu (~504 jutsu: Taijutsu C/B/A/S (121), Bukijutsu (383),
+      Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

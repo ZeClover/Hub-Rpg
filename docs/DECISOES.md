@@ -7160,6 +7160,25 @@ Testado com Playwright: catálogo mostra 879 opções (1 placeholder + 878
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 184. Naruto 5e — Taijutsu Rank D 100% completo (19/09/2026)
+
+Continuação da decisão #183. Terceiro e último lote do Rank D de
+Taijutsu (18 jutsu, de "Golpe na Nuca" a "Tartaruga Sábia") entrou no
+`JUTSU_CATALOGO` — 896 das ~1400 entradas totais. Com isso, o Rank D de
+Taijutsu está completo (54 jutsu, o maior rank da categoria) — faltam
+C, B, A e S dela (121 jutsu) pra fechar Taijutsu inteiro.
+
+Mais 4 golpes ligados a Posturas (Punho de Leão, Punho de Coelho, Punho
+de Serpente, Punho Silencioso) e a dupla "Primeiro/Segundo Fôlego
+Celestial" — jutsu que só pode ser lançado com o anterior já ativo,
+substituindo-o e empilhando os efeitos (uma progressão de buffs em
+cadeia, nova pro catálogo). Atualizei o comentário de completude do
+arquivo pra refletir Rank D 100% pronto.
+
+Testado com Playwright: catálogo mostra 897 opções (1 placeholder + 896
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
