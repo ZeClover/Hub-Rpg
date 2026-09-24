@@ -2014,9 +2014,14 @@ passando.
       #190. Os 15 jutsu do Rank S fecharam o Taijutsu inteiro (174 de
       175 jutsu) — 1016 de ~1400 no total. Testado com Playwright;
       `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Bukijutsu Rank D (lote
+      1 de 6)** (19/09/2026) — decisão #191. 20 dos 114 jutsu do Rank D
+      de Bukijutsu (a maior categoria do Compêndio, 383 jutsu) entraram
+      no catálogo — 1036 de ~1400 no total. Testado com Playwright;
+      `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~384 jutsu: "Shadow Dancing Leaf" pendente, Bukijutsu
-      (383), Invocação — categoria por
+      Jutsu (~364 jutsu: "Shadow Dancing Leaf" pendente, Bukijutsu
+      (363 restantes de 383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

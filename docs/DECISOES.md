@@ -7331,6 +7331,42 @@ Testado com Playwright: catálogo mostra 1017 opções (1 placeholder +
 1016 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 191. Naruto 5e — Catálogo de Jutsu, início do Bukijutsu Rank D (lote 1 de 6) (19/09/2026)
+
+Continuação da decisão #190. Décima categoria do Compêndio: Bukijutsu
+(jutsu de arma), com 383 jutsu no total — a maior categoria de todas,
+maior até que Taijutsu. O Rank D é o maior rank dela, com 114 jutsu,
+entrando em lotes de ~20. Este primeiro lote (20 jutsu, de "Golpe
+Esmagador Único" a "Sopro do Eco: Reverberação") entrou no
+`JUTSU_CATALOGO` — 1036 das ~1400 entradas totais (20 de 114 jutsu de
+Bukijutsu Rank D).
+
+Bukijutsu introduz um detalhe de nomenclatura importante: apesar de ser
+"jutsu de arma", o livro descreve o ataque mecânico como "Melee/Ranged
+Taijutsu Attack" (não "Weapon Attack") — ou seja, o próprio golpe de
+arma usa a mesma rolagem de ataque do Taijutsu, só que com uma arma
+empunhada. Por isso mantive a tradução já estabelecida "Ataque de
+Taijutsu corpo a corpo"/"à distância" em vez de inventar "Ataque de
+Bukijutsu", e usei "dano da arma" (termo já usado em jutsu antigos como
+"Golpe de Chakra" e "Fio de Aço Flamejante") pro que o livro chama de
+"Weapon's Damage". "Alcance da arma" (já usado antes) cobre os casos de
+"Weapon Range". Uma mecânica nova de fato: a palavra-chave "Chain"
+(golpes que podem ser "encadeados" em Chain 2/Chain 3 pra ganhar efeito
+extra, geralmente mais dano ou pior condição pro alvo) — mantive
+"Chain" sem tradução, no mesmo espírito de "Combo"/"Clash" já
+mantidos em inglês no Taijutsu/Ninjutsu. Também nasce a família
+"Fúria Contida" (Biding Fury), com uma Postura que acumula um recurso
+("Fúria") gasto em dois jutsu-filhos, e a família "Sopro de [elemento]"
+(Breath of...), que empresta chakra elemental pra armas — ambas devem
+reaparecer em lotes seguintes, então fixei esses nomes de família como
+padrão a seguir. "Calcanhar de Aquiles" usa a perícia "Artes Marciais"
+já estabelecida (não "Taijutsu" — são coisas diferentes no Hub: Artes
+Marciais é a perícia testável, Taijutsu é o atributo/tipo de jutsu).
+
+Testado com Playwright: catálogo mostra 1037 opções (1 placeholder +
+1036 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

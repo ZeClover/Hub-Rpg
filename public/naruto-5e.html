@@ -435,9 +435,10 @@ const RANKS_JUTSU = [
    prontos) — nona categoria fechada, decisão #190. Só falta mesmo
    "Shadow Dancing Leaf" (Rank C), de fora por dados vazios na extração
    do PDF (decisão #186) — pendência isolada, não uma categoria em
-   aberto. Restam Bukijutsu e Invocação pra fechar o Compêndio inteiro,
-   entrando aos poucos, categoria por categoria, mesmo ritmo dos
-   Clãs/Classes. */
+   aberto. Bukijutsu (jutsu de arma) em andamento — décima categoria,
+   383 jutsu no total, a maior de todas; Rank D é o maior rank dela,
+   com 114 jutsu entrando aos poucos em lotes de ~20 (decisão #191).
+   Resta também Invocação pra fechar o Compêndio inteiro. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -2503,6 +2504,46 @@ const JUTSU_CATALOGO = [
     efeito:'Só pode ser lançado enquanto você estiver adjacente a pelo menos uma criatura hostil. A(s) criatura(s) adjacente(s) fazem um teste de Força ou Destreza (Artes Marciais) contra o seu — quem perder o teste, pelo tempo que durar, não consegue se afastar de você: sempre que tentar se mover ou teleportar pra longe, você pode gastar seu próprio deslocamento pra ficar adjacente de novo (não gasta deslocamento se isso acontecer no turno de outra criatura; dimensões diferentes contam como distância infinita, impedindo o efeito). Toda vez que se mover assim até alguém, pode usar a Ação de Ataque contra ela — no acerto, ela só pode alvejar você com ataques corpo a corpo ou à distância até o fim do turno atual. Além disso, quando for usar a Ação de Ataque, pode atacar individualmente cada criatura adjacente a você.'},
   {nome:'Lírio Branco', tipo:'Taijutsu', categoria:'Taijutsu', rank:'S', custo:'Especial (25 Chakra)', alcance:'Toque', duracao:'Concentração, até 1 minuto',
     efeito:'Médico: toca a base da coluna de um aliado disposto (não pode alvejar a si mesmo), liberando o tempo de resposta dos reflexos dele. Pelo tempo que durar, o alvo ganha uma Ação Bônus e uma Reação extras em cada turno, mas não pode manter concentração em nenhum outro jutsu enquanto isso. Ao acabar, o corpo dele desacelera de vez, ficando Fragilizado por 1 hora. Se ele ganhar 2 ou mais ranks de Chocado enquanto estiver sob este efeito, fica Atordoado até o fim do turno seguinte dele. Uma criatura só pode se beneficiar deste jutsu uma vez por descanso.'},
+  {nome:'Golpe Esmagador Único', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Golpe ascendente que arremete de baixo pra cima: Ataque de Taijutsu corpo a corpo, dano da arma + 2d6. Se acertar, o alvo testa Força ou tem a Defesa reduzida em 1d4 até o início do turno seguinte dele. Em ranks mais altos: +3 de custo e +1d6 de dano por rank acima de D.'},
+  {nome:'Corte de Golpe Único', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Corte largo em arco, sem desperdiçar movimento: Ataque de Taijutsu corpo a corpo, dano da arma + 2d6. Se acertar, o alvo testa Constituição ou ganha 1 rank de Sangramento. Em ranks mais altos: +3 de custo e +1d6 de dano por rank acima de D.'},
+  {nome:'Golpe Cruzado Duplo', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Dois cortes cruzados formando um X: 2 Ataques de Taijutsu corpo a corpo, cada um causando dano da arma. Cada acerto força o alvo a testar Constituição ou ganhar 1 rank de Machucado. Em ranks mais altos: +3 de custo por rank acima de D, e o alvo sofre -1 no teste.'},
+  {nome:'Penetração em Dois Pontos', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Ataca ombros ou pernas pra desestabilizar o alvo: 2 Ataques de Taijutsu corpo a corpo, dano da arma. Acertando ao menos uma vez, o alvo testa Constituição ou tem o deslocamento reduzido em 3m por acerto até o fim do turno seguinte dele. Em ranks mais altos: +3 de custo por rank acima de D, e -1 no teste do alvo.'},
+  {nome:'Canhão de Ar 36 PSI', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'Instantâneo',
+    efeito:'Dispara pela lâmina um projétil de ar comprimido: Ataque de Taijutsu à distância, dano da arma + 1d12. Se acertar, o alvo testa Destreza ou ganha 1 rank de Lento (repete o teste no fim de cada turno dele pra se livrar). Lançado como Chain 2, causa +2d12 de dano; como Chain 3, o alvo ganha mais 1 rank de Lento. Em ranks mais altos: +3 de custo e +1 no tamanho do dado de dano por rank acima de D.'},
+  {nome:'Corte Lateral Triplo', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'3 Ataques de Taijutsu corpo a corpo mirando as juntas do alvo pra desarmar e incapacitar, dano da arma sem somar seu modificador de habilidade. Causando dano ao menos uma vez, o alvo testa Constituição ou larga a arma (arremessada 3m) e fica Zonzo até o fim do turno seguinte dele. Em ranks mais altos: +3 de custo por rank acima de D, e -1 no teste do alvo.'},
+  {nome:'Perfuração em Três Pontos', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'3 Ataques de Taijutsu corpo a corpo em pontos diferentes da defesa do alvo, dano da arma sem somar seu modificador de habilidade. O alvo testa Constituição ou fica Fragilizado até o fim do turno seguinte dele. Em ranks mais altos: +3 de custo por rank acima de D, e -1 no teste do alvo.'},
+  {nome:'Calcanhar de Aquiles', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'9m', duracao:'1 minuto',
+    efeito:'Mira nos pontos fracos da armadura do alvo (precisa estar vestindo armadura): faz um teste de Artes Marciais contra a Defesa dele. Se superar, ignora a redução de dano da armadura e a Defesa do alvo cai em 1 enquanto durar. Termina antes se perder o alvo de vista.'},
+  {nome:'Corte do Encaixe da Flecha', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Corte instantâneo que só dá brecha pro alvo reagir: Ataque de Taijutsu corpo a corpo, dano da arma + 2d4. Ao acertar, pode se afastar 3m do alvo antes de rolar o dano. Em ranks mais altos: +3 de custo e +2d4 de dano por rank acima de D.'},
+  {nome:'Postura da Fúria Contida', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Postura: toda vez que é atingido, ou reage pra fazer um ataque errar, ganha 1 ponto de Fúria. Guarda até um total de Fúria igual ao seu nível, pra gastar depois em jutsu da família "Fúria Contida".'},
+  {nome:'Fúria Contida: Rajada do Dragão', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'1 minuto',
+    efeito:'Exige estar na Postura da Fúria Contida. 2 Ataques de Taijutsu corpo a corpo, dano da arma + 1d4 cada. Acertando os dois, pode gastar 2 ou mais pontos de Fúria pra fazer um ataque adicional por ponto gasto, até 4 ataques adicionais.'},
+  {nome:'Fúria Contida: Bloqueio Horizontal', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'1 minuto',
+    efeito:'Reação a ser atingido por um ataque: exige estar na Postura da Fúria Contida. Gasta 2 ou mais pontos de Fúria pra aparar — rola o dado de dano da arma uma vez por ponto gasto e reduz o dano recebido pelo total rolado. Se isso zerar o dano, faz um ataque a cada 2 pontos de Fúria gastos, causando o dado de dano da arma em cada acerto.'},
+  {nome:'Lâmina do Pecado: Preguiça', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Imbui a lâmina com o pecado da Preguiça: Ataque de Taijutsu corpo a corpo, dano da arma + 1d8. O alvo testa Constituição ou desce na ordem de iniciativa, perdendo o ímpeto de agir rápido. Lançado como Chain 2, causa +2d8 de dano; como Chain 3, o teste do alvo tem desvantagem. Em ranks mais altos: +3 de custo e +1d12 de dano por rank acima de D; a partir do Rank A, se o alvo já for o último na iniciativa e falhar o teste, fica incapaz de se mover ou agir até o fim do turno seguinte dele.'},
+  {nome:'Golpe Contundente', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Carrega a arma de chakra concussivo e mira no centro do peito do alvo: Ataque de Taijutsu à distância, dano da arma + 2d4 de Concussão. Se acertar, o alvo testa Constituição ou fica Zonzo — enquanto isso durar, qualquer teste de concentração dele pra manter Genjutsu ou Ninjutsu soma 1d8 a mais de dificuldade. Em ranks mais altos: +3 de custo e +2d4 de dano por rank acima de D.'},
+  {nome:'Ricochete em Cadeia', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Mira pra acertar o maior número de alvos possível: Ataque de Taijutsu à distância, dano da arma + 1d8. Acertando, pode fazer um segundo Ataque de Taijutsu à distância contra outra criatura no alcance com -2 no ataque; acertando esse, um terceiro ataque contra outra criatura com mais -2 acumulado. Em ranks mais altos: +3 de custo e +1d8 de dano por rank acima de D.'},
+  {nome:'Sopro das Cinzas: Chamuscar', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Cobre a arma com chakra de Fogo até virar cinzas incandescentes: Ataque de Taijutsu à distância com +1 no intervalo de acerto crítico, dano da arma + 2d6 de Fogo. O alvo fica Cego pelas cinzas até o início do turno seguinte dele ou até ser alvo de um ataque antes disso. Em ranks mais altos: +3 de custo e +1d6 de dano por rank acima de D; no Rank B, atinge uma segunda criatura; no Rank S, uma terceira.'},
+  {nome:'Sopro das Feras: Presa', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'O chakra que cobre a arma toma a forma de uma fera à sua escolha, visível a qualquer um: 2 Ataques de Taijutsu corpo a corpo, dano da arma + 1d6 cada, sem somar seu modificador de habilidade. Em ranks mais altos: +3 de custo por rank acima de D; a partir do Rank C, +1d6 de dano; no Rank B, +1 ataque; no Rank S, +2 ataques.'},
+  {nome:'Sopro da Poeira: Sokusei', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'O chakra de Terra aumenta o peso e a força de impacto da arma: Ataque de Taijutsu à distância (não pode ser crítico), dano da arma + 1d12 de Terra, e o alvo é empurrado 1,5m. Em ranks mais altos: +3 de custo e +1d12 de dano por rank acima de D.'},
+  {nome:'Sopro da Terra: Esmagar', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (3m de raio)', duracao:'Instantâneo',
+    efeito:'Finge um golpe numa direção e muda de ângulo na hora H: toda criatura no raio com pontuação de Taijutsu menor que a sua sofre -1d4 no teste de resistência deste jutsu. Escolhe as criaturas afetadas, que testam Destreza — falhando, sofrem dano da arma + 2d6 de Terra e ficam Derrubadas e com 1 rank de Machucado; passando, sofrem metade do dano e nada mais. Em ranks mais altos: +3 de custo, +1d6 de dano e +1,5m de raio por rank acima de D; no Rank B, a penalidade vira -1d6; no Rank S, -1d8.'},
+  {nome:'Sopro do Eco: Reverberação', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'O chakra manifesta uma nota musical visível sobre a arma e dispara dois estampidos sonoros: 2 Ataques de Taijutsu à distância, dano da arma cada. Cada acerto força o alvo e quem estiver a até 1,5m dele a testar Sabedoria ou ficar Ofuscado. Em ranks mais altos: +3 de custo e +1d4 de dano por rank acima de D; a partir do Rank C, +1 ataque; a partir do Rank B, também fica Zonzo na falha.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -2974,7 +3015,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu e Taijutsu 100% completos; faltam Bukijutsu e Invocação) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu e Taijutsu 100% completos; Bukijutsu em andamento, falta Invocação) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),
