@@ -7698,6 +7698,36 @@ Testado com Playwright: catálogo mostra 1297 opções (1 placeholder +
 1296 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 206. Naruto 5e — Bukijutsu Rank B 100% completo (lote 5 de ~5) (24/09/2026)
+
+Continuação da decisão #205. Quinto e último lote do Rank B de
+Bukijutsu (13 jutsu, de "Golpe de Resistência" a "Inversão Yin-Yang")
+entrou no `JUTSU_CATALOGO` — 1309 das ~1400 entradas totais. Com isso,
+o Rank B de Bukijutsu fica 100% completo: 81 dos 81 jutsu, sem nenhuma
+pendência de dados corrompidos neste rank (igual ao Rank C, diferente
+do Rank D, que ficou com "Stone Form" de fora).
+
+"Sword Aura: Green" fechou a família "Aura da Espada" no rank B: exige
+estar sob "Laranja" (não "Amarela") pra ser lançada — o texto original
+do livro confirma que a família ramifica a partir de "Laranja" nesse
+ponto, não é uma progressão linear única de cores. "Suicide Bombing"
+foi traduzido como "Autodestruição" em vez de tradução literal, pra
+evitar terminologia do mundo real ligada a terrorismo — mecânica
+preservada (dano máximo em si mesmo, explosão em área), só o nome
+mudou. Bukijutsu Rank B inteiro fixou, além dos termos já vistos:
+"grupo Haste" e "grupo Força" (decisão #205), o mapeamento
+Bruised→Machucado / Concussed→Contundido (decisão #202), e a
+convenção de manter nomes de deuses gregos na forma consagrada em
+português (Apolo, Ártemis, Hélio, Selene).
+
+Com isso, restam os ranks A e S de Bukijutsu (89 jutsu: 64+25) pra
+fechar o Compêndio inteiro — ficam pra fatias futuras, respeitando a
+decisão #26 de uma fatia por vez.
+
+Testado com Playwright: catálogo mostra 1310 opções (1 placeholder +
+1309 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
