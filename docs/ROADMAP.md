@@ -1871,10 +1871,18 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       compartilhado (`(hub)/qr-code.tsx`). Nunca lê nem escreve `dados`
       de ficha de sistema nenhum. `tsc`, lint, `next build` e os 302
       testes automáticos continuam limpos
-- [ ] **Demais ideias do pedido** (exportar PDF,
-      sandbox de ficha/combate, prévia do Level Up, PWA,
-      offline parcial, sincronização ao reconectar) — fica pra
-      quando o Zé confirmar a ordem das próximas
+- [x] **PWA e leitura offline de telas recentes** (24/09/2026) —
+      decisão #150. Service worker nativo (`public/sw.js`) cacheia só o
+      que a pessoa já visitou — telas do Hub, fichas, respostas de API
+      já lidas; nunca escrita. Instalável (manifesto + ícones gerados
+      sem lib nova). Sincronização automática ao reconectar ficou só
+      como aviso (não recarrega sozinho): construir uma fila de retry
+      de verdade exigiria mexer nas ~10 fichas de sistema, sem include
+      comum entre elas — risco demais pra esta fatia. `tsc`, lint,
+      `next build` e os 302 testes automáticos continuam limpos
+- [ ] **Demais ideias do pedido** (exportar PDF, sandbox de
+      ficha/combate, prévia do Level Up) — fica pra quando o Zé
+      confirmar a ordem das próximas
 
 ---
 

@@ -6682,6 +6682,62 @@ Sem migração, sem dependência nova.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 150. Hub — PWA e leitura offline de telas recentes (24/09/2026)
+
+Décima terceira fatia do backlog de "demais ideias" (decisão #134):
+instalável como app (ideia #128) e offline parcial só pra telas/fichas
+já visitadas (ideia #129), mais o que dava pra fazer com segurança de
+"sincronizar ao reconectar" (ideia #130).
+
+**Custo zero (decisão #5):** Cache API e Service Worker são nativos do
+navegador — nada de serviço externo, nada de processo rodando 24h. Os
+dois ícones do manifesto (`icone-192.png`/`icone-512.png`) foram
+gerados por um script Node local usando só `zlib` (já vem com o Node),
+sem instalar nenhuma biblioteca de imagem.
+
+**Como funciona:** `public/sw.js` guarda em cache, sozinho, o que a
+pessoa efetivamente abre — nunca pré-carrega a campanha ou a ficha de
+ninguém. Três regras: arquivo estático imutável (`_next/static`,
+manifesto, ícones) é cache-first; navegação de página e leitura de API
+(`GET /api/...`) são network-first com o cache como plano B; qualquer
+escrita (POST/PATCH/DELETE) nunca passa pelo cache, sempre vai direto
+pra rede. Resultado: uma ficha ou campanha já aberta antes volta a
+abrir sem internet: a página, e o último retrato de dados que a API
+devolveu, os dois já estavam no cache.
+
+**Por que a sincronização automática NÃO existe ainda (ideia #130
+parcial, de propósito).** Cada uma das ~10 fichas de sistema já
+salva sozinha a cada mudança (decisão #46), mas quem dispara esse
+salvamento é o próprio arquivo HTML da ficha, não o Hub — e nenhuma
+delas tem hoje uma fila de "tentar de novo quando a internet voltar".
+Fazer o Hub recarregar a página sozinho ao reconectar arriscaria
+jogar fora uma mudança que a pessoa fez offline e que ainda não tinha
+sido salva — o oposto do que a decisão pedia ("nunca quebrar
+funcionalidade existente"). Construir uma fila de verdade exigiria
+mexer nos ~10 arquivos HTML soltos, sem nada em comum entre eles
+(achado confirmado por auditoria antes de construir), o que é risco
+demais pra uma fatia só. Em vez disso, o Hub mostra um aviso ("sem
+conexão" / "conectado de novo") — a pessoa fica sabendo do estado da
+rede e decide se quer recarregar, sem nada acontecer por baixo dos
+panos.
+
+**Onde entrou:** `<Pwa />` no layout raiz (registra o service worker,
+mostra o aviso); `/manifest.json` e os dois ícones; `/offline`, a
+página mostrada quando o navegador tenta abrir algo nunca visitado
+sem internet; e o `matcher` do `proxy.ts` (renovação de sessão) passou
+a pular `manifest.json`/`sw.js` — eles não precisam de sessão nenhuma,
+mesma razão que já excluía `favicon.ico`.
+
+Sem migração, sem dependência nova.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos. `manifest.json` e `sw.js`
+confirmados servindo com `curl` direto (200, sem passar pelo proxy de
+sessão). Não foi possível testar a instalação/o cache offline num
+navegador de verdade nesta sessão — este ambiente não tem as
+credenciais do Supabase configuradas, então nenhuma tela logada roda
+localmente aqui.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

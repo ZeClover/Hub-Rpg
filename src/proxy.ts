@@ -40,6 +40,9 @@ export async function proxy(requisicao: NextRequest) {
 }
 
 export const config = {
-  // Pula arquivos estáticos e imagens — eles não precisam de sessão.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  // Pula arquivos estáticos, imagens e os arquivos do PWA (decisão #150)
+  // — nenhum deles precisa de sessão renovada.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
