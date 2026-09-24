@@ -923,9 +923,20 @@ function novoPersonagem(nome){
     atributos: {forca:8, agilidade:8, mente:8, vontade:6},
     xp: 0,
     classes: [{classeId:'', nivel:0}],
+    // classesCustom: {id, nome, categoria} — classe homebrew que o jogador
+    // criar, ao lado das do catálogo (decisão #47). Some no mesmo
+    // seletor de classe, e some sem nenhum poder de catálogo — só ganha
+    // poder através de Poder Livre, abaixo.
+    classesCustom: [],
     // poder.escolhas: { 'espadachim': { 'postura-combate': 1, ... }, ... } —
     // quantas vezes cada poder daquela classe foi comprado (o "NP" dele).
+    // Poder Livre usa o mesmo mapa, pela própria chave (id do poder
+    // custom), pra gastar do mesmo total de pontos da classe.
     poder: {escolhas: {}},
+    // poderesCustom: {id, classeId, nome, texto, max} — poder homebrew de
+    // uma classe (do catálogo ou própria), comprado com o mesmo pool de
+    // pontos de poder da classe (decisão #47).
+    poderesCustom: [],
     atual: {pv:null, pm:null},   // null = cheio
     bonus: {defesa:0, defesaMagica:0, iniciativa:0}, // "outros bônus", o que o inventário não cobrir
     condicoes: [],
@@ -946,6 +957,11 @@ function novoPersonagem(nome){
     // próprio jogador e salva na ficha — pra montar um craft que o
     // catálogo do sistema ainda não previu.
     receitasCustom: [],
+    // itensLoja: mesmo formato de ITENS_LOJA, escrito pelo próprio jogador
+    // — uma loja pessoal, item que o catálogo do sistema não previu
+    // (decisão #47). Comprado com a mesma Carteira, mesmo desconto de
+    // Faro pra Barganha.
+    itensLoja: [],
     carteira: {ouro: 0, prata: 0},
     andar: {atual: 1, zona: 'segura'},
     // guilda separado de perfil.guilda (que já existia, texto livre com o
@@ -979,6 +995,11 @@ function nivelGeral(p){
   const soma = p.classes.reduce((total, c) => total + (c.classeId ? (c.nivel||0) : 0), 0);
   return Math.max(1, soma);
 }
+
+// As classes do catálogo mais as que o jogador criar (decisão #47) —
+// usado em todo lugar que precisa achar nome/categoria de uma classe pelo
+// id, sem se importar se ela é do sistema ou homebrew.
+function todasClasses(p){ return [...CLASSES, ...(p.classesCustom||[])]; }
 
 // Nível investido numa classe específica — soma se ela aparecer em mais de
 // uma linha (a UI não incentiva isso, mas o cálculo fica robusto de qualquer
@@ -1542,7 +1563,7 @@ function telaGuiada(p){
 
   if(passo === 3){
     const c = p.classes[0];
-    const classe = c && c.classeId ? CLASSES.find(x => x.id === c.classeId) : null;
+    const classe = c && c.classeId ? todasClasses(p).find(x => x.id === c.classeId) : null;
     return cabecalho + `
     <div class="cartao">
       <h2 style="font-size:18px">3. Primeiro Poder</h2>
@@ -1894,7 +1915,7 @@ function abaMundo(p){
 // (telaGuiada) sem duplicar o select/nível — uma única fonte de verdade.
 function linhaClasse(p, i){
   const c = p.classes[i];
-  const classe = CLASSES.find(x => x.id === c.classeId);
+  const classe = todasClasses(p).find(x => x.id === c.classeId);
   const categoria = classe && CATEGORIAS_CLASSE.find(x => x.id === classe.categoria);
   return `<div class="classe-linha">
     <div>
@@ -1905,6 +1926,10 @@ function linhaClasse(p, i){
           ${CLASSES.filter(x => x.categoria===cat.id).map(x =>
             `<option value="${x.id}" ${x.id===c.classeId?'selected':''}>${x.nome}</option>`).join('')}
         </optgroup>`).join('')}
+        ${(p.classesCustom||[]).length ? `<optgroup label="Suas Classes">
+          ${p.classesCustom.map(x =>
+            `<option value="${x.id}" ${x.id===c.classeId?'selected':''}>${x.nome || 'Classe sem nome'}</option>`).join('')}
+        </optgroup>` : ''}
       </select>
       ${categoria ? `<p class="mini" style="margin-top:6px">${categoria.nome} — ${categoria.sobre}</p>` : ''}
     </div>
@@ -1958,7 +1983,7 @@ function cancelarNivelUp(p){
 // subiu (o "+1 ponto de poder" fica pronto pra gastar ali mesmo).
 function painelResumoNivel(p, resumo){
   const {classeId, nivelClasse, antes, depois} = resumo;
-  const nomeClasse = CLASSES.find(x => x.id === classeId)?.nome || classeId;
+  const nomeClasse = todasClasses(p).find(x => x.id === classeId)?.nome || classeId;
   const linha = (rotulo, chave) => {
     const a = antes[chave], d = depois[chave];
     if(a === d) return '';
@@ -2010,20 +2035,39 @@ function abaClasses(p){
     </p>
     ${p.classes.map((c,i) => linhaClasse(p, i)).join('')}
     <button id="btAddClasse">+ Outra classe</button>
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Suas Classes</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Classe homebrew, pro seu personagem — some no seletor acima, do lado
+      das do catálogo. Ela nasce sem nenhum poder do sistema; dê poder a
+      ela com "+ Poder Livre" na aba Poderes, depois de escolhê-la e dar
+      nível.
+    </p>
+    ${(p.classesCustom||[]).map(c => `<div class="linha" style="margin-bottom:8px">
+      <input data-classecustom-campo="${c.id}|nome" value="${esc(c.nome)}" placeholder="Nome da classe" style="flex:2">
+      <select data-classecustom-categoria="${c.id}" style="flex:1">
+        ${CATEGORIAS_CLASSE.map(cat => `<option value="${cat.id}" ${cat.id===c.categoria?'selected':''}>${cat.nome}</option>`).join('')}
+      </select>
+      <button data-remover-classecustom="${c.id}" class="perigo">Remover</button>
+    </div>`).join('')}
+    <button id="btAddClasseCustom">+ Classe própria</button>
   </div>`;
 }
 
 // Extraído de abaPoderes pra dar pra reusar no resumo do botão "+1 Nível"
 // (painelResumoNivel) — a MESMA classe que acabou de subir.
 function blocoPoderesClasse(p, classeId){
-  const classe = CLASSES.find(x => x.id === classeId);
+  const classe = todasClasses(p).find(x => x.id === classeId);
   const poderes = PODERES_CLASSE[classeId] || [];
+  const livres = (p.poderesCustom||[]).filter(pw => pw.classeId === classeId);
   const nivel = nivelDeClasse(p, classeId);
   const usados = pontosUsadosClasse(p, classeId);
   const escolhas = p.poder.escolhas[classeId] || {};
   return `<div class="cartao">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-      <h2 style="font-size:18px">${classe.nome}</h2>
+      <h2 style="font-size:18px">${classe ? classe.nome : 'Classe removida'}</h2>
       <span class="mini">${usados}/${nivel} pontos de poder usados</span>
     </div>
     ${usados > nivel
@@ -2044,6 +2088,26 @@ function blocoPoderesClasse(p, classeId){
         </div>
       </div>`;
     }).join('')}
+    ${livres.map(poder => {
+      const n = escolhas[poder.id] || 0;
+      const max = poder.max||1;
+      const podeComprar = usados < nivel && n < max;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-poder-livre-campo="${poder.id}|nome" value="${esc(poder.nome)}" placeholder="Nome do poder" style="font-family:var(--fonte-titulo);flex:1">
+          <button data-remover-poder-livre="${poder.id}" class="perigo">Remover</button>
+        </div>
+        <textarea data-poder-livre-campo="${poder.id}|texto" placeholder="O que ele faz" rows="2" style="margin-top:8px">${esc(poder.texto)}</textarea>
+        <div class="linha" style="margin-top:10px;align-items:center">
+          <label style="text-transform:none;letter-spacing:normal">Vezes que dá pra comprar</label>
+          <input data-poder-livre-num="${poder.id}|max" type="number" min="1" value="${max}" style="max-width:70px">
+          <span class="mini">${n}/${max}</span>
+          <button data-poder-livre-menos="${classeId}|${poder.id}" ${n<=0?'disabled':''}>-</button>
+          <button data-poder-livre-mais="${classeId}|${poder.id}" ${podeComprar?'':'disabled'}>+ Comprar</button>
+        </div>
+      </div>`;
+    }).join('')}
+    <button data-add-poder-livre="${classeId}" style="margin-top:10px">+ Poder Livre</button>
   </div>`;
 }
 
@@ -2238,7 +2302,7 @@ function abaEquipamento(p){
 }
 
 function cartaoReceita(p, receita, indiceCustom){
-  const classe = CLASSES.find(c => c.id === receita.classe);
+  const classe = todasClasses(p).find(c => c.id === receita.classe);
   const temClasse = classe && nivelDeClasse(p, classe.id) > 0;
   const pronta = temClasse && temMateriais(p, receita);
   const listaMateriais = receita.materiais.map(m => {
@@ -2293,7 +2357,7 @@ function abaCrafting(p){
         <div><label>Classe dona</label>
           <select data-receita-classe="${ri}">
             <option value="">— nenhuma —</option>
-            ${CLASSES.map(c => `<option value="${c.id}" ${c.id===r.classe?'selected':''}>${c.nome}</option>`).join('')}
+            ${todasClasses(p).map(c => `<option value="${c.id}" ${c.id===r.classe?'selected':''}>${c.nome}</option>`).join('')}
           </select>
         </div>
         <div></div>
@@ -2359,6 +2423,50 @@ function abaLoja(p){
         <p class="mini">${esc(item.item.notas || '')}</p>
       </div>`;
     }).join('')}
+  </div>
+
+  <div class="cartao">
+    <h2 style="font-size:18px">Seus Itens</h2>
+    <p class="mini" style="margin:6px 0 14px">
+      Item que você define e guarda na própria ficha, pra comprar do lado
+      dos itens fixos do sistema — mesmo desconto de Faro pra Barganha.
+    </p>
+    ${(p.itensLoja||[]).map(item => {
+      const preco = precoCompra(p, item.precoPrata||0);
+      const daPra = totalPrata(p) >= preco;
+      return `<div class="linha-lista">
+        <div class="topo">
+          <input data-itemloja-campo="${item.id}|nome" value="${esc(item.nome)}" placeholder="Nome do item" style="font-family:var(--fonte-titulo);flex:1">
+          <button data-remover-itemloja="${item.id}" class="perigo">Remover</button>
+        </div>
+        <div class="grade g4" style="margin-top:8px">
+          <div><label>Tipo</label>
+            <select data-itemloja-select="${item.id}|tipo">
+              ${TIPOS_ITEM.map(t => `<option value="${t.id}" ${t.id===item.tipo?'selected':''}>${t.nome}</option>`).join('')}
+            </select></div>
+          <div><label>Raridade</label>
+            <select data-itemloja-select="${item.id}|raridade">
+              ${RARIDADES.map(x => `<option value="${x.id}" ${x.id===item.raridade?'selected':''}>${x.nome}</option>`).join('')}
+            </select></div>
+          <div><label>Efeito</label>
+            <select data-itemloja-select="${item.id}|efeitoTipo">
+              ${EFEITOS_ITEM.map(e => `<option value="${e.id}" ${e.id===item.efeitoTipo?'selected':''}>${e.nome}</option>`).join('')}
+            </select></div>
+          <div><label>Valor do efeito</label>
+            <input data-itemloja-num="${item.id}|efeitoValor" type="number" value="${item.efeitoValor||0}"></div>
+        </div>
+        <div class="grade g4" style="margin-top:8px">
+          <div><label>Peso</label><input data-itemloja-num="${item.id}|peso" type="number" min="0" value="${item.peso||0}"></div>
+          <div><label>Durabilidade máxima</label><input data-itemloja-num="${item.id}|durabilidadeMaxima" type="number" min="0" value="${item.durabilidadeMaxima||0}"></div>
+          <div><label>Preço (Prata)</label><input data-itemloja-num="${item.id}|precoPrata" type="number" min="0" value="${item.precoPrata||0}"></div>
+          <div><label>Notas</label><input data-itemloja-campo="${item.id}|notas" value="${esc(item.notas||'')}"></div>
+        </div>
+        <div class="linha" style="margin-top:10px">
+          <button data-comprar-itemloja="${item.id}" ${daPra?'':'disabled'}>Comprar por ${preco} Prata</button>
+        </div>
+      </div>`;
+    }).join('')}
+    <button id="btAddItemLoja">+ Criar Item</button>
   </div>`;
 }
 
@@ -2646,6 +2754,26 @@ function ligarEventos(){
   const addClasse = document.getElementById('btAddClasse');
   if(addClasse) addClasse.onclick = () => mudar(p => p.classes.push({classeId:'', nivel:0}));
 
+  // Suas Classes: classe homebrew (decisão #47) — nome livre, categoria do
+  // mesmo catálogo das outras, pra aparecer no seletor certo.
+  app.querySelectorAll('[data-classecustom-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [cid, chave] = el.dataset.classecustomCampo.split('|');
+      const c = (p.classesCustom||[]).find(x => x.id === cid); if(!c) return;
+      c[chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-classecustom-categoria]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const c = (p.classesCustom||[]).find(x => x.id === el.dataset.classecustomCategoria); if(!c) return;
+      c.categoria = el.value;
+    }));
+  app.querySelectorAll('[data-remover-classecustom]').forEach(b =>
+    b.onclick = () => mudar(p =>
+      p.classesCustom = (p.classesCustom||[]).filter(x => x.id !== b.dataset.removerClassecustom)));
+  const addClasseCustom = document.getElementById('btAddClasseCustom');
+  if(addClasseCustom) addClasseCustom.onclick = () => mudar(p =>
+    (p.classesCustom || (p.classesCustom = [])).push({id:uid(), nome:'', categoria:'combate'}));
+
   app.querySelectorAll('[data-subir-nivel]').forEach(b =>
     b.onclick = () => mudar(p => subirNivelClasseSAO(p, Number(b.dataset.subirNivel))));
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
@@ -2677,6 +2805,48 @@ function ligarEventos(){
       const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
       mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
     }));
+
+  // Poder Livre: poder homebrew de uma classe (decisão #47), comprado do
+  // mesmo pool de pontos — mesmo mapa `poder.escolhas[classeId]` dos
+  // poderes de catálogo, só que pela chave própria (id do poder custom).
+  app.querySelectorAll('[data-poder-livre-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [pid, chave] = el.dataset.poderLivreCampo.split('|');
+      const poder = (p.poderesCustom||[]).find(x => x.id === pid); if(!poder) return;
+      poder[chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-poder-livre-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [pid, chave] = el.dataset.poderLivreNum.split('|');
+      const poder = (p.poderesCustom||[]).find(x => x.id === pid); if(!poder) return;
+      poder[chave] = Math.max(1, Number(el.value) || 1);
+    }));
+  app.querySelectorAll('[data-poder-livre-mais]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderLivreMais.split('|');
+      const poder = (p.poderesCustom||[]).find(x => x.id === poderId); if(!poder) return;
+      const mapa = p.poder.escolhas[classeId] || (p.poder.escolhas[classeId] = {});
+      if(pontosUsadosClasse(p, classeId) >= nivelDeClasse(p, classeId)) return;
+      mapa[poderId] = Math.min(poder.max||1, (mapa[poderId] || 0) + 1);
+    }));
+  app.querySelectorAll('[data-poder-livre-menos]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const [classeId, poderId] = b.dataset.poderLivreMenos.split('|');
+      const mapa = p.poder.escolhas[classeId]; if(!mapa) return;
+      mapa[poderId] = Math.max(0, (mapa[poderId] || 0) - 1);
+    }));
+  app.querySelectorAll('[data-remover-poder-livre]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const pid = b.dataset.removerPoderLivre;
+      const poder = (p.poderesCustom||[]).find(x => x.id === pid);
+      p.poderesCustom = (p.poderesCustom||[]).filter(x => x.id !== pid);
+      if(poder){ const mapa = p.poder.escolhas[poder.classeId]; if(mapa) delete mapa[pid]; }
+    }));
+  app.querySelectorAll('[data-add-poder-livre]').forEach(b =>
+    b.onclick = () => mudar(p =>
+      (p.poderesCustom || (p.poderesCustom = [])).push({
+        id:uid(), classeId:b.dataset.addPoderLivre, nome:'', texto:'', max:1,
+      })));
 
   const switchAtivo = document.getElementById('c-switch-ativo');
   if(switchAtivo) switchAtivo.onchange = () => mudar(p => p.switchAtivo.ativo = switchAtivo.checked);
@@ -2921,6 +3091,48 @@ function ligarEventos(){
         efeitoTipo: it.efeitoTipo, efeitoValor: it.efeitoValor, peso: it.peso,
         durabilidadeMaxima: it.durabilidadeMaxima, durabilidadeAtual: it.durabilidadeMaxima,
         equipado: false, notas: it.notas,
+      });
+    }));
+
+  // Seus Itens: item de loja homebrew (decisão #47), mesma Carteira e
+  // mesmo desconto de Faro pra Barganha dos itens fixos do sistema.
+  app.querySelectorAll('[data-itemloja-campo]').forEach(el =>
+    el.oninput = () => mudarSemRedesenhar(p => {
+      const [iid, chave] = el.dataset.itemlojaCampo.split('|');
+      const it = (p.itensLoja||[]).find(x => x.id === iid); if(!it) return;
+      it[chave] = el.value;
+    }, el));
+  app.querySelectorAll('[data-itemloja-select]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [iid, chave] = el.dataset.itemlojaSelect.split('|');
+      const it = (p.itensLoja||[]).find(x => x.id === iid); if(!it) return;
+      it[chave] = el.value;
+    }));
+  app.querySelectorAll('[data-itemloja-num]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const [iid, chave] = el.dataset.itemlojaNum.split('|');
+      const it = (p.itensLoja||[]).find(x => x.id === iid); if(!it) return;
+      it[chave] = Number(el.value) || 0;
+    }));
+  app.querySelectorAll('[data-remover-itemloja]').forEach(b =>
+    b.onclick = () => mudar(p =>
+      p.itensLoja = (p.itensLoja||[]).filter(x => x.id !== b.dataset.removerItemloja)));
+  const addItemLoja = document.getElementById('btAddItemLoja');
+  if(addItemLoja) addItemLoja.onclick = () => mudar(p =>
+    (p.itensLoja || (p.itensLoja = [])).push({
+      id: uid(), nome: '', tipo:'outro', raridade:'comum', efeitoTipo:'nenhum', efeitoValor:0,
+      peso:0, durabilidadeMaxima:0, precoPrata:0, notas:'',
+    }));
+  app.querySelectorAll('[data-comprar-itemloja]').forEach(b =>
+    b.onclick = () => mudar(p => {
+      const item = (p.itensLoja||[]).find(x => x.id === b.dataset.comprarItemloja); if(!item) return;
+      const preco = precoCompra(p, item.precoPrata||0);
+      if(!gastarPrata(p, preco)) return;
+      p.inventario.push({
+        id: uid(), nome: item.nome, tipo: item.tipo, raridade: item.raridade,
+        efeitoTipo: item.efeitoTipo, efeitoValor: item.efeitoValor, peso: item.peso,
+        durabilidadeMaxima: item.durabilidadeMaxima, durabilidadeAtual: item.durabilidadeMaxima,
+        equipado: false, notas: item.notas,
       });
     }));
 }
