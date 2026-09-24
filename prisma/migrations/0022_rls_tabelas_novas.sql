@@ -18,17 +18,24 @@
 -- (nem erro, nem mudança) — seguro rodar mais de uma vez, e seguro rodar
 -- mesmo nas tabelas que já tiverem essa trava (0018/0019 já nasceram com
 -- ela, corrigidas antes deste arquivo).
+--
+-- IF EXISTS em cada linha: esta migração pode rodar antes da 0018/0019
+-- terem sido aplicadas (ordem de quem já rodou o quê no Supabase varia),
+-- e "itens"/"grupos"/etc. daquelas migrações ainda podem não existir —
+-- sem IF EXISTS isso quebra com "relation ... does not exist" no meio do
+-- script. Com IF EXISTS, tabela que ainda não existe é só pulada (ela já
+-- nasce com RLS ligado quando a 0018/0019 rodar, de qualquer forma).
 
-ALTER TABLE "sessoes_presencas"     ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "mensagens_chat"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "avisos"                ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "enquetes"              ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "enquetes_votos"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "notificacoes"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "campos_personalizados" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "conquistas_campanha"   ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "grupos"                ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "grupos_membros"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "itens"                 ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "companheiros"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "veiculos"              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "sessoes_presencas"     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "mensagens_chat"        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "avisos"                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "enquetes"              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "enquetes_votos"        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "notificacoes"          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "campos_personalizados" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "conquistas_campanha"   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "grupos"                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "grupos_membros"        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "itens"                 ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "companheiros"          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS "veiculos"              ENABLE ROW LEVEL SECURITY;

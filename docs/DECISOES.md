@@ -6969,6 +6969,14 @@ decisão #2 já aplicava desde o início do projeto.
 Testado: `grep` confirmando que nenhuma outra tabela criada depois da
 0002 ficou de fora da lista da migração 0022.
 
+**Correção:** ao tentar rodar a 0022 antes da 0019, o Supabase deu erro
+(`relation "itens" does not exist`) — a 0022 partia do pressuposto de que
+todas as 13 tabelas já existiam, mas a ordem de quem já rodou o quê varia
+de banco pra banco. Troquei todo `ALTER TABLE "x" ENABLE ROW LEVEL
+SECURITY` da 0022 por `ALTER TABLE IF EXISTS "x" ENABLE ROW LEVEL
+SECURITY` — tabela que ainda não existe é só pulada, sem quebrar o
+script, e já nasce com RLS ligada quando a migração dela rodar.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
