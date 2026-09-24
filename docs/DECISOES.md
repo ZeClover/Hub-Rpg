@@ -7780,6 +7780,33 @@ Testado com Playwright: catálogo mostra 1342 opções (1 placeholder +
 1341 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 209. Naruto 5e — Bukijutsu Rank A, lote 3 de ~4 (24/09/2026)
+
+Continuação da decisão #208. Terceiro lote (16 jutsu, de "Fatal
+Instincts" a "Pride's Fall") entrou no `JUTSU_CATALOGO` — 1357 das
+~1400 entradas totais (48 de 64 jutsu do Rank A).
+
+"Nadegiri" e "Onibi" ficaram sem tradução por já serem termos
+japoneses (nomes de golpe/técnica em si, não descrição em inglês),
+mesmo tratamento dado a "Ichimonji" no Rank B. "Killer Bee" também
+ficou sem tradução — é referência direta ao nome de um personagem
+(convenção de nome próprio, igual às figuras históricas/lendárias já
+citadas no glossário do projeto). "Overcomer" veio com uma
+inconsistência clássica (anomalia "e"): o campo `alcance` da extração
+dizia "30 pés" pra a linha do dash, mas o texto mecânico descrevia
+"60 pés" duas vezes seguidas ao narrar o ataque; usei 18m (60 pés),
+priorizando o texto mecânico mais detalhado sobre o campo estruturado,
+e documento aqui a escolha. "Nadegiri" trouxe uma referência de escala
+"por rank acima de B-Rank" mesmo sendo uma entrada de Rank A — mantive
+literalmente (é como o livro descreve a progressão dessa família de
+golpe), e o efeito de ignorar Resistência (que o texto diz começar
+"a partir do Rank A") já entra como parte do efeito base desta
+entrada, já que ela É o Rank A.
+
+Testado com Playwright: catálogo mostra 1358 opções (1 placeholder +
+1357 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
