@@ -7888,6 +7888,51 @@ Testado com Playwright: catálogo mostra 1387 opções (1 placeholder +
 1386 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 212. Naruto 5e — Bukijutsu Rank S 100% completo (lote 2 de 2)
+
+Continuação da decisão #211. Segundo e último lote do Rank S de
+Bukijutsu (12 jutsu, de "Merciless Havoc" a "The Zone") entrou no
+`JUTSU_CATALOGO` — 1398 das ~1400 entradas totais. Com isso, o Rank S
+de Bukijutsu fica 100% completo: 25 dos 25 jutsu, sem nenhuma
+pendência de dados corrompidos neste rank.
+
+**Bukijutsu (a categoria inteira, 383 jutsu) fica 100% completa**: D
+(113/114, só "Stone Form" fora — decisão #196), C (99/99), B (81/81),
+A (64/64) e S (25/25) — 382 dos 383 jutsu da categoria, decisões
+#191-#212. Com Bukijutsu fechada, **o Compêndio de Jutsu do Jiraiya
+como um todo fica completo**, restando só as duas pendências isoladas
+de dados corrompidos já documentadas e conhecidas — "Shadow Dancing
+Leaf" (Taijutsu Rank C, decisão #186) e "Stone Form" (Bukijutsu Rank
+D, decisão #196) — ambas aguardando o Zé remandar a página
+correspondente do PDF de origem, não um trabalho de tradução em
+aberto. O comentário de bloco acima de `JUTSU_CATALOGO` e o parágrafo
+`aviso` da página foram atualizados pra refletir isso.
+
+A família "Aura da Espada" fecha a corrente no topo com "Violeta"
+(Sword Aura: Violet), a última cor do espectro visível depois de
+Índigo — exige estar sob efeito de qualquer Aura da Espada ativa
+(mesmo requisito genérico de "Azul"), confirmando a suspeita do
+glossário do projeto. "Devil Hunter" (lote 1, decisão #211) e este
+lote não trouxeram mais membros dessa cadeia.
+
+Duas anomalias de dados (tipo "e", inconsistência interna resolvida a
+favor do padrão da família): "Mortal Draw" pede pra "reduce your
+current hit die to 0" como parte do custo — frase ambígua nesse
+sistema; resolvida como "gasta um Dado de Vida (ou de Tenacidade)",
+mesma mecânica de custo já usada nos Kinjutsu de Fuinjutsu Necromante
+do catálogo. "The Zone" fala em "Bukijutsu save DC" (não "Taijutsu
+save DC"), mas todo o resto da categoria já usa "CD de Taijutsu" como
+a mesma CD por trás de qualquer ataque de arma (convenção fixada
+desde o Rank D — "Ataque de Taijutsu corpo a corpo" nunca vira "Ataque
+de Bukijutsu"); tratado como o mesmo valor e traduzido como "CD de
+Taijutsu" pra manter a consistência com o resto do catálogo.
+
+Testado com Playwright: catálogo mostra 1399 opções (1 placeholder +
+1398 jutsu), sem nomes duplicados, e nenhum jutsu com `tipo` fora de
+Ninjutsu/Taijutsu/Genjutsu/Bukijutsu. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores (7 scripts Playwright) sem
+regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

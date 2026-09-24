@@ -435,17 +435,17 @@ const RANKS_JUTSU = [
    prontos) — nona categoria fechada, decisão #190. Só falta mesmo
    "Shadow Dancing Leaf" (Rank C), de fora por dados vazios na extração
    do PDF (decisão #186) — pendência isolada, não uma categoria em
-   aberto. Bukijutsu (jutsu de arma) em andamento — décima categoria,
-   383 jutsu no total, a maior de todas; Rank D dela está completo (113
-   de 114 jutsu — só "Stone Form" fora, dados vazios na extração do
-   PDF, decisão #196); Rank C dela também está completo (99 de 99
-   jutsu, decisão #201); Rank B dela também está completo (81 de 81
-   jutsu, decisão #206); Rank A dela também está completo (64 de 64
-   jutsu, decisão #210); Rank S dela em andamento — 13 de 25 jutsu
-   prontos (lote 1 de 2, decisão #211) — falta o lote 2 (12 jutsu)
-   pra fechar o Rank S e o Compêndio inteiro. Não existe uma
-   categoria separada "Invocação" no PDF — jutsu de invocação estão
-   dentro das classificações já cobertas (Não-Elemental etc.). */
+   aberto. Bukijutsu (jutsu de arma) 100% completo — décima e última
+   categoria fechada, 382 dos 383 jutsu (Rank D 113/114 — só "Stone
+   Form" fora, dados vazios na extração do PDF, decisão #196; Ranks C,
+   B, A e S completos, decisões #201/#206/#210/#212). Com isso o
+   Compêndio de Jutsu do Jiraiya inteiro está fechado, restando só as
+   duas pendências isoladas de dados corrompidos já documentadas —
+   "Shadow Dancing Leaf" (Taijutsu Rank C, decisão #186) e "Stone Form"
+   (Bukijutsu Rank D, decisão #196) — ambas aguardando o Zé remandar a
+   página correspondente do PDF de origem. Não existe uma categoria
+   separada "Invocação" no PDF — jutsu de invocação estão dentro das
+   classificações já cobertas (Não-Elemental etc.). */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -3251,6 +3251,30 @@ const JUTSU_CATALOGO = [
     efeito:'Uma vez que ganha impulso, nada te para. Uma vez por turno, ao acertar uma criatura com um Ataque de Taijutsu corpo a corpo depois de já ter se movido pelo menos 9m neste turno, pode gastar 10 de chakra pra causar 4d8 de dano extra. Ativando este jutsu de novo no turno seguinte, o custo sobe +5 de chakra e o dano extra sobe +2d8, até um máximo de 12d8 de dano extra. O dano extra e o custo voltam ao normal se você passar um turno sem lançar este jutsu.'},
   {nome:'Força Viva', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'25 Chakra', alcance:'1,5m', duracao:'Instantâneo',
     efeito:'Puxa de emoções negativas, deixando-as vazar e se fundir ao seu chakra até virarem Força. Desfere um único golpe devastador com sua arma, com força o bastante pra rachar o chão e incendiar o ar ao seu redor: Ataque de Taijutsu corpo a corpo, causando dano da arma + 20d6 de dano de Fogo. Toda criatura a até 4,5m de você testa Destreza, sofrendo o dano causado na falha ou metade na passagem.'},
+  {nome:'Caos Impiedoso', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Pessoal (linha de 4,5m)', duracao:'Instantâneo',
+    efeito:'Crava a arma no oponente e emenda na hora uma enxurrada de golpes — cada investida cria um eco espectral da arma que atravessa todos os inimigos à sua frente. Faz 7 Ataques de Taijutsu corpo a corpo contra a Defesa de todo alvo numa linha de 4,5m partindo de você (estes ataques nunca causam dano crítico). No acerto, cada alvo sofre o dado de dano da arma + 1d4. Um alvo atingido pelos 7 ataques cai Derrubado e tem o deslocamento reduzido a 0 até o fim do turno seguinte dele. Lançado como Chain 2, o dado de dano sobe 2 passos; como Chain 3, sobe mais 2 passos.'},
+  {nome:'Desafio Mortal', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Pessoal', duracao:'Especial',
+    efeito:'Reação a sofrer dano que reduziria seus PV a 0: mantém a arma girando, usando-a como âncora pra te prender a este mundo mortal um pouco mais. Este jutsu dura até você morrer ou se estabilizar; enquanto durar, rola seus testes de morte no fim do seu turno, com os seguintes efeitos: causando dano a uma criatura com a arma usada pra lançar este jutsu, ganha vantagem nesse teste; reduzindo uma criatura a 0 PV, é sucesso automático no teste; sofrendo dano enquanto estiver neste estado, não sofre falha automática no teste — em vez disso, rola esse teste com desvantagem (sem poder ganhar vantagem nele por nenhum meio); tirando 20 natural num teste de ataque, se estabiliza na hora com 1 PV; passando um turno inteiro sem causar dano a uma criatura, não rola o teste de morte no fim do turno — em vez disso, sofre 1 falha automática.'},
+  {nome:'Saque Mortal', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'25 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: como parte deste jutsu, empala a si mesmo com a própria arma, cobrindo-a com o próprio sangue — gasta um Dado de Vida (ou de Tenacidade) e sofre 4d12 de dano Necrótico que não pode ser reduzido de forma alguma (você não perde a concentração neste jutsu por causa de dano). Sua arma vira uma manifestação viva da sua força vital, ampliando seu alcance e sua letalidade: enquanto durar, o alcance da arma dobra, ela causa +4d12 de dano Necrótico duas vezes por turno, ignora resistência e imunidade, e causa o dobro do dano contra estruturas e construtos.'},
+  {nome:'Explosão da Fênix', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Pessoal (linha de 72m de comprimento por 4,5m de largura)', duracao:'Instantâneo',
+    efeito:'Dispara a arma depois de estender o alcance dela com chakra, mandando à frente uma larga linha de pura destruição. Toda criatura no alcance testa Destreza, sofrendo dano da arma + 5d4 e ficando Atordoada até o início do seu próximo turno na falha, ou metade do dano sem efeito adicional na passagem. Todo construto ou estrutura sem reforço de chakra na área é destruído na hora, e os que têm reforço de chakra sofrem o dano máximo. Se uma criatura sofreria 0 de dano por passar neste teste, sofre 1/4 do dano em vez disso. Lançado como Chain 2, o dado de dano sobe +5; como Chain 3, sobe mais +2, e as criaturas sofrem -1d4 no teste de resistência.'},
+  {nome:'Investida Veloz', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Crava a arma no torso do oponente e a gira rápido acima da cabeça, manipulando a pressão do ar ao redor pra puxar os inimigos próximos. Ataque de Taijutsu corpo a corpo — no acerto, o alvo sofre dano da arma; em seguida, toda criatura a até o alcance da arma + 3m testa Força, sofrendo o dado de dano da arma + 3d8 e sendo puxada 4,5m em sua direção na falha, ou metade do dano sem efeito adicional na passagem. Lançado como Chain 2, o dado de dano sobe +3; como Chain 3, sobe mais +1, e o alcance da arma se estende em +4,5m neste lançamento.'},
+  {nome:'Tiro Disperso', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Especial', duracao:'Instantâneo',
+    efeito:'Carrega toda a pilha de munição num único disparo, buscando a destruição mais ampla possível. Toda criatura no alcance deste jutsu testa Destreza, sofrendo dano da arma + 15 dados do tamanho da munição na falha, ou metade na passagem. O alcance e o dado de dano mudam conforme o tamanho da munição gasta: d4 — cone de 4,5m, dano em d4; d6 — cone de 9m, dano em d6; d8 — cone de 18m, dano em d8; d10 — cone de 36m, dano em d10; d12 — cone de 72m, dano em d12.'},
+  {nome:'Queda das Sombras', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'Especial (25 Chakra)', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'Kinjutsu: como Ação Bônus, gera uma explosão de chakra pelo corpo todo, se preparando pra um surto de velocidade e poder. Ganha 3 ações adicionais até o fim do turno, que só podem ser usadas pra lançar Bukijutsu em sequência; ao fim do turno, ganha 5 ranks de Exaustão.'},
+  {nome:'Fenda Celestial', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'30 Chakra', alcance:'30m', duracao:'Instantâneo',
+    efeito:'Um único golpe com força o bastante pra rachar o céu e a terra só pelo peso do ataque. Toda criatura numa linha de 30m de comprimento por 4,5m de largura, partindo de você, testa Destreza, sofrendo dano da arma + 10d10 na falha ou metade na passagem. O chão se abre e deixa uma fenda de 15m de profundidade — criaturas a mais de 1,5m da borda da fenda testam Destreza ou caem até o fundo, sofrendo a queda inteira.'},
+  {nome:'Poder Celestial', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'28 Chakra', alcance:'27m', duracao:'Instantâneo',
+    efeito:'Exige que o alvo esteja no ar. Carrega a arma com chakra drenante, salta no ar e acerta o abdômen do oponente: Ataque de Taijutsu corpo a corpo contra um alvo aéreo, causando dano da arma + 5d8 no acerto — o alvo também sofre o dobro do dano de queda ao ser arremessado contra o chão. Se reduzir uma criatura a 0 PV com este jutsu, recupera PV igual ao dano causado. Lançado como Chain 2, o dado de dano sobe +5; como Chain 3, sobe mais +5.'},
+  {nome:'Passagem Espiral das Nuvens', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'25 Chakra', alcance:'Pessoal (7,5m)', duracao:'Instantâneo',
+    efeito:'Salta no ar golpeando sem parar, atingindo tudo e todos ao redor várias vezes seguidas. Faz 3 Ataques de Taijutsu corpo a corpo e escolhe todas as criaturas a até 7,5m de você como alvos; compara cada um dos 3 resultados contra a Defesa de cada alvo escolhido (um mesmo alvo pode ser atingido mais de uma vez). A cada acerto, o alvo sofre o dado de dano da arma + 3d10 de dano Cortante. Tirando um crítico em algum desses ataques, todos os alvos atingidos sofrem os efeitos do crítico.'},
+  {nome:'Aura da Espada: Violeta', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'24 Chakra', alcance:'Pessoal (esfera de 18m de raio)', duracao:'Instantâneo',
+    efeito:'Exige estar sob efeito de alguma Aura da Espada. Libera o chakra acumulado na lâmina numa explosão violeta violenta ao golpear pra baixo, derramando sua Aura da Espada numa área ampla e atingindo tudo à sua frente. Toda criatura à sua escolha na área testa Destreza, sofrendo dano da arma + 3d6 e ganhando 3 ranks de Lacerado na falha, ou metade do dano e 2 ranks de Sangramento na passagem. Lançado como Chain 2, o dado de dano sobe +4; como Chain 3, sobe mais +2, e ganha mais 1 rank de Lacerado.'},
+  {nome:'A Zona', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'S', custo:'30 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Kinjutsu: corpo e mente entram num estado de clareza que só anos de treino disciplinado alcançam. Como parte da ativação, você não consegue manter concentração em nenhum outro jutsu enquanto este durar. Enquanto durar, ganha os seguintes benefícios: seus ataques de arma e de Taijutsu não podem ser reagidos, ignoram Resistência a dano e tratam Imunidade a dano como Resistência; seu deslocamento dobra e sua Defesa sobe +2; ganha vantagem em testes de ataque de arma e de Taijutsu, e sua CD de Taijutsu sobe +1; você não perde a concentração neste jutsu por falhar um teste de concentração. Pode encerrar este jutsu antes como Ação Bônus e reativá-lo como Ação Bônus, pagando metade do custo inicial — depois que ele terminar, só pode usá-lo de novo após um descanso completo.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
@@ -3722,7 +3746,7 @@ function renderJutsu(p){
   );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
-    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya (Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu e Taijutsu 100% completos; Bukijutsu em andamento) — vai crescendo aos poucos. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya — Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu, Taijutsu e Bukijutsu 100% completos, o Compêndio inteiro fechado. Restam só duas pendências isoladas de dados corrompidos na extração do PDF ("Shadow Dancing Leaf" e "Stone Form"), aguardando o Zé remandar a página de origem. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Nome'), el('th',{},'Tipo'), el('th',{},'Rank'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhas),

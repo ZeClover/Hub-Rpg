@@ -2104,10 +2104,16 @@ passando.
       de Bukijutsu, o mais raro e poderoso do jogo (13 de 25 no
       total) — 1386 de ~1400 no total. Testado com Playwright; `tsc`
       e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~14 jutsu: "Shadow Dancing Leaf" e "Stone Form"
-      pendentes, e lote 2 do Rank S de Bukijutsu — 12 jutsu — categoria
-      por categoria),
+- [x] **Naruto 5e — Bukijutsu Rank S 100% completo (lote 2 de 2) — Compêndio de Jutsu do Jiraiya inteiro fechado** (24/09/2026) —
+      decisão #212. Último lote (12 jutsu) fechou o Rank S de
+      Bukijutsu (25/25), fechando a categoria Bukijutsu inteira
+      (382/383, só "Stone Form" fora) e, com ela, o Compêndio de Jutsu
+      do Jiraiya inteiro — 1398 de ~1400 no total. Restam só as duas
+      pendências isoladas de dados corrompidos já documentadas
+      ("Shadow Dancing Leaf", decisão #186, e "Stone Form", decisão
+      #196), aguardando o Zé remandar a página correspondente do PDF.
+      Testado com Playwright; `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
