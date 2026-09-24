@@ -7367,6 +7367,28 @@ Testado com Playwright: catálogo mostra 1037 opções (1 placeholder +
 1036 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 192. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank D (lote 2 de 6) (19/09/2026)
+
+Continuação da decisão #191. Segundo lote do Rank D de Bukijutsu (20
+jutsu, de "Sopro do Enoki: Infestar" a "Dança do Tolo Dançarino")
+entrou no `JUTSU_CATALOGO` — 1056 das ~1400 entradas totais (40 de 114
+jutsu de Bukijutsu Rank D).
+
+Este lote fecha a maior parte da família "Sopro de [elemento]" (Breath
+of...) começada no lote 1 — chakra elemental que empresta seu tipo de
+dano e efeito à arma, incluindo variantes de Fogo, Água, Vento, Raio,
+Terra, Som e Médico. Duas armas com números conflitantes entre o campo
+de alcance e o texto mecânico do livro ("Disparo em Rajada" tinha "45
+pés" no cabeçalho mas "cone de 30 pés" no texto da mecânica) — usei o
+número citado dentro da mecânica, por ser o que de fato rege o efeito.
+"Golpe Debilitante" já existia como Taijutsu Rank A (decisão anterior),
+então o equivalente de Bukijutsu ("Crippling Strike") virou "Golpe
+Mutilante" pra evitar nome duplicado.
+
+Testado com Playwright: catálogo mostra 1057 opções (1 placeholder +
+1056 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

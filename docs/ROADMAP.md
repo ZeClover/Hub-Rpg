@@ -2019,9 +2019,13 @@ passando.
       de Bukijutsu (a maior categoria do Compêndio, 383 jutsu) entraram
       no catálogo — 1036 de ~1400 no total. Testado com Playwright;
       `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank D (lote 2 de
+      6)** (19/09/2026) — decisão #192. Mais 20 jutsu do Rank D de
+      Bukijutsu (40 de 114 no total) — 1056 de ~1400 no total. Testado
+      com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~364 jutsu: "Shadow Dancing Leaf" pendente, Bukijutsu
-      (363 restantes de 383), Invocação — categoria por
+      Jutsu (~344 jutsu: "Shadow Dancing Leaf" pendente, Bukijutsu
+      (343 restantes de 383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
