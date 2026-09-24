@@ -7389,6 +7389,27 @@ Testado com Playwright: catálogo mostra 1057 opções (1 placeholder +
 1056 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 193. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank D (lote 3 de 6) (19/09/2026)
+
+Continuação da decisão #192. Terceiro lote do Rank D de Bukijutsu (20
+jutsu, de "Chicote do Tolo Dançarino" a "Andorinha Voadora: Linha
+Reta") entrou no `JUTSU_CATALOGO` — 1076 das ~1400 entradas totais (60
+de 114 jutsu de Bukijutsu Rank D).
+
+Nasce a família "Andorinha Voadora" (Flying Swallow), a primeira do
+Bukijutsu que exige empunhar uma arma em cada mão (dual wielding) pra
+poder ser lançada — registrei essa exigência dentro do "efeito", já
+que o esquema não tem campo de pré-requisito de equipamento (mesma
+solução usada pras Posturas do Taijutsu). "Investida da Libélula" e
+"Pouso da Libélula" preservam o mesmo inseto do nome original (Dragon
+Fly = libélula) por familiaridade temática. Bloqueio Aprimorado, Fio
+Eterno e Aposta do Diabo trazem jutsu de suporte passivo/defensivo pra
+complementar a lista, quase toda ofensiva até aqui.
+
+Testado com Playwright: catálogo mostra 1077 opções (1 placeholder +
+1076 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
