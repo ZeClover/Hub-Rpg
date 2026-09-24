@@ -2001,9 +2001,14 @@ passando.
       1 de 2)** (19/09/2026) — decisão #187. 19 dos 38 jutsu do Rank B
       entraram no catálogo (958 de ~1400 no total). Testado com
       Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Taijutsu Rank B 100% completo** (19/09/2026) —
+      decisão #188. Os 19 jutsu do último lote fecharam o Rank B
+      inteiro (38 jutsu) — 977 de ~1400 no total, faltando A e S de
+      Taijutsu. Testado com Playwright; `tsc` e lint continuam
+      limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~442 jutsu: Taijutsu B restante (19) + A/S (39) + "Shadow
-      Dancing Leaf" pendente, Bukijutsu (383), Invocação — categoria por
+      Jutsu (~423 jutsu: A/S de Taijutsu (39) + "Shadow Dancing Leaf"
+      pendente, Bukijutsu (383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,

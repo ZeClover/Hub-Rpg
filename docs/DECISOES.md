@@ -7252,6 +7252,30 @@ Testado com Playwright: catálogo mostra 959 opções (1 placeholder + 958
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 188. Naruto 5e — Taijutsu Rank B 100% completo (19/09/2026)
+
+Continuação da decisão #187. Segundo e último lote do Rank B de
+Taijutsu (19 jutsu, de "Soco Metralhadora!" a "Golpes Imprevisíveis")
+entrou no `JUTSU_CATALOGO` — 977 das ~1400 entradas totais. Com isso, o
+Rank B de Taijutsu está completo (38 jutsu) — faltam A e S dela (39
+jutsu) pra fechar a categoria inteira.
+
+Fecha a dupla de Finalizadores "Lótus Frontal" (Solo e Duplo) —
+referência direta ao golpe do Rock Lee e do Guy no anime, ambos com o
+mesmo pré-requisito da cadeia "Fôlego Celestial"/Oito Portões Internos
+já visto na decisão #187; a versão Duplo é o segundo jutsu de
+"Combinação" do lote, com efeito escalando pelo maior Carisma entre os
+dois conjuradores igual "Onda de Força". "Vingança Real" é um ramo
+alternativo da cadeia "Guarda Real" iniciada na #186, competindo com o
+"Royal Flush": em vez de virar um buff, descarrega a energia absorvida
+num golpe só. "Triplo-Duplo" ficou sem tradução por ser termo já
+consagrado no português do esporte (mesmo tratamento dado a "Royal
+Flush" e "Full House").
+
+Testado com Playwright: catálogo mostra 978 opções (1 placeholder +
+977 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
