@@ -7482,6 +7482,29 @@ Testado com Playwright: catálogo mostra 1130 opções (1 placeholder +
 1129 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 197. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank C (lote 1 de ~5) (19/09/2026)
+
+Este lote (20 jutsu, de "Canhão de Ar 1080 PSI" a "Sopro da Névoa:
+Smog") entrou no `JUTSU_CATALOGO` — 1149 das ~1400 entradas totais (20
+de 99 jutsu de Bukijutsu Rank C).
+
+Duas famílias novas de nomenclatura ficaram estabelecidas aqui. Os
+esportes "boliche" trazem os termos "Spare" e "Strike" sem tradução,
+seguindo a mesma regra já usada com nomes de carta/esporte consagrados
+em português — "Boliche: Spare" e "Boliche: Strike". A família "Sopro
+de [elemento]" (Breath of...), já usada no Rank D, ganhou um elemento
+novo ("Névoa"/Fog) e reaproveitou os elementos já traduzidos
+(Cinzas, Feras, Poeira, Eco, Enoki, Chama) com sub-nomes diferentes dos
+do Rank D — confirma que cada rank tem sua própria variação da mesma
+técnica-base, não uma repetição. Também ficou fixado "Mangual" como
+tradução de "Flail" (arma) e "propriedade Mortal" pra "Deadly trait",
+dois termos mecânicos que ainda não tinham aparecido em nenhum lote
+anterior.
+
+Testado com Playwright: catálogo mostra 1150 opções (1 placeholder +
+1149 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
