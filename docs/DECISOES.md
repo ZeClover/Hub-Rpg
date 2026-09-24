@@ -7452,6 +7452,36 @@ Testado com Playwright: catálogo mostra 1117 opções (1 placeholder +
 1116 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 196. Naruto 5e — Bukijutsu Rank D quase completo — 1 jutsu faltando por falha de extração (19/09/2026)
+
+Continuação da decisão #195. Sexto e último lote do Rank D de
+Bukijutsu (13 jutsu, de "Ruptura da Alma" a "Golpe Yosaku") entrou no
+`JUTSU_CATALOGO` — 1129 das ~1400 entradas totais. Com isso, o Rank D
+de Bukijutsu está praticamente completo: 113 dos 114 jutsu, o maior
+rank da maior categoria do Compêndio.
+
+O jutsu que faltou, "Stone Form", veio com todos os campos vazios na
+extração do PDF (nome presente, mas custo/alcance/duração/descrição
+todos nulos) — mesmo padrão de falha já visto em "Shadow Dancing Leaf"
+(Taijutsu Rank C, decisão #186). Segui a mesma regra: pular a entrada
+em vez de inventar mecânica, e documentar aqui pra registro. "Storm of
+Steel" é o primeiro jutsu de Bukijutsu com a palavra-chave
+"Combination" (decisão de nomenclatura já usada em Ninjutsu — "em
+Combinação, o efeito escala com o maior Carisma do grupo"), e "Weapon
+Deflect" é o primeiro Bukijutsu que interage diretamente com a
+mecânica "Chain" de outro jutsu (bônus de dano pro próximo Bukijutsu
+com Chain que for lançado), confirmando que "Chain" funciona como uma
+palavra-chave própria da categoria, não só um efeito isolado por
+jutsu.
+
+Com isso, restam os ranks C, B, A e S de Bukijutsu (269 jutsu) e
+Invocação pra fechar o Compêndio inteiro — ficam pra fatias futuras,
+respeitando a decisão #26 de uma fatia por vez.
+
+Testado com Playwright: catálogo mostra 1130 opções (1 placeholder +
+1129 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

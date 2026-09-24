@@ -2035,10 +2035,15 @@ passando.
       6)** (19/09/2026) — decisão #195. Mais 20 jutsu do Rank D de
       Bukijutsu (100 de 114 no total) — 1116 de ~1400 no total. Testado
       com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Bukijutsu Rank D quase completo (113/114)**
+      (19/09/2026) — decisão #196. Último lote (13 jutsu) fechou o
+      Rank D de Bukijutsu — só "Stone Form" fora (dados vazios na
+      extração, mesmo padrão de "Shadow Dancing Leaf") — 1129 de ~1400
+      no total. Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~284 jutsu: "Shadow Dancing Leaf" pendente, Bukijutsu
-      (283 restantes de 383), Invocação — categoria por
-      categoria),
+      Jutsu (~271 jutsu: "Shadow Dancing Leaf" e "Stone Form"
+      pendentes, Bukijutsu Ranks C/B/A/S (269 restantes de 383),
+      Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

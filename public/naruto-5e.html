@@ -436,10 +436,10 @@ const RANKS_JUTSU = [
    "Shadow Dancing Leaf" (Rank C), de fora por dados vazios na extração
    do PDF (decisão #186) — pendência isolada, não uma categoria em
    aberto. Bukijutsu (jutsu de arma) em andamento — décima categoria,
-   383 jutsu no total, a maior de todas; Rank D é o maior rank dela,
-   com 114 jutsu entrando aos poucos em lotes de ~20 (decisão #191),
-   100 já prontos. Resta também Invocação pra fechar o Compêndio
-   inteiro. */
+   383 jutsu no total, a maior de todas; Rank D dela está completo (113
+   de 114 jutsu — só "Stone Form" fora, dados vazios na extração do
+   PDF, decisão #196) — faltam os ranks C, B, A e S de Bukijutsu (269
+   jutsu) e Invocação pra fechar o Compêndio inteiro. */
 const JUTSU_CATALOGO = [
   {nome:'Mãos de Chakra', tipo:'Ninjutsu', categoria:'Não-Elemental', rank:'E', custo:'1 Chakra', alcance:'9m', duracao:'1 minuto',
     efeito:'Cria uma mão espectral flutuante que manipula objetos leves (até ~4,5kg) a distância; não ataca nem carrega itens de chakra.'},
@@ -2705,6 +2705,32 @@ const JUTSU_CATALOGO = [
     efeito:'Cobre as armas de chakra antes de disparar (manter a concentração neste jutsu não custa Chakra). Enquanto durar, o primeiro Ataque de Arma à distância com uma arma Perfurante à distância em cada turno ganha +1 no intervalo de crítico. Em ranks mais altos: +3 de custo por rank acima de D; a partir do Rank B, +1 no intervalo de crítico; no Rank S, mais +1.'},
   {nome:'Marca da Alma', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'36m', duracao:'1 minuto',
     efeito:'Trava a mira mental e visual num alvo à vista: enquanto durar, a criatura marcada não se beneficia de cobertura de 3/4 nem de metade, e todo ataque de arma seu contra ela soma +1d10 de dano do tipo da arma. A marca dura até o alvo chegar a 0 PV ou você perder ele de vista (precisa relançar pra marcar de novo). Enquanto tiver um alvo marcado, qualquer ataque de arma seu contra outra criatura sofre -1d6 de dano. Em ranks mais altos: +3 de custo e +1 alvo marcável por rank acima de D.'},
+  {nome:'Ruptura da Alma', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'6 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Mira na própria alma do oponente: prepara o golpe e o solta de uma vez. Ataque de Taijutsu corpo a corpo com desvantagem — acertando, causa 4d6 de dano Cortante e 1 rank de Sangramento. Lançado como Chain 2, +1 rank de Sangramento; como Chain 3, o dano vira 6d12.'},
+  {nome:'Roubo de Alma', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Aprende a mirar no espírito do alvo, não no corpo: enquanto durar, a primeira vez em cada turno que um ataque de arma seu for crítico, dobra o dano do seu modificador de habilidade e ignora PV temporário. Em ranks mais altos: +3 de custo por rank acima de D, e +1 no intervalo de crítico do primeiro Ataque de Arma à distância de cada turno.'},
+  {nome:'Lagoa Parada, Rio Correndo', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (4,5m de raio)', duracao:'Instantâneo',
+    efeito:'Reação: segura a arma numa postura perpendicular perfeita, esperando o momento de golpear — quando uma criatura no alcance da sua arma fizer um ataque de arma ou de Taijutsu (até o início do seu próximo turno), você golpeia primeiro, puxando o ataque pra si. Ataque de Taijutsu contra ela — acertando, causa dano da arma e você vira o novo alvo do ataque dela.'},
+  {nome:'Tempestade de Aço', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'Especial (28 Chakra)', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Combinação: você e os aliados a até 9m do alvo se preparam pra desencadear um temporal de aço. Cada participante faz, um de cada vez, um Ataque de Taijutsu contra o alvo, causando dano da arma + 3d8 no acerto. Depois que todos atacarem, o alvo sofre conforme os tipos de dano recebidos — pra cada tipo, testa o atributo ligado a ele (Força pra Concussão, Destreza pra Cortante, Constituição pra Perfurante) contra a maior CD de Taijutsu entre os atacantes, com -1 de penalidade por acerto daquele tipo: falhando na de Força, ganha 1 rank de Machucado; na de Destreza, 1 rank de Sangramento; na de Constituição, 1 rank de Lento. Em Combinação, o dado de dano sobe conforme o maior Carisma do grupo: d10 com +2 ou mais, d12 com +4 ou mais.'},
+  {nome:'Lança Rompedora', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Estoca a lança carregada de chakra pra ferir carne ou quebrar aço: Ataque de Taijutsu corpo a corpo — acertando, escolhe entre causar dano da arma ou reduzir a Redução de Dano do alvo num valor igual a esse dano até o início do seu próximo turno. Lançado como Chain 2, faz as duas coisas sem precisar escolher; como Chain 3, faz mais um ataque.'},
+  {nome:'Aura da Espada: Vermelha', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'1 minuto',
+    efeito:'Desbloqueia a Aura da Espada, um caminho só de mestres espadachins: um fluxo controlado de chakra faz o fio da espada brilhar vermelho. Enquanto durar, a lâmina ignora 4 pontos de Redução de Dano, e uma vez por turno, ao causar dano com ela, pode forçar o alvo a testar Força — falhando, sofre 1d10 de dano de Fogo e cai Derrubado com a explosão da lâmina.'},
+  {nome:'Língua Chicoteante do Sapo', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'4 Chakra', alcance:'Pessoal', duracao:'Concentração, até 1 minuto',
+    efeito:'Aprimora a arma com chakra pra controlar a trajetória dela em pleno ataque (manter a concentração não custa Chakra). Enquanto durar, ataques com uma arma tipo mangual ganham +1 no ataque e no dano, +1,5m extra de alcance, e +2 em tentativas de Derrubar ou Agarrar. Em ranks mais altos: +3 de custo por rank acima de D; a partir do Rank C, o bônus de ataque/dano vira +2; a partir do Rank B, mais +1,5m de alcance; a partir do Rank A, o bônus vira +3; no Rank S, o bônus de Derrubar/Agarrar vira +10.'},
+  {nome:'Garras do Tigre', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Arremessa a arma numa diagonal precisa: Ataque de Taijutsu à distância, dano da arma + 1d8. O alvo testa Constituição — falhando, é cortado fundo no peito e sofre mais 2d8 de dano Cortante. Em ranks mais altos: +3 de custo e +1d8 de dano (nos dois efeitos) por rank acima de D.'},
+  {nome:'Quebra de Arma', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'Instantâneo',
+    efeito:'Reação a ser atingido corpo a corpo: usa a própria arma pra prender a arma do atacante num ângulo vulnerável. Quem te atacou testa Destreza — falhando, a arma dele quebra (se a arma tiver bônus de ataque/dano ou selo de aprimoramento, só quebra contra uma arma sua com bônus ou selo igual ou maior).'},
+  {nome:'Desvio de Arma', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal', duracao:'1 rodada',
+    efeito:'Entra numa postura defensiva pronta pra aparar qualquer ataque: ganha +2 de Defesa até o início do próximo turno. Até o fim do turno seguinte, o próximo Bukijutsu que lançar com a palavra-chave Chain ganha +2 dados de dano extra. Em ranks mais altos: +3 de custo por rank acima de D; no Rank B, +1 de Defesa e +1 dado extra; no Rank S, +2 de Defesa e +2 dados extras.'},
+  {nome:'Armadilha de Fio', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'3 Chakra', alcance:'4,5m', duracao:'Instantâneo',
+    efeito:'Arma uma armadilha num local à vista: a área de gatilho é um cubo de 4,5m centrado nela. Quem entrar ali aciona a armadilha e testa Destreza — falhando, fica Restrito (repete um teste de Força no início de cada turno seguinte pra arrebentar o fio e se soltar).'},
+  {nome:'Corte Ferino', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Alcance da arma', duracao:'Instantâneo',
+    efeito:'Cobre a arma de chakra serrilhado antes de golpear com a intenção de mutilar: Ataque de Taijutsu corpo a corpo com desvantagem — acertando, causa dano da arma + 2d10 e 1 rank de Sangramento. Em ranks mais altos: +3 de custo e +1 rank de Sangramento por rank acima de D.'},
+  {nome:'Golpe Yosaku', tipo:'Bukijutsu', categoria:'Bukijutsu', rank:'D', custo:'5 Chakra', alcance:'Pessoal (4,5m de cone)', duracao:'Instantâneo',
+    efeito:'Golpeia com força o bastante pra criar uma onda cortante lateral: toda criatura num cone de 4,5m à sua frente testa Destreza — falhando, sofre dano da arma + 3d4 (metade se passar), sem somar seu modificador de habilidade. Quem estiver a até 1,5m de você quando lançar testa com desvantagem. Lançado como Chain 2, soma seu modificador de habilidade ao dano; como Chain 3, o dado de dano sobe um passo. Em ranks mais altos: +3 de custo e +1,5m de alcance por rank acima de D.'},
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
