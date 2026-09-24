@@ -6913,6 +6913,31 @@ card novo nem o Grimório num navegador logado nesta sessão — mesma
 limitação das decisões #150 a #152, sem credenciais do Supabase
 configuradas neste ambiente.
 
+## 154. Correção — migrações 0018 e 0019 quebravam ao colar no Supabase (24/09/2026)
+
+O Zé reportou o mesmo erro que já tinha aparecido na migração 0017 (v1):
+`CREATE TABLE IF NOT EXISTS "conquistas_campanha" (;` — sintaxe quebrada,
+sem nenhuma coluna. O arquivo no repositório sempre esteve correto (cada
+`CREATE TABLE` bem formado, em várias linhas); o problema é o caminho de
+colar essa instrução de várias linhas no SQL Editor do Supabase, que já
+tinha mostrado (migração 0017) que pode perder a quebra de linha no meio
+de uma instrução e juntar o `(` de abertura direto com o `;` mais
+próximo.
+
+Reescrevi as migrações `0018_campos_personalizados_e_conquistas.sql` e
+`0019_grupos_itens_companheiros_veiculos.sql` (a única outra migração
+ainda não confirmada como rodada, com o mesmo formato de `CREATE TABLE`
+em várias linhas) pra cada instrução caber numa linha só — mesma técnica
+que resolveu a 0017 na hora. Migrações mais antigas (0014, 0015) já
+foram rodadas com sucesso faz tempo — não fazem mais sentido tocar,
+reescrever uma migração já aplicada não muda nada retroativamente.
+
+Sem mudança de schema, sem migração nova — só as duas reescritas.
+
+Testado: chaves/parênteses de cada instrução conferidos (excluindo
+comentário SQL, que o Postgres ignora e pode ter parêntese solto de
+prosa sem afetar a sintaxe de verdade).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
