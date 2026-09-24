@@ -6938,6 +6938,37 @@ Testado: chaves/parênteses de cada instrução conferidos (excluindo
 comentário SQL, que o Postgres ignora e pode ter parêntese solto de
 prosa sem afetar a sintaxe de verdade).
 
+## 155. Correção — tabelas novas sem Row Level Security (24/09/2026)
+
+O Supabase avisou sozinho ("Potential issue detected") ao rodar a
+migração 0018: `campos_personalizados` estava sendo criada sem RLS
+ligada. Auditoria: a decisão #2 (`0002_fechar_tabelas.sql`) ligou RLS
+sem nenhuma política em toda tabela que existia na época, e também
+revogou de vez o privilégio de "anon"/"authenticated" em qualquer
+tabela futura (`ALTER DEFAULT PRIVILEGES`) — essa segunda trava sozinha
+já bloqueia o acesso por fora do servidor, mas o "cinto e suspensório"
+que a própria 0002 descreve é ligar as duas. Nenhuma migração depois da
+0002 repetiu a parte de RLS pra tabela nova — nem 0014 (sessões/
+presença), nem 0015 (chat/avisos/enquetes/notificações), nem os
+próprios 0018/0019 desta sessão. Sem o aviso do Supabase, esse buraco
+teria continuado.
+
+**Fechado em duas frentes:** `0018` e `0019` (ainda não confirmadas
+como rodadas) ganharam `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`
+logo depois de cada `CREATE TABLE`, pra nascerem já fechadas — não
+precisar do aviso interativo do Supabase pra lembrar. Uma migração nova,
+`0022_rls_tabelas_novas.sql`, liga a mesma trava nas 8 tabelas mais
+antigas que já foram criadas sem ela (0014/0015) e, de novo, nas de
+0018/0019 — `ENABLE ROW LEVEL SECURITY` não erra nem muda nada se já
+estiver ligada, então rodar nas que já tiverem a trava (por já ter
+clicado "Run and enable RLS" na hora) é inofensivo.
+
+Sem mudança de schema, sem coluna nova — só a trava de acesso, igual a
+decisão #2 já aplicava desde o início do projeto.
+
+Testado: `grep` confirmando que nenhuma outra tabela criada depois da
+0002 ficou de fora da lista da migração 0022.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
