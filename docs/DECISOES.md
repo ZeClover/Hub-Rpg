@@ -7434,6 +7434,24 @@ Testado com Playwright: catálogo mostra 1097 opções (1 placeholder +
 1096 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 195. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank D (lote 5 de 6) (19/09/2026)
+
+Continuação da decisão #194. Quinto lote do Rank D de Bukijutsu (20
+jutsu, de "Peso do Rei Macaco" a "Marca da Alma") entrou no
+`JUTSU_CATALOGO` — 1116 das ~1400 entradas totais (100 de 114 jutsu de
+Bukijutsu Rank D).
+
+Fecha a família "Rei Macaco" e traz a dupla "Assalto da Dor"/"Barragem
+da Dor"/"Dança da Dor", que gastam ou reduzem o "dado de munição" da
+arma (mecânica de recurso limitado pra armas à distância, equivalente
+ao "Chakra" mas específico de projéteis). "Soaring Dragon" virou
+"Dragão Alado" em vez de "Dragão Ascendente" pra não colidir com o
+Taijutsu Rank D já existente ("Dragão Ascendente", decisão #182/#183).
+
+Testado com Playwright: catálogo mostra 1117 opções (1 placeholder +
+1116 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
