@@ -1846,13 +1846,21 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       cabeçalho CORS "sujar" o canvas: gera de novo sem a imagem em vez
       de falhar. Sem migração. `tsc`, lint, `next build` e os 302
       testes automáticos continuam limpos
-- [ ] **Demais ideias do pedido** (companheiros/
-      pets, veículos genéricos, grupos/equipes, inventário e cofre
-      compartilhados, biblioteca pessoal de item, exportar PDF, mestre
+- [x] **Grupos, itens e companheiros** (24/09/2026) — decisão #147.
+      Quatro modelos novos (`Grupo`/`GrupoMembro`, `Item`, `Companheiro`,
+      `Veiculo`), migração `0019`: grupos/equipes dentro da campanha,
+      inventário compartilhado de grupo, cofre da campanha, transferência
+      de itens entre fichas, biblioteca pessoal de item, companheiros/
+      pets como vínculo entre fichas, e veículos genéricos. Nada toca no
+      `dados` de ficha de sistema nenhum (decisão #17). Aba "Equipes" na
+      página da campanha, página nova `/itens`, "+ Companheiro" em
+      `/fichas`. Sem dependência nova. `tsc`, lint, `next build` e os
+      302 testes automáticos continuam limpos
+- [ ] **Demais ideias do pedido** (exportar PDF, mestre
       auxiliar, sandbox de ficha/combate, prévia do Level Up, PWA,
-      offline parcial, QR Code do link compartilhável da ficha, página
-      geral do personagem) — fica pra quando o Zé confirmar a ordem das
-      próximas
+      offline parcial, sincronização ao reconectar, QR Code do link
+      compartilhável da ficha, página geral do personagem) — fica pra
+      quando o Zé confirmar a ordem das próximas
 
 ---
 

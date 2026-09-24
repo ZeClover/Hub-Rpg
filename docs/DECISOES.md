@@ -6547,6 +6547,60 @@ Sem migração, sem rota nova, sem dependência nova.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 147. Hub — Grupos, itens, companheiros e veículos (24/09/2026)
+
+Décima fatia do backlog de "demais ideias" (decisão #134) — cinco ideias
+juntas por serem o mesmo pedaço de modelo de dados: companheiros/pets
+(#56), veículos genéricos (#57), grupos/equipes dentro da campanha (#58),
+inventário compartilhado de grupo (#59), cofre da campanha (#60),
+transferência de itens entre fichas (#61) e biblioteca pessoal de itens
+(#63).
+
+**Auditoria antes de construir:** nenhuma dessas sete ideias tinha
+qualquer coisa parecida no Hub. `Personagem.dados` já guarda o
+inventário de cada sistema, mas em formato próprio de cada um (decisão
+#17) — os modelos novos abaixo nunca leem nem escrevem esse campo,
+ficam inteiramente por fora.
+
+**Quatro modelos novos, migração `0019`:**
+- `Grupo`/`GrupoMembro` — equipe dentro de uma campanha ("esquadrão A"),
+  só uma lista de fichas. Só o mestre cria/renomeia/apaga e
+  adiciona/remove ficha; qualquer participante lê (é organizacional,
+  não secreto, mesma régua da identidade da campanha — decisão #134).
+- `Item` — genérico, mora em exatamente um lugar por vez: biblioteca
+  pessoal de alguém (`donoId`), uma ficha específica (`personagemId`),
+  o inventário de um grupo (`grupoId`) ou o cofre da campanha
+  (`campanhaId` sozinho). "Transferir" um item é só trocar qual desses
+  quatro campos está preenchido — nunca toca no `dados` de nenhuma
+  ficha. Permissão por local: biblioteca só o dono da conta; ficha, o
+  dono dela ou o mestre da campanha; grupo, o mestre ou quem tem uma
+  ficha naquele grupo; cofre, só o mestre.
+- `Companheiro` — vínculo entre duas fichas já existentes (uma é
+  companheiro/pet da outra), como o próprio pedido descreveu. Não cria
+  tipo de ficha novo: o companheiro continua sendo uma ficha comum, só
+  marcada como ligada à ficha dona. Por segurança, as duas fichas do
+  vínculo precisam ser do mesmo dono.
+- `Veiculo` — nome/descrição/capacidade, ligado a uma ficha dona.
+  Deliberadamente simples pra não duplicar mecânica de veículo de
+  sistema nenhum (decisão #17) — o Veículo Pessoal do Piloto de Fabula
+  Ultima, por exemplo, continua vivendo só no `dados` daquela ficha. Só
+  o mestre cria/edita/apaga.
+
+**Onde aparece:** aba nova "Equipes" na página da campanha (mestre e
+jogador) com Grupos, Cofre da campanha e Inventário dos grupos lado a
+lado, mais Veículos; página nova `/itens` com a biblioteca pessoal e os
+itens de cada ficha própria, pra mover item de um lugar pro outro sem
+precisar abrir a campanha; e um "+ Companheiro" em cada ficha de
+`/fichas`.
+
+Sem dependência nova. Migração `0019_grupos_itens_companheiros_
+veiculos.sql`, idempotente, no mesmo formato `DO $$ BEGIN ... EXCEPTION
+WHEN duplicate_object THEN null; END $$;` que já funcionou nas
+migrações 0013 a 0016 e 0018.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

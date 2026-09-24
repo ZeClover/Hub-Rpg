@@ -16,14 +16,18 @@ import { CriarPersonagem } from "./criar-personagem";
 import { DuplicarInimigo } from "./duplicar-inimigo";
 import { Enquetes, type EnqueteView } from "./enquetes";
 import { EntrarNaCampanha } from "./entrar-na-campanha";
+import { Equipes } from "./equipes";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { GerarCard } from "../../gerar-card";
+import { type ItemView } from "../../itens-compartilhados";
 import { IdentidadeCampanha } from "./identidade-campanha";
+import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
 import { QrCode } from "./qr-code";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
 import { Sessoes, type SessaoView } from "./sessoes";
+import { type VeiculoView } from "./veiculos";
 
 /*
   A campanha em si. O que aparece muda conforme quem está olhando:
@@ -189,6 +193,44 @@ export default async function PaginaCampanha({
     criadoEm: c.criadoEm.toISOString(),
   }));
 
+  // Grupos, itens e veículos (decisão #147): mesmo caso de campos/enquetes —
+  // nada de mestre aqui, a mesma consulta serve pra mestre e jogador.
+  const [gruposBase, itensCofre, veiculos] = await Promise.all([
+    banco.grupo.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "asc" },
+      select: {
+        id: true,
+        nome: true,
+        membros: { select: { personagemId: true, personagem: { select: { nome: true } } } },
+        itens: {
+          orderBy: { criadoEm: "desc" },
+          select: { id: true, nome: true, descricao: true, quantidade: true },
+        },
+      },
+    }),
+    banco.item.findMany({
+      where: { campanhaId: id, grupoId: null },
+      orderBy: { criadoEm: "desc" },
+      select: { id: true, nome: true, descricao: true, quantidade: true },
+    }),
+    banco.veiculo.findMany({
+      where: { campanhaId: id },
+      orderBy: { criadoEm: "asc" },
+      select: { id: true, nome: true, descricao: true, capacidade: true, donoId: true },
+    }),
+  ]);
+  const grupos = gruposBase.map((g) => ({
+    id: g.id,
+    nome: g.nome,
+    membros: g.membros.map((m) => ({ personagemId: m.personagemId, nome: m.personagem.nome })),
+    itens: g.itens,
+  }));
+  const fichasDaCampanha = personagensDaCampanha.map((p) => ({ id: p.id, nome: p.nome }));
+  const meusPersonagensIds = new Set(
+    personagensDaCampanha.filter((p) => p.donoId === usuario.id).map((p) => p.id),
+  );
+
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
 
@@ -273,6 +315,11 @@ export default async function PaginaCampanha({
           enquetes={enquetes}
           campos={campos}
           conquistas={conquistas}
+          grupos={grupos}
+          itensCofre={itensCofre}
+          veiculos={veiculos}
+          fichasDaCampanha={fichasDaCampanha}
+          meusPersonagensIds={meusPersonagensIds}
         />
       ) : (
         <VisaoDoJogador
@@ -309,6 +356,11 @@ export default async function PaginaCampanha({
           enquetes={enquetes}
           campos={campos}
           conquistas={conquistas}
+          grupos={grupos}
+          itensCofre={itensCofre}
+          veiculos={veiculos}
+          fichasDaCampanha={fichasDaCampanha}
+          meusPersonagensIds={meusPersonagensIds}
         />
       )}
     </main>
@@ -338,6 +390,11 @@ function VisaoDoMestre({
   enquetes,
   campos,
   conquistas,
+  grupos,
+  itensCofre,
+  veiculos,
+  fichasDaCampanha,
+  meusPersonagensIds,
 }: {
   campanhaId: string;
   nome: string;
@@ -361,6 +418,11 @@ function VisaoDoMestre({
   enquetes: EnqueteView[];
   campos: CampoView[];
   conquistas: ConquistaView[];
+  grupos: GrupoView[];
+  itensCofre: ItemView[];
+  veiculos: VeiculoView[];
+  fichasDaCampanha: { id: string; nome: string }[];
+  meusPersonagensIds: Set<string>;
 }) {
   const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
@@ -595,6 +657,21 @@ function VisaoDoMestre({
               </>
             ),
           },
+          {
+            id: "equipes",
+            rotulo: "Equipes",
+            conteudo: (
+              <Equipes
+                campanhaId={campanhaId}
+                grupos={grupos}
+                itensCofre={itensCofre}
+                veiculos={veiculos}
+                fichasDaCampanha={fichasDaCampanha}
+                souMestre
+                meusPersonagensIds={meusPersonagensIds}
+              />
+            ),
+          },
         ]}
       />
     </>
@@ -617,6 +694,11 @@ function VisaoDoJogador({
   enquetes,
   campos,
   conquistas,
+  grupos,
+  itensCofre,
+  veiculos,
+  fichasDaCampanha,
+  meusPersonagensIds,
 }: {
   campanhaId: string;
   ficha: string | null;
@@ -633,6 +715,11 @@ function VisaoDoJogador({
   enquetes: EnqueteView[];
   campos: CampoView[];
   conquistas: ConquistaView[];
+  grupos: GrupoView[];
+  itensCofre: ItemView[];
+  veiculos: VeiculoView[];
+  fichasDaCampanha: { id: string; nome: string }[];
+  meusPersonagensIds: Set<string>;
 }) {
   return (
     <>
@@ -707,6 +794,21 @@ function VisaoDoJogador({
                   />
                   <Chat campanhaId={campanhaId} meuUsuarioId={meuUsuarioId} />
                 </>
+              ),
+            },
+            {
+              id: "equipes",
+              rotulo: "Equipes",
+              conteudo: (
+                <Equipes
+                  campanhaId={campanhaId}
+                  grupos={grupos}
+                  itensCofre={itensCofre}
+                  veiculos={veiculos}
+                  fichasDaCampanha={fichasDaCampanha}
+                  souMestre={false}
+                  meusPersonagensIds={meusPersonagensIds}
+                />
               ),
             },
           ]}

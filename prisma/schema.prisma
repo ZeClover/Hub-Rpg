@@ -92,6 +92,7 @@ model Usuario {
   enquetes        Enquete[]
   enqueteVotos    EnqueteVoto[]
   notificacoes    Notificacao[]
+  itens           Item[]
 
   @@map("usuarios")
 }
@@ -160,6 +161,9 @@ model Campanha {
   notificacoes         Notificacao[]
   camposPersonalizados CampoPersonalizado[]
   conquistas           Conquista[]
+  grupos               Grupo[]
+  itens                Item[]
+  veiculos             Veiculo[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -230,6 +234,14 @@ model Personagem {
   sistema  Sistema   @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   dono     Usuario   @relation(fields: [donoId], references: [id], onDelete: Cascade)
   campanha Campanha? @relation(fields: [campanhaId], references: [id], onDelete: SetNull)
+
+  grupoMembros         GrupoMembro[]
+  /// Fichas das quais esta ficha é dona (companheiros/pets dela).
+  companheirosOndeDono Companheiro[] @relation("DonoDoCompanheiro")
+  /// Fichas para as quais esta ficha É o companheiro/pet.
+  companheiroDe        Companheiro[] @relation("FichaComoCompanheiro")
+  itens                Item[]
+  veiculos             Veiculo[]
 
   @@index([donoId])
   @@index([sistemaId])
@@ -430,4 +442,109 @@ model Conquista {
 
   @@index([campanhaId])
   @@map("conquistas_campanha")
+}
+
+// ---------------------------------------------------------------------------
+// Grupos, itens, companheiros e veículos (decisão #147)
+// ---------------------------------------------------------------------------
+
+/// Um grupo/equipe dentro da campanha (ex.: "esquadrão A", "os que ficaram na
+/// cidade") — só organizacional, não muda regra de sistema nenhuma. Só o
+/// mestre cria/renomeia/apaga e mexe nos membros.
+model Grupo {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  nome       String
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha      @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  membros  GrupoMembro[]
+  itens    Item[]
+
+  @@index([campanhaId])
+  @@map("grupos")
+}
+
+/// Uma ficha dentro de um grupo. Tabela simples de vínculo — a ficha em si
+/// não sabe a quais grupos pertence, quem pergunta é sempre o grupo.
+model GrupoMembro {
+  id           String @id @default(uuid()) @db.Uuid
+  grupoId      String @db.Uuid
+  personagemId String @db.Uuid
+
+  grupo      Grupo      @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  personagem Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+
+  @@unique([grupoId, personagemId])
+  @@index([personagemId])
+  @@map("grupos_membros")
+}
+
+/// Item genérico do Hub — de propósito fora do `dados` json de qualquer
+/// ficha (decisão #17: cada sistema tem seu próprio formato de inventário,
+/// isto aqui nunca tenta ser esse formato). Mora em exatamente um lugar por
+/// vez: biblioteca pessoal de alguém, sem campanha nenhuma (`donoId`), com
+/// uma ficha específica (`personagemId`), com o inventário de um grupo
+/// (`grupoId`) ou no cofre da campanha (`campanhaId` sozinho, sem os
+/// outros). "Transferir" um item é só trocar qual desses campos está
+/// preenchido — nunca mexe no `dados` da ficha.
+model Item {
+  id           String   @id @default(uuid()) @db.Uuid
+  nome         String
+  descricao    String?
+  quantidade   Int      @default(1)
+  donoId       String?  @db.Uuid
+  personagemId String?  @db.Uuid
+  grupoId      String?  @db.Uuid
+  campanhaId   String?  @db.Uuid
+  criadoEm     DateTime @default(now())
+
+  dono       Usuario?    @relation(fields: [donoId], references: [id], onDelete: Cascade)
+  personagem Personagem? @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+  grupo      Grupo?      @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  campanha   Campanha?   @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@index([donoId])
+  @@index([personagemId])
+  @@index([grupoId])
+  @@index([campanhaId])
+  @@map("itens")
+}
+
+/// Vínculo entre duas fichas já existentes — uma é companheiro/pet da
+/// outra. Não cria um tipo de ficha novo: o companheiro continua sendo uma
+/// ficha comum (do mesmo sistema ou não), só marcada como ligada à ficha
+/// dona.
+model Companheiro {
+  id            String @id @default(uuid()) @db.Uuid
+  personagemId  String @db.Uuid
+  companheiroId String @db.Uuid
+
+  personagem  Personagem @relation("DonoDoCompanheiro", fields: [personagemId], references: [id], onDelete: Cascade)
+  companheiro Personagem @relation("FichaComoCompanheiro", fields: [companheiroId], references: [id], onDelete: Cascade)
+
+  @@unique([personagemId, companheiroId])
+  @@index([companheiroId])
+  @@map("companheiros")
+}
+
+/// Veículo genérico da campanha — deliberadamente simples, só pra
+/// organizar "quem tem o quê e quanta gente cabe". Não duplica mecânica de
+/// sistema nenhum (ex.: o Veículo Pessoal do Piloto de Fabula Ultima
+/// continua vivendo só no `dados` da ficha daquele sistema, decisão #17).
+model Veiculo {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  donoId     String   @db.Uuid
+  nome       String
+  descricao  String?
+  capacidade Int?
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha   @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  dono     Personagem @relation(fields: [donoId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId])
+  @@index([donoId])
+  @@map("veiculos")
 }
