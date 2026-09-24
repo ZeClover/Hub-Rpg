@@ -19,23 +19,24 @@
 -- mesmo nas tabelas que já tiverem essa trava (0018/0019 já nasceram com
 -- ela, corrigidas antes deste arquivo).
 --
--- IF EXISTS em cada linha: esta migração pode rodar antes da 0018/0019
--- terem sido aplicadas (ordem de quem já rodou o quê no Supabase varia),
--- e "itens"/"grupos"/etc. daquelas migrações ainda podem não existir —
--- sem IF EXISTS isso quebra com "relation ... does not exist" no meio do
--- script. Com IF EXISTS, tabela que ainda não existe é só pulada (ela já
--- nasce com RLS ligado quando a 0018/0019 rodar, de qualquer forma).
+-- Esta migração pode rodar antes da 0018/0019 terem sido aplicadas por
+-- inteiro (ordem de quem já rodou o quê no Supabase varia), e "itens"/
+-- "grupos"/etc. daquelas migrações ainda podem não existir. "ALTER TABLE
+-- IF EXISTS" já deveria bastar pra isso sozinho, mas na prática ainda deu
+-- erro "relation ... does not exist" — por segurança, cada linha abaixo
+-- confere a existência da tabela em information_schema antes de tentar
+-- ligar a trava, então nenhuma ordem de execução quebra o script.
 
-ALTER TABLE IF EXISTS "sessoes_presencas"     ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "mensagens_chat"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "avisos"                ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "enquetes"              ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "enquetes_votos"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "notificacoes"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "campos_personalizados" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "conquistas_campanha"   ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "grupos"                ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "grupos_membros"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "itens"                 ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "companheiros"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS "veiculos"              ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='sessoes_presencas') THEN EXECUTE 'ALTER TABLE "sessoes_presencas" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='mensagens_chat') THEN EXECUTE 'ALTER TABLE "mensagens_chat" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='avisos') THEN EXECUTE 'ALTER TABLE "avisos" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='enquetes') THEN EXECUTE 'ALTER TABLE "enquetes" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='enquetes_votos') THEN EXECUTE 'ALTER TABLE "enquetes_votos" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='notificacoes') THEN EXECUTE 'ALTER TABLE "notificacoes" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='campos_personalizados') THEN EXECUTE 'ALTER TABLE "campos_personalizados" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='conquistas_campanha') THEN EXECUTE 'ALTER TABLE "conquistas_campanha" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='grupos') THEN EXECUTE 'ALTER TABLE "grupos" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='grupos_membros') THEN EXECUTE 'ALTER TABLE "grupos_membros" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='itens') THEN EXECUTE 'ALTER TABLE "itens" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='companheiros') THEN EXECUTE 'ALTER TABLE "companheiros" ENABLE ROW LEVEL SECURITY'; END IF; END $$;
+DO $$ BEGIN IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='veiculos') THEN EXECUTE 'ALTER TABLE "veiculos" ENABLE ROW LEVEL SECURITY'; END IF; END $$;

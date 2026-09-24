@@ -6972,10 +6972,14 @@ Testado: `grep` confirmando que nenhuma outra tabela criada depois da
 **Correção:** ao tentar rodar a 0022 antes da 0019, o Supabase deu erro
 (`relation "itens" does not exist`) — a 0022 partia do pressuposto de que
 todas as 13 tabelas já existiam, mas a ordem de quem já rodou o quê varia
-de banco pra banco. Troquei todo `ALTER TABLE "x" ENABLE ROW LEVEL
-SECURITY` da 0022 por `ALTER TABLE IF EXISTS "x" ENABLE ROW LEVEL
-SECURITY` — tabela que ainda não existe é só pulada, sem quebrar o
-script, e já nasce com RLS ligada quando a migração dela rodar.
+de banco pra banco. Primeira tentativa de correção usou `ALTER TABLE IF
+EXISTS "x" ENABLE ROW LEVEL SECURITY`, que deveria bastar sozinho — mas
+o mesmo erro em `itens` se repetiu mesmo com o `IF EXISTS` no lugar.
+Troquei pra algo mais à prova de falha: cada linha virou um bloco `DO $$
+... $$` que confere primeiro, em `information_schema.tables`, se a tabela
+existe, e só então executa o `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`
+por dentro de um `EXECUTE`. Assim nenhuma ordem de execução das
+migrações consegue quebrar o script — tabela ausente é só ignorada.
 
 ## 31. Restrições registradas
 
