@@ -7728,6 +7728,32 @@ Testado com Playwright: catálogo mostra 1310 opções (1 placeholder +
 1309 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 207. Naruto 5e — Bukijutsu Rank A, lote 1 de ~4 (24/09/2026)
+
+Começa o Rank A de Bukijutsu (64 jutsu), continuação direta da decisão
+#206. Primeiro lote (16 jutsu, em ordem alfabética de "1-Shot Pierce"
+a "Burst Ammo") entrou no `JUTSU_CATALOGO` — 1325 das ~1400 entradas
+totais (16 de 64 jutsu do Rank A). Este rank veio limpo na extração:
+nenhuma das 64 entradas teve campo vazio ou nome corrompido.
+
+Nasceu a família "Sopro da Lua" (Breath of Moon), um sub-tema dentro
+do padrão já fixado "Sopro de [elemento/tema]": os cinco membros deste
+lote (Catástrofe, Palácio do Anoitecer, Repugnante, Contemplação
+Lunar, Faixas Lunares) compartilham o gatilho de permitir lançar outro
+jutsu da mesma família com Ação, Ação Bônus ou Reação até o fim do
+próximo turno — mecânica de encadeamento, preservada em todos os
+cinco. A família "Fúria Contida" ganhou "Meteoro", só lançável como
+Chain 3 (mesma convenção de "Quebra-Ossos", Rank B, decisão #206). A
+família "Lâmina do Pecado" ganhou "Inveja". Confirmado que a
+palavra-chave solta "Clash" (sem efeito mecânico próprio descrito no
+texto) não vira texto no campo `efeito` — é uma marcação do sistema de
+Clash genérico (aba Regras), não uma mecânica exclusiva do jutsu;
+mesmo tratamento dado a ela desde os Ranks D/C/B.
+
+Testado com Playwright: catálogo mostra 1326 opções (1 placeholder +
+1325 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
