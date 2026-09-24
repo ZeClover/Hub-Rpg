@@ -1,9 +1,10 @@
+import Link from "next/link";
+
 import { banco } from "@/lib/banco";
 import { ROTULO_SITUACAO, SISTEMAS } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 
 import { GerarCard } from "../gerar-card";
-import { Companheiros } from "./companheiros";
 import { CriarFicha } from "./criar-ficha";
 import { CriarNpc } from "./criar-npc";
 import { BotaoExcluir } from "./excluir-ficha";
@@ -22,7 +23,6 @@ type Personagem = {
   campanha: { nome: string } | null;
   ehMonstro: boolean;
   sistema: { chave: string; nome: string };
-  companheirosOndeDono: { companheiro: { id: string; nome: string } }[];
 };
 
 export default async function Fichas() {
@@ -48,7 +48,6 @@ export default async function Fichas() {
         // todo monstro linkava (errado) pra ficha de jogador.
         ehMonstro: true,
         sistema: { select: { chave: true, nome: true } },
-        companheirosOndeDono: { select: { companheiro: { select: { id: true, nome: true } } } },
       },
     }),
     banco.usuario.findUnique({
@@ -78,10 +77,6 @@ export default async function Fichas() {
     minhasParticipacoes
       .map((part) => part.campanha)
       .filter((c) => c.sistemaId === p.sistemaId && c.id !== p.campanhaId);
-  // Companheiro/pet (decisão #147, ideia #56): qualquer outra ficha sua
-  // serve de candidata, de sistema ou campanha nenhuma em particular.
-  const candidatasCompanheiroDe = (p: Personagem) =>
-    personagens.filter((outra) => outra.id !== p.id).map((outra) => ({ id: outra.id, nome: outra.nome }));
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-14">
@@ -98,7 +93,6 @@ export default async function Fichas() {
               key={personagem.id}
               personagem={personagem}
               candidatas={candidatasDe(personagem)}
-              candidatasCompanheiro={candidatasCompanheiroDe(personagem)}
             />
           ))}
         </ul>
@@ -119,7 +113,6 @@ export default async function Fichas() {
               key={personagem.id}
               personagem={personagem}
               candidatas={candidatasDe(personagem)}
-              candidatasCompanheiro={candidatasCompanheiroDe(personagem)}
             />
           ))}
         </ul>
@@ -164,11 +157,9 @@ export default async function Fichas() {
 function CartaoFicha({
   personagem,
   candidatas,
-  candidatasCompanheiro,
 }: {
   personagem: Personagem;
   candidatas: { id: string; nome: string }[];
-  candidatasCompanheiro: { id: string; nome: string }[];
 }) {
   const sistema = SISTEMAS.find((s) => s.chave === personagem.sistema.chave);
   const arquivoFicha = personagem.ehMonstro ? sistema?.fichaInimigo : sistema?.ficha;
@@ -198,6 +189,12 @@ function CartaoFicha({
             avatarUrlInicial={personagem.avatarUrl}
             bannerUrlInicial={personagem.bannerUrl}
           />
+          <Link
+            href={`/fichas/${personagem.id}`}
+            className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto"
+          >
+            Gerenciar
+          </Link>
         </div>
         <div className="mt-2">
           <MoverOuCopiarFicha
@@ -206,11 +203,6 @@ function CartaoFicha({
             candidatas={candidatas}
           />
         </div>
-        <Companheiros
-          personagemId={personagem.id}
-          companheiros={personagem.companheirosOndeDono.map((c) => c.companheiro)}
-          candidatas={candidatasCompanheiro}
-        />
         <div className="mt-2">
           <GerarCard
             dados={{

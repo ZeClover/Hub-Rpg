@@ -6638,6 +6638,50 @@ fosse mestre (mesmas abas, mesmo Manual do Mestre), só sem o botão
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 149. Hub — Página geral do personagem e QR Code da ficha (24/09/2026)
+
+Décima segunda fatia do backlog de "demais ideias" (decisão #134):
+página geral do personagem (ideia #135) e QR Code do link
+compartilhável da ficha (ideia #132), construídas juntas porque a
+segunda vive naturalmente dentro da primeira.
+
+**Por que juntar as duas.** A ideia #132 parecia simples — "bota um QR
+Code perto do link de compartilhar" — mas o link de compartilhar
+(`Personagem.compartilhado`, decisão #46) vive hoje dentro de cada uma
+das ~10 fichas de sistema em `public/*.html`. São páginas HTML soltas,
+sem nenhum include compartilhado entre elas (cada uma tem seu próprio
+`<style>` e `<script>` inline) — não dá pra "importar um componente
+React" ali dentro. Em vez de portar a geração de QR Code (pacote
+`qrcode`) pra dentro de ~10 arquivos JS diferentes, criei a página
+geral do personagem: um lugar novo, só React, que já ia precisar
+existir de qualquer forma pra reunir status/imagem/companheiros/itens/
+veículos.
+
+**`/fichas/[id]`** — só o dono acessa (404 pra qualquer outra pessoa,
+decisão #13). Nunca lê nem escreve `dados` da ficha (decisão #17: quem
+manda ali continua sendo o HTML do sistema); é gerenciamento ao redor
+dela:
+- Status, avatar/banner (já existiam em `/fichas`, só passaram a
+  também aparecer aqui).
+- **Compartilhamento + QR Code** (`CompartilharFicha`): o mesmo toggle
+  que já existia em cada ficha de sistema, centralizado aqui — o QR
+  Code (`QrCode`, movido de `campanhas/[id]/` pra `(hub)/` por virar
+  compartilhado entre convite de campanha e link de ficha) aponta pra
+  URL de verdade da ficha (`ficha/fichaInimigo?id=...`), não pra esta
+  página de gerenciamento.
+- Companheiros, itens (biblioteca pessoal ↔ esta ficha ↔ outras
+  fichas suas) e veículos (leitura — quem cria é o mestre, na
+  campanha) — os três reaproveitando os componentes da decisão #147.
+
+`/fichas` ganhou um link "Gerenciar" por ficha, e o widget de
+Companheiros saiu do cartão da lista (ficou só na página nova, pra não
+duplicar a mesma ação em dois lugares).
+
+Sem migração, sem dependência nova.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

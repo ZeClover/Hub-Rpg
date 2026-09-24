@@ -1863,10 +1863,17 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       de checagem espalhados que comparavam `papel === "MESTRE"` direto.
       Só o mestre titular promove/remove. `tsc`, lint, `next build` e os
       302 testes automáticos continuam limpos
+- [x] **Página geral do personagem e QR Code da ficha** (24/09/2026)
+      — decisão #149. Página nova `/fichas/[id]` (só o dono acessa):
+      status/imagem, compartilhamento com QR Code (ideias #132/#135),
+      companheiros, itens e veículos. QR Code aponta pra URL de
+      verdade da ficha, não pra esta página. `QrCode` virou componente
+      compartilhado (`(hub)/qr-code.tsx`). Nunca lê nem escreve `dados`
+      de ficha de sistema nenhum. `tsc`, lint, `next build` e os 302
+      testes automáticos continuam limpos
 - [ ] **Demais ideias do pedido** (exportar PDF,
       sandbox de ficha/combate, prévia do Level Up, PWA,
-      offline parcial, sincronização ao reconectar, QR Code do link
-      compartilhável da ficha, página geral do personagem) — fica pra
+      offline parcial, sincronização ao reconectar) — fica pra
       quando o Zé confirmar a ordem das próximas
 
 ---
