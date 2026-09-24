@@ -19,6 +19,19 @@
   /* Fonte de título (decisão #116) — trocada por aplicarFonteTitulo(), preferência de navegador (não do personagem, igual a escala de fonte). */
   --fonte-titulo:Georgia,'Times New Roman',serif;
 }
+/* Exportar em PDF (decisão #151) — força papel branco/tinta preta na
+   impressão, não importa a cor de tema escolhida (aplicarTema() escreve
+   direto no style de :root, por isso o !important: senão a cor do tema
+   ganharia da folha de estilo). Esconde botões e barra de navegação, que
+   não fazem sentido no papel. */
+@media print{
+  :root{
+    --fundo:#ffffff !important; --superficie:#ffffff !important; --superficie-alta:#f3f3f3 !important;
+    --borda:#999999 !important; --texto:#000000 !important; --suave:#333333 !important;
+    --ambar:#000000 !important; --ambar-forte:#000000 !important; --ambar-rgb:0,0,0 !important; --alerta:#000000 !important;
+  }
+  .barra, #painelAparencia, button{ display:none !important; }
+}
 *{box-sizing:border-box}
 html{color-scheme:dark}
 body{
@@ -170,6 +183,7 @@ body.compacto .abas{margin-bottom:14px}
   <span class="cresce"></span>
   <span id="statusSalvo" class="status-salvo"></span>
   <button id="btAparencia" title="Cor do tema e tamanho da fonte">🎨 Aparência</button>
+  <button id="btExportarPdf" title="Abre a janela de impressão do navegador — escolha 'Salvar como PDF'">🖨️ Exportar PDF</button>
   <button id="btExportar">Exportar</button>
   <button id="btImportar">Importar</button>
   <input type="file" id="arquivo" accept="application/json" hidden>
@@ -6438,6 +6452,15 @@ document.getElementById('btExcluir').onclick = () => {
   estado.modoGuiado = false;
   salvar(); render();
 };
+
+/*
+  Exportar em PDF (decisão #151, ideia #89) — sem lib nova, sem servidor:
+  usa a própria caixa de impressão do navegador ("Salvar como PDF" é uma
+  das opções de destino em qualquer navegador moderno). Respeita dado
+  privado de graça, porque só imprime o que já estava desenhado na tela
+  desta pessoa — nunca busca nada a mais do servidor.
+*/
+document.getElementById('btExportarPdf').onclick = () => window.print();
 
 document.getElementById('btExportar').onclick = () => {
   const p = atual(); if(!p) return;

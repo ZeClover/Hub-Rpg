@@ -43,3 +43,34 @@ body {
 html {
   color-scheme: dark;
 }
+
+/*
+  Exportar em PDF (decisão #151, ideia #89) — força papel branco/tinta
+  preta na impressão de qualquer tela do Hub (Ctrl+P do navegador,
+  "Salvar como PDF" nos destinos de impressão). Usada de propósito pela
+  ficha de Campanha Livre, mas vale pra qualquer tela — imprimir a lista
+  de fichas ou uma campanha também sai legível, não só preto sobre marrom
+  escuro.
+*/
+@media print {
+  :root {
+    --cor-fundo: #ffffff;
+    --cor-superficie: #ffffff;
+    --cor-superficie-alta: #f3f3f3;
+    --cor-borda: #999999;
+    --cor-texto: #000000;
+    --cor-texto-suave: #333333;
+    --cor-ambar: #000000;
+    --cor-ambar-forte: #000000;
+    --cor-segredo: #000000;
+  }
+  html {
+    color-scheme: light;
+  }
+  /* Botão não faz sentido no papel; o link "Exportar PDF" se some
+     também, senão ele mesmo apareceria impresso. */
+  button,
+  .sem-impressao {
+    display: none !important;
+  }
+}

@@ -33,6 +33,18 @@
     --body:'Space Grotesk', sans-serif;
     --mono:'IBM Plex Mono', monospace;
   }
+  /* Exportar em PDF (decisão #151) — força papel branco/tinta preta na
+     impressão. Esconde a barra de botões, que não faz sentido no papel. */
+  @media print{
+    :root{
+      --navy-deep:#ffffff !important; --navy-mid:#ffffff !important; --parchment:#000000 !important;
+      --parchment-dim:#333333 !important; --ink:#000000 !important;
+      --brass:#000000 !important; --brass-bright:#000000 !important;
+      --verdigris:#000000 !important; --verdigris-bright:#000000 !important;
+      --line:#999999 !important; --line-strong:#999999 !important; --danger:#000000 !important;
+    }
+    #rosterBar, button{ display:none !important; }
+  }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
@@ -5232,6 +5244,7 @@ function renderRosterBarHub(){
   const p = personagemAtual();
   el.innerHTML = `
     <a href="/fichas" class="btn">← Fichas</a>
+    <button class="btn" id="btnExportarPdf" title="Abre a janela de impressão do navegador — escolha 'Salvar como PDF'">🖨️ Exportar PDF</button>
     <button class="btn" id="btnExportar" ${!p?'disabled':''}>Exportar JSON</button>
     ${state.ehDono ? `
       <button class="btn" id="btnImportar">Importar JSON</button>
@@ -5243,6 +5256,15 @@ function renderRosterBarHub(){
     ` : ''}
     <span id="rosterMsg" style="font-family:var(--mono); font-size:11px; color:var(--verdigris-bright); align-self:center;"></span>
   `;
+
+  /*
+    Exportar em PDF (decisão #151, ideia #89) — sem lib nova, sem servidor:
+    usa a própria caixa de impressão do navegador ("Salvar como PDF" é uma
+    das opções de destino em qualquer navegador moderno). Respeita dado
+    privado de graça, porque só imprime o que já estava desenhado na tela
+    desta pessoa — nunca busca nada a mais do servidor.
+  */
+  document.getElementById('btnExportarPdf').addEventListener('click', ()=> window.print());
 
   if(p) document.getElementById('btnExportar').addEventListener('click', ()=>{
     const blob = new Blob([JSON.stringify(p, null, 2)], {type:'application/json'});

@@ -6738,6 +6738,53 @@ navegador de verdade nesta sessão — este ambiente não tem as
 credenciais do Supabase configuradas, então nenhuma tela logada roda
 localmente aqui.
 
+## 151. Hub — Exportar ficha em PDF (24/09/2026)
+
+Décima quarta fatia do backlog de "demais ideias" (decisão #134),
+ideia #89: exportar a ficha em PDF respeitando dado privado.
+
+**"Respeitar dado privado" já vinha de graça.** Um botão de exportar só
+pode imprimir o que já está desenhado na tela de quem clicou — e o que
+está desenhado já passou por toda trava de permissão de sempre (dono
+vê tudo da própria ficha; mestre vê o que a decisão #131 já deixa ele
+ver). Não tem nada a mais pra filtrar.
+
+**Sem lib nova, sem servidor (decisão #5):** o botão "🖨️ Exportar PDF"
+só chama `window.print()` — a própria caixa de diálogo de impressão do
+navegador já tem "Salvar como PDF" como destino, em qualquer navegador
+moderno, sem escrever nenhum gerador de PDF.
+
+**O trabalho de verdade foi CSS de impressão, arquivo por arquivo.**
+Confirmado por auditoria (mesma auditoria da decisão #150): as ~10
+fichas de sistema são HTML solto, sem include comum — cada uma
+recebeu, na mão, um bloco `@media print{ :root{...} }` forçando papel
+branco/tinta preta (`--fundo`/`--texto`/etc., cada arquivo com seus
+próprios nomes de variável — Sistema do Sávio usa `--roxo` em vez de
+`--ambar`, Kaizoku no Sho usa uma paleta náutica inteira própria,
+`--navy-deep`/`--parchment`/`--brass`) e escondendo a barra de botões
+(`display:none`) — sem isso, a impressão sairia com a cor de tema que
+a pessoa escolheu (`aplicarTema()` escreve a cor direto no `style` do
+elemento, por isso o `!important` na regra de impressão: senão a cor
+do tema ganharia). A tela de Campanha Livre (decisão #35/#36, um Server
+Component de verdade, não HTML solto) ganhou o mesmo tratamento de um
+jeito só, direto no `globals.css` compartilhado por todo o Hub.
+
+**Cada arquivo validado individualmente**, além da bateria de sempre:
+o `<script>` inline de cada um dos 6 HTML continua parseando sem erro
+de sintaxe (`new Function(...)` sobre o conteúdo do script), e as
+chaves `{`/`}` de cada bloco `<style>` continuam balanceadas — a forma
+mais direta de garantir que a edição cirúrgica não quebrou o CSS ou o
+JS de nenhuma ficha por acidente. `btExportarPdf` é um botão
+novo, ao lado do `btExportar` (JSON) que já existia — os dois nunca se
+confundem.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos, mais a checagem de sintaxe/chaves
+descrita acima em cada um dos 6 arquivos HTML tocados. Não foi possível
+testar a impressão de verdade num navegador nesta sessão (mesma
+limitação da decisão #150 — sem credenciais do Supabase configuradas
+neste ambiente, nenhuma ficha carrega dado de verdade aqui).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

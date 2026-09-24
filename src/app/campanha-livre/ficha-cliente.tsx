@@ -182,9 +182,22 @@ export function FichaCampanhaLivre() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
-      <Link href="/fichas" className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto">
-        ← Fichas
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link
+          href="/fichas"
+          className="sem-impressao text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto"
+        >
+          ← Fichas
+        </Link>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          title="Abre a janela de impressão do navegador — escolha 'Salvar como PDF'"
+          className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto"
+        >
+          🖨️ Exportar PDF
+        </button>
+      </div>
 
       {falhouSalvar && (
         <div className="mt-4 rounded border border-segredo/50 bg-segredo/10 p-3 text-sm text-segredo">

@@ -1880,7 +1880,16 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       de verdade exigiria mexer nas ~10 fichas de sistema, sem include
       comum entre elas — risco demais pra esta fatia. `tsc`, lint,
       `next build` e os 302 testes automáticos continuam limpos
-- [ ] **Demais ideias do pedido** (exportar PDF, sandbox de
+- [x] **Exportar ficha em PDF** (24/09/2026) — decisão #151. Botão
+      "🖨️ Exportar PDF" em cada uma das ~10 fichas de sistema e na
+      ficha de Campanha Livre — sem lib nova, só `window.print()` (o
+      navegador já oferece "Salvar como PDF"). Cada ficha ganhou um
+      `@media print` forçando papel branco/tinta preta, sobrescrevendo
+      a cor de tema escolhida. `tsc`, lint, `next build` e os 302
+      testes automáticos continuam limpos; JS e CSS de cada arquivo
+      HTML tocado validados individualmente (sintaxe + chaves
+      balanceadas)
+- [ ] **Demais ideias do pedido** (sandbox de
       ficha/combate, prévia do Level Up) — fica pra quando o Zé
       confirmar a ordem das próximas
 
