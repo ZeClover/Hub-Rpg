@@ -7547,6 +7547,23 @@ Testado com Playwright: catálogo mostra 1190 opções (1 placeholder +
 1189 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 200. Naruto 5e — Catálogo de Jutsu, Bukijutsu Rank C (lote 4 de ~5) (19/09/2026)
+
+Continuação da decisão #199. Mais 20 jutsu do Rank C de Bukijutsu, de
+"Silhueta Oca" a "Onda Serrilhada", entraram no `JUTSU_CATALOGO` —
+1209 das ~1400 entradas totais (80 de 99 jutsu de Bukijutsu Rank C).
+
+A família "Rei Macaco" ganhou duas técnicas novas ("Arrogância" e
+"Astúcia"), e mais três nomes próprios lendários ficaram sem tradução
+(Musashi, Nobunaga — em duas técnicas — e Leto, da mitologia grega).
+Nenhum termo mecânico novo precisou ser fixado neste lote: todo o
+vocabulário (Postura, Restrito, Chain, propriedade Reforçada,
+Finalizador de Taijutsu) já vinha de lotes anteriores.
+
+Testado com Playwright: catálogo mostra 1210 opções (1 placeholder +
+1209 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
