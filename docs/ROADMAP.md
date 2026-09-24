@@ -2006,8 +2006,12 @@ passando.
       inteiro (38 jutsu) — 977 de ~1400 no total, faltando A e S de
       Taijutsu. Testado com Playwright; `tsc` e lint continuam
       limpos.
+- [x] **Naruto 5e — Taijutsu Rank A 100% completo** (19/09/2026) —
+      decisão #189. Os 24 jutsu do Rank A entraram no catálogo num lote
+      só — 1001 de ~1400 no total, faltando só o S de Taijutsu.
+      Testado com Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~423 jutsu: A/S de Taijutsu (39) + "Shadow Dancing Leaf"
+      Jutsu (~399 jutsu: S de Taijutsu (15) + "Shadow Dancing Leaf"
       pendente, Bukijutsu (383), Invocação — categoria por
       categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada

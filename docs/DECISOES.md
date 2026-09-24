@@ -7276,6 +7276,30 @@ Testado com Playwright: catálogo mostra 978 opções (1 placeholder +
 977 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 189. Naruto 5e — Taijutsu Rank A 100% completo (19/09/2026)
+
+Continuação da decisão #188. O Rank A do Taijutsu (24 jutsu, pequeno o
+bastante pra caber num lote só) entrou inteiro no `JUTSU_CATALOGO` — de
+"Quebra de Combo" a "Destruidor de Mundos", 1001 das ~1400 entradas
+totais. Com isso, Taijutsu tem os Ranks D, C (43/44), B e A prontos —
+falta só o Rank S dela (15 jutsu) pra fechar a categoria inteira.
+
+Lote pesado em pré-requisitos encadeados: metade dos jutsu exige estar
+com um "Fôlego Celestial" avançado ativo ou algum Portão dos Oito
+Portões Internos aberto (inclusive um novo elo da cadeia, "Sexto
+Fôlego Celestial: Arquejar"), e dois são jutsu de "Combinação" que só
+funcionam com um segundo conjurador por perto ("Matador Celestial" e
+"Rugido Selvagem", ambos custando 70 Chakra). "Flor da Morte" é o
+primeiro Kinjutsu do Rank A — golpe que promete parar o coração do
+alvo e, usado como Finalizador, aplica Laceração o bastante pra fazer
+o coração explodir de fato. "Verdadeira Palma do Rakshasa" fecha a
+trinca começada no Rank C, fundindo "Palma" e "Sola" do Rakshasa num
+único jutsu de Clash.
+
+Testado com Playwright: catálogo mostra 1002 opções (1 placeholder +
+1001 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
