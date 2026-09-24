@@ -7179,6 +7179,27 @@ Testado com Playwright: catálogo mostra 897 opções (1 placeholder + 896
 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
 limpos; suíte de testes anteriores sem regressão.
 
+## 185. Naruto 5e — Catálogo de Jutsu, início do Taijutsu Rank C (19/09/2026)
+
+Continuação da decisão #184. O Rank C do Taijutsu tem 44 jutsu, entrando
+em 2 lotes de ~22. Este primeiro lote (22 jutsu, de "Combo dos Dez" a
+"Contra-ataque de Interseção") entrou no `JUTSU_CATALOGO` — 918 das
+~1400 entradas totais (22 de 44 jutsu de Taijutsu Rank C).
+
+Traz "Elementânia", o primeiro Finalizador de Taijutsu que imita as 5
+Naturezas elementais (escolhendo Terra/Vento/Fogo/Água/Raio no momento
+de lançar) sem ser de fato Ninjutsu — e o "Terceiro/Quarto Fôlego
+Celestial", continuando a cadeia de jutsu em progressão iniciada no
+Rank D (cada um substitui o anterior, empilhando efeitos, até a versão
+final impor uma penalidade quando acaba). "Clone de Combate" também
+introduz um mecanismo novo: copiar temporariamente o estilo de luta
+(dano desarmado, Ataque Múltiplo, Postura) de outra criatura via teste
+de perícia, em vez de escolha fixa.
+
+Testado com Playwright: catálogo mostra 919 opções (1 placeholder + 918
+jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint` seguem
+limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

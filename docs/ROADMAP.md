@@ -1987,9 +1987,13 @@ passando.
       inteiro (54 jutsu, o maior rank da categoria) — 896 de ~1400 no
       total, faltando C/B/A/S de Taijutsu. Testado com Playwright; `tsc`
       e lint continuam limpos.
+- [x] **Naruto 5e — Catálogo de Jutsu, início do Taijutsu Rank C (lote
+      1 de 2)** (19/09/2026) — decisão #185. 22 dos 44 jutsu do Rank C
+      entraram no catálogo (918 de ~1400 no total). Testado com
+      Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~504 jutsu: Taijutsu C/B/A/S (121), Bukijutsu (383),
-      Invocação — categoria por categoria),
+      Jutsu (~482 jutsu: Taijutsu C restante (22) + B/A/S (77),
+      Bukijutsu (383), Invocação — categoria por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
