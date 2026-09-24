@@ -7300,6 +7300,37 @@ Testado com Playwright: catálogo mostra 1002 opções (1 placeholder +
 1001 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 190. Naruto 5e — Taijutsu 100% completo (19/09/2026)
+
+Continuação da decisão #189. O Rank S do Taijutsu (15 jutsu, o mais
+alto da categoria) entrou no `JUTSU_CATALOGO` — de "Nério Negro" a
+"Lírio Branco", 1016 das ~1400 entradas totais. Com isso, **Taijutsu
+está completo** (174 de 175 jutsu, os 5 ranks D a S — não tem Rank E)
+— nona categoria do Compêndio fechada, junto com o Ninjutsu
+Não-Elemental, as 5 Naturezas elementais e Genjutsu. Só falta mesmo
+"Shadow Dancing Leaf" (Rank C), de fora desde a decisão #186 por dados
+vazios na extração do PDF — pendência isolada de uma entrada, não uma
+categoria em aberto.
+
+O Rank S concentra os Finalizadores mais poderosos do Taijutsu:
+"Guy Noturno" (referência direta ao golpe do Guy contra o Portão da
+Morte no anime) mata quem falhar a resistência e desintegra o próprio
+usuário logo depois — o primeiro jutsu do catálogo em que o "custo" real
+é a vida de quem lança, não o Chakra. "Nério Negro" é o segundo Kinjutsu
+Médico do catálogo (depois de "Flor da Morte", decisão #189), com a
+mesma lógica de parar o coração aos poucos até a décima falha de
+resistência. "Guarda Encouraçada" fecha o trio "Guarda Real"/"Vingança
+Real" começado nos Ranks D e B, fundindo os dois numa defesa quase
+total. O par "Blue Rose"/"Red Lotus" e mais "Rosa Azul"/"Lótus
+Vermelho" formam um conjunto temático de flores junto com "Lírio
+Branco" e "Nério Negro" — todos nomes de plantas, a maioria tóxicas,
+condizente com serem jutsu que mexem com o corpo do alvo (ou do
+próprio usuário) em nível biológico.
+
+Testado com Playwright: catálogo mostra 1017 opções (1 placeholder +
+1016 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
