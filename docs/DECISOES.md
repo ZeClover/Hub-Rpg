@@ -7807,6 +7807,39 @@ Testado com Playwright: catálogo mostra 1358 opções (1 placeholder +
 1357 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 210. Naruto 5e — Bukijutsu Rank A 100% completo (lote 4 de ~4) (24/09/2026)
+
+Continuação da decisão #209. Quarto e último lote do Rank A de
+Bukijutsu (16 jutsu, de "Projected Force" a "Whip Like Strikes") entrou
+no `JUTSU_CATALOGO` — 1373 das ~1400 entradas totais. Com isso, o Rank
+A de Bukijutsu fica 100% completo: 64 dos 64 jutsu, sem nenhuma
+pendência de dados corrompidos neste rank (igual aos Ranks C e B —
+este foi, junto com eles, um dos ranks mais limpos da extração).
+
+"Twinshot" colidiu com "Tiro Duplo" (Rank D, já no catálogo) e virou
+"Tiro Gêmeo", seguindo a regra do projeto de trocar o nome do lado
+ainda não inserido. A família "Aura da Espada" ganhou dois novos elos
+no topo da corrente — Azul (exige qualquer Aura da Espada ativa) e
+Índigo (exige especificamente "Verde", substituindo-a) — mostrando que
+a cadeia continua ramificada e crescente no Rank A: Vermelha → Laranja
+→ (Amarela OU Verde) → Azul (a partir de qualquer uma) → Índigo (só a
+partir de Verde). "Shadow Eclipse" tinha uma ambiguidade menor entre o
+componente da arma (à distância) e o texto descrevendo um "Ataque de
+Taijutsu corpo a corpo" — tratado como erro de digitação do PDF e
+resolvido como ataque à distância, coerente com a arma exigida e a
+narrativa de "disparar" o projétil. Nenhuma outra anomalia de dados
+apareceu nos 64 jutsu do rank inteiro.
+
+Com o Rank A fechado, Bukijutsu tem D (113/114), C (99/99), B (81/81)
+e A (64/64) completos — só falta o Rank S (25 jutsu) pra fechar a
+categoria inteira e o Compêndio de Jutsu do Jiraiya como um todo,
+respeitando a decisão #26 de uma fatia por vez (fica pra uma fatia
+futura).
+
+Testado com Playwright: catálogo mostra 1374 opções (1 placeholder +
+1373 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

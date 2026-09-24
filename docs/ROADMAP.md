@@ -2094,10 +2094,15 @@ passando.
       ~4)** (24/09/2026) — decisão #209. Mais 16 jutsu do Rank A de
       Bukijutsu (48 de 64 no total) — 1357 de ~1400 no total. Testado
       com Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Bukijutsu Rank A 100% completo** (24/09/2026) —
+      decisão #210. Último lote (16 jutsu) fechou o Rank A de
+      Bukijutsu, sem pendências de dados corrompidos neste rank — 1373
+      de ~1400 no total. Testado com Playwright; `tsc` e lint
+      continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki), resto do Catálogo de
-      Jutsu (~41 jutsu: "Shadow Dancing Leaf" e "Stone Form"
-      pendentes, Rank A de Bukijutsu — 16 restantes de 64 — e Rank S de
-      Bukijutsu inteiro — 25 jutsu — categoria por categoria),
+      Jutsu (~27 jutsu: "Shadow Dancing Leaf" e "Stone Form"
+      pendentes, e Rank S de Bukijutsu inteiro — 25 jutsu — categoria
+      por categoria),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
