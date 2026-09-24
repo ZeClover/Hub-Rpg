@@ -1915,6 +1915,20 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       atualiza `Sistema.nome` no banco (a coluna nunca se autoatualiza
       a partir de `sistemas.ts`). `tsc`, lint, `next build` e os 302
       testes automáticos continuam limpos
+- [x] **Sistema SAO — Classe própria, Poder Livre e Seus Itens**
+      (24/09/2026) — decisão #156. Pedido do Zé por mais controle no
+      sistema: as três peças que ainda prendiam o jogador ao catálogo
+      fixo (Materiais próprios e Suas Receitas já existiam desde a
+      decisão #16).
+  - Classe própria (nome + categoria), Poder Livre por classe (gasta
+    do mesmo pool de pontos dos poderes de catálogo), Seus Itens na
+    Loja (mesmo formato de `ITENS_LOJA`, comprável com a Carteira) —
+    reconhecidos também dentro do Modo Guiado, não só na ficha completa
+  - Testado com Playwright: classe própria no seletor e nos Poderes,
+    Poder Livre comprando e travando no próprio teto, Seu Item
+    comprando/descontando Carteira/indo pro inventário, tudo
+    persistindo após recarregar. `tsc`, lint e os 302 testes
+    automáticos continuam limpos
 
 ---
 
