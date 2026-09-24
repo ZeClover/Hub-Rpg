@@ -6852,6 +6852,67 @@ fluxo completo (criar sandbox, cancelar um Level Up de verdade) num
 navegador nesta sessão — mesma limitação das decisões #150/#151, sem
 credenciais do Supabase configuradas neste ambiente.
 
+## 153. The Celestials — Dano Padrão de Ataques, Grimório e novo nome (24/09/2026)
+
+Pedido direto do Zé sobre o "Sistema do Sávio": um espaço na aba Combate
+somando o dano padrão de ataque, um Grimório pro sistema (que ainda não
+tinha nenhum) e trocar o nome pra <strong>The Celestials</strong>.
+
+**Dano Padrão de Ataques.** Auditoria antes de construir: a aba Combate
+já tinha uma linha só de texto (no card "Arma") somando dado da arma +
+traço Mestre das Armas + Habilidade de Buff + item Buff — quase o
+pedido, mas incompleta (não gatava o traço Mestre das Armas em "só
+enquanto empunha arma", não distinguia desarmado do Combatente, e o
+limiar de Força — que soma dado direto em "qualquer ataque" — não
+aparecia em lugar nenhum de Combate). Virou um card novo, no topo da
+aba, `⚔️ Dano Padrão de Ataques`: base (arma equipada ou desarmado do
+Combatente) + traço Mestre das Armas (corrigido pra só contar com arma
+equipada, igual o resumo de cada Habilidade já fazia) + toda Habilidade
+ativa de Buff + todo item Buff equipado, tudo mirando Dano — e um aviso
+de "role também" pro limiar de Força e qualquer buff em modo Dado
+(nunca simula rolagem). A linha antiga do card Arma virou só uma
+referência ao card novo, pra não mostrar dois números ligeiramente
+diferentes. Feito nas duas fichas do sistema (jogador e monstro/
+inimigo) — a de monstro escala tudo pela Dificuldade, do mesmo jeito
+que o resto da ficha já fazia.
+
+**Grimório.** Auditoria: a própria ficha já tinha uma aba "Regras"
+completa e correta (`abaRegras`/`regrasHabilidadesConteudo`/
+`regrasGeraisConteudo`) e um dicionário de textos de Ajuda por aba
+(`AJUDA_ABAS`) — o Grimório novo (`sistema-do-savio-grimorio.html`,
+mesmo layout/CSS dos outros grimórios do Hub, cor violeta em vez de
+âmbar pra bater com o tema do sistema) é essa mesma informação
+reorganizada em 14 seções com sumário, tabelas e exemplos jogados,
+mais o que as abas de UI não documentavam em prosa corrida (Especiali-
+zações por extenso, Ascensão/Arquétipos/Imersão Espiritual, Elemental,
+Invocações, e a ficha de Monstro pro mestre). Link "📖 Grimório"
+adicionado na barra da ficha de jogador, mesmo padrão dos outros três
+sistemas com Grimório.
+
+**Troca de nome.** "Sistema do Sávio" → "The Celestials" — nome que já
+existia dentro da própria lore do sistema (um Elemental Mítico é "filho
+de Celestial"). A chave interna (`sistema-do-savio`) e os nomes de
+arquivo não mudam — só a etiqueta visível. Como o nome do sistema é uma
+coluna do banco (`Sistema.nome`, seedada por uma migração antiga com
+`ON CONFLICT DO NOTHING` — nunca se autoatualiza), a troca precisou de
+duas partes: `nome` em `sistemas.ts` (o que `/sistemas`, `/fichas` e a
+escolha de sistema leem) e uma migração nova (`UPDATE sistemas SET
+nome = ...`) pra a mesma troca valer em `campanha.sistema.nome` e
+`personagem.sistema.nome`, que vêm do banco. `<title>` e a marca no
+topo das duas fichas (jogador e monstro) atualizados também.
+
+Sem dependência nova.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos. As duas fichas de sistema
+tocadas tiveram o `<script>` interno checado por sintaxe (`new
+Function(...)`) depois de cada edição; o Grimório novo (HTML estático,
+sem `<script>`) teve as tags balanceadas e os links do sumário
+conferidos contra os `id` de cada seção. Não foi possível testar o
+card novo nem o Grimório num navegador logado nesta sessão — mesma
+limitação das decisões #150 a #152, sem credenciais do Supabase
+configuradas neste ambiente.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

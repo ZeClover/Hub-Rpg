@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ficha de Monstro — Sistema do Sávio</title>
+<title>Ficha de Monstro — The Celestials</title>
 <style>
 /* Mesma paleta-base do Hub RPG, com destaque em violeta pra diferenciar
    visualmente este sistema dos outros três (âmbar). */
@@ -158,7 +158,7 @@ body.compacto .abas{margin-bottom:14px}
 </head>
 <body>
 <div class="barra">
-  <span class="marca">Sistema do Sávio — Monstro</span>
+  <span class="marca">The Celestials — Monstro</span>
   <a id="linkFichas" href="/fichas" hidden style="color:var(--roxo);text-decoration:none;font-size:13px">← Fichas</a>
   <button id="btModoGuiado" style="font-size:13px">🧭 Modo Guiado</button>
   <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
@@ -2901,10 +2901,58 @@ function habilidadeResumoCombate(h, i, p){
   </div>`;
 }
 
+// Dano Padrão de Ataques (pedido do Zé): mesmo espaço da ficha de
+// jogador, adaptado pra Dificuldade do monstro — a base (dado da arma ou
+// desarmado) e o traço de classe já vêm com o sufixo "×N"/multiplicados
+// pelas próprias funções (comSufixoDificuldade/porDificuldade); item Buff
+// equipado, por convenção do resto da ficha, não escala com Dificuldade
+// (é equipamento externo, não parte do monstro em si).
+function blocoDanoPadrao(p){
+  const equipada = armaEquipada(p);
+  const desarmadoComTraco = !equipada && p.especializacaoId === 'combatente';
+  const tam = TAMANHOS_ARMA.find(t => t.id === p.arma.tamanho) || TAMANHOS_ARMA[1];
+  const base = equipada ? comSufixoDificuldade(p, tam.dano) : desarmadoComTraco ? danoDesarmadoTexto(p) : null;
+  const origemBase = equipada ? `arma equipada (${tam.nome})` : desarmadoComTraco ? 'desarmado (traço Combatente)' : null;
+
+  if(base === null){
+    return `<div class="cartao">
+      <h3 style="font-size:16px;margin-bottom:10px">⚔️ Dano Padrão de Ataques</h3>
+      <p class="mini">Nenhuma arma equipada (nomeie uma na seção "Arma" abaixo) e a Especialização não tem dano desarmado próprio — combine um valor com o mestre.</p>
+    </div>`;
+  }
+
+  const bonusMestre = (equipada && p.especializacaoId === 'mestre-das-armas') ? porDificuldade(p, maiorAtributo(p)) : 0;
+  const bonusHab = bonusHabilidadesDano(p);
+  const bonusItem = bonusItensDano(p);
+  const totalFixo = bonusMestre + bonusHab + bonusItem;
+
+  const partes = [
+    base,
+    bonusMestre ? `+${bonusMestre} (traço Mestre das Armas)` : '',
+    bonusHab ? `+${bonusHab} (Habilidade ativa de Buff)` : '',
+    bonusItem ? `+${bonusItem} (item Buff equipado)` : '',
+  ].filter(Boolean).join(' ');
+
+  // Limiar de Força (5/10) soma dado direto em "qualquer ataque" — é o
+  // único limiar de atributo em dado, nunca vira número aqui, só aviso
+  // (já escalado pela Dificuldade via textoLimiarEscalado, igual a aba
+  // Atributos faz).
+  const avisosLimiarForca = limiaresAtivos(atributoEfetivo(p,'forca'),'forca').map(l => textoLimiarEscalado(p,'forca',l.txt));
+  const avisos = [...avisosLimiarForca, ...avisosDadoHabilidadesDano(p), ...avisosDadoItemDano(p)];
+
+  return `<div class="cartao">
+    <h3 style="font-size:16px;margin-bottom:10px">⚔️ Dano Padrão de Ataques</h3>
+    <p class="mini">Dano de um golpe comum agora — ${equipada ? 'com a arma equipada' : 'desarmado'} —, já somando todo traço de classe, Habilidade ativa e item Buff equipado que mirar Dano.</p>
+    <p style="font-size:20px;font-weight:600;margin-top:8px">${partes}</p>
+    <p class="mini" style="margin-top:4px">Base: ${origemBase}${totalFixo ? ` · bônus fixo somado: +${totalFixo}` : ' · nenhum bônus fixo ativo agora'} · esquiva: ${tam.esquiva}</p>
+    ${avisos.length ? `<p class="mini" style="color:var(--roxo-forte);margin-top:6px">Role também: ${avisos.join(', ')} (modo Dado — não entra na soma, é a pessoa quem rola)</p>` : ''}
+  </div>`;
+}
+
 function abaCombate(p){
   const tam = TAMANHOS_ARMA.find(t => t.id === p.arma.tamanho) || TAMANHOS_ARMA[1];
   const ativas = habilidadesAtivas(p);
-  return `<div class="cartao">
+  return blocoDanoPadrao(p) + `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Rodada</h3>
     <p class="mini">"⏭ Passar Round" avança o tempo pras Habilidades
       ativas: Duradouras contam 1 round a menos (desligam sozinhas ao
@@ -2932,9 +2980,7 @@ function abaCombate(p){
           ${TAMANHOS_ARMA.map(t => `<option value="${t.id}" ${t.id===p.arma.tamanho?'selected':''}>${t.nome}</option>`).join('')}
         </select></div>
     </div>
-    <p class="mini" style="margin-top:8px">Dano ${comSufixoDificuldade(p, tam.dano)}${p.especializacaoId==='mestre-das-armas' ? `+${porDificuldade(p, maiorAtributo(p))} (traço Mestre das Armas)` : ''}${bonusHabilidadesDano(p) ? `+${bonusHabilidadesDano(p)} (Habilidade de Buff)` : ''}${bonusItensDano(p) ? `+${bonusItensDano(p)} (item Buff Equipado)` : ''} · esquiva: ${tam.esquiva}</p>
-    ${avisosDadoHabilidadesDano(p).length ? `<p class="mini" style="color:var(--roxo-forte)">${avisosDadoHabilidadesDano(p).join(', ')} (role junto, não está somado)</p>` : ''}
-    ${avisosDadoItemDano(p).length ? `<p class="mini" style="color:var(--roxo-forte)">${avisosDadoItemDano(p).join(', ')} (role junto, não está somado)</p>` : ''}
+    <p class="mini" style="margin-top:8px">Dano base ${comSufixoDificuldade(p, tam.dano)} · esquiva: ${tam.esquiva} — o total já somado com traço/Habilidade/item está no card "⚔️ Dano Padrão de Ataques", no topo desta aba.</p>
     <label for="c-arma-notas" style="margin-top:8px">Notas</label>
     <textarea id="c-arma-notas" data-arma="notas" rows="2">${esc(p.arma.notas)}</textarea>
     <p class="mini" style="margin-top:6px">Só dá pra carregar 1 arma + 1 item

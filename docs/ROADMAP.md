@@ -1902,6 +1902,19 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       `tsc`, lint, `next build` e os 302 testes automáticos continuam
       limpos; JS de cada um dos 5 arquivos de Level Up validado
       individualmente (sintaxe)
+- [x] **The Celestials — Dano Padrão de Ataques, Grimório e novo nome**
+      (24/09/2026) — decisão #153, pedido direto do Zé sobre o "Sistema
+      do Sávio". Card novo "⚔️ Dano Padrão de Ataques" no topo da aba
+      Combate (ficha de jogador e de monstro), somando base de
+      arma/desarmado + traço de classe + Habilidade ativa de Buff +
+      item Buff, com aviso separado pro que é só dado (nunca simula
+      rolagem). Grimório novo (`sistema-do-savio-grimorio.html`, 14
+      seções) reaproveitando a aba Regras e os textos de Ajuda que já
+      existiam na ficha. Nome trocado pra "The Celestials" — chave
+      interna e arquivos continuam `sistema-do-savio`; migração nova
+      atualiza `Sistema.nome` no banco (a coluna nunca se autoatualiza
+      a partir de `sistemas.ts`). `tsc`, lint, `next build` e os 302
+      testes automáticos continuam limpos
 
 ---
 

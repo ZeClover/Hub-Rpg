@@ -123,7 +123,7 @@ export const SISTEMAS: Sistema[] = [
   },
   {
     chave: "sistema-do-savio",
-    nome: "Sistema do Sávio",
+    nome: "The Celestials",
     descricao:
       "Homebrew de um amigo do Zé — Habilidades livres desenhadas pelo próprio jogador, com tabela de bônus por Nível como guia.",
     ficha: "/sistema-do-savio.html",
@@ -132,7 +132,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: "/sistema-do-savio-inimigo.html",
     escudoMestre: null,
     campoVidaInimigo: ["atual", "pv"],
-    grimorio: null,
+    grimorio: "/sistema-do-savio-grimorio.html",
   },
   {
     chave: "thryliki-chelona",
