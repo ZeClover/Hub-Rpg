@@ -23,7 +23,8 @@ import { type ItemView } from "../../itens-compartilhados";
 import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
-import { QrCode } from "./qr-code";
+import { MestreAuxiliar } from "./mestre-auxiliar";
+import { QrCode } from "../../qr-code";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
 import { Sessoes, type SessaoView } from "./sessoes";
@@ -88,11 +89,17 @@ export default async function PaginaCampanha({
   ]);
 
   const minhaParticipacao = participacoes.find((p) => p.usuarioId === usuario.id);
-  const souMestre = minhaParticipacao?.papel === "MESTRE";
+  // Mestre auxiliar (decisão #148, ideia #115) tem os mesmos poderes do
+  // mestre — inclusive ver esta tela inteira como mestre — com uma
+  // exceção: nunca excluir a campanha nem mexer em quem é mestre. Por
+  // isso duas variáveis: `souMestre` (poder de mestre, o comum) e
+  // `souMestreTitular` (só o dono da campanha, pra essas duas exceções).
+  const souMestre = minhaParticipacao?.papel === "MESTRE" || minhaParticipacao?.papel === "MESTRE_AUXILIAR";
+  const souMestreTitular = minhaParticipacao?.papel === "MESTRE";
 
-  // O Manual do Mestre só é buscado quando quem pergunta é mestre — a
-  // consulta nem acontece pra jogador, então o campo nunca sai do servidor
-  // pra quem não devia ver (decisão #13).
+  // O Manual do Mestre só é buscado quando quem pergunta tem poder de
+  // mestre — a consulta nem acontece pra jogador, então o campo nunca sai
+  // do servidor pra quem não devia ver (decisão #13).
   const manualMestre = souMestre
     ? (
         await banco.campanha.findUnique({
@@ -298,9 +305,10 @@ export default async function PaginaCampanha({
           ficha={ficha}
           fichaInimigo={fichaInimigo}
           origem={origem}
-          jogadores={participacoes.filter((p) => p.papel === "JOGADOR")}
+          jogadores={participacoes.filter((p) => p.papel !== "MESTRE")}
           personagensDaCampanha={personagensDaCampanha}
           idDoMestre={usuario.id}
+          souMestreTitular={souMestreTitular}
           manualMestre={manualMestre}
           escudoMestre={escudoMestre}
           grimorio={grimorio}
@@ -376,6 +384,7 @@ function VisaoDoMestre({
   jogadores,
   personagensDaCampanha,
   idDoMestre,
+  souMestreTitular,
   manualMestre,
   escudoMestre,
   grimorio,
@@ -401,9 +410,14 @@ function VisaoDoMestre({
   ficha: string | null;
   fichaInimigo: string | null;
   origem: string;
-  jogadores: { usuarioId: string; usuario: { nome: string | null; email: string } }[];
+  jogadores: {
+    usuarioId: string;
+    papel: string;
+    usuario: { nome: string | null; email: string };
+  }[];
   personagensDaCampanha: { id: string; nome: string; donoId: string; ehMonstro: boolean }[];
   idDoMestre: string;
+  souMestreTitular: boolean;
   manualMestre: string;
   escudoMestre: string | null;
   grimorio: string | null;
@@ -475,7 +489,7 @@ function VisaoDoMestre({
             📖 Abrir Grimório (manual do jogador e do mestre)
           </a>
         )}
-        <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
+        {souMestreTitular && <ExcluirCampanha campanhaId={campanhaId} nome={nome} />}
       </section>
 
       <Abas
@@ -550,6 +564,11 @@ function VisaoDoMestre({
                             <div>
                               <p className="font-titulo text-base">
                                 {jogador.usuario.nome ?? jogador.usuario.email}
+                                {jogador.papel === "MESTRE_AUXILIAR" && (
+                                  <span className="ml-2 rounded-full border border-ambar/40 bg-ambar/10 px-2 py-0.5 text-xs text-ambar-forte">
+                                    Mestre auxiliar
+                                  </span>
+                                )}
                               </p>
                               {personagens.length > 0 ? (
                                 <ul className="mt-1 space-y-0.5">
@@ -576,11 +595,20 @@ function VisaoDoMestre({
                                 </p>
                               )}
                             </div>
-                            <RemoverJogador
-                              campanhaId={campanhaId}
-                              usuarioId={jogador.usuarioId}
-                              nome={jogador.usuario.nome ?? jogador.usuario.email}
-                            />
+                            <div className="flex shrink-0 flex-col items-end gap-2">
+                              {souMestreTitular && (
+                                <MestreAuxiliar
+                                  campanhaId={campanhaId}
+                                  usuarioId={jogador.usuarioId}
+                                  ehAuxiliar={jogador.papel === "MESTRE_AUXILIAR"}
+                                />
+                              )}
+                              <RemoverJogador
+                                campanhaId={campanhaId}
+                                usuarioId={jogador.usuarioId}
+                                nome={jogador.usuario.nome ?? jogador.usuario.email}
+                              />
+                            </div>
                           </li>
                         );
                       })}

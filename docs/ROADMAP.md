@@ -1856,8 +1856,15 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       página da campanha, página nova `/itens`, "+ Companheiro" em
       `/fichas`. Sem dependência nova. `tsc`, lint, `next build` e os
       302 testes automáticos continuam limpos
-- [ ] **Demais ideias do pedido** (exportar PDF, mestre
-      auxiliar, sandbox de ficha/combate, prévia do Level Up, PWA,
+- [x] **Mestre auxiliar** (24/09/2026) — decisão #148. Papel novo
+      (`MESTRE_AUXILIAR`, migração `0020`) com todos os poderes do
+      mestre, exceto excluir a campanha e mexer em quem é mestre. Helper
+      único `ehMestreOuAuxiliar`/`ehMestreTitular` substituiu ~25 pontos
+      de checagem espalhados que comparavam `papel === "MESTRE"` direto.
+      Só o mestre titular promove/remove. `tsc`, lint, `next build` e os
+      302 testes automáticos continuam limpos
+- [ ] **Demais ideias do pedido** (exportar PDF,
+      sandbox de ficha/combate, prévia do Level Up, PWA,
       offline parcial, sincronização ao reconectar, QR Code do link
       compartilhável da ficha, página geral do personagem) — fica pra
       quando o Zé confirmar a ordem das próximas

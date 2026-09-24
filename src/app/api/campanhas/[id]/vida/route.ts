@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehPapelDeMestre } from "@/lib/permissao-mestre";
 import { lerResumoVida } from "@/lib/resumo-vida";
 import { usuarioAtual } from "@/lib/usuario";
 
@@ -36,7 +37,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
   if (!participacao) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
-  const souMestre = participacao.papel === "MESTRE";
+  const souMestre = ehPapelDeMestre(participacao.papel);
 
   const personagens = await banco.personagem.findMany({
     where: { campanhaId },

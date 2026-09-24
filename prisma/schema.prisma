@@ -21,8 +21,15 @@ datasource db {
 
 /// Quem uma pessoa é dentro de uma campanha específica.
 /// A mesma pessoa pode ser mestre numa mesa e jogadora em outra.
+///
+/// MESTRE_AUXILIAR (decisão #148, ideia #115) tem os mesmos poderes do
+/// mestre — lê o Manual do Mestre, cria sessão/aviso/enquete/campo/
+/// conquista, ajusta vida e iniciativa, gerencia grupos/itens/veículos —
+/// com uma única exceção: nunca pode excluir a campanha nem promover ou
+/// remover outro mestre auxiliar (só quem é MESTRE de verdade faz isso).
 enum Papel {
   MESTRE
+  MESTRE_AUXILIAR
   JOGADOR
 }
 

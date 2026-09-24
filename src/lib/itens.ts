@@ -1,4 +1,5 @@
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 
 /*
   Onde um Item pode morar (decisão #147) — biblioteca pessoal, uma ficha
@@ -11,13 +12,6 @@ export type LocalItem = {
   grupoId?: string | null;
   campanhaId?: string | null;
 };
-
-async function souMestreDaCampanha(campanhaId: string, usuarioId: string): Promise<boolean> {
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId } },
-  });
-  return participacao?.papel === "MESTRE";
-}
 
 /*
   Quem pode gerenciar (editar/apagar/tirar dali) um item que já está num
@@ -42,7 +36,7 @@ export async function podeGerenciarLocal(local: LocalItem, usuarioId: string): P
     });
     if (!personagem) return false;
     if (personagem.donoId === usuarioId) return true;
-    if (personagem.campanhaId && (await souMestreDaCampanha(personagem.campanhaId, usuarioId))) {
+    if (personagem.campanhaId && (await ehMestreOuAuxiliar(personagem.campanhaId, usuarioId))) {
       return true;
     }
     return false;
@@ -53,14 +47,14 @@ export async function podeGerenciarLocal(local: LocalItem, usuarioId: string): P
       select: { campanhaId: true },
     });
     if (!grupo) return false;
-    if (await souMestreDaCampanha(grupo.campanhaId, usuarioId)) return true;
+    if (await ehMestreOuAuxiliar(grupo.campanhaId, usuarioId)) return true;
     const souMembro = await banco.grupoMembro.findFirst({
       where: { grupoId: local.grupoId, personagem: { donoId: usuarioId } },
     });
     return souMembro !== null;
   }
   if (local.campanhaId) {
-    return souMestreDaCampanha(local.campanhaId, usuarioId);
+    return ehMestreOuAuxiliar(local.campanhaId, usuarioId);
   }
   return false;
 }

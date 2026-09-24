@@ -18,7 +18,9 @@ type Contexto = { params: Promise<{ id: string }> };
 async function campanhasComoMestreDe(idDoUsuario: string) {
   return (
     await banco.participacao.findMany({
-      where: { usuarioId: idDoUsuario, papel: "MESTRE" },
+      // Mestre auxiliar (decisão #148) edita ficha de jogador igual ao
+      // mestre titular — é o mesmo poder de mestre da decisão #131.
+      where: { usuarioId: idDoUsuario, papel: { in: ["MESTRE", "MESTRE_AUXILIAR"] } },
       select: { campanhaId: true },
     })
   ).map((c) => c.campanhaId);

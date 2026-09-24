@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string; enqueteId: string }> };
 
-/* Encerrar uma enquete (decisão #136) — só o mestre, e é uma via só: não existe reabrir. */
+/* Encerrar uma enquete (decisão #136) — só o mestre (ou auxiliar), e é uma via só: não existe reabrir. */
 export async function PATCH(_requisicao: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
   if (!usuario) {
@@ -18,10 +19,7 @@ export async function PATCH(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-  });
-  if (participacao?.papel !== "MESTRE") {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

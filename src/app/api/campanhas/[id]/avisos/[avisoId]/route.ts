@@ -1,16 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string; avisoId: string }> };
-
-async function souMestreDaCampanha(campanhaId: string, usuarioId: string) {
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId } },
-  });
-  return participacao?.papel === "MESTRE";
-}
 
 /*
   Editar (texto e/ou fixado — fixar/desfixar é só um PATCH de `fixado`) ou
@@ -27,7 +21,7 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   if (!aviso || aviso.campanhaId !== campanhaId) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
-  if (!(await souMestreDaCampanha(campanhaId, usuario.id))) {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
@@ -64,7 +58,7 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
   if (!aviso || aviso.campanhaId !== campanhaId) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
-  if (!(await souMestreDaCampanha(campanhaId, usuario.id))) {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

@@ -104,7 +104,11 @@ export default async function Painel() {
                   >
                     <span className="truncate">{campanha.nome}</span>
                     <span className="shrink-0 text-xs text-texto-suave">
-                      {papel === "MESTRE" ? "mestre" : "jogador"}
+                      {papel === "MESTRE"
+                        ? "mestre"
+                        : papel === "MESTRE_AUXILIAR"
+                          ? "mestre auxiliar"
+                          : "jogador"}
                     </span>
                   </Link>
                 </li>

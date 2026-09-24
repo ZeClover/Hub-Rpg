@@ -2,14 +2,15 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
 import { notificarParticipantes } from "@/lib/notificacoes";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
-  Enquete simples (decisão #136) — só o mestre pergunta. Sem GET: a lista
-  de enquetes chega junto da página da campanha, mesmo padrão de Sessões
-  e Avisos.
+  Enquete simples (decisão #136) — só o mestre (ou mestre auxiliar, decisão
+  #148) pergunta. Sem GET: a lista de enquetes chega junto da página da
+  campanha, mesmo padrão de Sessões e Avisos.
 */
 export async function POST(requisicao: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
@@ -18,10 +19,7 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const { id: campanhaId } = await params;
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-  });
-  if (participacao?.papel !== "MESTRE") {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

@@ -6601,6 +6601,43 @@ migrações 0013 a 0016 e 0018.
 Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
 testes automáticos continuam limpos.
 
+## 148. Hub — Mestre auxiliar (24/09/2026)
+
+Décima primeira fatia do backlog de "demais ideias" (decisão #134),
+ideia #115: um papel que ajuda o mestre a tocar a campanha sem poder
+excluí-la.
+
+**Auditoria antes de construir:** não existia um único lugar que
+decidisse "isto é poder de mestre" — cada rota comparava
+`participacao.papel === "MESTRE"` (ou uma cópia local de
+`souMestreDaCampanha()`) direto, ~25 pontos de checagem espalhados por
+~30 arquivos. Em vez de duplicar mais um papel em mais um desses
+lugares, criei `src/lib/permissao-mestre.ts` com duas funções —
+`ehMestreOuAuxiliar` (qualquer poder de mestre) e `ehMestreTitular` (só
+excluir campanha e promover/remover mestre auxiliar) — e troquei os ~25
+pontos por elas. Isso deixa o próximo papel (se um dia precisar) num
+lugar só pra mudar.
+
+**`Papel` ganha `MESTRE_AUXILIAR`** (migração `0020`, `ALTER TYPE ...
+ADD VALUE IF NOT EXISTS` — enum do Postgres, não uma tabela nova). Tem
+todos os poderes do mestre: Manual do Mestre, sessão, aviso, enquete,
+campo personalizado, conquista, vida, iniciativa, grupos/itens/
+veículos, editar ficha de jogador (decisão #131). As duas únicas
+exceções: nunca exclui a campanha, e nunca promove/remove outro mestre
+auxiliar nem remove o mestre titular — só quem é MESTRE de verdade
+mexe nisso.
+
+**Como alguém vira mestre auxiliar:** só o mestre titular promove, na
+lista de jogadores da própria campanha (botão "Tornar mestre
+auxiliar"/"Tirar mestre auxiliar" — `PATCH
+/campanhas/[id]/jogadores/[usuarioId]`). Um mestre auxiliar aparece
+com um selo na lista; a tela inteira da campanha abre pra ele como se
+fosse mestre (mesmas abas, mesmo Manual do Mestre), só sem o botão
+"Excluir campanha".
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

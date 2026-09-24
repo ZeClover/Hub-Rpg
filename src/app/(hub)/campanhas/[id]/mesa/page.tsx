@@ -40,7 +40,9 @@ export default async function PaginaMesaAoVivo({
     where: { campanhaId_usuarioId: { campanhaId: id, usuarioId: usuario.id } },
   });
   if (!participacao) notFound();
-  const souMestre = participacao.papel === "MESTRE";
+  // Mestre auxiliar (decisão #148) tem o mesmo controle da Mesa ao Vivo
+  // que o mestre — as rotas que esta tela chama já aceitam os dois papéis.
+  const souMestre = participacao.papel === "MESTRE" || participacao.papel === "MESTRE_AUXILIAR";
 
   const sistemaDef = SISTEMAS.find((s) => s.chave === campanha.sistema.chave);
 

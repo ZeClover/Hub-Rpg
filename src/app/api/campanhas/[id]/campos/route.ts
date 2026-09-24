@@ -2,6 +2,7 @@ import { TipoCampoPersonalizado } from "@prisma/client";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string }> };
@@ -20,10 +21,7 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const { id: campanhaId } = await params;
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-  });
-  if (participacao?.papel !== "MESTRE") {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

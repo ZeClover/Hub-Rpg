@@ -1,12 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar, ehMestreTitular } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
-  Excluir a campanha inteira. Só o mestre pode.
+  Excluir a campanha inteira. Só o mestre TITULAR pode — a única coisa que
+  o mestre auxiliar nunca tem (decisão #148, ideia #115).
 
   As fichas ligadas a ela (de jogador ou de inimigo) não são apagadas —
   ficam soltas, campanhaId volta a null, exatamente como qualquer ficha
@@ -21,10 +23,7 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
   }
 
   const { id: campanhaId } = await params;
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-  });
-  if (participacao?.papel !== "MESTRE") {
+  if (!(await ehMestreTitular(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
@@ -45,10 +44,7 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const { id: campanhaId } = await params;
-  const participacao = await banco.participacao.findUnique({
-    where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-  });
-  if (participacao?.papel !== "MESTRE") {
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 

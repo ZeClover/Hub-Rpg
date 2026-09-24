@@ -60,7 +60,11 @@ export default async function Campanhas() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-texto-suave">
-                    {papel === "MESTRE" ? "Você é o mestre" : "Você é jogador"}
+                    {papel === "MESTRE"
+                      ? "Você é o mestre"
+                      : papel === "MESTRE_AUXILIAR"
+                        ? "Você é mestre auxiliar"
+                        : "Você é jogador"}
                   </p>
                   {campanha.descricao && (
                     <p className="mt-1 truncate text-xs text-texto-suave">{campanha.descricao}</p>

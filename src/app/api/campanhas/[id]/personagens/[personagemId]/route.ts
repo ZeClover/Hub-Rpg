@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 
 type Contexto = { params: Promise<{ id: string; personagemId: string }> };
@@ -31,13 +32,7 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
   }
 
   const souODono = personagem.donoId === usuario.id;
-  let souMestre = false;
-  if (!souODono) {
-    const participacao = await banco.participacao.findUnique({
-      where: { campanhaId_usuarioId: { campanhaId, usuarioId: usuario.id } },
-    });
-    souMestre = participacao?.papel === "MESTRE";
-  }
+  const souMestre = souODono ? false : await ehMestreOuAuxiliar(campanhaId, usuario.id);
   if (!souODono && !souMestre) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
