@@ -19,17 +19,19 @@ const ESTADO_VAZIO: EstadoIniciativa = { combatentes: [], vezDe: 0, rodada: 1 };
   modo leitura (`VisaoEspectadorMesa`) — nunca o contrário, o servidor
   nunca manda estado de volta pra cá.
 */
-function chaveArmazenamento(campanhaId: string) {
-  return `mesa-iniciativa:${campanhaId}`;
+function chaveArmazenamento(campanhaId: string, sandbox: boolean) {
+  // Sandbox de combate (decisão #152, ideia #122) — chave separada, pra
+  // testar um encontro sem misturar com a ordem "de verdade" da campanha.
+  return sandbox ? `mesa-iniciativa-sandbox:${campanhaId}` : `mesa-iniciativa:${campanhaId}`;
 }
 
 // Só roda no primeiro render de cada campanha (via useState preguiçoso, não
 // um efeito): ler o estado salvo é montar o estado inicial, não sincronizar
 // com algo que muda por fora — não precisa de useEffect pra isso.
-function lerEstadoSalvo(campanhaId: string): EstadoIniciativa {
+function lerEstadoSalvo(campanhaId: string, sandbox: boolean): EstadoIniciativa {
   if (typeof window === "undefined") return ESTADO_VAZIO;
   try {
-    const salvo = localStorage.getItem(chaveArmazenamento(campanhaId));
+    const salvo = localStorage.getItem(chaveArmazenamento(campanhaId, sandbox));
     if (!salvo) return ESTADO_VAZIO;
     const estado = JSON.parse(salvo);
     return {
@@ -43,25 +45,42 @@ function lerEstadoSalvo(campanhaId: string): EstadoIniciativa {
 }
 
 export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
-  const [estado, setEstado] = useState<EstadoIniciativa>(() => lerEstadoSalvo(campanhaId));
+  // Sandbox de combate (decisão #152, ideia #122) — mesma tela, mas com
+  // uma ordem à parte, só no navegador, que nunca chega ao jogador nem à
+  // ordem "de verdade": pra testar um encontro (quantos inimigos, que
+  // condições) sem afetar a cena real. Trocar de modo troca de roster —
+  // cada um guarda o seu, e volta a aparecer do jeito que ficou da
+  // última vez que esse modo esteve ativo.
+  const [sandbox, setSandbox] = useState(false);
+  const [estado, setEstado] = useState<EstadoIniciativa>(() => lerEstadoSalvo(campanhaId, false));
   const [nomeNovo, setNomeNovo] = useState("");
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [condicaoEmMassa, setCondicaoEmMassa] = useState("");
   const temporizadorSync = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { combatentes, vezDe, rodada } = estado;
 
+  function alternarSandbox() {
+    const novo = !sandbox;
+    setSelecionados(new Set());
+    setSandbox(novo);
+    setEstado(lerEstadoSalvo(campanhaId, novo));
+  }
+
   useEffect(() => {
     try {
-      localStorage.setItem(chaveArmazenamento(campanhaId), JSON.stringify(estado));
+      localStorage.setItem(chaveArmazenamento(campanhaId, sandbox), JSON.stringify(estado));
     } catch {
       // localStorage indisponível (aba privada, navegador restrito) — a
       // sessão continua, só não persiste entre recarregamentos.
     }
-  }, [campanhaId, estado]);
+  }, [campanhaId, sandbox, estado]);
 
   // Espelha pro servidor 1.2s depois da última mudança, pra não mandar uma
   // requisição por tecla digitada na condição — só a foto final da pausa.
+  // Nunca roda em modo sandbox: o jogador nunca deveria ver um combate de
+  // teste como se fosse a cena de verdade.
   useEffect(() => {
+    if (sandbox) return;
     if (temporizadorSync.current) clearTimeout(temporizadorSync.current);
     temporizadorSync.current = setTimeout(() => {
       fetch(`/api/campanhas/${campanhaId}/iniciativa`, {
@@ -76,7 +95,7 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
     return () => {
       if (temporizadorSync.current) clearTimeout(temporizadorSync.current);
     };
-  }, [campanhaId, estado]);
+  }, [campanhaId, sandbox, estado]);
 
   function adicionar() {
     const nome = nomeNovo.trim();
@@ -167,10 +186,27 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
 
   return (
     <section className="mt-10">
-      <h2 className="font-titulo text-xl">Ordem de iniciativa</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-titulo text-xl">
+          Ordem de iniciativa
+          {sandbox && (
+            <span className="ml-2 rounded-full border border-ambar/40 bg-ambar/10 px-2 py-0.5 align-middle text-xs text-ambar-forte">
+              🧪 Sandbox
+            </span>
+          )}
+        </h2>
+        <button
+          type="button"
+          onClick={alternarSandbox}
+          className="text-xs text-texto-suave underline decoration-borda underline-offset-4 hover:text-texto"
+        >
+          {sandbox ? "Voltar pra ordem real" : "🧪 Testar um encontro (sandbox)"}
+        </button>
+      </div>
       <p className="mt-2 text-sm text-texto-suave">
-        Controlada aqui, no seu navegador — os jogadores só acompanham em
-        modo leitura, você continua no comando.
+        {sandbox
+          ? "Modo teste: essa ordem é só sua, nunca sincroniza com o jogador nem mexe na cena de verdade."
+          : "Controlada aqui, no seu navegador — os jogadores só acompanham em modo leitura, você continua no comando."}
       </p>
 
       <div className="mt-4 flex items-center gap-3">

@@ -1889,9 +1889,19 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       testes automáticos continuam limpos; JS e CSS de cada arquivo
       HTML tocado validados individualmente (sintaxe + chaves
       balanceadas)
-- [ ] **Demais ideias do pedido** (sandbox de
-      ficha/combate, prévia do Level Up) — fica pra quando o Zé
-      confirmar a ordem das próximas
+- [x] **Sandbox de ficha/combate e prévia do Level Up** (24/09/2026)
+      — decisão #152, fecha o backlog de "demais ideias". Sandbox de
+      ficha: reaproveita a Cópia (decisão #139), só sempre avulsa e
+      nomeada "(sandbox)". Sandbox de combate: mesmo Rastreador de
+      Iniciativa, uma segunda chave de `localStorage` que nunca
+      sincroniza pro servidor — "não virar VTT" resolvido não
+      construindo nada novo. Prévia do Level Up: as 5 fichas com Level
+      Up guiado ganharam uma cópia de segurança tirada antes de
+      qualquer mudança e um botão "Cancelar" ao lado do "Confirmar" —
+      mudança só aditiva, sem reestruturar quando a mutação acontece.
+      `tsc`, lint, `next build` e os 302 testes automáticos continuam
+      limpos; JS de cada um dos 5 arquivos de Level Up validado
+      individualmente (sintaxe)
 
 ---
 

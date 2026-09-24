@@ -4253,6 +4253,10 @@ const state = {
   // Resumo transitório do último Level Up — só de exibição, não é salvo na
   // ficha (some ao trocar de aba ou ao fechar).
   levelUpResumo: null,
+  // Cópia completa da ficha de antes do Level Up atual (decisão #152,
+  // ideia #123) — permite "Cancelar" desfazer tudo; nunca é salva junto
+  // da ficha, só existe enquanto o resumo está na tela.
+  levelUpBackup: null,
   // Em qual passo do Level Up guiado a pessoa está (1, 2, 3...) — o resumo
   // mostra Atributos, depois Perícias, depois Poder, um de cada vez, em vez
   // de tudo empilhado numa tela só.
@@ -6148,10 +6152,32 @@ function snapshotNC(p){
 }
 function subirDeNivel(p){
   if(p.nc >= 20) return;
+  // Prévia com cancelar de verdade (decisão #152, ideia #123) — guarda a
+  // ficha inteira de antes de mexer em nada, não só os números do resumo.
+  // Os passos seguintes (Atributos/Perícias/Poder) editam `p` de verdade,
+  // com as mesmas funções de sempre — "Cancelar" desfaz tudo de uma vez
+  // devolvendo essa cópia; "Concluir" simplesmente não usa ela.
+  state.levelUpBackup = JSON.parse(JSON.stringify(p));
   const antes = snapshotNC(p);
   p.nc = p.nc + 1;
   const depois = snapshotNC(p);
   state.levelUpResumo = {antes, depois};
+  state.passoNivelUp = 1;
+  onFieldChange();
+  renderAll();
+}
+
+// Desfaz o Level Up inteiro (decisão #152) — devolve a ficha pro estado
+// salvo em subirDeNivel(), antes de qualquer mudança de NC/atributo/
+// perícia/poder. `Object.assign` porque `p` é a mesma referência dentro
+// de state.roster (personagemAtual() nunca copia); trocar os campos nela
+// já é o bastante, sem precisar re-selecionar personagem nenhum.
+function cancelarLevelUp(p){
+  if(!state.levelUpBackup) return;
+  Object.keys(p).forEach(chave => delete p[chave]);
+  Object.assign(p, state.levelUpBackup);
+  state.levelUpBackup = null;
+  state.levelUpResumo = null;
   state.passoNivelUp = 1;
   onFieldChange();
   renderAll();
@@ -6219,9 +6245,12 @@ function panelResumoLevelUp(p, resumo){
     <p class="panel-note" style="text-align:center; text-transform:uppercase; letter-spacing:.08em;">Passo ${state.passoNivelUp} de ${passos.length} — ${passoAtual.titulo}</p>
     ${passoAtual.corpo}
     <div class="field-row" style="justify-content:space-between; margin-top:16px;">
-      ${state.passoNivelUp > 1 ? `<button type="button" class="btn" id="btnNivelUpAnterior">← Voltar</button>` : `<span></span>`}
+      <div class="field-row" style="gap:8px;">
+        ${state.passoNivelUp > 1 ? `<button type="button" class="btn" id="btnNivelUpAnterior">← Voltar</button>` : `<span></span>`}
+        <button type="button" class="btn danger" id="btnCancelarLevelUp" title="Desfaz o Level Up inteiro — volta pra ficha exatamente como estava antes">Cancelar</button>
+      </div>
       ${ultimo
-        ? `<button type="button" class="btn primary" id="btnFecharResumoLevelUp">Concluir — voltar pra ficha</button>`
+        ? `<button type="button" class="btn primary" id="btnFecharResumoLevelUp">Confirmar — voltar pra ficha</button>`
         : `<button type="button" class="btn primary" id="btnNivelUpProximo">Próximo →</button>`}
     </div>
   `;
@@ -6248,9 +6277,16 @@ function telaResumoLevelUp(p, resumo){
 function bindResumoLevelUp(p){
   const btnFecharResumoLevelUp = document.getElementById('btnFecharResumoLevelUp');
   if(btnFecharResumoLevelUp) btnFecharResumoLevelUp.addEventListener('click', ()=>{
+    state.levelUpBackup = null;
     state.levelUpResumo = null;
     state.passoNivelUp = 1;
     renderAll();
+  });
+  const btnCancelarLevelUp = document.getElementById('btnCancelarLevelUp');
+  if(btnCancelarLevelUp) btnCancelarLevelUp.addEventListener('click', ()=>{
+    if(confirm('Desfazer o Level Up? Tudo que você mudou nestes passos (NC, atributos, perícias, poder) volta a ser como era antes.')){
+      cancelarLevelUp(p);
+    }
   });
   const btnNivelUpProximo = document.getElementById('btnNivelUpProximo');
   if(btnNivelUpProximo) btnNivelUpProximo.addEventListener('click', ()=>{

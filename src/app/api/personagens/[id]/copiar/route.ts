@@ -27,6 +27,14 @@ type Contexto = { params: Promise<{ id: string }> };
   `compartilhado` e `status` não são copiados: a cópia nasce fechada
   (ninguém tem o link dela ainda) e ativa, começando do zero nesses dois
   pontos organizacionais em vez de herdar da original.
+
+  `sandbox` no corpo (decisão #152, ideia #121 — "sandbox de ficha
+  temporário") é um atalho pra um caso específico de cópia: testar uma
+  mudança na ficha sem afetar a de verdade. É a mesma cópia de sempre,
+  só que sempre avulsa (nunca entra numa campanha) e com o nome marcado
+  "(sandbox)" em vez de "(cópia)", pra aparecer separado nas listas.
+  Apagar o sandbox depois é o mesmo "Excluir" de qualquer ficha — não
+  existe limpeza automática.
 */
 const QUANTIDADE_MAXIMA = 20;
 
@@ -43,8 +51,9 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const corpo = await requisicao.json().catch(() => null);
-  const campanhaId = typeof corpo?.campanhaId === "string" ? corpo.campanhaId : null;
-  const quantidadeBruta = typeof corpo?.quantidade === "number" ? corpo.quantidade : 1;
+  const sandbox = corpo?.sandbox === true;
+  const campanhaId = !sandbox && typeof corpo?.campanhaId === "string" ? corpo.campanhaId : null;
+  const quantidadeBruta = sandbox ? 1 : typeof corpo?.quantidade === "number" ? corpo.quantidade : 1;
   if (!Number.isInteger(quantidadeBruta) || quantidadeBruta < 1 || quantidadeBruta > QUANTIDADE_MAXIMA) {
     return NextResponse.json(
       { erro: `quantidade precisa ser um número inteiro entre 1 e ${QUANTIDADE_MAXIMA}` },
@@ -67,7 +76,11 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const nomeCopia = (indice: number) =>
-    quantidade === 1 ? `${original.nome} (cópia)` : `${original.nome} (cópia ${indice})`;
+    sandbox
+      ? `${original.nome} (sandbox)`
+      : quantidade === 1
+        ? `${original.nome} (cópia)`
+        : `${original.nome} (cópia ${indice})`;
 
   // As criações vêm sempre primeiro no array — o upsert de participação
   // (quando existe) é sempre o último resultado, por isso `slice(0,

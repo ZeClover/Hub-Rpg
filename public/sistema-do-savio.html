@@ -1347,10 +1347,24 @@ function snapshotNivelSavio(p){
 // Sobe 1 Nível e guarda o resumo em estado.nivelUpResumo — sem teto (o
 // mestre decide o ritmo, igual os outros três sistemas fazem).
 function subirNivel(p){
+  // Prévia com cancelar de verdade (decisão #152, ideia #123) — guarda a
+  // ficha inteira de antes de mexer em nada. "Cancelar" desfaz tudo de
+  // uma vez devolvendo essa cópia; "Confirmar" simplesmente não usa ela.
+  estado.nivelUpBackup = JSON.parse(JSON.stringify(p));
   const antes = snapshotNivelSavio(p);
   p.nivel += 1;
   const depois = snapshotNivelSavio(p);
   estado.nivelUpResumo = {antes, depois};
+}
+
+// Desfaz o Level Up inteiro (decisão #152) — devolve a ficha pro estado
+// salvo em subirNivel(), antes da mudança de nível.
+function cancelarNivelUp(p){
+  if(!estado.nivelUpBackup) return;
+  Object.keys(p).forEach(chave => delete p[chave]);
+  Object.assign(p, estado.nivelUpBackup);
+  estado.nivelUpBackup = null;
+  estado.nivelUpResumo = null;
 }
 
 /* --- Armazenamento ---------------------------------------------------------
@@ -1425,6 +1439,10 @@ const estado = {
   // exibição, não é salvo na ficha; some ao fechar ou ao trocar de
   // personagem (mesmo mecanismo dos outros três sistemas).
   nivelUpResumo: null,
+  // Cópia completa da ficha de antes do Level Up atual (decisão #152,
+  // ideia #123) — permite "Cancelar" desfazer tudo; nunca é salva junto
+  // da ficha, só existe enquanto o resumo está na tela.
+  nivelUpBackup: null,
   // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
   // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
   mostrarAjuda: false,
@@ -1903,7 +1921,10 @@ function telaResumoNivel(p, resumo){
       ${p.passivas.map((h,i) => passivaLinha(h,i)).join('')}
       <button id="btAddPassiva" class="destaque">+ Nova Passiva</button>
     </div>` : ''}
-    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>`;
+    <div class="linha" style="gap:10px;margin-top:16px">
+      <button id="btFecharResumoNivel" class="destaque">Confirmar — voltar pra ficha</button>
+      <button id="btCancelarNivel" title="Desfaz o Level Up inteiro — volta pra ficha exatamente como estava antes">Cancelar</button>
+    </div>`;
 }
 
 function seletorEspecializacao(p){
@@ -3476,7 +3497,17 @@ function ligarEventos(){
     salvar(); render();
   };
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
-  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => {
+    estado.nivelUpBackup = null;
+    estado.nivelUpResumo = null;
+    render();
+  };
+  const btCancelarNivel = document.getElementById('btCancelarNivel');
+  if(btCancelarNivel) btCancelarNivel.onclick = () => {
+    if(confirm('Desfazer o Level Up? Tudo que você mudou neste resumo (nível, habilidade, passiva) volta a ser como era antes.')){
+      mudar(p => cancelarNivelUp(p));
+    }
+  };
 
   const temaCorInput = app.querySelector('[data-tema-cor]');
   if(temaCorInput) temaCorInput.onchange = () => mudar(p => p.temaCor = temaCorInput.value);
@@ -3914,6 +3945,7 @@ document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.modoGuiado = false;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   render();
 };
 
@@ -3925,6 +3957,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.modoGuiado = true;
   estado.passoGuiado = 1;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   salvar(); render();
 };
 
@@ -3941,6 +3974,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.modoGuiado = false;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   salvar(); render();
 };
 
@@ -3984,6 +4018,7 @@ document.getElementById('arquivo').onchange = e => {
       }
       estado.modoGuiado = false;
       estado.nivelUpResumo = null;
+      estado.nivelUpBackup = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

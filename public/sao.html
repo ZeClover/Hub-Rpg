@@ -1171,6 +1171,10 @@ const estado = {
   // (antes/depois) — só de exibição, não é salvo na ficha; some ao fechar
   // ou ao trocar de personagem.
   nivelUpResumo: null,
+  // Cópia completa da ficha de antes do Level Up atual (decisão #152,
+  // ideia #123) — permite "Cancelar" desfazer tudo; nunca é salva junto
+  // da ficha, só existe enquanto o resumo está na tela.
+  nivelUpBackup: null,
   // mostrarAjuda: painel de Tutorial (❓ Ajuda) aberto/fechado — transitório,
   // fica aberto ao trocar de aba de propósito (o texto só atualiza sozinho).
   mostrarAjuda: false,
@@ -1927,11 +1931,27 @@ function snapshotNivelSAO(p){
 function subirNivelClasseSAO(p, indice){
   const c = p.classes[indice];
   if(!c || !c.classeId) return;
+  // Prévia com cancelar de verdade (decisão #152, ideia #123) — guarda a
+  // ficha inteira de antes de mexer em nada (o resumo deixa gastar o
+  // ponto de Poder novo, que mexe em `p` de verdade). "Cancelar" desfaz
+  // tudo de uma vez devolvendo essa cópia; "Confirmar" não usa ela.
+  estado.nivelUpBackup = JSON.parse(JSON.stringify(p));
   const antes = snapshotNivelSAO(p);
   const classeId = c.classeId;
   c.nivel = (c.nivel||0) + 1;
   const depois = snapshotNivelSAO(p);
   estado.nivelUpResumo = {classeId, nivelClasse: c.nivel, antes, depois};
+}
+
+// Desfaz o Level Up inteiro (decisão #152) — devolve a ficha pro estado
+// salvo em subirNivelClasseSAO(), antes de qualquer mudança de
+// nível/poder.
+function cancelarNivelUp(p){
+  if(!estado.nivelUpBackup) return;
+  Object.keys(p).forEach(chave => delete p[chave]);
+  Object.assign(p, estado.nivelUpBackup);
+  estado.nivelUpBackup = null;
+  estado.nivelUpResumo = null;
 }
 
 // Modo Guiado de Evolução: o resumo já embute os Poderes da classe que
@@ -1953,7 +1973,10 @@ function painelResumoNivel(p, resumo){
       <p class="mini" style="color:var(--ambar-forte);margin-bottom:8px">✨ Cada Nível numa classe dá 1 ponto de Poder pra gastar só nela — escolha onde investir o de ${esc(nomeClasse)} agora:</p>
       ${blocoPoderesClasse(p, classeId)}
     </div>
-    <button id="btFecharResumoNivel" class="destaque" style="margin-top:16px">Concluir — voltar pra ficha</button>
+    <div class="linha" style="gap:10px;margin-top:16px">
+      <button id="btFecharResumoNivel" class="destaque">Confirmar — voltar pra ficha</button>
+      <button id="btCancelarNivel" title="Desfaz o Level Up inteiro — volta pra ficha exatamente como estava antes">Cancelar</button>
+    </div>
   </div>`;
 }
 
@@ -2508,6 +2531,7 @@ function ligarEventos(){
     // fora do guiado) — sem isso, a ficha abriria direto no resumo do
     // Level Up em vez das abas normais.
     estado.nivelUpResumo = null;
+    estado.nivelUpBackup = null;
     render();
   };
 
@@ -2625,7 +2649,17 @@ function ligarEventos(){
   app.querySelectorAll('[data-subir-nivel]').forEach(b =>
     b.onclick = () => mudar(p => subirNivelClasseSAO(p, Number(b.dataset.subirNivel))));
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
-  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; render(); };
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => {
+    estado.nivelUpBackup = null;
+    estado.nivelUpResumo = null;
+    render();
+  };
+  const btCancelarNivel = document.getElementById('btCancelarNivel');
+  if(btCancelarNivel) btCancelarNivel.onclick = () => {
+    if(confirm('Desfazer o Level Up? Tudo que você mudou neste resumo (nível, poder) volta a ser como era antes.')){
+      mudar(p => cancelarNivelUp(p));
+    }
+  };
 
   // Poderes: os data-attrs guardam "classeId|poderId" juntos, separados por
   // "|", porque um botão só aceita um valor — mesmo truque do Fabula Ultima.
@@ -2901,6 +2935,7 @@ document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.modoGuiado = false;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   render();
 };
 
@@ -2914,6 +2949,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.modoGuiado = true;
   estado.passoGuiado = 1;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   salvar(); render();
 };
 
@@ -2930,6 +2966,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.modoGuiado = false;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   salvar(); render();
 };
 
@@ -2976,6 +3013,7 @@ document.getElementById('arquivo').onchange = e => {
       }
       estado.modoGuiado = false;
       estado.nivelUpResumo = null;
+      estado.nivelUpBackup = null;
       salvar(); render();
     }catch(err){
       alert('Não consegui ler esse arquivo. Ele precisa ser um JSON exportado por esta ficha.');

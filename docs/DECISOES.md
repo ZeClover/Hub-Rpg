@@ -6785,6 +6785,73 @@ testar a impressão de verdade num navegador nesta sessão (mesma
 limitação da decisão #150 — sem credenciais do Supabase configuradas
 neste ambiente, nenhuma ficha carrega dado de verdade aqui).
 
+## 152. Hub — Sandbox de ficha/combate e prévia do Level Up (24/09/2026)
+
+Décima quinta e última fatia do backlog de "demais ideias" (decisão
+#134) que ainda faltava: sandbox de ficha temporário (ideia #121),
+sandbox de combate temporário (ideia #122) e prévia do Level Up com
+confirmar/cancelar (ideia #123). Fecha a lista de ideias avulsas do
+pedido original — o que resta no roadmap agora são as fatias já em
+andamento por sistema.
+
+**Sandbox de ficha (#121): reaproveitou a Cópia (decisão #139) em vez
+de inventar mecanismo novo.** Uma ficha sandbox É uma cópia comum —
+mesmos dados, dono continua sendo a mesma pessoa — só que sempre
+avulsa (nunca entra numa campanha, mesmo se a rota receber
+`campanhaId`) e nomeada "(sandbox)" em vez de "(cópia)", pra não
+confundir as duas nas listas. Testar é abrir e mexer à vontade;
+terminar é "Excluir", igual qualquer ficha — sem limpeza automática.
+Botão "🧪 Criar sandbox pra testar" na página geral do personagem
+(decisão #149). Zero mudança em `/api/personagens/[id]/copiar` além
+de um parâmetro opcional — reuso quase total.
+
+**Sandbox de combate (#122): mesmo Rastreador de Iniciativa, uma
+segunda chave de armazenamento.** "Não virar VTT" era a preocupação
+que o pedido original registrou — resolvida não construindo nada novo:
+o toggle "🧪 Testar um encontro (sandbox)" troca pra uma chave de
+`localStorage` separada (`mesa-iniciativa-sandbox:<campanhaId>`, a de
+verdade continua sendo `mesa-iniciativa:<campanhaId>`) e desliga o
+efeito que espelha pro servidor (decisão #137) enquanto esse modo
+estiver ativo — o jogador em modo espectador nunca vê um combate de
+teste como se fosse a cena real. "Limpar tudo" (que já existia) já
+serve de "descartar o teste".
+
+**Prévia do Level Up (#123): a auditoria da fatia #150 já tinha achado
+o problema certo.** As 5 fichas com Level Up guiado (Kaizoku no Sho,
+Fabula Ultima, Sistema SAO, Sistema do Sávio, Thrylikí Chelóna)
+aplicavam a mudança de nível IMEDIATAMENTE e só depois mostravam um
+resumo antes/depois — sem nenhum jeito de desfazer. Reestruturar QUANDO
+a mutação acontece seria cirurgia grande e arriscada em 5 arquivos
+diferentes, sem nada em comum entre eles (mesma auditoria da decisão
+#150/#151). Em vez disso, a mudança foi só ADITIVA: a primeira linha de
+cada função de "subir de nível" agora tira uma cópia (`JSON.parse
+(JSON.stringify(p))`) da ficha inteira ANTES de mexer em qualquer
+coisa — nível, atributo, perícia, poder, o que for. O resumo de sempre
+continua na tela do mesmo jeito (mostrando antes/depois), só ganhou um
+botão "Cancelar" ao lado do que virou "Confirmar" (era "Concluir"):
+cancelar devolve a ficha inteira pra essa cópia, com o mesmo
+`onFieldChange()`/`salvar()` de sempre gravando a versão desfeita. Como
+`personagemAtual()`/`atual()` sempre devolvem a MESMA referência dentro
+do roster (nunca uma cópia), sobrescrever os campos da ficha em cima
+funciona sem precisar re-selecionar personagem nenhum. A cópia de
+segurança também é limpa em todo lugar que já zerava o resumo antigo
+(trocar de ficha, criar, excluir, importar) — pra nunca sobrar uma
+cópia velha de outra ficha por engano.
+
+**Validação de cada um dos 5 arquivos tocados**, além da bateria de
+sempre: o `<script>` inline de cada um continua parseando sem erro de
+sintaxe (`new Function(...)`), do mesmo jeito que a decisão #151 já
+tinha validado o CSS de impressão.
+
+Sem migração, sem dependência nova.
+
+Testado: `tsc --noEmit`, `npm run lint`, `npm run build` e os 302
+testes automáticos continuam limpos, mais a checagem de sintaxe em
+cada um dos 5 arquivos HTML de Level Up. Não foi possível testar o
+fluxo completo (criar sandbox, cancelar um Level Up de verdade) num
+navegador nesta sessão — mesma limitação das decisões #150/#151, sem
+credenciais do Supabase configuradas neste ambiente.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

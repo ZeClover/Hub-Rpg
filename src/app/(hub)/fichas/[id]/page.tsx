@@ -9,6 +9,7 @@ import { usuarioAtual } from "@/lib/usuario";
 import { GerenciadorItens, type LocalItem } from "../../itens-compartilhados";
 import { Companheiros } from "../companheiros";
 import { CompartilharFicha } from "../compartilhar-ficha";
+import { CriarSandbox } from "../criar-sandbox";
 import { AvatarFicha, EditarImagemFicha, ROTULO_STATUS, StatusFicha } from "../organizacao-ficha";
 
 /*
@@ -119,6 +120,10 @@ export default async function PaginaDoPersonagem({
       <p className="mt-2 text-xs text-texto-suave">
         Status atual: {ROTULO_STATUS[personagem.status] ?? personagem.status}
       </p>
+
+      <div className="mt-3">
+        <CriarSandbox personagemId={personagem.id} />
+      </div>
 
       <CompartilharFicha
         personagemId={personagem.id}

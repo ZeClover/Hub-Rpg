@@ -3113,10 +3113,26 @@ function snapshotNivel(p){
 // Sobe 1 Nível e guarda o resumo em estado.nivelUpResumo. Nível não tem
 // teto (diferente do NC do Kaizoku) — o personagem sempre pode subir.
 function subirDeNivel(p, zerarProgresso){
+  // Prévia com cancelar de verdade (decisão #152, ideia #123) — guarda a
+  // ficha inteira de antes de mexer em nada. Os passos seguintes do
+  // resumo (Áreas de Estudo etc.) editam `p` de verdade — "Cancelar"
+  // desfaz tudo de uma vez devolvendo essa cópia; "Confirmar" não usa ela.
+  estado.nivelUpBackup = JSON.parse(JSON.stringify(p));
   const antes = snapshotNivel(p);
   p.nivel += 1;
   if(zerarProgresso) p.progressaoEscolar.progressoNivel = 0;
   estado.nivelUpResumo = {antes, depois: snapshotNivel(p)};
+  estado.passoNivelUp = 1;
+}
+
+// Desfaz o Level Up inteiro (decisão #152) — devolve a ficha pro estado
+// salvo em subirDeNivel(), antes de qualquer mudança de nível/progresso.
+function cancelarNivelUp(p){
+  if(!estado.nivelUpBackup) return;
+  Object.keys(p).forEach(chave => delete p[chave]);
+  Object.assign(p, estado.nivelUpBackup);
+  estado.nivelUpBackup = null;
+  estado.nivelUpResumo = null;
   estado.passoNivelUp = 1;
 }
 
@@ -3273,6 +3289,10 @@ const estado = {
   // depois) — só de exibição, não é salvo na ficha; some ao fechar ou ao
   // trocar de personagem. Mesmo padrão do botão de Level Up do Kaizoku no Sho.
   nivelUpResumo: null,
+  // Cópia completa da ficha de antes do Level Up atual (decisão #152,
+  // ideia #123) — permite "Cancelar" desfazer tudo; nunca é salva junto
+  // da ficha, só existe enquanto o resumo está na tela.
+  nivelUpBackup: null,
   // passoNivelUp: em qual passo do Level Up guiado a pessoa está (1, 2, 3...)
   // — o resumo mostra só as escolhas liberadas daquele Nível uma de cada vez
   // (Marco, depois Ascensão, depois cada jeito de gastar PE), em vez de tudo
@@ -4453,9 +4473,12 @@ function painelResumoNivel(p, resumo){
     <p class="mini" style="text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Passo ${estado.passoNivelUp} de ${passos.length} — ${esc(passoAtual.titulo)}</p>
     ${passoAtual.corpo}
     <div class="linha" style="justify-content:space-between;margin-top:16px">
-      ${estado.passoNivelUp > 1 ? `<button id="btNivelUpAnterior">← Voltar</button>` : `<span></span>`}
+      <div class="linha" style="gap:8px">
+        ${estado.passoNivelUp > 1 ? `<button id="btNivelUpAnterior">← Voltar</button>` : `<span></span>`}
+        <button id="btCancelarNivel" title="Desfaz o Level Up inteiro — volta pra ficha exatamente como estava antes">Cancelar</button>
+      </div>
       ${ultimo
-        ? `<button id="btFecharResumoNivel" class="destaque">Concluir — voltar pra ficha</button>`
+        ? `<button id="btFecharResumoNivel" class="destaque">Confirmar — voltar pra ficha</button>`
         : `<button id="btNivelUpProximo" class="destaque">Próximo →</button>`}
     </div>
   </div>`;
@@ -6213,7 +6236,18 @@ function ligarEventos(){
   const btSubirNivelDireto = document.getElementById('btSubirNivelDireto');
   if(btSubirNivelDireto) btSubirNivelDireto.onclick = () => mudar(p => { subirDeNivel(p, false); });
   const btFecharResumoNivel = document.getElementById('btFecharResumoNivel');
-  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => { estado.nivelUpResumo = null; estado.passoNivelUp = 1; render(); };
+  if(btFecharResumoNivel) btFecharResumoNivel.onclick = () => {
+    estado.nivelUpBackup = null;
+    estado.nivelUpResumo = null;
+    estado.passoNivelUp = 1;
+    render();
+  };
+  const btCancelarNivel = document.getElementById('btCancelarNivel');
+  if(btCancelarNivel) btCancelarNivel.onclick = () => {
+    if(confirm('Desfazer o Level Up? Tudo que você mudou nestes passos (nível, progresso, Fórmulas/Poderes) volta a ser como era antes.')){
+      mudar(p => cancelarNivelUp(p));
+    }
+  };
   const btNivelUpProximo = document.getElementById('btNivelUpProximo');
   if(btNivelUpProximo) btNivelUpProximo.onclick = () => { estado.passoNivelUp += 1; render(); };
   const btNivelUpAnterior = document.getElementById('btNivelUpAnterior');
@@ -6417,6 +6451,7 @@ document.getElementById('chkCompartilhar').onchange = e => {
 document.getElementById('seletor').onchange = e => {
   estado.atualId = e.target.value;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   estado.passoNivelUp = 1;
   estado.modoGuiado = false;
   render();
@@ -6428,6 +6463,7 @@ document.getElementById('btNovo').onclick = () => {
   estado.atualId = p.id;
   estado.aba = 'status';
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   estado.passoNivelUp = 1;
   // Personagem novo começa no Modo Guiado — quem já conhece o sistema sai
   // com um clique em "Ver ficha completa" (barra do topo).
@@ -6448,6 +6484,7 @@ document.getElementById('btExcluir').onclick = () => {
   estado.fichas = estado.fichas.filter(f => f.id !== p.id);
   estado.atualId = estado.fichas.length ? estado.fichas[0].id : null;
   estado.nivelUpResumo = null;
+  estado.nivelUpBackup = null;
   estado.passoNivelUp = 1;
   estado.modoGuiado = false;
   salvar(); render();
@@ -6492,6 +6529,7 @@ document.getElementById('arquivo').onchange = e => {
         estado.atualId = lido.id;
       }
       estado.nivelUpResumo = null;
+      estado.nivelUpBackup = null;
       estado.passoNivelUp = 1;
       estado.modoGuiado = false;
       salvar(); render();
