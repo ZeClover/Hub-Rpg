@@ -7564,6 +7564,31 @@ Testado com Playwright: catálogo mostra 1210 opções (1 placeholder +
 1209 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores sem regressão.
 
+## 201. Naruto 5e — Bukijutsu Rank C 100% completo (lote 5 de ~5) (19/09/2026)
+
+Continuação da decisão #200. Quinto e último lote do Rank C de
+Bukijutsu (19 jutsu, de "Corte de Onda de Choque" a "Foco de Yoichi")
+entrou no `JUTSU_CATALOGO` — 1228 das ~1400 entradas totais. Com isso,
+o Rank C de Bukijutsu fica 100% completo: 99 dos 99 jutsu, sem nenhuma
+pendência de dados corrompidos neste rank (diferente do Rank D, que
+ficou com "Stone Form" de fora).
+
+A família "Aura da Espada" ganhou duas cores novas (Laranja e
+Amarela), encadeadas — "Laranja" exige estar sob "Vermelha" (já do
+Rank D) pra ser lançada, e "Amarela" exige qualquer Aura da Espada
+ativa, confirmando que a família inteira funciona como uma progressão
+de estados que se substituem. Mais nomes próprios lendários ficaram
+sem tradução (Tametomo, Tanuki — mitológico —, Tokugawa, Toriyama,
+Yasuke, Yoichi).
+
+Com isso, restam os ranks B, A e S de Bukijutsu (269 jutsu) e
+Invocação pra fechar o Compêndio inteiro — ficam pra fatias futuras,
+respeitando a decisão #26 de uma fatia por vez.
+
+Testado com Playwright: catálogo mostra 1229 opções (1 placeholder +
+1228 jutsu), sem nomes duplicados. `tsc --noEmit` e `npm run lint`
+seguem limpos; suíte de testes anteriores sem regressão.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
