@@ -79,15 +79,19 @@ function normalizar(dados){
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 
-const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'' };
+const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'', lojas:[] };
 
 async function carregar(){
   if(!CAMPANHA_ID){ estado.erro='sem-campanha'; estado.carregando=false; render(); return; }
   try{
-    const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/personagens`);
-    if(!resposta.ok){ estado.erro = resposta.status === 401 ? 'nao-autenticado' : 'sem-acesso'; return; }
-    const {personagens} = await resposta.json();
+    const [respPersonagens, respLojas] = await Promise.all([
+      fetch(`/api/campanhas/${CAMPANHA_ID}/personagens`),
+      fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`),
+    ]);
+    if(!respPersonagens.ok){ estado.erro = respPersonagens.status === 401 ? 'nao-autenticado' : 'sem-acesso'; return; }
+    const {personagens} = await respPersonagens.json();
     estado.personagens = personagens.map(p => ({...p, dados: normalizar(p.dados)}));
+    if(respLojas.ok){ const {lojas} = await respLojas.json(); estado.lojas = lojas; }
   }catch(e){
     console.error('Falha ao carregar campanha', e);
     estado.erro = 'sem-acesso';
@@ -121,6 +125,51 @@ async function aplicarEmLote(mutar, rotuloAcao){
     mostrarStatus('Erro ao salvar — confira a conexão e tente de novo.');
   }
   render();
+}
+
+/* --- Lojas (decisão #162) --------------------------------------------- */
+
+async function recarregarLojas(){
+  const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`);
+  if(resposta.ok){ const {lojas} = await resposta.json(); estado.lojas = lojas; }
+  render();
+}
+
+async function criarLoja(nome){
+  const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nome}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra criar a loja.'); return; }
+  await recarregarLojas();
+}
+
+async function alternarAberta(loja){
+  const resposta = await fetch(`/api/lojas/${loja.id}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({aberta: !loja.aberta}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra mudar o estado da loja.'); return; }
+  await recarregarLojas();
+}
+
+async function removerLoja(lojaId){
+  if(!confirm('Excluir esta loja e todo o estoque dela? Não tem como desfazer.')) return;
+  const resposta = await fetch(`/api/lojas/${lojaId}`, {method:'DELETE'});
+  if(!resposta.ok){ mostrarStatus('Não deu pra excluir a loja.'); return; }
+  await recarregarLojas();
+}
+
+async function adicionarItemLoja(lojaId, {nome, preco, estoque}){
+  const resposta = await fetch(`/api/lojas/${lojaId}/itens`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nome, preco, estoque}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra adicionar o item.'); return; }
+  await recarregarLojas();
+}
+
+async function removerItemLoja(lojaId, itemId){
+  const resposta = await fetch(`/api/lojas/${lojaId}/itens/${itemId}`, {method:'DELETE'});
+  if(!resposta.ok){ mostrarStatus('Não deu pra remover o item.'); return; }
+  await recarregarLojas();
 }
 
 function render(){
@@ -199,6 +248,36 @@ function render(){
       <input id="conteudoId" placeholder="id do conteúdo, ex.: expelliarmus" style="flex:1">
       <button data-acao-conteudo class="destaque">Conceder</button>
     </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Lojas</h3>
+    <p class="mini" style="margin-bottom:10px">Fechada por padrão — monte o estoque em paz antes de abrir. Compra desconta Galeões e estoque na hora, mesmo com dois jogadores comprando ao mesmo tempo.</p>
+    <div class="linha" style="margin-bottom:12px">
+      <input id="novaLojaNome" placeholder="Nome da loja, ex.: Gemialidades Weasley">
+      <button data-criar-loja class="destaque">+ Nova loja</button>
+    </div>
+    ${estado.lojas.map(loja => `
+      <div class="cartao" style="background:var(--superficie-alta)">
+        <div class="linha">
+          <h3 style="flex:1;font-size:15px">${esc(loja.nome)}</h3>
+          <button data-alternar-aberta="${loja.id}" class="${loja.aberta?'destaque':''}">${loja.aberta ? '🟢 Aberta' : '⚪ Fechada'}</button>
+          <button data-remover-loja="${loja.id}" style="border-color:rgba(196,80,107,.5);color:#e58a9b">Excluir loja</button>
+        </div>
+        ${loja.itens.length===0 ? '<p class="mini" style="margin-top:8px">Sem itens ainda.</p>' : loja.itens.map(item => `
+          <div class="linha" style="margin-top:8px;border-top:1px solid var(--borda);padding-top:8px">
+            <span style="flex:1">${esc(item.nome)} — ${item.preco} Galeões ${item.estoque!==null ? `(${item.estoque} em estoque)` : '(infinito)'}</span>
+            <button data-remover-item-loja="${loja.id}:${item.id}" style="padding:4px 10px">✕</button>
+          </div>
+        `).join('')}
+        <div class="linha" style="margin-top:10px">
+          <input data-novo-item-nome="${loja.id}" placeholder="Nome do item" style="flex:1">
+          <input data-novo-item-preco="${loja.id}" type="number" min="0" placeholder="Preço" style="width:100px">
+          <input data-novo-item-estoque="${loja.id}" type="number" min="0" placeholder="Estoque (vazio=infinito)" style="width:180px">
+          <button data-add-item-loja="${loja.id}">+ Item</button>
+        </div>
+      </div>
+    `).join('')}
   </div>`;
 
   ligarEventos();
@@ -239,6 +318,35 @@ function ligarEventos(){
     if(!id) return;
     aplicarEmLote(p => { p.dados.conteudosConhecidos[id] = 'conhecido'; }, `Conteúdo "${id}"`);
   };
+
+  // Lojas
+  const btCriarLoja = app.querySelector('[data-criar-loja]');
+  if(btCriarLoja) btCriarLoja.onclick = () => {
+    const nome = document.getElementById('novaLojaNome').value.trim();
+    if(!nome) return;
+    criarLoja(nome);
+  };
+  app.querySelectorAll('[data-alternar-aberta]').forEach(b => b.onclick = () => {
+    const loja = estado.lojas.find(l => l.id === b.dataset.alternarAberta);
+    if(loja) alternarAberta(loja);
+  });
+  app.querySelectorAll('[data-remover-loja]').forEach(b => b.onclick = () => removerLoja(b.dataset.removerLoja));
+  app.querySelectorAll('[data-remover-item-loja]').forEach(b => b.onclick = () => {
+    const [lojaId, itemId] = b.dataset.removerItemLoja.split(':');
+    removerItemLoja(lojaId, itemId);
+  });
+  app.querySelectorAll('[data-add-item-loja]').forEach(b => b.onclick = () => {
+    const lojaId = b.dataset.addItemLoja;
+    const nome = app.querySelector(`[data-novo-item-nome="${lojaId}"]`).value.trim();
+    const precoStr = app.querySelector(`[data-novo-item-preco="${lojaId}"]`).value;
+    const estoqueStr = app.querySelector(`[data-novo-item-estoque="${lojaId}"]`).value;
+    if(!nome || precoStr === '') return;
+    adicionarItemLoja(lojaId, {
+      nome,
+      preco: Math.max(0, Number(precoStr) || 0),
+      estoque: estoqueStr === '' ? null : Math.max(0, Number(estoqueStr) || 0),
+    });
+  });
 }
 
 render();

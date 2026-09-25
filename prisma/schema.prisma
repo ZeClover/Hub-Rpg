@@ -171,6 +171,7 @@ model Campanha {
   grupos               Grupo[]
   itens                Item[]
   veiculos             Veiculo[]
+  lojas                Loja[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -249,6 +250,7 @@ model Personagem {
   companheiroDe        Companheiro[] @relation("FichaComoCompanheiro")
   itens                Item[]
   veiculos             Veiculo[]
+  comprasLoja          LojaCompra[]
 
   @@index([donoId])
   @@index([sistemaId])
@@ -554,4 +556,78 @@ model Veiculo {
   @@index([campanhaId])
   @@index([donoId])
   @@map("veiculos")
+}
+
+/// Loja ao vivo (decisão #162) — a peça que faltava pra "sistema com
+/// comércio de verdade": estoque compartilhado, com concorrência real
+/// (dois jogadores comprando a última unidade ao mesmo tempo). Diferente
+/// de `Item` (biblioteca pessoal/ficha/grupo/cofre — um objeto já
+/// existente sendo guardado), Loja é catálogo à venda com preço, e a
+/// compra é uma transação — por isso não deu pra reaproveitar `Item`
+/// puro; a lógica de "descontar estoque e moeda atomicamente" precisava
+/// de tabela própria.
+///
+/// Hoje é usada pelo módulo do Hogwarts RPG (preço em Galeões, item
+/// comprado cai em `dados.itens` da ficha) — pensada pra poder ser usada
+/// por outro sistema depois, mas a rota de compra (`/api/lojas/[id]/
+/// comprar`) ainda fala só a língua do Hogwarts (decisão #17: nenhum
+/// sistema empresta a forma do `dados` de outro, então um "comprar"
+/// genérico exigiria uma segunda convenção reservada tipo `_mestre` — fica
+/// pra quando um segundo sistema precisar).
+model Loja {
+  id         String   @id @default(uuid()) @db.Uuid
+  campanhaId String   @db.Uuid
+  nome       String
+  descricao  String?
+  /// Fechada por padrão — o mestre monta o estoque em paz antes de abrir
+  /// pros jogadores comprarem.
+  aberta     Boolean  @default(false)
+  criadoEm   DateTime @default(now())
+
+  campanha Campanha     @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  itens    LojaItem[]
+  compras  LojaCompra[]
+
+  @@index([campanhaId])
+  @@map("lojas")
+}
+
+model LojaItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  lojaId    String   @db.Uuid
+  nome      String
+  descricao String?
+  /// Preço em Galeões (Hogwarts). Sem casa decimal — moeda inteira, como
+  /// já é o Galeões na ficha.
+  preco     Int
+  /// null = estoque infinito (item comum, sem limite de compra).
+  estoque   Int?
+  criadoEm  DateTime @default(now())
+
+  loja Loja @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@index([lojaId])
+  @@map("loja_itens")
+}
+
+/// Histórico de compras — sobrevive mesmo que o item seja depois editado
+/// ou removido da loja (por isso `nomeItem`/`preco` são cópias congeladas
+/// do momento da compra, não uma leitura de `LojaItem` toda vez).
+/// `lojaItemId` de propósito NÃO é uma foreign key: apagar o item da loja
+/// não pode apagar quem já comprou ele.
+model LojaCompra {
+  id           String   @id @default(uuid()) @db.Uuid
+  lojaId       String   @db.Uuid
+  lojaItemId   String   @db.Uuid
+  personagemId String   @db.Uuid
+  nomeItem     String
+  preco        Int
+  criadoEm     DateTime @default(now())
+
+  loja       Loja       @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+  personagem Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+
+  @@index([lojaId])
+  @@index([personagemId])
+  @@map("loja_compras")
 }

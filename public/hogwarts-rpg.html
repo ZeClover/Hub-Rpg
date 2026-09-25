@@ -672,6 +672,7 @@ const estado = {
   // como vazar nada pra ninguém, então mostra tudo. Em Modo Hub, quem
   // decide é a resposta do servidor (decisão #159), nunca o navegador.
   ehMestre: !MODO_HUB,
+  campanhaId: null, lojas: [], statusCompra: '',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -694,12 +695,48 @@ async function iniciarModoHub(){
     // fosse segredo de verdade (o PATCH do servidor reescreve `_mestre`
     // de qualquer forma pra quem não é mestre).
     estado.ehMestre = !!personagem.ehMestre;
+    estado.campanhaId = personagem.campanhaId || null;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
   }finally{
     estado.carregandoHub = false; render();
+    if(estado.campanhaId) carregarLojas();
   }
+}
+
+async function carregarLojas(){
+  try{
+    const resposta = await fetch(`/api/campanhas/${estado.campanhaId}/lojas`);
+    if(!resposta.ok) return;
+    const {lojas} = await resposta.json();
+    estado.lojas = lojas;
+  }catch(e){
+    console.error('Falha ao carregar lojas', e);
+  }finally{
+    render();
+  }
+}
+
+async function comprarItem(lojaId, item){
+  const p = atual(); if(!p) return;
+  estado.statusCompra = 'Comprando…'; render();
+  try{
+    const resposta = await fetch(`/api/lojas/${lojaId}/comprar`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({itemId:item.id, personagemId:p.id}),
+    });
+    const corpo = await resposta.json().catch(() => ({}));
+    if(!resposta.ok){ estado.statusCompra = corpo.erro || 'Não deu pra comprar.'; render(); return; }
+    Object.assign(p, garantirCamposNovos(corpo.dados));
+    estado.statusCompra = `Comprou ${item.nome}. ✓`;
+    await carregarLojas();
+  }catch(e){
+    console.error('Falha ao comprar', e);
+    estado.statusCompra = 'Erro de conexão — tente de novo.';
+  }
+  render();
+  setTimeout(() => { estado.statusCompra=''; render(); }, 2500);
 }
 
 function alternarCompartilhado(valor){
@@ -742,6 +779,7 @@ const ABAS = [
   {id:'colecao', nome:'Sapos de Chocolate'},
   {id:'unicos', nome:'Conteúdos Únicos'},
   {id:'social', nome:'Relações & Projetos'},
+  {id:'loja', nome:'Loja'},
 ];
 
 function abaPerfil(p){
@@ -1484,6 +1522,34 @@ function abaSocial(p){
   </div>`;
 }
 
+function abaLoja(p){
+  const status = estado.statusCompra ? `<div class="ok">${esc(estado.statusCompra)}</div>` : '';
+  const abertas = estado.lojas.filter(l => l.aberta);
+  return status + `<div class="cartao">
+    <h3 style="margin-bottom:6px">Loja</h3>
+    <p class="mini" style="margin-bottom:10px">Suas Galeões: <b>${p.galeoes}</b>. Comprar desconta na hora e o item já cai no seu Inventário — não precisa recarregar a página.</p>
+    ${abertas.length===0 ? '<p class="mini">Nenhuma loja aberta nesta campanha agora.</p>' : ''}
+  </div>
+  ${abertas.map(loja => `
+    <div class="cartao">
+      <h3 style="margin-bottom:6px">${esc(loja.nome)}</h3>
+      ${loja.descricao ? `<p class="mini" style="margin-bottom:10px">${esc(loja.descricao)}</p>` : ''}
+      ${loja.itens.length===0 ? '<p class="mini">Sem itens à venda no momento.</p>' : loja.itens.map(item => {
+        const esgotado = item.estoque !== null && item.estoque <= 0;
+        const semGaleoes = p.galeoes < item.preco;
+        const desabilitado = esgotado || semGaleoes;
+        return `<div class="item-conteudo">
+          <div class="linha">
+            <span style="flex:1"><b>${esc(item.nome)}</b> — ${item.preco} Galeões ${item.estoque!==null ? `<span class="pill">${item.estoque} em estoque</span>` : ''}</span>
+            <button data-comprar-item="${item.id}" data-comprar-loja="${loja.id}" class="${desabilitado?'':'destaque'}" ${desabilitado?'disabled':''}>${esgotado?'Esgotado':semGaleoes?'Sem Galeões':'Comprar'}</button>
+          </div>
+          ${item.descricao ? `<p class="mini" style="margin-top:6px">${esc(item.descricao)}</p>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('')}`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1506,8 +1572,8 @@ function render(){
     : falhouAoSalvar ? `<div class="aviso"><strong>Não consegui salvar${MODO_HUB?' no Hub':''}.</strong> Confira sua conexão.</div>` : '';
 
   app.innerHTML = alerta
-    + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial}[estado.aba])(p);
+    + `<div class="abas">` + ABAS.filter(a => a.id!=='loja' || estado.campanhaId).map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial, loja:abaLoja}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1945,6 +2011,13 @@ function ligarEventos(){
     if(!tag) return;
     mudar(p => { if(!p.reputacao.includes(tag)) p.reputacao.push(tag); });
   };
+
+  // Loja
+  app.querySelectorAll('[data-comprar-item]').forEach(b => b.onclick = () => {
+    const loja = estado.lojas.find(l => l.id === b.dataset.comprarLoja);
+    const item = loja?.itens.find(i => i.id === b.dataset.comprarItem);
+    if(item) comprarItem(loja.id, item);
+  });
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };

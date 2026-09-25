@@ -103,6 +103,10 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
       nome: personagem.nome,
       dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
       compartilhado: personagem.compartilhado,
+      // Campanha da ficha (decisão #162) — a ficha usa isto pra buscar as
+      // Lojas abertas da própria mesa. null pra ficha avulsa (sem
+      // campanha), que continua funcionando normalmente, só sem loja.
+      campanhaId: personagem.campanhaId,
       ehDono,
       ehMestre,
       podeEditar: podeLer,
