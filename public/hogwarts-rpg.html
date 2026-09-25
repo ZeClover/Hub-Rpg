@@ -463,6 +463,7 @@ function novoPersonagem(){
     ingredientes: [],
     pocoesEstoque: [],
     pocoesCustom: [],
+    cultivos: [],
     academico: {materias: {}, notas: []},
     itens: [],
     reliquias: [],
@@ -489,6 +490,7 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.ingredientes)) p.ingredientes = [];
   if(!Array.isArray(p.pocoesEstoque)) p.pocoesEstoque = [];
   if(!Array.isArray(p.pocoesCustom)) p.pocoesCustom = [];
+  if(!Array.isArray(p.cultivos)) p.cultivos = [];
   if(!p.academico || typeof p.academico !== 'object') p.academico = {materias:{}, notas:[]};
   if(!p.academico.materias) p.academico.materias = {};
   if(!Array.isArray(p.academico.notas)) p.academico.notas = [];
@@ -1140,6 +1142,25 @@ function abaPocoes(p){
     ${p.pocoesCustom.length ? p.pocoesCustom.map(r => `
       <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(r.nome)}</span><button data-remover-receita-custom="${r.id}" class="perigo" style="padding:3px 8px">✕</button></div>
     `).join('') : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:6px">Cultivo (Herbologia)</h3>
+    <p class="mini" style="margin-bottom:10px">Plantar Mandrágoras normais não é Projeto — é isto aqui. Sem calendário de mundo próprio ainda, o Hub usa a data real do seu dispositivo como aproximação (ver ROADMAP).</p>
+    ${p.cultivos.length===0 ? '<p class="mini">Nenhum cultivo ainda.</p>' : p.cultivos.map(c => {
+      const pronto = c.estado==='Plantado' && (Date.now() - c.dataPlantio) >= c.diasCrescimento*86400000;
+      return `<div class="item-conteudo">
+        <div class="linha">
+          <input data-cult-campo="${c.id}:planta" value="${esc(c.planta)}" placeholder="Planta" style="flex:1">
+          <input type="number" min="1" data-cult-campo-num="${c.id}:diasCrescimento" value="${c.diasCrescimento}" style="width:90px" title="Dias de crescimento">
+          <input data-cult-campo="${c.id}:producao" value="${esc(c.producao||'')}" placeholder="Produção (ex.: 2–3 un.)" style="width:150px">
+          <button data-cult-remover="${c.id}" class="perigo" style="padding:4px 10px">✕</button>
+        </div>
+        <p class="mini" style="margin-top:6px">Plantado em ${new Date(c.dataPlantio).toLocaleDateString('pt-BR')} — estado: <b>${esc(c.estado)}</b> ${pronto ? '<span class="pill on">Pronto para colheita</span>' : ''}</p>
+        ${pronto ? `<button data-cult-colher="${c.id}" class="destaque" style="margin-top:6px">Colher (vai pro inventário de ingredientes)</button>` : ''}
+      </div>`;
+    }).join('')}
+    <button data-novo-cultivo>+ Cultivo</button>
   </div>`;
 }
 
@@ -1656,6 +1677,26 @@ function ligarEventos(){
     }));
   };
   app.querySelectorAll('[data-remover-receita-custom]').forEach(b => b.onclick = () => mudar(p => { p.pocoesCustom = p.pocoesCustom.filter(r => r.id !== b.dataset.removerReceitaCustom); }));
+
+  // Cultivo (Herbologia)
+  const btNovoCultivo = app.querySelector('[data-novo-cultivo]');
+  if(btNovoCultivo) btNovoCultivo.onclick = () => mudar(p => p.cultivos.push({id:uid(), planta:'Planta', dataPlantio:Date.now(), diasCrescimento:30, producao:'', estado:'Plantado'}));
+  app.querySelectorAll('[data-cult-remover]').forEach(b => b.onclick = () => mudar(p => { p.cultivos = p.cultivos.filter(c => c.id !== b.dataset.cultRemover); }));
+  app.querySelectorAll('[data-cult-colher]').forEach(b => b.onclick = () => mudar(p => {
+    const c = p.cultivos.find(x => x.id === b.dataset.cultColher); if(!c) return;
+    c.estado = 'Colhido';
+    const item = p.ingredientes.find(i => i.nome.trim().toLowerCase() === c.planta.trim().toLowerCase());
+    if(item) item.quantidade++;
+    else p.ingredientes.push({id:uid(), nome:c.planta, quantidade:1});
+  }));
+  app.querySelectorAll('[data-cult-campo]').forEach(el => {
+    const [id, campo] = el.dataset.cultCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const c = p.cultivos.find(x=>x.id===id); if(c) c[campo] = el.value; }));
+  });
+  app.querySelectorAll('[data-cult-campo-num]').forEach(el => {
+    const [id, campo] = el.dataset.cultCampoNum.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const c = p.cultivos.find(x=>x.id===id); if(c) c[campo] = Math.max(1, Number(el.value)||1); }));
+  });
 
   // Acadêmico
   app.querySelectorAll('[data-mat-cursando]').forEach(el => el.onchange = () => mudar(p => { garantirMateria(p, el.dataset.matCursando).cursando = el.checked; }));
