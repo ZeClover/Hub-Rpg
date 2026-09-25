@@ -7098,6 +7098,109 @@ Verificado: `tsc --noEmit`, `eslint` e os 302 testes automáticos
 continuam limpos; `next build` compila com o sistema novo listado.
 `node --check` no JavaScript da ficha nova passa sem erro.
 
+## 158. Hogwarts RPG — fatias 2 a 11 (25/09/2026)
+
+Zé pediu pra continuar sem parar pra perguntar ("faz a entrada dos
+próximos... não pare até vc achar que deve parar"). Segui a ordem que
+eu mesmo tinha deixado registrada no ROADMAP da decisão #157, uma
+fatia por vez, cada uma no próprio commit, validada (`tsc --noEmit`,
+`eslint`, os 302 testes automáticos, `next build`, mais `node --check`
+no JavaScript da ficha) antes de avançar pra próxima — sem deixar
+nenhuma delas pela metade.
+
+**Fatia 2 — Casa & Família.** Nova aba, catálogo igual Conteúdos:
+Tradição de Casa (1:1 fixa com a Casa, sem bônus numérico — Casa não é
+classe), Família com 8 entradas canônicas (Black, Gaunt, Malfoy,
+Potter, Weasley, Ollivander, Longbottom, Burke — Tipo, Condição
+Financeira, Tags, Conteúdo Familiar, Acesso Familiar) mais família
+própria, Segredos Familiares por personagem, Origem com 8 seeds mais
+origem própria. `perfil.familia`/`perfil.origem` (texto livre) viraram
+`perfil.familiaId`/`perfil.origemId` apontando pro catálogo;
+`garantirCamposNovos()` migra fichas já salvas na hora de abrir.
+
+**Fatia 3 — Bestiário.** 11 criaturas seed cobrindo as cinco
+categorias do sistema (Pelúcio, Pixie da Cornuália, Bezerro-Lunar,
+Kneazle, Hipogrifo, Testrálio, Unicórnio, Troll, Acromântula, Graphorn,
+e um modelo de Dragão Adulto pra Catástrofe, que não usa ficha comum de
+Vida/Defesa) mais criatura própria. Conhecimento é individual por
+personagem (não um "sabe tudo ou nada"): cinco campos revelados
+separadamente (Conhecimento Básico, Comportamento, Fraquezas/forma
+segura, Materiais, Informação rara).
+
+**Fatia 4 — Poções.** A peça que eu mais queria acertar de verdade: a
+regra-base do sistema ("com receita + Perícia + ingredientes + tempo,
+não precisa rolar") virou automação real, não só texto na tela.
+Inventário de ingredientes por nome+quantidade (nunca "material
+genérico"), 12 receitas seed (Wiggenweld até Veritaserum/Polissuco/
+Morte Viva, marcadas como restritas), botão "Preparar" que só habilita
+quando Perícia Poções ≥ custo da receita E todo ingrediente está na
+quantidade certa — aí desconta ingredientes e soma dose no Estoque
+automaticamente. Faltando qualquer um dos dois, o botão explica por
+quê e não faz nada (pressa/substituição continuam sendo mesa, o Hub
+não rola dados).
+
+**Fatia 5 — Acadêmico.** 8 matérias obrigatórias sempre visíveis,
+5 eletivas que só aparecem a partir do 3º ano (não cursar não torna o
+conhecimento impossível, só exige outra fonte). Progresso Acadêmico
+por matéria sinalizando "pronto pra Conteúdo Extra" em 2 — o Mestre
+concede manualmente, o Hub só avisa. Mensagem contextual de N.O.M.s
+(5º ano)/N.I.E.M.s (7º ano) a partir do ano escolar derivado do nível.
+Notas na escala oficial.
+
+**Fatia 6 — Inventário.** Galeões com atalhos, Itens (raridade,
+Carregado/Guardado, confisco com por-quem/motivo, sem limite de
+slots), Relíquias (propriedades conhecidas vs. ocultas, estágio
+Dormente→Desperta→Vinculada→Completa, vínculo).
+
+**Fatia 7 — Sapos de Chocolate.** Comprar sapo lacrado gastando
+Galeões, abrir sorteando por peso de raridade (Comum 55%/Incomum 25%/
+Rara 12%/Muito Rara 6%/Lendária 2%), álbum com 12 cartas. Escolhi
+figuras históricas/mitológicas de domínio público (Merlin, Circe,
+Hécate, Paracelso...) em vez de personagens do livro — mesma linha da
+decisão #31 sobre não reproduzir conteúdo comercial de terceiros, só
+que aplicada por conta própria a um sistema onde isso nunca tinha sido
+discutido explicitamente. Coleção não concede bônus mecânico.
+
+**Fatia 8 — Conteúdos Únicos / Caminhos Raros.** Os 9 caminhos do
+documento (Animagia, Legilimência, Oclumência, Magia Sem Varinha,
+Patrono Avançado, Criação de Feitiços, Metamorfomagia, Dom Profético,
+Ofidioglossia, Herança Familiar, Vínculos Extraordinários) como
+estágios adquiríveis com custo em Escolhas Únicas. Contador automático
+de Escolhas Únicas totais a partir dos Marcos Extraordinários
+(níveis 5/10/.../35) já alcançados. Aviso — não trava — quando um
+estágio é marcado fora de ordem, porque controle do Mestre pesa mais
+que automação aqui (regra de decisão do próprio Hub). Dons Latentes
+como lista livre do Mestre, com campo de visibilidade.
+
+**Fatia 9 — Relações & Projetos.** Relações numa escala persistente
+por NPC/personagem (sem catálogo de NPC compartilhado — cada
+personagem guarda sua própria visão, mesma limitação de recurso
+compartilhado das outras fatias), Companheiros, Projetos de objetivo
+longo com progresso/total editável, Reputação como tags.
+
+**Fatia 10 — Cultivo (Herbologia).** Planta + dias de crescimento +
+detecção de "pronto pra colheita" usando a data real do dispositivo
+como aproximação de calendário de campanha (que ainda não existe no
+Hub) — documentado na própria tela pra não confundir ninguém. Colher
+deposita a produção direto no inventário de ingredientes da fatia 4.
+
+**Fatia 11 — Cargos e Disciplina.** Cargos como tags livres,
+detenções com motivo/aplicada por, sem bloquear o personagem de jogar.
+
+**O que ficou de fora, e por quê.** Todo o resto do documento de
+design que restava (segredo real por campo, Lojas ao vivo, trocas de
+cartas entre jogadores, Modo Sessão do Mestre com ações em lote,
+Quadribol, Clubes, Mapa Conhecido, Calendário de campanha) esbarra na
+mesma peça: o chassi atual é "ficha = 1 JSON por personagem", sem
+recurso compartilhado entre fichas nem trava real de visibilidade por
+campo. Construir isso sem antes decidir a arquitetura certa (que vale
+pro Hub inteiro, não só pro Hogwarts) arriscaria refazer tudo depois —
+por isso ficou registrado no ROADMAP como pendência de arquitetura, não
+como próxima fatia de conteúdo.
+
+Verificado a cada fatia: `tsc --noEmit`, `eslint`, os 302 testes
+automáticos, `next build` e `node --check` no JavaScript da ficha.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -1947,25 +1947,78 @@ edição do mestre, múltiplas fichas por jogador, etc.).
   - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
     continuam limpos
 
-## Próximas fatias do Hogwarts RPG
+- [x] **Hogwarts RPG — fatias 2 a 11** (25/09/2026) — decisão #158.
+      Sequência rápida logo depois da fatia 1, cada uma no seu próprio
+      commit, validada (`tsc`, `eslint`, os 302 testes automáticos,
+      `next build`) antes de avançar para a próxima:
+  - **Fatia 2 — Casa & Família**: Tradição de Casa (1:1 fixa, sem
+    bônus numérico), Família como catálogo (8 canônicas — Black,
+    Gaunt, Malfoy, Potter, Weasley, Ollivander, Longbottom, Burke —
+    com Tipo/Condição Financeira/Tags/Conteúdo Familiar/Acesso
+    Familiar) + família própria, Segredos Familiares por personagem,
+    Origem como catálogo (8 seeds) + origem própria
+  - **Fatia 3 — Bestiário**: 11 criaturas seed (Pelúcio, Pixie,
+    Bezerro-Lunar, Kneazle, Hipogrifo, Testrálio, Unicórnio, Troll,
+    Acromântula, Graphorn, modelo de Dragão Adulto/Catástrofe) +
+    criatura própria; conhecimento individual por personagem em cinco
+    campos revelados separadamente
+  - **Fatia 4 — Poções**: inventário de ingredientes por nome+
+    quantidade, 12 receitas seed com preparo **automático de verdade**
+    (Perícia Poções ≥ custo + ingredientes na quantidade certa =
+    desconta e gera dose, sem rolar) + receita própria
+  - **Fatia 5 — Acadêmico**: 8 matérias obrigatórias + 5 eletivas
+    (liberadas a partir do 3º ano), Progresso Acadêmico por matéria
+    sinalizando Conteúdo Extra em 2, N.O.M.s/N.I.E.M.s contextuais por
+    ano escolar, Notas na escala oficial (Ótimo…Trasgo)
+  - **Fatia 6 — Inventário**: Galeões, Itens (raridade, Carregado/
+    Guardado, confisco), Relíquias (propriedades públicas/ocultas,
+    estágio, vínculo)
+  - **Fatia 7 — Sapos de Chocolate**: comprar/abrir sapo, sorteio por
+    peso de raridade, álbum com 12 cartas seed de figuras históricas/
+    mitológicas (domínio público) — sem bônus mecânico
+  - **Fatia 8 — Conteúdos Únicos**: os 9 Caminhos Raros (Animagia,
+    Legilimência, Oclumência, Magia Sem Varinha, Patrono Avançado,
+    Criação de Feitiços, Metamorfomagia, Dom Profético, Ofidioglossia,
+    Herança Familiar, Vínculos Extraordinários) como estágios com
+    custo em Escolhas Únicas (contadas automaticamente pelos Marcos
+    Extraordinários já alcançados), aviso (não trava) de ordem errada;
+    Dons Latentes como lista livre do Mestre
+  - **Fatia 9 — Relações & Projetos**: Relações numa escala persistente
+    por NPC/personagem, Companheiros, Projetos de objetivo longo com
+    progresso/total editável, Reputação como tags
+  - **Fatia 10 — Cultivo**: plantio com dias de crescimento, detecção
+    de "pronto pra colheita" (usando a data real do dispositivo como
+    aproximação — sem calendário de campanha ainda) e colheita
+    depositando direto no inventário de ingredientes
+  - **Fatia 11 — Cargos e Disciplina**: cargos como tags livres,
+    detenções (motivo/aplicada por) sem bloquear o personagem
+  - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
+    continuam limpos depois de cada fatia
 
-Nesta ordem (decisão #26 — uma de cada vez), depois de rodado em mesa:
+## O que ainda falta no Hogwarts RPG
 
-- [ ] Casas/Tradições, Famílias e Origens como catálogos administráveis
-      pelo Mestre (igual Conteúdos), em vez de campo de texto livre
-- [ ] Varinha: sintonia revelando Tendência/Propriedade automaticamente
-      por marco, e separação real entre o que o dono vê e o que só o
-      Mestre vê — depende de decidir primeiro como o Hub representa
-      "campo visível só pro Mestre" em geral (não é só do Hogwarts;
-      "Notas do Mestre" de todo personagem tem o mesmo problema hoje)
-- [ ] Bestiário e criaturas (categorias Fraca→Catástrofe) como catálogo
-      próprio, com conhecimento revelado por personagem
-- [ ] Poções/Herbologia: receitas como Conteúdo, preparo automático
-      quando ingredientes+Perícia+tempo batem
-- [ ] Currículo por ano/matéria, progresso acadêmico, N.O.M.s/N.I.E.M.s
-- [ ] Lojas ao vivo, Sapos de Chocolate/coleção, Modo Sessão do Mestre
-      com ações rápidas (aplicar condição em vários jogadores de uma vez
-      etc.) — maior parte também depende da peça de visibilidade acima
+Tudo abaixo esbarra na mesma peça de infraestrutura que o chassi atual
+("ficha = 1 JSON por personagem", sem recurso compartilhado entre
+fichas nem separação real de visibilidade por campo) ainda não tem —
+não é falta de vontade de continuar fatiando, é decisão de arquitetura
+que vale para o Hub inteiro, não só para este sistema:
+
+- [ ] **Segredo por campo, de verdade.** Varinha oculta, Segredos
+      Familiares, propriedades ocultas de Relíquia e Dons Latentes já
+      existem na ficha, mas sem trava de servidor — hoje é o Mestre
+      quem decide na mesa o que contar, documentado em cada tela. Isso
+      exige decidir primeiro como o Hub representa "campo visível só
+      pro Mestre" em geral (o mesmo problema já existe pra "Notas do
+      Mestre" de qualquer personagem, em qualquer sistema)
+- [ ] **Lojas ao vivo** com estoque compartilhado e concorrência real
+      (dois jogadores comprando a última unidade ao mesmo tempo)
+- [ ] **Trocas de Sapos de Chocolate** entre jogadores — a coleção em
+      si já existe (fatia 7), falta só a troca, que depende de um
+      recurso compartilhado entre duas fichas
+- [ ] **Modo Sessão do Mestre** com ações em lote pra vários jogadores
+      de uma vez (aplicar condição/revelar informação pra um grupo)
+- [ ] Quadribol, Clubes, Mapa Conhecido e Calendário de campanha —
+      já eram "fase posterior"/opcionais no próprio documento de design
 
 ---
 
