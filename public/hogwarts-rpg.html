@@ -362,6 +362,26 @@ const TIPOS_NOTA = ['Trabalho','Prova','N.O.M.','N.I.E.M.','Outro'];
 
 const RARIDADES_ITEM = ['Comum','Encantado','Raro','Excepcional','Único'];
 
+// Coleção "Sapos de Chocolate" — figuras históricas/mitológicas ligadas a
+// magia e alquimia (domínio público, não personagens do livro), seguindo
+// a regra do sistema: coleção não concede bônus mecânico, só descoberta.
+const CARTAS_SEED = [
+  {id:'merlin', nome:'Merlin', raridade:'Lendária', numero:1, bio:'Figura lendária da tradição arturiana, associada à sabedoria e à profecia.'},
+  {id:'morgana', nome:'Morgana', raridade:'Muito Rara', numero:2, bio:'Feiticeira da tradição arturiana, ligada a cura e transformação.'},
+  {id:'hecate', nome:'Hécate', raridade:'Muito Rara', numero:3, bio:'Figura da mitologia grega associada a encruzilhadas e magia.'},
+  {id:'circe', nome:'Circe', raridade:'Rara', numero:4, bio:'Figura da mitologia grega associada a transformação e poções.'},
+  {id:'hermes-trismegisto', nome:'Hermes Trismegisto', raridade:'Rara', numero:5, bio:'Figura lendária associada às origens da alquimia ocidental.'},
+  {id:'paracelso', nome:'Paracelso', raridade:'Incomum', numero:6, bio:'Médico e alquimista renascentista, associado à toxicologia e à iatroquímica.'},
+  {id:'nostradamus', nome:'Nostradamus', raridade:'Incomum', numero:7, bio:'Astrólogo e autor renascentista associado a profecias.'},
+  {id:'agrippa', nome:'Heinrich Cornelius Agrippa', raridade:'Incomum', numero:8, bio:'Estudioso renascentista de filosofia oculta.'},
+  {id:'john-dee', nome:'John Dee', raridade:'Comum', numero:9, bio:'Estudioso inglês associado a matemática, astrologia e ocultismo.'},
+  {id:'trithemius', nome:'Johannes Trithemius', raridade:'Comum', numero:10, bio:'Abade e estudioso associado a criptografia e ocultismo.'},
+  {id:'zosimos', nome:'Zósimo de Panópolis', raridade:'Comum', numero:11, bio:'Um dos primeiros autores conhecidos sobre alquimia.'},
+  {id:'cagliostro', nome:'Conde de Cagliostro', raridade:'Comum', numero:12, bio:'Figura do século XVIII associada a ocultismo e charlatanismo — histórico contestado.'},
+];
+const PESO_RARIDADE = {'Comum':55, 'Incomum':25, 'Rara':12, 'Muito Rara':6, 'Lendária':2};
+const CUSTO_SAPO = 2; // Galeões por Sapo de Chocolate lacrado
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -399,6 +419,9 @@ function novoPersonagem(){
     academico: {materias: {}, notas: []},
     itens: [],
     reliquias: [],
+    sapoLacrados: 0,
+    album: {},
+    ultimaCartaAberta: null,
   };
 }
 
@@ -418,6 +441,9 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.academico.notas)) p.academico.notas = [];
   if(!Array.isArray(p.itens)) p.itens = [];
   if(!Array.isArray(p.reliquias)) p.reliquias = [];
+  if(typeof p.sapoLacrados !== 'number') p.sapoLacrados = 0;
+  if(!p.album || typeof p.album !== 'object') p.album = {};
+  if(p.ultimaCartaAberta === undefined) p.ultimaCartaAberta = null;
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -435,6 +461,19 @@ function todasReceitas(p){ return [...RECEITAS_SEED, ...p.pocoesCustom]; }
 function estadoMateria(p, nome){
   return p.academico.materias[nome] || {cursando: MATERIAS_OBRIGATORIAS.includes(nome), progresso: 0};
 }
+function sortearCarta(){
+  const total = Object.values(PESO_RARIDADE).reduce((a,b)=>a+b, 0);
+  let alvo = Math.random() * total;
+  let raridadeSorteada = 'Comum';
+  for(const [rar, peso] of Object.entries(PESO_RARIDADE)){
+    if(alvo < peso){ raridadeSorteada = rar; break; }
+    alvo -= peso;
+  }
+  const candidatas = CARTAS_SEED.filter(c => c.raridade === raridadeSorteada);
+  const pool = candidatas.length ? candidatas : CARTAS_SEED;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function garantirMateria(p, nome){
   if(!p.academico.materias[nome]) p.academico.materias[nome] = estadoMateria(p, nome);
   return p.academico.materias[nome];
@@ -577,6 +616,7 @@ const ABAS = [
   {id:'pocoes', nome:'Poções'},
   {id:'academico', nome:'Acadêmico'},
   {id:'inventario', nome:'Inventário'},
+  {id:'colecao', nome:'Sapos de Chocolate'},
 ];
 
 function abaPerfil(p){
@@ -1140,6 +1180,35 @@ function abaInventario(p){
   </div>`;
 }
 
+function abaColecao(p){
+  const total = CARTAS_SEED.length;
+  const possuidas = Object.keys(p.album).filter(id => p.album[id] > 0).length;
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Sapos de Chocolate</h3>
+    <p class="mini" style="margin-bottom:10px">Coleção nunca concede bônus mecânico — só raridade, duplicata e, às vezes, uma informação de mundo. Cada Sapo custa ${CUSTO_SAPO} Galeões.</p>
+    <div class="linha">
+      <button data-comprar-sapo>Comprar Sapo (${CUSTO_SAPO} Galeões)</button>
+      <span class="mini">Lacrados: <b>${p.sapoLacrados}</b></span>
+      <button data-abrir-sapo ${p.sapoLacrados>0?'':'disabled'}>Abrir 1 Sapo</button>
+    </div>
+    ${p.ultimaCartaAberta ? (() => { const c = CARTAS_SEED.find(x=>x.id===p.ultimaCartaAberta); return c ? `<div class="ok" style="margin-top:10px"><b>${esc(c.nome)}</b> — ${esc(c.raridade)}. ${esc(c.bio)}</div>` : ''; })() : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Álbum — Bruxos e Bruxas Notáveis (${possuidas} / ${total})</h3>
+    <div class="grade">
+      ${CARTAS_SEED.map(c => {
+        const qtd = p.album[c.id] || 0;
+        return `<div class="grid-atributo" style="${qtd===0?'opacity:.4':''}">
+          <div class="mini">#${c.numero} · ${esc(c.raridade)}</div>
+          <div style="font-size:14px;font-family:var(--fonte-titulo);margin:4px 0">${qtd>0 ? esc(c.nome) : '???'}</div>
+          <div class="mini">${qtd>0 ? '×'+qtd : 'não descoberta'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1163,7 +1232,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1456,6 +1525,21 @@ function ligarEventos(){
     const [id, campo] = el.dataset.relCampo.split(':');
     const evento = el.tagName==='SELECT' ? 'change' : 'input';
     el.addEventListener(evento, () => mudarSemRedesenhar(p => { const r = p.reliquias.find(x=>x.id===id); if(r) r[campo] = el.value; }));
+  });
+
+  // Sapos de Chocolate
+  const btComprarSapo = app.querySelector('[data-comprar-sapo]');
+  if(btComprarSapo) btComprarSapo.onclick = () => mudar(p => {
+    if(p.galeoes < CUSTO_SAPO) return;
+    p.galeoes -= CUSTO_SAPO; p.sapoLacrados++;
+  });
+  const btAbrirSapo = app.querySelector('[data-abrir-sapo]');
+  if(btAbrirSapo) btAbrirSapo.onclick = () => mudar(p => {
+    if(p.sapoLacrados <= 0) return;
+    p.sapoLacrados--;
+    const carta = sortearCarta();
+    p.album[carta.id] = (p.album[carta.id] || 0) + 1;
+    p.ultimaCartaAberta = carta.id;
   });
 }
 
