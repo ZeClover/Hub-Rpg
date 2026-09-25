@@ -2124,13 +2124,27 @@ passando.
       de Namikaze a Shikigami, entraram no `CLAS` (25 para 35 no
       total) — inclui a opção "Sem Clã" (Non-Clan). Testado com
       Playwright; `tsc` e lint continuam limpos.
+- [x] **Naruto 5e — Equipamento: catálogo de armas e armaduras**
+      (25/09/2026) — decisão #215. Novo `EQUIPAMENTO_CATALOGO` (94
+      itens: 68 armas, 18 armaduras, 8 munições) do Capítulo 5 do
+      livro-base, mais seletor "+ Do catálogo" na aba Notas. Tabelas
+      vinham como imagem no PDF (texto não extraía) — lidas
+      visualmente renderizando a página como PNG. Testado com
+      Playwright; `tsc` e lint continuam limpos.
 - [ ] Naruto 5e — resto dos Clãs (Shoton a Yuki, lote 3 de 3),
-      Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
-      opção de subclasse, Ficha de Inimigo/Bingo Book,
-      Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
-      #26); PDF grande demais pra ferramenta do Drive extrair inteiro →
-      pedir recortado como anexo no chat e ler local com
-      `pymupdf` (decisão #136)
+      Hijutsu (jutsu de clã) e Talentos de Clã de todos os clãs,
+      mecânica de cada opção de subclasse (Genjutsu Pledges, Hunter
+      Creeds etc. — fonte recebida, "Orochimaru's Observation
+      Compendium" completo, 272 páginas), Talentos gerais (Capítulo
+      13, fonte recebida no "Naruto 5e - Full Document.pdf"), Itens de
+      Chakra (fonte recebida, PDF dedicado), Ficha de Inimigo/Bingo
+      Book (fonte recebida, 70 páginas de estatísticas de NPC/monstro),
+      Escudo do Mestre/Kage Guide (fonte recebida, 81 páginas),
+      sistema de Bulk/Inventário do Equipamento, Modo Hub — fatias
+      futuras (decisão #26). Zé já mandou o PDF completo de cada um
+      desses (recortado em partes e extraído local com `pymupdf`,
+      decisão #136) — não é mais pendência de material, só de tempo
+      de trabalho.
 
 ---
 

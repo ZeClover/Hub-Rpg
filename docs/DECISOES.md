@@ -8044,6 +8044,68 @@ batendo com algum id de `PERICIAS`). Os 7 scripts Playwright sem
 regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit` e `npm run
 lint` seguem limpos.
 
+## 215. Naruto 5e — Equipamento: catálogo de armas e armaduras (Capítulo 5) (25/09/2026)
+
+Zé mandou o "Naruto 5e - Full Document.pdf" completo (181 páginas,
+extraído localmente com `pymupdf`). A aba Equipamento existia desde o
+início só como inventário livre (`{nome, notas}`), com um aviso
+dizendo que as tabelas de arma/armadura ainda estavam fora do Hub.
+Essa pendência fecha agora: novo `EQUIPAMENTO_CATALOGO` com 94 itens
+— 68 armas (simples/marciais/exóticas, corpo a corpo e à distância),
+18 armaduras (leve/média/pesada) e 8 tipos de munição — mais um
+seletor "+ Do catálogo" na aba Notas, no mesmo padrão já usado em
+Jutsu (`jutsuDoCatalogo`/`equipamentoDoCatalogo`). O item continua
+salvo como `{nome, notas}` — o cadastro manual ("+ Item em branco")
+não muda, só ganhou uma forma mais rápida de preencher.
+
+**Achado técnico**: as tabelas de armas/armaduras do livro são imagem
+dentro do PDF — a extração de texto por `pymupdf` (`get_text()`) pula
+elas silenciosamente (mesmo com o PDF completo, sem truncamento; é a
+mesma lacuna que já tínhamos identificado antes de receber o PDF
+inteiro). Resolvido renderizando as páginas específicas como PNG
+(`page.get_pixmap()`) e lendo a tabela visualmente — os números
+(custo, dano, bônus de armadura etc.) foram conferidos direto da
+imagem, não inventados.
+
+Termos de propriedade de arma/armadura traduzidos e fixados (mantendo
+consistência com os ~380 jutsu de Bukijutsu que já citam várias
+delas): Deadly→**Mortal**, Reinforced→**Reforçada**, Reach→**Alcance
+Estendido**, Polearm→grupo **Haste**, Power→grupo **Força** (todos já
+fixados antes); novos nesta decisão: Finesse→**Acuidade**,
+Light→**Leve**, Heavy→**Pesada**, Thrown→**Arremessável**,
+Multiattack→**Multiataque**, Blocking→**Bloqueio**,
+Grapple→**Agarrão**, Trip→**Derrubar**, Disarm→**Desarmar**,
+Hidden→**Oculta**, Versatile→**Versátil**, Critical→**Crítico**,
+Lethal→**Letal**, Loading→**Recarga**, Winding→**Impulso**,
+Returning→**Retorno**, Volatile→**Instável**, Evocation→**Evocação**,
+Tactical→**Tática**, Unarmed→**Desarmado**, Flexible→**Flexível**;
+propriedades de armadura Camouflage→**Camuflagem**,
+Fortified→**Fortificada**, Fashionable→**Elegante**, High
+Quality→**Alta Qualidade**, Bulky→**Volumosa**, Heavyweight→**Peso
+Elevado**, Threatening→**Intimidante**, Lightweight→**Peso
+Reduzido**. Nomes de arma japoneses consagrados (Katana, Kunai,
+Shuriken, Senbon, Tanto, Kama, Naginata, Yari, Tonfa, Nunchaku,
+Kanabo, Chakram, Tachi, Odachi, Sai, Gunsen, Chigiriki, Sasumata,
+Tinbe Rochin, Jitte, Urumi, Chokuto) ficaram sem tradução, mesmo
+padrão já usado pra nomes próprios estrangeiros no catálogo de jutsu;
+nomes descritivos em inglês (Hand Axe, Weighted Chain, Short Bow,
+Light Crossbow, Broadsword, Iron Claw, Knuckle Blades, Hidden Blade,
+Chained Spear, Whip, Battle Wire, Great Axe, Scythe, Hooked Lance,
+War Club, Combat Bracers, Boomerang, Blowgun etc.) foram traduzidos.
+
+**Pendências que ficam fora desta fatia** (decisão #26): o sistema de
+Bulk/Slots de Inventário e Encumbrance do livro (créditos a Giffy
+Glyph no original) não foi implementado — o campo `bulk` de cada item
+é só referência, a ficha não soma nem limita nada com ele ainda;
+Itens de Chakra (equivalente a itens mágicos) têm PDF próprio já
+recebido, mas ficam pra próxima fatia de Equipamento.
+
+Testado com Playwright (`test_naruto.js` a `test_naruto7.js`, mais um
+teste novo específico simulando escolher "Katana" no seletor e clicar
+"+ Do catálogo"): todos "ERROS JS: nenhum". `EQUIPAMENTO_CATALOGO.length`
+= 94, sem `nome` duplicado. `npx tsc --noEmit` e `npm run lint`
+seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

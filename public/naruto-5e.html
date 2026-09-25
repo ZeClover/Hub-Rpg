@@ -485,6 +485,113 @@ const RANKS_JUTSU = [
   {rank:'S', equivalente:'Nível 9'},
 ];
 
+/* Equipamento (Capítulo 5 do livro-base "Naruto 5e - Full Document") — armas
+   simples/marciais/exóticas, armaduras e munição. Números batidos direto do
+   livro (tabelas vieram como imagem no PDF, lidas visualmente — decisão
+   registrada em DECISOES.md). "propriedades" e "grupo" usam os mesmos termos
+   já fixados no catálogo de Bukijutsu (Mortal=Deadly, Reforçada=Reinforced,
+   Alcance Estendido=Reach, grupo Haste=Polearm, grupo Força=Power etc.) pra
+   ficar consistente com os ~380 jutsu de arma que já citam essas palavras.
+   Ainda não tem o sistema de Bulk/Inventário (Slots, Encumbrance) do livro —
+   o campo "bulk" fica só de referência por enquanto. */
+const EQUIPAMENTO_CATALOGO = [
+  {nome:'Kunai', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d4 Perfurante', propriedades:'Arremessável (30/60), Leve, Acuidade, Multiataque, Munição', grupo:'Arremessável/Munição', bulk:2},
+  {nome:'Machadinha', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d6 Cortante', propriedades:'Leve, Arremessável (20/60)', grupo:'Arremessável', bulk:2},
+  {nome:'Sai', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Perfurante', propriedades:'Arremessável (20/60), Leve, Acuidade, Desarmar', grupo:'Lâmina/Arremessável', bulk:1},
+  {nome:'Tanto (Espada Curta)', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d6 Perfurante', propriedades:'Leve, Acuidade, Mortal, Flexível (Cortante d4)', grupo:'Lâmina', bulk:2},
+  {nome:'Kama (Foice de Mão)', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d4 Cortante', propriedades:'Leve, Acuidade, Crítico, Tática, Multiataque', grupo:'Lâmina', bulk:1},
+  {nome:'Gunsen', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d4 Cortante', propriedades:'Mortal, Leve, Acuidade, Oculta', grupo:'Lâmina', bulk:1},
+  {nome:'Bastão Longo', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d6 Concussão', propriedades:'Versátil (1d8), Bloqueio', grupo:'Haste', bulk:2},
+  {nome:'Lança', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d6 Perfurante', propriedades:'Versátil (1d8), Alcance Estendido 1', grupo:'Haste', bulk:2},
+  {nome:'Corrente com Peso', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'1d4 Concussão', propriedades:'Alcance Estendido 2, Agarrão, Derrubar, Duas Mãos, Multiataque', grupo:'Mangual', bulk:2},
+  {nome:'Kusarigama (Foice Acorrentada)', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'10 Ryo', dano:'2d4 Cortante', propriedades:'Alcance Estendido 1, Agarrão, Acuidade, Tática, Duas Mãos, Impulso', grupo:'Mangual', bulk:2},
+  {nome:'Tekko (Soco-Inglês)', tipo:'Arma', categoria:'Arma Simples Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Concussão', propriedades:'Desarmado, Agarrão, Leve', grupo:'Força', bulk:2},
+  {nome:'Espadão', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d6 Cortante', propriedades:'Leve, Acuidade, Desarmar', grupo:'Lâmina', bulk:2},
+  {nome:'Garra de Ferro', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Cortante', propriedades:'Desarmado, Acuidade, Crítico, Leve', grupo:'Lâmina', bulk:1},
+  {nome:'Tachi', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d8 Cortante', propriedades:'Versátil (1d10), Mortal', grupo:'Lâmina', bulk:2},
+  {nome:'Katana', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'30 Ryo', dano:'1d8 Cortante', propriedades:'Mortal, Acuidade', grupo:'Lâmina', bulk:2},
+  {nome:'Odachi', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'80 Ryo', dano:'2d6 Cortante', propriedades:'Crítico, Pesada, Duas Mãos', grupo:'Lâmina', bulk:3},
+  {nome:'Lâminas de Soco', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d6 Cortante', propriedades:'Leve, Acuidade, Oculta', grupo:'Lâmina', bulk:1},
+  {nome:'Lâmina Oculta', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Perfurante', propriedades:'Mortal, Letal 5, Oculta, Acuidade', grupo:'Lâmina', bulk:1},
+  {nome:'Lança Acorrentada', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d10 Perfurante', propriedades:'Alcance Estendido 1, Derrubar, Agarrão', grupo:'Mangual', bulk:3},
+  {nome:'Chigiriki', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'25 Ryo', dano:'1d8 Perfurante', propriedades:'Alcance Estendido 1, Derrubar, Desarmar, Acuidade', grupo:'Mangual', bulk:2},
+  {nome:'Chicote', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d6 Cortante', propriedades:'Alcance Estendido 2, Derrubar, Acuidade, Impulso', grupo:'Mangual', bulk:1},
+  {nome:'Arame de Batalha', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Cortante', propriedades:'Alcance Estendido 2, Derrubar, Agarrão, Acuidade, Especial*', grupo:'Mangual', bulk:1},
+  {nome:'Naginata', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d10 Cortante', propriedades:'Alcance Estendido 1, Pesada, Derrubar, Duas Mãos, Flexível (Concussão d8)', grupo:'Haste', bulk:3},
+  {nome:'Sasumata', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d10 Perfurante', propriedades:'Alcance Estendido 1, Agarrão, Duas Mãos', grupo:'Haste', bulk:3},
+  {nome:'Machado Grande', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d12 Cortante', propriedades:'Mortal, Pesada, Duas Mãos', grupo:'Haste', bulk:3},
+  {nome:'Foice', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d8 Cortante', propriedades:'Alcance Estendido 1, Mortal, Pesada, Duas Mãos', grupo:'Haste', bulk:3},
+  {nome:'Tinbe Rochin', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'15 Ryo', dano:'1d6 Perfurante', propriedades:'Bloqueio, Duas Mãos', grupo:'Haste', bulk:2},
+  {nome:'Yari', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'3d4 Perfurante', propriedades:'Alcance Estendido 1, Pesada, Duas Mãos', grupo:'Haste', bulk:3},
+  {nome:'Lança com Gancho', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d10 Perfurante', propriedades:'Alcance Estendido 1, Duas Mãos', grupo:'Haste', bulk:3},
+  {nome:'Tetsubo', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d10 Concussão', propriedades:'Mortal 2, Pesada, Versátil (1d12)', grupo:'Força', bulk:3},
+  {nome:'Tonfa', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d6 Concussão', propriedades:'Leve, Bloqueio, Oculta, Derrubar, Multiataque', grupo:'Força', bulk:2},
+  {nome:'Clava de Guerra', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d8 Concussão', propriedades:'Alcance Estendido 1, Pesada', grupo:'Força', bulk:3},
+  {nome:'Nunchaku', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d6 Concussão', propriedades:'Leve, Desarmar, Multiataque, Impulso', grupo:'Força', bulk:2},
+  {nome:'Braceletes de Combate', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Concussão', propriedades:'Desarmado, Desarmar, Leve', grupo:'Força', bulk:1},
+  {nome:'Jitte', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'20 Ryo', dano:'1d4 Concussão', propriedades:'Leve, Bloqueio, Desarmar', grupo:'Força', bulk:1},
+  {nome:'Leque Gunbai', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'1d6 Concussão', propriedades:'Bloqueio, Duas Mãos', grupo:'Força', bulk:3},
+  {nome:'Kanabo', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'30 Ryo', dano:'1d10 Concussão', propriedades:'Crítico, Pesada, Duas Mãos', grupo:'Força', bulk:2},
+  {nome:'Martelo Otsuchi', tipo:'Arma', categoria:'Arma Marcial Corpo a Corpo', custo:'40 Ryo', dano:'3d4 Concussão', propriedades:'Pesada, Duas Mãos', grupo:'Força', bulk:2},
+  {nome:'Sansetsukon (Bastão de 3 Seções)', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'100 Ryo', dano:'1d10 Concussão', propriedades:'Alcance Estendido 1, Desarmar, Derrubar, Duas Mãos, Acuidade, Impulso', grupo:'Força', bulk:2},
+  {nome:'Foice Tríplice', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'100 Ryo', dano:'1d12 Cortante', propriedades:'Alcance Estendido 2, Mortal 2, Duas Mãos, Impulso', grupo:'Haste', bulk:2},
+  {nome:'Espada Cutelo', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'100 Ryo', dano:'1d8 Cortante', propriedades:'Acuidade, Crítico, Mortal', grupo:'Lâmina', bulk:2},
+  {nome:'Katar Triplo', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'100 Ryo', dano:'1d6 Perfurante', propriedades:'Desarmado, Leve, Bloqueio, Oculta', grupo:'Lâmina', bulk:2},
+  {nome:'Urumi', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'100 Ryo', dano:'1d8 Cortante', propriedades:'Alcance Estendido 1, Acuidade, Desarmar, Derrubar, Agarrão, Impulso', grupo:'Lâmina', bulk:2},
+  {nome:'Chokuto', tipo:'Arma', categoria:'Arma Exótica Corpo a Corpo', custo:'20 Ryo', dano:'1d8 Cortante/Perfurante', propriedades:'Acuidade, Crítico, Letal 2', grupo:'Lâmina', bulk:3},
+  {nome:'Senbon', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'15 Ryo', dano:'1d4 Perfurante', propriedades:'Arremessável (30/60), Multiataque, Munição', grupo:'Arremessável/Munição', bulk:1},
+  {nome:'Arco Curto', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'20 Ryo', dano:'1d6 Perfurante', propriedades:'Alcance (60/180), Duas Mãos, Acuidade, Munição', grupo:'Munição', bulk:2},
+  {nome:'Shuriken', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'10 Ryo', dano:'1d4 Cortante', propriedades:'Arremessável (30/120), Multiataque, Munição', grupo:'Arremessável/Munição', bulk:2},
+  {nome:'Funda', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'5 Ryo', dano:'1d4 Concussão', propriedades:'Alcance (30/120), Munição', grupo:'Munição', bulk:1},
+  {nome:'Besta Leve', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'20 Ryo', dano:'1d8 Perfurante', propriedades:'Alcance (60/120), Duas Mãos, Munição', grupo:'Munição', bulk:2},
+  {nome:'Bola (arma)', tipo:'Arma', categoria:'Arma Simples à Distância', custo:'5 Ryo', dano:'1d4 Concussão', propriedades:'Arremessável, Alcance (30/60), Derrubar, Munição', grupo:'Munição', bulk:1},
+  {nome:'Chakram', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'40 Ryo', dano:'1d6 Cortante', propriedades:'Arremessável (30/60), Leve, Retorno', grupo:'Arremessável', bulk:2},
+  {nome:'Chakram Gigante', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'40 Ryo', dano:'1d10 Cortante', propriedades:'Arremessável (60/120), Duas Mãos, Retorno', grupo:'Arremessável', bulk:3},
+  {nome:'Fuma-Shuriken', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'20 Ryo', dano:'1d8 Cortante', propriedades:'Arremessável (60/120), Oculta, Retorno', grupo:'Arremessável', bulk:2},
+  {nome:'Shuriken Gigante', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'40 Ryo', dano:'1d12 Cortante', propriedades:'Arremessável (40/80), Pesada, Duas Mãos, Retorno', grupo:'Arremessável', bulk:3},
+  {nome:'Torinawa', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'5 Ryo', dano:'1d4 Concussão', propriedades:'Arremessável (20/40), Agarrão', grupo:'Arremessável', bulk:1},
+  {nome:'Bumerangue', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'25 Ryo', dano:'1d6 Concussão', propriedades:'Arremessável (60/90), Versátil (1d8), Retorno', grupo:'Arremessável', bulk:1},
+  {nome:'Bumerangue Gigante', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'50 Ryo', dano:'1d10 Concussão', propriedades:'Arremessável (90/120), Duas Mãos, Pesada, Retorno', grupo:'Arremessável', bulk:1},
+  {nome:'Arco Longo', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'40 Ryo', dano:'1d8 Perfurante', propriedades:'Alcance (120/180), Acuidade, Duas Mãos, Munição', grupo:'Munição', bulk:3},
+  {nome:'Besta de Mão', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'20 Ryo', dano:'1d6 Perfurante', propriedades:'Alcance (30/120), Leve, Recarga, Munição', grupo:'Munição', bulk:2},
+  {nome:'Besta Pesada', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'40 Ryo', dano:'1d10 Perfurante', propriedades:'Alcance (30/120), Pesada, Acuidade, Recarga, Munição', grupo:'Munição', bulk:3},
+  {nome:'Zarabatana', tipo:'Arma', categoria:'Arma Marcial à Distância', custo:'20 Ryo', dano:'1d4 Perfurante', propriedades:'Alcance (25/100), Munição', grupo:'Munição', bulk:1},
+  {nome:'Pistola de Mecha', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'200 Ryo', dano:'3d6 Perfurante', propriedades:'Alcance (15/60), Leve, Recarga, Munição, Instável 3', grupo:'Munição', bulk:2},
+  {nome:'Rifle de Mecha', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'250 Ryo', dano:'3d8 Perfurante', propriedades:'Alcance (60/150), Recarga, Duas Mãos, Munição, Instável 4', grupo:'Munição', bulk:2},
+  {nome:'Hiya Taihou', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'500 Ryo', dano:'6d6 Fogo', propriedades:'Alcance (60/150), Recarga, Duas Mãos, Munição, Instável 5', grupo:'Munição', bulk:3},
+  {nome:'Pergaminho de Combate', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'250 Ryo', dano:'1d8 Variável', propriedades:'Alcance (30/90), Evocação', grupo:'-', bulk:1},
+  {nome:'Pergaminho de Combate Gigante', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'500 Ryo', dano:'1d12 Variável', propriedades:'Alcance (60/180), Evocação, Duas Mãos', grupo:'-', bulk:3},
+  {nome:'Arma de Kunai Balístico', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'300 Ryo', dano:'3d6 Perfurante', propriedades:'Alcance (30/60), Recarga, Munição, Multiataque, Instável 3', grupo:'Munição', bulk:2},
+  {nome:'Rifle de Shuriken Balístico', tipo:'Arma', categoria:'Arma Exótica à Distância', custo:'500 Ryo', dano:'3d8 Cortante', propriedades:'Alcance (120), Recarga, Duas Mãos, Munição, Multiataque, Instável 5', grupo:'Munição', bulk:3},
+  {nome:'Tecido Acolchoado', tipo:'Armadura', categoria:'Armadura Leve', custo:'100 Ryo', bonusArmadura:1, bonusDestreza:'Máximo +7', propriedades:'Nenhuma', bulk:1},
+  {nome:'Trama de Couro', tipo:'Armadura', categoria:'Armadura Leve', custo:'250 Ryo', bonusArmadura:2, bonusDestreza:'Máximo +7', propriedades:'Camuflagem', bulk:1},
+  {nome:'Tecido Blindado', tipo:'Armadura', categoria:'Armadura Leve', custo:'500 Ryo', bonusArmadura:3, bonusDestreza:'Máximo +7', propriedades:'Fortificada', bulk:2},
+  {nome:'Tecido Reforçado', tipo:'Armadura', categoria:'Armadura Leve', custo:'750 Ryo', bonusArmadura:3, bonusDestreza:'Máximo +7', propriedades:'Reforçada (2)', bulk:2},
+  {nome:'Trama Sintética', tipo:'Armadura', categoria:'Armadura Leve', custo:'1500 Ryo', bonusArmadura:4, bonusDestreza:'Máximo +7', propriedades:'Elegante', bulk:3},
+  {nome:'Trama Shinobi', tipo:'Armadura', categoria:'Armadura Leve', custo:'2500 Ryo', bonusArmadura:5, bonusDestreza:'Máximo +7', propriedades:'Alta Qualidade', bulk:3},
+  {nome:'Jaqueta de Combate', tipo:'Armadura', categoria:'Armadura Média', custo:'100 Ryo', bonusArmadura:4, bonusDestreza:'Máximo +3', propriedades:'Volumosa', bulk:4},
+  {nome:'Jaqueta Shinobi', tipo:'Armadura', categoria:'Armadura Média', custo:'250 Ryo', bonusArmadura:4, bonusDestreza:'Máximo +3', propriedades:'Elegante, Reforçada (2)', bulk:3},
+  {nome:'Jaqueta de Combate Shinobi', tipo:'Armadura', categoria:'Armadura Média', custo:'500 Ryo', bonusArmadura:5, bonusDestreza:'Máximo +3', propriedades:'Camuflagem, Reforçada (3)', bulk:4},
+  {nome:'Jaqueta de Chunin', tipo:'Armadura', categoria:'Armadura Média', custo:'750 Ryo', bonusArmadura:5, bonusDestreza:'Máximo +3', propriedades:'Fortificada, Reforçada (3)', bulk:5},
+  {nome:'Sobretudo de Batalha', tipo:'Armadura', categoria:'Armadura Média', custo:'1500 Ryo', bonusArmadura:6, bonusDestreza:'Máximo +3', propriedades:'Alta Qualidade, Peso Elevado (12), Reforçada (4)', bulk:6},
+  {nome:'Sobretudo Blindado de Chunin', tipo:'Armadura', categoria:'Armadura Média', custo:'2500 Ryo', bonusArmadura:6, bonusDestreza:'Máximo +3', propriedades:'Fortificada, Peso Elevado (14), Reforçada (4)', bulk:6},
+  {nome:'Armadura de Combate', tipo:'Armadura', categoria:'Armadura Pesada', custo:'100 Ryo', bonusArmadura:6, bonusDestreza:'-', propriedades:'Volumosa, Reforçada (4)', bulk:6},
+  {nome:'Armadura Sintética', tipo:'Armadura', categoria:'Armadura Pesada', custo:'250 Ryo', bonusArmadura:6, bonusDestreza:'-', propriedades:'Alta Qualidade, Reforçada (4)', bulk:5},
+  {nome:'Armadura de Jonin', tipo:'Armadura', categoria:'Armadura Pesada', custo:'500 Ryo', bonusArmadura:7, bonusDestreza:'-', propriedades:'Intimidante, Peso Elevado (14), Reforçada (6)', bulk:4},
+  {nome:'Armadura de Jonin de Elite', tipo:'Armadura', categoria:'Armadura Pesada', custo:'750 Ryo', bonusArmadura:7, bonusDestreza:'-', propriedades:'Intimidante, Alta Qualidade, Reforçada (6)', bulk:6},
+  {nome:'Armadura de Ronin', tipo:'Armadura', categoria:'Armadura Pesada', custo:'1500 Ryo', bonusArmadura:8, bonusDestreza:'-', propriedades:'Peso Reduzido, Fortificada, Peso Elevado (16), Reforçada (8)', bulk:6},
+  {nome:'Armadura de Samurai', tipo:'Armadura', categoria:'Armadura Pesada', custo:'2500 Ryo', bonusArmadura:8, bonusDestreza:'-', propriedades:'Alta Qualidade, Fortificada (2), Peso Elevado (18), Reforçada (8)', bulk:8},
+  {nome:'Flechas (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'25 Ryo', bulk:2},
+  {nome:'Agulhas de Zarabatana (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'10 Ryo', bulk:1},
+  {nome:'Virotes de Besta (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'25 Ryo', bulk:2},
+  {nome:'Kunai (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'10 Ryo', bulk:2},
+  {nome:'Agulhas Senbon (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'15 Ryo', bulk:1},
+  {nome:'Shuriken (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'10 Ryo', bulk:2},
+  {nome:'Munição de Mecha (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'50 Ryo', bulk:2},
+  {nome:'Munição de Hiya Taihou (1 Pilha)', tipo:'Munição', categoria:'Munição', custo:'100 Ryo', bulk:2},
+];
+function equipamentoDoCatalogo(nome){ return EQUIPAMENTO_CATALOGO.find(e => e.nome === nome) || null; }
+
 /* Catálogo de Jutsu (Compêndio de Jutsu do Jiraiya — 1400 jutsu ao todo
    nas 341 páginas das duas partes que o Zé mandou, lidas locais com
    pymupdf). Mecânica (custo, alcance, duração, palavras-chave) copiada
@@ -3889,6 +3996,12 @@ function renderRegras(p){
   return [tabelaProf, elemento, clash, jutsuRegras, condicoes];
 }
 
+function detalhesEquipamento(it){
+  if(it.tipo === 'Armadura') return `${it.categoria} · Bônus de Armadura +${it.bonusArmadura} · Bônus de Destreza: ${it.bonusDestreza} · Propriedades: ${it.propriedades} · Custo: ${it.custo} · Bulk: ${it.bulk}`;
+  if(it.tipo === 'Munição') return `${it.categoria} · Custo: ${it.custo} · Bulk: ${it.bulk}`;
+  return `${it.categoria} · Dano: ${it.dano} · Propriedades: ${it.propriedades} · Grupo: ${it.grupo} · Custo: ${it.custo} · Bulk: ${it.bulk}`;
+}
+
 function renderNotas(p){
   const linhasEquip = p.equipamento.map((it, i) => el('tr', {},
     el('td', {}, el('input', {value:it.nome, oninput: e => { it.nome = e.target.value; salvar(); }})),
@@ -3896,14 +4009,27 @@ function renderNotas(p){
     el('td', {}, el('button', {class:'perigo', onclick: () => { p.equipamento.splice(i,1); salvar(); render(); }}, '×')),
   ));
 
+  const selCatalogoEquip = el('select', {},
+    el('option', {value:''}, '— escolher do catálogo —'),
+    ...EQUIPAMENTO_CATALOGO.map(it => el('option', {value:it.nome}, `${it.nome} (${it.tipo}, ${it.custo})`)),
+  );
   const equip = el('div', {class:'cartao'},
     el('h2', {}, 'Equipamento'),
-    el('p', {class:'aviso'}, 'Tabelas de armas/armaduras/itens chakra ainda fora do Hub — inventário livre por enquanto.'),
+    el('p', {class:'aviso'}, `Catálogo do Hub com ${EQUIPAMENTO_CATALOGO.length} itens do Capítulo 5 (armas simples/marciais/exóticas, armaduras e munição) — ainda falta o sistema de Bulk/Inventário do livro e os Itens de Chakra. Pra qualquer item ainda fora da lista, cadastre à mão com "+ Item em branco".`),
     el('table', {class:'lista'},
       el('thead', {}, el('tr', {}, el('th',{},'Item'), el('th',{},'Notas'), el('th',{},''))),
       el('tbody', {}, ...linhasEquip),
     ),
-    el('button', {class:'destaque', style:'margin-top:10px', onclick: () => { p.equipamento.push({nome:'Novo item', notas:''}); salvar(); render(); }}, '+ Item'),
+    el('div', {class:'linha', style:'margin-top:10px'},
+      selCatalogoEquip,
+      el('button', {class:'destaque', onclick: () => {
+        const it = equipamentoDoCatalogo(selCatalogoEquip.value);
+        if(!it) return;
+        p.equipamento.push({nome:it.nome, notas:detalhesEquipamento(it)});
+        salvar(); render();
+      }}, '+ Do catálogo'),
+      el('button', {onclick: () => { p.equipamento.push({nome:'Novo item', notas:''}); salvar(); render(); }}, '+ Item em branco'),
+    ),
   );
 
   const notas = el('div', {class:'cartao'},
