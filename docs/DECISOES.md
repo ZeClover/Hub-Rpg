@@ -7404,6 +7404,81 @@ ficha pertence a uma campanha): oferecer, aceitar, cancelar.
 `node --check` continuam limpos. Migração 0024 também ainda precisa
 ser colada no Supabase.
 
+## 164. Smoke test completo do Hogwarts RPG antes do PR (25/09/2026)
+
+Antes de abrir o PR da fatia inteira (decisões #157-#163), rodei um
+smoke test de ponta a ponta: Postgres local com as 25 migrações
+aplicadas, `next dev` local, e Playwright simulando duas contas
+diferentes (dois jogadores + um mestre) numa mesma campanha, cobrindo
+todos os fluxos da ficha, o Modo Sessão, a Loja (inclusive concorrência
+real de estoque) e as Trocas de carta — sem nenhum atalho pulando
+autenticação/permissão de verdade no código: só a chamada de rede pro
+Supabase em si foi trocada por um cabeçalho de teste, tudo protegido
+por uma variável de ambiente (`SMOKE_TEST=1`) que não existe na Vercel;
+essas três alterações temporárias (`src/lib/usuario.ts`, `src/proxy.ts`,
+`src/lib/banco.ts`) foram revertidas antes do commit.
+
+Achou dois problemas reais:
+
+1. **Faltava a linha do Hogwarts RPG na tabela `sistemas`.** Mesmo
+   motivo das migrações 0007-0011 (SAO, Thrylikí Chelóna, Campanha
+   Livre, The Celestials, D&D 5e): `src/lib/sistemas.ts` já listava o
+   sistema desde a decisão #157, mas nenhuma migração cadastrava a
+   linha correspondente no banco — "+ Criar campanha"/"+ Criar ficha"
+   buscam por `chave` antes de criar, então escolher Hogwarts RPG
+   falhava com "sistema desconhecido" na prática, apesar de a ficha, o
+   Modo Sessão e a Loja já estarem prontos. Corrigido na migração
+   `0025_sistema_hogwarts_rpg.sql` (ainda precisa ser colada no
+   Supabase, como as 0023/0024).
+
+2. **`<select>` da ficha não redesenhava a UI dependente na hora.**
+   Sete pontos de `public/hogwarts-rpg.html` (Casa, Status de Sangue,
+   Família, Origem, Sintonia da varinha, campos só-Mestre, estado de
+   ferimento/condição/item/relíquia/relação) usavam
+   `mudarSemRedesenhar()` pra qualquer `<select>`, o mesmo tratamento
+   dado a campo de texto pra não perder o cursor durante a digitação —
+   só que um `<select>` não tem cursor pra perder, e várias dessas
+   escolhas alimentam um cartão condicional na mesma tela (ex.: mudar
+   a Família não mostrava a ficha da família na hora). Corrigido pra
+   `<select>` chamar `mudar()` (redesenho completo) e manter
+   `mudarSemRedesenhar()` só pros campos de texto de verdade. Pelo
+   mesmo motivo, o campo numérico "Nível" também virou `mudar()`: o
+   texto de "Ano escolar atual" no mesmo cartão é calculado a partir
+   dele.
+
+Também achei e corrigi, durante o teste do Modo Sessão em lote, uma
+falha que travava a ficha inteira: uma ação em lote do Mestre (decisão
+#161) salva um `dados` reduzido — só os campos que a própria tela usa
+(perfil.nome, vida, tensão, galeões, condições) — pra qualquer
+personagem selecionado, inclusive um que o jogador nunca abriu. Isso é
+esperado (o Modo Sessão não precisa saber de toda a ficha), mas
+`garantirCamposNovos()`, a função que toda leitura da ficha passa antes
+de renderizar, assumia que campos como `perfil` e `varinha` já vinham
+completos sempre que `perfil` existisse — e quebrava com
+`TypeError` ao ler `varinha.tendencia` de um objeto sem `varinha`. Como
+`garantirCamposNovos()` já existe justamente pra "consertar" formato
+antigo/incompleto (comentário original: fichas de antes da fatia de
+Casa & Família), ela ganhou valor padrão pra todo campo de nível 1 que
+o resto do arquivo lê direto (nível, atributos, perícias, vida, tensão,
+condições, ferimentos, conteúdos conhecidos/custom, favoritos, varinha,
+galeões, mostrar restritos) — não só os arrays que já cobria.
+
+Não corrigi (fica registrado pra não repetir a surpresa depois): o
+painel do Modo Sessão redesenha a tela inteira a cada ação — inclusive
+o auto-some da mensagem de status, ~2,5s depois — e isso derruba
+qualquer texto ainda não enviado em campos soltos da própria tela
+(nome da nova loja, nome/preço/estoque de item). É uma janela de corrida
+de baixa probabilidade em uso real (só derruba se o Mestre estiver
+digitando algo nesses campos exatamente quando um timer de outra ação
+dispara), não um sistema de rascunho como o `mudarSemRedesenhar()` da
+ficha — considerei fora do escopo de "corrigir bug encontrado" por ser
+uma limitação de arquitetura do painel, não uma regressão desta fatia.
+
+`tsc`, `eslint`, os 307 testes automáticos e `next build` continuam
+limpos depois das correções e da reversão das alterações temporárias
+de teste. Migração 0025 ainda precisa ser colada no Supabase, como as
+0023/0024.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

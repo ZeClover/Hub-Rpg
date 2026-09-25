@@ -491,7 +491,30 @@ function novoPersonagem(){
 
 // Preenche campos que fichas criadas antes desta fatia ainda não têm —
 // evita que abrir uma ficha salva antes de Casa & Família quebre a tela.
+//
+// Também é a rede de segurança pra `dados` parcial vindo de outro caminho
+// além da própria ficha — por exemplo o Modo Sessão do Mestre (decisão
+// #161), que salva só o subconjunto de campos que usa em ações de lote.
+// Por isso todo campo de nível 1 usado no resto do arquivo (perfil,
+// atributos, varinha etc.) tem que ganhar um valor padrão aqui antes de
+// qualquer coisa tentar ler dentro dele.
 function garantirCamposNovos(p){
+  if(!p.perfil || typeof p.perfil !== 'object') p.perfil = {};
+  if(typeof p.perfil.nome !== 'string') p.perfil.nome = 'Novo Bruxo';
+  if(typeof p.nivel !== 'number') p.nivel = 1;
+  if(!p.atributos || typeof p.atributos !== 'object') p.atributos = {Arcano:0, Engenho:0, Pulso:0, Presença:0, Fibra:0};
+  if(!p.pericias || typeof p.pericias !== 'object'){ p.pericias = {}; PERICIAS.forEach(nome => p.pericias[nome] = 0); }
+  if(typeof p.periciasOverride !== 'boolean') p.periciasOverride = false;
+  if(!p.vida || typeof p.vida !== 'object') p.vida = {atual:5, maxima:5};
+  if(typeof p.tensao !== 'number') p.tensao = 0;
+  if(!Array.isArray(p.condicoes)) p.condicoes = [];
+  if(!Array.isArray(p.ferimentos)) p.ferimentos = [];
+  if(!p.conteudosConhecidos || typeof p.conteudosConhecidos !== 'object') p.conteudosConhecidos = {};
+  if(!Array.isArray(p.conteudosCustom)) p.conteudosCustom = [];
+  if(!Array.isArray(p.favoritos)) p.favoritos = [];
+  if(!p.varinha || typeof p.varinha !== 'object') p.varinha = {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', sintonia:1};
+  if(typeof p.galeoes !== 'number') p.galeoes = 0;
+  if(typeof p.mostrarRestritos !== 'boolean') p.mostrarRestritos = false;
   if(!Array.isArray(p.familiasCustom)) p.familiasCustom = [];
   if(!Array.isArray(p.origensCustom)) p.origensCustom = [];
   if(!Array.isArray(p.criaturasCustom)) p.criaturasCustom = [];
@@ -1711,10 +1734,12 @@ function ligarEventos(){
 
   // Campos de texto genéricos: data-campo="perfil.nome" / "varinha.madeira" etc.
   app.querySelectorAll('[data-campo]').forEach(el => {
-    const evento = (el.tagName==='SELECT') ? 'change' : 'input';
-    el.addEventListener(evento, () => {
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => {
       const [grupo, chave] = el.dataset.campo.split('.');
-      mudarSemRedesenhar(p => { p[grupo][chave] = el.value; });
+      // Select tem UI condicional (Casa, Família...) que depende do valor
+      // escolhido, então precisa de redesenho completo pra aparecer na hora.
+      (ehSelect ? mudar : mudarSemRedesenhar)(p => { p[grupo][chave] = el.value; });
     });
   });
   // Campos dentro de `_mestre`: data-campo-mestre="notasPersonagem" (direto)
@@ -1722,10 +1747,10 @@ function ligarEventos(){
   // Só existem na tela quando estado.ehMestre, mas o handler é genérico
   // igual o de cima.
   app.querySelectorAll('[data-campo-mestre]').forEach(el => {
-    const evento = (el.tagName==='SELECT') ? 'change' : 'input';
-    el.addEventListener(evento, () => {
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => {
       const partes = el.dataset.campoMestre.split('.');
-      mudarSemRedesenhar(p => {
+      (ehSelect ? mudar : mudarSemRedesenhar)(p => {
         const m = garantirMestre(p);
         if(partes.length === 1) m[partes[0]] = el.value;
         else m[partes[0]][partes[1]] = el.value;
@@ -1733,13 +1758,15 @@ function ligarEventos(){
     });
   });
   app.querySelectorAll('[data-campo-num]').forEach(el => {
-    el.addEventListener('input', () => {
-      const caminho = el.dataset.campoNum.split('.');
-      mudarSemRedesenhar(p => {
-        let alvo = p; for(let i=0;i<caminho.length-1;i++) alvo = alvo[caminho[i]];
-        alvo[caminho[caminho.length-1]] = Math.max(0, Number(el.value) || 0);
-      });
-    });
+    const caminho = el.dataset.campoNum.split('.');
+    // Redesenha a cada mudança (diferente dos campos de texto): campos como
+    // Nível têm texto derivado (ano escolar, limite de perícia) na mesma
+    // tela que precisa refletir o valor novo na hora, e número curto não
+    // sofre com perda de cursor do jeito que um campo de texto sofreria.
+    el.addEventListener('input', () => mudar(p => {
+      let alvo = p; for(let i=0;i<caminho.length-1;i++) alvo = alvo[caminho[i]];
+      alvo[caminho[caminho.length-1]] = Math.max(0, Number(el.value) || 0);
+    }));
   });
 
   // Atributos
@@ -1762,8 +1789,8 @@ function ligarEventos(){
   app.querySelectorAll('[data-fer-remover]').forEach(b => b.onclick = () => mudar(p => { p.ferimentos = p.ferimentos.filter(f => f.id !== b.dataset.ferRemover); }));
   app.querySelectorAll('[data-fer-campo]').forEach(el => {
     const [id, campo] = el.dataset.ferCampo.split(':');
-    const evento = el.tagName==='SELECT' ? 'change' : 'input';
-    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const f = p.ferimentos.find(x=>x.id===id); if(f) f[campo] = el.value; }));
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => (ehSelect ? mudar : mudarSemRedesenhar)(p => { const f = p.ferimentos.find(x=>x.id===id); if(f) f[campo] = el.value; }));
   });
 
   // Condições
@@ -1777,8 +1804,8 @@ function ligarEventos(){
   }));
   app.querySelectorAll('[data-cond-campo]').forEach(el => {
     const [id, campo] = el.dataset.condCampo.split(':');
-    const evento = el.tagName==='SELECT' ? 'change' : 'input';
-    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const c = p.condicoes.find(x=>x.id===id); if(c) c[campo] = el.value; }));
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => (ehSelect ? mudar : mudarSemRedesenhar)(p => { const c = p.condicoes.find(x=>x.id===id); if(c) c[campo] = el.value; }));
   });
   app.querySelectorAll('[data-cond-campo-num]').forEach(el => {
     const [id, campo] = el.dataset.condCampoNum.split(':');
@@ -1991,8 +2018,8 @@ function ligarEventos(){
   app.querySelectorAll('[data-item-confiscado]').forEach(el => el.onchange = () => mudar(p => { const i = p.itens.find(x=>x.id===el.dataset.itemConfiscado); if(i) i.confiscado = el.checked; }));
   app.querySelectorAll('[data-item-campo]').forEach(el => {
     const [id, campo] = el.dataset.itemCampo.split(':');
-    const evento = el.tagName==='SELECT' ? 'change' : 'input';
-    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const i = p.itens.find(x=>x.id===id); if(i) i[campo] = el.value; }));
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => (ehSelect ? mudar : mudarSemRedesenhar)(p => { const i = p.itens.find(x=>x.id===id); if(i) i[campo] = el.value; }));
   });
   app.querySelectorAll('[data-item-conf-campo]').forEach(el => {
     const [id, campo] = el.dataset.itemConfCampo.split(':');
@@ -2012,8 +2039,8 @@ function ligarEventos(){
   app.querySelectorAll('[data-rel-oculta]').forEach(el => el.addEventListener('input', () => mudarSemRedesenhar(p => { garantirMestre(p).reliquiasOcultas[el.dataset.relOculta] = el.value; })));
   app.querySelectorAll('[data-rel-campo]').forEach(el => {
     const [id, campo] = el.dataset.relCampo.split(':');
-    const evento = el.tagName==='SELECT' ? 'change' : 'input';
-    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const r = p.reliquias.find(x=>x.id===id); if(r) r[campo] = el.value; }));
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => (ehSelect ? mudar : mudarSemRedesenhar)(p => { const r = p.reliquias.find(x=>x.id===id); if(r) r[campo] = el.value; }));
   });
 
   // Sapos de Chocolate
@@ -2068,8 +2095,8 @@ function ligarEventos(){
   app.querySelectorAll('[data-rlc-remover]').forEach(b => b.onclick = () => mudar(p => { p.relacoes = p.relacoes.filter(r => r.id !== b.dataset.rlcRemover); }));
   app.querySelectorAll('[data-rlc-campo]').forEach(el => {
     const [id, campo] = el.dataset.rlcCampo.split(':');
-    const evento = el.tagName==='SELECT' ? 'change' : 'input';
-    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const r = p.relacoes.find(x=>x.id===id); if(r) r[campo] = el.value; }));
+    const ehSelect = el.tagName === 'SELECT';
+    el.addEventListener(ehSelect ? 'change' : 'input', () => (ehSelect ? mudar : mudarSemRedesenhar)(p => { const r = p.relacoes.find(x=>x.id===id); if(r) r[campo] = el.value; }));
   });
 
   // Companheiros
