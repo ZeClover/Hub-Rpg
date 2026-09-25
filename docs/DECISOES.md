@@ -7034,6 +7034,70 @@ recarregamento de página. `node --check` e a varredura de caractere
 estranho (CJK/Hangul) limpos. `tsc --noEmit`, lint e os 302 testes
 automáticos (`node --test`) do projeto continuam passando.
 
+## 157. Hogwarts RPG — novo sistema no Hub, fatia 1 (25/09/2026)
+
+O Zé mandou o pacote completo de design do "Hogwarts RPG" (núcleo de
+regras, patch de tempo/distância, feitiços v2/v2.1, Caminhos Raros,
+famílias, varinhas, criaturas, equipamentos, currículo — um documento
+gigante) pedindo pra integrar como um sistema novo dentro do Hub, sem
+recriar autenticação/campanhas/permissões que já existem.
+
+**Antes de escrever código, auditei a arquitetura real** (o próprio
+documento do Zé pedia isso): `src/lib/sistemas.ts` já é exatamente o
+"sistema é um módulo" da decisão #17/#35 — cada sistema (Kaizoku no
+Sho, Fabula Ultima, SAO, D&D 5e, The Celestials, Thrylikí Chelóna) é
+uma ficha HTML autônoma em `public/`, que sabe entender `?id=` na URL
+e salvar sozinha via `PATCH /api/personagens/[id]` (campo genérico
+`dados`, um JSON por personagem — não uma tabela própria por sistema).
+Isso muda o que "implementar como sistema novo" significa aqui: não é
+desenhar tabelas Prisma pra Casa/Feitiço/Conteúdo — é escrever mais um
+módulo desse formato, registrado em `SISTEMAS`.
+
+O documento do Zé também descreve uma arquitetura bem mais pesada
+(Character↔Content com estados por personagem, segredo campo a campo
+por jogador, lojas ao vivo com concorrência, bestiário revelado por
+campo, sapos de chocolate, currículo por ano) — isso pede infraestrutura
+de servidor que o chassi atual (ficha = 1 JSON) não tem pra nenhum
+sistema hoje, nem os "prontos". Construir isso tudo de uma vez
+contrariaria a decisão #26 (uma fatia por vez) e arriscaria os 302
+testes/todo o resto do Hub por uma fatia gigante nunca testada em mesa.
+Por isso esta primeira fatia entrega só o **chassi essencial jogável**
+(critério de aceite "Fase 1/2" que o próprio documento definia):
+identidade, Casa/Família/Origem/Varinha como campos simples, os cinco
+Atributos (criação 3/2/2/1/0, teto 5), as dezesseis Perícias com teto
+por ano escolar (e override do Mestre), Vida (5) e Tensão (0–3) com
+atalhos rápidos, as treze Condições oficiais com contador de rodadas,
+Ferimentos Graves, nível 1–35 com ano escolar derivado automaticamente,
+e uma aba de Conteúdos data-driven (~50 Feitiços/Técnicas do núcleo já
+cadastrados com alcance/área/duração/sucesso-elevado-excepcional, mais
+um formulário pra Mestre/jogador cadastrar os próprios sem mexer em
+código) com estado por personagem (oculto → conhecido → dominado...) e
+favoritos.
+
+**O que ficou de fora desta fatia, de propósito:** segredo/visibilidade
+por campo e por jogador (a ficha de personagem no Hub hoje não distingue
+"o que o dono vê" de "o que o Mestre vê" — é tudo um JSON só, então
+"Notas do Mestre" e as informações ocultas da Varinha existem como
+campo na ficha, mas sem trava de servidor real ainda: fica documentado
+na própria tela pro Zé não confiar nisso como segredo de verdade),
+Casas/Famílias/Bestiário/Lojas/Sapos de Chocolate como catálogos
+próprios administráveis, currículo por ano/matéria, N.O.M.s/N.I.E.M.s,
+Poções com preparo automático, Modo Sessão do Mestre. Ficam registrados
+no ROADMAP como próximas fatias — a maior parte exige decidir antes
+como o Hub vai representar "campo visível só pro Mestre" em geral (não
+é problema exclusivo do Hogwarts), o que é decisão de arquitetura, não
+de conteúdo.
+
+Sistema registrado como `hogwarts-rpg` em `SISTEMAS`, situação
+"em-construção" (como Kaizoku começou e D&D 5e/Campanha Livre também
+estão hoje). Ficha nova em `public/hogwarts-rpg.html`, seguindo o mesmo
+padrão de armazenamento/tema/abas dos outros seis sistemas — não
+duplica nada de autenticação, campanha ou navegação do Hub.
+
+Verificado: `tsc --noEmit`, `eslint` e os 302 testes automáticos
+continuam limpos; `next build` compila com o sistema novo listado.
+`node --check` no JavaScript da ficha nova passa sem erro.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

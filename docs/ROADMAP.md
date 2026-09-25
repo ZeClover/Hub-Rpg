@@ -1930,6 +1930,43 @@ edição do mestre, múltiplas fichas por jogador, etc.).
     persistindo após recarregar. `tsc`, lint e os 302 testes
     automáticos continuam limpos
 
+- [x] **Hogwarts RPG — sistema novo, fatia 1 (chassi essencial)**
+      (25/09/2026) — decisão #157. Pacote de design completo mandado
+      pelo Zé; integrado como mais um módulo de `src/lib/sistemas.ts`
+      (mesmo formato dos outros seis: ficha HTML autônoma que salva
+      via `?id=` no Hub), não como arquitetura nova.
+  - Ficha nova `public/hogwarts-rpg.html`: identidade (Casa, Família,
+    Status de Sangue, Origem, Ambição/Medo/Vínculo, Varinha como
+    campos), os cinco Atributos (criação 3/2/2/1/0, teto 5), as
+    dezesseis Perícias com teto por ano escolar (override do Mestre),
+    Vida (5) e Tensão (0–3), as treze Condições oficiais com contador
+    de rodadas, Ferimentos Graves, nível 1–35 com ano escolar
+    derivado, e uma aba de Conteúdos data-driven (~50 Feitiços/
+    Técnicas do núcleo já cadastrados, mais cadastro próprio sem
+    mexer em código) com estado por personagem e favoritos
+  - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
+    continuam limpos
+
+## Próximas fatias do Hogwarts RPG
+
+Nesta ordem (decisão #26 — uma de cada vez), depois de rodado em mesa:
+
+- [ ] Casas/Tradições, Famílias e Origens como catálogos administráveis
+      pelo Mestre (igual Conteúdos), em vez de campo de texto livre
+- [ ] Varinha: sintonia revelando Tendência/Propriedade automaticamente
+      por marco, e separação real entre o que o dono vê e o que só o
+      Mestre vê — depende de decidir primeiro como o Hub representa
+      "campo visível só pro Mestre" em geral (não é só do Hogwarts;
+      "Notas do Mestre" de todo personagem tem o mesmo problema hoje)
+- [ ] Bestiário e criaturas (categorias Fraca→Catástrofe) como catálogo
+      próprio, com conhecimento revelado por personagem
+- [ ] Poções/Herbologia: receitas como Conteúdo, preparo automático
+      quando ingredientes+Perícia+tempo batem
+- [ ] Currículo por ano/matéria, progresso acadêmico, N.O.M.s/N.I.E.M.s
+- [ ] Lojas ao vivo, Sapos de Chocolate/coleção, Modo Sessão do Mestre
+      com ações rápidas (aplicar condição em vários jogadores de uma vez
+      etc.) — maior parte também depende da peça de visibilidade acima
+
 ---
 
 ## Fora de escopo

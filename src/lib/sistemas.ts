@@ -135,6 +135,19 @@ export const SISTEMAS: Sistema[] = [
     grimorio: "/sistema-do-savio-grimorio.html",
   },
   {
+    chave: "hogwarts-rpg",
+    nome: "Hogwarts RPG",
+    descricao:
+      "Homebrew do Zé sem classes: Atributos + Perícias + Conteúdos + Casa + Família + Origem + Varinha. Fatia 1: chassi essencial (atributos, perícias, vida, tensão, condições, nível e Conteúdos data-driven).",
+    ficha: "/hogwarts-rpg.html",
+    situacao: "em-construcao",
+    salvaNoHub: true,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+    grimorio: null,
+  },
+  {
     chave: "thryliki-chelona",
     nome: "Thrylikí Chelóna",
     descricao:

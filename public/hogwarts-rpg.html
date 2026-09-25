@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha — Hogwarts RPG</title>
+<style>
+/* Paleta própria (dourado/vinho) pra diferenciar do resto do Hub — mesma
+   base escura dos outros sistemas (decisão #17: cada sistema é um módulo,
+   com identidade própria mas família visual comum). */
+:root{
+  --fundo:#0c0a08; --superficie:#161009; --superficie-alta:#201709;
+  --borda:#3a2a14; --texto:#f2ead9; --suave:#b3a488;
+  --roxo:#c9a227; --roxo-forte:#e3bf49; --roxo-rgb:201,162,39;
+  --alerta:#c4506b;
+  --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#8c3b3b;
+  --fonte-titulo:Georgia,'Times New Roman',serif;
+}
+@media print{
+  :root{
+    --fundo:#ffffff !important; --superficie:#ffffff !important; --superficie-alta:#f3f3f3 !important;
+    --borda:#999999 !important; --texto:#000000 !important; --suave:#333333 !important;
+    --roxo:#000000 !important; --roxo-forte:#000000 !important; --roxo-rgb:0,0,0 !important; --alerta:#000000 !important;
+  }
+  .barra, button{ display:none !important; }
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0; background:var(--fundo); color:var(--texto); font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+h1,h2,h3{font-family:var(--fonte-titulo); font-weight:600; margin:0}
+a{color:var(--roxo-forte)}
+.barra{position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 16px; background:var(--superficie); border-bottom:1px solid var(--borda)}
+.marca{font-family:var(--fonte-titulo); font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--roxo)}
+.cresce{flex:1}
+.status-salvo{font-size:12px; color:var(--suave); white-space:nowrap}
+.status-salvo.salvando{color:var(--roxo-forte)}
+.status-salvo.ok{color:var(--verde)}
+.status-salvo.erro{color:var(--alerta); font-weight:600}
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:8px; padding:7px 12px; cursor:pointer}
+button:hover{border-color:rgba(var(--roxo-rgb),.6)}
+button.destaque{background:rgba(var(--roxo-rgb),.18); border-color:rgba(var(--roxo-rgb),.6); color:var(--roxo-forte)}
+button.perigo{border-color:rgba(196,80,107,.5); color:#e58a9b}
+button[aria-current="true"]{border-color:rgba(var(--roxo-rgb),.7); color:var(--roxo-forte); background:rgba(var(--roxo-rgb),.14)}
+input,select,textarea{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:6px; padding:7px 9px; width:100%}
+label{display:block; font-size:12px; color:var(--suave); margin-bottom:4px; text-transform:uppercase; letter-spacing:.04em}
+main{max-width:980px; margin:0 auto; padding:16px}
+.abas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px}
+.abas button{font-size:13px}
+.cartao{background:var(--superficie); border:1px solid var(--borda); border-radius:12px; padding:16px; margin-bottom:14px}
+.grade{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px}
+.grade2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.linha{display:flex; gap:10px; align-items:center}
+.mini{font-size:12.5px; color:var(--suave)}
+.vazio{padding:60px 16px; text-align:center}
+.pill{display:inline-block; padding:2px 9px; border-radius:999px; font-size:11.5px; border:1px solid var(--borda); color:var(--suave)}
+.pill.on{border-color:rgba(var(--roxo-rgb),.6); color:var(--roxo-forte); background:rgba(var(--roxo-rgb),.12)}
+.item-conteudo{border:1px solid var(--borda); border-radius:10px; padding:12px; margin-bottom:10px}
+.item-conteudo h4{font-size:14.5px; margin-bottom:4px}
+.item-conteudo .campos{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:6px; font-size:12.5px; color:var(--suave); margin:6px 0}
+.item-conteudo .campos b{color:var(--texto)}
+.linha-cond{display:flex; gap:8px; align-items:center; border:1px solid var(--borda); border-radius:8px; padding:8px 10px; margin-bottom:8px}
+.ok{background:rgba(76,140,91,.15); border:1px solid rgba(76,140,91,.4); border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:13px}
+.aviso{background:rgba(196,80,107,.15); border:1px solid rgba(196,80,107,.4); border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:13px}
+.barra-vida{height:10px; border-radius:6px; background:var(--superficie-alta); overflow:hidden; border:1px solid var(--borda)}
+.barra-vida > div{height:100%; background:var(--vermelho)}
+.barra-tensao > div{height:100%; background:var(--roxo)}
+.grid-atributo{text-align:center; border:1px solid var(--borda); border-radius:10px; padding:10px}
+.grid-atributo .valor{font-size:26px; font-family:var(--fonte-titulo)}
+.busca{margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Hogwarts RPG</span>
+  <a id="linkFichas" href="/fichas" hidden style="color:var(--roxo);text-decoration:none;font-size:13px">← Fichas</a>
+  <label id="labelCompartilhar" style="display:none;align-items:center;gap:6px;font-size:12px;color:var(--suave);text-transform:none;letter-spacing:normal">
+    <input type="checkbox" id="chkCompartilhar" style="width:auto">
+    Compartilhar (link de leitura)
+  </label>
+  <select id="seletor" style="width:auto;min-width:170px"></select>
+  <button id="btNovo">+ Novo</button>
+  <span class="cresce"></span>
+  <span id="statusSalvo" class="status-salvo"></span>
+  <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<main id="app"></main>
+<script>
+/* ===========================================================================
+   FICHA — HOGWARTS RPG (homebrew do Zé, Núcleo 1.0 + Patch v1.1)
+
+   Sistema novo do Hub (decisão #17): mesmo chassi de armazenamento dos
+   outros (ficha = JSON num campo genérico `dados`, salvo por
+   /api/personagens/[id], modo Hub via ?id= — decisão #40/#44), só que essa
+   é a FASE 1+2 do sistema (chassi essencial: identidade, Atributos,
+   Perícias, Vida, Tensão, Condições, nível/progressão e Conteúdos
+   data-driven). Casas/Famílias/Varinha entram como campos básicos já
+   editáveis; os módulos maiores do documento de design (currículo
+   completo, lojas, bestiário, sapos de chocolate, segredos com
+   visibilidade por jogador) exigem infraestrutura de servidor que este
+   chassi de "personagem = um JSON" não tem ainda — ficam para as próximas
+   fatias (decisão #26), registradas no ROADMAP.
+=========================================================================== */
+
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+/* --- Dados fixos do sistema (mecânica, não texto do livro) --------------- */
+
+const ATRIBUTOS = ['Arcano','Engenho','Pulso','Presença','Fibra'];
+
+const PERICIAS = [
+  'Feitiços','Transfiguração','Poções','Herbologia',
+  'Defesa Contra as Artes das Trevas','História da Magia','Astronomia','Voo',
+  'Aritmancia','Runas Antigas','Adivinhação','Trato das Criaturas Mágicas',
+  'Estudos dos Trouxas','Investigação','Furtividade','Influência',
+];
+
+const CASAS = [
+  {nome:'Grifinória', foco:'Coragem, proteção, perigo, reação.'},
+  {nome:'Sonserina', foco:'Vantagem, ambição, segredos, controle e conhecimento perigoso.'},
+  {nome:'Corvinal', foco:'Análise, pesquisa, experimentação e modificação da magia.'},
+  {nome:'Lufa-Lufa', foco:'Preparação, cooperação, perseverança, criaturas e plantas.'},
+];
+
+const STATUS_SANGUE = ['Puro-sangue','Mestiço','Nascido-trouxa','Desconhecido'];
+
+const CONDICOES_DEF = {
+  'Abalado': 'Desvantagem no próximo teste relevante que realizar; termina depois disso (ou no fim do próximo turno, o que vier primeiro).',
+  'Desequilibrado': 'Até o fim do próximo turno: Movimento máximo 3 m e Esquiva como Defesa Ativa sofre Desvantagem.',
+  'Desarmado': 'Perdeu varinha/arma/objeto principal. Permanece até recuperar, receber outro, ou usar alternativa.',
+  'Imobilizado': 'Movimento = 0 m. Ainda fala, pensa e pode conjurar se tiver liberdade corporal suficiente. Não usa Esquiva.',
+  'Atordoado': 'Até o fim do próximo turno: perde a Reação e, no próprio turno, escolhe só Ação OU Movimento.',
+  'Cego': 'Desvantagem em ações dependentes de visão; ataques contra alvo não percebido visualmente também sofrem Desvantagem.',
+  'Silenciado': 'Não produz voz — sem conjuração verbal normal. Conjuração Não Verbal continua funcionando.',
+  'Enredado': 'Movimento máximo 3 m. Pode gastar a Ação pra tentar escapar, se a fonte tiver mecanismo de escape.',
+  'Em Chamas': 'No início do próximo turno, sofre 1 dano. Depois disso o fogo mágico comum normalmente termina.',
+  'Envenenado': 'Categoria — o veneno específico determina dano, duração, penalidades e cura.',
+  'Amaldiçoado': 'Categoria — a Maldição específica determina efeito, duração, gatilho e remoção.',
+  'Incapacitado': 'Sem Ação, Movimento ou Reação. Pode estar consciente, inconsciente, petrificado ou dormindo, conforme a fonte.',
+  'Petrificado': 'Movimento = 0 m, sem ações físicas normais, sem Esquiva. Conjuração comum com varinha normalmente é impossível. Finite remove.',
+};
+const CONDICOES_NOMES = Object.keys(CONDICOES_DEF);
+
+const ESTADOS_CONTEUDO = ['oculto','descoberto','bloqueado','disponivel','formacao-inicial','conhecido','dominado','assinatura'];
+const ROTULO_ESTADO = {
+  'oculto':'Oculto', 'descoberto':'Descoberto', 'bloqueado':'Bloqueado', 'disponivel':'Disponível',
+  'formacao-inicial':'Formação Inicial', 'conhecido':'Conhecido', 'dominado':'Dominado', 'assinatura':'Assinatura',
+};
+
+// Seed de Conteúdos (Feitiços gerais, mecânica descrita pelo próprio Zé —
+// decisão de não copiar texto de livro comercial não se aplica aqui, isto
+// é o homebrew dele). Cada item vira uma linha selecionável na aba
+// Conteúdos; o Mestre/jogador pode adicionar os próprios em cima destes.
+const CONTEUDOS_SEED = [
+  {id:'lumos', nome:'Lumos', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Pessoal', area:'—', duracao:'Até Nox', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Produz luz na ponta da varinha.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'nox', nome:'Nox', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Pessoal', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Encerra Lumos.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'reparo', nome:'Reparo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Permanente', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Repara dano físico em objeto.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'alohomora', nome:'Alohomora', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'3 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Abre fechadura comum. Proteções mágicas podem exigir teste ou impedir.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'colloportus', nome:'Colloportus', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Até aberto/removido', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Fecha e sela magicamente porta, janela ou mecanismo semelhante.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'wingardium-leviosa', nome:'Wingardium Leviosa', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Concentração, até 10 rodadas', concentracao:true, dano:'0', natureza:'Não Letal', sucesso:'Levita e movimenta objetos, até ~6 m por turno.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'incendio', nome:'Incendio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'1–2', natureza:'Perigosa', sucesso:'1 dano.', elevado:'1 dano + Em Chamas.', excepcional:'2 dano + Em Chamas.', restrito:false},
+  {id:'sonorus', nome:'Sonorus', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Pessoal/Toque', area:'—', duracao:'Até Quietus', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Amplifica fortemente a voz do alvo.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'quietus', nome:'Quietus', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Pessoal/Toque', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Encerra Sonorus.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'impervius', nome:'Impervius', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Toque', area:'—', duracao:'8 horas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Faz superfície repelir água e afins.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'accio', nome:'Accio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'30 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Convoca um objeto conhecido.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'depulso', nome:'Depulso', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Empurra até 3 m.', elevado:'Até 6 m + Desequilibrado 1 rodada.', excepcional:'Até 9 m ou impacto especialmente forte.', restrito:false},
+  {id:'flipendo', nome:'Flipendo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1 rodada', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Desequilibrado.', elevado:'Reposicionamento de até 3 m.', excepcional:'Abertura especialmente forte.', restrito:false},
+  {id:'descendo', nome:'Descendo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'1–2', natureza:'Perigosa', sucesso:'Alvo suspenso: 1 dano.', elevado:'2 dano.', excepcional:'2 dano + consequência ambiental.', restrito:false},
+  {id:'engorgio', nome:'Engorgio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1 hora', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Aumenta o tamanho de objeto apropriado.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'reducio', nome:'Reducio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1 hora', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Reduz o tamanho de objeto apropriado.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'silencio', nome:'Silencio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1–3 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Silenciado 1 rodada.', elevado:'2 rodadas.', excepcional:'3 rodadas.', restrito:false},
+  {id:'revelio', nome:'Revelio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'raio de 6 m', area:'raio 6 m', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Detecta sinais relevantes de magia, mecanismos ou elementos escondidos.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'diffindo', nome:'Diffindo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'1–2', natureza:'Perigosa', sucesso:'1 dano.', elevado:'2 dano.', excepcional:'2 dano + corte grave.', restrito:false},
+  {id:'aguamenti', nome:'Aguamenti', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Concentração, até 10 rodadas', concentracao:true, dano:'0', natureza:'Não Letal', sucesso:'Produz fluxo contínuo de água.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'arresto-momentum', nome:'Arresto Momentum', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1–3 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Movimento máximo 3 m por 1 rodada.', elevado:'3 m por 2 rodadas.', excepcional:'Imobilizado 1 rodada, depois 3 m na seguinte.', restrito:false},
+  {id:'glacius', nome:'Glacius', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1–2 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Enredado 1 rodada.', elevado:'Imobilizado 1 rodada.', excepcional:'Imobilizado 2 rodadas.', restrito:false},
+  {id:'finite', nome:'Finite', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Encerra magia simples.', elevado:'Contra efeitos relevantes: Engenho + Feitiços enfrenta a força do encantamento.', excepcional:'—', restrito:false},
+  {id:'specialis-revelio', nome:'Specialis Revelio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'3 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Analisa objeto/substância e revela propriedades mágicas detectáveis.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'desilusao', nome:'Feitiço de Desilusão', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Pessoal/Toque', area:'—', duracao:'Concentração, até 10 minutos', concentracao:true, dano:'0', natureza:'Não Letal', sucesso:'Camufla visualmente o alvo. Vantagem em Furtividade por visão quando apropriado.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'bombarda', nome:'Bombarda', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'30 m', area:'raio 2 m', duracao:'Instantânea', concentracao:false, dano:'1–3', natureza:'Perigosa', sucesso:'1 dano + destruição ambiental.', elevado:'2 dano + Desequilibrado.', excepcional:'3 dano ou destruição maior.', restrito:false},
+  {id:'homenum-revelio', nome:'Homenum Revelio', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'raio de 15 m', area:'raio 15 m', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Detecta presença humana; resultados melhores revelam quantidade/direção/posição.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'obliviate', nome:'Obliviate', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Permanente até restauração', concentracao:false, dano:'0', natureza:'Perigosa', sucesso:'Remove ou altera memória. Não é ataque comum de duelo.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'scourgify', nome:'Scourgify', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'6 m', area:'até raio 2 m', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Remove sujeira, poeira, lama, manchas e impurezas físicas.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'tergeo', nome:'Tergeo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Pulso', alcance:'3 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Remove/aspira precisamente líquidos e resíduos.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'episkey', nome:'Episkey', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'Toque', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Recupera 1 Vida (uma vez por cena por alvo).', elevado:'—', excepcional:'—', restrito:false},
+  {id:'ferula', nome:'Ferula', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'3 m', area:'—', duracao:'Até removido', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Conjura bandagens/talas; estabiliza Ferimento Grave físico pra transporte.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'locomotor', nome:'Locomotor', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Concentração, até 10 minutos', concentracao:true, dano:'0', natureza:'Não Letal', sucesso:'Faz um objeto se deslocar seguindo ordens do conjurador (~6 m/rodada).', elevado:'—', excepcional:'—', restrito:false},
+  {id:'confundo', nome:'Confundo', categoria:'Feitiço', pericia:'Feitiços', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'1–3 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Desvantagem no próximo teste de julgamento/atenção/decisão.', elevado:'2 rodadas.', excepcional:'3 rodadas + interpretação plausível equivocada.', restrito:false},
+  {id:'prior-incantato', nome:'Prior Incantato', categoria:'Feitiço', pericia:'Feitiços', atributo:'Engenho', alcance:'3 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Identifica o último feitiço executado por uma varinha.', elevado:'Também intensidade, sucesso e recência aproximados.', excepcional:'Também direção, natureza do alvo e peculiaridade da conjuração.', restrito:false},
+  {id:'expelliarmus', nome:'Expelliarmus', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Alvo fica Desarmado.', elevado:'Objeto lançado a ~6 m numa direção plausível.', excepcional:'Desarmado + Desequilibrado 1 rodada.', restrito:false},
+  {id:'rictusempra', nome:'Rictusempra', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'1 rodada', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Abalado 1 rodada.', elevado:'Desequilibrado 1 rodada.', excepcional:'Atordoado 1 rodada.', restrito:false},
+  {id:'tarantallegra', nome:'Tarantallegra', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'1–2 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Desequilibrado 1 rodada.', elevado:'Enredado 2 rodadas.', excepcional:'Movimento 0 m por 2 rodadas (ainda age sem as pernas).', restrito:false},
+  {id:'protego', nome:'Protego', categoria:'Técnica', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'Pessoal', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Substitui Defesa Passiva: 2d6 + Arcano + Defesa contra o ataque.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'stupefy', nome:'Stupefy', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'1 rodada', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Abalado 1 rodada.', elevado:'Atordoado 1 rodada.', excepcional:'Incapacitado 1 rodada.', restrito:false},
+  {id:'petrificus-totalus', nome:'Petrificus Totalus', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'1–3 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Petrificado 1 rodada.', elevado:'2 rodadas.', excepcional:'3 rodadas.', restrito:false},
+  {id:'rennervate', nome:'Rennervate', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'3 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Desperta alguém inconsciente por Stupefy ou efeito compatível.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'impedimenta', nome:'Impedimenta', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'1–2 rodadas', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Enredado 1 rodada.', elevado:'Enredado 2 rodadas.', excepcional:'Imobilizado 2 rodadas.', restrito:false},
+  {id:'incarcerous', nome:'Incarcerous', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'Até escapar/destruir/contramagia', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Enredado (escape Pulso/Fibra CD 9).', elevado:'Imobilizado (escape CD 11).', excepcional:'Imobilizado severamente (escape CD 13).', restrito:false},
+  {id:'reducto', nome:'Reducto', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'30 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'1–2', natureza:'Perigosa', sucesso:'1 dano (contra criatura).', elevado:'1 dano + Desequilibrado.', excepcional:'2 dano.', restrito:false},
+  {id:'confringo', nome:'Confringo', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'30 m', area:'raio ~2 m', duracao:'Instantânea', concentracao:false, dano:'1–2', natureza:'Perigosa', sucesso:'1 dano.', elevado:'2 dano.', excepcional:'2 dano + Em Chamas.', restrito:false},
+  {id:'expecto-patronum', nome:'Expecto Patronum', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'até 15 m', area:'—', duracao:'Concentração, até 10 rodadas', concentracao:true, dano:'0', natureza:'Não Letal', sucesso:'Proteção contra Dementadores e ameaças apropriadas.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'protego-totalum', nome:'Protego Totalum', categoria:'Técnica', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'—', area:'raio 6 m', duracao:'10 minutos', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Cria barreira protetora de área (2 Ações consecutivas para conjurar).', elevado:'—', excepcional:'—', restrito:false},
+  {id:'protego-horribilis', nome:'Protego Horribilis', categoria:'Técnica', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'—', area:'raio 8 m', duracao:'10 minutos', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Barreira excepcional contra magia perigosa (3 Ações consecutivas para conjurar).', elevado:'—', excepcional:'—', restrito:false},
+  {id:'transformacao-simples', nome:'Transformação Simples', categoria:'Técnica', pericia:'Transfiguração', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Até 1 hora ou até revertida', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Transforma objetos simples em outros de tamanho semelhante.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'transformacao-material', nome:'Transformação Material', categoria:'Técnica', pericia:'Transfiguração', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Até 1 hora ou até revertida', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Altera material/propriedades físicas de objetos.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'transformacao-animal', nome:'Transformação Animal', categoria:'Técnica', pericia:'Transfiguração', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Até 10 minutos', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Transfigurações envolvendo animais. Não é Animagia.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'conjuracao', nome:'Conjuração', categoria:'Técnica', pericia:'Transfiguração', atributo:'Arcano', alcance:'até 3 m', area:'—', duracao:'Até 1 hora', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Cria magicamente objetos/materiais permitidos pela técnica.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'evanesco', nome:'Evanesco', categoria:'Feitiço', pericia:'Transfiguração', atributo:'Arcano', alcance:'6 m', area:'—', duracao:'Permanente', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Faz matéria apropriada desaparecer.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'transfiguracao-humana', nome:'Transfiguração Humana', categoria:'Técnica', pericia:'Transfiguração', atributo:'Arcano', alcance:'Toque ou 3 m', area:'—', duracao:'Até 10 minutos', concentracao:false, dano:'0', natureza:'Não Letal', sucesso:'Altera características físicas de um humano.', elevado:'—', excepcional:'—', restrito:false},
+  {id:'crucio', nome:'Crucio', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Arcano', alcance:'15 m', area:'—', duracao:'Concentração, máximo 3 rodadas', concentracao:true, dano:'0', natureza:'Mortal', sucesso:'Alvo fica Atordoado enquanto mantido.', elevado:'Incapacitado enquanto mantido.', excepcional:'Incapacitado + consequência grave se prolongado.', restrito:true},
+  {id:'imperio', nome:'Imperio', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Presença', alcance:'15 m', area:'—', duracao:'Até 1 hora', concentracao:false, dano:'0', natureza:'Perigosa', sucesso:'Impõe compulsão sobrenatural. Ordens contra valores/Vínculos dão nova resistência (Fibra).', elevado:'—', excepcional:'—', restrito:true},
+  {id:'avada-kedavra', nome:'Avada Kedavra', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'Morte', natureza:'Mortal', sucesso:'Se atingir plenamente um ser vivo vulnerável: morte. Protego comum não bloqueia.', elevado:'—', excepcional:'—', restrito:true},
+];
+
+/* --- Personagem novo ------------------------------------------------------ */
+
+function novoPersonagem(){
+  const t = Date.now();
+  const pericias = {}; PERICIAS.forEach(p => pericias[p] = 0);
+  return {
+    id: uid(), criadoEm: t, atualizadoEm: t,
+    perfil: {
+      nome:'Novo Bruxo', sobrenome:'', imagem:'',
+      anoEscolar:1, casa:'', statusSangue:'', familia:'', origem:'',
+      ambicao:'', medo:'', vinculo:'', descricao:'', notasMestre:'',
+    },
+    nivel: 1,
+    atributos: {Arcano:0, Engenho:0, Pulso:0, Presença:0, Fibra:0},
+    pericias,
+    periciasOverride: false,
+    vida: {atual:5, maxima:5},
+    tensao: 0,
+    condicoes: [],
+    ferimentos: [],
+    conteudosConhecidos: {},
+    conteudosCustom: [],
+    favoritos: [],
+    varinha: {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', tendencia:'', propriedade:'', peculiaridade:'', sintonia:1, lealdade:'Leal'},
+    galeoes: 0,
+    mostrarRestritos: false,
+  };
+}
+
+function anoEscolar(nivel){ return Math.max(1, Math.min(7, Math.ceil(nivel/5))); }
+function limitePericia(ano){ return ano<=2?2 : ano<=4?3 : ano===5?4 : 5; }
+
+function todosConteudos(p){ return [...CONTEUDOS_SEED, ...p.conteudosCustom]; }
+
+/* --- Armazenamento (mesmo mecanismo dos outros sistemas: decisão #40/#44) - */
+
+const MODO_HUB = new URLSearchParams(location.search).get('id');
+const CHAVE = 'hogwarts_fichas';
+let falhouAoSalvar = false;
+
+function carregar(){
+  try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru) : []; }
+  catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
+}
+
+function mostrarStatusSalvo(texto, classe){
+  const el = document.getElementById('statusSalvo');
+  if(!el) return;
+  el.textContent = texto;
+  el.className = 'status-salvo ' + (classe || '');
+}
+function statusSalvoOk(){
+  mostrarStatusSalvo('Salvo ✓', 'ok');
+  setTimeout(() => mostrarStatusSalvo('', ''), 1800);
+}
+
+let debounceHub = null;
+function salvarNoHub(){
+  clearTimeout(debounceHub);
+  mostrarStatusSalvo('Salvando…', 'salvando');
+  debounceHub = setTimeout(async () => {
+    const p = atual(); if(!p) return;
+    // Resumo genérico de vida pro Painel de Vida da Mesa ao Vivo (decisão #46).
+    p.resumoVida = {atual: Math.max(0, Math.min(p.vida.maxima, p.vida.atual)), maxima: p.vida.maxima, rotulo: 'Vida'};
+    try{
+      const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
+        method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p}),
+      });
+      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      if(falhouAoSalvar){ falhouAoSalvar=false; render(); }
+      statusSalvoOk();
+    }catch(e){
+      console.error('Falha ao salvar no Hub', e);
+      if(!falhouAoSalvar){ falhouAoSalvar=true; render(); }
+      mostrarStatusSalvo('Erro ao salvar', 'erro');
+    }
+  }, 500);
+}
+
+function salvar(){
+  if(MODO_HUB){ salvarNoHub(); return; }
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(estado.fichas));
+    if(falhouAoSalvar){ falhouAoSalvar=false; render(); }
+    statusSalvoOk();
+  }catch(e){
+    console.error('Falha ao salvar', e);
+    if(!falhouAoSalvar){ falhouAoSalvar=true; render(); }
+    mostrarStatusSalvo('Erro ao salvar', 'erro');
+  }
+}
+
+const estado = {
+  fichas: MODO_HUB ? [] : carregar(),
+  atualId: null, aba:'perfil',
+  carregandoHub: !!MODO_HUB, erroHub: null,
+  ehDono:false, podeEditar:false, compartilhado:false,
+};
+if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
+const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+async function iniciarModoHub(){
+  try{
+    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    if(!resposta.ok){ estado.erroHub='nao-encontrado'; return; }
+    const {personagem} = await resposta.json();
+    const dados = personagem.dados;
+    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    p.id = MODO_HUB;
+    estado.fichas = [p]; estado.atualId = p.id;
+    estado.ehDono = !!personagem.ehDono;
+    estado.podeEditar = !!personagem.podeEditar;
+    estado.compartilhado = !!personagem.compartilhado;
+  }catch(e){
+    console.error('Falha ao carregar do Hub', e);
+    estado.erroHub = 'nao-encontrado';
+  }finally{
+    estado.carregandoHub = false; render();
+  }
+}
+
+function alternarCompartilhado(valor){
+  estado.compartilhado = valor; render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({compartilhado:valor}),
+  }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+function mudar(fn){
+  if(MODO_HUB && !estado.podeEditar) return;
+  const p = atual(); if(!p) return;
+  fn(p); p.atualizadoEm = Date.now();
+  salvar(); render();
+}
+
+let debounceTexto = null;
+function mudarSemRedesenhar(fn){
+  if(MODO_HUB && !estado.podeEditar) return;
+  const p = atual(); if(!p) return;
+  fn(p); p.atualizadoEm = Date.now();
+  clearTimeout(debounceTexto);
+  debounceTexto = setTimeout(salvar, 500);
+}
+
+/* --- Telas ----------------------------------------------------------------- */
+
+const ABAS = [
+  {id:'perfil', nome:'Perfil'},
+  {id:'atributos', nome:'Atributos'},
+  {id:'pericias', nome:'Perícias'},
+  {id:'combate', nome:'Vida & Tensão'},
+  {id:'condicoes', nome:'Condições'},
+  {id:'conteudos', nome:'Conteúdos'},
+];
+
+function abaPerfil(p){
+  return `<div class="cartao">
+    <h3 style="margin-bottom:12px">Identidade</h3>
+    <div class="grade2">
+      <div><label>Nome</label><input data-campo="perfil.nome" value="${esc(p.perfil.nome)}"></div>
+      <div><label>Sobrenome</label><input data-campo="perfil.sobrenome" value="${esc(p.perfil.sobrenome)}"></div>
+      <div><label>Casa</label><select data-campo="perfil.casa">
+        <option value="">— nenhuma ainda —</option>
+        ${CASAS.map(c => `<option value="${esc(c.nome)}" ${p.perfil.casa===c.nome?'selected':''}>${esc(c.nome)}</option>`).join('')}
+      </select></div>
+      <div><label>Status de Sangue</label><select data-campo="perfil.statusSangue">
+        <option value="">—</option>
+        ${STATUS_SANGUE.map(s => `<option value="${esc(s)}" ${p.perfil.statusSangue===s?'selected':''}>${esc(s)}</option>`).join('')}
+      </select></div>
+      <div><label>Família</label><input data-campo="perfil.familia" value="${esc(p.perfil.familia)}" placeholder="Sobrenome / linhagem"></div>
+      <div><label>Origem</label><input data-campo="perfil.origem" value="${esc(p.perfil.origem)}" placeholder="Como cresceu"></div>
+    </div>
+    ${p.perfil.casa ? `<p class="mini" style="margin-top:10px">${esc(CASAS.find(c=>c.nome===p.perfil.casa)?.foco || '')}</p>` : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:12px">Ambição, Medo e Vínculo</h3>
+    <div class="grade2">
+      <div><label>Ambição</label><textarea data-campo="perfil.ambicao" rows="2">${esc(p.perfil.ambicao)}</textarea></div>
+      <div><label>Medo</label><textarea data-campo="perfil.medo" rows="2">${esc(p.perfil.medo)}</textarea></div>
+    </div>
+    <label style="margin-top:10px">Vínculo</label><textarea data-campo="perfil.vinculo" rows="2">${esc(p.perfil.vinculo)}</textarea>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:12px">Varinha</h3>
+    <p class="mini" style="margin-bottom:10px">Escolhida pelo Mestre fora do Hub (decisão do sistema: não existe questionário/algoritmo aqui) — só registrada.</p>
+    <div class="grade">
+      <div><label>Madeira</label><input data-campo="varinha.madeira" value="${esc(p.varinha.madeira)}"></div>
+      <div><label>Núcleo</label><input data-campo="varinha.nucleo" value="${esc(p.varinha.nucleo)}"></div>
+      <div><label>Comprimento</label><input data-campo="varinha.comprimento" value="${esc(p.varinha.comprimento)}" placeholder='ex.: 11¾"'></div>
+      <div><label>Flexibilidade</label><input data-campo="varinha.flexibilidade" value="${esc(p.varinha.flexibilidade)}"></div>
+    </div>
+    <details style="margin-top:12px"><summary class="mini" style="cursor:pointer">Informações do Mestre (ocultas por padrão na tela)</summary>
+      <div class="grade" style="margin-top:10px">
+        <div><label>Tendência</label><input data-campo="varinha.tendencia" value="${esc(p.varinha.tendencia)}"></div>
+        <div><label>Propriedade Desperta</label><input data-campo="varinha.propriedade" value="${esc(p.varinha.propriedade)}"></div>
+        <div><label>Peculiaridade</label><input data-campo="varinha.peculiaridade" value="${esc(p.varinha.peculiaridade)}"></div>
+        <div><label>Sintonia</label><select data-campo="varinha.sintonia">
+          <option value="1" ${p.varinha.sintonia==1?'selected':''}>I — Escolhida</option>
+          <option value="2" ${p.varinha.sintonia==2?'selected':''}>II — Familiaridade</option>
+          <option value="3" ${p.varinha.sintonia==3?'selected':''}>III — Domínio</option>
+          <option value="4" ${p.varinha.sintonia==4?'selected':''}>IV — União</option>
+        </select></div>
+        <div><label>Lealdade</label><select data-campo="varinha.lealdade">
+          <option ${p.varinha.lealdade==='Leal'?'selected':''}>Leal</option>
+          <option ${p.varinha.lealdade==='Incerta'?'selected':''}>Incerta</option>
+          <option ${p.varinha.lealdade==='Conquistada por Outro'?'selected':''}>Conquistada por Outro</option>
+        </select></div>
+      </div>
+      <p class="mini" style="margin-top:8px">Sem controle real de visibilidade por jogador ainda (exigiria conta de mestre/jogador separada por campo — ver ROADMAP). Por ora é o Mestre quem decide contar ou não.</p>
+    </details>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:12px">Descrição e notas</h3>
+    <label>Descrição</label><textarea data-campo="perfil.descricao" rows="3">${esc(p.perfil.descricao)}</textarea>
+    <label style="margin-top:10px">Notas do Mestre</label><textarea data-campo="perfil.notasMestre" rows="3">${esc(p.perfil.notasMestre)}</textarea>
+    <div class="grade" style="margin-top:10px">
+      <div><label>Galeões</label><input type="number" min="0" data-campo-num="galeoes" value="${p.galeoes}"></div>
+    </div>
+  </div>`;
+}
+
+function abaAtributos(p){
+  const soma = ATRIBUTOS.reduce((s,a) => s + (p.atributos[a]||0), 0);
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Atributos</h3>
+    <p class="mini" style="margin-bottom:14px">Criação: distribua 3 / 2 / 2 / 1 / 0 entre os cinco. Máximo normal: 5. Soma atual: <b>${soma}</b> (esperado 8, mas o Mestre pode liberar mais em Marcos Extraordinários).</p>
+    <div class="grade">
+      ${ATRIBUTOS.map(a => `<div class="grid-atributo">
+        <div class="mini">${esc(a)}</div>
+        <div class="valor">${p.atributos[a]}</div>
+        <div class="linha" style="justify-content:center;margin-top:6px">
+          <button data-atr-dec="${a}" style="padding:4px 10px">−</button>
+          <button data-atr-inc="${a}" style="padding:4px 10px">+</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function abaPericias(p){
+  const ano = anoEscolar(p.nivel);
+  const limite = limitePericia(ano);
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Perícias</h3>
+    <p class="mini" style="margin-bottom:6px">Ano escolar atual: <b>${ano}º ano</b> (do nível ${p.nivel}) — limite normal por perícia: <b>${limite}</b>.</p>
+    <label class="linha" style="width:auto;margin-bottom:14px"><input type="checkbox" style="width:auto" data-override-pericia ${p.periciasOverride?'checked':''}> <span style="text-transform:none;letter-spacing:normal;font-size:13px">Mestre libera ultrapassar o limite do ano</span></label>
+    <div class="grade">
+      ${PERICIAS.map(nome => {
+        const v = p.pericias[nome] || 0;
+        const acimaDoLimite = v > limite;
+        return `<div class="grid-atributo" style="${acimaDoLimite && !p.periciasOverride ? 'border-color:rgba(196,80,107,.6)' : ''}">
+          <div class="mini">${esc(nome)}</div>
+          <div class="valor">${v}</div>
+          <div class="linha" style="justify-content:center;margin-top:6px">
+            <button data-per-dec="${nome}" style="padding:4px 10px">−</button>
+            <button data-per-inc="${nome}" style="padding:4px 10px">+</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Nível e progressão</h3>
+    <div class="grade2">
+      <div><label>Nível (1–35)</label><input type="number" min="1" max="35" data-campo-num="nivel" value="${p.nivel}"></div>
+      <div><label>Marco Extraordinário</label><div class="mini" style="padding-top:8px">${[5,10,15,20,25,30,35].includes(p.nivel) ? '✨ Sim — +1 Atributo e +2 escolhas Únicas neste nível.' : 'Não — +1 Treinamento de Perícia e +2 escolhas de Conteúdo neste nível.'}</div></div>
+    </div>
+  </div>`;
+}
+
+function abaCombate(p){
+  const pctVida = Math.round(100 * Math.max(0,Math.min(1, p.vida.atual / Math.max(1,p.vida.maxima))));
+  const pctTensao = Math.round(100 * Math.max(0,Math.min(1, p.tensao / 3)));
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Vida</h3>
+    <div class="linha" style="margin-bottom:8px">
+      <button data-vida-delta="-1">−1</button>
+      <button data-vida-delta="1">+1</button>
+      <span class="mini">${p.vida.atual} / ${p.vida.maxima}</span>
+      <span class="cresce"></span>
+      <label style="width:auto;font-size:12px;text-transform:none">Máxima <input type="number" min="1" style="width:70px;display:inline-block" data-campo-num="vida.maxima" value="${p.vida.maxima}"></label>
+    </div>
+    <div class="barra-vida"><div style="width:${pctVida}%"></div></div>
+    <p class="mini" style="margin-top:8px">0 Vida não mata sozinho — o Mestre escolhe a consequência (Incapacitado / Ferimento Grave / À Beira da Morte).</p>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Tensão Mágica</h3>
+    <div class="linha" style="margin-bottom:8px">
+      <button data-tensao-delta="-1">−1</button>
+      <button data-tensao-delta="1">+1</button>
+      <span class="mini">${p.tensao} / 3 ${p.tensao>=3 ? '— Limite' : ''}</span>
+    </div>
+    <div class="barra-vida barra-tensao"><div style="width:${pctTensao}%"></div></div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Defesa Passiva</h3>
+    <p class="mini">7 + Pulso (${p.atributos.Pulso}) = <b>${7 + (p.atributos.Pulso||0)}</b>. Defesa Ativa (gastando a Reação) substitui, nunca soma às duas.</p>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Ferimentos Graves</h3>
+    ${p.ferimentos.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.ferimentos.map(f => `
+      <div class="linha-cond">
+        <input data-fer-campo="${f.id}:nome" value="${esc(f.nome)}" placeholder="Nome" style="flex:1">
+        <select data-fer-campo="${f.id}:estado" style="width:150px">
+          ${['Não Tratado','Estabilizado','Em Tratamento','Recuperado'].map(e => `<option ${f.estado===e?'selected':''}>${e}</option>`).join('')}
+        </select>
+        <button data-fer-remover="${f.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>
+      <textarea data-fer-campo="${f.id}:consequencia" rows="1" placeholder="Consequência" style="margin-bottom:8px">${esc(f.consequencia||'')}</textarea>
+    `).join('')}
+    <button data-novo-ferimento>+ Ferimento Grave</button>
+  </div>`;
+}
+
+function abaCondicoes(p){
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Condições ativas</h3>
+    ${p.condicoes.length===0 ? '<p class="mini">Nenhuma condição ativa.</p>' : p.condicoes.map(c => `
+      <div class="linha-cond">
+        <select data-cond-campo="${c.id}:nome" style="width:170px">
+          ${CONDICOES_NOMES.map(n => `<option ${c.nome===n?'selected':''}>${n}</option>`).join('')}
+        </select>
+        <label style="width:auto;font-size:12px;text-transform:none">Rodadas <input type="number" min="0" style="width:70px;display:inline-block" data-cond-campo-num="${c.id}:rodadas" value="${c.rodadas}"></label>
+        <input data-cond-campo="${c.id}:origem" value="${esc(c.origem||'')}" placeholder="Origem" style="flex:1">
+        <button data-cond-rodada-menos="${c.id}" title="Fim de turno: -1 rodada">−1 rodada</button>
+        <button data-cond-remover="${c.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>
+    `).join('')}
+    <button data-nova-condicao>+ Aplicar condição</button>
+  </div>
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Referência rápida</h3>
+    ${CONDICOES_NOMES.map(n => `<p class="mini" style="margin-bottom:6px"><b>${n}</b> — ${CONDICOES_DEF[n]}</p>`).join('')}
+  </div>`;
+}
+
+function abaConteudos(p){
+  const lista = todosConteudos(p).filter(c => p.mostrarRestritos || !c.restrito);
+  const busca = (p._buscaConteudo || '').toLowerCase();
+  const filtrada = busca ? lista.filter(c => c.nome.toLowerCase().includes(busca) || c.pericia.toLowerCase().includes(busca)) : lista;
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Conteúdos (Feitiços, Técnicas...)</h3>
+    <p class="mini" style="margin-bottom:10px">Perícia mede competência; Conteúdo mede possibilidade. Marque o estado de cada um conforme o personagem aprende.</p>
+    <div class="linha busca">
+      <input placeholder="Buscar por nome ou perícia…" data-busca-conteudo value="${esc(p._buscaConteudo||'')}">
+      <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-mostrar-restritos ${p.mostrarRestritos?'checked':''}> Mostrar restritos (Artes das Trevas)</label>
+    </div>
+    ${filtrada.map(c => {
+      const estado = p.conteudosConhecidos[c.id] || 'oculto';
+      const fav = p.favoritos.includes(c.id);
+      return `<div class="item-conteudo">
+        <h4>${esc(c.nome)} ${c.restrito?'<span class="pill" style="border-color:rgba(196,80,107,.5);color:#e58a9b">restrito</span>':''} ${c.concentracao?'<span class="pill">concentração</span>':''}</h4>
+        <div class="campos">
+          <div><b>${esc(c.categoria)}</b></div>
+          <div>${esc(c.pericia)} + ${esc(c.atributo)}</div>
+          <div>Alcance: ${esc(c.alcance)}</div>
+          <div>Área: ${esc(c.area)}</div>
+          <div>Duração: ${esc(c.duracao)}</div>
+          <div>Natureza: ${esc(c.natureza)}</div>
+        </div>
+        <p class="mini"><b>Sucesso:</b> ${esc(c.sucesso)}</p>
+        ${c.elevado!=='—' ? `<p class="mini"><b>Elevado:</b> ${esc(c.elevado)}</p>` : ''}
+        ${c.excepcional!=='—' ? `<p class="mini"><b>Excepcional:</b> ${esc(c.excepcional)}</p>` : ''}
+        <div class="linha" style="margin-top:8px;flex-wrap:wrap">
+          <select data-conteudo-estado="${c.id}" style="width:170px">
+            ${ESTADOS_CONTEUDO.map(e => `<option value="${e}" ${estado===e?'selected':''}>${ROTULO_ESTADO[e]}</option>`).join('')}
+          </select>
+          <button data-conteudo-favorito="${c.id}" class="${fav?'destaque':''}">${fav?'★ Favorito':'☆ Favoritar'}</button>
+        </div>
+      </div>`;
+    }).join('')}
+    ${filtrada.length===0 ? '<p class="mini">Nada encontrado.</p>' : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Favoritos (${p.favoritos.length})</h3>
+    ${p.favoritos.length===0 ? '<p class="mini">Marque até 8–12 pra agilizar sessão (decisão do patch v1.1) — não limita o que o personagem conhece.</p>' :
+      p.favoritos.map(id => { const c = todosConteudos(p).find(x=>x.id===id); return c ? `<span class="pill on" style="margin:0 6px 6px 0;display:inline-block">${esc(c.nome)}</span>` : ''; }).join('')}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">+ Conteúdo próprio</h3>
+    <p class="mini" style="margin-bottom:10px">O Mestre cadastra sem mexer em código — igual ao catálogo, mas escrito por vocês.</p>
+    <div class="grade">
+      <div><label>Nome</label><input id="novoConteudoNome" placeholder="Ex.: Avis"></div>
+      <div><label>Categoria</label><input id="novoConteudoCategoria" placeholder="Feitiço, Técnica, Receita..."></div>
+      <div><label>Perícia</label><input id="novoConteudoPericia" placeholder="Ex.: Feitiços"></div>
+      <div><label>Atributo</label><input id="novoConteudoAtributo" placeholder="Ex.: Arcano"></div>
+    </div>
+    <label style="margin-top:8px">Efeito (sucesso / elevado / excepcional, resumido)</label>
+    <textarea id="novoConteudoEfeito" rows="2"></textarea>
+    <button data-add-conteudo style="margin-top:10px">+ Adicionar à ficha</button>
+    ${p.conteudosCustom.length ? `<h4 style="margin-top:16px;font-size:13px">Já criados</h4>` + p.conteudosCustom.map(c => `
+      <div class="linha" style="margin-bottom:6px"><span class="mini" style="flex:1">${esc(c.nome)} — ${esc(c.categoria)}</span><button data-remover-conteudo-custom="${c.id}" class="perigo" style="padding:3px 8px">✕</button></div>
+    `).join('') : ''}
+  </div>`;
+}
+
+/* --- Render / eventos -------------------------------------------------------- */
+
+function render(){
+  desenharBarra();
+  const app = document.getElementById('app');
+
+  if(MODO_HUB && estado.carregandoHub){ app.innerHTML = `<div class="vazio"><h2>Carregando…</h2></div>`; return; }
+  if(MODO_HUB && estado.erroHub === 'nao-encontrado'){
+    app.innerHTML = `<div class="vazio"><h2>Ficha não encontrada</h2><p class="mini">Ela pode ter sido apagada, ou não é sua. <a href="/fichas">Voltar para Fichas</a></p></div>`;
+    return;
+  }
+  const p = atual();
+  if(!p){
+    app.innerHTML = `<div class="vazio"><h2>Nenhum personagem ainda</h2><p class="mini">Clique em "+ Novo" para criar a primeira ficha.</p></div>`;
+    return;
+  }
+  const somenteLeitura = MODO_HUB && !estado.podeEditar;
+  const alerta = somenteLeitura
+    ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
+    : falhouAoSalvar ? `<div class="aviso"><strong>Não consegui salvar${MODO_HUB?' no Hub':''}.</strong> Confira sua conexão.</div>` : '';
+
+  app.innerHTML = alerta
+    + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
+    + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos}[estado.aba])(p);
+
+  ligarEventos();
+  if(somenteLeitura){
+    app.querySelectorAll('input, select, textarea, button:not([data-aba])').forEach(el => el.disabled = true);
+  }
+}
+
+function desenharBarra(){
+  if(MODO_HUB){
+    document.getElementById('seletor').hidden = true;
+    document.getElementById('btNovo').hidden = true;
+    document.getElementById('btExcluir').hidden = true;
+    document.getElementById('linkFichas').hidden = false;
+    const label = document.getElementById('labelCompartilhar');
+    label.style.display = estado.ehDono ? 'flex' : 'none';
+    document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    return;
+  }
+  const sel = document.getElementById('seletor');
+  sel.innerHTML = estado.fichas.map(f => `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`).join('');
+}
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+
+  app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+
+  // Campos de texto genéricos: data-campo="perfil.nome" / "varinha.madeira" etc.
+  app.querySelectorAll('[data-campo]').forEach(el => {
+    const evento = (el.tagName==='SELECT') ? 'change' : 'input';
+    el.addEventListener(evento, () => {
+      const [grupo, chave] = el.dataset.campo.split('.');
+      mudarSemRedesenhar(p => { p[grupo][chave] = el.value; });
+    });
+  });
+  app.querySelectorAll('[data-campo-num]').forEach(el => {
+    el.addEventListener('input', () => {
+      const caminho = el.dataset.campoNum.split('.');
+      mudarSemRedesenhar(p => {
+        let alvo = p; for(let i=0;i<caminho.length-1;i++) alvo = alvo[caminho[i]];
+        alvo[caminho[caminho.length-1]] = Math.max(0, Number(el.value) || 0);
+      });
+    });
+  });
+
+  // Atributos
+  app.querySelectorAll('[data-atr-inc]').forEach(b => b.onclick = () => mudar(p => { if((p.atributos[b.dataset.atrInc]||0) < 5) p.atributos[b.dataset.atrInc]++; }));
+  app.querySelectorAll('[data-atr-dec]').forEach(b => b.onclick = () => mudar(p => { if((p.atributos[b.dataset.atrDec]||0) > 0) p.atributos[b.dataset.atrDec]--; }));
+
+  // Perícias
+  app.querySelectorAll('[data-per-inc]').forEach(b => b.onclick = () => mudar(p => { if((p.pericias[b.dataset.perInc]||0) < 5) p.pericias[b.dataset.perInc]++; }));
+  app.querySelectorAll('[data-per-dec]').forEach(b => b.onclick = () => mudar(p => { if((p.pericias[b.dataset.perDec]||0) > 0) p.pericias[b.dataset.perDec]--; }));
+  const chkOverride = app.querySelector('[data-override-pericia]');
+  if(chkOverride) chkOverride.onchange = () => mudar(p => { p.periciasOverride = chkOverride.checked; });
+
+  // Vida / Tensão
+  app.querySelectorAll('[data-vida-delta]').forEach(b => b.onclick = () => mudar(p => { p.vida.atual = Math.max(0, Math.min(p.vida.maxima, p.vida.atual + Number(b.dataset.vidaDelta))); }));
+  app.querySelectorAll('[data-tensao-delta]').forEach(b => b.onclick = () => mudar(p => { p.tensao = Math.max(0, Math.min(3, p.tensao + Number(b.dataset.tensaoDelta))); }));
+
+  // Ferimentos
+  const btNovoFer = app.querySelector('[data-novo-ferimento]');
+  if(btNovoFer) btNovoFer.onclick = () => mudar(p => p.ferimentos.push({id:uid(), nome:'Ferimento', consequencia:'', tratamento:'', recuperacao:'', estado:'Não Tratado'}));
+  app.querySelectorAll('[data-fer-remover]').forEach(b => b.onclick = () => mudar(p => { p.ferimentos = p.ferimentos.filter(f => f.id !== b.dataset.ferRemover); }));
+  app.querySelectorAll('[data-fer-campo]').forEach(el => {
+    const [id, campo] = el.dataset.ferCampo.split(':');
+    const evento = el.tagName==='SELECT' ? 'change' : 'input';
+    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const f = p.ferimentos.find(x=>x.id===id); if(f) f[campo] = el.value; }));
+  });
+
+  // Condições
+  const btNovaCond = app.querySelector('[data-nova-condicao]');
+  if(btNovaCond) btNovaCond.onclick = () => mudar(p => p.condicoes.push({id:uid(), nome:CONDICOES_NOMES[0], rodadas:1, origem:''}));
+  app.querySelectorAll('[data-cond-remover]').forEach(b => b.onclick = () => mudar(p => { p.condicoes = p.condicoes.filter(c => c.id !== b.dataset.condRemover); }));
+  app.querySelectorAll('[data-cond-rodada-menos]').forEach(b => b.onclick = () => mudar(p => {
+    const c = p.condicoes.find(x=>x.id===b.dataset.condRodadaMenos); if(!c) return;
+    c.rodadas = Math.max(0, c.rodadas - 1);
+    if(c.rodadas === 0) p.condicoes = p.condicoes.filter(x => x.id !== c.id);
+  }));
+  app.querySelectorAll('[data-cond-campo]').forEach(el => {
+    const [id, campo] = el.dataset.condCampo.split(':');
+    const evento = el.tagName==='SELECT' ? 'change' : 'input';
+    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const c = p.condicoes.find(x=>x.id===id); if(c) c[campo] = el.value; }));
+  });
+  app.querySelectorAll('[data-cond-campo-num]').forEach(el => {
+    const [id, campo] = el.dataset.condCampoNum.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const c = p.condicoes.find(x=>x.id===id); if(c) c[campo] = Math.max(0, Number(el.value)||0); }));
+  });
+
+  // Conteúdos
+  const buscaEl = app.querySelector('[data-busca-conteudo]');
+  if(buscaEl) buscaEl.addEventListener('input', () => mudarSemRedesenhar(p => { p._buscaConteudo = buscaEl.value; }));
+  const chkRestritos = app.querySelector('[data-mostrar-restritos]');
+  if(chkRestritos) chkRestritos.onchange = () => mudar(p => { p.mostrarRestritos = chkRestritos.checked; });
+  app.querySelectorAll('[data-conteudo-estado]').forEach(el => el.addEventListener('change', () => mudar(p => { p.conteudosConhecidos[el.dataset.conteudoEstado] = el.value; })));
+  app.querySelectorAll('[data-conteudo-favorito]').forEach(b => b.onclick = () => mudar(p => {
+    const id = b.dataset.conteudoFavorito;
+    if(p.favoritos.includes(id)) p.favoritos = p.favoritos.filter(x=>x!==id);
+    else p.favoritos.push(id);
+  }));
+  const btAddConteudo = app.querySelector('[data-add-conteudo]');
+  if(btAddConteudo) btAddConteudo.onclick = () => {
+    const nome = document.getElementById('novoConteudoNome').value.trim();
+    if(!nome) return;
+    mudar(p => p.conteudosCustom.push({
+      id: uid(), nome,
+      categoria: document.getElementById('novoConteudoCategoria').value.trim() || 'Conteúdo',
+      pericia: document.getElementById('novoConteudoPericia').value.trim() || '—',
+      atributo: document.getElementById('novoConteudoAtributo').value.trim() || '—',
+      alcance:'—', area:'—', duracao:'—', concentracao:false, dano:'0', natureza:'Não Letal',
+      sucesso: document.getElementById('novoConteudoEfeito').value.trim() || '—',
+      elevado:'—', excepcional:'—', restrito:false,
+    }));
+  };
+  app.querySelectorAll('[data-remover-conteudo-custom]').forEach(b => b.onclick = () => mudar(p => { p.conteudosCustom = p.conteudosCustom.filter(c => c.id !== b.dataset.removerConteudoCustom); }));
+}
+
+document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
+document.getElementById('btNovo').onclick = () => {
+  const p = novoPersonagem();
+  estado.fichas.push(p); estado.atualId = p.id;
+  salvar(); render();
+};
+document.getElementById('btExcluir').onclick = () => {
+  const p = atual(); if(!p) return;
+  if(!confirm(`Excluir "${p.perfil.nome}"? Não tem como desfazer.`)) return;
+  estado.fichas = estado.fichas.filter(f => f.id !== p.id);
+  estado.atualId = estado.fichas[0]?.id || null;
+  salvar(); render();
+};
+document.getElementById('chkCompartilhar').onchange = e => alternarCompartilhado(e.target.checked);
+
+render();
+if(MODO_HUB) iniciarModoHub();
+</script>
+</body>
+</html>
