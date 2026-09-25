@@ -7607,6 +7607,76 @@ qualquer sessão que adicionou uma migração, se ela foi mesmo colada e
 rodada no Supabase — este caso ficou destrancado por sessões inteiras
 sem ninguém notar.
 
+## 168. Hogwarts RPG tinha tudo pronto e nada navegável (25/09/2026)
+
+O Zé testou o preview real depois do PR das decisões #157-#164 e achou
+um problema que nenhum smoke test anterior pegou: a página da campanha
+Hogwarts parecia idêntica à de qualquer outro sistema — Geral, Sessões,
+Comunicação, Grupo, Equipes, Mesa ao Vivo — sem nenhum caminho visível
+pra Conteúdos, Acadêmico, Bestiário, Poções, Inventário, Relações,
+Sapos de Chocolate/Trocas ou Loja. Tudo isso já existia de verdade
+dentro da ficha (`public/hogwarts-rpg.html`, abas da decisão #157 em
+diante) e a Loja já tinha CRUD completo no Modo Sessão do Mestre
+(decisão #161/#162) — só que "existe uma rota/API que funciona" não é
+o mesmo que "dá pra chegar lá clicando", e o smoke test anterior testou
+fluxo por fluxo direto na URL da ficha, nunca validou a navegação
+partindo só da página da campanha. Achado real, sem desculpa: a decisão
+#164 testou "a funcionalidade funciona" e nunca testou "alguém
+encontra a funcionalidade".
+
+**O que mudou**, tudo dentro do chassi genérico da campanha
+(`src/app/(hub)/campanhas/[id]/page.tsx`), sem tocar em nada específico
+de outro sistema:
+
+1. **`Sistema.modulosFicha`** (`src/lib/sistemas.ts`) — campo novo e
+   opcional: lista de `{id, rotulo}` dos módulos que merecem link
+   direto. Só o Hogwarts RPG preenche isso por enquanto; qualquer outro
+   sistema continua com `undefined` e a página da campanha continua
+   exatamente igual a antes — nenhuma aba nova aparece pra quem não
+   declarar módulos. `id` tem que bater com o `data-aba` da ficha (não
+   tem checagem cruzada automática entre os dois arquivos).
+
+2. **A ficha entende `?aba=`** (`public/hogwarts-rpg.html`) — deep-link
+   pra abrir já na aba certa (`?id=X&aba=loja`), em vez de sempre cair
+   em "Perfil" e depender de alguém saber clicar na aba certa depois.
+   Valor inválido/desconhecido cai em "Perfil" (fallback no dispatch de
+   render, não crash).
+
+3. **Aba "Hogwarts RPG" nova na página da campanha, só pro Mestre**,
+   aparece só quando o sistema declara `modulosFicha`: link pro Modo
+   Sessão, painel de Lojas embutido (criar loja, abrir/fechar, add/
+   remover item, tudo direto ali — sem precisar abrir o Modo Sessão
+   externo só pra isso) e a lista de todas as fichas da campanha com um
+   link por módulo cada uma (`ModulosFicha`, componente novo e
+   genérico — não hardcoded pro Hogwarts, só recebe a lista de módulos
+   como prop).
+
+4. **Jogador ganha os mesmos atalhos de módulo** embaixo de cada ficha
+   dele na tela inicial da campanha (`EntrarNaCampanha`), sem precisar
+   abrir a ficha inteira e descobrir a aba certa sozinho. Continua sem
+   nada de administrativo — só os módulos que já eram dele.
+
+5. **Loja de verdade virou uma ferramenta de campanha, não uma
+   propriedade escondida do Hogwarts.** O modelo `Loja` já era
+   genérico por `campanhaId` desde a decisão #162 (nenhuma coluna de
+   sistema); o painel novo (`painel-lojas.tsx`) só usa as MESMAS rotas
+   que o Modo Sessão e a ficha já usavam — a permissão continua sendo
+   inteiramente do servidor (`ehMestreOuAuxiliar`), a tela só chama a
+   API certa.
+
+**Testado partindo só da página da campanha** (sem digitar URL
+interna), com Playwright simulando mestre e jogador: aba "Hogwarts
+RPG" aparece pro mestre com Loja/atalhos, criar loja pelo painel
+embutido funciona e aparece na tela, deep-link `?aba=loja` abre a
+ficha já na aba certa (`aria-current="true"`), jogador vê os mesmos
+atalhos de módulo na tela inicial sem precisar abrir a ficha primeiro.
+Testei também regressão: uma campanha de outro sistema (Fabula Ultima)
+continua com o mesmo conjunto de abas de sempre — nenhuma aba nova,
+nenhuma mudança visual.
+
+`tsc`, `eslint`, os 307 testes automáticos e `next build` continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

@@ -631,6 +631,10 @@ function podePrepararAutomatico(p, receita){
 /* --- Armazenamento (mesmo mecanismo dos outros sistemas: decisão #40/#44) - */
 
 const MODO_HUB = new URLSearchParams(location.search).get('id');
+// Deep-link pra uma aba específica (ex.: `?id=X&aba=loja`), usado pelo painel
+// Hogwarts da campanha pra levar direto pro módulo certo em vez de sempre
+// abrir em "Perfil" — decisão #168.
+const ABA_INICIAL = new URLSearchParams(location.search).get('aba') || 'perfil';
 const CHAVE = 'hogwarts_fichas';
 let falhouAoSalvar = false;
 
@@ -688,7 +692,7 @@ function salvar(){
 
 const estado = {
   fichas: MODO_HUB ? [] : carregar(),
-  atualId: null, aba:'perfil',
+  atualId: null, aba: ABA_INICIAL,
   carregandoHub: !!MODO_HUB, erroHub: null,
   ehDono:false, podeEditar:false, compartilhado:false,
   // Modo local (sem ?id=, fora do Hub) não passa pelo servidor — não tem
@@ -1686,7 +1690,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.filter(a => a.id!=='loja' || estado.campanhaId).map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial, loja:abaLoja}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial, loja:abaLoja}[estado.aba] || abaPerfil)(p);
 
   ligarEventos();
   if(somenteLeitura){

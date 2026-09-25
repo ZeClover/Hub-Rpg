@@ -64,6 +64,19 @@ export type Sistema = {
     esse painel ainda.
   */
   modoSessao: string | null;
+  /*
+    Módulos da ficha que merecem link direto na página da campanha —
+    decisão #168. Sem isto, mestre e jogador só alcançam Conteúdos,
+    Acadêmico, Inventário etc. abrindo a ficha e clicando manualmente na
+    aba certa; com isto, a campanha mostra um atalho por módulo que já
+    abre direto nela (`?id=<personagem>&aba=<id>`, que a ficha precisa
+    entender). `id` tem que bater exatamente com o `data-aba` que a
+    própria ficha usa — não tem checagem cruzada automática entre os
+    dois arquivos, então ao renomear uma aba na ficha, atualize aqui
+    também. undefined/[] pra sistema sem esse recorte ainda (fica só
+    com o link de abrir a ficha inteira, como sempre foi).
+  */
+  modulosFicha?: { id: string; rotulo: string }[];
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -164,6 +177,17 @@ export const SISTEMAS: Sistema[] = [
     campoVidaInimigo: null,
     grimorio: null,
     modoSessao: "/hogwarts-rpg-mestre.html",
+    modulosFicha: [
+      { id: "familia", rotulo: "Casa & Família" },
+      { id: "conteudos", rotulo: "Conteúdos" },
+      { id: "academico", rotulo: "Acadêmico" },
+      { id: "criaturas", rotulo: "Bestiário" },
+      { id: "pocoes", rotulo: "Poções" },
+      { id: "inventario", rotulo: "Inventário & Relíquias" },
+      { id: "social", rotulo: "Relações & Projetos" },
+      { id: "colecao", rotulo: "Sapos de Chocolate & Trocas" },
+      { id: "loja", rotulo: "Loja" },
+    ],
   },
   {
     chave: "thryliki-chelona",

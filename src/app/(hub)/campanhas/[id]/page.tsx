@@ -24,6 +24,8 @@ import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
 import { MestreAuxiliar } from "./mestre-auxiliar";
+import { ModulosFicha } from "./modulos-ficha";
+import { PainelLojas } from "./painel-lojas";
 import { QrCode } from "../../qr-code";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
@@ -73,6 +75,8 @@ export default async function PaginaCampanha({
   const escudoMestre = sistemaDef?.escudoMestre ?? null;
   const grimorio = sistemaDef?.grimorio ?? null;
   const modoSessao = sistemaDef?.modoSessao ?? null;
+  const modulosFicha = sistemaDef?.modulosFicha ?? [];
+  const temLojaViva = modulosFicha.some((m) => m.id === "loja");
 
   const [participacoes, personagensDaCampanha] = await Promise.all([
     banco.participacao.findMany({
@@ -314,6 +318,9 @@ export default async function PaginaCampanha({
           escudoMestre={escudoMestre}
           grimorio={grimorio}
           modoSessao={modoSessao}
+          modulosFicha={modulosFicha}
+          temLojaViva={temLojaViva}
+          nomeSistema={campanha.sistema.nome}
           capaUrl={campanha.capaUrl ?? ""}
           descricao={campanha.descricao ?? ""}
           tags={campanha.tags}
@@ -359,6 +366,7 @@ export default async function PaginaCampanha({
             })) > 0
           }
           grimorio={grimorio}
+          modulosFicha={modulosFicha}
           sessoes={sessoes}
           pessoas={pessoas}
           agoraMs={agoraMs}
@@ -391,6 +399,9 @@ function VisaoDoMestre({
   escudoMestre,
   grimorio,
   modoSessao,
+  modulosFicha,
+  temLojaViva,
+  nomeSistema,
   capaUrl,
   descricao,
   tags,
@@ -425,6 +436,9 @@ function VisaoDoMestre({
   escudoMestre: string | null;
   grimorio: string | null;
   modoSessao: string | null;
+  modulosFicha: { id: string; rotulo: string }[];
+  temLojaViva: boolean;
+  nomeSistema: string;
   capaUrl: string;
   descricao: string;
   tags: string[];
@@ -525,6 +539,92 @@ function VisaoDoMestre({
               </>
             ),
           },
+          ...(modulosFicha.length > 0
+            ? [
+                {
+                  id: "sistema",
+                  rotulo: nomeSistema,
+                  conteudo: (
+                    <>
+                      <section>
+                        <h2 className="font-titulo text-xl">Painel do Mestre — {nomeSistema}</h2>
+                        <p className="mt-2 text-sm text-texto-suave">
+                          Ferramentas e atalhos específicos deste sistema, além do que já
+                          existe nas outras abas.
+                        </p>
+                        {modoSessao && (
+                          <a
+                            href={`${modoSessao}?campanha=${campanhaId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
+                          >
+                            🧙 Abrir Modo Sessão (ações em lote, criar NPC/monstro)
+                          </a>
+                        )}
+                      </section>
+
+                      {temLojaViva && (
+                        <section className="mt-8">
+                          <h2 className="font-titulo text-xl">Lojas</h2>
+                          <p className="mt-2 text-sm text-texto-suave">
+                            Toda loja nasce fechada. Abra só quando o estoque estiver pronto —
+                            compra desconta Galeões e estoque na hora, mesmo com dois
+                            jogadores comprando ao mesmo tempo.
+                          </p>
+                          <PainelLojas campanhaId={campanhaId} />
+                        </section>
+                      )}
+
+                      <section className="mt-8">
+                        <h2 className="font-titulo text-xl">Fichas — atalhos por módulo</h2>
+                        <p className="mt-2 text-sm text-texto-suave">
+                          Cada link já abre a ficha direto no módulo certo, sem precisar
+                          navegar pelas abas de dentro dela.
+                        </p>
+                        {personagensDaCampanha.length === 0 ? (
+                          <p className="mt-3 text-sm text-texto-suave">
+                            Nenhuma ficha nesta campanha ainda.
+                          </p>
+                        ) : (
+                          <ul className="mt-4 space-y-3">
+                            {personagensDaCampanha.map((personagem) => (
+                              <li
+                                key={personagem.id}
+                                className="rounded border border-borda bg-fundo px-3 py-2"
+                              >
+                                {ficha ? (
+                                  <a
+                                    href={`${ficha}?id=${personagem.id}`}
+                                    className="text-sm text-ambar-forte underline underline-offset-2"
+                                  >
+                                    {personagem.nome}
+                                  </a>
+                                ) : (
+                                  <span className="text-sm text-texto">{personagem.nome}</span>
+                                )}
+                                {personagem.ehMonstro && (
+                                  <span className="ml-2 rounded-full border border-borda px-2 py-0.5 text-xs text-texto-suave">
+                                    monstro/NPC
+                                  </span>
+                                )}
+                                {ficha && (
+                                  <ModulosFicha
+                                    ficha={ficha}
+                                    personagemId={personagem.id}
+                                    modulos={modulosFicha}
+                                  />
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </section>
+                    </>
+                  ),
+                },
+              ]
+            : []),
           {
             id: "sessoes",
             rotulo: "Sessões",
@@ -729,6 +829,7 @@ function VisaoDoJogador({
   minhasFichasDoSistema,
   temFichasEmOutraCampanha,
   grimorio,
+  modulosFicha,
   sessoes,
   pessoas,
   agoraMs,
@@ -750,6 +851,7 @@ function VisaoDoJogador({
   minhasFichasDoSistema: { id: string; nome: string }[];
   temFichasEmOutraCampanha: boolean;
   grimorio: string | null;
+  modulosFicha: { id: string; rotulo: string }[];
   sessoes: SessaoView[];
   pessoas: { usuarioId: string; nome: string }[];
   agoraMs: number;
@@ -776,6 +878,7 @@ function VisaoDoJogador({
             minhasFichas={minhasFichasDoSistema}
             meusPersonagens={meusPersonagens}
             temFichasEmOutraCampanha={temFichasEmOutraCampanha}
+            modulosFicha={modulosFicha}
           />
         ) : (
           <p className="mt-3 text-sm text-texto-suave">

@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 
+import { ModulosFicha } from "./modulos-ficha";
+
 /*
   Ligar fichas (suas) a esta campanha. Decisão #133: um jogador pode ter
   duas ou mais fichas na mesma campanha (ex.: personagem principal + um
@@ -17,12 +19,14 @@ export function EntrarNaCampanha({
   minhasFichas,
   meusPersonagens,
   temFichasEmOutraCampanha,
+  modulosFicha,
 }: {
   campanhaId: string;
   ficha: string;
   minhasFichas: { id: string; nome: string }[];
   meusPersonagens: { id: string; nome: string }[];
   temFichasEmOutraCampanha: boolean;
+  modulosFicha: { id: string; rotulo: string }[];
 }) {
   const roteador = useRouter();
   const idsJaLigados = new Set(meusPersonagens.map((p) => p.id));
@@ -75,22 +79,25 @@ export function EntrarNaCampanha({
           {meusPersonagens.map((personagem) => (
             <li
               key={personagem.id}
-              className="flex items-center justify-between gap-3 rounded border border-borda bg-fundo px-3 py-2"
+              className="rounded border border-borda bg-fundo px-3 py-2"
             >
-              <a
-                href={`${ficha}?id=${personagem.id}`}
-                className="text-sm text-ambar-forte underline underline-offset-2"
-              >
-                {personagem.nome}
-              </a>
-              <button
-                type="button"
-                onClick={() => soltar(personagem.id)}
-                disabled={processando === personagem.id}
-                className="text-xs text-texto-suave underline decoration-borda underline-offset-4 transition hover:text-segredo disabled:opacity-50"
-              >
-                {processando === personagem.id ? "Soltando…" : "Soltar"}
-              </button>
+              <div className="flex items-center justify-between gap-3">
+                <a
+                  href={`${ficha}?id=${personagem.id}`}
+                  className="text-sm text-ambar-forte underline underline-offset-2"
+                >
+                  {personagem.nome}
+                </a>
+                <button
+                  type="button"
+                  onClick={() => soltar(personagem.id)}
+                  disabled={processando === personagem.id}
+                  className="text-xs text-texto-suave underline decoration-borda underline-offset-4 transition hover:text-segredo disabled:opacity-50"
+                >
+                  {processando === personagem.id ? "Soltando…" : "Soltar"}
+                </button>
+              </div>
+              <ModulosFicha ficha={ficha} personagemId={personagem.id} modulos={modulosFicha} />
             </li>
           ))}
         </ul>
