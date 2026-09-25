@@ -123,7 +123,62 @@ const CASAS = [
   {nome:'Lufa-Lufa', foco:'Preparação, cooperação, perseverança, criaturas e plantas.'},
 ];
 
+// Toda Casa concede 1 Tradição gratuita (não é bônus numérico — Casa não é
+// classe). Fixo 1:1 com a Casa, por isso não é um catálogo administrável
+// separado; só aparece automaticamente quando a Casa é escolhida no Perfil.
+const TRADICOES = {
+  'Grifinória': 'Tradição da Bravura — quando o personagem age primeiro e sob risco real pra proteger alguém, o Mestre pode conceder Vantagem no teste (não empilha com outra fonte de Vantagem).',
+  'Sonserina': 'Tradição da Ambição — o personagem sabe reconhecer quando uma situação social esconde uma vantagem a se tomar; o Mestre pode revelar uma pista extra em cenas de negociação/intriga.',
+  'Corvinal': 'Tradição do Estudo — depois de observar ou pesquisar algo por alguns minutos antes de agir, o Mestre pode conceder Vantagem no teste relacionado.',
+  'Lufa-Lufa': 'Tradição da Perseverança — ao Ajudar um aliado (regra geral de Ajudar), o efeito pode durar até o fim da cena em vez de só até o fim do próximo turno, quando fizer sentido.',
+};
+
 const STATUS_SANGUE = ['Puro-sangue','Mestiço','Nascido-trouxa','Desconhecido'];
+
+const CONDICAO_FINANCEIRA = ['Modesta','Confortável','Abastada','Riquíssima'];
+
+// Famílias — catálogo igual Conteúdos: seed fixo + as que o Mestre/jogador
+// criar em cima (p.familiasCustom). Nunca concede Atributo — só Conteúdo
+// Familiar, Acesso Familiar, Tags e Condição Financeira (decisão do sistema).
+const FAMILIAS_SEED = [
+  {id:'black', nome:'Black', tipo:'Canônica', condicaoFinanceira:'Abastada', tags:['Antiga','Influente','Tradicional','Intimidadora'],
+    conteudoFamiliar:'Educação das Casas Antigas — genealogias, símbolos, etiqueta e costumes de famílias bruxas tradicionais.',
+    acessoFamiliar:'Parentes, correspondências, residências e círculos tradicionais — nunca livre acesso a todos os segredos da família.'},
+  {id:'gaunt', nome:'Gaunt', tipo:'Canônica', condicaoFinanceira:'Decadente', tags:['Antiquíssima','Obscura','Decadente'],
+    conteudoFamiliar:'Legado de Slytherin — conhece Salazar Slytherin, símbolos serpentinos e tradições obscuras da linhagem (não concede Ofidioglossia).',
+    acessoFamiliar:'Objetos antigos, histórias transmitidas oralmente, locais e membros da linhagem.'},
+  {id:'malfoy', nome:'Malfoy', tipo:'Canônica', condicaoFinanceira:'Riquíssima', tags:['Rica','Influente','Prestigiada','Ambiciosa'],
+    conteudoFamiliar:'Alta Sociedade Bruxa — etiqueta da elite, famílias influentes, como solicitar audiência sem gafes.',
+    acessoFamiliar:'Introduções a pessoas influentes, comerciantes, eventos e propriedades — não é dinheiro infinito do pai.'},
+  {id:'potter', nome:'Potter', tipo:'Canônica', condicaoFinanceira:'Abastada', tags:['Antiga','Respeitável','Discreta','Inventiva'],
+    conteudoFamiliar:'Tradição de Remédios — preparados medicinais, conservação, ingredientes curativos, observação de sintomas.',
+    acessoFamiliar:'Cadernos antigos, receitas, contatos de boticários, materiais de Poções.'},
+  {id:'weasley', nome:'Weasley', tipo:'Canônica', condicaoFinanceira:'Variável por ramo', tags:['Antiga','Extensa','Conectada'],
+    conteudoFamiliar:'Teia Familiar — grande familiaridade com parentes, casamentos e conexões entre famílias bruxas.',
+    acessoFamiliar:'Rede extensa de parentes, conhecidos e contatos familiares.'},
+  {id:'ollivander', nome:'Ollivander', tipo:'Canônica', condicaoFinanceira:'Confortável', tags:['Antiquíssima','Artesã','Especialista','Respeitada'],
+    conteudoFamiliar:'Conhecimento de Varinhas — madeiras comuns, núcleos tradicionais, manutenção e construção básica.',
+    acessoFamiliar:'Oficina, registros, fornecedores e artesãos de varinhas.'},
+  {id:'longbottom', nome:'Longbottom', tipo:'Canônica', condicaoFinanceira:'Confortável', tags:['Antiga','Respeitável','Tradicional'],
+    conteudoFamiliar:'Memória da Linhagem — registros extensos de gerações anteriores, úteis em investigações sobre família/propriedade.',
+    acessoFamiliar:'Documentos, parentes e propriedades de longa data.'},
+  {id:'burke', nome:'Burke', tipo:'Canônica', condicaoFinanceira:'Confortável', tags:['Comerciante','Obscura','Conhecedora de Artefatos'],
+    conteudoFamiliar:'Avaliação de Artefatos — reconhece sinais gerais de procedência, falsificação, risco e valor em objetos mágicos.',
+    acessoFamiliar:'Comerciantes, colecionadores, avaliadores e objetos incomuns.'},
+];
+
+// Origem: pequena, sem árvore própria — só um benefício. Também catálogo
+// igual Conteúdos (seed + p.origensCustom).
+const ORIGENS_SEED = [
+  {id:'lar-bruxo', nome:'Lar bruxo tradicional', beneficio:'Cresceu cercado de magia cotidiana — conhece etiqueta e costumes bruxos básicos sem precisar de teste.'},
+  {id:'nascido-trouxa', nome:'Nascido-trouxa', beneficio:'Primeira geração mágica da família — traz uma competência trouxa transferível (ver Família Trouxa) e olhar de fora sobre o mundo bruxo.'},
+  {id:'parentes-distantes', nome:'Criado por parentes distantes', beneficio:'Cresceu longe do núcleo familiar — Vantagem pra perceber quando alguém está escondendo algo sobre a própria história.'},
+  {id:'orfanato', nome:'Criado em instituição/orfanato trouxa', beneficio:'Aprendeu cedo a se virar sozinho — Vantagem pra encontrar comida, abrigo ou uma saída num lugar desconhecido.'},
+  {id:'familia-mista', nome:'Família mista (bruxa e trouxa)', beneficio:'Trânsito natural entre os dois mundos — sem Desvantagem em Estudos dos Trouxas por falta de vivência.'},
+  {id:'itinerante', nome:'Família itinerante/viajante', beneficio:'Já morou em vários lugares — conhece pelo menos uma cultura/região bruxa fora da Grã-Bretanha.'},
+  {id:'dificuldades', nome:'Criado com dificuldades financeiras', beneficio:'Aprendeu a fazer mais com menos — Vantagem pra consertar, adaptar ou reaproveitar um objeto comum quebrado.'},
+  {id:'sob-expectativa', nome:'Criado sob expectativa de uma grande família', beneficio:'Sabe se comportar em ambientes formais sob pressão — Vantagem pra manter a compostura quando todos os olhos estão nele.'},
+];
 
 const CONDICOES_DEF = {
   'Abalado': 'Desvantagem no próximo teste relevante que realizar; termina depois disso (ou no fim do próximo turno, o que vier primeiro).',
@@ -222,7 +277,7 @@ function novoPersonagem(){
     id: uid(), criadoEm: t, atualizadoEm: t,
     perfil: {
       nome:'Novo Bruxo', sobrenome:'', imagem:'',
-      anoEscolar:1, casa:'', statusSangue:'', familia:'', origem:'',
+      anoEscolar:1, casa:'', statusSangue:'', familiaId:'', origemId:'',
       ambicao:'', medo:'', vinculo:'', descricao:'', notasMestre:'',
     },
     nivel: 1,
@@ -239,13 +294,29 @@ function novoPersonagem(){
     varinha: {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', tendencia:'', propriedade:'', peculiaridade:'', sintonia:1, lealdade:'Leal'},
     galeoes: 0,
     mostrarRestritos: false,
+    familiasCustom: [],
+    origensCustom: [],
+    segredosFamiliares: [],
   };
+}
+
+// Preenche campos que fichas criadas antes desta fatia ainda não têm —
+// evita que abrir uma ficha salva antes de Casa & Família quebre a tela.
+function garantirCamposNovos(p){
+  if(!Array.isArray(p.familiasCustom)) p.familiasCustom = [];
+  if(!Array.isArray(p.origensCustom)) p.origensCustom = [];
+  if(!Array.isArray(p.segredosFamiliares)) p.segredosFamiliares = [];
+  if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
+  if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
+  return p;
 }
 
 function anoEscolar(nivel){ return Math.max(1, Math.min(7, Math.ceil(nivel/5))); }
 function limitePericia(ano){ return ano<=2?2 : ano<=4?3 : ano===5?4 : 5; }
 
 function todosConteudos(p){ return [...CONTEUDOS_SEED, ...p.conteudosCustom]; }
+function todasFamilias(p){ return [...FAMILIAS_SEED, ...p.familiasCustom]; }
+function todasOrigens(p){ return [...ORIGENS_SEED, ...p.origensCustom]; }
 
 /* --- Armazenamento (mesmo mecanismo dos outros sistemas: decisão #40/#44) - */
 
@@ -254,7 +325,7 @@ const CHAVE = 'hogwarts_fichas';
 let falhouAoSalvar = false;
 
 function carregar(){
-  try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru) : []; }
+  try{ const cru = localStorage.getItem(CHAVE); return cru ? JSON.parse(cru).map(garantirCamposNovos) : []; }
   catch(e){ console.error('Não consegui ler as fichas salvas', e); return []; }
 }
 
@@ -320,7 +391,7 @@ async function iniciarModoHub(){
     if(!resposta.ok){ estado.erroHub='nao-encontrado'; return; }
     const {personagem} = await resposta.json();
     const dados = personagem.dados;
-    const p = (dados && dados.perfil) ? dados : novoPersonagem();
+    const p = garantirCamposNovos((dados && dados.perfil) ? dados : novoPersonagem());
     p.id = MODO_HUB;
     estado.fichas = [p]; estado.atualId = p.id;
     estado.ehDono = !!personagem.ehDono;
@@ -361,6 +432,7 @@ function mudarSemRedesenhar(fn){
 
 const ABAS = [
   {id:'perfil', nome:'Perfil'},
+  {id:'familia', nome:'Casa & Família'},
   {id:'atributos', nome:'Atributos'},
   {id:'pericias', nome:'Perícias'},
   {id:'combate', nome:'Vida & Tensão'},
@@ -382,10 +454,8 @@ function abaPerfil(p){
         <option value="">—</option>
         ${STATUS_SANGUE.map(s => `<option value="${esc(s)}" ${p.perfil.statusSangue===s?'selected':''}>${esc(s)}</option>`).join('')}
       </select></div>
-      <div><label>Família</label><input data-campo="perfil.familia" value="${esc(p.perfil.familia)}" placeholder="Sobrenome / linhagem"></div>
-      <div><label>Origem</label><input data-campo="perfil.origem" value="${esc(p.perfil.origem)}" placeholder="Como cresceu"></div>
     </div>
-    ${p.perfil.casa ? `<p class="mini" style="margin-top:10px">${esc(CASAS.find(c=>c.nome===p.perfil.casa)?.foco || '')}</p>` : ''}
+    ${p.perfil.casa ? `<p class="mini" style="margin-top:10px">${esc(CASAS.find(c=>c.nome===p.perfil.casa)?.foco || '')}<br>${esc(TRADICOES[p.perfil.casa] || '')}</p>` : '<p class="mini" style="margin-top:10px">Sem Casa ainda: sem Tradição gratuita. Família e Origem estão na aba "Casa & Família".</p>'}
   </div>
 
   <div class="cartao">
@@ -434,6 +504,84 @@ function abaPerfil(p){
     <div class="grade" style="margin-top:10px">
       <div><label>Galeões</label><input type="number" min="0" data-campo-num="galeoes" value="${p.galeoes}"></div>
     </div>
+  </div>`;
+}
+
+function abaFamilia(p){
+  const familia = todasFamilias(p).find(f => f.id === p.perfil.familiaId);
+  const origem = todasOrigens(p).find(o => o.id === p.perfil.origemId);
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Família</h3>
+    <p class="mini" style="margin-bottom:10px">Concede 1 Conteúdo Familiar, 1 Acesso Familiar, Tags e Condição Financeira. Nunca concede Atributo — família famosa não é personagem mais forte.</p>
+    <select data-campo="perfil.familiaId" style="margin-bottom:10px">
+      <option value="">— nenhuma escolhida —</option>
+      ${todasFamilias(p).map(f => `<option value="${esc(f.id)}" ${p.perfil.familiaId===f.id?'selected':''}>${esc(f.nome)}</option>`).join('')}
+    </select>
+    ${familia ? `
+      <div class="grade2" style="margin-bottom:8px">
+        <div class="pill">${esc(familia.tipo)}</div>
+        <div class="pill">Condição financeira: ${esc(familia.condicaoFinanceira)}</div>
+      </div>
+      <div style="margin-bottom:8px">${familia.tags.map(t => `<span class="pill" style="margin:0 4px 4px 0;display:inline-block">${esc(t)}</span>`).join('')}</div>
+      <p class="mini"><b>Conteúdo Familiar:</b> ${esc(familia.conteudoFamiliar)}</p>
+      <p class="mini"><b>Acesso Familiar:</b> ${esc(familia.acessoFamiliar)}</p>
+    ` : '<p class="mini">Escolha uma família do catálogo, ou crie uma própria abaixo.</p>'}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Segredos Familiares</h3>
+    <p class="mini" style="margin-bottom:10px">Sem trava real de servidor por jogador ainda (mesma limitação da Varinha — ver ROADMAP): o Mestre decide na mesa o que cada personagem já sabe.</p>
+    ${p.segredosFamiliares.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.segredosFamiliares.map(s => `
+      <div class="linha-cond">
+        <input data-seg-campo="${s.id}:nome" value="${esc(s.nome)}" placeholder="Nome do segredo" style="flex:1">
+        <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-seg-oculto="${s.id}" ${s.oculto?'checked':''}> Oculto do jogador</label>
+        <button data-seg-remover="${s.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>
+      <textarea data-seg-campo="${s.id}:descricao" rows="1" placeholder="A verdade completa (só o Mestre precisa ler)" style="margin-bottom:8px">${esc(s.descricao||'')}</textarea>
+    `).join('')}
+    <button data-novo-segredo>+ Segredo Familiar</button>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">+ Família própria</h3>
+    <div class="grade">
+      <div><label>Nome</label><input id="novaFamiliaNome" placeholder="Sobrenome"></div>
+      <div><label>Tipo</label><select id="novaFamiliaTipo">
+        <option>Original</option><option>Trouxa</option><option>Mista</option><option>Canônica</option>
+      </select></div>
+      <div><label>Condição Financeira</label><select id="novaFamiliaCondicao">
+        ${CONDICAO_FINANCEIRA.map(c => `<option>${c}</option>`).join('')}
+      </select></div>
+      <div><label>Tags (separe por vírgula)</label><input id="novaFamiliaTags" placeholder="Ex.: Excêntrica, Endividada"></div>
+    </div>
+    <label style="margin-top:8px">Conteúdo Familiar</label><textarea id="novaFamiliaConteudo" rows="2"></textarea>
+    <label style="margin-top:8px">Acesso Familiar</label><textarea id="novaFamiliaAcesso" rows="2"></textarea>
+    <button data-add-familia style="margin-top:10px">+ Adicionar ao catálogo desta ficha</button>
+    ${p.familiasCustom.length ? p.familiasCustom.map(f => `
+      <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(f.nome)} — ${esc(f.tipo)}</span><button data-remover-familia-custom="${f.id}" class="perigo" style="padding:3px 8px">✕</button></div>
+    `).join('') : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:6px">Origem</h3>
+    <p class="mini" style="margin-bottom:10px">Como o personagem cresceu — pequena, sem árvore própria, só um benefício.</p>
+    <select data-campo="perfil.origemId" style="margin-bottom:10px">
+      <option value="">— nenhuma escolhida —</option>
+      ${todasOrigens(p).map(o => `<option value="${esc(o.id)}" ${p.perfil.origemId===o.id?'selected':''}>${esc(o.nome)}</option>`).join('')}
+    </select>
+    ${origem ? `<p class="mini"><b>Benefício:</b> ${esc(origem.beneficio)}</p>` : '<p class="mini">Escolha uma origem do catálogo, ou crie uma própria abaixo.</p>'}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">+ Origem própria</h3>
+    <div class="grade2">
+      <div><label>Nome</label><input id="novaOrigemNome" placeholder="Ex.: Criado por avós no interior"></div>
+      <div><label>Benefício</label><input id="novaOrigemBeneficio" placeholder="Um pequeno benefício, sem progressão própria"></div>
+    </div>
+    <button data-add-origem style="margin-top:10px">+ Adicionar ao catálogo desta ficha</button>
+    ${p.origensCustom.length ? p.origensCustom.map(o => `
+      <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(o.nome)}</span><button data-remover-origem-custom="${o.id}" class="perigo" style="padding:3px 8px">✕</button></div>
+    `).join('') : ''}
   </div>`;
 }
 
@@ -641,7 +789,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -756,6 +904,51 @@ function ligarEventos(){
     }));
   };
   app.querySelectorAll('[data-remover-conteudo-custom]').forEach(b => b.onclick = () => mudar(p => { p.conteudosCustom = p.conteudosCustom.filter(c => c.id !== b.dataset.removerConteudoCustom); }));
+
+  // Segredos Familiares
+  const btNovoSegredo = app.querySelector('[data-novo-segredo]');
+  if(btNovoSegredo) btNovoSegredo.onclick = () => mudar(p => p.segredosFamiliares.push({id:uid(), nome:'Segredo', descricao:'', oculto:true}));
+  app.querySelectorAll('[data-seg-remover]').forEach(b => b.onclick = () => mudar(p => { p.segredosFamiliares = p.segredosFamiliares.filter(s => s.id !== b.dataset.segRemover); }));
+  app.querySelectorAll('[data-seg-oculto]').forEach(el => el.onchange = () => mudar(p => { const s = p.segredosFamiliares.find(x=>x.id===el.dataset.segOculto); if(s) s.oculto = el.checked; }));
+  app.querySelectorAll('[data-seg-campo]').forEach(el => {
+    const [id, campo] = el.dataset.segCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const s = p.segredosFamiliares.find(x=>x.id===id); if(s) s[campo] = el.value; }));
+  });
+
+  // + Família própria
+  const btAddFamilia = app.querySelector('[data-add-familia]');
+  if(btAddFamilia) btAddFamilia.onclick = () => {
+    const nome = document.getElementById('novaFamiliaNome').value.trim();
+    if(!nome) return;
+    const tags = document.getElementById('novaFamiliaTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+    mudar(p => p.familiasCustom.push({
+      id: uid(), nome,
+      tipo: document.getElementById('novaFamiliaTipo').value,
+      condicaoFinanceira: document.getElementById('novaFamiliaCondicao').value,
+      tags,
+      conteudoFamiliar: document.getElementById('novaFamiliaConteudo').value.trim() || '—',
+      acessoFamiliar: document.getElementById('novaFamiliaAcesso').value.trim() || '—',
+    }));
+  };
+  app.querySelectorAll('[data-remover-familia-custom]').forEach(b => b.onclick = () => mudar(p => {
+    p.familiasCustom = p.familiasCustom.filter(f => f.id !== b.dataset.removerFamiliaCustom);
+    if(p.perfil.familiaId === b.dataset.removerFamiliaCustom) p.perfil.familiaId = '';
+  }));
+
+  // + Origem própria
+  const btAddOrigem = app.querySelector('[data-add-origem]');
+  if(btAddOrigem) btAddOrigem.onclick = () => {
+    const nome = document.getElementById('novaOrigemNome').value.trim();
+    if(!nome) return;
+    mudar(p => p.origensCustom.push({
+      id: uid(), nome,
+      beneficio: document.getElementById('novaOrigemBeneficio').value.trim() || '—',
+    }));
+  };
+  app.querySelectorAll('[data-remover-origem-custom]').forEach(b => b.onclick = () => mudar(p => {
+    p.origensCustom = p.origensCustom.filter(o => o.id !== b.dataset.removerOrigemCustom);
+    if(p.perfil.origemId === b.dataset.removerOrigemCustom) p.perfil.origemId = '';
+  }));
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
