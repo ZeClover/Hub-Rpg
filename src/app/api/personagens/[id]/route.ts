@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
@@ -64,41 +66,53 @@ async function buscarSeFoiDonoOuMestre(id: string, idDoUsuario: string) {
 */
 export async function GET(_requisicao: NextRequest, { params }: Contexto) {
   const { id } = await params;
-  const personagem = await banco.personagem.findUnique({ where: { id } });
-  if (!personagem) {
-    return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  try {
+    const personagem = await banco.personagem.findUnique({ where: { id } });
+    if (!personagem) {
+      return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+    }
+
+    // `ehDono` é sempre estrito (só a própria dona) — controla ações que
+    // continuam exclusivas do dono na tela (compartilhar, importar JSON).
+    // `podeEditar` é o que decide se a ficha abre editável ou só de leitura
+    // (decisão #131: dono OU mestre da campanha, os dois editam).
+    const usuario = await usuarioAtual();
+    const ehDono = usuario ? personagem.donoId === usuario.id : false;
+
+    const campanhasComoMestre =
+      usuario && !ehDono && personagem.campanhaId
+        ? await campanhasComoMestreDe(usuario.id)
+        : [];
+
+    const podeLer = usuario
+      ? podeAcessarPersonagem(usuario.id, personagem, campanhasComoMestre)
+      : false;
+
+    if (!podeLer && !personagem.compartilhado) {
+      return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      personagem: {
+        id: personagem.id,
+        nome: personagem.nome,
+        dados: personagem.dados,
+        compartilhado: personagem.compartilhado,
+        ehDono,
+        podeEditar: podeLer,
+      },
+    });
+  } catch (erro) {
+    // A ficha em produção mostrava só "Ficha não encontrada" tanto pra 404
+    // quanto pra um erro de verdade quebrando aqui (decisão #158 já
+    // corrigiu a causa mais provável, em usuarioAtual()) — sem isto, um
+    // erro novo nesta rota ficava invisível: o Next some com o corpo da
+    // resposta de erro em produção, e o log correspondente não tinha
+    // nenhuma pista de qual `id` ou qual etapa quebrou.
+    const referencia = randomUUID().slice(0, 8);
+    console.error(`[GET /api/personagens/${id}] falhou (ref ${referencia}):`, erro);
+    return NextResponse.json({ erro: "erro interno", referencia }, { status: 500 });
   }
-
-  // `ehDono` é sempre estrito (só a própria dona) — controla ações que
-  // continuam exclusivas do dono na tela (compartilhar, importar JSON).
-  // `podeEditar` é o que decide se a ficha abre editável ou só de leitura
-  // (decisão #131: dono OU mestre da campanha, os dois editam).
-  const usuario = await usuarioAtual();
-  const ehDono = usuario ? personagem.donoId === usuario.id : false;
-
-  const campanhasComoMestre =
-    usuario && !ehDono && personagem.campanhaId
-      ? await campanhasComoMestreDe(usuario.id)
-      : [];
-
-  const podeLer = usuario
-    ? podeAcessarPersonagem(usuario.id, personagem, campanhasComoMestre)
-    : false;
-
-  if (!podeLer && !personagem.compartilhado) {
-    return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
-  }
-
-  return NextResponse.json({
-    personagem: {
-      id: personagem.id,
-      nome: personagem.nome,
-      dados: personagem.dados,
-      compartilhado: personagem.compartilhado,
-      ehDono,
-      podeEditar: podeLer,
-    },
-  });
 }
 
 export async function PATCH(requisicao: NextRequest, { params }: Contexto) {

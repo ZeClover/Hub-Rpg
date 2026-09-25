@@ -7119,6 +7119,49 @@ seja este caso específico e já entendido).
 Testado: os 302 testes automáticos do projeto (`node --test`) e
 `tsc --noEmit` continuam passando.
 
+## 159. Correção de verdade — migração 0020 (Mestre auxiliar) nunca tinha rodado em produção (25/09/2026)
+
+A correção da decisão #158 foi feita antes de ter acesso ao log real do
+erro — era uma fragilidade genuína, mas não a causa deste caso. O Zé
+achou o log de verdade direto no painel da Vercel (Logs → filtrar por
+rota), e ele apontava outra coisa:
+
+```
+PrismaClientKnownRequestError: Invalid `prisma.participacao.findMany()`
+invocation: Invalid input value for enum "Papel": "ME...
+```
+
+Esse é um erro do **Postgres**, não da lógica do Hub: `campanhasComoMestreDe()`
+(`src/app/api/personagens/[id]/route.ts`) filtra
+`papel: { in: ["MESTRE", "MESTRE_AUXILIAR"] } }` — e o tipo `Papel` no
+banco de produção nunca tinha o valor `MESTRE_AUXILIAR` cadastrado. A
+migração `0020_mestre_auxiliar.sql` (decisão #148, criada há sessões
+atrás) sempre existiu no repositório, mas **nunca foi rodada** no
+Supabase de produção — um "colar e rodar" que ficou pra trás.
+
+Isso batia exatamente com o sintoma: ler a própria ficha nunca aciona
+essa consulta (só roda quando quem pede NÃO é a dona — decisão #13, o
+caminho "será que essa pessoa é mestre de alguma campanha?"). Por isso
+o dono de uma ficha nunca via problema nenhum, e um mestre tentando
+ler a ficha de qualquer jogador — a ação que gerou o relato original —
+quebrava sempre, com 500, não 404. O aviso "Ficha não encontrada" que
+a ficha mostra pra qualquer erro (decisão #158 já tinha notado essa
+ambiguidade) escondeu isso por várias rodadas de investigação.
+
+**Correção:** rodada a migração que já existia,
+`ALTER TYPE "Papel" ADD VALUE IF NOT EXISTS 'MESTRE_AUXILIAR';`, direto
+no SQL Editor do Supabase. Sem mudança de código nenhuma — o código já
+estava certo desde a decisão #148, só o banco de produção que ficou
+pra trás.
+
+**Lição prática:** toda vez que uma migração usa `ALTER TYPE ... ADD
+VALUE`, ela precisa MESMO ser rodada — não tem "vai funcionar sem
+rodar" porque o Prisma só valida o schema, quem valida o valor de
+verdade é o Postgres na hora da consulta. Vale conferir, depois de
+qualquer sessão que adicionou uma migração, se ela foi mesmo colada e
+rodada no Supabase — este caso ficou destrancado por sessões inteiras
+sem ninguém notar.
+
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 
 **As tabelas estão trancadas para acesso externo.** O Supabase publica uma API

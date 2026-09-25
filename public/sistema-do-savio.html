@@ -1479,7 +1479,20 @@ const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
 async function iniciarModoHub(){
   try{
     const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
-    if(!resposta.ok){ estado.erroHub = 'nao-encontrado'; return; }
+    if(!resposta.ok){
+      // Distingue "não é sua/não existe" (4xx — permissão, decisão #13) de
+      // "quebrou de verdade" (5xx) — as duas caíam na mesma mensagem
+      // genérica antes, o que escondeu um erro de servidor real atrás de
+      // um aviso de permissão, atrasando o diagnóstico (decisão #158).
+      if(resposta.status >= 500){
+        const corpo = await resposta.json().catch(() => null);
+        estado.erroHub = 'erro-servidor';
+        estado.erroHubReferencia = (corpo && corpo.referencia) || null;
+      }else{
+        estado.erroHub = 'nao-encontrado';
+      }
+      return;
+    }
     const {personagem} = await resposta.json();
     const dados = personagem.dados;
     const p = (dados && dados.perfil) ? dados : novoPersonagem();
@@ -1491,7 +1504,7 @@ async function iniciarModoHub(){
     estado.compartilhado = !!personagem.compartilhado;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
-    estado.erroHub = 'nao-encontrado';
+    estado.erroHub = 'erro-servidor';
   }finally{
     estado.carregandoHub = false;
     render();
