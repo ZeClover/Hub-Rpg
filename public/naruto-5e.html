@@ -199,13 +199,16 @@ function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 /* Clãs (Compêndio de Estudos da Tsunade) — mecânica traduzida e resumida
    pelo Hub. O compêndio lista 45 clãs/opções ao todo. Zé mandou o restante
    do PDF (as 256 páginas completas) e o catálogo está sendo fechado em 3
-   lotes de 10: lote 1 (Iburi a Kuru) já entrou, em ordem alfabética logo
-   depois de Hyūga — decisão #213. Faltam os lotes 2 e 3 (Namikaze em
-   diante) pra fechar os 45.
+   lotes de 10: lote 1 (Iburi a Kuru, decisão #213) e lote 2 (Namikaze a
+   Shikigami, decisão #214) já entraram, em ordem alfabética logo depois
+   de Hyūga. Falta o lote 3 (Shoton em diante) pra fechar os 45.
    Quando o clã dá bônus "ou" num atributo/afinidade, o texto conta as
    opções — a ficha não impõe escolha automática no atributo (mesmo
    princípio do bônus de Antecedente: fica como referência pro jogador
-   aplicar à mão no campo de Atributos). */
+   aplicar à mão no campo de Atributos). Dois clãs (Sarutobi e Sem Clã)
+   deixam TODAS as perícias como escolha livre do jogador (sem nenhuma
+   fixa) — `pericias` fica como array vazio nesses dois, e o texto do
+   `traco` explica a escolha por extenso. */
 const CLAS = [
   {id:'aburame', nome:'Aburame', bonus:'+2 Inteligência, +1 Sabedoria', velocidade:9,
     pericias:['natureza','adestrarAnimais'],
@@ -282,6 +285,36 @@ const CLAS = [
   {id:'kuru', nome:'Kuru', bonus:'+2 Sabedoria, +1 Constituição', velocidade:9,
     pericias:['intuicao','controleChakra'],
     traco:'Não aprende nenhuma das cinco afinidades elementais — canaliza só Chakra Yin, reforçando dano ou CD dos próprios jutsu sem elemento algumas vezes por turno. Manifesta o dojutsu Kurugan, capaz de vislumbrar levemente o futuro.'},
+  {id:'namikaze', nome:'Namikaze', bonus:'+2 Destreza, +1 Inteligência', velocidade:10.5,
+    pericias:['acrobacia','controleChakra'],
+    traco:'Começa com afinidade de Vento ou Raio (escolha) — base da Liberação Veloz do clã. Ganha velocidade extra além da racial e desenvolve um recurso próprio (Dados de Velocidade) pra esquivar, correr mais ou fazer ataques adicionais — mecânica completa fica pra quando o catálogo de jutsu do clã entrar no Hub. Acesso a lista própria de jutsu do clã.'},
+  {id:'nara', nome:'Nara', bonus:'+2 Inteligência, +1 Carisma', velocidade:9,
+    pericias:['investigacao','intuicao'],
+    traco:'Clã de estrategistas: ao rolar iniciativa, pode gastar a reação pra coordenar os aliados, concedendo a eles uma condição especial que ajuda em combate ou negociação. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã (manipulação de sombras).'},
+  {id:'semcla', nome:'Sem Clã', bonus:'+2 em um atributo à escolha, +1 em outro (ou +1 em três atributos)', velocidade:9,
+    pericias:[],
+    traco:'Opção formal pra personagem sem clã: escolhe livremente 2 perícias quaisquer (sem lista fixa) e o requisito de atributo pra aprender e lançar qualquer jutsu cai em 2. Em compensação, nunca pode pegar Talentos da categoria Clã — ganha mais Talentos de outras categorias ao longo da progressão pra compensar.'},
+  {id:'ranton', nome:'Ranton (Liberação de Tempestade)', bonus:'+2 Destreza, +1 Inteligência', velocidade:10.5,
+    pericias:['ninshou','natureza'],
+    traco:'Começa com afinidade de Água ou Raio (escolha) — base da Liberação de Tempestade do clã. No 1º nível escolhe entre dois estilos, Tempestade (ondas de choque) ou Laser (feixes de raio), que definem os Hijutsu e traços exclusivos do clã. Acesso a lista própria de jutsu do clã.'},
+  {id:'ryu', nome:'Ryu', bonus:'+2 Inteligência, +1 Constituição', velocidade:9,
+    pericias:['ninshou','controleChakra'],
+    traco:'Nasce com o sangue de um dos 5 Dragões: escolhe uma das cinco afinidades elementais no 1º nível, que também define a palavra-chave de todos os jutsu do clã. Proficiência com Katana. Acesso a lista própria de jutsu do clã.'},
+  {id:'sarutobi', nome:'Sarutobi', bonus:'+2 Força ou Inteligência, +1 Constituição', velocidade:9,
+    pericias:[],
+    traco:'Escolhe 2 perícias entre Ninshou, Artes Marciais e Ilusões. Escolhe uma afinidade elemental (ou Medicina) no 1º nível pra aprender jutsu dessa palavra-chave (ganha uma segunda no 7º nível), e todos os atributos contam como +1 mais altos pros requisitos de jutsu de rank alto.'},
+  {id:'senju', nome:'Senju', bonus:'+2 Constituição, +1 Força', velocidade:9,
+    pericias:['controleChakra','ninshou'],
+    traco:'Começa com afinidade de Terra ou Água (escolha) — base da Liberação da Madeira do clã. Ganha PV máximo extra a cada nível e acumula um recurso próprio (Células Senju) pra se curar ou remover condições — mecânica completa fica pra quando o catálogo de jutsu do clã entrar no Hub. Acesso a lista própria de jutsu do clã.'},
+  {id:'shakuton', nome:'Shakuton (Liberação Calcinante)', bonus:'+2 Inteligência, +1 Sabedoria', velocidade:9,
+    pericias:['sobrevivencia','ninshou'],
+    traco:'Começa com afinidade de Vento ou Fogo (escolha) — base da Liberação Calcinante do clã. Acumula um recurso próprio (Dados de Calcinação) pra intensificar dano de Fogo ou reduzir resistência a jutsu de Fogo/Vento — mecânica completa fica pra quando o catálogo de jutsu do clã entrar no Hub. Acesso a lista própria de jutsu do clã.'},
+  {id:'shihou', nome:'Shí Hóu', bonus:'+2 Constituição, +1 Força ou Destreza', velocidade:10.5,
+    pericias:['controleChakra'],
+    traco:'Kekkei genkai de cauda de macaco desde o nascimento: a cauda segura objetos pequenos e permite um ataque à distância com arma leve e arremessável como ação bônus. Ganha velocidade de escalada igual à velocidade de caminhada. Perícia extra à escolha entre Ninshou ou Artes Marciais.'},
+  {id:'shikigami', nome:'Shikigami', bonus:'+2 Inteligência, +1 Destreza', velocidade:9,
+    pericias:['prestidigitacao','atuacao'],
+    traco:'Fabrica itens de papel (bombas, tags explosivas) de graça a cada descanso, além de meio custo em Ryo pra fabricar esses itens fora de combate. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã.'},
 ];
 function cla(id){ return CLAS.find(c => c.id === id) || null; }
 
@@ -3508,7 +3541,7 @@ function blocoCla(p){
   } else {
     cCla.appendChild(campoTexto('Nome do clã (fora do catálogo por enquanto)', p.cla, v => { p.cla = v; salvar(); }));
   }
-  cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com 15 dos ~38 clãs do Compêndio de Estudos da Tsunade — a extração do PDF parou em Hyūga. Os demais (Iburi em diante) entram quando o resto do livro chegar.`));
+  cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com ${CLAS.length} dos 45 clãs/opções do Compêndio de Estudos da Tsunade — falta o último lote (Shoton em diante) pra fechar.`));
   return cCla;
 }
 

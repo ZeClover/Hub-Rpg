@@ -7981,6 +7981,69 @@ Playwright (`test_naruto.js` a `test_naruto7.js`) rodaram sem
 regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit` e `npm run
 lint` seguem limpos.
 
+## 214. Naruto 5e — Catálogo de Clãs, traços (lote 2 de 3) (25/09/2026)
+
+Continuação da decisão #213. Segundo lote de 3: dez clãs/opções em
+ordem alfabética, de Namikaze a Shikigami, entraram em `CLAS` —
+`Namikaze`, `Nara`, `Sem Clã`, `Ranton`, `Ryu`, `Sarutobi`, `Senju`,
+`Shakuton`, `Shí Hóu`, `Shikigami`. `CLAS.length` foi de 25 para 35.
+
+Termos novos de tradução fixados neste lote:
+
+- **"Non-Clan" → "Sem Clã"**: opção formal de personagem que não
+  pertence a nenhum clã (não é um clã de verdade, é uma entrada no
+  mesmo seletor). Bônus de atributo totalmente livre (+2 num atributo
+  e +1 em outro, ou +1 em três), perícias totalmente livres (2
+  quaisquer) e o requisito de atributo pra qualquer jutsu cai em 2 —
+  em troca, nunca pode pegar Talentos da categoria Clã. `id: 'semcla'`.
+- **Perícia 100% livre (sem nenhuma fixa)**: além de "Sem Clã", o
+  clã `Sarutobi` também escolhe as 2 perícias inteiras dentro de um
+  grupo de 3 (Ninshou/Artes Marciais/Ilusões), sem nenhuma fixa — um
+  formato que os clãs anteriores (1 fixa + escolha entre 2) não
+  cobriam. Resolvido com `pericias: []` nesses dois casos, com o
+  `traco` explicando a escolha por extenso; documentado também no
+  comentário de bloco acima de `CLAS`. Isso é só uma questão de
+  representação de dados — a UI já tolera bem um array vazio (a linha
+  "Perícias já marcadas" só fica sem nada depois dos dois pontos,
+  sem quebrar).
+- **Clãs de "Liberação X" (mesma convenção da decisão #213)**:
+  `Ranton (Liberação de Tempestade)` (Storm Release, afinidade de
+  Água ou Raio) e `Shakuton (Liberação Calcinante)` (Scorch Release,
+  afinidade de Vento ou Fogo) — "Liberação Calcinante" é termo novo
+  cunhado aqui (não havia tradução prévia de "Scorch Release" no
+  Hub); "calcinante" mantém o sentido de queima extrema sem soar
+  estranho em português. `Namikaze`, apesar de ter uma afinidade
+  combinada de Vento/Raio chamada "Swift Release" no livro, não
+  ganhou parêntese porque o nome do clã (velocidade) não é a palavra
+  japonesa da liberação em si — mesmo critério já usado pro Konjiki
+  na decisão #213.
+- **Nome de clã com acento no original**: `Shí Hóu` mantido como no
+  livro (não é nome descritivo em inglês, então não se traduz — regra
+  do projeto), `id: 'shihou'` sem acento.
+
+Recursos próprios ainda não implementados neste lote, mesmo
+tratamento já dado ao Akimichi/Jūgo (citados em uma frase, mecânica
+numérica completa adiada pro catálogo de jutsu do clã): Dados de
+Velocidade do Namikaze, Células Senju do Senju e Dados de Calcinação
+do Shakuton.
+
+Nenhuma anomalia de dados grave neste lote.
+
+Correção de escopo pequena junto com o lote: o aviso fixo que a
+ficha mostra abaixo do seletor de Clã ("Catálogo com 15 dos ~38
+clãs...") tinha ficado defasado desde a decisão #213 (o texto
+antigo, herdado de antes do PDF completo chegar, nunca tinha sido
+atualizado). Trocado por um texto que lê `CLAS.length` direto do
+array, então não fica defasado de novo nos próximos lotes nem
+precisa de edição manual a cada lote.
+
+Verificação: mesmo processo da decisão #213 — sintaxe do `<script>`
+validada com `new Function()`, `CLAS` extraído via bracket-matching +
+`eval` (35 entradas, sem `id`/`nome` duplicado, todas as `pericias`
+batendo com algum id de `PERICIAS`). Os 7 scripts Playwright sem
+regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit` e `npm run
+lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

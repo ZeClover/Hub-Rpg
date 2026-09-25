@@ -2119,7 +2119,12 @@ passando.
       "Compêndio de Estudos da Tsunade" completo (256 páginas),
       extraído local com `pymupdf` (decisão #136). Testado com
       Playwright; `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Namikaze a Yuki, lotes 2 e 3 de 3),
+- [x] **Naruto 5e — Catálogo de Clãs, traços (lote 2 de 3)**
+      (25/09/2026) — decisão #214. Dez clãs/opções em ordem alfabética,
+      de Namikaze a Shikigami, entraram no `CLAS` (25 para 35 no
+      total) — inclui a opção "Sem Clã" (Non-Clan). Testado com
+      Playwright; `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Shoton a Yuki, lote 3 de 3),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão
