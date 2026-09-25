@@ -7084,7 +7084,40 @@ que a mesma Habilidade pode ser escolhida de novo numa vaga futura.
 Testado: `node -e "new Function(...)"` nos dois arquivos (ficha e
 ficha de monstro) depois de cada edição — sem erro de sintaxe.
 
-## 31. Restrições registradas
+## 158. Correção — `usuarioAtual()` podia derrubar qualquer página com erro 500 (25/09/2026)
+
+Investigando um relato do mestre de uma campanha ("não consigo ver a
+ficha de um jogador meu"), o navegador dele mostrou que a chamada
+`GET /api/personagens/[id]` estava voltando **500** (erro de servidor),
+não 404 (permissão negada) — mas a tela da ficha mostra a mesma
+mensagem genérica "Ficha não encontrada" pros dois casos
+(`!resposta.ok`), o que escondeu o tipo real do erro por várias
+rodadas de investigação. A causa raiz do 500 específico dele ainda
+está em aberto (segue investigação), mas a auditoria encontrou um
+ponto real e sério de fragilidade, corrigido aqui.
+
+**O que estava frágil.** `usuarioAtual()` (`src/lib/usuario.ts`) é a
+função que toda página e toda rota de API chama primeiro — "quem é
+você?". Ela faz um `upsert` na tabela `usuarios` usando o id da sessão
+atual do Supabase Auth como chave. `email` é `@unique` nessa tabela.
+Se, por qualquer motivo, o id da sessão atual não bater com o id já
+gravado pra aquele e-mail (ex.: a pessoa entrou de um jeito diferente
+em algum momento e o Supabase deu um id novo pro mesmo e-mail), o
+`create` do upsert quebra com violação de unicidade — e como
+`usuarioAtual()` roda ANTES de qualquer checagem de permissão, em
+TODA página, isso derruba a página inteira com 500, não só a ação que
+a pessoa tentou fazer.
+
+**Correção:** `usuarioAtual()` agora pega esse erro específico (código
+`P2002` do Prisma, no campo `email`) e, em vez de deixar a exceção
+subir, busca a linha que já existe pra aquele e-mail e segue com ela —
+a pessoa continua reconhecida, com todo o histórico (campanhas,
+fichas, itens), só sem atualizar pro id de sessão novo. Qualquer outro
+erro continua subindo normalmente (nunca escondemos um erro que não
+seja este caso específico e já entendido).
+
+Testado: os 302 testes automáticos do projeto (`node --test`) e
+`tsc --noEmit` continuam passando.
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

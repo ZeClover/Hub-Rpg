@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { cache } from "react";
 
 import { banco } from "@/lib/banco";
@@ -48,10 +49,37 @@ export const usuarioAtual = cache(async function usuarioAtual(): Promise<Usuario
     (user.user_metadata?.picture as string | undefined) ??
     null;
 
-  return banco.usuario.upsert({
-    where: { id: user.id },
-    create: { id: user.id, email: user.email, nome, avatarUrl },
-    update: { email: user.email, nome, avatarUrl },
-    select: { id: true, email: true, nome: true, avatarUrl: true },
-  });
+  try {
+    return await banco.usuario.upsert({
+      where: { id: user.id },
+      create: { id: user.id, email: user.email, nome, avatarUrl },
+      update: { email: user.email, nome, avatarUrl },
+      select: { id: true, email: true, nome: true, avatarUrl: true },
+    });
+  } catch (erro) {
+    /*
+      `email` é único na tabela. Se o Supabase Auth já confirmou este e-mail
+      mas com um id diferente do que está gravado (ex.: a pessoa entrou de
+      um jeito novo — outro provedor, conta recriada — e o Supabase deu um
+      id novo pro mesmo e-mail), o `create` acima quebra com violação de
+      unicidade em vez de atualizar a linha certa, e ISSO derrubava a
+      página inteira com erro 500 (a função roda antes de qualquer
+      permissão ser checada). Em vez de deixar quebrar, reaproveita a linha
+      que já existe pra aquele e-mail — a pessoa continua reconhecida e com
+      todo o histórico dela (campanhas, fichas, itens), só sem atualizar
+      pra este `id` de sessão novo.
+    */
+    const eraEmailDuplicado =
+      erro instanceof Prisma.PrismaClientKnownRequestError &&
+      erro.code === "P2002" &&
+      (erro.meta?.target as string[] | undefined)?.includes("email");
+    if (!eraEmailDuplicado) throw erro;
+
+    const existente = await banco.usuario.findUnique({
+      where: { email: user.email },
+      select: { id: true, email: true, nome: true, avatarUrl: true },
+    });
+    if (existente) return existente;
+    throw erro;
+  }
 });
