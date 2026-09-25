@@ -7034,7 +7034,452 @@ recarregamento de página. `node --check` e a varredura de caractere
 estranho (CJK/Hangul) limpos. `tsc --noEmit`, lint e os 302 testes
 automáticos (`node --test`) do projeto continuam passando.
 
-## 157. The Celestials — Nível 7 de Habilidade e Ascensão acumulável (25/09/2026)
+## 157. Hogwarts RPG — novo sistema no Hub, fatia 1 (25/09/2026)
+
+O Zé mandou o pacote completo de design do "Hogwarts RPG" (núcleo de
+regras, patch de tempo/distância, feitiços v2/v2.1, Caminhos Raros,
+famílias, varinhas, criaturas, equipamentos, currículo — um documento
+gigante) pedindo pra integrar como um sistema novo dentro do Hub, sem
+recriar autenticação/campanhas/permissões que já existem.
+
+**Antes de escrever código, auditei a arquitetura real** (o próprio
+documento do Zé pedia isso): `src/lib/sistemas.ts` já é exatamente o
+"sistema é um módulo" da decisão #17/#35 — cada sistema (Kaizoku no
+Sho, Fabula Ultima, SAO, D&D 5e, The Celestials, Thrylikí Chelóna) é
+uma ficha HTML autônoma em `public/`, que sabe entender `?id=` na URL
+e salvar sozinha via `PATCH /api/personagens/[id]` (campo genérico
+`dados`, um JSON por personagem — não uma tabela própria por sistema).
+Isso muda o que "implementar como sistema novo" significa aqui: não é
+desenhar tabelas Prisma pra Casa/Feitiço/Conteúdo — é escrever mais um
+módulo desse formato, registrado em `SISTEMAS`.
+
+O documento do Zé também descreve uma arquitetura bem mais pesada
+(Character↔Content com estados por personagem, segredo campo a campo
+por jogador, lojas ao vivo com concorrência, bestiário revelado por
+campo, sapos de chocolate, currículo por ano) — isso pede infraestrutura
+de servidor que o chassi atual (ficha = 1 JSON) não tem pra nenhum
+sistema hoje, nem os "prontos". Construir isso tudo de uma vez
+contrariaria a decisão #26 (uma fatia por vez) e arriscaria os 302
+testes/todo o resto do Hub por uma fatia gigante nunca testada em mesa.
+Por isso esta primeira fatia entrega só o **chassi essencial jogável**
+(critério de aceite "Fase 1/2" que o próprio documento definia):
+identidade, Casa/Família/Origem/Varinha como campos simples, os cinco
+Atributos (criação 3/2/2/1/0, teto 5), as dezesseis Perícias com teto
+por ano escolar (e override do Mestre), Vida (5) e Tensão (0–3) com
+atalhos rápidos, as treze Condições oficiais com contador de rodadas,
+Ferimentos Graves, nível 1–35 com ano escolar derivado automaticamente,
+e uma aba de Conteúdos data-driven (~50 Feitiços/Técnicas do núcleo já
+cadastrados com alcance/área/duração/sucesso-elevado-excepcional, mais
+um formulário pra Mestre/jogador cadastrar os próprios sem mexer em
+código) com estado por personagem (oculto → conhecido → dominado...) e
+favoritos.
+
+**O que ficou de fora desta fatia, de propósito:** segredo/visibilidade
+por campo e por jogador (a ficha de personagem no Hub hoje não distingue
+"o que o dono vê" de "o que o Mestre vê" — é tudo um JSON só, então
+"Notas do Mestre" e as informações ocultas da Varinha existem como
+campo na ficha, mas sem trava de servidor real ainda: fica documentado
+na própria tela pro Zé não confiar nisso como segredo de verdade),
+Casas/Famílias/Bestiário/Lojas/Sapos de Chocolate como catálogos
+próprios administráveis, currículo por ano/matéria, N.O.M.s/N.I.E.M.s,
+Poções com preparo automático, Modo Sessão do Mestre. Ficam registrados
+no ROADMAP como próximas fatias — a maior parte exige decidir antes
+como o Hub vai representar "campo visível só pro Mestre" em geral (não
+é problema exclusivo do Hogwarts), o que é decisão de arquitetura, não
+de conteúdo.
+
+Sistema registrado como `hogwarts-rpg` em `SISTEMAS`, situação
+"em-construção" (como Kaizoku começou e D&D 5e/Campanha Livre também
+estão hoje). Ficha nova em `public/hogwarts-rpg.html`, seguindo o mesmo
+padrão de armazenamento/tema/abas dos outros seis sistemas — não
+duplica nada de autenticação, campanha ou navegação do Hub.
+
+Verificado: `tsc --noEmit`, `eslint` e os 302 testes automáticos
+continuam limpos; `next build` compila com o sistema novo listado.
+`node --check` no JavaScript da ficha nova passa sem erro.
+
+## 158. Hogwarts RPG — fatias 2 a 11 (25/09/2026)
+
+Zé pediu pra continuar sem parar pra perguntar ("faz a entrada dos
+próximos... não pare até vc achar que deve parar"). Segui a ordem que
+eu mesmo tinha deixado registrada no ROADMAP da decisão #157, uma
+fatia por vez, cada uma no próprio commit, validada (`tsc --noEmit`,
+`eslint`, os 302 testes automáticos, `next build`, mais `node --check`
+no JavaScript da ficha) antes de avançar pra próxima — sem deixar
+nenhuma delas pela metade.
+
+**Fatia 2 — Casa & Família.** Nova aba, catálogo igual Conteúdos:
+Tradição de Casa (1:1 fixa com a Casa, sem bônus numérico — Casa não é
+classe), Família com 8 entradas canônicas (Black, Gaunt, Malfoy,
+Potter, Weasley, Ollivander, Longbottom, Burke — Tipo, Condição
+Financeira, Tags, Conteúdo Familiar, Acesso Familiar) mais família
+própria, Segredos Familiares por personagem, Origem com 8 seeds mais
+origem própria. `perfil.familia`/`perfil.origem` (texto livre) viraram
+`perfil.familiaId`/`perfil.origemId` apontando pro catálogo;
+`garantirCamposNovos()` migra fichas já salvas na hora de abrir.
+
+**Fatia 3 — Bestiário.** 11 criaturas seed cobrindo as cinco
+categorias do sistema (Pelúcio, Pixie da Cornuália, Bezerro-Lunar,
+Kneazle, Hipogrifo, Testrálio, Unicórnio, Troll, Acromântula, Graphorn,
+e um modelo de Dragão Adulto pra Catástrofe, que não usa ficha comum de
+Vida/Defesa) mais criatura própria. Conhecimento é individual por
+personagem (não um "sabe tudo ou nada"): cinco campos revelados
+separadamente (Conhecimento Básico, Comportamento, Fraquezas/forma
+segura, Materiais, Informação rara).
+
+**Fatia 4 — Poções.** A peça que eu mais queria acertar de verdade: a
+regra-base do sistema ("com receita + Perícia + ingredientes + tempo,
+não precisa rolar") virou automação real, não só texto na tela.
+Inventário de ingredientes por nome+quantidade (nunca "material
+genérico"), 12 receitas seed (Wiggenweld até Veritaserum/Polissuco/
+Morte Viva, marcadas como restritas), botão "Preparar" que só habilita
+quando Perícia Poções ≥ custo da receita E todo ingrediente está na
+quantidade certa — aí desconta ingredientes e soma dose no Estoque
+automaticamente. Faltando qualquer um dos dois, o botão explica por
+quê e não faz nada (pressa/substituição continuam sendo mesa, o Hub
+não rola dados).
+
+**Fatia 5 — Acadêmico.** 8 matérias obrigatórias sempre visíveis,
+5 eletivas que só aparecem a partir do 3º ano (não cursar não torna o
+conhecimento impossível, só exige outra fonte). Progresso Acadêmico
+por matéria sinalizando "pronto pra Conteúdo Extra" em 2 — o Mestre
+concede manualmente, o Hub só avisa. Mensagem contextual de N.O.M.s
+(5º ano)/N.I.E.M.s (7º ano) a partir do ano escolar derivado do nível.
+Notas na escala oficial.
+
+**Fatia 6 — Inventário.** Galeões com atalhos, Itens (raridade,
+Carregado/Guardado, confisco com por-quem/motivo, sem limite de
+slots), Relíquias (propriedades conhecidas vs. ocultas, estágio
+Dormente→Desperta→Vinculada→Completa, vínculo).
+
+**Fatia 7 — Sapos de Chocolate.** Comprar sapo lacrado gastando
+Galeões, abrir sorteando por peso de raridade (Comum 55%/Incomum 25%/
+Rara 12%/Muito Rara 6%/Lendária 2%), álbum com 12 cartas. Escolhi
+figuras históricas/mitológicas de domínio público (Merlin, Circe,
+Hécate, Paracelso...) em vez de personagens do livro — mesma linha da
+decisão #31 sobre não reproduzir conteúdo comercial de terceiros, só
+que aplicada por conta própria a um sistema onde isso nunca tinha sido
+discutido explicitamente. Coleção não concede bônus mecânico.
+
+**Fatia 8 — Conteúdos Únicos / Caminhos Raros.** Os 9 caminhos do
+documento (Animagia, Legilimência, Oclumência, Magia Sem Varinha,
+Patrono Avançado, Criação de Feitiços, Metamorfomagia, Dom Profético,
+Ofidioglossia, Herança Familiar, Vínculos Extraordinários) como
+estágios adquiríveis com custo em Escolhas Únicas. Contador automático
+de Escolhas Únicas totais a partir dos Marcos Extraordinários
+(níveis 5/10/.../35) já alcançados. Aviso — não trava — quando um
+estágio é marcado fora de ordem, porque controle do Mestre pesa mais
+que automação aqui (regra de decisão do próprio Hub). Dons Latentes
+como lista livre do Mestre, com campo de visibilidade.
+
+**Fatia 9 — Relações & Projetos.** Relações numa escala persistente
+por NPC/personagem (sem catálogo de NPC compartilhado — cada
+personagem guarda sua própria visão, mesma limitação de recurso
+compartilhado das outras fatias), Companheiros, Projetos de objetivo
+longo com progresso/total editável, Reputação como tags.
+
+**Fatia 10 — Cultivo (Herbologia).** Planta + dias de crescimento +
+detecção de "pronto pra colheita" usando a data real do dispositivo
+como aproximação de calendário de campanha (que ainda não existe no
+Hub) — documentado na própria tela pra não confundir ninguém. Colher
+deposita a produção direto no inventário de ingredientes da fatia 4.
+
+**Fatia 11 — Cargos e Disciplina.** Cargos como tags livres,
+detenções com motivo/aplicada por, sem bloquear o personagem de jogar.
+
+**O que ficou de fora, e por quê.** Todo o resto do documento de
+design que restava (segredo real por campo, Lojas ao vivo, trocas de
+cartas entre jogadores, Modo Sessão do Mestre com ações em lote,
+Quadribol, Clubes, Mapa Conhecido, Calendário de campanha) esbarra na
+mesma peça: o chassi atual é "ficha = 1 JSON por personagem", sem
+recurso compartilhado entre fichas nem trava real de visibilidade por
+campo. Construir isso sem antes decidir a arquitetura certa (que vale
+pro Hub inteiro, não só pro Hogwarts) arriscaria refazer tudo depois —
+por isso ficou registrado no ROADMAP como pendência de arquitetura, não
+como próxima fatia de conteúdo.
+
+Verificado a cada fatia: `tsc --noEmit`, `eslint`, os 302 testes
+automáticos, `next build` e `node --check` no JavaScript da ficha.
+
+## 159. Segurança de verdade — `dados._mestre` nunca sai do servidor (25/09/2026)
+
+Zé pediu direto: "o que eu quero é que tenha segurança, o hub precisa
+saber comportar coisas só pro mestre". Fui atrás do buraco de verdade
+em vez de só mexer na tela.
+
+**O que estava errado.** `GET /api/personagens/[id]` manda
+`personagem.dados` inteiro pra qualquer um com acesso — e "acesso"
+inclui tanto o dono (jogador) quanto o mestre da campanha, os dois com
+`podeEditar: true` (decisão #131). Todo campo que o Hogwarts RPG
+tinha registrado como "só o Mestre deveria ver" (Notas do Mestre,
+Tendência/Propriedade/Peculiaridade/Lealdade da Varinha, Segredos
+Familiares, nome real de Dom Latente, propriedade oculta de Relíquia)
+estava sendo mandado pro navegador do próprio jogador dono da ficha —
+só não aparecia desenhado na tela. Isso é exatamente o vazamento que a
+decisão #13 proíbe ("esconder na tela não conta, o dado já saiu do
+servidor"), só que a trava da decisão #13
+(`filtrarCampos`/`visibilidade.ts`) nunca tinha sido estendida pra
+`dados` de Personagem — só existia pro antigo cadastro de Entidade,
+removido na decisão #36. Eu mesmo documentei esse buraco em três
+fatias diferentes do Hogwarts (decisão #158) como "sem trava real de
+servidor ainda" em vez de resolver — corrigido agora.
+
+**A correção, genérica pra qualquer sistema** (decisão #17: o Hub não
+conhece a forma interna de cada sistema):
+
+- `semSegredosDeMestre()`, nova função em `src/lib/visibilidade.ts`
+  (mesmo arquivo da trava original): se `dados` tiver uma chave
+  `_mestre`, ela é removida antes de sair. Nenhum sistema precisa
+  ensinar o Hub sobre sua própria estrutura — só guardar segredo
+  dentro dessa chave reservada.
+- `GET` calcula `ehMestre` de verdade (mestre confirmado da campanha,
+  diferente de `ehDono`/`podeEditar`, que os dois têm) e só manda
+  `dados._mestre` pra quem é. A resposta agora inclui `ehMestre`, pra
+  cada ficha adaptar a tela sem precisar adivinhar.
+- `PATCH`: quem não é mestre nunca recebeu `_mestre` no GET, então o
+  objeto que devolve no PATCH não tem essa chave — um PATCH ingênuo
+  apagaria os segredos de vez. O servidor agora reescreve `_mestre`
+  com o que já estava salvo sempre que quem escreve não é mestre,
+  ignorando qualquer coisa que o corpo da requisição tenha mandado
+  nesse campo — isso cobre tanto o cliente normal quanto um PATCH
+  malicioso direto na API tentando injetar ou apagar segredo.
+
+Não quebra nenhum sistema existente: `_mestre` é opcional, e sistema
+que não usa a convenção continua exatamente como antes.
+
+Testado com um script simulando o fluxo completo (GET como jogador →
+segredo não vem; GET como mestre → vem; PATCH do jogador editando um
+campo público → segredo sobrevive intacto no banco) além dos testes
+automáticos de `semSegredosDeMestre` em `visibilidade.test.ts`, no
+mesmo formato que a decisão #13 já exigia: tentar ler segredo como
+quem não é mestre precisa falhar, com prova de que o texto do segredo
+não aparece em lugar nenhum do JSON filtrado.
+
+`tsc --noEmit`, `eslint`, os 307 testes automáticos e `next build`
+continuam limpos.
+
+## 160. Hogwarts RPG migrado pra `_mestre` de verdade (25/09/2026)
+
+Consequência direta da decisão #159: de nada adianta o Hub ter a trava
+se o próprio sistema não guarda o segredo no lugar certo. Reestruturei
+os campos que o Hogwarts já tinha marcado (só na documentação, não de
+verdade) como exclusivos do Mestre:
+
+- `perfil.notasMestre` → `_mestre.notasPersonagem`
+- `varinha.{tendencia,propriedade,peculiaridade,lealdade}` →
+  `_mestre.varinha.{...}` (madeira/núcleo/comprimento/flexibilidade/
+  sintonia continuam públicos — é isso que o jogador vê na Varinha)
+- `p.segredosFamiliares` (array inteiro) → `_mestre.segredosFamiliares`
+- `reliquias[].propriedadesOcultas` → `_mestre.reliquiasOcultas[id]`
+  (a relíquia em si e suas propriedades conhecidas continuam públicas)
+- `donsLatentes[].{nomeReal,condicaoDespertar,visivelParaJogador}` →
+  `_mestre.donsLatentes[id].{nomeReal,condicaoDespertar}`; o registro
+  público vira só `{id, nomeVisivel}` — o jogador sempre vê que um Dom
+  Latente existe (como "Dom Latente: ???" quando o Mestre não revelou
+  um nome ainda), nunca a natureza real, estruturalmente, não por
+  convenção de tela
+
+A ficha agora lê `estado.ehMestre` (vindo do GET, nunca calculado no
+navegador) pra decidir o que desenhar: seções de Mestre inteiras somem
+da tela de quem não é mestre — coerente com o servidor já nem ter
+mandado os dados, em vez de só escondido com CSS. `garantirMestre(p)`
+centraliza a criação preguiçosa de `p._mestre` (só chamada quando
+`estado.ehMestre`, nunca no caminho de quem não é mestre).
+
+**Sem migração de dados existentes.** O sistema começou "em
+construção" no mesmo dia das fatias 1-11 — não existe ficha real de
+mesa com esse conteúdo ainda. `garantirCamposNovos()` apenas apaga os
+campos velhos (que estavam em texto livre público) ao abrir uma ficha
+criada antes desta decisão, sem tentar preservar/mover o conteúdo pro
+lugar novo — documentado no próprio código pra não confundir uma
+futura sessão.
+
+`tsc --noEmit`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` no JavaScript da ficha continuam limpos.
+
+## 161. Modo Sessão do Mestre (25/09/2026)
+
+Zé pediu pra "finalizar o resto do sistema" — voltei ao que eu mesmo
+tinha deixado como pendência no ROADMAP da decisão #157/#158. Primeira
+peça: ações em lote numa campanha inteira, sem abrir ficha por ficha
+("aplicar condição em vários jogadores de uma vez" era o exemplo que
+eu mesmo tinha escrito).
+
+Não precisou de tabela nova nem rota de escrita nova: o mestre já pode
+editar qualquer ficha da própria campanha via `PATCH /api/personagens/
+[id]` (decisão #131), então este painel só reúne o que já existia numa
+tela que opera em várias fichas de uma vez. Precisou de uma peça de
+leitura que faltava — `GET /api/campanhas/[id]/personagens` só tinha
+`POST`. Só o mestre chama esse GET (`ehMestreOuAuxiliar`), então
+`dados` sai inteiro, `_mestre` incluso: quem está lendo JÁ é o mestre,
+não faz sentido filtrar dele mesmo.
+
+`Sistema.modoSessao` (novo campo em `src/lib/sistemas.ts`, `null` pros
+outros seis sistemas) segue o mesmo padrão de Escudo do Mestre/
+Grimório — um link na tela da campanha — só que aponta pra uma página
+que lê `?campanha=<id>` e busca dados de verdade, em vez de conteúdo
+estático.
+
+Painel novo `public/hogwarts-rpg-mestre.html`: seleciona vários
+personagens e aplica Condição, ajusta Vida/Tensão/Galeões, ou concede
+Conteúdo. `tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos.
+
+## 162. Loja ao vivo com concorrência real (25/09/2026)
+
+Segunda peça do "finalizar o resto do sistema": a Loja com estoque
+compartilhado que o ROADMAP registrava como pendente desde a decisão
+#158. Diferente do Modo Sessão, esta precisou de infraestrutura nova
+de verdade — nem o `Item` genérico (decisão #147, biblioteca pessoal/
+ficha/grupo/cofre) resolvia, porque `Item` não tem preço nem uma
+transação de compra, só "guardar objeto nalgum lugar".
+
+Modelo novo (`Loja`/`LojaItem`/`LojaCompra`, migração 0023) seguindo a
+mesma convenção de RLS das migrações 0018/0019 (`ENABLE ROW LEVEL
+SECURITY` sem política nenhuma cadastrada — a trava "cinto e
+suspensório" da decisão #2).
+
+A parte que importava de verdade: **concorrência real**. Dois
+jogadores comprando a última unidade ao mesmo tempo não podiam os dois
+passar. A rota de compra (`POST /api/lojas/[id]/comprar`) resolve isso
+com `UPDATE ... WHERE estoque > 0` direto em SQL (via `$executeRaw`
+dentro de `$transaction`) em vez de "ler o estoque em JavaScript,
+decidir, escrever" — a segunda tentativa simplesmente vê 0 linhas
+afetadas e falha com 409, não corrompe nada. O mesmo desenho decide se
+há Galeões suficientes: um segundo `UPDATE ... WHERE (dados->>
+'galeoes')::int >= preço` direto no jsonb da ficha, que já desconta e
+adiciona o item ao inventário na mesma instrução. Se a checagem de
+estoque passar mas a de Galeões falhar, um erro tipado (`FalhaDeCompra`)
+joga a transação inteira fora — o Postgres desfaz sozinho o estoque já
+decrementado, sem eu precisar escrever uma compensação manual (a
+primeira versão fazia isso manualmente; simplifiquei ao perceber que
+`$transaction` já resolve isso melhor que eu).
+
+**Decisão de escopo deliberada:** a rota de compra fala a língua
+específica do Hogwarts (`dados.galeoes`, `dados.itens`) — decisão #17
+diz que nenhum sistema empresta a forma do `dados` de outro, então uma
+Loja genérica pra qualquer sistema exigiria uma segunda convenção
+reservada (como `_mestre` já é pra segredo). Não construí essa
+generalização especulativamente; fica pra quando um segundo sistema
+precisar de verdade.
+
+Duas telas conectadas: aba "Loja" nova na ficha do jogador (só aparece
+quando a ficha pertence a uma campanha — `GET /api/personagens/[id]`
+passou a devolver `campanhaId` também) comprando e atualizando Galeões/
+Inventário na hora; seção "Lojas" no Modo Sessão do Mestre pra montar
+estoque, abrir/fechar.
+
+`tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos. `prisma generate` rodado — a migração
+0023 ainda precisa ser colada no Supabase por Zé (esta sessão não tem
+acesso ao banco, mesmo fluxo de sempre).
+
+## 163. Trocas de Sapos de Chocolate entre jogadores (25/09/2026)
+
+Terceira e última peça do "finalizar o resto do sistema" que ainda
+dava pra resolver sem uma decisão de arquitetura maior — completa a
+coleção da fatia 7 (decisão #158), que já tinha comprar/abrir/
+colecionar mas não trocar.
+
+Mesmo desenho da Loja (decisão #162), aplicado a duas fichas em vez de
+uma ficha + uma loja: modelo novo `TrocaCarta` (migração 0024) guarda
+uma oferta aberta ("ofereço carta X, quero carta Y"), visível pra toda
+a campanha. Aceitar (`POST /api/trocas/[id]/aceitar`) faz dois `UPDATE
+... WHERE (dados->'album'->>carta)::int >= 1` condicionais — um em
+cada ficha — dentro da mesma transação; se qualquer um dos dois falhar
+(a oferta não vale mais, ou quem está aceitando não tem a carta que a
+oferta pede), o erro tipado (`FalhaDeTroca`) desfaz tudo.
+
+Os `jsonb_set` desta vez vieram aninhados de propósito: o caminho
+`album.<idDaCarta>` tem dois níveis, e `jsonb_set` só cria
+automaticamente o ÚLTIMO elemento do caminho — se `album` não existisse
+ainda dentro de `dados`, o `jsonb_set` de fora garante que ele existe
+antes do de dentro mexer numa carta específica. Não precisei disso na
+Loja porque lá o caminho tinha um nível só (`itens`, `galeoes`).
+
+Seção "Trocas" nova na aba Sapos de Chocolate da ficha (só quando a
+ficha pertence a uma campanha): oferecer, aceitar, cancelar.
+
+`tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos. Migração 0024 também ainda precisa
+ser colada no Supabase.
+
+## 164. Smoke test completo do Hogwarts RPG antes do PR (25/09/2026)
+
+Antes de abrir o PR da fatia inteira (decisões #157-#163), rodei um
+smoke test de ponta a ponta: Postgres local com as 25 migrações
+aplicadas, `next dev` local, e Playwright simulando duas contas
+diferentes (dois jogadores + um mestre) numa mesma campanha, cobrindo
+todos os fluxos da ficha, o Modo Sessão, a Loja (inclusive concorrência
+real de estoque) e as Trocas de carta — sem nenhum atalho pulando
+autenticação/permissão de verdade no código: só a chamada de rede pro
+Supabase em si foi trocada por um cabeçalho de teste, tudo protegido
+por uma variável de ambiente (`SMOKE_TEST=1`) que não existe na Vercel;
+essas três alterações temporárias (`src/lib/usuario.ts`, `src/proxy.ts`,
+`src/lib/banco.ts`) foram revertidas antes do commit.
+
+Achou dois problemas reais:
+
+1. **Faltava a linha do Hogwarts RPG na tabela `sistemas`.** Mesmo
+   motivo das migrações 0007-0011 (SAO, Thrylikí Chelóna, Campanha
+   Livre, The Celestials, D&D 5e): `src/lib/sistemas.ts` já listava o
+   sistema desde a decisão #157, mas nenhuma migração cadastrava a
+   linha correspondente no banco — "+ Criar campanha"/"+ Criar ficha"
+   buscam por `chave` antes de criar, então escolher Hogwarts RPG
+   falhava com "sistema desconhecido" na prática, apesar de a ficha, o
+   Modo Sessão e a Loja já estarem prontos. Corrigido na migração
+   `0025_sistema_hogwarts_rpg.sql` (ainda precisa ser colada no
+   Supabase, como as 0023/0024).
+
+2. **`<select>` da ficha não redesenhava a UI dependente na hora.**
+   Sete pontos de `public/hogwarts-rpg.html` (Casa, Status de Sangue,
+   Família, Origem, Sintonia da varinha, campos só-Mestre, estado de
+   ferimento/condição/item/relíquia/relação) usavam
+   `mudarSemRedesenhar()` pra qualquer `<select>`, o mesmo tratamento
+   dado a campo de texto pra não perder o cursor durante a digitação —
+   só que um `<select>` não tem cursor pra perder, e várias dessas
+   escolhas alimentam um cartão condicional na mesma tela (ex.: mudar
+   a Família não mostrava a ficha da família na hora). Corrigido pra
+   `<select>` chamar `mudar()` (redesenho completo) e manter
+   `mudarSemRedesenhar()` só pros campos de texto de verdade. Pelo
+   mesmo motivo, o campo numérico "Nível" também virou `mudar()`: o
+   texto de "Ano escolar atual" no mesmo cartão é calculado a partir
+   dele.
+
+Também achei e corrigi, durante o teste do Modo Sessão em lote, uma
+falha que travava a ficha inteira: uma ação em lote do Mestre (decisão
+#161) salva um `dados` reduzido — só os campos que a própria tela usa
+(perfil.nome, vida, tensão, galeões, condições) — pra qualquer
+personagem selecionado, inclusive um que o jogador nunca abriu. Isso é
+esperado (o Modo Sessão não precisa saber de toda a ficha), mas
+`garantirCamposNovos()`, a função que toda leitura da ficha passa antes
+de renderizar, assumia que campos como `perfil` e `varinha` já vinham
+completos sempre que `perfil` existisse — e quebrava com
+`TypeError` ao ler `varinha.tendencia` de um objeto sem `varinha`. Como
+`garantirCamposNovos()` já existe justamente pra "consertar" formato
+antigo/incompleto (comentário original: fichas de antes da fatia de
+Casa & Família), ela ganhou valor padrão pra todo campo de nível 1 que
+o resto do arquivo lê direto (nível, atributos, perícias, vida, tensão,
+condições, ferimentos, conteúdos conhecidos/custom, favoritos, varinha,
+galeões, mostrar restritos) — não só os arrays que já cobria.
+
+Não corrigi (fica registrado pra não repetir a surpresa depois): o
+painel do Modo Sessão redesenha a tela inteira a cada ação — inclusive
+o auto-some da mensagem de status, ~2,5s depois — e isso derruba
+qualquer texto ainda não enviado em campos soltos da própria tela
+(nome da nova loja, nome/preço/estoque de item). É uma janela de corrida
+de baixa probabilidade em uso real (só derruba se o Mestre estiver
+digitando algo nesses campos exatamente quando um timer de outra ação
+dispara), não um sistema de rascunho como o `mudarSemRedesenhar()` da
+ficha — considerei fora do escopo de "corrigir bug encontrado" por ser
+uma limitação de arquitetura do painel, não uma regressão desta fatia.
+
+`tsc`, `eslint`, os 307 testes automáticos e `next build` continuam
+limpos depois das correções e da reversão das alterações temporárias
+de teste. Migração 0025 ainda precisa ser colada no Supabase, como as
+0023/0024.
+
+## 165. The Celestials — Nível 7 de Habilidade e Ascensão acumulável (25/09/2026)
 
 Correção de três pontos nas Habilidades do The Celestials
 (`sistema-do-savio.html` e `sistema-do-savio-inimigo.html`), a pedido do
@@ -7084,7 +7529,7 @@ que a mesma Habilidade pode ser escolhida de novo numa vaga futura.
 Testado: `node -e "new Function(...)"` nos dois arquivos (ficha e
 ficha de monstro) depois de cada edição — sem erro de sintaxe.
 
-## 158. Correção — `usuarioAtual()` podia derrubar qualquer página com erro 500 (25/09/2026)
+## 166. Correção — `usuarioAtual()` podia derrubar qualquer página com erro 500 (25/09/2026)
 
 Investigando um relato do mestre de uma campanha ("não consigo ver a
 ficha de um jogador meu"), o navegador dele mostrou que a chamada
@@ -7119,9 +7564,9 @@ seja este caso específico e já entendido).
 Testado: os 302 testes automáticos do projeto (`node --test`) e
 `tsc --noEmit` continuam passando.
 
-## 159. Correção de verdade — migração 0020 (Mestre auxiliar) nunca tinha rodado em produção (25/09/2026)
+## 167. Correção de verdade — migração 0020 (Mestre auxiliar) nunca tinha rodado em produção (25/09/2026)
 
-A correção da decisão #158 foi feita antes de ter acesso ao log real do
+A correção da decisão #166 foi feita antes de ter acesso ao log real do
 erro — era uma fragilidade genuína, mas não a causa deste caso. O Zé
 achou o log de verdade direto no painel da Vercel (Logs → filtrar por
 rota), e ele apontava outra coisa:
@@ -7145,7 +7590,7 @@ caminho "será que essa pessoa é mestre de alguma campanha?"). Por isso
 o dono de uma ficha nunca via problema nenhum, e um mestre tentando
 ler a ficha de qualquer jogador — a ação que gerou o relato original —
 quebrava sempre, com 500, não 404. O aviso "Ficha não encontrada" que
-a ficha mostra pra qualquer erro (decisão #158 já tinha notado essa
+a ficha mostra pra qualquer erro (decisão #166 já tinha notado essa
 ambiguidade) escondeu isso por várias rodadas de investigação.
 
 **Correção:** rodada a migração que já existia,
@@ -7161,6 +7606,8 @@ verdade é o Postgres na hora da consulta. Vale conferir, depois de
 qualquer sessão que adicionou uma migração, se ela foi mesmo colada e
 rodada no Supabase — este caso ficou destrancado por sessões inteiras
 sem ninguém notar.
+
+## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
 

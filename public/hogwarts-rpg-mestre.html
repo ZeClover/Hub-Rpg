@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modo Sessão — Hogwarts RPG</title>
+<style>
+:root{
+  --fundo:#0c0a08; --superficie:#161009; --superficie-alta:#201709;
+  --borda:#3a2a14; --texto:#f2ead9; --suave:#b3a488;
+  --roxo:#c9a227; --roxo-forte:#e3bf49; --roxo-rgb:201,162,39;
+  --alerta:#c4506b; --verde:#4c8c5b;
+  --fonte-titulo:Georgia,'Times New Roman',serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0; background:var(--fundo); color:var(--texto); font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+h1,h2,h3{font-family:var(--fonte-titulo); font-weight:600; margin:0}
+.barra{position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 16px; background:var(--superficie); border-bottom:1px solid var(--borda)}
+.marca{font-family:var(--fonte-titulo); font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--roxo)}
+main{max-width:1000px; margin:0 auto; padding:16px}
+.cartao{background:var(--superficie); border:1px solid var(--borda); border-radius:12px; padding:16px; margin-bottom:14px}
+button,select,input,textarea{font:inherit; color:var(--texto)}
+button{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:8px; padding:7px 12px; cursor:pointer}
+button:hover{border-color:rgba(var(--roxo-rgb),.6)}
+button.destaque{background:rgba(var(--roxo-rgb),.18); border-color:rgba(var(--roxo-rgb),.6); color:var(--roxo-forte)}
+input,select,textarea{background:var(--superficie-alta); border:1px solid var(--borda); border-radius:6px; padding:7px 9px}
+label{display:block; font-size:12px; color:var(--suave); margin-bottom:4px; text-transform:uppercase; letter-spacing:.04em}
+.mini{font-size:12.5px; color:var(--suave)}
+.linha{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.lista-pj{border:1px solid var(--borda); border-radius:10px; overflow:hidden; margin-bottom:14px}
+.linha-pj{display:flex; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--borda)}
+.linha-pj:last-child{border-bottom:none}
+.linha-pj .nome{flex:1}
+.tag{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; border:1px solid var(--borda); color:var(--suave); margin-left:6px}
+.ok{background:rgba(76,140,91,.15); border:1px solid rgba(76,140,91,.4); border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:13px}
+.erro{background:rgba(196,80,107,.15); border:1px solid rgba(196,80,107,.4); border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:13px}
+.grade{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Hogwarts RPG — Modo Sessão</span>
+  <span class="mini" id="tituloCampanha"></span>
+</div>
+<main id="app"><div class="cartao"><p class="mini">Carregando…</p></div></main>
+<script>
+/* ===========================================================================
+   MODO SESSÃO DO MESTRE — HOGWARTS RPG (decisão #161)
+
+   Painel próprio pra ações em lote numa campanha: selecionar vários
+   personagens e aplicar Condição / ajustar Vida / Tensão / Galeões /
+   conceder Conteúdo de uma vez, sem abrir ficha por ficha. Usa as MESMAS
+   rotas que cada ficha já usa sozinha — GET/PATCH de
+   /api/personagens/[id] — então a mesma trava de segurança da decisão
+   #159 (dados._mestre nunca sai do servidor pra quem não é mestre) vale
+   aqui também; quem abre este painel só consegue fazer algo de fato se o
+   servidor confirmar que é mestre daquela campanha em cada PATCH.
+=========================================================================== */
+
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const CONDICOES_NOMES = ['Abalado','Desequilibrado','Desarmado','Imobilizado','Atordoado','Cego','Silenciado','Enredado','Em Chamas','Envenenado','Amaldiçoado','Incapacitado','Petrificado'];
+
+const CAMPANHA_ID = new URLSearchParams(location.search).get('campanha');
+
+// Preenche o mínimo pra uma ficha nunca-aberta (dados:{}) não quebrar as
+// ações em lote — mesmo espírito de garantirCamposNovos() da ficha normal.
+function normalizar(dados){
+  const d = (dados && typeof dados === 'object') ? dados : {};
+  if(!d.perfil) d.perfil = {nome:'(sem nome ainda)'};
+  if(!d.condicoes) d.condicoes = [];
+  if(typeof d.tensao !== 'number') d.tensao = 0;
+  if(!d.vida) d.vida = {atual:5, maxima:5};
+  if(typeof d.galeoes !== 'number') d.galeoes = 0;
+  if(!d.conteudosConhecidos) d.conteudosConhecidos = {};
+  return d;
+}
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'', lojas:[] };
+
+async function carregar(){
+  if(!CAMPANHA_ID){ estado.erro='sem-campanha'; estado.carregando=false; render(); return; }
+  try{
+    const [respPersonagens, respLojas] = await Promise.all([
+      fetch(`/api/campanhas/${CAMPANHA_ID}/personagens`),
+      fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`),
+    ]);
+    if(!respPersonagens.ok){ estado.erro = respPersonagens.status === 401 ? 'nao-autenticado' : 'sem-acesso'; return; }
+    const {personagens} = await respPersonagens.json();
+    estado.personagens = personagens.map(p => ({...p, dados: normalizar(p.dados)}));
+    if(respLojas.ok){ const {lojas} = await respLojas.json(); estado.lojas = lojas; }
+  }catch(e){
+    console.error('Falha ao carregar campanha', e);
+    estado.erro = 'sem-acesso';
+  }finally{
+    estado.carregando = false;
+    render();
+  }
+}
+
+function mostrarStatus(texto){ estado.status = texto; render(); setTimeout(() => { estado.status=''; render(); }, 2500); }
+
+async function salvarPersonagem(p){
+  const resposta = await fetch(`/api/personagens/${p.id}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p.dados}),
+  });
+  if(!resposta.ok) throw new Error('falha ao salvar ' + p.nome);
+}
+
+function selecionados(){ return estado.personagens.filter(p => estado.selecionados.has(p.id)); }
+
+async function aplicarEmLote(mutar, rotuloAcao){
+  const alvos = selecionados();
+  if(alvos.length === 0){ mostrarStatus('Selecione pelo menos um personagem.'); return; }
+  mostrarStatus(`Aplicando ${rotuloAcao} em ${alvos.length}...`);
+  try{
+    alvos.forEach(mutar);
+    await Promise.all(alvos.map(salvarPersonagem));
+    mostrarStatus(`${rotuloAcao} aplicado em ${alvos.length} personagem(ns). ✓`);
+  }catch(e){
+    console.error(e);
+    mostrarStatus('Erro ao salvar — confira a conexão e tente de novo.');
+  }
+  render();
+}
+
+/* --- Lojas (decisão #162) --------------------------------------------- */
+
+async function recarregarLojas(){
+  const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`);
+  if(resposta.ok){ const {lojas} = await resposta.json(); estado.lojas = lojas; }
+  render();
+}
+
+async function criarLoja(nome){
+  const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nome}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra criar a loja.'); return; }
+  await recarregarLojas();
+}
+
+async function alternarAberta(loja){
+  const resposta = await fetch(`/api/lojas/${loja.id}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({aberta: !loja.aberta}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra mudar o estado da loja.'); return; }
+  await recarregarLojas();
+}
+
+async function removerLoja(lojaId){
+  if(!confirm('Excluir esta loja e todo o estoque dela? Não tem como desfazer.')) return;
+  const resposta = await fetch(`/api/lojas/${lojaId}`, {method:'DELETE'});
+  if(!resposta.ok){ mostrarStatus('Não deu pra excluir a loja.'); return; }
+  await recarregarLojas();
+}
+
+async function adicionarItemLoja(lojaId, {nome, preco, estoque}){
+  const resposta = await fetch(`/api/lojas/${lojaId}/itens`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nome, preco, estoque}),
+  });
+  if(!resposta.ok){ mostrarStatus('Não deu pra adicionar o item.'); return; }
+  await recarregarLojas();
+}
+
+async function removerItemLoja(lojaId, itemId){
+  const resposta = await fetch(`/api/lojas/${lojaId}/itens/${itemId}`, {method:'DELETE'});
+  if(!resposta.ok){ mostrarStatus('Não deu pra remover o item.'); return; }
+  await recarregarLojas();
+}
+
+function render(){
+  document.getElementById('tituloCampanha').textContent = CAMPANHA_ID ? `campanha ${CAMPANHA_ID}` : '';
+  const app = document.getElementById('app');
+
+  if(estado.carregando){ app.innerHTML = '<div class="cartao"><p class="mini">Carregando…</p></div>'; return; }
+  if(estado.erro === 'sem-campanha'){
+    app.innerHTML = '<div class="cartao erro">Abra este painel pelo link "🧙 Modo Sessão do Mestre" dentro da campanha — ele precisa saber qual campanha é.</div>';
+    return;
+  }
+  if(estado.erro === 'nao-autenticado'){
+    app.innerHTML = '<div class="cartao erro">Você precisa estar logado no Hub. <a href="/entrar" style="color:var(--roxo)">Entrar</a></div>';
+    return;
+  }
+  if(estado.erro === 'sem-acesso'){
+    app.innerHTML = '<div class="cartao erro">Sem acesso — este painel só abre pra quem é mestre (ou mestre auxiliar) desta campanha.</div>';
+    return;
+  }
+
+  const status = estado.status ? `<div class="ok">${esc(estado.status)}</div>` : '';
+
+  app.innerHTML = status + `
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Personagens da campanha</h3>
+    <p class="mini" style="margin-bottom:10px">Marque quem vai receber a ação em lote. Fichas nunca abertas aparecem como "(sem nome ainda)".</p>
+    <div class="lista-pj">
+      ${estado.personagens.length===0 ? '<div class="linha-pj mini">Nenhum personagem nesta campanha ainda.</div>' : estado.personagens.map(p => `
+        <label class="linha-pj">
+          <input type="checkbox" data-selecionar="${p.id}" ${estado.selecionados.has(p.id)?'checked':''}>
+          <span class="nome">${esc(p.dados.perfil?.nome || p.nome)}</span>
+          ${p.ehMonstro ? '<span class="tag">monstro/NPC</span>' : ''}
+          <span class="mini">Vida ${p.dados.vida.atual}/${p.dados.vida.maxima} · Tensão ${p.dados.tensao} · Galeões ${p.dados.galeoes}</span>
+        </label>
+      `).join('')}
+    </div>
+    <div class="linha">
+      <button data-selecionar-todos>Selecionar todos</button>
+      <button data-limpar-selecao>Limpar seleção</button>
+      <span class="mini">${estado.selecionados.size} selecionado(s)</span>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Aplicar Condição</h3>
+    <div class="grade">
+      <div><label>Condição</label><select id="condNome">${CONDICOES_NOMES.map(n => `<option>${n}</option>`).join('')}</select></div>
+      <div><label>Rodadas</label><input type="number" id="condRodadas" min="0" value="1"></div>
+      <div><label>Origem</label><input id="condOrigem" placeholder="Opcional"></div>
+    </div>
+    <button data-acao-condicao class="destaque" style="margin-top:10px">Aplicar aos selecionados</button>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Ajustar Vida / Tensão / Galeões</h3>
+    <div class="grade">
+      <div>
+        <label>Vida (delta)</label>
+        <div class="linha"><button data-delta-vida="-1">−1</button><button data-delta-vida="1">+1</button></div>
+      </div>
+      <div>
+        <label>Tensão (delta)</label>
+        <div class="linha"><button data-delta-tensao="-1">−1</button><button data-delta-tensao="1">+1</button></div>
+      </div>
+      <div>
+        <label>Galeões (delta)</label>
+        <div class="linha"><button data-delta-galeoes="-10">−10</button><button data-delta-galeoes="10">+10</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Conceder Conteúdo</h3>
+    <p class="mini" style="margin-bottom:8px">Marca o id do Conteúdo (do catálogo do sistema ou um criado na campanha) como "Conhecido" pros selecionados.</p>
+    <div class="linha">
+      <input id="conteudoId" placeholder="id do conteúdo, ex.: expelliarmus" style="flex:1">
+      <button data-acao-conteudo class="destaque">Conceder</button>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Lojas</h3>
+    <p class="mini" style="margin-bottom:10px">Fechada por padrão — monte o estoque em paz antes de abrir. Compra desconta Galeões e estoque na hora, mesmo com dois jogadores comprando ao mesmo tempo.</p>
+    <div class="linha" style="margin-bottom:12px">
+      <input id="novaLojaNome" placeholder="Nome da loja, ex.: Gemialidades Weasley">
+      <button data-criar-loja class="destaque">+ Nova loja</button>
+    </div>
+    ${estado.lojas.map(loja => `
+      <div class="cartao" style="background:var(--superficie-alta)">
+        <div class="linha">
+          <h3 style="flex:1;font-size:15px">${esc(loja.nome)}</h3>
+          <button data-alternar-aberta="${loja.id}" class="${loja.aberta?'destaque':''}">${loja.aberta ? '🟢 Aberta' : '⚪ Fechada'}</button>
+          <button data-remover-loja="${loja.id}" style="border-color:rgba(196,80,107,.5);color:#e58a9b">Excluir loja</button>
+        </div>
+        ${loja.itens.length===0 ? '<p class="mini" style="margin-top:8px">Sem itens ainda.</p>' : loja.itens.map(item => `
+          <div class="linha" style="margin-top:8px;border-top:1px solid var(--borda);padding-top:8px">
+            <span style="flex:1">${esc(item.nome)} — ${item.preco} Galeões ${item.estoque!==null ? `(${item.estoque} em estoque)` : '(infinito)'}</span>
+            <button data-remover-item-loja="${loja.id}:${item.id}" style="padding:4px 10px">✕</button>
+          </div>
+        `).join('')}
+        <div class="linha" style="margin-top:10px">
+          <input data-novo-item-nome="${loja.id}" placeholder="Nome do item" style="flex:1">
+          <input data-novo-item-preco="${loja.id}" type="number" min="0" placeholder="Preço" style="width:100px">
+          <input data-novo-item-estoque="${loja.id}" type="number" min="0" placeholder="Estoque (vazio=infinito)" style="width:180px">
+          <button data-add-item-loja="${loja.id}">+ Item</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+
+  ligarEventos();
+}
+
+function ligarEventos(){
+  const app = document.getElementById('app');
+  app.querySelectorAll('[data-selecionar]').forEach(el => el.onchange = () => {
+    if(el.checked) estado.selecionados.add(el.dataset.selecionar);
+    else estado.selecionados.delete(el.dataset.selecionar);
+  });
+  const btTodos = app.querySelector('[data-selecionar-todos]');
+  if(btTodos) btTodos.onclick = () => { estado.personagens.forEach(p => estado.selecionados.add(p.id)); render(); };
+  const btLimpar = app.querySelector('[data-limpar-selecao]');
+  if(btLimpar) btLimpar.onclick = () => { estado.selecionados.clear(); render(); };
+
+  const btCondicao = app.querySelector('[data-acao-condicao]');
+  if(btCondicao) btCondicao.onclick = () => {
+    const nome = document.getElementById('condNome').value;
+    const rodadas = Math.max(0, Number(document.getElementById('condRodadas').value) || 0);
+    const origem = document.getElementById('condOrigem').value.trim();
+    aplicarEmLote(p => p.dados.condicoes.push({id:uid(), nome, rodadas, origem}), `Condição "${nome}"`);
+  };
+
+  app.querySelectorAll('[data-delta-vida]').forEach(b => b.onclick = () => aplicarEmLote(p => {
+    p.dados.vida.atual = Math.max(0, Math.min(p.dados.vida.maxima, p.dados.vida.atual + Number(b.dataset.deltaVida)));
+  }, 'Ajuste de Vida'));
+  app.querySelectorAll('[data-delta-tensao]').forEach(b => b.onclick = () => aplicarEmLote(p => {
+    p.dados.tensao = Math.max(0, Math.min(3, p.dados.tensao + Number(b.dataset.deltaTensao)));
+  }, 'Ajuste de Tensão'));
+  app.querySelectorAll('[data-delta-galeoes]').forEach(b => b.onclick = () => aplicarEmLote(p => {
+    p.dados.galeoes = Math.max(0, p.dados.galeoes + Number(b.dataset.deltaGaleoes));
+  }, 'Ajuste de Galeões'));
+
+  const btConteudo = app.querySelector('[data-acao-conteudo]');
+  if(btConteudo) btConteudo.onclick = () => {
+    const id = document.getElementById('conteudoId').value.trim();
+    if(!id) return;
+    aplicarEmLote(p => { p.dados.conteudosConhecidos[id] = 'conhecido'; }, `Conteúdo "${id}"`);
+  };
+
+  // Lojas
+  const btCriarLoja = app.querySelector('[data-criar-loja]');
+  if(btCriarLoja) btCriarLoja.onclick = () => {
+    const nome = document.getElementById('novaLojaNome').value.trim();
+    if(!nome) return;
+    criarLoja(nome);
+  };
+  app.querySelectorAll('[data-alternar-aberta]').forEach(b => b.onclick = () => {
+    const loja = estado.lojas.find(l => l.id === b.dataset.alternarAberta);
+    if(loja) alternarAberta(loja);
+  });
+  app.querySelectorAll('[data-remover-loja]').forEach(b => b.onclick = () => removerLoja(b.dataset.removerLoja));
+  app.querySelectorAll('[data-remover-item-loja]').forEach(b => b.onclick = () => {
+    const [lojaId, itemId] = b.dataset.removerItemLoja.split(':');
+    removerItemLoja(lojaId, itemId);
+  });
+  app.querySelectorAll('[data-add-item-loja]').forEach(b => b.onclick = () => {
+    const lojaId = b.dataset.addItemLoja;
+    const nome = app.querySelector(`[data-novo-item-nome="${lojaId}"]`).value.trim();
+    const precoStr = app.querySelector(`[data-novo-item-preco="${lojaId}"]`).value;
+    const estoqueStr = app.querySelector(`[data-novo-item-estoque="${lojaId}"]`).value;
+    if(!nome || precoStr === '') return;
+    adicionarItemLoja(lojaId, {
+      nome,
+      preco: Math.max(0, Number(precoStr) || 0),
+      estoque: estoqueStr === '' ? null : Math.max(0, Number(estoqueStr) || 0),
+    });
+  });
+}
+
+render();
+carregar();
+</script>
+</body>
+</html>
