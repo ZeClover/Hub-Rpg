@@ -8166,6 +8166,48 @@ todas as `pericias` batendo com algum id de `PERICIAS`). Os 7 scripts
 Playwright sem regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit`
 e `npm run lint` seguem limpos.
 
+## 217. Naruto 5e — arquitetura do Hijutsu (jutsu exclusivo de clã) (25/09/2026)
+
+Antes de começar a preencher os 415 Hijutsu do Compêndio de Estudos da
+Tsunade (um por clã, D a S-Rank), fechei a arquitetura de como eles
+entram na ficha, pra próximas fatias/agentes só precisarem preencher
+dado, sem decisão de estrutura no meio.
+
+`HIJUTSU_CATALOGO` é um array novo, separado do `JUTSU_CATALOGO`,
+mesmo schema (`nome, tipo, rank, custo, alcance, duracao, efeito`)
+mais um campo `claId` (bate com `CLAS[].id`) que trava quem pode
+escolher aquele jutsu. `tipo` continua só
+`Ninjutsu`/`Taijutsu`/`Genjutsu`/`Bukijutsu` — conferido no PDF que o
+livro trata "Hijutsu" como palavra-chave extra (`Keywords: Hijutsu,
+Ninjutsu` etc.), não um 5º tipo de jutsu; contagem por palavra-chave:
+275 Ninjutsu, 55 Taijutsu, 47 Bukijutsu, 21 Genjutsu, mais alguns sem
+o segundo keyword explícito.
+
+Na aba Jutsu, o seletor "+ Do catálogo" continua igual; abaixo dele
+entrou um segundo seletor "+ Hijutsu do catálogo" que já vem
+filtrado pelo clã do personagem (`hijutsuDoCla(p.claId)`) — clã sem
+nenhum Hijutsu no Hub ainda mostra "seu clã ainda não tem Hijutsu no
+Hub" em vez de lista vazia confusa. Ao adicionar, cai na mesma
+`p.jutsus` (schema `{nome, tipo, rank, notas}` sem mudança nenhuma),
+com a nota prefixada `[Hijutsu de <Nome do Clã>]` pra ficar claro na
+lista de onde veio. `HIJUTSU_CATALOGO` começa vazio — vai ser
+preenchido fatia por fatia (decisão #26), próximas decisões
+numeradas a partir daqui.
+
+**Achado durante a verificação**: o `test_naruto6.js` (suíte
+Playwright compartilhada) pegava o seletor do catálogo de jutsu com
+`.last()` — quebrou ao ganhar um segundo `<select>` na mesma aba.
+Corrigido pra pegar o `<select>` com mais `<option>` (só o catálogo
+principal passa de 1000), em vez de depender de posição — mais
+robusto pra qualquer seletor novo que a ficha ganhar no futuro.
+Corrigido na cópia canônica em
+`/tmp/claude-0/.../scratchpad/test_naruto6.js`, que é de onde todo
+agente futuro copia a suíte.
+
+Testado com Playwright (os 7 scripts, mais `test_equipamento.js`):
+todos "ERROS JS: nenhum". `HIJUTSU_CATALOGO.length` = 0 (array vazio,
+por enquanto). `npx tsc --noEmit` e `npm run lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

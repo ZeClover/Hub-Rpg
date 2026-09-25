@@ -3482,6 +3482,18 @@ const JUTSU_CATALOGO = [
 ];
 function jutsuDoCatalogo(nome){ return JUTSU_CATALOGO.find(j => j.nome === nome) || null; }
 
+/* Hijutsu (jutsu exclusivo de clã, Compêndio de Estudos da Tsunade) — mesmo
+   schema do JUTSU_CATALOGO, mais o campo claId (bate com CLAS[].id) pra
+   travar quem pode escolher. Mecânica classificada como Ninjutsu, Taijutsu,
+   Genjutsu ou Bukijutsu igual o resto (o livro trata "Hijutsu" como uma
+   palavra-chave extra, não um 5º tipo de jutsu) — decisão #217. Catálogo
+   começa vazio, vai enchendo fatia por fatia (415 Hijutsu no total, 45
+   clãs — decisão #26, uma fatia por vez). */
+const HIJUTSU_CATALOGO = [
+];
+function hijutsuDoCatalogo(nome){ return HIJUTSU_CATALOGO.find(j => j.nome === nome) || null; }
+function hijutsuDoCla(claId){ return HIJUTSU_CATALOGO.filter(j => j.claId === claId); }
+
 /* ---------- Estado / persistência (localStorage — Modo Hub é fatia futura) ---------- */
 const CHAVE_LISTA = 'hub_naruto5e_lista';
 
@@ -3948,6 +3960,11 @@ function renderJutsu(p){
     el('option', {value:''}, '— escolher do catálogo —'),
     ...JUTSU_CATALOGO.map(j => el('option', {value:j.nome}, `${j.nome} (${j.rank}-Rank, ${j.custo})`)),
   );
+  const hijutsuDisponiveis = hijutsuDoCla(p.claId);
+  const selHijutsu = el('select', {},
+    el('option', {value:''}, hijutsuDisponiveis.length ? '— escolher Hijutsu do seu clã —' : '— seu clã ainda não tem Hijutsu no Hub —'),
+    ...hijutsuDisponiveis.map(j => el('option', {value:j.nome}, `${j.nome} (${j.rank}-Rank, ${j.custo})`)),
+  );
   const lista = el('div', {class:'cartao'},
     el('h2', {}, 'Jutsu conhecidos'),
     el('p', {class:'aviso'}, `Catálogo do Hub com ${JUTSU_CATALOGO.length} de ~1400 jutsu do Compêndio de Jutsu do Jiraiya — Ninjutsu Não-Elemental, as 5 Naturezas elementais, Genjutsu, Taijutsu e Bukijutsu 100% completos, o Compêndio inteiro fechado. Restam só duas pendências isoladas de dados corrompidos na extração do PDF ("Shadow Dancing Leaf" e "Stone Form"), aguardando o Zé remandar a página de origem. Pra qualquer jutsu ainda fora da lista, cadastre à mão com "+ Jutsu em branco".`),
@@ -3964,6 +3981,15 @@ function renderJutsu(p){
         salvar(); render();
       }}, '+ Do catálogo'),
       el('button', {onclick: () => { p.jutsus.push({nome:'Novo jutsu', tipo:'Ninjutsu', rank:'E', notas:''}); salvar(); render(); }}, '+ Jutsu em branco'),
+    ),
+    el('div', {class:'linha', style:'margin-top:10px'},
+      selHijutsu,
+      el('button', {class:'destaque', onclick: () => {
+        const j = hijutsuDoCatalogo(selHijutsu.value);
+        if(!j) return;
+        p.jutsus.push({nome:j.nome, tipo:j.tipo, rank:j.rank, notas:`[Hijutsu de ${cla(j.claId) ? cla(j.claId).nome : j.claId}] ${j.efeito} (Custo: ${j.custo} · Alcance: ${j.alcance} · Duração: ${j.duracao})`});
+        salvar(); render();
+      }}, '+ Hijutsu do catálogo'),
     ),
   );
 

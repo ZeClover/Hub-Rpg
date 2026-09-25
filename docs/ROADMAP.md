@@ -2135,7 +2135,14 @@ passando.
       total)** (25/09/2026) — decisão #216. Último lote (Shoton a
       Yuki) fechou o `CLAS` — 35 para 45 no total. Testado com
       Playwright; `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — Hijutsu (jutsu de clã) e Talentos de Clã de todos os
+- [x] **Naruto 5e — arquitetura do Hijutsu (jutsu de clã)** (25/09/2026)
+      — decisão #217. Novo `HIJUTSU_CATALOGO` (schema do
+      `JUTSU_CATALOGO` + `claId`) e seletor "+ Hijutsu do catálogo" na
+      aba Jutsu, já filtrado pelo clã do personagem. Catálogo começa
+      vazio (415 Hijutsu pra preencher em fatias futuras). Testado com
+      Playwright (corrigido um seletor frágil no `test_naruto6.js`
+      compartilhado); `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — preencher os 415 Hijutsu e 153 Talentos de Clã dos
       45 clãs, mecânica de cada opção de subclasse (Genjutsu Pledges,
       Hunter Creeds etc. — fonte recebida, "Orochimaru's Observation
       Compendium" completo, 272 páginas), Talentos gerais (Capítulo
