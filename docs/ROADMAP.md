@@ -2113,7 +2113,13 @@ passando.
       ("Shadow Dancing Leaf", decisão #186, e "Stone Form", decisão
       #196), aguardando o Zé remandar a página correspondente do PDF.
       Testado com Playwright; `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Iburi a Yuki),
+- [x] **Naruto 5e — Catálogo de Clãs, traços (lote 1 de 3)**
+      (25/09/2026) — decisão #213. Dez clãs em ordem alfabética, de
+      Iburi a Kuru, entraram no `CLAS` (15 para 25 no total). Fonte: o
+      "Compêndio de Estudos da Tsunade" completo (256 páginas),
+      extraído local com `pymupdf` (decisão #136). Testado com
+      Playwright; `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — resto dos Clãs (Namikaze a Yuki, lotes 2 e 3 de 3),
       Equipamento/Itens Chakra, Talentos, Guia de Modificação de Classe, mecânica de cada
       opção de subclasse, Ficha de Inimigo/Bingo Book,
       Escudo do Mestre/Kage Guide, Modo Hub — fatias futuras (decisão

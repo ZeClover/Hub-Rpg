@@ -7933,6 +7933,54 @@ Ninjutsu/Taijutsu/Genjutsu/Bukijutsu. `tsc --noEmit` e `npm run lint`
 seguem limpos; suíte de testes anteriores (7 scripts Playwright) sem
 regressão.
 
+## 213. Naruto 5e — Catálogo de Clãs, traços (lote 1 de 3) (25/09/2026)
+
+Zé mandou o "Compêndio de Estudos da Tsunade" (o livro de clãs) completo,
+as 256 páginas extraídas localmente com `pymupdf` (mesmo método da
+decisão #136), destravando os ~30 clãs que faltavam no `CLAS` desde a
+decisão #17. Primeiro lote de 3: dez clãs em ordem alfabética, de Iburi
+a Kuru, entraram em `public/naruto-5e.html` logo depois de Hyūga —
+`Iburi`, `Inuzuka`, `Jiton`, `Jūgo`, `Kaguya`, `Kashu`, `Keton`,
+`Konjiki`, `Kurama`, `Kuru`.
+
+Mesmo schema dos 15 clãs já existentes: bônus de atributo, velocidade
+(convertida de pés pra metros), 2 perícias fixas e um `traco` resumindo
+só a identidade mecânica de 1º nível (nunca a prosa do livro). Termos
+novos de tradução fixados neste lote:
+
+- **Clãs de "Liberação X" (sufixo `-ton`)**: quando o nome do clã é
+  literalmente o nome japonês da própria natureza de chakra (padrão já
+  usado em Bakuton/Futton, decisão anterior), o `nome` ganha o
+  parêntese com a tradução — `Jiton (Liberação Magnética)` e `Keton
+  (Liberação de Plasma)`. `Konjiki`, apesar de ter afinidade de
+  "Steel Release" (Liberação de Aço), não segue esse padrão porque o
+  nome do clã em si não é a palavra japonesa da liberação — ficou sem
+  parêntese, mecânica descrita só no `traco`.
+- **Kekkei genkai que só aparecem depois do 1º nível** (Kurama —
+  Onijutsu no 3º nível; Kuru — dojutsu Kurugan no 3º nível): como são a
+  identidade central e mais vendável do clã, foram citados no `traco`
+  mesmo assim, sem detalhar a mecânica numérica (fica pro catálogo de
+  Hijutsu/Talentos de Clã, fatia futura). O traço de fato aplicado no
+  nível 1 desses dois clãs (redução de requisito de Genjutsu na Kurama,
+  bloqueio das 5 afinidades elementais na Kuru) é o que está descrito
+  em detalhe.
+- **Recursos próprios não implementados** (Chakra Bruto do Jūgo):
+  mesmo tratamento já usado pro Akimichi (Calorias→Chakra) — citado em
+  uma frase, mecânica numérica completa adiada pro catálogo de jutsu do
+  clã.
+
+Nenhuma anomalia de dados grave neste lote — todas as dez seções
+TRAITS/FEATURES vieram completas e sem texto de um clã grudado no
+outro.
+
+Verificação: `CLAS.length` foi de 15 para 25, sem `id`/`nome`
+duplicado (checado com `Set` depois de extrair o array via
+bracket-matching + `eval`, mesmo método do catálogo de jutsu).
+Sintaxe do `<script>` validada com `new Function()`. Os 7 scripts
+Playwright (`test_naruto.js` a `test_naruto7.js`) rodaram sem
+regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit` e `npm run
+lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

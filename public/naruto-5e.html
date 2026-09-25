@@ -197,10 +197,11 @@ const PERICIAS = [
 function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 
 /* Clãs (Compêndio de Estudos da Tsunade) — mecânica traduzida e resumida
-   pelo Hub. O compêndio lista mais de 30 clãs, mas a extração do PDF parou
-   no meio (mesma trava que já tinha acontecido com o Fabula Ultima): só os
-   primeiros 15, em ordem alfabética até Hyūga, vieram completos. O resto
-   (Iburi em diante) entra numa fatia futura, quando o resto do PDF chegar.
+   pelo Hub. O compêndio lista 45 clãs/opções ao todo. Zé mandou o restante
+   do PDF (as 256 páginas completas) e o catálogo está sendo fechado em 3
+   lotes de 10: lote 1 (Iburi a Kuru) já entrou, em ordem alfabética logo
+   depois de Hyūga — decisão #213. Faltam os lotes 2 e 3 (Namikaze em
+   diante) pra fechar os 45.
    Quando o clã dá bônus "ou" num atributo/afinidade, o texto conta as
    opções — a ficha não impõe escolha automática no atributo (mesmo
    princípio do bônus de Antecedente: fica como referência pro jogador
@@ -251,6 +252,36 @@ const CLAS = [
   {id:'hyuga', nome:'Hyūga', bonus:'+2 Sabedoria, +1 Destreza', velocidade:9,
     pericias:['percepcao','intuicao'],
     traco:'Visão no escuro até 9m (Byakugan) e 1 Jutsu D-Rank exclusivo do clã a mais, sem contar nos jutsu conhecidos.'},
+  {id:'iburi', nome:'Iburi', bonus:'+2 Inteligência, +1 Constituição', velocidade:9,
+    pericias:['controleChakra','sobrevivencia'],
+    traco:'Kekkei genkai que transforma o corpo em fumaça, reduzindo pela metade a distância de recuo forçado (knockback) e ajudando contra Genjutsu com a palavra-chave Inalação. Nasce com afinidade de Fogo e conta a Ninjutsu como +2 mais alta pra liberar jutsu de Fogo de rank B ou maior. Acesso a lista própria de jutsu do clã.'},
+  {id:'inuzuka', nome:'Inuzuka', bonus:'+2 Força ou Destreza, +1 Sabedoria', velocidade:10.5,
+    pericias:['adestrarAnimais','acrobacia'],
+    traco:'Ganha um companheiro canino (Nin-Dog) que luta ao seu lado e evolui junto com o personagem, fala com cães (idioma extra) e pode usar Destreza como modificador de Taijutsu nos jutsu do clã. Acesso a lista própria de jutsu do clã.'},
+  {id:'jiton', nome:'Jiton (Liberação Magnética)', bonus:'+2 Inteligência, +1 Constituição', velocidade:9,
+    pericias:['ninshou','sobrevivencia'],
+    traco:'Começa com afinidade de Terra ou Vento (escolha) — base da Liberação Magnética do clã, que ganha a segunda afinidade num nível mais alto. Acesso a lista própria de jutsu do clã.'},
+  {id:'jugo', nome:'Jūgo', bonus:'+2 Força, +1 Constituição', velocidade:10.5,
+    pericias:['atletismo','acrobacia'],
+    traco:'Usa Força no lugar de Inteligência pros Ninjutsu do clã e acumula um recurso próprio (Chakra Bruto) pra amplificar ataques, absorver chakra inimigo, reduzir custo de jutsu ou curar — mecânica completa fica pra quando o catálogo de jutsu do clã entrar no Hub. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos.'},
+  {id:'kaguya', nome:'Kaguya', bonus:'+2 Força ou Destreza, +1 Constituição', velocidade:10.5,
+    pericias:['atletismo','artesMarciais'],
+    traco:'Kekkei genkai Shikotsumyaku: ejeta os próprios ossos como ação bônus pra criar Armas de Osso (com Multiataque e Precisão), base de um estilo de luta corpo a corpo próprio do clã. Acesso a lista própria de jutsu do clã.'},
+  {id:'kashu', nome:'Kashu', bonus:'+2 Inteligência, +1 Sabedoria', velocidade:9,
+    pericias:['ilusoes','sobrevivencia'],
+    traco:'Especialistas em Genjutsu Auditivo: todos os atributos contam como +2 mais altos pra liberar Genjutsu de rank alto com a palavra-chave Auditivo, e fabricam uma ferramenta sonora a cada descanso pra reforçar esses jutsu. Começa sabendo 1 Hijutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos.'},
+  {id:'keton', nome:'Keton (Liberação de Plasma)', bonus:'+2 Constituição, +1 Carisma', velocidade:9,
+    pericias:['atuacao','controleChakra'],
+    traco:'Kekkei genkai que funde Fogo e Raio: começa com afinidade de Fogo ou Raio (escolha), tem tolerância a luz forte (vantagem contra Cego e Ofuscado) e pode gerar luz tocando objetos. Acesso a lista própria de jutsu do clã.'},
+  {id:'konjiki', nome:'Konjiki', bonus:'+2 Inteligência, +1 Força ou Constituição', velocidade:9,
+    pericias:['oficio','ninshou'],
+    traco:'Liberação de Aço (fusão de Yin com Terra): nasce com afinidade de Terra e conta a Ninjutsu como +2 mais alta pra jutsu de Terra de rank B ou maior. Pode moldar os Hijutsu do clã pra causar dano de concussão, perfuração ou corte, cada um com um efeito extra próprio. Acesso a lista própria de jutsu do clã.'},
+  {id:'kurama', nome:'Kurama', bonus:'+2 Sabedoria ou Carisma, +1 Inteligência', velocidade:9,
+    pericias:['ilusoes','intuicao'],
+    traco:'Especialistas em Genjutsu: o requisito de atributo pra aprender e lançar Genjutsu cai em 2, e desde o início o custo de manutenção de Genjutsu por concentração é reduzido. Membros raros manifestam o kekkei genkai Onijutsu, que torna os efeitos da ilusão fisicamente reais.'},
+  {id:'kuru', nome:'Kuru', bonus:'+2 Sabedoria, +1 Constituição', velocidade:9,
+    pericias:['intuicao','controleChakra'],
+    traco:'Não aprende nenhuma das cinco afinidades elementais — canaliza só Chakra Yin, reforçando dano ou CD dos próprios jutsu sem elemento algumas vezes por turno. Manifesta o dojutsu Kurugan, capaz de vislumbrar levemente o futuro.'},
 ];
 function cla(id){ return CLAS.find(c => c.id === id) || null; }
 
