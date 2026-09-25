@@ -172,6 +172,7 @@ model Campanha {
   itens                Item[]
   veiculos             Veiculo[]
   lojas                Loja[]
+  trocasCartas         TrocaCarta[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -251,6 +252,7 @@ model Personagem {
   itens                Item[]
   veiculos             Veiculo[]
   comprasLoja          LojaCompra[]
+  ofertasTroca         TrocaCarta[]
 
   @@index([donoId])
   @@index([sistemaId])
@@ -630,4 +632,34 @@ model LojaCompra {
   @@index([lojaId])
   @@index([personagemId])
   @@map("loja_compras")
+}
+
+/// Troca de carta de Sapo de Chocolate entre dois personagens da mesma
+/// campanha (decisão #163) — completa a coleção da fatia 7, que já tinha
+/// comprar/abrir/colecionar mas não trocar (dependia de um recurso
+/// compartilhado entre duas fichas, que não existia até a Loja).
+///
+/// `personagemAceitouId` de propósito NÃO é foreign key (mesma ideia do
+/// `lojaItemId` de `LojaCompra`): é só o registro de quem aceitou, sem
+/// exigir uma segunda relação nomeada pra `Personagem`.
+model TrocaCarta {
+  id                  String   @id @default(uuid()) @db.Uuid
+  campanhaId          String   @db.Uuid
+  personagemOfertaId  String   @db.Uuid
+  /// Id da carta no catálogo do sistema (ex.: "merlin") — o Hub não
+  /// conhece o catálogo, só compara ids ao mover entre os dois álbuns.
+  cartaOferecidaId    String
+  cartaDesejadaId     String
+  /// aberta | aceita | cancelada
+  estado              String   @default("aberta")
+  personagemAceitouId String?  @db.Uuid
+  criadoEm            DateTime @default(now())
+  atualizadoEm        DateTime @updatedAt
+
+  campanha         Campanha   @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  personagemOferta Personagem @relation(fields: [personagemOfertaId], references: [id], onDelete: Cascade)
+
+  @@index([campanhaId])
+  @@index([personagemOfertaId])
+  @@map("trocas_cartas")
 }

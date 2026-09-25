@@ -673,6 +673,7 @@ const estado = {
   // decide é a resposta do servidor (decisão #159), nunca o navegador.
   ehMestre: !MODO_HUB,
   campanhaId: null, lojas: [], statusCompra: '',
+  trocas: [], statusTroca: '',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -701,7 +702,68 @@ async function iniciarModoHub(){
     estado.erroHub = 'nao-encontrado';
   }finally{
     estado.carregandoHub = false; render();
-    if(estado.campanhaId) carregarLojas();
+    if(estado.campanhaId){ carregarLojas(); carregarTrocas(); }
+  }
+}
+
+async function carregarTrocas(){
+  try{
+    const resposta = await fetch(`/api/campanhas/${estado.campanhaId}/trocas`);
+    if(!resposta.ok) return;
+    const {trocas} = await resposta.json();
+    estado.trocas = trocas;
+  }catch(e){
+    console.error('Falha ao carregar trocas', e);
+  }finally{
+    render();
+  }
+}
+
+function mostrarStatusTroca(texto){ estado.statusTroca = texto; render(); setTimeout(() => { estado.statusTroca=''; render(); }, 2500); }
+
+async function oferecerTroca(cartaOferecidaId, cartaDesejadaId){
+  const p = atual(); if(!p) return;
+  try{
+    const resposta = await fetch(`/api/campanhas/${estado.campanhaId}/trocas`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({personagemId:p.id, cartaOferecidaId, cartaDesejadaId}),
+    });
+    const corpo = await resposta.json().catch(() => ({}));
+    if(!resposta.ok){ mostrarStatusTroca(corpo.erro || 'Não deu pra oferecer.'); return; }
+    mostrarStatusTroca('Oferta publicada. ✓');
+    await carregarTrocas();
+  }catch(e){
+    console.error('Falha ao oferecer troca', e);
+    mostrarStatusTroca('Erro de conexão.');
+  }
+}
+
+async function aceitarTroca(trocaId){
+  const p = atual(); if(!p) return;
+  try{
+    const resposta = await fetch(`/api/trocas/${trocaId}/aceitar`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({personagemId:p.id}),
+    });
+    const corpo = await resposta.json().catch(() => ({}));
+    if(!resposta.ok){ mostrarStatusTroca(corpo.erro || 'Não deu pra aceitar.'); return; }
+    mostrarStatusTroca('Troca feita. ✓');
+    // A compra/troca já foi salva no servidor — recarrega esta ficha pra
+    // pegar o álbum atualizado, em vez de tentar reconstruir localmente.
+    await iniciarModoHub();
+    await carregarTrocas();
+  }catch(e){
+    console.error('Falha ao aceitar troca', e);
+    mostrarStatusTroca('Erro de conexão.');
+  }
+}
+
+async function cancelarTroca(trocaId){
+  try{
+    const resposta = await fetch(`/api/trocas/${trocaId}`, {method:'DELETE'});
+    if(!resposta.ok){ mostrarStatusTroca('Não deu pra cancelar.'); return; }
+    await carregarTrocas();
+  }catch(e){
+    console.error('Falha ao cancelar troca', e);
   }
 }
 
@@ -1412,7 +1474,35 @@ function abaColecao(p){
         </div>`;
       }).join('')}
     </div>
-  </div>`;
+  </div>
+
+  ${estado.campanhaId ? `<div class="cartao">
+    <h3 style="margin-bottom:6px">Trocas</h3>
+    <p class="mini" style="margin-bottom:10px">Trocas abertas de toda a campanha aparecem aqui — qualquer um pode aceitar, menos quem ofertou.</p>
+    ${estado.statusTroca ? `<div class="ok">${esc(estado.statusTroca)}</div>` : ''}
+    ${estado.trocas.length===0 ? '<p class="mini">Nenhuma troca aberta no momento.</p>' : estado.trocas.map(t => {
+      const oferecida = CARTAS_SEED.find(c=>c.id===t.cartaOferecidaId);
+      const desejada = CARTAS_SEED.find(c=>c.id===t.cartaDesejadaId);
+      const minha = t.personagemOfertaId === p.id;
+      const tenhoADesejada = (p.album[t.cartaDesejadaId]||0) > 0;
+      return `<div class="linha-cond">
+        <span style="flex:1"><b>${esc(t.personagemOferta.nome)}</b> oferece <b>${esc(oferecida?.nome||t.cartaOferecidaId)}</b> por <b>${esc(desejada?.nome||t.cartaDesejadaId)}</b></span>
+        ${minha ? `<button data-cancelar-troca="${t.id}" class="perigo">Cancelar</button>`
+          : `<button data-aceitar-troca="${t.id}" class="${tenhoADesejada?'destaque':''}" ${tenhoADesejada?'':'disabled'} title="${tenhoADesejada?'':'Você não tem essa carta'}">Aceitar</button>`}
+      </div>`;
+    }).join('')}
+    <div class="linha" style="margin-top:10px;flex-wrap:wrap">
+      <select id="trocaOferecer">
+        <option value="">Carta que você oferece…</option>
+        ${CARTAS_SEED.filter(c => (p.album[c.id]||0) > 0).map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join('')}
+      </select>
+      <select id="trocaPedir">
+        <option value="">Carta que você quer…</option>
+        ${CARTAS_SEED.map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join('')}
+      </select>
+      <button data-oferecer-troca class="destaque">Oferecer troca</button>
+    </div>
+  </div>` : ''}`;
 }
 
 function abaUnicos(p){
@@ -2018,6 +2108,18 @@ function ligarEventos(){
     const item = loja?.itens.find(i => i.id === b.dataset.comprarItem);
     if(item) comprarItem(loja.id, item);
   });
+
+  // Trocas
+  app.querySelectorAll('[data-aceitar-troca]').forEach(b => b.onclick = () => aceitarTroca(b.dataset.aceitarTroca));
+  app.querySelectorAll('[data-cancelar-troca]').forEach(b => b.onclick = () => cancelarTroca(b.dataset.cancelarTroca));
+  const btOferecerTroca = app.querySelector('[data-oferecer-troca]');
+  if(btOferecerTroca) btOferecerTroca.onclick = () => {
+    const oferecida = document.getElementById('trocaOferecer').value;
+    const desejada = document.getElementById('trocaPedir').value;
+    if(!oferecida || !desejada) return;
+    if(oferecida === desejada){ mostrarStatusTroca('Escolha cartas diferentes.'); return; }
+    oferecerTroca(oferecida, desejada);
+  };
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
