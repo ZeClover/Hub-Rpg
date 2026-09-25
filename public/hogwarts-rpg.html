@@ -476,6 +476,8 @@ function novoPersonagem(){
     companheiros: [],
     projetos: [],
     reputacao: [],
+    cargos: [],
+    detencoes: [],
   };
 }
 
@@ -505,6 +507,8 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.companheiros)) p.companheiros = [];
   if(!Array.isArray(p.projetos)) p.projetos = [];
   if(!Array.isArray(p.reputacao)) p.reputacao = [];
+  if(!Array.isArray(p.cargos)) p.cargos = [];
+  if(!Array.isArray(p.detencoes)) p.detencoes = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -758,6 +762,25 @@ function abaPerfil(p){
     <div class="grade" style="margin-top:10px">
       <div><label>Galeões</label><input type="number" min="0" data-campo-num="galeoes" value="${p.galeoes}"></div>
     </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Cargos</h3>
+    <p class="mini" style="margin-bottom:10px">Concedem permissões narrativas, não bônus automáticos.</p>
+    <div style="margin-bottom:10px">${p.cargos.map(c => `<span class="pill on" style="margin:0 6px 6px 0;display:inline-block">${esc(c)} <a href="#" data-cargo-remover="${esc(c)}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>`).join('')}</div>
+    <div class="linha"><input id="novoCargo" placeholder="Ex.: Monitor, Capitão de Quadribol"><button data-add-cargo>+ Adicionar</button></div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Disciplina</h3>
+    <p class="mini" style="margin-bottom:10px">Detenção não bloqueia o personagem de jogar.</p>
+    ${p.detencoes.length===0 ? '<p class="mini">Nenhuma registrada.</p>' : p.detencoes.map(d => `
+      <div class="linha-cond">
+        <input data-det-campo="${d.id}:motivo" value="${esc(d.motivo)}" placeholder="Motivo" style="flex:1">
+        <input data-det-campo="${d.id}:professor" value="${esc(d.professor||'')}" placeholder="Aplicada por" style="width:150px">
+        <button data-det-remover="${d.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>`).join('')}
+    <button data-nova-detencao>+ Detenção</button>
   </div>`;
 }
 
@@ -1455,6 +1478,24 @@ function desenharBarra(){
 }
 
 function ligarEventos(){
+  // Cargos
+  const appCargos = document.getElementById('app');
+  appCargos.querySelectorAll('[data-cargo-remover]').forEach(a => a.onclick = (ev) => { ev.preventDefault(); mudar(p => { p.cargos = p.cargos.filter(c => c !== a.dataset.cargoRemover); }); });
+  const btAddCargo = appCargos.querySelector('[data-add-cargo]');
+  if(btAddCargo) btAddCargo.onclick = () => {
+    const cargo = document.getElementById('novoCargo').value.trim();
+    if(!cargo) return;
+    mudar(p => { if(!p.cargos.includes(cargo)) p.cargos.push(cargo); });
+  };
+  // Disciplina
+  const btNovaDetencao = appCargos.querySelector('[data-nova-detencao]');
+  if(btNovaDetencao) btNovaDetencao.onclick = () => mudar(p => p.detencoes.push({id:uid(), motivo:'', professor:''}));
+  appCargos.querySelectorAll('[data-det-remover]').forEach(b => b.onclick = () => mudar(p => { p.detencoes = p.detencoes.filter(d => d.id !== b.dataset.detRemover); }));
+  appCargos.querySelectorAll('[data-det-campo]').forEach(el => {
+    const [id, campo] = el.dataset.detCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const d = p.detencoes.find(x=>x.id===id); if(d) d[campo] = el.value; }));
+  });
+
   const app = document.getElementById('app');
 
   app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
