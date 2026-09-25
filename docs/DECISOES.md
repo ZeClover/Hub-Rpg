@@ -7201,6 +7201,102 @@ como próxima fatia de conteúdo.
 Verificado a cada fatia: `tsc --noEmit`, `eslint`, os 302 testes
 automáticos, `next build` e `node --check` no JavaScript da ficha.
 
+## 159. Segurança de verdade — `dados._mestre` nunca sai do servidor (25/09/2026)
+
+Zé pediu direto: "o que eu quero é que tenha segurança, o hub precisa
+saber comportar coisas só pro mestre". Fui atrás do buraco de verdade
+em vez de só mexer na tela.
+
+**O que estava errado.** `GET /api/personagens/[id]` manda
+`personagem.dados` inteiro pra qualquer um com acesso — e "acesso"
+inclui tanto o dono (jogador) quanto o mestre da campanha, os dois com
+`podeEditar: true` (decisão #131). Todo campo que o Hogwarts RPG
+tinha registrado como "só o Mestre deveria ver" (Notas do Mestre,
+Tendência/Propriedade/Peculiaridade/Lealdade da Varinha, Segredos
+Familiares, nome real de Dom Latente, propriedade oculta de Relíquia)
+estava sendo mandado pro navegador do próprio jogador dono da ficha —
+só não aparecia desenhado na tela. Isso é exatamente o vazamento que a
+decisão #13 proíbe ("esconder na tela não conta, o dado já saiu do
+servidor"), só que a trava da decisão #13
+(`filtrarCampos`/`visibilidade.ts`) nunca tinha sido estendida pra
+`dados` de Personagem — só existia pro antigo cadastro de Entidade,
+removido na decisão #36. Eu mesmo documentei esse buraco em três
+fatias diferentes do Hogwarts (decisão #158) como "sem trava real de
+servidor ainda" em vez de resolver — corrigido agora.
+
+**A correção, genérica pra qualquer sistema** (decisão #17: o Hub não
+conhece a forma interna de cada sistema):
+
+- `semSegredosDeMestre()`, nova função em `src/lib/visibilidade.ts`
+  (mesmo arquivo da trava original): se `dados` tiver uma chave
+  `_mestre`, ela é removida antes de sair. Nenhum sistema precisa
+  ensinar o Hub sobre sua própria estrutura — só guardar segredo
+  dentro dessa chave reservada.
+- `GET` calcula `ehMestre` de verdade (mestre confirmado da campanha,
+  diferente de `ehDono`/`podeEditar`, que os dois têm) e só manda
+  `dados._mestre` pra quem é. A resposta agora inclui `ehMestre`, pra
+  cada ficha adaptar a tela sem precisar adivinhar.
+- `PATCH`: quem não é mestre nunca recebeu `_mestre` no GET, então o
+  objeto que devolve no PATCH não tem essa chave — um PATCH ingênuo
+  apagaria os segredos de vez. O servidor agora reescreve `_mestre`
+  com o que já estava salvo sempre que quem escreve não é mestre,
+  ignorando qualquer coisa que o corpo da requisição tenha mandado
+  nesse campo — isso cobre tanto o cliente normal quanto um PATCH
+  malicioso direto na API tentando injetar ou apagar segredo.
+
+Não quebra nenhum sistema existente: `_mestre` é opcional, e sistema
+que não usa a convenção continua exatamente como antes.
+
+Testado com um script simulando o fluxo completo (GET como jogador →
+segredo não vem; GET como mestre → vem; PATCH do jogador editando um
+campo público → segredo sobrevive intacto no banco) além dos testes
+automáticos de `semSegredosDeMestre` em `visibilidade.test.ts`, no
+mesmo formato que a decisão #13 já exigia: tentar ler segredo como
+quem não é mestre precisa falhar, com prova de que o texto do segredo
+não aparece em lugar nenhum do JSON filtrado.
+
+`tsc --noEmit`, `eslint`, os 307 testes automáticos e `next build`
+continuam limpos.
+
+## 160. Hogwarts RPG migrado pra `_mestre` de verdade (25/09/2026)
+
+Consequência direta da decisão #159: de nada adianta o Hub ter a trava
+se o próprio sistema não guarda o segredo no lugar certo. Reestruturei
+os campos que o Hogwarts já tinha marcado (só na documentação, não de
+verdade) como exclusivos do Mestre:
+
+- `perfil.notasMestre` → `_mestre.notasPersonagem`
+- `varinha.{tendencia,propriedade,peculiaridade,lealdade}` →
+  `_mestre.varinha.{...}` (madeira/núcleo/comprimento/flexibilidade/
+  sintonia continuam públicos — é isso que o jogador vê na Varinha)
+- `p.segredosFamiliares` (array inteiro) → `_mestre.segredosFamiliares`
+- `reliquias[].propriedadesOcultas` → `_mestre.reliquiasOcultas[id]`
+  (a relíquia em si e suas propriedades conhecidas continuam públicas)
+- `donsLatentes[].{nomeReal,condicaoDespertar,visivelParaJogador}` →
+  `_mestre.donsLatentes[id].{nomeReal,condicaoDespertar}`; o registro
+  público vira só `{id, nomeVisivel}` — o jogador sempre vê que um Dom
+  Latente existe (como "Dom Latente: ???" quando o Mestre não revelou
+  um nome ainda), nunca a natureza real, estruturalmente, não por
+  convenção de tela
+
+A ficha agora lê `estado.ehMestre` (vindo do GET, nunca calculado no
+navegador) pra decidir o que desenhar: seções de Mestre inteiras somem
+da tela de quem não é mestre — coerente com o servidor já nem ter
+mandado os dados, em vez de só escondido com CSS. `garantirMestre(p)`
+centraliza a criação preguiçosa de `p._mestre` (só chamada quando
+`estado.ehMestre`, nunca no caminho de quem não é mestre).
+
+**Sem migração de dados existentes.** O sistema começou "em
+construção" no mesmo dia das fatias 1-11 — não existe ficha real de
+mesa com esse conteúdo ainda. `garantirCamposNovos()` apenas apaga os
+campos velhos (que estavam em texto livre público) ao abrir uma ficha
+criada antes desta decisão, sem tentar preservar/mover o conteúdo pro
+lugar novo — documentado no próprio código pra não confundir uma
+futura sessão.
+
+`tsc --noEmit`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` no JavaScript da ficha continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

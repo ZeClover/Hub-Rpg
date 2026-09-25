@@ -1995,21 +1995,26 @@ edição do mestre, múltiplas fichas por jogador, etc.).
   - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
     continuam limpos depois de cada fatia
 
+- [x] **Segredo por campo, de verdade** (25/09/2026) — decisões #159 e
+      #160, pedido direto do Zé por segurança. `dados._mestre` é agora
+      uma chave reservada que `GET /api/personagens/[id]` remove antes
+      de responder pra quem não é mestre confirmado da campanha, e que
+      `PATCH` protege contra apagar/injetar por quem não é mestre —
+      genérico pra qualquer sistema, não só o Hogwarts. Notas do
+      Mestre, Tendência/Propriedade/Peculiaridade/Lealdade da Varinha,
+      Segredos Familiares, propriedade oculta de Relíquia e a natureza
+      real de Dom Latente migraram pra lá de verdade. Outros sistemas
+      (Fabula Ultima, SAO...) continuam como estavam — a convenção é
+      opcional, adotar fica pra quando cada um precisar
+
 ## O que ainda falta no Hogwarts RPG
 
 Tudo abaixo esbarra na mesma peça de infraestrutura que o chassi atual
 ("ficha = 1 JSON por personagem", sem recurso compartilhado entre
-fichas nem separação real de visibilidade por campo) ainda não tem —
-não é falta de vontade de continuar fatiando, é decisão de arquitetura
-que vale para o Hub inteiro, não só para este sistema:
+fichas) ainda não tem — não é falta de vontade de continuar fatiando,
+é decisão de arquitetura que vale para o Hub inteiro, não só para este
+sistema:
 
-- [ ] **Segredo por campo, de verdade.** Varinha oculta, Segredos
-      Familiares, propriedades ocultas de Relíquia e Dons Latentes já
-      existem na ficha, mas sem trava de servidor — hoje é o Mestre
-      quem decide na mesa o que contar, documentado em cada tela. Isso
-      exige decidir primeiro como o Hub representa "campo visível só
-      pro Mestre" em geral (o mesmo problema já existe pra "Notas do
-      Mestre" de qualquer personagem, em qualquer sistema)
 - [ ] **Lojas ao vivo** com estoque compartilhado e concorrência real
       (dois jogadores comprando a última unidade ao mesmo tempo)
 - [ ] **Trocas de Sapos de Chocolate** entre jogadores — a coleção em

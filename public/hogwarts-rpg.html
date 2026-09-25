@@ -439,7 +439,7 @@ function novoPersonagem(){
     perfil: {
       nome:'Novo Bruxo', sobrenome:'', imagem:'',
       anoEscolar:1, casa:'', statusSangue:'', familiaId:'', origemId:'',
-      ambicao:'', medo:'', vinculo:'', descricao:'', notasMestre:'',
+      ambicao:'', medo:'', vinculo:'', descricao:'',
     },
     nivel: 1,
     atributos: {Arcano:0, Engenho:0, Pulso:0, Presença:0, Fibra:0},
@@ -452,12 +452,15 @@ function novoPersonagem(){
     conteudosConhecidos: {},
     conteudosCustom: [],
     favoritos: [],
-    varinha: {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', tendencia:'', propriedade:'', peculiaridade:'', sintonia:1, lealdade:'Leal'},
+    // madeira/núcleo/comprimento/flexibilidade/sintonia são públicos — o
+    // resto (Tendência, Propriedade Desperta, Peculiaridade, Lealdade) só
+    // existe dentro de `_mestre.varinha` (decisão #159: nunca sai do
+    // servidor pra quem não é mestre).
+    varinha: {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', sintonia:1},
     galeoes: 0,
     mostrarRestritos: false,
     familiasCustom: [],
     origensCustom: [],
-    segredosFamiliares: [],
     criaturasCustom: [],
     bestiarioConhecido: {},
     ingredientes: [],
@@ -466,11 +469,16 @@ function novoPersonagem(){
     cultivos: [],
     academico: {materias: {}, notas: []},
     itens: [],
+    // reliquias[] é público (nome/propriedades conhecidas/estado/vínculo);
+    // a propriedade oculta de cada uma mora em `_mestre.reliquiasOcultas`.
     reliquias: [],
     sapoLacrados: 0,
     album: {},
     ultimaCartaAberta: null,
     unicosAdquiridos: {},
+    // donsLatentes[] é só o registro público (existe um Dom, talvez com um
+    // nome visível que o Mestre decidiu contar) — nome real e condição de
+    // despertar moram em `_mestre.donsLatentes[id]`.
     donsLatentes: [],
     relacoes: [],
     companheiros: [],
@@ -486,7 +494,6 @@ function novoPersonagem(){
 function garantirCamposNovos(p){
   if(!Array.isArray(p.familiasCustom)) p.familiasCustom = [];
   if(!Array.isArray(p.origensCustom)) p.origensCustom = [];
-  if(!Array.isArray(p.segredosFamiliares)) p.segredosFamiliares = [];
   if(!Array.isArray(p.criaturasCustom)) p.criaturasCustom = [];
   if(!p.bestiarioConhecido || typeof p.bestiarioConhecido !== 'object') p.bestiarioConhecido = {};
   if(!Array.isArray(p.ingredientes)) p.ingredientes = [];
@@ -511,7 +518,36 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.detencoes)) p.detencoes = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
+
+  // Limpeza de fichas criadas antes da decisão #159 (segurança de campo):
+  // esses campos moravam em texto livre público — não dava pra "migrar"
+  // pra `_mestre` de dentro do navegador de quem talvez nem devesse ver o
+  // conteúdo (o próprio dono). Como o sistema começou "em construção" no
+  // mesmo dia, não existe ficha real de mesa com esse conteúdo ainda —
+  // só remove o campo velho, sem tentar preservar.
+  if(p.perfil.notasMestre !== undefined) delete p.perfil.notasMestre;
+  if(p.varinha.tendencia !== undefined) delete p.varinha.tendencia;
+  if(p.varinha.propriedade !== undefined) delete p.varinha.propriedade;
+  if(p.varinha.peculiaridade !== undefined) delete p.varinha.peculiaridade;
+  if(p.varinha.lealdade !== undefined) delete p.varinha.lealdade;
+  if(p.segredosFamiliares !== undefined) delete p.segredosFamiliares;
+  if(Array.isArray(p.reliquias)) p.reliquias.forEach(r => { if(r.propriedadesOcultas !== undefined) delete r.propriedadesOcultas; });
+  if(Array.isArray(p.donsLatentes)) p.donsLatentes.forEach(d => { delete d.nomeReal; delete d.condicaoDespertar; delete d.visivelParaJogador; });
+
   return p;
+}
+
+// `p._mestre` só existe de verdade pra quem o servidor confirmou como
+// mestre (decisão #159) — quem edita essas telas sempre passa por aqui
+// antes de escrever, nunca assume que a chave já existe.
+function garantirMestre(p){
+  if(!p._mestre || typeof p._mestre !== 'object') p._mestre = {};
+  if(!Array.isArray(p._mestre.segredosFamiliares)) p._mestre.segredosFamiliares = [];
+  if(!p._mestre.varinha || typeof p._mestre.varinha !== 'object') p._mestre.varinha = {tendencia:'', propriedade:'', peculiaridade:'', lealdade:'Leal'};
+  if(!p._mestre.reliquiasOcultas || typeof p._mestre.reliquiasOcultas !== 'object') p._mestre.reliquiasOcultas = {};
+  if(!p._mestre.donsLatentes || typeof p._mestre.donsLatentes !== 'object') p._mestre.donsLatentes = {};
+  if(typeof p._mestre.notasPersonagem !== 'string') p._mestre.notasPersonagem = '';
+  return p._mestre;
 }
 
 function anoEscolar(nivel){ return Math.max(1, Math.min(7, Math.ceil(nivel/5))); }
@@ -632,6 +668,10 @@ const estado = {
   atualId: null, aba:'perfil',
   carregandoHub: !!MODO_HUB, erroHub: null,
   ehDono:false, podeEditar:false, compartilhado:false,
+  // Modo local (sem ?id=, fora do Hub) não passa pelo servidor — não tem
+  // como vazar nada pra ninguém, então mostra tudo. Em Modo Hub, quem
+  // decide é a resposta do servidor (decisão #159), nunca o navegador.
+  ehMestre: !MODO_HUB,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -648,6 +688,12 @@ async function iniciarModoHub(){
     estado.ehDono = !!personagem.ehDono;
     estado.podeEditar = !!personagem.podeEditar;
     estado.compartilhado = !!personagem.compartilhado;
+    // Vem do servidor, não é calculado aqui — decisão #159. Se `_mestre`
+    // não veio na resposta (não somos mestre), `garantirMestre()` cria um
+    // objeto vazio só de exibição; ele nunca é enviado de volta como se
+    // fosse segredo de verdade (o PATCH do servidor reescreve `_mestre`
+    // de qualquer forma pra quem não é mestre).
+    estado.ehMestre = !!personagem.ehMestre;
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
@@ -733,32 +779,32 @@ function abaPerfil(p){
       <div><label>Núcleo</label><input data-campo="varinha.nucleo" value="${esc(p.varinha.nucleo)}"></div>
       <div><label>Comprimento</label><input data-campo="varinha.comprimento" value="${esc(p.varinha.comprimento)}" placeholder='ex.: 11¾"'></div>
       <div><label>Flexibilidade</label><input data-campo="varinha.flexibilidade" value="${esc(p.varinha.flexibilidade)}"></div>
+      <div><label>Sintonia</label><select data-campo="varinha.sintonia">
+        <option value="1" ${p.varinha.sintonia==1?'selected':''}>I — Escolhida</option>
+        <option value="2" ${p.varinha.sintonia==2?'selected':''}>II — Familiaridade</option>
+        <option value="3" ${p.varinha.sintonia==3?'selected':''}>III — Domínio</option>
+        <option value="4" ${p.varinha.sintonia==4?'selected':''}>IV — União</option>
+      </select></div>
     </div>
-    <details style="margin-top:12px"><summary class="mini" style="cursor:pointer">Informações do Mestre (ocultas por padrão na tela)</summary>
+    ${estado.ehMestre ? (() => { const vm = garantirMestre(p).varinha; return `
+    <details style="margin-top:12px" open><summary class="mini" style="cursor:pointer">Informações do Mestre <span class="pill">só você vê — de verdade, o servidor nem manda isso pro jogador</span></summary>
       <div class="grade" style="margin-top:10px">
-        <div><label>Tendência</label><input data-campo="varinha.tendencia" value="${esc(p.varinha.tendencia)}"></div>
-        <div><label>Propriedade Desperta</label><input data-campo="varinha.propriedade" value="${esc(p.varinha.propriedade)}"></div>
-        <div><label>Peculiaridade</label><input data-campo="varinha.peculiaridade" value="${esc(p.varinha.peculiaridade)}"></div>
-        <div><label>Sintonia</label><select data-campo="varinha.sintonia">
-          <option value="1" ${p.varinha.sintonia==1?'selected':''}>I — Escolhida</option>
-          <option value="2" ${p.varinha.sintonia==2?'selected':''}>II — Familiaridade</option>
-          <option value="3" ${p.varinha.sintonia==3?'selected':''}>III — Domínio</option>
-          <option value="4" ${p.varinha.sintonia==4?'selected':''}>IV — União</option>
-        </select></div>
-        <div><label>Lealdade</label><select data-campo="varinha.lealdade">
-          <option ${p.varinha.lealdade==='Leal'?'selected':''}>Leal</option>
-          <option ${p.varinha.lealdade==='Incerta'?'selected':''}>Incerta</option>
-          <option ${p.varinha.lealdade==='Conquistada por Outro'?'selected':''}>Conquistada por Outro</option>
+        <div><label>Tendência</label><input data-campo-mestre="varinha.tendencia" value="${esc(vm.tendencia)}"></div>
+        <div><label>Propriedade Desperta</label><input data-campo-mestre="varinha.propriedade" value="${esc(vm.propriedade)}"></div>
+        <div><label>Peculiaridade</label><input data-campo-mestre="varinha.peculiaridade" value="${esc(vm.peculiaridade)}"></div>
+        <div><label>Lealdade</label><select data-campo-mestre="varinha.lealdade">
+          <option ${vm.lealdade==='Leal'?'selected':''}>Leal</option>
+          <option ${vm.lealdade==='Incerta'?'selected':''}>Incerta</option>
+          <option ${vm.lealdade==='Conquistada por Outro'?'selected':''}>Conquistada por Outro</option>
         </select></div>
       </div>
-      <p class="mini" style="margin-top:8px">Sem controle real de visibilidade por jogador ainda (exigiria conta de mestre/jogador separada por campo — ver ROADMAP). Por ora é o Mestre quem decide contar ou não.</p>
-    </details>
+    </details>`; })() : '<p class="mini" style="margin-top:8px">Tendência, Propriedade Desperta, Peculiaridade e Lealdade são só do Mestre — nem aparecem aqui pra você.</p>'}
   </div>
 
   <div class="cartao">
     <h3 style="margin-bottom:12px">Descrição e notas</h3>
     <label>Descrição</label><textarea data-campo="perfil.descricao" rows="3">${esc(p.perfil.descricao)}</textarea>
-    <label style="margin-top:10px">Notas do Mestre</label><textarea data-campo="perfil.notasMestre" rows="3">${esc(p.perfil.notasMestre)}</textarea>
+    ${estado.ehMestre ? `<label style="margin-top:10px">Notas do Mestre <span class="pill">só você vê</span></label><textarea data-campo-mestre="notasPersonagem" rows="3">${esc(p._mestre?.notasPersonagem||'')}</textarea>` : ''}
     <div class="grade" style="margin-top:10px">
       <div><label>Galeões</label><input type="number" min="0" data-campo-num="galeoes" value="${p.galeoes}"></div>
     </div>
@@ -805,19 +851,24 @@ function abaFamilia(p){
     ` : '<p class="mini">Escolha uma família do catálogo, ou crie uma própria abaixo.</p>'}
   </div>
 
+  ${estado.ehMestre ? (() => { const segredos = garantirMestre(p).segredosFamiliares; return `
   <div class="cartao">
-    <h3 style="margin-bottom:10px">Segredos Familiares</h3>
-    <p class="mini" style="margin-bottom:10px">Sem trava real de servidor por jogador ainda (mesma limitação da Varinha — ver ROADMAP): o Mestre decide na mesa o que cada personagem já sabe.</p>
-    ${p.segredosFamiliares.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.segredosFamiliares.map(s => `
+    <h3 style="margin-bottom:10px">Segredos Familiares <span class="pill">só você vê</span></h3>
+    <p class="mini" style="margin-bottom:10px">Agora com trava de verdade (decisão #159): o servidor nem manda isto pro navegador de quem não é mestre. "Contado" é só sua lembrança de mesa, não revela nada sozinho.</p>
+    ${segredos.length===0 ? '<p class="mini">Nenhum registrado.</p>' : segredos.map(s => `
       <div class="linha-cond">
         <input data-seg-campo="${s.id}:nome" value="${esc(s.nome)}" placeholder="Nome do segredo" style="flex:1">
-        <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-seg-oculto="${s.id}" ${s.oculto?'checked':''}> Oculto do jogador</label>
+        <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-seg-oculto="${s.id}" ${s.oculto?'checked':''}> Ainda não contei ao jogador</label>
         <button data-seg-remover="${s.id}" class="perigo" style="padding:4px 10px">✕</button>
       </div>
-      <textarea data-seg-campo="${s.id}:descricao" rows="1" placeholder="A verdade completa (só o Mestre precisa ler)" style="margin-bottom:8px">${esc(s.descricao||'')}</textarea>
+      <textarea data-seg-campo="${s.id}:descricao" rows="1" placeholder="A verdade completa" style="margin-bottom:8px">${esc(s.descricao||'')}</textarea>
     `).join('')}
     <button data-novo-segredo>+ Segredo Familiar</button>
-  </div>
+  </div>`; })() : `
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Segredos Familiares</h3>
+    <p class="mini">Só o Mestre vê essa lista — nem existência nem conteúdo chegam aqui.</p>
+  </div>`}
 
   <div class="cartao">
     <h3 style="margin-bottom:10px">+ Família própria</h3>
@@ -1284,8 +1335,8 @@ function abaInventario(p){
         </div>
         <label style="margin-top:6px">Propriedades conhecidas</label>
         <textarea data-rel-campo="${r.id}:propriedadesPublicas" rows="2">${esc(r.propriedadesPublicas||'')}</textarea>
-        <label style="margin-top:6px">Propriedades ocultas (só o Mestre precisa ler — sem trava real de servidor ainda)</label>
-        <textarea data-rel-campo="${r.id}:propriedadesOcultas" rows="2">${esc(r.propriedadesOcultas||'')}</textarea>
+        ${estado.ehMestre ? `<label style="margin-top:6px">Propriedades ocultas <span class="pill">só você vê</span></label>
+        <textarea data-rel-oculta="${r.id}" rows="2">${esc(garantirMestre(p).reliquiasOcultas[r.id]||'')}</textarea>` : ''}
         <div class="grade2" style="margin-top:6px">
           <div><label>Estado</label><select data-rel-campo="${r.id}:estado">
             ${['Dormente','Desperta','Vinculada','Completa'].map(e => `<option ${r.estado===e?'selected':''}>${e}</option>`).join('')}
@@ -1355,17 +1406,19 @@ function abaUnicos(p){
 
   <div class="cartao">
     <h3 style="margin-bottom:10px">Dons Latentes</h3>
-    <p class="mini" style="margin-bottom:10px">Podem existir desde a criação, inclusive ocultos do jogador — o Mestre registra e revela quando fizer sentido.</p>
-    ${p.donsLatentes.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.donsLatentes.map(d => `
+    <p class="mini" style="margin-bottom:10px">Podem existir desde a criação, inclusive ocultos do jogador — o Mestre registra e revela quando fizer sentido. A existência de um Dom (e o nome visível, se o Mestre já deu um) é pública; o nome real e a condição de despertar só o Mestre vê.</p>
+    ${p.donsLatentes.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.donsLatentes.map(d => {
+      const secreto = estado.ehMestre ? (garantirMestre(p).donsLatentes[d.id] || {nomeReal:'', condicaoDespertar:''}) : null;
+      return estado.ehMestre ? `
       <div class="linha-cond">
-        <input data-dom-campo="${d.id}:nomeReal" value="${esc(d.nomeReal)}" placeholder="Nome real (Mestre)" style="flex:1">
-        <input data-dom-campo="${d.id}:nomeVisivel" value="${esc(d.nomeVisivel||'')}" placeholder="Nome visível ao jogador (opcional)" style="flex:1">
-        <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-dom-visivel="${d.id}" ${d.visivelParaJogador?'checked':''}> Visível</label>
+        <input data-dom-real="${d.id}" value="${esc(secreto.nomeReal)}" placeholder="Nome real" style="flex:1">
+        <input data-dom-campo="${d.id}:nomeVisivel" value="${esc(d.nomeVisivel||'')}" placeholder="Nome visível ao jogador (deixe vazio pra mostrar ???)" style="flex:1">
         <button data-dom-remover="${d.id}" class="perigo" style="padding:4px 10px">✕</button>
       </div>
-      <textarea data-dom-campo="${d.id}:condicaoDespertar" rows="1" placeholder="Condição de despertar" style="margin-bottom:8px">${esc(d.condicaoDespertar||'')}</textarea>
-    `).join('')}
-    <button data-novo-dom>+ Dom Latente</button>
+      <textarea data-dom-despertar="${d.id}" rows="1" placeholder="Condição de despertar" style="margin-bottom:8px">${esc(secreto.condicaoDespertar)}</textarea>
+      ` : `<div class="linha-cond"><span style="flex:1">Dom Latente: <b>${esc(d.nomeVisivel || '???')}</b></span></div>`;
+    }).join('')}
+    ${estado.ehMestre ? '<button data-novo-dom>+ Dom Latente</button>' : ''}
   </div>`;
 }
 
@@ -1508,6 +1561,21 @@ function ligarEventos(){
       mudarSemRedesenhar(p => { p[grupo][chave] = el.value; });
     });
   });
+  // Campos dentro de `_mestre`: data-campo-mestre="notasPersonagem" (direto)
+  // ou "varinha.tendencia" (um nível dentro de _mestre) — decisão #159.
+  // Só existem na tela quando estado.ehMestre, mas o handler é genérico
+  // igual o de cima.
+  app.querySelectorAll('[data-campo-mestre]').forEach(el => {
+    const evento = (el.tagName==='SELECT') ? 'change' : 'input';
+    el.addEventListener(evento, () => {
+      const partes = el.dataset.campoMestre.split('.');
+      mudarSemRedesenhar(p => {
+        const m = garantirMestre(p);
+        if(partes.length === 1) m[partes[0]] = el.value;
+        else m[partes[0]][partes[1]] = el.value;
+      });
+    });
+  });
   app.querySelectorAll('[data-campo-num]').forEach(el => {
     el.addEventListener('input', () => {
       const caminho = el.dataset.campoNum.split('.');
@@ -1588,14 +1656,15 @@ function ligarEventos(){
   };
   app.querySelectorAll('[data-remover-conteudo-custom]').forEach(b => b.onclick = () => mudar(p => { p.conteudosCustom = p.conteudosCustom.filter(c => c.id !== b.dataset.removerConteudoCustom); }));
 
-  // Segredos Familiares
+  // Segredos Familiares — vivem em _mestre.segredosFamiliares (decisão
+  // #159); esses seletores só existem na tela quando estado.ehMestre.
   const btNovoSegredo = app.querySelector('[data-novo-segredo]');
-  if(btNovoSegredo) btNovoSegredo.onclick = () => mudar(p => p.segredosFamiliares.push({id:uid(), nome:'Segredo', descricao:'', oculto:true}));
-  app.querySelectorAll('[data-seg-remover]').forEach(b => b.onclick = () => mudar(p => { p.segredosFamiliares = p.segredosFamiliares.filter(s => s.id !== b.dataset.segRemover); }));
-  app.querySelectorAll('[data-seg-oculto]').forEach(el => el.onchange = () => mudar(p => { const s = p.segredosFamiliares.find(x=>x.id===el.dataset.segOculto); if(s) s.oculto = el.checked; }));
+  if(btNovoSegredo) btNovoSegredo.onclick = () => mudar(p => garantirMestre(p).segredosFamiliares.push({id:uid(), nome:'Segredo', descricao:'', oculto:true}));
+  app.querySelectorAll('[data-seg-remover]').forEach(b => b.onclick = () => mudar(p => { const m = garantirMestre(p); m.segredosFamiliares = m.segredosFamiliares.filter(s => s.id !== b.dataset.segRemover); }));
+  app.querySelectorAll('[data-seg-oculto]').forEach(el => el.onchange = () => mudar(p => { const s = garantirMestre(p).segredosFamiliares.find(x=>x.id===el.dataset.segOculto); if(s) s.oculto = el.checked; }));
   app.querySelectorAll('[data-seg-campo]').forEach(el => {
     const [id, campo] = el.dataset.segCampo.split(':');
-    el.addEventListener('input', () => mudarSemRedesenhar(p => { const s = p.segredosFamiliares.find(x=>x.id===id); if(s) s[campo] = el.value; }));
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const s = garantirMestre(p).segredosFamiliares.find(x=>x.id===id); if(s) s[campo] = el.value; }));
   });
 
   // + Família própria
@@ -1779,8 +1848,12 @@ function ligarEventos(){
 
   // Inventário — Relíquias
   const btNovaReliquia = app.querySelector('[data-nova-reliquia]');
-  if(btNovaReliquia) btNovaReliquia.onclick = () => mudar(p => p.reliquias.push({id:uid(), nome:'Relíquia', propriedadesPublicas:'', propriedadesOcultas:'', estado:'Dormente', vinculo:''}));
-  app.querySelectorAll('[data-rel-remover]').forEach(b => b.onclick = () => mudar(p => { p.reliquias = p.reliquias.filter(r => r.id !== b.dataset.relRemover); }));
+  if(btNovaReliquia) btNovaReliquia.onclick = () => mudar(p => p.reliquias.push({id:uid(), nome:'Relíquia', propriedadesPublicas:'', estado:'Dormente', vinculo:''}));
+  app.querySelectorAll('[data-rel-remover]').forEach(b => b.onclick = () => mudar(p => {
+    p.reliquias = p.reliquias.filter(r => r.id !== b.dataset.relRemover);
+    if(p._mestre?.reliquiasOcultas) delete p._mestre.reliquiasOcultas[b.dataset.relRemover];
+  }));
+  app.querySelectorAll('[data-rel-oculta]').forEach(el => el.addEventListener('input', () => mudarSemRedesenhar(p => { garantirMestre(p).reliquiasOcultas[el.dataset.relOculta] = el.value; })));
   app.querySelectorAll('[data-rel-campo]').forEach(el => {
     const [id, campo] = el.dataset.relCampo.split(':');
     const evento = el.tagName==='SELECT' ? 'change' : 'input';
@@ -1805,15 +1878,33 @@ function ligarEventos(){
   // Conteúdos Únicos
   app.querySelectorAll('[data-unico]').forEach(el => el.onchange = () => mudar(p => { p.unicosAdquiridos[el.dataset.unico] = el.checked; }));
 
-  // Dons Latentes
+  // Dons Latentes — só o registro público (existência + nome visível
+  // opcional) mora em p.donsLatentes; nome real/condição de despertar
+  // moram em _mestre.donsLatentes[id] (decisão #159).
   const btNovoDom = app.querySelector('[data-novo-dom]');
-  if(btNovoDom) btNovoDom.onclick = () => mudar(p => p.donsLatentes.push({id:uid(), nomeReal:'???', nomeVisivel:'', condicaoDespertar:'', visivelParaJogador:false}));
-  app.querySelectorAll('[data-dom-remover]').forEach(b => b.onclick = () => mudar(p => { p.donsLatentes = p.donsLatentes.filter(d => d.id !== b.dataset.domRemover); }));
-  app.querySelectorAll('[data-dom-visivel]').forEach(el => el.onchange = () => mudar(p => { const d = p.donsLatentes.find(x=>x.id===el.dataset.domVisivel); if(d) d.visivelParaJogador = el.checked; }));
+  if(btNovoDom) btNovoDom.onclick = () => mudar(p => {
+    const id = uid();
+    p.donsLatentes.push({id, nomeVisivel:''});
+    garantirMestre(p).donsLatentes[id] = {nomeReal:'???', condicaoDespertar:''};
+  });
+  app.querySelectorAll('[data-dom-remover]').forEach(b => b.onclick = () => mudar(p => {
+    p.donsLatentes = p.donsLatentes.filter(d => d.id !== b.dataset.domRemover);
+    if(p._mestre?.donsLatentes) delete p._mestre.donsLatentes[b.dataset.domRemover];
+  }));
   app.querySelectorAll('[data-dom-campo]').forEach(el => {
     const [id, campo] = el.dataset.domCampo.split(':');
     el.addEventListener('input', () => mudarSemRedesenhar(p => { const d = p.donsLatentes.find(x=>x.id===id); if(d) d[campo] = el.value; }));
   });
+  app.querySelectorAll('[data-dom-real]').forEach(el => el.addEventListener('input', () => mudarSemRedesenhar(p => {
+    const dl = garantirMestre(p).donsLatentes;
+    if(!dl[el.dataset.domReal]) dl[el.dataset.domReal] = {nomeReal:'', condicaoDespertar:''};
+    dl[el.dataset.domReal].nomeReal = el.value;
+  })));
+  app.querySelectorAll('[data-dom-despertar]').forEach(el => el.addEventListener('input', () => mudarSemRedesenhar(p => {
+    const dl = garantirMestre(p).donsLatentes;
+    if(!dl[el.dataset.domDespertar]) dl[el.dataset.domDespertar] = {nomeReal:'', condicaoDespertar:''};
+    dl[el.dataset.domDespertar].condicaoDespertar = el.value;
+  })));
 
   // Relações
   const btNovaRelacao = app.querySelector('[data-nova-relacao]');
