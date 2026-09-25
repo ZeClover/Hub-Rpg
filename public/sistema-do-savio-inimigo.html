@@ -420,12 +420,18 @@ function danoDesarmadoTexto(p){
 // mais de um reduz o Nível efetivo em 1 pra todos os efeitos combinados
 // (regra do documento, mostrada como aviso — não é travada em código porque
 // a combinação em si é livre).
+// Níveis 6 e 7 só existem por Ascensão (cada ascensão de uma Habilidade
+// soma 1 Nível efetivo, no máximo duas vezes) ou por Sustentada (que já
+// nasce +2 Níveis acima) — nenhuma Habilidade de monstro ESCOLHE Nível
+// 6/7 na criação (o campo "Nível" continua limitado a 1–5).
 const TABELA_HABILIDADE = [
   {nivel:1, danoCuraMovRD:'+1d12 ou +6', alcance:'+6m',  duracao:'+2 rounds', vantagem:'+1d12 ou +6'},
   {nivel:2, danoCuraMovRD:'+2d12 ou +12',alcance:'+12m', duracao:'+3 rounds', vantagem:'+2d12 ou +12'},
   {nivel:3, danoCuraMovRD:'+3d12 ou +18',alcance:'+18m', duracao:'+4 rounds', vantagem:'+3d12 ou +18'},
   {nivel:4, danoCuraMovRD:'+4d12 ou +24',alcance:'+24m', duracao:'+5 rounds', vantagem:'+4d12 ou +24'},
   {nivel:5, danoCuraMovRD:'+6d12 ou +36',alcance:'+36m', duracao:'+6 rounds', vantagem:'+6d12 ou +36'},
+  {nivel:6, danoCuraMovRD:'+7d12 ou +42',alcance:'+42m', duracao:'+7 rounds', vantagem:'+7d12 ou +42'},
+  {nivel:7, danoCuraMovRD:'+10d12 ou +60',alcance:'+60m',duracao:'+10 rounds',vantagem:'+10d12 ou +60'},
 ];
 
 // Custo padrão de PE por Nível de Habilidade — referência (a mesa pode
@@ -481,16 +487,27 @@ function habilidadeContagemEfeitos(h){
   const personalizados = (h.efeitosPersonalizados||[]).reduce((total, ef) => total + Math.max(1, Number(ef.custo)||1), 0);
   return fixos + personalizados;
 }
+// Quantas vezes esta Habilidade já foi ascendida (Segunda Ascensão, no
+// máximo duas vezes — decisão registrada em DECISOES.md). `ascendida`
+// (booleano) é o campo antigo, de quando só dava pra ascender uma vez;
+// fichas salvas antes desta mudança continuam lidas como 1 vez.
+function habilidadeVezesAscendida(h){
+  if(typeof h.vezesAscendida === 'number') return Math.max(0, Math.min(2, h.vezesAscendida));
+  return h.ascendida ? 1 : 0;
+}
 // Nível efetivo: sobe 2 se for Sustentada (ela já nasce com duas desvantagens
-// embutidas — gasto contínuo de PE e precisar de concentração) e cai
-// (contagem de efeitos − 1) — o primeiro efeito é grátis, cada um a mais
-// desconta o próprio custo (normalmente 1; um efeito personalizado pode
-// custar mais, ex.: Atordoamento custo 2 já desconta 2 Níveis sozinho).
+// embutidas — gasto contínuo de PE e precisar de concentração), sobe 1 por
+// vez ascendida (Segunda Ascensão, até 2 vezes — sem custo extra de PE,
+// por isso não mexe em `custoPe`/`custoPeDefault`) e cai (contagem de
+// efeitos − 1) — o primeiro efeito é grátis, cada um a mais desconta o
+// próprio custo (normalmente 1; um efeito personalizado pode custar mais,
+// ex.: Atordoamento custo 2 já desconta 2 Níveis sozinho). Teto 7: Nível 5
+// (o maior escolhível) ascendido duas vezes.
 function habilidadeNivelEfetivo(h){
   const n = habilidadeContagemEfeitos(h);
-  let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0);
+  let nivel = h.nivel + (h.tipo === 'sustentada' ? 2 : 0) + habilidadeVezesAscendida(h);
   nivel -= Math.max(0, n - 1);
-  return Math.max(1, Math.min(5, nivel));
+  return Math.max(1, Math.min(7, nivel));
 }
 // Traço automático de Especialização que soma direto no efeito de uma
 // Habilidade — hoje só Suporte (Cura) e Guerreiro Mágico (Dano ou Cura),
@@ -2469,6 +2486,7 @@ function habilidadeLinha(h, i, p){
         </label>`).join('')}
       </div>
       ${h.tipo === 'sustentada' && contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Sustentada (+2) combinando ${contagemEfeitos} efeitos (−${contagemEfeitos-1}): Nível efetivo ${nivelEfetivo} (era ${h.nivel}).</p>` : h.tipo === 'sustentada' ? `<p class="mini" style="color:var(--alerta)">Sustentada: Nível efetivo sobe pra ${nivelEfetivo} (era ${h.nivel}), por já ter duas desvantagens embutidas.</p>` : contagemEfeitos > 1 ? `<p class="mini" style="color:var(--alerta)">Combinando ${contagemEfeitos} efeitos: Nível efetivo cai ${contagemEfeitos-1} (pra ${nivelEfetivo}, era ${h.nivel}).</p>` : ''}
+      ${habilidadeVezesAscendida(h) ? `<p class="mini" style="color:var(--roxo-forte)">Ascendida ${habilidadeVezesAscendida(h)}x (Segunda Ascensão): +${habilidadeVezesAscendida(h)} no Nível efetivo (${nivelEfetivo}), sem custo extra de PE.</p>` : ''}
       ${efeitosEscolhidos.length ? `<div class="grade g2" style="margin-top:8px">
         ${efeitosEscolhidos.map(e => {
           const bonusClasse = bonusClasseEfeitoHabilidade(p, h, e.chave);
@@ -2543,10 +2561,12 @@ function habilidadeLinha(h, i, p){
     </div>
     <label style="margin-top:10px">Descrição livre (opcional — narrativa, condição aplicada etc.)</label>
     <textarea data-hab-campo="${i}|efeito" rows="2">${esc(h.efeito)}</textarea>
-    <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px">
-      <label class="checagem">
-        <input type="checkbox" data-hab-flag="${i}|ascendida" ${h.ascendida?'checked':''}> Ascendida (pós-Nível 20, +1 Nível sem custo extra)
-      </label>
+    <div class="linha" style="margin-top:10px;flex-wrap:wrap;gap:14px;align-items:center">
+      <div>
+        <label for="hab-vezes-asc-${i}">Vezes ascendida (0–2)</label>
+        <input id="hab-vezes-asc-${i}" type="number" min="0" max="2" style="width:70px"
+          data-hab-vezes-ascendida="${i}" value="${habilidadeVezesAscendida(h)}">
+      </div>
       <label class="checagem">
         <input type="checkbox" data-hab-flag="${i}|habilidadeMaxima" ${h.habilidadeMaxima?'checked':''}> É uma Habilidade Máxima
       </label>
@@ -2554,6 +2574,9 @@ function habilidadeLinha(h, i, p){
         <input type="checkbox" data-hab-flag="${i}|reacao" ${h.reacao?'checked':''}> É uma Habilidade de Reação (só ativa como reação/Contra-Atacar, nunca como ação comum)
       </label>
     </div>
+    <p class="mini" style="margin-top:6px">Cada vez ascendida soma 1 Nível
+      efetivo, sem custo extra de PE (Segunda Ascensão, no máximo 2 vezes —
+      um Nível 5 ascendido duas vezes vira uma Habilidade Máxima).</p>
   </div>`;
 }
 
@@ -3863,6 +3886,13 @@ function ligarEventos(){
       const [i, chave] = el.dataset.habFlag.split('|');
       p.habilidades[Number(i)][chave] = el.checked;
     }));
+  // Vezes ascendida usa onchange (redesenha a tela) — o Nível efetivo
+  // mostrado logo abaixo depende dela.
+  app.querySelectorAll('[data-hab-vezes-ascendida]').forEach(el =>
+    el.onchange = () => mudar(p => {
+      const h = p.habilidades[Number(el.dataset.habVezesAscendida)];
+      h.vezesAscendida = Math.max(0, Math.min(2, Number(el.value) || 0));
+    }));
   // Efeitos usam onchange (redesenha a tela) porque o bônus calculado
   // logo abaixo depende de quais estão marcados agora.
   app.querySelectorAll('[data-hab-efeito]').forEach(el =>
@@ -3892,7 +3922,7 @@ function ligarEventos(){
   const addHab = document.getElementById('btAddHabilidade');
   if(addHab) addHab.onclick = () => mudar(p => {
     estado.habExpandidas.add(p.habilidades.length);
-    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, efeitosPersonalizados:[], periciasAlvo:[], tipoBonus:'soma', usaArma:false, vantagemBuffaDano:false, ascendida:false, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
+    p.habilidades.push({nome:'', nivel:1, tipo:'imediata', custoPe:CUSTO_PE_HABILIDADE[1], efeito:'', efeitos:{}, efeitosPersonalizados:[], periciasAlvo:[], tipoBonus:'soma', usaArma:false, vantagemBuffaDano:false, vezesAscendida:0, habilidadeMaxima:false, reacao:false, ativa:false, duracaoRestante:null});
   });
   app.querySelectorAll('[data-hab-select]').forEach(el =>
     el.onchange = () => mudar(p => {
