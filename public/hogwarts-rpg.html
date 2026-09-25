@@ -323,6 +323,38 @@ const CRIATURAS_SEED = [
     comportamento:'Varia por espécie (ex.: mais agressivo/territorial vs. prefere evitar humanos) — um pacote curto por espécie em cima deste modelo, sem duplicar toda a regra.', habitat:'Reservas, montanhas remotas.', materiais:'Escamas, sangue, fogo (usos extremamente raros e perigosos).'},
 ];
 
+// Receitas de Poções — catálogo igual aos outros. `custo` é a Perícia
+// Poções mínima pra preparo automático (regra-base: conhece a receita +
+// Perícia suficiente + ingredientes + equipamento + tempo = não precisa
+// rolar). `ingredientes` usa nomes livres — o Hub casa por nome com o
+// inventário de ingredientes do personagem, sem exigir cadastro prévio.
+const RECEITAS_SEED = [
+  {id:'wiggenweld', nome:'Wiggenweld', custo:1, tempo:'30 minutos', doses:1, efeito:'Recupera 1 Vida e remove sangramentos/ferimentos superficiais leves. Satura: sem 2ª cura por poção na mesma cena.', restrito:false,
+    ingredientes:[{nome:'Raiz de Wiggenweld', qtd:1},{nome:'Água', qtd:1}]},
+  {id:'antidoto-comum', nome:'Antídoto para Venenos Comuns', custo:1, tempo:'30 minutos', doses:1, efeito:'Remove Envenenado por veneno comum compatível.', restrito:false,
+    ingredientes:[{nome:'Bezoar', qtd:1}]},
+  {id:'pocao-pimenta', nome:'Poção Pimenta', custo:2, tempo:'1 hora', doses:1, efeito:'Remove Abalado por doença/exaustão comum; alivia resfriados; mantém funcional sob frio intenso. Não recupera Vida.', restrito:false,
+    ingredientes:[{nome:'Pimenta-de-fogo', qtd:2}]},
+  {id:'pocao-edurus', nome:'Poção Edurus', custo:2, tempo:'1 hora', doses:1, efeito:'Cena: na primeira vez que sofreria 2+ de dano físico, reduz em 1 (benefício consumido depois disso).', restrito:false,
+    ingredientes:[{nome:'Pele de Ararambóia', qtd:1},{nome:'Casca de carvalho', qtd:1}]},
+  {id:'pocao-foco', nome:'Poção de Foco', custo:2, tempo:'1 hora', doses:1, efeito:'10 minutos: Vantagem pra manter Concentração ou executar trabalho mágico extremamente preciso.', restrito:false,
+    ingredientes:[{nome:'Folha de Lavanda-mágica', qtd:1},{nome:'Raiz de Valeriana', qtd:1}]},
+  {id:'pocao-maxima', nome:'Poção Máxima', custo:3, tempo:'2 horas', doses:1, efeito:'3 rodadas: o próximo feitiço ofensivo que acertar sobe +1 grau de sucesso (não passa de Excepcional); termina depois.', restrito:false,
+    ingredientes:[{nome:'Escama de Salamandra', qtd:2},{nome:'Erva-de-poder', qtd:1}]},
+  {id:'pocao-invisibilidade', nome:'Poção de Invisibilidade', custo:3, tempo:'2 horas', doses:1, efeito:'Até 10 minutos de invisibilidade; termina antes se atacar, conjurar magia visível, ou sofrer forte impacto. Não some som/cheiro/pegadas.', restrito:false,
+    ingredientes:[{nome:'Lasca de Demiguise', qtd:1},{nome:'Suco de Ácer', qtd:1}]},
+  {id:'thunderbrew', nome:'Thunderbrew', custo:3, tempo:'2 horas', doses:1, efeito:'3 rodadas: pequena tempestade acompanha o usuário — 1x/rodada, inimigo a até 2 m sofre 1 dano elétrico ou efeito de deslocamento.', restrito:false,
+    ingredientes:[{nome:'Pena de Trovão', qtd:1},{nome:'Água de tempestade', qtd:1}]},
+  {id:'pocao-sono-profundo', nome:'Poção do Sono Profundo', custo:3, tempo:'2 horas', doses:1, efeito:'Quem ingerir resiste; em sucesso da poção fica Incapacitado e adormecido por ~1 hora. Antídoto/tratamento desperta antes.', restrito:false,
+    ingredientes:[{nome:'Pétala de Dormideira', qtd:2},{nome:'Mel de Abelha-fada', qtd:1}]},
+  {id:'polissuco', nome:'Poção Polissuco', custo:4, tempo:'preparação extensa (semanas)', doses:1, efeito:'~1 hora por dose: transforma fisicamente o usuário em outra pessoa (precisa de material biológico dela). Não copia memórias/Perícias/magia.', restrito:true,
+    ingredientes:[{nome:'Ervas-de-são-mungo', qtd:1},{nome:'Sanguessugas', qtd:3},{nome:'Chifre de bicórnio em pó', qtd:1},{nome:'Pele-de-ararambóia', qtd:1},{nome:'Material biológico do alvo', qtd:1}]},
+  {id:'veritaserum', nome:'Veritaserum', custo:5, tempo:'preparação extensa (1 mês lunar)', doses:1, efeito:'Torna extremamente difícil mentir conscientemente — não é infalível (memória alterada, resistência mágica, engano genuíno). Uso coercitivo tem consequências graves. Acesso restrito.', restrito:true,
+    ingredientes:[{nome:'Orvalho de lua cheia', qtd:1},{nome:'Cabelo de Jobberknoll', qtd:3}]},
+  {id:'morte-viva', nome:'Poção da Morte Viva', custo:4, tempo:'2 horas', doses:1, efeito:'Sono mágico extremamente profundo — narrativa/medicinal/perigosa, não é vantagem de combate. Antídoto/magia apropriada pode ser necessário pra despertar.', restrito:true,
+    ingredientes:[{nome:'Raiz de Asfódelo', qtd:1},{nome:'Pó de Losna', qtd:1}]},
+];
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -354,6 +386,9 @@ function novoPersonagem(){
     segredosFamiliares: [],
     criaturasCustom: [],
     bestiarioConhecido: {},
+    ingredientes: [],
+    pocoesEstoque: [],
+    pocoesCustom: [],
   };
 }
 
@@ -365,6 +400,9 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.segredosFamiliares)) p.segredosFamiliares = [];
   if(!Array.isArray(p.criaturasCustom)) p.criaturasCustom = [];
   if(!p.bestiarioConhecido || typeof p.bestiarioConhecido !== 'object') p.bestiarioConhecido = {};
+  if(!Array.isArray(p.ingredientes)) p.ingredientes = [];
+  if(!Array.isArray(p.pocoesEstoque)) p.pocoesEstoque = [];
+  if(!Array.isArray(p.pocoesCustom)) p.pocoesCustom = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -377,6 +415,20 @@ function todosConteudos(p){ return [...CONTEUDOS_SEED, ...p.conteudosCustom]; }
 function todasFamilias(p){ return [...FAMILIAS_SEED, ...p.familiasCustom]; }
 function todasOrigens(p){ return [...ORIGENS_SEED, ...p.origensCustom]; }
 function todasCriaturas(p){ return [...CRIATURAS_SEED, ...p.criaturasCustom]; }
+function todasReceitas(p){ return [...RECEITAS_SEED, ...p.pocoesCustom]; }
+
+// Regra-base de Poções: conhece a receita (aqui: existe no catálogo da
+// ficha) + Perícia Poções >= custo + todos os ingredientes na quantidade
+// certa => preparo automático, sem rolar.
+function ingredienteDisponivel(p, nome, qtd){
+  const item = p.ingredientes.find(i => i.nome.trim().toLowerCase() === nome.trim().toLowerCase());
+  return !!item && item.quantidade >= qtd;
+}
+function podePrepararAutomatico(p, receita){
+  const periciaPocoes = p.pericias['Poções'] || 0;
+  if(periciaPocoes < receita.custo) return false;
+  return receita.ingredientes.every(ing => ingredienteDisponivel(p, ing.nome, ing.qtd));
+}
 
 /* --- Armazenamento (mesmo mecanismo dos outros sistemas: decisão #40/#44) - */
 
@@ -499,6 +551,7 @@ const ABAS = [
   {id:'condicoes', nome:'Condições'},
   {id:'conteudos', nome:'Conteúdos'},
   {id:'criaturas', nome:'Bestiário'},
+  {id:'pocoes', nome:'Poções'},
 ];
 
 function abaPerfil(p){
@@ -883,6 +936,75 @@ function abaCriaturas(p){
   </div>`;
 }
 
+function abaPocoes(p){
+  const periciaPocoes = p.pericias['Poções'] || 0;
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Ingredientes</h3>
+    <p class="mini" style="margin-bottom:10px">Identidade própria, não "Material Verde x43" — nome, quantidade, e o Hub casa pelo nome na hora de preparar.</p>
+    ${p.ingredientes.length===0 ? '<p class="mini">Nenhum ingrediente ainda.</p>' : p.ingredientes.map(i => `
+      <div class="linha-cond">
+        <span style="flex:1">${esc(i.nome)}</span>
+        <button data-ing-dec="${i.id}" style="padding:4px 10px">−</button>
+        <span class="mini" style="width:30px;text-align:center">${i.quantidade}</span>
+        <button data-ing-inc="${i.id}" style="padding:4px 10px">+</button>
+        <button data-ing-remover="${i.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>`).join('')}
+    <div class="linha" style="margin-top:10px">
+      <input id="novoIngredienteNome" placeholder="Nome do ingrediente" style="flex:1">
+      <input id="novoIngredienteQtd" type="number" min="1" value="1" style="width:80px">
+      <button data-add-ingrediente>+ Adicionar</button>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:6px">Receitas</h3>
+    <p class="mini" style="margin-bottom:10px">Sua Poções atual: <b>${periciaPocoes}</b>. Com ingredientes + Perícia suficientes + tempo, o preparo é automático — sem rolar. Pressa, substituição ou receita acima da capacidade continuam exigindo teste do Mestre na mesa (o Hub não rola por vocês).</p>
+    ${todasReceitas(p).filter(r => p.mostrarRestritos || !r.restrito).map(r => {
+      const pode = podePrepararAutomatico(p, r);
+      return `<div class="item-conteudo">
+        <h4>${esc(r.nome)} ${r.restrito?'<span class="pill" style="border-color:rgba(196,80,107,.5);color:#e58a9b">restrito</span>':''}</h4>
+        <div class="campos">
+          <div>Poções mín.: <b>${r.custo}</b></div>
+          <div>Tempo: ${esc(r.tempo)}</div>
+          <div>Doses: ${r.doses}</div>
+        </div>
+        <p class="mini"><b>Ingredientes:</b> ${r.ingredientes.map(ing => `${esc(ing.nome)} ×${ing.qtd}${ingredienteDisponivel(p,ing.nome,ing.qtd)?'':' (falta)'}`).join(', ')}</p>
+        <p class="mini"><b>Efeito:</b> ${esc(r.efeito)}</p>
+        <div class="linha" style="margin-top:8px">
+          <button data-preparar-pocao="${r.id}" class="${pode?'destaque':''}" ${pode?'':'disabled'} title="${pode?'Preparo automático disponível':'Falta Perícia Poções ou algum ingrediente'}">${pode?'✓ Preparar':'Não dá pra preparar automático'}</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Estoque de Poções</h3>
+    ${p.pocoesEstoque.length===0 ? '<p class="mini">Nenhuma poção preparada ainda.</p>' : p.pocoesEstoque.map(e => `
+      <div class="linha-cond">
+        <span style="flex:1">${esc(e.nome)}</span>
+        <span class="mini">${e.doses} dose(s)</span>
+        <button data-usar-dose="${e.id}">Usar 1 dose</button>
+      </div>`).join('')}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">+ Receita própria</h3>
+    <div class="grade">
+      <div><label>Nome</label><input id="novaReceitaNome"></div>
+      <div><label>Poções mínimo</label><input type="number" min="0" id="novaReceitaCusto" value="1"></div>
+      <div><label>Tempo</label><input id="novaReceitaTempo" placeholder="Ex.: 1 hora"></div>
+      <div><label>Doses</label><input type="number" min="1" id="novaReceitaDoses" value="1"></div>
+    </div>
+    <label style="margin-top:8px">Ingredientes (nome×qtd, separados por vírgula)</label>
+    <input id="novaReceitaIngredientes" placeholder="Ex.: Bezoar×1, Água×2">
+    <label style="margin-top:8px">Efeito</label><textarea id="novaReceitaEfeito" rows="2"></textarea>
+    <button data-add-receita style="margin-top:10px">+ Adicionar ao catálogo desta ficha</button>
+    ${p.pocoesCustom.length ? p.pocoesCustom.map(r => `
+      <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(r.nome)}</span><button data-remover-receita-custom="${r.id}" class="perigo" style="padding:3px 8px">✕</button></div>
+    `).join('') : ''}
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -906,7 +1028,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1097,6 +1219,61 @@ function ligarEventos(){
     }));
   };
   app.querySelectorAll('[data-remover-criatura-custom]').forEach(b => b.onclick = () => mudar(p => { p.criaturasCustom = p.criaturasCustom.filter(c => c.id !== b.dataset.removerCriaturaCustom); }));
+
+  // Ingredientes
+  app.querySelectorAll('[data-ing-inc]').forEach(b => b.onclick = () => mudar(p => { const i = p.ingredientes.find(x=>x.id===b.dataset.ingInc); if(i) i.quantidade++; }));
+  app.querySelectorAll('[data-ing-dec]').forEach(b => b.onclick = () => mudar(p => {
+    const i = p.ingredientes.find(x=>x.id===b.dataset.ingDec); if(!i) return;
+    i.quantidade--; if(i.quantidade <= 0) p.ingredientes = p.ingredientes.filter(x=>x.id!==i.id);
+  }));
+  app.querySelectorAll('[data-ing-remover]').forEach(b => b.onclick = () => mudar(p => { p.ingredientes = p.ingredientes.filter(i => i.id !== b.dataset.ingRemover); }));
+  const btAddIngrediente = app.querySelector('[data-add-ingrediente]');
+  if(btAddIngrediente) btAddIngrediente.onclick = () => {
+    const nome = document.getElementById('novoIngredienteNome').value.trim();
+    if(!nome) return;
+    const qtd = Math.max(1, Number(document.getElementById('novoIngredienteQtd').value) || 1);
+    mudar(p => {
+      const existente = p.ingredientes.find(i => i.nome.trim().toLowerCase() === nome.toLowerCase());
+      if(existente) existente.quantidade += qtd;
+      else p.ingredientes.push({id:uid(), nome, quantidade:qtd});
+    });
+  };
+
+  // Preparo de poções (automático — regra-base do sistema)
+  app.querySelectorAll('[data-preparar-pocao]').forEach(b => b.onclick = () => mudar(p => {
+    const receita = todasReceitas(p).find(r => r.id === b.dataset.prepararPocao);
+    if(!receita || !podePrepararAutomatico(p, receita)) return;
+    receita.ingredientes.forEach(ing => {
+      const item = p.ingredientes.find(i => i.nome.trim().toLowerCase() === ing.nome.trim().toLowerCase());
+      if(item){ item.quantidade -= ing.qtd; }
+    });
+    p.ingredientes = p.ingredientes.filter(i => i.quantidade > 0);
+    const dose = p.pocoesEstoque.find(e => e.receitaId === receita.id);
+    if(dose) dose.doses += receita.doses;
+    else p.pocoesEstoque.push({id:uid(), receitaId:receita.id, nome:receita.nome, doses:receita.doses});
+  }));
+  app.querySelectorAll('[data-usar-dose]').forEach(b => b.onclick = () => mudar(p => {
+    const e = p.pocoesEstoque.find(x => x.id === b.dataset.usarDose); if(!e) return;
+    e.doses--; if(e.doses <= 0) p.pocoesEstoque = p.pocoesEstoque.filter(x => x.id !== e.id);
+  }));
+  const btAddReceita = app.querySelector('[data-add-receita]');
+  if(btAddReceita) btAddReceita.onclick = () => {
+    const nome = document.getElementById('novaReceitaNome').value.trim();
+    if(!nome) return;
+    const ingredientes = document.getElementById('novaReceitaIngredientes').value.split(',').map(t => t.trim()).filter(Boolean).map(par => {
+      const [n, q] = par.split('×');
+      return {nome:(n||par).trim(), qtd: Math.max(1, Number(q)||1)};
+    });
+    mudar(p => p.pocoesCustom.push({
+      id: uid(), nome,
+      custo: Math.max(0, Number(document.getElementById('novaReceitaCusto').value) || 0),
+      tempo: document.getElementById('novaReceitaTempo').value.trim() || '—',
+      doses: Math.max(1, Number(document.getElementById('novaReceitaDoses').value) || 1),
+      efeito: document.getElementById('novaReceitaEfeito').value.trim() || '—',
+      restrito: false, ingredientes,
+    }));
+  };
+  app.querySelectorAll('[data-remover-receita-custom]').forEach(b => b.onclick = () => mudar(p => { p.pocoesCustom = p.pocoesCustom.filter(r => r.id !== b.dataset.removerReceitaCustom); }));
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
