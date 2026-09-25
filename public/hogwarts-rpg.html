@@ -382,6 +382,52 @@ const CARTAS_SEED = [
 const PESO_RARIDADE = {'Comum':55, 'Incomum':25, 'Rara':12, 'Muito Rara':6, 'Lendária':2};
 const CUSTO_SAPO = 2; // Galeões por Sapo de Chocolate lacrado
 
+const MARCOS_EXTRAORDINARIOS = [5,10,15,20,25,30,35];
+
+// Conteúdos Únicos / Caminhos Raros — cada estágio é um item separado.
+// `ordem` dentro do mesmo `caminho` é a sequência esperada (Animagia II
+// só depois de I etc.) — o Hub avisa quando fora de ordem, mas não trava,
+// porque controle do Mestre vale mais que automação aqui.
+const UNICOS_SEED = [
+  {id:'animagia-1', caminho:'Animagia', ordem:1, nome:'Animagia I — Preparação', custo:2, requisito:'Transfiguração 3, Poções 2', descricao:'Desbloqueia o Projeto "Tornar-se Animago". Ainda não transforma.'},
+  {id:'animagia-2', caminho:'Animagia', ordem:2, nome:'Animagia II — Primeira Transformação', custo:1, requisito:'Concluir o Projeto', descricao:'Forma Animaga fixa; transforma-se com 1 Ação (pode exigir teste sob pressão extrema no início).'},
+  {id:'animagia-3', caminho:'Animagia', ordem:3, nome:'Animagia III — Transformação Natural', custo:1, requisito:'', descricao:'Transformar e retornar deixa de exigir teste em condições normais.'},
+  {id:'animagia-4', caminho:'Animagia', ordem:4, nome:'Animagia IV — Mestre Animago', custo:1, requisito:'', descricao:'1x por cena, transforma-se usando o Movimento em vez da Ação.'},
+  {id:'legilimencia-1', caminho:'Legilimência', ordem:1, nome:'Legilimência I — Sensibilidade Mental', custo:2, requisito:'', descricao:'A até 3 m, após concentração, percebe emoção dominante ou forte intenção imediata. Não lê pensamentos completos.'},
+  {id:'legilimencia-2', caminho:'Legilimência', ordem:2, nome:'Legilimência II — Pensamento Superficial', custo:1, requisito:'', descricao:'1 Ação, 3 m: sucesso recebe um pensamento/palavra/sensação/imagem presente no momento.'},
+  {id:'legilimencia-3', caminho:'Legilimência', ordem:3, nome:'Legilimência III — Fragmentos de Memória', custo:1, requisito:'', descricao:'Com contato prolongado/alvo vulnerável/voluntário, pode alcançar fragmentos de memória (incompletos, não gravação perfeita).'},
+  {id:'legilimencia-4', caminho:'Legilimência', ordem:4, nome:'Legilimência IV — Legilimente Consumado', custo:1, requisito:'', descricao:'Legilimência superficial sem fórmula verbal evidente, às vezes sem varinha; pode tentar discretamente numa conversa.'},
+  {id:'oclumencia-1', caminho:'Oclumência', ordem:1, nome:'Oclumência I — Fechar a Mente', custo:2, requisito:'', descricao:'Vantagem pra resistir Legilimência e invasões mentais semelhantes.'},
+  {id:'oclumencia-2', caminho:'Oclumência', ordem:2, nome:'Oclumência II — Compartimentalização', custo:1, requisito:'', descricao:'Pode esconder deliberadamente uma emoção/preocupação/memória superficial/intenção atrás de uma superfície controlada.'},
+  {id:'oclumencia-3', caminho:'Oclumência', ordem:3, nome:'Oclumência III — Falsa Superfície', custo:1, requisito:'', descricao:'Ao resistir com sucesso uma invasão, pode apresentar um pensamento/emoção falso e plausível.'},
+  {id:'oclumencia-4', caminho:'Oclumência', ordem:4, nome:'Oclumência IV — Fortaleza Mental', custo:1, requisito:'', descricao:'1x por cena, quando uma invasão penetrar sua defesa, reduz o resultado dela em um grau.'},
+  {id:'sem-varinha-1', caminho:'Magia Sem Varinha', ordem:1, nome:'Magia Sem Varinha I — Manifestação', custo:2, requisito:'Arcano 3', descricao:'Efeitos mágicos simples sem varinha (luz pequena, movimentação trivial, fechar algo simples).'},
+  {id:'sem-varinha-2', caminho:'Magia Sem Varinha', ordem:2, nome:'Magia Sem Varinha II — Conjuração Básica', custo:1, requisito:'', descricao:'Lança sem varinha feitiços de Complexidade Básica conhecidos, com Desvantagem.'},
+  {id:'sem-varinha-3', caminho:'Magia Sem Varinha', ordem:3, nome:'Magia Sem Varinha III — Conjuração Treinada', custo:1, requisito:'', descricao:'Básicos sem Desvantagem; Intermediários com Desvantagem.'},
+  {id:'sem-varinha-4', caminho:'Magia Sem Varinha', ordem:4, nome:'Magia Sem Varinha IV — Maestria', custo:1, requisito:'', descricao:'Intermediários sem Desvantagem; Avançados com Desvantagem e +1 Tensão.'},
+  {id:'patrono-corporeo', caminho:'Patrono Avançado', ordem:1, nome:'Patrono Corpóreo', custo:1, requisito:'Expecto Patronum', descricao:'Forma animal definida pela identidade do personagem; move até 15 m do conjurador, protege outros. Ainda exige Concentração.'},
+  {id:'guardiao-patronal', caminho:'Patrono Avançado', ordem:2, nome:'Guardião Patronal', custo:1, requisito:'', descricao:'O Patrono protege área maior e pode enfrentar uma ameaça enquanto você realiza outra ação (mantendo Concentração).'},
+  {id:'maestria-patrono', caminho:'Patrono Avançado', ordem:3, nome:'Maestria do Patrono', custo:1, requisito:'', descricao:'Dano leve não exige mais teste de Concentração pra manter o Patrono; impactos graves continuam exigindo.'},
+  {id:'criador-1', caminho:'Criação de Feitiços', ordem:1, nome:'Criador de Feitiços I — Teórico', custo:2, requisito:'Engenho 3 + Perícia mágica 3', descricao:'Pode iniciar Projetos de Criação de Feitiço (objetivo, princípio mágico, limitações, complexidade, riscos).'},
+  {id:'criador-2', caminho:'Criação de Feitiços', ordem:2, nome:'Criador II — Experimentador', custo:1, requisito:'', descricao:'Falhas em protótipos geram instabilidade/nova exigência/descoberta útil em vez de destruir o progresso.'},
+  {id:'criador-3', caminho:'Criação de Feitiços', ordem:3, nome:'Criador III — Inventor', custo:1, requisito:'', descricao:'Pode estabilizar feitiços originais suficientemente desenvolvidos; o Mestre aprova a ficha mecânica final.'},
+  {id:'criador-4', caminho:'Criação de Feitiços', ordem:4, nome:'Criador IV — Mestre de Encantamentos', custo:1, requisito:'', descricao:'Feitiços excepcionalmente complexos, modificações profundas, ensino formal de suas criações.'},
+  {id:'metamorfomagia-1', caminho:'Metamorfomagia', ordem:1, nome:'Metamorfomagia I — Despertar', custo:2, requisito:'Dom Latente correspondente', descricao:'Altera voluntariamente cabelo/olhos/nariz/pequenas características faciais, sem varinha.'},
+  {id:'metamorfomagia-2', caminho:'Metamorfomagia', ordem:2, nome:'Metamorfomagia II — Controle', custo:1, requisito:'', descricao:'Modifica aparência facial/corporal dentro de limites humanoides plausíveis; não copia memória/voz/habilidades.'},
+  {id:'metamorfomagia-3', caminho:'Metamorfomagia', ordem:3, nome:'Metamorfomagia III — Maestria', custo:1, requisito:'', descricao:'Modifica rapidamente e mantém controle sob pressão; alterações menores sem gastar Ação relevante.'},
+  {id:'vidente-1', caminho:'Dom Profético', ordem:1, nome:'Vidente I — O Olho Interior', custo:2, requisito:'Dom Latente correspondente', descricao:'Recebe visões verdadeiras espontâneas (o Mestre decide quando); podem ser simbólicas/fragmentadas.'},
+  {id:'vidente-2', caminho:'Dom Profético', ordem:2, nome:'Vidente II — Buscar o Presságio', custo:1, requisito:'', descricao:'Com método divinatório apropriado, direciona a percepção pra um tema/pessoa/lugar/perigo — presságios, não respostas diretas.'},
+  {id:'vidente-3', caminho:'Dom Profético', ordem:3, nome:'Vidente III — Profecia', custo:1, requisito:'', descricao:'Em circunstâncias raras, produz uma verdadeira Profecia — pertence fortemente ao Mestre e à narrativa.'},
+  {id:'ofidioglossia', caminho:'Dom Único', ordem:1, nome:'Ofidioglossia', custo:2, requisito:'', descricao:'Compreende e fala com serpentes; interage com mecanismos que respondam a isso. Não controla toda cobra automaticamente.'},
+  {id:'heranca-1', caminho:'Herança Familiar', ordem:1, nome:'Herança I — Despertar o Legado', custo:2, requisito:'Ter uma Família com Herança', descricao:'Desbloqueia uma camada profunda da família: técnica, conhecimento, relíquia, acesso, tradição, segredo ou capacidade rara.'},
+  {id:'heranca-2', caminho:'Herança Familiar', ordem:2, nome:'Herança II — Aprofundamento', custo:1, requisito:'', descricao:'Acessa parte mais rara do legado.'},
+  {id:'heranca-3', caminho:'Herança Familiar', ordem:3, nome:'Herança III — Portador do Legado', custo:1, requisito:'', descricao:'O personagem torna-se um dos que realmente incorporam aquela tradição familiar.'},
+  {id:'vinculo-criatura', caminho:'Vínculos Extraordinários', ordem:1, nome:'Vínculo com Criatura', custo:2, requisito:'Relação já construída em jogo', descricao:'Transforma uma relação real em Vínculo Extraordinário: habilidades da dupla, melhor comunicação, evolução da criatura.'},
+  {id:'vinculo-reliquia', caminho:'Vínculos Extraordinários', ordem:1, nome:'Vínculo com Relíquia', custo:2, requisito:'Relíquia já presente na história', descricao:'A Relíquia passa a reconhecer/responder ao personagem — pode revelar propriedades ocultas, novas funções, memória.'},
+  {id:'vinculo-hogwarts', caminho:'Vínculos Extraordinários', ordem:1, nome:'Vínculo com Hogwarts', custo:2, requisito:'História extraordinária de ligação com o castelo', descricao:'Percebe alterações, reconhece padrões do castelo, interage com passagens/encantamentos — não dá mapa completo.'},
+  {id:'vinculo-espiritual', caminho:'Vínculos Extraordinários', ordem:1, nome:'Vínculo Espiritual', custo:2, requisito:'Ligação construída em jogo (fantasma, retrato, espírito)', descricao:'A relação concede conhecimento, comunicação, auxílio específico ou Conteúdos próprios — não transforma o ser em servo.'},
+];
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -422,6 +468,8 @@ function novoPersonagem(){
     sapoLacrados: 0,
     album: {},
     ultimaCartaAberta: null,
+    unicosAdquiridos: {},
+    donsLatentes: [],
   };
 }
 
@@ -444,6 +492,8 @@ function garantirCamposNovos(p){
   if(typeof p.sapoLacrados !== 'number') p.sapoLacrados = 0;
   if(!p.album || typeof p.album !== 'object') p.album = {};
   if(p.ultimaCartaAberta === undefined) p.ultimaCartaAberta = null;
+  if(!p.unicosAdquiridos || typeof p.unicosAdquiridos !== 'object') p.unicosAdquiridos = {};
+  if(!Array.isArray(p.donsLatentes)) p.donsLatentes = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -461,6 +511,18 @@ function todasReceitas(p){ return [...RECEITAS_SEED, ...p.pocoesCustom]; }
 function estadoMateria(p, nome){
   return p.academico.materias[nome] || {cursando: MATERIAS_OBRIGATORIAS.includes(nome), progresso: 0};
 }
+function escolhasUnicasTotais(p){ return MARCOS_EXTRAORDINARIOS.filter(m => m <= p.nivel).length * 2; }
+function escolhasUnicasGastas(p){
+  return Object.keys(p.unicosAdquiridos).filter(id => p.unicosAdquiridos[id])
+    .reduce((soma, id) => { const u = UNICOS_SEED.find(x=>x.id===id); return soma + (u ? u.custo : 0); }, 0);
+}
+function caminhosUnicos(){
+  const grupos = {};
+  UNICOS_SEED.forEach(u => { (grupos[u.caminho] = grupos[u.caminho] || []).push(u); });
+  Object.values(grupos).forEach(lista => lista.sort((a,b) => a.ordem - b.ordem));
+  return grupos;
+}
+
 function sortearCarta(){
   const total = Object.values(PESO_RARIDADE).reduce((a,b)=>a+b, 0);
   let alvo = Math.random() * total;
@@ -617,6 +679,7 @@ const ABAS = [
   {id:'academico', nome:'Acadêmico'},
   {id:'inventario', nome:'Inventário'},
   {id:'colecao', nome:'Sapos de Chocolate'},
+  {id:'unicos', nome:'Conteúdos Únicos'},
 ];
 
 function abaPerfil(p){
@@ -1209,6 +1272,49 @@ function abaColecao(p){
   </div>`;
 }
 
+function abaUnicos(p){
+  const totais = escolhasUnicasTotais(p);
+  const gastas = escolhasUnicasGastas(p);
+  const grupos = caminhosUnicos();
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Conteúdos Únicos — Caminhos Raros</h3>
+    <p class="mini" style="margin-bottom:10px">Recebidos só em Marcos Extraordinários (níveis 5/10/15/20/25/30/35): 2 Escolhas Únicas cada. Personagem no nível ${p.nivel}: <b>${totais}</b> Escolhas Únicas totais, <b>${gastas}</b> gastas, <b>${Math.max(0,totais-gastas)}</b> disponíveis.</p>
+    ${gastas>totais ? '<p class="aviso">Gastou mais Escolhas Únicas do que tem disponível — confira com o Mestre.</p>' : ''}
+  </div>
+  ${Object.entries(grupos).map(([caminho, lista]) => `
+    <div class="cartao">
+      <h3 style="margin-bottom:10px">${esc(caminho)}</h3>
+      ${lista.map(u => {
+        const adquirido = !!p.unicosAdquiridos[u.id];
+        const anteriorId = lista.find(x => x.ordem === u.ordem - 1)?.id;
+        const anteriorFalta = anteriorId && !p.unicosAdquiridos[anteriorId];
+        return `<div class="linha-cond" style="align-items:flex-start">
+          <label style="width:auto;flex:1;font-size:13px;text-transform:none">
+            <input type="checkbox" style="width:auto" data-unico="${u.id}" ${adquirido?'checked':''}> <b>${esc(u.nome)}</b> — custo ${u.custo}
+            ${anteriorFalta ? '<span class="pill" style="border-color:rgba(196,80,107,.5);color:#e58a9b;margin-left:6px">fora de ordem</span>' : ''}
+            <div class="mini" style="margin-top:2px">${esc(u.descricao)}${u.requisito ? ` <i>(Requisito: ${esc(u.requisito)})</i>` : ''}</div>
+          </label>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('')}
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Dons Latentes</h3>
+    <p class="mini" style="margin-bottom:10px">Podem existir desde a criação, inclusive ocultos do jogador — o Mestre registra e revela quando fizer sentido.</p>
+    ${p.donsLatentes.length===0 ? '<p class="mini">Nenhum registrado.</p>' : p.donsLatentes.map(d => `
+      <div class="linha-cond">
+        <input data-dom-campo="${d.id}:nomeReal" value="${esc(d.nomeReal)}" placeholder="Nome real (Mestre)" style="flex:1">
+        <input data-dom-campo="${d.id}:nomeVisivel" value="${esc(d.nomeVisivel||'')}" placeholder="Nome visível ao jogador (opcional)" style="flex:1">
+        <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-dom-visivel="${d.id}" ${d.visivelParaJogador?'checked':''}> Visível</label>
+        <button data-dom-remover="${d.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>
+      <textarea data-dom-campo="${d.id}:condicaoDespertar" rows="1" placeholder="Condição de despertar" style="margin-bottom:8px">${esc(d.condicaoDespertar||'')}</textarea>
+    `).join('')}
+    <button data-novo-dom>+ Dom Latente</button>
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1232,7 +1338,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1540,6 +1646,19 @@ function ligarEventos(){
     const carta = sortearCarta();
     p.album[carta.id] = (p.album[carta.id] || 0) + 1;
     p.ultimaCartaAberta = carta.id;
+  });
+
+  // Conteúdos Únicos
+  app.querySelectorAll('[data-unico]').forEach(el => el.onchange = () => mudar(p => { p.unicosAdquiridos[el.dataset.unico] = el.checked; }));
+
+  // Dons Latentes
+  const btNovoDom = app.querySelector('[data-novo-dom]');
+  if(btNovoDom) btNovoDom.onclick = () => mudar(p => p.donsLatentes.push({id:uid(), nomeReal:'???', nomeVisivel:'', condicaoDespertar:'', visivelParaJogador:false}));
+  app.querySelectorAll('[data-dom-remover]').forEach(b => b.onclick = () => mudar(p => { p.donsLatentes = p.donsLatentes.filter(d => d.id !== b.dataset.domRemover); }));
+  app.querySelectorAll('[data-dom-visivel]').forEach(el => el.onchange = () => mudar(p => { const d = p.donsLatentes.find(x=>x.id===el.dataset.domVisivel); if(d) d.visivelParaJogador = el.checked; }));
+  app.querySelectorAll('[data-dom-campo]').forEach(el => {
+    const [id, campo] = el.dataset.domCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const d = p.donsLatentes.find(x=>x.id===id); if(d) d[campo] = el.value; }));
   });
 }
 
