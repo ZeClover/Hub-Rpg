@@ -53,6 +53,17 @@ export type Sistema = {
     por vez — cada sistema ganha o dele quando for a vez dele).
   */
   grimorio: string | null;
+  /*
+    Modo Sessão do Mestre (decisão #161) — painel próprio do sistema pra
+    ações em lote na campanha inteira (aplicar condição em vários
+    personagens de uma vez, por exemplo), lido via `?campanha=<id>` (mesmo
+    padrão do `?id=` da ficha). Diferente de Escudo do Mestre/Grimório,
+    que são estáticos: este painel busca e edita fichas de verdade da
+    campanha, então só é oferecido a quem já é mestre dela (checado no
+    próprio HTML pelas mesmas rotas que a ficha usa). null pra sistema sem
+    esse painel ainda.
+  */
+  modoSessao: string | null;
 };
 
 export const SISTEMAS: Sistema[] = [
@@ -68,6 +79,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: "/kaizoku-no-sho-escudo-mestre.html",
     campoVidaInimigo: null,
     grimorio: "/kaizoku-no-sho-grimorio.html",
+    modoSessao: null,
   },
   {
     chave: "fabula-ultima",
@@ -81,6 +93,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: "/fabula-ultima-escudo-mestre.html",
     campoVidaInimigo: ["pvAtual"],
     grimorio: "/fabula-ultima-grimorio.html",
+    modoSessao: null,
   },
   {
     chave: "sao",
@@ -94,6 +107,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: "/sao-escudo-mestre.html",
     campoVidaInimigo: ["atual", "pv"],
     grimorio: "/sao-grimorio.html",
+    modoSessao: null,
   },
   {
     chave: "dnd-5e",
@@ -107,6 +121,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: null,
     campoVidaInimigo: null,
     grimorio: null,
+    modoSessao: null,
   },
   {
     chave: "campanha-livre",
@@ -120,6 +135,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: null,
     campoVidaInimigo: null,
     grimorio: "/campanha-livre-grimorio.html",
+    modoSessao: null,
   },
   {
     chave: "sistema-do-savio",
@@ -133,19 +149,21 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: null,
     campoVidaInimigo: ["atual", "pv"],
     grimorio: "/sistema-do-savio-grimorio.html",
+    modoSessao: null,
   },
   {
     chave: "hogwarts-rpg",
     nome: "Hogwarts RPG",
     descricao:
-      "Homebrew do Zé sem classes: Atributos + Perícias + Conteúdos + Casa + Família + Origem + Varinha. Fatia 1: chassi essencial (atributos, perícias, vida, tensão, condições, nível e Conteúdos data-driven).",
+      "Homebrew do Zé sem classes: Atributos + Perícias + Conteúdos + Casa + Família + Origem + Varinha. Chassi completo: ficha, Modo Sessão do Mestre e Loja ao vivo.",
     ficha: "/hogwarts-rpg.html",
-    situacao: "em-construcao",
+    situacao: "pronta",
     salvaNoHub: true,
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
     grimorio: null,
+    modoSessao: "/hogwarts-rpg-mestre.html",
   },
   {
     chave: "thryliki-chelona",
@@ -159,6 +177,7 @@ export const SISTEMAS: Sistema[] = [
     escudoMestre: "/thryliki-chelona-escudo-mestre.html",
     campoVidaInimigo: ["atual", "pv"],
     grimorio: "/thryliki-chelona-grimorio.html",
+    modoSessao: null,
   },
 ];
 

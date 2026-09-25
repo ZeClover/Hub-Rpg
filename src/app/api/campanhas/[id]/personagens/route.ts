@@ -7,6 +7,34 @@ import { usuarioAtual } from "@/lib/usuario";
 type Contexto = { params: Promise<{ id: string }> };
 
 /*
+  Lista as fichas da campanha COM `dados` — usada pelo Modo Sessão do
+  Mestre (decisão #161), que precisa ler/escrever em lote sem abrir ficha
+  por ficha. Só o mestre chama isto: quem pergunta já é confirmadamente
+  mestre (`ehMestreOuAuxiliar`), então `dados` sai inteiro — incluindo
+  `_mestre` — sem passar por `semSegredosDeMestre` (decisão #159), porque
+  quem está lendo É o mestre. Não existe um "modo jogador" desta lista.
+*/
+export async function GET(_requisicao: NextRequest, { params }: Contexto) {
+  const usuario = await usuarioAtual();
+  if (!usuario) {
+    return NextResponse.json({ erro: "não autenticado" }, { status: 401 });
+  }
+
+  const { id: campanhaId } = await params;
+  if (!(await ehMestreOuAuxiliar(campanhaId, usuario.id))) {
+    return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  }
+
+  const personagens = await banco.personagem.findMany({
+    where: { campanhaId },
+    select: { id: true, nome: true, donoId: true, ehMonstro: true, dados: true },
+    orderBy: { nome: "asc" },
+  });
+
+  return NextResponse.json({ personagens });
+}
+
+/*
   O mestre cria uma ficha de PERSONAGEM completa direto na campanha — mesma
   ficha de jogador do sistema, útil pra um NPC importante (aliado, mentor)
   que precisa das regras completas, não só de um bestiário.
