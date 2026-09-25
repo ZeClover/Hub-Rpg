@@ -6981,6 +6981,56 @@ existe, e só então executa o `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`
 por dentro de um `EXECUTE`. Assim nenhuma ordem de execução das
 migrações consegue quebrar o script — tabela ausente é só ignorada.
 
+## 156. The Celestials — Nível 7 de Habilidade e Ascensão acumulável (25/09/2026)
+
+Correção de três pontos nas Habilidades do The Celestials
+(`sistema-do-savio.html` e `sistema-do-savio-inimigo.html`), a pedido do
+Zé depois de comparar com a tabela original do amigo dele. Nenhuma
+migração — tudo dentro do `dados` (JSON) de cada ficha.
+
+**Teto de Nível efetivo era 5, devia ser 7.** `TABELA_HABILIDADE` só
+tinha linhas 1 a 5, e `habilidadeNivelEfetivo` travava o resultado em
+`Math.min(5, nivel)` — então uma Habilidade Sustentada de Nível 4 ou 5
+(que soma +2 de Nível efetivo, por já nascer com duas desvantagens
+embutidas) ficava presa em 5 em vez de subir pra 6 ou 7, mesmo o texto
+de ajuda da própria aba Ascensão já descrevendo "ascender uma
+Habilidade Nível 5 já aprimorada pro Nível 7" — o código nunca
+acompanhou esse texto. Acrescentei as linhas 6 e 7 em
+`TABELA_HABILIDADE` (valores exatos que o Zé mandou: `+7d12 ou +42` /
+alcance `+42m` / duração `+7 rounds` no Nível 6; `+10d12 ou +60` /
+`+60m` / `+10 rounds` no Nível 7) e troquei o teto pra
+`Math.min(7, nivel)`. O campo "Nível" que o jogador escolhe ao criar a
+Habilidade continua travado em 1–5 — 6 e 7 só existem no Nível
+*efetivo*, nunca como escolha direta.
+
+**Ascender virou acumulável até 2 vezes.** O campo `ascendida` era um
+booleano (marcado ou não) que, além de só permitir ascender uma vez,
+nem chegava a mudar nenhuma conta — era só uma etiqueta visual, sem
+efeito no Nível efetivo. Troquei por `vezesAscendida` (0 a 2), que agora
+soma de verdade no Nível efetivo (`habilidadeNivelEfetivo`), igual ao
++2 da Sustentada — sem mexer no custo de PE (`custoPeDefault` continua
+lendo o Nível base escolhido, nunca o ascendido: ascender é "sem custo
+extra", como o texto sempre disse). Fichas salvas antes desta mudança
+continuam funcionando: `habilidadeVezesAscendida(h)` lê o `ascendida`
+antigo como 1 vez quando `vezesAscendida` não existe ainda.
+
+**Vantagem/Desvantagem mirando Dano já existia.** O terceiro pedido —
+uma opção de Dano na criação de Habilidades que soma no dano padrão
+enquanto a Habilidade estiver ativa, aparecendo em toda soma de dano —
+já estava implementado (`vantagemBuffaDano`, decisão anterior ao Nível
+efetivo): ao marcar o efeito Vantagem/Desvantagem, aparece um checkbox
+"Também aplicar no Dano" que soma o bônus fixo dela no card "⚔️ Dano
+Padrão de Ataques" e em qualquer efeito de Dano de outra Habilidade.
+Conferido e confirmado — nenhuma mudança de código precisou aqui, só
+expliquei pro Zé onde já está.
+
+Grimório (`sistema-do-savio-grimorio.html`) atualizado: tabela de
+bônus agora mostra as linhas 6 e 7, e o texto de Ascensão deixa claro
+que a mesma Habilidade pode ser escolhida de novo numa vaga futura.
+
+Testado: `node -e "new Function(...)"` nos dois arquivos (ficha e
+ficha de monstro) depois de cada edição — sem erro de sintaxe.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
