@@ -197,18 +197,21 @@ const PERICIAS = [
 function pericia(id){ return PERICIAS.find(p => p.id === id) || null; }
 
 /* Clãs (Compêndio de Estudos da Tsunade) — mecânica traduzida e resumida
-   pelo Hub. O compêndio lista 45 clãs/opções ao todo. Zé mandou o restante
-   do PDF (as 256 páginas completas) e o catálogo está sendo fechado em 3
-   lotes de 10: lote 1 (Iburi a Kuru, decisão #213) e lote 2 (Namikaze a
-   Shikigami, decisão #214) já entraram, em ordem alfabética logo depois
-   de Hyūga. Falta o lote 3 (Shoton em diante) pra fechar os 45.
+   pelo Hub. Catálogo 100% completo: os 45 clãs/opções do compêndio, em
+   ordem alfabética. Zé mandou o PDF completo (256 páginas) e os últimos
+   30 (Iburi em diante, que tinham ficado de fora pela trava de extração
+   antiga) entraram em 3 lotes de 10 — decisões #213, #214 e #216.
    Quando o clã dá bônus "ou" num atributo/afinidade, o texto conta as
    opções — a ficha não impõe escolha automática no atributo (mesmo
    princípio do bônus de Antecedente: fica como referência pro jogador
    aplicar à mão no campo de Atributos). Dois clãs (Sarutobi e Sem Clã)
    deixam TODAS as perícias como escolha livre do jogador (sem nenhuma
    fixa) — `pericias` fica como array vazio nesses dois, e o texto do
-   `traco` explica a escolha por extenso. */
+   `traco` explica a escolha por extenso.
+   O que NÃO entrou nesta fatia (decisão #26 — uma fatia por vez): o
+   Hijutsu (jutsu exclusivo) de cada clã e os Talentos de categoria Clã.
+   Ficam pra uma fatia futura, quando fizer sentido puxar o catálogo de
+   jutsu de cada clã junto. */
 const CLAS = [
   {id:'aburame', nome:'Aburame', bonus:'+2 Inteligência, +1 Sabedoria', velocidade:9,
     pericias:['natureza','adestrarAnimais'],
@@ -315,6 +318,36 @@ const CLAS = [
   {id:'shikigami', nome:'Shikigami', bonus:'+2 Inteligência, +1 Destreza', velocidade:9,
     pericias:['prestidigitacao','atuacao'],
     traco:'Fabrica itens de papel (bombas, tags explosivas) de graça a cada descanso, além de meio custo em Ryo pra fabricar esses itens fora de combate. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã.'},
+  {id:'shoton', nome:'Shoton (Liberação de Cristal)', bonus:'+2 Constituição, +1 Carisma', velocidade:9,
+    pericias:['natureza','sobrevivencia'],
+    traco:'Nasce com afinidade de Terra. Pode usar Carisma como modificador de Ninjutsu ao lançar jutsu de Terra, e reforça construtos de Terra do clã com redução de dano extra. Acesso a lista própria de jutsu do clã.'},
+  {id:'humanosintetico', nome:'Humano Sintético', bonus:'+2 Inteligência, +1 Carisma', velocidade:9,
+    pericias:['percepcao','sobrevivencia'],
+    traco:'Personagem raro criado pelos experimentos de Orochimaru: fala com cobras (idioma extra) e pode deslocar as próprias juntas pra esticar os braços até 4,5m, aumentando o alcance de ataques desarmados e dando vantagem em testes de agarrar. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã.'},
+  {id:'tsuchigumo', nome:'Tsuchigumo', bonus:'+2 Destreza, +1 Sabedoria', velocidade:10.5,
+    pericias:['acrobacia','percepcao'],
+    traco:'Kekkei genkai de "terceiro olho" que se abre uma vez por descanso, aumentando a percepção e liberando a ação especial Busca-Aranha (revela o maior bônus de ataque de um alvo). Também gera Armas de Teia como ação bônus (armas simples ou à distância com Multiataque). Acesso a lista própria de jutsu do clã.'},
+  {id:'uchiha', nome:'Uchiha', bonus:'+2 Destreza ou Inteligência, +1 Inteligência ou Sabedoria (não pode ser Inteligência nos dois)', velocidade:9,
+    pericias:['intuicao'],
+    traco:'Nasce com afinidade de Fogo e no 3º nível desperta o dojutsu Sharingan, que evolui em Tomoe e concede visão de chakra, cópia de jutsu e vantagens táticas. Desde o 1º nível escolhe uma entre várias adaptações de combate do clã. Perícia extra à escolha entre Ninshou, Artes Marciais ou Ilusões. Acesso a lista própria de jutsu do clã.'},
+  {id:'uzumaki', nome:'Uzumaki', bonus:'+2 Constituição, +1 Carisma', velocidade:9,
+    pericias:['controleChakra','ninshou'],
+    traco:'Chakra máximo extra a cada nível e um recurso próprio (Células de Reserva) pra recarregar Chakra ou reduzir dano de Chakra; pode lançar um jutsu de Fuinjutsu que conhece como ação bônus uma vez por descanso. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã (Fuinjutsu).'},
+  {id:'vesper', nome:'Vesper', bonus:'+2 Carisma, +1 Força ou Destreza', velocidade:9,
+    pericias:['acrobacia','furtividade'],
+    traco:'Kekkei genkai de morcego: visão no escuro até 18m (inclusive através de obscurecimento leve) e pode agir furtivamente como ação bônus no escuro. Usa Carisma no lugar de Sabedoria pra lançar os Hijutsu de Genjutsu do clã, e todos os atributos contam como +2 mais altos pra Genjutsu de rank alto com a palavra-chave Visual. Acesso a lista própria de jutsu do clã.'},
+  {id:'yamada', nome:'Yamada', bonus:'+2 Destreza, +1 Força ou Sabedoria', velocidade:9,
+    pericias:['artesMarciais','medicina'],
+    traco:'Especialistas em Katana e Odachi: ao causar dano com essas armas usando Força ou Destreza, soma metade do outro modificador também, e pode usar Destreza pros ataques e CD dos Hijutsu do clã. Acesso a lista própria de jutsu do clã.'},
+  {id:'yamanaka', nome:'Yamanaka', bonus:'+2 Sabedoria ou Carisma, +1 Inteligência', velocidade:9,
+    pericias:['ilusoes','intuicao'],
+    traco:'Pode usar Carisma no lugar de Sabedoria como modificador de Genjutsu pros jutsu do clã, focado em controle mental. Começa sabendo 1 Jutsu D-Rank exclusivo a mais, sem contar nos jutsu conhecidos. Acesso a lista própria de jutsu do clã.'},
+  {id:'yoton', nome:'Yoton (Liberação de Lava)', bonus:'+2 Inteligência, +1 Constituição', velocidade:9,
+    pericias:['natureza','sobrevivencia'],
+    traco:'Começa com afinidade de Terra ou Fogo (escolha) — base da Liberação de Lava do clã. A pele calcificada dá redução de dano contra ataques de concussão, perfuração e corte desde o 1º nível. Acesso a lista própria de jutsu do clã.'},
+  {id:'yuki', nome:'Yuki (Liberação de Gelo)', bonus:'+2 Destreza ou Inteligência, +1 Inteligência ou Carisma (não pode ser Inteligência nos dois)', velocidade:9,
+    pericias:['controleChakra','ninshou'],
+    traco:'Começa com afinidade de Vento ou Água (escolha) — base da Liberação de Gelo do clã. Pode congelar o chão num raio de terreno difícil como ação bônus algumas vezes por descanso. Acesso a lista própria de jutsu do clã.'},
 ];
 function cla(id){ return CLAS.find(c => c.id === id) || null; }
 
@@ -3648,7 +3681,7 @@ function blocoCla(p){
   } else {
     cCla.appendChild(campoTexto('Nome do clã (fora do catálogo por enquanto)', p.cla, v => { p.cla = v; salvar(); }));
   }
-  cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com ${CLAS.length} dos 45 clãs/opções do Compêndio de Estudos da Tsunade — falta o último lote (Shoton em diante) pra fechar.`));
+  cCla.appendChild(el('p', {class:'aviso'}, `Catálogo com os ${CLAS.length} clãs/opções do Compêndio de Estudos da Tsunade. O Hijutsu (jutsu exclusivo) de cada clã fica pra uma fatia futura.`));
   return cCla;
 }
 

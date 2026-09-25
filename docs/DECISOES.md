@@ -8106,6 +8106,66 @@ teste novo específico simulando escolher "Katana" no seletor e clicar
 = 94, sem `nome` duplicado. `npx tsc --noEmit` e `npm run lint`
 seguem limpos.
 
+## 216. Naruto 5e — Traços dos clãs 100% completos (45 clãs/opções no total) (25/09/2026)
+
+Continuação das decisões #213 e #214. Terceiro e último lote de 3:
+dez clãs/opções em ordem alfabética, de Shoton a Yuki, entraram em
+`CLAS` — `Shoton`, `Synthetic Human` (→ "Humano Sintético"),
+`Tsuchigumo`, `Uchiha`, `Uzumaki`, `Vesper`, `Yamada`, `Yamanaka`,
+`Yoton`, `Yuki`. `CLAS.length` foi de 35 para 45.
+
+Esta decisão nasceu em paralelo à decisão #215 (Equipamento — outra
+fatia, outra sessão de trabalho) e ficou numerada #216 pra não colidir
+com ela.
+
+**Com isso, os traços mecânicos dos 45 clãs/opções do Compêndio de
+Estudos da Tsunade ficam 100% completos.** O comentário de bloco
+acima de `CLAS` e o aviso que a aba Clã mostra na ficha foram
+reescritos pra refletir isso (o aviso agora lê `CLAS.length` em vez
+de um número fixo — corrigido na decisão #214 — então não precisa de
+outro ajuste manual no futuro).
+
+Termos novos de tradução fixados neste lote:
+
+- **"Synthetic Human" → "Humano Sintético"**: opção rara de
+  personagem criado pelos experimentos de Orochimaru (não é uma
+  linhagem de clã de verdade, mas entra no mesmo seletor, como Sem
+  Clã). `id: 'humanosintetico'`.
+- **Clãs de "Liberação X"**: `Shoton (Liberação de Cristal)` (Crystal
+  Release — clã sem escolha de afinidade, nasce só com Terra, ao
+  contrário dos outros clãs combinados do gênero), `Yoton (Liberação
+  de Lava)` (afinidade de Terra ou Fogo) e `Yuki (Liberação de Gelo)`
+  (afinidade de Vento ou Água).
+- **Restrição de "não pode repetir o mesmo atributo nos dois bônus"**:
+  `Uchiha` (não pode ser Inteligência no +2 e no +1 ao mesmo tempo) e
+  `Yuki` (mesma restrição) são os primeiros clãs do catálogo com essa
+  trava explícita no livro — o texto de `bonus` documenta a restrição
+  por extenso entre parênteses, já que o campo é só referência e quem
+  aplica à mão é o jogador.
+- **Kekkei genkai que só aparece depois do 1º nível** (Uchiha —
+  Sharingan no 3º nível): mesmo tratamento das decisões #213/#214
+  (Kurama, Kuru) — citado no `traco` como identidade central do clã,
+  sem detalhar a progressão de Tomoe.
+- **Recurso próprio não implementado** (Uzumaki — Células de Reserva):
+  mesmo tratamento já usado pro Akimichi/Jūgo/Senju/Shakuton.
+
+Nenhuma anomalia de dados grave neste lote.
+
+**O que fica de fora desta fatia (decisão #26 — uma fatia por vez):**
+o Hijutsu (jutsu exclusivo) de cada um dos 45 clãs e os Talentos da
+categoria Clã não entraram — só o resumo do traço mecânico de 1º
+nível, igual o restante do catálogo. Isso vai virar uma fatia futura,
+quando fizer sentido puxar o catálogo de jutsu de clã (provavelmente
+junto do resto do Compêndio de Estudos da Tsunade, que também tem
+Talentos gerais e outras opções que ainda não entraram no Hub).
+
+Verificação: mesmo processo das decisões #213/#214 — sintaxe do
+`<script>` validada com `new Function()`, `CLAS` extraído via
+bracket-matching + `eval` (45 entradas, sem `id`/`nome` duplicado,
+todas as `pericias` batendo com algum id de `PERICIAS`). Os 7 scripts
+Playwright sem regressão, todos "ERROS JS: nenhum". `npx tsc --noEmit`
+e `npm run lint` seguem limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

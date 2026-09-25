@@ -2131,10 +2131,13 @@ passando.
       vinham como imagem no PDF (texto não extraía) — lidas
       visualmente renderizando a página como PNG. Testado com
       Playwright; `tsc` e lint continuam limpos.
-- [ ] Naruto 5e — resto dos Clãs (Shoton a Yuki, lote 3 de 3),
-      Hijutsu (jutsu de clã) e Talentos de Clã de todos os clãs,
-      mecânica de cada opção de subclasse (Genjutsu Pledges, Hunter
-      Creeds etc. — fonte recebida, "Orochimaru's Observation
+- [x] **Naruto 5e — Traços dos Clãs 100% completos (45 clãs/opções no
+      total)** (25/09/2026) — decisão #216. Último lote (Shoton a
+      Yuki) fechou o `CLAS` — 35 para 45 no total. Testado com
+      Playwright; `tsc` e lint continuam limpos.
+- [ ] Naruto 5e — Hijutsu (jutsu de clã) e Talentos de Clã de todos os
+      45 clãs, mecânica de cada opção de subclasse (Genjutsu Pledges,
+      Hunter Creeds etc. — fonte recebida, "Orochimaru's Observation
       Compendium" completo, 272 páginas), Talentos gerais (Capítulo
       13, fonte recebida no "Naruto 5e - Full Document.pdf"), Itens de
       Chakra (fonte recebida, PDF dedicado), Ficha de Inimigo/Bingo
