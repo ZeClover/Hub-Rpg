@@ -268,6 +268,61 @@ const CONTEUDOS_SEED = [
   {id:'avada-kedavra', nome:'Avada Kedavra', categoria:'Feitiço', pericia:'Defesa Contra as Artes das Trevas', atributo:'Pulso', alcance:'15 m', area:'—', duracao:'Instantânea', concentracao:false, dano:'Morte', natureza:'Mortal', sucesso:'Se atingir plenamente um ser vivo vulnerável: morte. Protego comum não bloqueia.', elevado:'—', excepcional:'—', restrito:true},
 ];
 
+// Bestiário — catálogo igual Conteúdos/Famílias/Origens: seed fixo +
+// p.criaturasCustom. Categoria não mede só Vida (decisão do sistema);
+// Catástrofe é um encontro inteiro, não uma ficha comum, por isso os
+// campos dela ficam livres em vez de tentar caber no mesmo molde.
+const CRIATURAS_SEED = [
+  {id:'niffler', nome:'Pelúcio (Niffler)', categoria:'Fraca', ministerio:'XXX', vida:2, defesa:10, movimento:'8 m', instinto:'+2',
+    tracos:'Farejador de Tesouro (percebe metais preciosos e objetos brilhantes escondidos). Bolsa Impossível (guarda muitos pequenos objetos no corpo).',
+    acoes:'Furtar — Instinto contra Defesa/Investigação; sucesso rouba um pequeno objeto brilhante acessível.',
+    reacoes:'Escapista — quando agarrado, Vantagem pra fugir/esgueirar.',
+    comportamento:'Curioso; prefere roubar e fugir a atacar.', habitat:'Qualquer lugar com objetos brilhantes.', materiais:'—'},
+  {id:'pixie', nome:'Pixie da Cornuália', categoria:'Fraca', ministerio:'XXX', vida:2, defesa:11, movimento:'voo 12 m', instinto:'+2',
+    tracos:'Pequeno e Rápido — ataques de precisão contra ele podem sofrer Desvantagem quando o tamanho for relevante.',
+    acoes:'Arrastar — se próximo, tenta agarrar; sucesso Desequilibrado, Elevado move até 3 m (vários cooperando podem erguer alguém).',
+    reacoes:'—', comportamento:'Caótico; prefere constranger, roubar e deslocar.', habitat:'Áreas com vegetação/aulas de criaturas.', materiais:'—'},
+  {id:'mooncalf', nome:'Bezerro-Lunar (Mooncalf)', categoria:'Fraca', ministerio:'XX', vida:2, defesa:9, movimento:'8 m', instinto:'+1',
+    tracos:'Tímido — prioridade é fugir quando ameaçado.',
+    acoes:'Disparada — move +6 m pra longe da ameaça.',
+    reacoes:'—', comportamento:'Evita confronto.', habitat:'Campos abertos, à luz da lua cheia.', materiais:'Esterco (útil pra cultivo mágico).'},
+  {id:'kneazle', nome:'Kneazle', categoria:'Normal', ministerio:'XXX', vida:4, defesa:11, movimento:'10 m', instinto:'+3',
+    tracos:'Faro para Problemas — pode reagir de forma perceptível a intenção hostil próxima (não é detector infalível).',
+    acoes:'Garras — 1 dano; Elevado também Desequilibrado 1 rodada.',
+    reacoes:'Salto Felino — uma vez por rodada, +1 Defesa contra um ataque físico apropriado.',
+    comportamento:'Inteligente e seletivo; excelente Companheiro.', habitat:'Doméstico ou selvagem.', materiais:'—'},
+  {id:'hipogrifo', nome:'Hipogrifo', categoria:'Normal', ministerio:'XXX', vida:6, defesa:10, movimento:'12 m', vooOuOutro:'Voo: 18 m', instinto:'+3',
+    tracos:'Orgulho — aproximação respeitosa (Trato das Criaturas) pode evitar combate; provocação muda comportamento pra Hostil.',
+    acoes:'Garras — 1 dano (Elevado 2). Investida Aérea — precisa de espaço pra voo, move até 12 m e ataca (Elevado Desequilibrado).',
+    reacoes:'—', comportamento:'Orgulhoso, não predatório.', habitat:'Áreas abertas, cercadas.', materiais:'Penas.'},
+  {id:'testralio', nome:'Testrálio', categoria:'Normal', ministerio:null, vida:6, defesa:10, movimento:'12 m', vooOuOutro:'Voo: 20 m', instinto:'+3',
+    tracos:'Invisível aos Não Marcados pela Morte — quem não o vê sofre Desvantagem pra interagir/atacar por visão (não é intangível). Navegador Excepcional.',
+    acoes:'Mordida/Coice — 1 dano.',
+    reacoes:'—', comportamento:'Reservado; pode formar Vínculos Extraordinários.', habitat:'Florestas.', materiais:'—'},
+  {id:'unicornio', nome:'Unicórnio', categoria:'Normal', ministerio:'XXXX', vida:6, defesa:12, movimento:'16 m', instinto:'+4',
+    tracos:'Natureza Mágica — Vantagem pra resistir magia hostil simples. Veloz — Corre +10 m em vez de +6 m.',
+    acoes:'Chifre — só quando acuado/defendendo algo; 2 dano.',
+    reacoes:'—', comportamento:'Dócil e cauteloso; normalmente foge de confronto (categoria não é sinônimo de agressividade).', habitat:'Florestas profundas.', materiais:'Cabelo/chifre (propriedades mágicas); sangue (uso extremo e amaldiçoado).'},
+  {id:'troll', nome:'Troll', categoria:'Forte', ministerio:'XXXX', vida:9, defesa:8, movimento:'8 m', instinto:'+3',
+    tracos:'Enorme — deslocamento forçado contra ele é reduzido pela metade. Força Brutal — destrói portas/móveis/paredes frágeis sem teste quando apropriado.',
+    acoes:'Porrete (3 m) — 2 dano, Elevado 2 dano + Desequilibrado, Excepcional 3 dano. Varredura — área frontal ~3 m, 1 dano + possível Desequilibrado em todos.',
+    reacoes:'—', comportamento:'Agressivo, pouco sofisticado.', habitat:'Masmorras, cavernas, florestas.', materiais:'—'},
+  {id:'acromantula', nome:'Acromântula', categoria:'Forte', ministerio:'XXXXX', vida:9, defesa:10, movimento:'10 m', vooOuOutro:'Escalada: 10 m', instinto:'+4',
+    tracos:'Escaladora — move-se normalmente em paredes/árvores/tetos.',
+    acoes:'Mordida Venenosa — 1 dano, Elevado +Envenenado. Teia (10 m) — Enredado, Elevado Imobilizado (escapa com Ação).',
+    reacoes:'Recuar pela Parede — uma vez por rodada após sofrer ataque próximo, move até 3 m sem provocar.',
+    comportamento:'Predadora, inteligente — pode negociar, ameaçar e enganar.', habitat:'Florestas densas.', materiais:'Veneno; teia.'},
+  {id:'graphorn', nome:'Graphorn', categoria:'Muito Forte', ministerio:'XXXX', vida:14, defesa:11, movimento:'10 m', instinto:'+5',
+    tracos:'2 ativações por rodada. Pele Resistente à Magia — +2 Defesa contra feitiço direto de dano/deslocamento/controle. Resistente a Controle — 1x/rodada reduz uma Condição severa em um grau.',
+    acoes:'Chifres — 2 dano (Elevado 2+Desequilibrado, Excepcional 3). Investida — move até 10 m em linha; se acertar, 3 dano.',
+    reacoes:'Repelir Magia — quando um feitiço de controle falha contra sua Defesa, move 3 m em direção ao conjurador.',
+    comportamento:'Territorial, extremamente agressivo, mas ainda um animal.', habitat:'Regiões montanhosas.', materiais:'Pele, sangue (usos alquímicos raros).'},
+  {id:'dragao-adulto', nome:'Dragão Adulto', categoria:'Catástrofe', ministerio:'XXXXX', vida:null, defesa:null, movimento:null, instinto:null,
+    tracos:'Não usa ficha comum — é um encontro inteiro (3 ativações por rodada). Fase 1: sobreviver à aproximação (Chamas ~cone 12 m: até 3 dano + Em Chamas; Cauda: área 6 m, 2 dano + Desequilibrado; Mordida: 3 dano, pode agarrar). Fase 2: criar abertura (olhos, asas, terreno, corrente, ninho, distração — Trato das Criaturas revela caminhos melhores que golpear a pele). Fase 3: o objetivo é definido antes do encontro (fugir, resgatar, roubar/recuperar, conter, afastar, capturar, ferir o suficiente pra recuar — matar um dragão adulto é excepcional).',
+    acoes:'—', reacoes:'—',
+    comportamento:'Varia por espécie (ex.: mais agressivo/territorial vs. prefere evitar humanos) — um pacote curto por espécie em cima deste modelo, sem duplicar toda a regra.', habitat:'Reservas, montanhas remotas.', materiais:'Escamas, sangue, fogo (usos extremamente raros e perigosos).'},
+];
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -297,6 +352,8 @@ function novoPersonagem(){
     familiasCustom: [],
     origensCustom: [],
     segredosFamiliares: [],
+    criaturasCustom: [],
+    bestiarioConhecido: {},
   };
 }
 
@@ -306,6 +363,8 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.familiasCustom)) p.familiasCustom = [];
   if(!Array.isArray(p.origensCustom)) p.origensCustom = [];
   if(!Array.isArray(p.segredosFamiliares)) p.segredosFamiliares = [];
+  if(!Array.isArray(p.criaturasCustom)) p.criaturasCustom = [];
+  if(!p.bestiarioConhecido || typeof p.bestiarioConhecido !== 'object') p.bestiarioConhecido = {};
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -317,6 +376,7 @@ function limitePericia(ano){ return ano<=2?2 : ano<=4?3 : ano===5?4 : 5; }
 function todosConteudos(p){ return [...CONTEUDOS_SEED, ...p.conteudosCustom]; }
 function todasFamilias(p){ return [...FAMILIAS_SEED, ...p.familiasCustom]; }
 function todasOrigens(p){ return [...ORIGENS_SEED, ...p.origensCustom]; }
+function todasCriaturas(p){ return [...CRIATURAS_SEED, ...p.criaturasCustom]; }
 
 /* --- Armazenamento (mesmo mecanismo dos outros sistemas: decisão #40/#44) - */
 
@@ -438,6 +498,7 @@ const ABAS = [
   {id:'combate', nome:'Vida & Tensão'},
   {id:'condicoes', nome:'Condições'},
   {id:'conteudos', nome:'Conteúdos'},
+  {id:'criaturas', nome:'Bestiário'},
 ];
 
 function abaPerfil(p){
@@ -766,6 +827,62 @@ function abaConteudos(p){
   </div>`;
 }
 
+function abaCriaturas(p){
+  const busca = (p._buscaCriatura || '').toLowerCase();
+  const lista = todasCriaturas(p).filter(c => !busca || c.nome.toLowerCase().includes(busca) || c.categoria.toLowerCase().includes(busca));
+  const CATEGORIAS_COR = {'Fraca':'','Normal':'','Forte':'','Muito Forte':'','Catástrofe':'border-color:rgba(196,80,107,.6)'};
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Bestiário</h3>
+    <p class="mini" style="margin-bottom:10px">Conhecimento é individual por personagem — cada campo é revelado separadamente pelo Mestre conforme aula, encontro ou pesquisa. Sem "conhece" nenhum, só aparece nome e categoria.</p>
+    <div class="linha busca"><input placeholder="Buscar por nome ou categoria…" data-busca-criatura value="${esc(p._buscaCriatura||'')}"></div>
+    ${lista.map(c => {
+      const conhecimento = p.bestiarioConhecido[c.id] || {};
+      return `<div class="item-conteudo" style="${CATEGORIAS_COR[c.categoria]||''}">
+        <h4>${esc(c.nome)} <span class="pill">${esc(c.categoria)}</span> ${c.ministerio ? `<span class="pill">Ministério: ${esc(c.ministerio)}</span>` : ''}</h4>
+        ${c.vida!=null ? `<div class="campos">
+          <div>Vida: <b>${c.vida}</b></div>
+          <div>Defesa: <b>${c.defesa}</b></div>
+          <div>Movimento: <b>${esc(c.movimento)}</b></div>
+          ${c.vooOuOutro ? `<div><b>${esc(c.vooOuOutro)}</b></div>` : ''}
+          <div>Instinto: <b>${esc(c.instinto)}</b></div>
+        </div>` : '<p class="mini">Catástrofe — não usa ficha comum de Vida/Defesa (é um encontro inteiro, ver Traços).</p>'}
+        <div class="linha" style="flex-wrap:wrap;gap:14px;margin:8px 0">
+          <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-best-campo="${c.id}:conhece" ${conhecimento.conhece?'checked':''}> Conhecimento Básico</label>
+          <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-best-campo="${c.id}:comportamento" ${conhecimento.comportamento?'checked':''}> Comportamento</label>
+          <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-best-campo="${c.id}:fraquezas" ${conhecimento.fraquezas?'checked':''}> Fraquezas/forma segura</label>
+          <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-best-campo="${c.id}:materiais" ${conhecimento.materiais?'checked':''}> Materiais</label>
+          <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-best-campo="${c.id}:raras" ${conhecimento.raras?'checked':''}> Informação rara</label>
+        </div>
+        ${conhecimento.conhece ? `<p class="mini"><b>Traços/Ações:</b> ${esc(c.tracos)} ${c.acoes ? esc(c.acoes) : ''} ${c.reacoes && c.reacoes!=='—' ? esc(c.reacoes) : ''}</p>` : ''}
+        ${conhecimento.comportamento ? `<p class="mini"><b>Comportamento:</b> ${esc(c.comportamento)}</p>` : ''}
+        ${conhecimento.fraquezas ? `<p class="mini"><b>Habitat/forma segura:</b> ${esc(c.habitat)}</p>` : ''}
+        ${conhecimento.materiais ? `<p class="mini"><b>Materiais/ingredientes:</b> ${esc(c.materiais)}</p>` : ''}
+      </div>`;
+    }).join('')}
+    ${lista.length===0 ? '<p class="mini">Nada encontrado.</p>' : ''}
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">+ Criatura própria</h3>
+    <div class="grade">
+      <div><label>Nome</label><input id="novaCriaturaNome"></div>
+      <div><label>Categoria</label><select id="novaCriaturaCategoria">
+        <option>Fraca</option><option>Normal</option><option>Forte</option><option>Muito Forte</option><option>Catástrofe</option>
+      </select></div>
+      <div><label>Vida</label><input type="number" id="novaCriaturaVida"></div>
+      <div><label>Defesa</label><input type="number" id="novaCriaturaDefesa"></div>
+      <div><label>Movimento</label><input id="novaCriaturaMovimento" placeholder="Ex.: 8 m"></div>
+      <div><label>Instinto</label><input id="novaCriaturaInstinto" placeholder="Ex.: +3"></div>
+    </div>
+    <label style="margin-top:8px">Traços/Ações/Reações</label><textarea id="novaCriaturaTracos" rows="2"></textarea>
+    <label style="margin-top:8px">Comportamento e habitat</label><textarea id="novaCriaturaComportamento" rows="2"></textarea>
+    <button data-add-criatura style="margin-top:10px">+ Adicionar ao catálogo desta ficha</button>
+    ${p.criaturasCustom.length ? p.criaturasCustom.map(c => `
+      <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(c.nome)} — ${esc(c.categoria)}</span><button data-remover-criatura-custom="${c.id}" class="perigo" style="padding:3px 8px">✕</button></div>
+    `).join('') : ''}
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -789,7 +906,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -949,6 +1066,37 @@ function ligarEventos(){
     p.origensCustom = p.origensCustom.filter(o => o.id !== b.dataset.removerOrigemCustom);
     if(p.perfil.origemId === b.dataset.removerOrigemCustom) p.perfil.origemId = '';
   }));
+
+  // Bestiário
+  const buscaCriaturaEl = app.querySelector('[data-busca-criatura]');
+  if(buscaCriaturaEl) buscaCriaturaEl.addEventListener('input', () => mudarSemRedesenhar(p => { p._buscaCriatura = buscaCriaturaEl.value; }));
+  app.querySelectorAll('[data-best-campo]').forEach(el => {
+    const [id, campo] = el.dataset.bestCampo.split(':');
+    el.onchange = () => mudar(p => {
+      if(!p.bestiarioConhecido[id]) p.bestiarioConhecido[id] = {};
+      p.bestiarioConhecido[id][campo] = el.checked;
+    });
+  });
+  const btAddCriatura = app.querySelector('[data-add-criatura]');
+  if(btAddCriatura) btAddCriatura.onclick = () => {
+    const nome = document.getElementById('novaCriaturaNome').value.trim();
+    if(!nome) return;
+    mudar(p => p.criaturasCustom.push({
+      id: uid(), nome,
+      categoria: document.getElementById('novaCriaturaCategoria').value,
+      ministerio: null,
+      vida: document.getElementById('novaCriaturaVida').value ? Number(document.getElementById('novaCriaturaVida').value) : null,
+      defesa: document.getElementById('novaCriaturaDefesa').value ? Number(document.getElementById('novaCriaturaDefesa').value) : null,
+      movimento: document.getElementById('novaCriaturaMovimento').value.trim() || '—',
+      vooOuOutro: '',
+      instinto: document.getElementById('novaCriaturaInstinto').value.trim() || '—',
+      tracos: document.getElementById('novaCriaturaTracos').value.trim() || '—',
+      acoes: '', reacoes: '',
+      comportamento: document.getElementById('novaCriaturaComportamento').value.trim() || '—',
+      habitat: '—', materiais: '—',
+    }));
+  };
+  app.querySelectorAll('[data-remover-criatura-custom]').forEach(b => b.onclick = () => mudar(p => { p.criaturasCustom = p.criaturasCustom.filter(c => c.id !== b.dataset.removerCriaturaCustom); }));
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
