@@ -7677,6 +7677,48 @@ nenhuma mudança visual.
 `tsc`, `eslint`, os 307 testes automáticos e `next build` continuam
 limpos.
 
+## 169. Hogwarts não tinha nenhum jeito de criar NPC/monstro pela tela (25/09/2026)
+
+O Zé mandou print do Modo Sessão real (produção) numa campanha Hogwarts
+sem nenhum personagem ainda, pedindo "cadê o resto das coisas que
+deveriam aparecer aqui". Investigando a fundo achei dois problemas
+reais na decisão #168, não só falta de dado:
+
+1. **Não tinha como criar um personagem nem um NPC/monstro Hogwarts
+   pela tela, em lugar nenhum do Hub.** `AdicionarInimigo` (botão "+
+   Criar ficha de monstro", já existente desde a decisão #139) só
+   aparece quando `Sistema.fichaInimigo` não é `null` — e Hogwarts
+   sempre teve `fichaInimigo: null` porque não existe uma ficha de
+   inimigo separada: monstro/NPC usa a MESMA `hogwarts-rpg.html`, só
+   marcado `ehMonstro` (decisão #143). A API
+   (`/api/campanhas/[id]/inimigos`) sempre aceitou isso, sem checagem
+   de sistema nenhuma — só o botão que nunca aparecia. Mesmo bug nos
+   dois lugares que listam monstro (aba "Grupo" e a aba "Hogwarts RPG"
+   nova): o link pra abrir a ficha de um monstro já criado também
+   dependia de `fichaInimigo`. Corrigido com `fichaParaMonstro =
+   fichaInimigo ?? ficha` — sistema sem ficha de inimigo dedicada cai
+   pra ficha comum, que é exatamente o que a API já fazia.
+
+2. **O link do Modo Sessão dizia "criar NPC/monstro" e isso nunca foi
+   verdade** — o painel só faz ações em lote em personagens que já
+   existem, não cria nada. Corrigido o texto do link.
+
+Também adicionei "+ Criar ficha de personagem"/"+ Criar ficha de
+monstro" direto na aba "Hogwarts RPG" (antes só existiam na aba
+"Grupo") — uma campanha recém-criada, sem nenhum personagem, agora
+mostra um jeito de resolver isso ali mesmo em vez de só "nenhuma ficha
+ainda" sem saída. E o Modo Sessão (`hogwarts-rpg-mestre.html`) ganhou
+um link "← Voltar pra campanha" no topo e, no estado vazio, um link
+direto pra aba "Hogwarts RPG" da campanha — antes não tinha nenhum
+jeito de voltar pra campanha a partir dali.
+
+Testado criando uma campanha nova vazia e confirmando pela tela (sem
+digitar URL): botão "Criar ficha de personagem" aparece e funciona na
+aba Hogwarts RPG mesmo sem nenhuma ficha ainda.
+
+`tsc`, `eslint` e a sintaxe dos arquivos HTML tocados continuam
+limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

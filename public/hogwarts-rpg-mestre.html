@@ -191,13 +191,15 @@ function render(){
   }
 
   const status = estado.status ? `<div class="ok">${esc(estado.status)}</div>` : '';
+  const linkCampanha = `${location.origin}/campanhas/${CAMPANHA_ID}`;
 
   app.innerHTML = status + `
+  <p class="mini" style="margin-bottom:14px"><a href="${linkCampanha}" style="color:var(--roxo-forte)">← Voltar pra campanha</a></p>
   <div class="cartao">
     <h3 style="margin-bottom:10px">Personagens da campanha</h3>
     <p class="mini" style="margin-bottom:10px">Marque quem vai receber a ação em lote. Fichas nunca abertas aparecem como "(sem nome ainda)".</p>
     <div class="lista-pj">
-      ${estado.personagens.length===0 ? '<div class="linha-pj mini">Nenhum personagem nesta campanha ainda.</div>' : estado.personagens.map(p => `
+      ${estado.personagens.length===0 ? `<div class="linha-pj mini">Nenhum personagem nesta campanha ainda — crie um na <a href="${linkCampanha}" style="color:var(--roxo-forte)">página da campanha</a>, aba "Hogwarts RPG".</div>` : estado.personagens.map(p => `
         <label class="linha-pj">
           <input type="checkbox" data-selecionar="${p.id}" ${estado.selecionados.has(p.id)?'checked':''}>
           <span class="nome">${esc(p.dados.perfil?.nome || p.nome)}</span>

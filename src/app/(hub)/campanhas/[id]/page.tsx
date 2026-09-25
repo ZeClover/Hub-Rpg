@@ -72,6 +72,14 @@ export default async function PaginaCampanha({
   const sistemaDef = SISTEMAS.find((s) => s.chave === campanha.sistema.chave);
   const ficha = sistemaDef?.ficha ?? null;
   const fichaInimigo = sistemaDef?.fichaInimigo ?? null;
+  /*
+    Sistema sem ficha de inimigo dedicada (Hogwarts, entre outros) ainda
+    tem monstro/NPC — mesma ficha de jogador, só marcada `ehMonstro`
+    (decisão #143). Sem este fallback, "Criar ficha de monstro" nunca
+    aparecia nesses sistemas mesmo a API já aceitando o pedido — decisão
+    #168 achou isso testando o fluxo de ponta a ponta pela interface.
+  */
+  const fichaParaMonstro = fichaInimigo ?? ficha;
   const escudoMestre = sistemaDef?.escudoMestre ?? null;
   const grimorio = sistemaDef?.grimorio ?? null;
   const modoSessao = sistemaDef?.modoSessao ?? null;
@@ -308,7 +316,7 @@ export default async function PaginaCampanha({
           campanhaId={campanha.id}
           nome={campanha.nome}
           ficha={ficha}
-          fichaInimigo={fichaInimigo}
+          fichaParaMonstro={fichaParaMonstro}
           origem={origem}
           jogadores={participacoes.filter((p) => p.papel !== "MESTRE")}
           personagensDaCampanha={personagensDaCampanha}
@@ -389,7 +397,7 @@ function VisaoDoMestre({
   campanhaId,
   nome,
   ficha,
-  fichaInimigo,
+  fichaParaMonstro,
   origem,
   jogadores,
   personagensDaCampanha,
@@ -422,7 +430,7 @@ function VisaoDoMestre({
   campanhaId: string;
   nome: string;
   ficha: string | null;
-  fichaInimigo: string | null;
+  fichaParaMonstro: string | null;
   origem: string;
   jogadores: {
     usuarioId: string;
@@ -559,7 +567,7 @@ function VisaoDoMestre({
                             rel="noreferrer"
                             className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
                           >
-                            🧙 Abrir Modo Sessão (ações em lote, criar NPC/monstro)
+                            🧙 Abrir Modo Sessão (ações em lote em vários personagens de uma vez)
                           </a>
                         )}
                       </section>
@@ -582,11 +590,12 @@ function VisaoDoMestre({
                           Cada link já abre a ficha direto no módulo certo, sem precisar
                           navegar pelas abas de dentro dela.
                         </p>
-                        {personagensDaCampanha.length === 0 ? (
+                        {personagensDaCampanha.length === 0 && (
                           <p className="mt-3 text-sm text-texto-suave">
-                            Nenhuma ficha nesta campanha ainda.
+                            Nenhuma ficha nesta campanha ainda — crie a primeira abaixo.
                           </p>
-                        ) : (
+                        )}
+                        {personagensDaCampanha.length > 0 && (
                           <ul className="mt-4 space-y-3">
                             {personagensDaCampanha.map((personagem) => (
                               <li
@@ -619,6 +628,12 @@ function VisaoDoMestre({
                             ))}
                           </ul>
                         )}
+                        <div className="mt-4 flex flex-wrap gap-3">
+                          {ficha && <CriarPersonagem campanhaId={campanhaId} ficha={ficha} />}
+                          {fichaParaMonstro && (
+                            <AdicionarInimigo campanhaId={campanhaId} ficha={fichaParaMonstro} />
+                          )}
+                        </div>
                       </section>
                     </>
                   ),
@@ -773,9 +788,9 @@ function VisaoDoMestre({
                     <ul className="mt-3 space-y-2">
                       {monstros.map((monstro) => (
                         <li key={monstro.id} className="flex flex-wrap items-center gap-3">
-                          {fichaInimigo ? (
+                          {fichaParaMonstro ? (
                             <a
-                              href={`${fichaInimigo}?id=${monstro.id}`}
+                              href={`${fichaParaMonstro}?id=${monstro.id}`}
                               className="text-sm text-texto underline decoration-borda underline-offset-2 hover:text-ambar-forte"
                             >
                               {monstro.nome}
@@ -788,8 +803,8 @@ function VisaoDoMestre({
                       ))}
                     </ul>
                   )}
-                  {fichaInimigo ? (
-                    <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
+                  {fichaParaMonstro ? (
+                    <AdicionarInimigo campanhaId={campanhaId} ficha={fichaParaMonstro} />
                   ) : (
                     <p className="mt-3 text-sm text-texto-suave">
                       O sistema desta campanha ainda não tem ficha de monstro própria no Hub.
