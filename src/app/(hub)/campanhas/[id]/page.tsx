@@ -72,6 +72,7 @@ export default async function PaginaCampanha({
   const fichaInimigo = sistemaDef?.fichaInimigo ?? null;
   const escudoMestre = sistemaDef?.escudoMestre ?? null;
   const grimorio = sistemaDef?.grimorio ?? null;
+  const modoSessao = sistemaDef?.modoSessao ?? null;
 
   const [participacoes, personagensDaCampanha] = await Promise.all([
     banco.participacao.findMany({
@@ -312,6 +313,7 @@ export default async function PaginaCampanha({
           manualMestre={manualMestre}
           escudoMestre={escudoMestre}
           grimorio={grimorio}
+          modoSessao={modoSessao}
           capaUrl={campanha.capaUrl ?? ""}
           descricao={campanha.descricao ?? ""}
           tags={campanha.tags}
@@ -388,6 +390,7 @@ function VisaoDoMestre({
   manualMestre,
   escudoMestre,
   grimorio,
+  modoSessao,
   capaUrl,
   descricao,
   tags,
@@ -421,6 +424,7 @@ function VisaoDoMestre({
   manualMestre: string;
   escudoMestre: string | null;
   grimorio: string | null;
+  modoSessao: string | null;
   capaUrl: string;
   descricao: string;
   tags: string[];
@@ -487,6 +491,16 @@ function VisaoDoMestre({
             className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
           >
             📖 Abrir Grimório (manual do jogador e do mestre)
+          </a>
+        )}
+        {modoSessao && (
+          <a
+            href={`${modoSessao}?campanha=${campanhaId}`}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 block text-sm text-ambar-forte underline underline-offset-2"
+          >
+            🧙 Abrir Modo Sessão do Mestre (ações em lote na campanha)
           </a>
         )}
         {souMestreTitular && <ExcluirCampanha campanhaId={campanhaId} nome={nome} />}

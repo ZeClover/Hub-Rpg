@@ -1930,6 +1930,127 @@ edição do mestre, múltiplas fichas por jogador, etc.).
     persistindo após recarregar. `tsc`, lint e os 302 testes
     automáticos continuam limpos
 
+- [x] **Hogwarts RPG — sistema novo, fatia 1 (chassi essencial)**
+      (25/09/2026) — decisão #157. Pacote de design completo mandado
+      pelo Zé; integrado como mais um módulo de `src/lib/sistemas.ts`
+      (mesmo formato dos outros seis: ficha HTML autônoma que salva
+      via `?id=` no Hub), não como arquitetura nova.
+  - Ficha nova `public/hogwarts-rpg.html`: identidade (Casa, Família,
+    Status de Sangue, Origem, Ambição/Medo/Vínculo, Varinha como
+    campos), os cinco Atributos (criação 3/2/2/1/0, teto 5), as
+    dezesseis Perícias com teto por ano escolar (override do Mestre),
+    Vida (5) e Tensão (0–3), as treze Condições oficiais com contador
+    de rodadas, Ferimentos Graves, nível 1–35 com ano escolar
+    derivado, e uma aba de Conteúdos data-driven (~50 Feitiços/
+    Técnicas do núcleo já cadastrados, mais cadastro próprio sem
+    mexer em código) com estado por personagem e favoritos
+  - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
+    continuam limpos
+
+- [x] **Hogwarts RPG — fatias 2 a 11** (25/09/2026) — decisão #158.
+      Sequência rápida logo depois da fatia 1, cada uma no seu próprio
+      commit, validada (`tsc`, `eslint`, os 302 testes automáticos,
+      `next build`) antes de avançar para a próxima:
+  - **Fatia 2 — Casa & Família**: Tradição de Casa (1:1 fixa, sem
+    bônus numérico), Família como catálogo (8 canônicas — Black,
+    Gaunt, Malfoy, Potter, Weasley, Ollivander, Longbottom, Burke —
+    com Tipo/Condição Financeira/Tags/Conteúdo Familiar/Acesso
+    Familiar) + família própria, Segredos Familiares por personagem,
+    Origem como catálogo (8 seeds) + origem própria
+  - **Fatia 3 — Bestiário**: 11 criaturas seed (Pelúcio, Pixie,
+    Bezerro-Lunar, Kneazle, Hipogrifo, Testrálio, Unicórnio, Troll,
+    Acromântula, Graphorn, modelo de Dragão Adulto/Catástrofe) +
+    criatura própria; conhecimento individual por personagem em cinco
+    campos revelados separadamente
+  - **Fatia 4 — Poções**: inventário de ingredientes por nome+
+    quantidade, 12 receitas seed com preparo **automático de verdade**
+    (Perícia Poções ≥ custo + ingredientes na quantidade certa =
+    desconta e gera dose, sem rolar) + receita própria
+  - **Fatia 5 — Acadêmico**: 8 matérias obrigatórias + 5 eletivas
+    (liberadas a partir do 3º ano), Progresso Acadêmico por matéria
+    sinalizando Conteúdo Extra em 2, N.O.M.s/N.I.E.M.s contextuais por
+    ano escolar, Notas na escala oficial (Ótimo…Trasgo)
+  - **Fatia 6 — Inventário**: Galeões, Itens (raridade, Carregado/
+    Guardado, confisco), Relíquias (propriedades públicas/ocultas,
+    estágio, vínculo)
+  - **Fatia 7 — Sapos de Chocolate**: comprar/abrir sapo, sorteio por
+    peso de raridade, álbum com 12 cartas seed de figuras históricas/
+    mitológicas (domínio público) — sem bônus mecânico
+  - **Fatia 8 — Conteúdos Únicos**: os 9 Caminhos Raros (Animagia,
+    Legilimência, Oclumência, Magia Sem Varinha, Patrono Avançado,
+    Criação de Feitiços, Metamorfomagia, Dom Profético, Ofidioglossia,
+    Herança Familiar, Vínculos Extraordinários) como estágios com
+    custo em Escolhas Únicas (contadas automaticamente pelos Marcos
+    Extraordinários já alcançados), aviso (não trava) de ordem errada;
+    Dons Latentes como lista livre do Mestre
+  - **Fatia 9 — Relações & Projetos**: Relações numa escala persistente
+    por NPC/personagem, Companheiros, Projetos de objetivo longo com
+    progresso/total editável, Reputação como tags
+  - **Fatia 10 — Cultivo**: plantio com dias de crescimento, detecção
+    de "pronto pra colheita" (usando a data real do dispositivo como
+    aproximação — sem calendário de campanha ainda) e colheita
+    depositando direto no inventário de ingredientes
+  - **Fatia 11 — Cargos e Disciplina**: cargos como tags livres,
+    detenções (motivo/aplicada por) sem bloquear o personagem
+  - `tsc --noEmit`, `eslint`, os 302 testes automáticos e `next build`
+    continuam limpos depois de cada fatia
+
+- [x] **Segredo por campo, de verdade** (25/09/2026) — decisões #159 e
+      #160, pedido direto do Zé por segurança. `dados._mestre` é agora
+      uma chave reservada que `GET /api/personagens/[id]` remove antes
+      de responder pra quem não é mestre confirmado da campanha, e que
+      `PATCH` protege contra apagar/injetar por quem não é mestre —
+      genérico pra qualquer sistema, não só o Hogwarts. Notas do
+      Mestre, Tendência/Propriedade/Peculiaridade/Lealdade da Varinha,
+      Segredos Familiares, propriedade oculta de Relíquia e a natureza
+      real de Dom Latente migraram pra lá de verdade. Outros sistemas
+      (Fabula Ultima, SAO...) continuam como estavam — a convenção é
+      opcional, adotar fica pra quando cada um precisar
+
+- [x] **Modo Sessão do Mestre** (25/09/2026) — decisão #161. Painel
+      `public/hogwarts-rpg-mestre.html`, aberto pelo link "🧙 Modo
+      Sessão do Mestre" na tela da campanha: seleciona vários
+      personagens e aplica Condição, ajusta Vida/Tensão/Galeões, ou
+      concede Conteúdo de uma vez, sem abrir ficha por ficha. Sem
+      infraestrutura nova de escrita — reusa o `PATCH /api/personagens/
+      [id]` que já existia; só precisou de um `GET /api/campanhas/[id]/
+      personagens` pra listar as fichas (só existia `POST`)
+- [x] **Loja ao vivo** (25/09/2026) — decisão #162. Modelo novo
+      (`Loja`/`LojaItem`/`LojaCompra`, migração 0023) com compra
+      transacional de verdade: dois jogadores comprando a última
+      unidade ao mesmo tempo resultam numa compra só (UPDATE
+      condicional em SQL, não "ler em JS, decidir, escrever"). Fala a
+      língua específica do Hogwarts (`dados.galeoes`/`dados.itens`) de
+      propósito — generalizar pra outro sistema é decisão de quando um
+      segundo sistema precisar. Aba "Loja" na ficha do jogador, seção
+      "Lojas" no Modo Sessão do Mestre
+- [x] **Trocas de Sapos de Chocolate** (25/09/2026) — decisão #163.
+      Mesmo desenho da Loja, entre duas fichas: modelo `TrocaCarta`
+      (migração 0024), oferta aberta visível pra campanha, aceitar faz
+      dois UPDATEs condicionais atômicos (um em cada álbum). Seção
+      "Trocas" na aba Sapos de Chocolate da ficha
+
+## O que ainda falta no Hogwarts RPG
+
+- [ ] **Segredo por campo dentro de `dados._mestre` pra sistemas com
+      múltiplas informações ocultas por personagem** (ex.: revelar
+      individualmente pra cada jogador um campo de NPC compartilhado)
+      — hoje `_mestre` já é seguro (decisão #159), mas continua sendo
+      "tudo ou nada" por personagem; segredo por jogador diferente
+      exigiria uma peça de arquitetura nova (quem-pode-ver-o-quê por
+      usuário, não só por papel), decisão maior que vale pro Hub
+      inteiro
+- [ ] Quadribol, Clubes, Mapa Conhecido e Calendário de campanha —
+      já eram "fase posterior"/opcionais no próprio documento de design
+
+## Pendência de configuração — Hogwarts RPG
+
+- [ ] Colar no Supabase (Storage → Query) as migrações 0023
+      (`lojas`/`loja_itens`/`loja_compras`) e 0024 (`trocas_cartas`) —
+      esta sessão não tem acesso ao banco (mesmo fluxo de sempre, ver
+      docs/ARQUITETURA.md). Sem isso, a aba Loja e a seção Trocas dão
+      erro 500/404 ao tentar ler ou escrever.
+
 ---
 
 ## Fora de escopo

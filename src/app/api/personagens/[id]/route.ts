@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { banco } from "@/lib/banco";
 import { podeAcessarPersonagem } from "@/lib/dono-personagem";
 import { usuarioAtual } from "@/lib/usuario";
+import { semSegredosDeMestre } from "@/lib/visibilidade";
 
 type Contexto = { params: Promise<{ id: string }> };
 
@@ -89,13 +90,25 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
+  // Mestre de verdade: nem dono, nem link de leitura compartilhado — é
+  // estar na lista de campanhas onde a pessoa é mestre daquela campanha
+  // específica. Só esse caso enxerga `dados._mestre` (decisão #159); dono
+  // e quem só tem o link nunca veem, mesmo que `podeEditar` seja true pro
+  // dono (ele edita a ficha, mas os segredos do Mestre não são dele).
+  const ehMestre = personagem.campanhaId != null && campanhasComoMestre.includes(personagem.campanhaId);
+
   return NextResponse.json({
     personagem: {
       id: personagem.id,
       nome: personagem.nome,
-      dados: personagem.dados,
+      dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
       compartilhado: personagem.compartilhado,
+      // Campanha da ficha (decisão #162) — a ficha usa isto pra buscar as
+      // Lojas abertas da própria mesa. null pra ficha avulsa (sem
+      // campanha), que continua funcionando normalmente, só sem loja.
+      campanhaId: personagem.campanhaId,
       ehDono,
+      ehMestre,
       podeEditar: podeLer,
     },
   });
@@ -146,10 +159,26 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
       ? nomeDentroDaFicha.trim()
       : existente.nome;
 
+  // Quem não é mestre nunca viu `dados._mestre` no GET (semSegredosDeMestre),
+  // então o objeto que ela manda de volta no PATCH nem contém essa chave —
+  // um PATCH ingênuo salvaria a ficha inteira SEM os segredos do Mestre,
+  // apagando-os de vez. `buscarSeFoiDonoOuMestre` só concede acesso a
+  // exatamente duas pessoas (dono OU mestre), então `!ehDono` aqui
+  // significa mestre — quem não é mestre tem seu `_mestre` reescrito com o
+  // que já estava salvo, ignorando qualquer coisa que o corpo da
+  // requisição tenha mandado nesse campo (decisão #159): o dono não
+  // escreve segredo de Mestre nem por engano nem de propósito.
+  const ehMestre = !ehDono;
+  const dadosParaSalvar = !temDados
+    ? undefined
+    : ehMestre
+      ? corpo.dados
+      : { ...(corpo.dados as Record<string, unknown>), _mestre: (existente.dados as Record<string, unknown> | null)?._mestre };
+
   const personagem = await banco.personagem.update({
     where: { id },
     data: {
-      ...(temDados ? { dados: corpo.dados, nome } : {}),
+      ...(temDados ? { dados: dadosParaSalvar, nome } : {}),
       ...(temCompartilhado ? { compartilhado: corpo.compartilhado } : {}),
       ...(temStatus ? { status: corpo.status } : {}),
       ...(temAvatar ? { avatarUrl: corpo.avatarUrl } : {}),
