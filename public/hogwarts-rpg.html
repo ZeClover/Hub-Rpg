@@ -360,6 +360,8 @@ const ELETIVAS = ['Aritmancia','Runas Antigas','Adivinhação','Trato das Criatu
 const NOTAS_ESCALA = ['Ótimo','Excede Expectativas','Aceitável','Péssimo','Deplorável','Trasgo'];
 const TIPOS_NOTA = ['Trabalho','Prova','N.O.M.','N.I.E.M.','Outro'];
 
+const RARIDADES_ITEM = ['Comum','Encantado','Raro','Excepcional','Único'];
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -395,6 +397,8 @@ function novoPersonagem(){
     pocoesEstoque: [],
     pocoesCustom: [],
     academico: {materias: {}, notas: []},
+    itens: [],
+    reliquias: [],
   };
 }
 
@@ -412,6 +416,8 @@ function garantirCamposNovos(p){
   if(!p.academico || typeof p.academico !== 'object') p.academico = {materias:{}, notas:[]};
   if(!p.academico.materias) p.academico.materias = {};
   if(!Array.isArray(p.academico.notas)) p.academico.notas = [];
+  if(!Array.isArray(p.itens)) p.itens = [];
+  if(!Array.isArray(p.reliquias)) p.reliquias = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -570,6 +576,7 @@ const ABAS = [
   {id:'criaturas', nome:'Bestiário'},
   {id:'pocoes', nome:'Poções'},
   {id:'academico', nome:'Acadêmico'},
+  {id:'inventario', nome:'Inventário'},
 ];
 
 function abaPerfil(p){
@@ -1072,6 +1079,67 @@ function abaAcademico(p){
   </div>`;
 }
 
+function abaInventario(p){
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Galeões</h3>
+    <div class="linha">
+      <button data-galeoes-delta="-10">−10</button>
+      <button data-galeoes-delta="-1">−1</button>
+      <span class="mini" style="font-size:18px">${p.galeoes} Galeões</span>
+      <button data-galeoes-delta="1">+1</button>
+      <button data-galeoes-delta="10">+10</button>
+    </div>
+    <p class="mini" style="margin-top:8px">Condição financeira da Família não equivale ao saldo pessoal — Galeões é a moeda mecânica de verdade.</p>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Itens</h3>
+    <p class="mini" style="margin-bottom:10px">Sem limite universal de slots. Regra de equipamento: só um bônus numérico por rolagem — o Hub não automatiza isso, é lembrete pra mesa.</p>
+    ${p.itens.length===0 ? '<p class="mini">Nenhum item ainda.</p>' : p.itens.map(i => `
+      <div class="item-conteudo">
+        <div class="linha" style="flex-wrap:wrap">
+          <input data-item-campo="${i.id}:nome" value="${esc(i.nome)}" placeholder="Nome" style="flex:2;min-width:140px">
+          <select data-item-campo="${i.id}:raridade" style="width:130px">${RARIDADES_ITEM.map(r => `<option ${i.raridade===r?'selected':''}>${r}</option>`).join('')}</select>
+          <select data-item-campo="${i.id}:local" style="width:120px"><option ${i.local==='Carregado'?'selected':''}>Carregado</option><option ${i.local==='Guardado'?'selected':''}>Guardado</option></select>
+          <button data-item-dec="${i.id}" style="padding:4px 10px">−</button>
+          <span class="mini" style="width:24px;text-align:center">${i.quantidade}</span>
+          <button data-item-inc="${i.id}" style="padding:4px 10px">+</button>
+          <button data-item-remover="${i.id}" class="perigo" style="padding:4px 10px">✕</button>
+        </div>
+        <textarea data-item-campo="${i.id}:descricao" rows="1" placeholder="Propriedade/descrição" style="margin-top:6px">${esc(i.descricao||'')}</textarea>
+        <label style="margin-top:6px;width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-item-confiscado="${i.id}" ${i.confiscado?'checked':''}> Confiscado</label>
+        ${i.confiscado ? `<div class="grade2" style="margin-top:6px">
+          <input data-item-conf-campo="${i.id}:por" value="${esc(i.confiscadoPor||'')}" placeholder="Por quem">
+          <input data-item-conf-campo="${i.id}:motivo" value="${esc(i.confiscadoMotivo||'')}" placeholder="Motivo">
+        </div>` : ''}
+      </div>`).join('')}
+    <button data-novo-item>+ Item</button>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Relíquias</h3>
+    <p class="mini" style="margin-bottom:10px">Não são "espada +3" — objetos com história, propriedades ocultas e possivelmente vínculo.</p>
+    ${p.reliquias.length===0 ? '<p class="mini">Nenhuma ainda.</p>' : p.reliquias.map(r => `
+      <div class="item-conteudo">
+        <div class="linha">
+          <input data-rel-campo="${r.id}:nome" value="${esc(r.nome)}" placeholder="Nome" style="flex:1">
+          <button data-rel-remover="${r.id}" class="perigo" style="padding:4px 10px">✕</button>
+        </div>
+        <label style="margin-top:6px">Propriedades conhecidas</label>
+        <textarea data-rel-campo="${r.id}:propriedadesPublicas" rows="2">${esc(r.propriedadesPublicas||'')}</textarea>
+        <label style="margin-top:6px">Propriedades ocultas (só o Mestre precisa ler — sem trava real de servidor ainda)</label>
+        <textarea data-rel-campo="${r.id}:propriedadesOcultas" rows="2">${esc(r.propriedadesOcultas||'')}</textarea>
+        <div class="grade2" style="margin-top:6px">
+          <div><label>Estado</label><select data-rel-campo="${r.id}:estado">
+            ${['Dormente','Desperta','Vinculada','Completa'].map(e => `<option ${r.estado===e?'selected':''}>${e}</option>`).join('')}
+          </select></div>
+          <div><label>Vínculo</label><input data-rel-campo="${r.id}:vinculo" value="${esc(r.vinculo||'')}"></div>
+        </div>
+      </div>`).join('')}
+    <button data-nova-reliquia>+ Relíquia</button>
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1095,7 +1163,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1356,6 +1424,39 @@ function ligarEventos(){
     data: Date.now(),
   }));
   app.querySelectorAll('[data-remover-nota]').forEach(b => b.onclick = () => mudar(p => { p.academico.notas = p.academico.notas.filter(n => n.id !== b.dataset.removerNota); }));
+
+  // Inventário — Galeões
+  app.querySelectorAll('[data-galeoes-delta]').forEach(b => b.onclick = () => mudar(p => { p.galeoes = Math.max(0, p.galeoes + Number(b.dataset.galeoesDelta)); }));
+
+  // Inventário — Itens
+  const btNovoItem = app.querySelector('[data-novo-item]');
+  if(btNovoItem) btNovoItem.onclick = () => mudar(p => p.itens.push({id:uid(), nome:'Item', raridade:'Comum', local:'Carregado', quantidade:1, descricao:'', confiscado:false, confiscadoPor:'', confiscadoMotivo:''}));
+  app.querySelectorAll('[data-item-remover]').forEach(b => b.onclick = () => mudar(p => { p.itens = p.itens.filter(i => i.id !== b.dataset.itemRemover); }));
+  app.querySelectorAll('[data-item-inc]').forEach(b => b.onclick = () => mudar(p => { const i = p.itens.find(x=>x.id===b.dataset.itemInc); if(i) i.quantidade++; }));
+  app.querySelectorAll('[data-item-dec]').forEach(b => b.onclick = () => mudar(p => { const i = p.itens.find(x=>x.id===b.dataset.itemDec); if(i) i.quantidade = Math.max(1, i.quantidade-1); }));
+  app.querySelectorAll('[data-item-confiscado]').forEach(el => el.onchange = () => mudar(p => { const i = p.itens.find(x=>x.id===el.dataset.itemConfiscado); if(i) i.confiscado = el.checked; }));
+  app.querySelectorAll('[data-item-campo]').forEach(el => {
+    const [id, campo] = el.dataset.itemCampo.split(':');
+    const evento = el.tagName==='SELECT' ? 'change' : 'input';
+    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const i = p.itens.find(x=>x.id===id); if(i) i[campo] = el.value; }));
+  });
+  app.querySelectorAll('[data-item-conf-campo]').forEach(el => {
+    const [id, campo] = el.dataset.itemConfCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => {
+      const i = p.itens.find(x=>x.id===id); if(!i) return;
+      if(campo==='por') i.confiscadoPor = el.value; else i.confiscadoMotivo = el.value;
+    }));
+  });
+
+  // Inventário — Relíquias
+  const btNovaReliquia = app.querySelector('[data-nova-reliquia]');
+  if(btNovaReliquia) btNovaReliquia.onclick = () => mudar(p => p.reliquias.push({id:uid(), nome:'Relíquia', propriedadesPublicas:'', propriedadesOcultas:'', estado:'Dormente', vinculo:''}));
+  app.querySelectorAll('[data-rel-remover]').forEach(b => b.onclick = () => mudar(p => { p.reliquias = p.reliquias.filter(r => r.id !== b.dataset.relRemover); }));
+  app.querySelectorAll('[data-rel-campo]').forEach(el => {
+    const [id, campo] = el.dataset.relCampo.split(':');
+    const evento = el.tagName==='SELECT' ? 'change' : 'input';
+    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const r = p.reliquias.find(x=>x.id===id); if(r) r[campo] = el.value; }));
+  });
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
