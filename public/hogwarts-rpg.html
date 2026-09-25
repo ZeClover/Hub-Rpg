@@ -355,6 +355,11 @@ const RECEITAS_SEED = [
     ingredientes:[{nome:'Raiz de Asfódelo', qtd:1},{nome:'Pó de Losna', qtd:1}]},
 ];
 
+const MATERIAS_OBRIGATORIAS = ['Feitiços','Transfiguração','Poções','Herbologia','Defesa Contra as Artes das Trevas','História da Magia','Astronomia','Voo'];
+const ELETIVAS = ['Aritmancia','Runas Antigas','Adivinhação','Trato das Criaturas Mágicas','Estudos dos Trouxas'];
+const NOTAS_ESCALA = ['Ótimo','Excede Expectativas','Aceitável','Péssimo','Deplorável','Trasgo'];
+const TIPOS_NOTA = ['Trabalho','Prova','N.O.M.','N.I.E.M.','Outro'];
+
 /* --- Personagem novo ------------------------------------------------------ */
 
 function novoPersonagem(){
@@ -389,6 +394,7 @@ function novoPersonagem(){
     ingredientes: [],
     pocoesEstoque: [],
     pocoesCustom: [],
+    academico: {materias: {}, notas: []},
   };
 }
 
@@ -403,6 +409,9 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.ingredientes)) p.ingredientes = [];
   if(!Array.isArray(p.pocoesEstoque)) p.pocoesEstoque = [];
   if(!Array.isArray(p.pocoesCustom)) p.pocoesCustom = [];
+  if(!p.academico || typeof p.academico !== 'object') p.academico = {materias:{}, notas:[]};
+  if(!p.academico.materias) p.academico.materias = {};
+  if(!Array.isArray(p.academico.notas)) p.academico.notas = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -416,6 +425,14 @@ function todasFamilias(p){ return [...FAMILIAS_SEED, ...p.familiasCustom]; }
 function todasOrigens(p){ return [...ORIGENS_SEED, ...p.origensCustom]; }
 function todasCriaturas(p){ return [...CRIATURAS_SEED, ...p.criaturasCustom]; }
 function todasReceitas(p){ return [...RECEITAS_SEED, ...p.pocoesCustom]; }
+
+function estadoMateria(p, nome){
+  return p.academico.materias[nome] || {cursando: MATERIAS_OBRIGATORIAS.includes(nome), progresso: 0};
+}
+function garantirMateria(p, nome){
+  if(!p.academico.materias[nome]) p.academico.materias[nome] = estadoMateria(p, nome);
+  return p.academico.materias[nome];
+}
 
 // Regra-base de Poções: conhece a receita (aqui: existe no catálogo da
 // ficha) + Perícia Poções >= custo + todos os ingredientes na quantidade
@@ -552,6 +569,7 @@ const ABAS = [
   {id:'conteudos', nome:'Conteúdos'},
   {id:'criaturas', nome:'Bestiário'},
   {id:'pocoes', nome:'Poções'},
+  {id:'academico', nome:'Acadêmico'},
 ];
 
 function abaPerfil(p){
@@ -1005,6 +1023,55 @@ function abaPocoes(p){
   </div>`;
 }
 
+function abaAcademico(p){
+  const ano = anoEscolar(p.nivel);
+  const linhaMateria = (nome) => {
+    const m = estadoMateria(p, nome);
+    return `<div class="linha-cond">
+      <label style="width:auto;font-size:13px;text-transform:none;flex:1"><input type="checkbox" style="width:auto" data-mat-cursando="${esc(nome)}" ${m.cursando?'checked':''}> ${esc(nome)}</label>
+      <span class="mini">Progresso:</span>
+      <button data-mat-prog-dec="${esc(nome)}" style="padding:4px 10px">−</button>
+      <span class="mini" style="width:20px;text-align:center">${m.progresso}</span>
+      <button data-mat-prog-inc="${esc(nome)}" style="padding:4px 10px">+</button>
+      ${m.progresso>=2 ? '<span class="pill on">Pronto: Conteúdo Extra Acadêmico</span>' : ''}
+    </div>`;
+  };
+  return `<div class="cartao">
+    <h3 style="margin-bottom:6px">Currículo</h3>
+    <p class="mini" style="margin-bottom:10px">Ano atual: <b>${ano}º ano</b>. Não cursar uma matéria não torna o conhecimento magicamente impossível — só exige outra fonte (Conteúdo Familiar, Origem, pesquisa própria).</p>
+    <h4 style="font-size:13px;margin-bottom:8px">Matérias obrigatórias</h4>
+    ${MATERIAS_OBRIGATORIAS.map(linhaMateria).join('')}
+    <h4 style="font-size:13px;margin:14px 0 8px">Eletivas ${ano<3 ? '(a partir do 3º ano)' : ''}</h4>
+    ${ano<3 ? '<p class="mini">Ainda não chegou a hora de escolher eletivas.</p>' : ELETIVAS.map(linhaMateria).join('')}
+    <p class="mini" style="margin-top:10px">2 Progressos na mesma matéria podem virar 1 Conteúdo Extra Acadêmico (máx. 2 por ano por personagem) — o Mestre concede manualmente, o Hub só sinaliza.</p>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">N.O.M.s / N.I.E.M.s</h3>
+    <p class="mini">${ano===5 ? '📝 5º ano — é o ano dos N.O.M.s. Uma rolagem ruim isolada não deve destruir anos de especialização; recuperação/prova extra/exceção do professor continuam possíveis.'
+      : ano===7 ? '🎓 7º ano — é o ano dos N.I.E.M.s, que encerram a formação escolar.'
+      : ano<5 ? `Faltam ${5-ano} ano(s) letivo(s) até os N.O.M.s.` : ano<7 ? `Faltam ${7-ano} ano(s) letivo(s) até os N.I.E.M.s.` : ''}</p>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Notas</h3>
+    <div class="grade">
+      <div><label>Matéria</label><select id="novaNotaMateria">
+        ${[...MATERIAS_OBRIGATORIAS, ...(ano>=3?ELETIVAS:[])].map(m => `<option>${esc(m)}</option>`).join('')}
+      </select></div>
+      <div><label>Tipo</label><select id="novaNotaTipo">${TIPOS_NOTA.map(t => `<option>${t}</option>`).join('')}</select></div>
+      <div><label>Nota</label><select id="novaNotaValor">${NOTAS_ESCALA.map(n => `<option>${n}</option>`).join('')}</select></div>
+      <div><label>Comentário</label><input id="novaNotaComentario"></div>
+    </div>
+    <button data-add-nota style="margin-top:10px">+ Lançar nota</button>
+    ${p.academico.notas.length===0 ? '<p class="mini" style="margin-top:10px">Nenhuma nota lançada ainda.</p>' : `<div style="margin-top:12px">` + p.academico.notas.slice().reverse().map(n => `
+      <div class="linha" style="margin-bottom:6px">
+        <span class="mini" style="flex:1"><b>${esc(n.materia)}</b> — ${esc(n.tipo)}: ${esc(n.nota)}${n.comentario?' — '+esc(n.comentario):''}</span>
+        <button data-remover-nota="${n.id}" class="perigo" style="padding:3px 8px">✕</button>
+      </div>`).join('') + `</div>`}
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1028,7 +1095,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1274,6 +1341,21 @@ function ligarEventos(){
     }));
   };
   app.querySelectorAll('[data-remover-receita-custom]').forEach(b => b.onclick = () => mudar(p => { p.pocoesCustom = p.pocoesCustom.filter(r => r.id !== b.dataset.removerReceitaCustom); }));
+
+  // Acadêmico
+  app.querySelectorAll('[data-mat-cursando]').forEach(el => el.onchange = () => mudar(p => { garantirMateria(p, el.dataset.matCursando).cursando = el.checked; }));
+  app.querySelectorAll('[data-mat-prog-inc]').forEach(b => b.onclick = () => mudar(p => { garantirMateria(p, b.dataset.matProgInc).progresso++; }));
+  app.querySelectorAll('[data-mat-prog-dec]').forEach(b => b.onclick = () => mudar(p => { const m = garantirMateria(p, b.dataset.matProgDec); m.progresso = Math.max(0, m.progresso - 1); }));
+  const btAddNota = app.querySelector('[data-add-nota]');
+  if(btAddNota) btAddNota.onclick = () => mudar(p => p.academico.notas.push({
+    id: uid(),
+    materia: document.getElementById('novaNotaMateria').value,
+    tipo: document.getElementById('novaNotaTipo').value,
+    nota: document.getElementById('novaNotaValor').value,
+    comentario: document.getElementById('novaNotaComentario').value.trim(),
+    data: Date.now(),
+  }));
+  app.querySelectorAll('[data-remover-nota]').forEach(b => b.onclick = () => mudar(p => { p.academico.notas = p.academico.notas.filter(n => n.id !== b.dataset.removerNota); }));
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
