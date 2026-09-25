@@ -6981,7 +6981,60 @@ existe, e só então executa o `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`
 por dentro de um `EXECUTE`. Assim nenhuma ordem de execução das
 migrações consegue quebrar o script — tabela ausente é só ignorada.
 
-## 156. The Celestials — Nível 7 de Habilidade e Ascensão acumulável (25/09/2026)
+## 156. Sistema SAO — Classe própria, Poder Livre e Seus Itens (24/09/2026)
+
+O Zé pediu mais controle dentro do Sistema SAO: "criar craftings, essas
+coisas". Materiais nomeados e Suas Receitas já existiam (decisão #16);
+o que faltava era o mesmo tratamento nas outras três peças fixas que
+prendiam o jogador ao catálogo do sistema — perguntei quais, porque
+"controlar mais as coisas" sozinho não dizia o suficiente pra saber
+onde construir sem chutar.
+
+**Nota de processo:** a primeira tentativa desta fatia foi feita numa
+branch que tinha ficado 121 commits atrás da produção (o projeto
+avançou até a decisão #155 enquanto esta sessão trabalhava). O merge
+deu conflito de verdade em `sao.html` (reescrito por outro trabalho
+nesse meio tempo — Modo Guiado, Level Up, Grimório). Descartei aquela
+tentativa sem aplicar nada, reiniciei a branch a partir da produção
+atual, e refiz a mesma fatia em cima do arquivo de verdade.
+
+- **Classe própria** — card "Suas Classes" na aba Classes: nome livre
+  e uma das três categorias (Combate/Produção/Outras), some no mesmo
+  seletor de classe do catálogo (inclusive no passo 2 do Modo Guiado,
+  que reaproveita `linhaClasse`). Nasce sem nenhum poder do sistema —
+  só ganha poder pelo Poder Livre, abaixo
+- **Poder Livre por classe** — em `blocoPoderesClasse` (a mesma peça
+  que a aba Poderes e o resumo do "+1 Nível" reaproveitam), cada
+  classe com nível investido ganha um "+ Poder Livre": nome, texto
+  livre do que faz, e quantas vezes dá pra comprar. Gasta do **mesmo
+  pool de pontos de poder** da classe (o mesmo mapa
+  `poder.escolhas[classeId]` que os poderes de catálogo já usavam, só
+  que pela chave do poder custom) — não é uma segunda economia
+  paralela, é a mesma régua que os poderes prontos
+- **Seus Itens na Loja** — card "Seus Itens", mesmo formato de
+  `ITENS_LOJA` (tipo, raridade, efeito, peso, durabilidade, preço em
+  Prata) só que escrito pelo jogador e comprável com a própria
+  Carteira, com o mesmo desconto de Faro pra Barganha
+- **Materiais próprios**: já existia desde a decisão #16 (`+ Material`
+  aceita qualquer nome) — nada pra construir, só confirmado no teste
+
+`todasClasses(p)` (`[...CLASSES, ...p.classesCustom]`) virou o ponto
+único de onde qualquer trecho da ficha busca uma classe pelo id, sem
+se importar se é do catálogo ou homebrew — troquei também os dois
+lugares do Modo Guiado que ainda buscavam só em `CLASSES` (o passo 3
+"Primeiro Poder" e o resumo do Level Up), senão uma classe própria
+escolhida ali apareceria como "nenhuma classe escolhida".
+
+Testado com Playwright: classe própria aparecendo no seletor (dentro
+e fora do Modo Guiado) e no cartão de Poderes, Poder Livre
+comprando/devolvendo e travando no próprio teto sem estourar o pool
+da classe, Seu Item comprando e descontando a Carteira certa, indo
+pro inventário, e tudo (classe, poder, item) sobrevivendo a um
+recarregamento de página. `node --check` e a varredura de caractere
+estranho (CJK/Hangul) limpos. `tsc --noEmit`, lint e os 302 testes
+automáticos (`node --test`) do projeto continuam passando.
+
+## 157. The Celestials — Nível 7 de Habilidade e Ascensão acumulável (25/09/2026)
 
 Correção de três pontos nas Habilidades do The Celestials
 (`sistema-do-savio.html` e `sistema-do-savio-inimigo.html`), a pedido do
