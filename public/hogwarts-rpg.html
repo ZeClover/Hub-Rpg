@@ -383,6 +383,7 @@ const PESO_RARIDADE = {'Comum':55, 'Incomum':25, 'Rara':12, 'Muito Rara':6, 'Len
 const CUSTO_SAPO = 2; // Galeões por Sapo de Chocolate lacrado
 
 const MARCOS_EXTRAORDINARIOS = [5,10,15,20,25,30,35];
+const ESCALA_RELACAO = ['Desconhecido','Conhecido','Próximo','Confidente','Vínculo'];
 
 // Conteúdos Únicos / Caminhos Raros — cada estágio é um item separado.
 // `ordem` dentro do mesmo `caminho` é a sequência esperada (Animagia II
@@ -470,6 +471,10 @@ function novoPersonagem(){
     ultimaCartaAberta: null,
     unicosAdquiridos: {},
     donsLatentes: [],
+    relacoes: [],
+    companheiros: [],
+    projetos: [],
+    reputacao: [],
   };
 }
 
@@ -494,6 +499,10 @@ function garantirCamposNovos(p){
   if(p.ultimaCartaAberta === undefined) p.ultimaCartaAberta = null;
   if(!p.unicosAdquiridos || typeof p.unicosAdquiridos !== 'object') p.unicosAdquiridos = {};
   if(!Array.isArray(p.donsLatentes)) p.donsLatentes = [];
+  if(!Array.isArray(p.relacoes)) p.relacoes = [];
+  if(!Array.isArray(p.companheiros)) p.companheiros = [];
+  if(!Array.isArray(p.projetos)) p.projetos = [];
+  if(!Array.isArray(p.reputacao)) p.reputacao = [];
   if(p.perfil.familiaId === undefined) p.perfil.familiaId = p.perfil.familia || '';
   if(p.perfil.origemId === undefined) p.perfil.origemId = p.perfil.origem || '';
   return p;
@@ -680,6 +689,7 @@ const ABAS = [
   {id:'inventario', nome:'Inventário'},
   {id:'colecao', nome:'Sapos de Chocolate'},
   {id:'unicos', nome:'Conteúdos Únicos'},
+  {id:'social', nome:'Relações & Projetos'},
 ];
 
 function abaPerfil(p){
@@ -1315,6 +1325,68 @@ function abaUnicos(p){
   </div>`;
 }
 
+function abaSocial(p){
+  return `<div class="cartao">
+    <h3 style="margin-bottom:10px">Relações</h3>
+    <p class="mini" style="margin-bottom:10px">Escala persistente por NPC/personagem. Contexto (amizade, rivalidade, romance, mentoria, inimizade) é texto livre; estado emocional é só uma tag temporária.</p>
+    ${p.relacoes.length===0 ? '<p class="mini">Nenhuma relação registrada.</p>' : p.relacoes.map(r => `
+      <div class="linha-cond">
+        <input data-rlc-campo="${r.id}:nome" value="${esc(r.nome)}" placeholder="Nome do NPC/personagem" style="flex:1">
+        <select data-rlc-campo="${r.id}:escala" style="width:130px">${ESCALA_RELACAO.map(e => `<option ${r.escala===e?'selected':''}>${e}</option>`).join('')}</select>
+        <input data-rlc-campo="${r.id}:contexto" value="${esc(r.contexto||'')}" placeholder="Contexto" style="width:140px">
+        <input data-rlc-campo="${r.id}:estadoAtual" value="${esc(r.estadoAtual||'')}" placeholder="Estado atual" style="width:120px">
+        <button data-rlc-remover="${r.id}" class="perigo" style="padding:4px 10px">✕</button>
+      </div>`).join('')}
+    <button data-nova-relacao>+ Relação</button>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Companheiros</h3>
+    <p class="mini" style="margin-bottom:10px">Não recebem automaticamente um turno completo independente — habilidades geralmente usam a Ação/Reação do personagem.</p>
+    ${p.companheiros.length===0 ? '<p class="mini">Nenhum ainda.</p>' : p.companheiros.map(c => `
+      <div class="item-conteudo">
+        <div class="linha">
+          <input data-comp-campo="${c.id}:nome" value="${esc(c.nome)}" placeholder="Nome" style="flex:1">
+          <input data-comp-campo="${c.id}:especie" value="${esc(c.especie||'')}" placeholder="Espécie" style="flex:1">
+          <button data-comp-remover="${c.id}" class="perigo" style="padding:4px 10px">✕</button>
+        </div>
+        <label style="margin-top:6px">Personalidade e história</label>
+        <textarea data-comp-campo="${c.id}:personalidade" rows="2">${esc(c.personalidade||'')}</textarea>
+        <label style="margin-top:6px">Habilidades</label>
+        <textarea data-comp-campo="${c.id}:habilidades" rows="2">${esc(c.habilidades||'')}</textarea>
+      </div>`).join('')}
+    <button data-novo-companheiro>+ Companheiro</button>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Projetos</h3>
+    <p class="mini" style="margin-bottom:10px">Só pra objetivos realmente longos (Animagia, criar feitiço, inventar poção, pesquisa extensa) — não pra tarefas rotineiras.</p>
+    ${p.projetos.length===0 ? '<p class="mini">Nenhum ainda.</p>' : p.projetos.map(pr => `
+      <div class="item-conteudo">
+        <div class="linha">
+          <input data-proj-campo="${pr.id}:nome" value="${esc(pr.nome)}" placeholder="Nome do Projeto" style="flex:1">
+          <button data-proj-dec="${pr.id}" style="padding:4px 10px">−</button>
+          <span class="mini" style="width:30px;text-align:center">${pr.progresso}/</span>
+          <input type="number" min="1" data-proj-total="${pr.id}" value="${pr.total}" style="width:60px">
+          <button data-proj-inc="${pr.id}" style="padding:4px 10px">+</button>
+          <button data-proj-remover="${pr.id}" class="perigo" style="padding:4px 10px">✕</button>
+        </div>
+        <textarea data-proj-campo="${pr.id}:descricao" rows="2" placeholder="Descrição, etapas, materiais, complicações" style="margin-top:6px">${esc(pr.descricao||'')}</textarea>
+      </div>`).join('')}
+    <div class="linha" style="margin-top:8px">
+      <button data-novo-projeto>+ Projeto</button>
+      <span class="mini">Escala sugerida: 2 simples · 4 elaborado · 6 avançado · 8+ extraordinário.</span>
+    </div>
+  </div>
+
+  <div class="cartao">
+    <h3 style="margin-bottom:10px">Reputação</h3>
+    <p class="mini" style="margin-bottom:10px">Tags — Excelente Duelista, Encrenqueiro, Aluno Modelo, Trapaceiro, Protetor...</p>
+    <div style="margin-bottom:10px">${p.reputacao.map(t => `<span class="pill on" style="margin:0 6px 6px 0;display:inline-block">${esc(t)} <a href="#" data-rep-remover="${esc(t)}" style="color:inherit;text-decoration:none;margin-left:4px">✕</a></span>`).join('')}</div>
+    <div class="linha"><input id="novaReputacao" placeholder="Nova tag"><button data-add-reputacao>+ Adicionar</button></div>
+  </div>`;
+}
+
 /* --- Render / eventos -------------------------------------------------------- */
 
 function render(){
@@ -1338,7 +1410,7 @@ function render(){
 
   app.innerHTML = alerta
     + `<div class="abas">` + ABAS.map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
-    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos}[estado.aba])(p);
+    + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial}[estado.aba])(p);
 
   ligarEventos();
   if(somenteLeitura){
@@ -1660,6 +1732,46 @@ function ligarEventos(){
     const [id, campo] = el.dataset.domCampo.split(':');
     el.addEventListener('input', () => mudarSemRedesenhar(p => { const d = p.donsLatentes.find(x=>x.id===id); if(d) d[campo] = el.value; }));
   });
+
+  // Relações
+  const btNovaRelacao = app.querySelector('[data-nova-relacao]');
+  if(btNovaRelacao) btNovaRelacao.onclick = () => mudar(p => p.relacoes.push({id:uid(), nome:'', escala:'Desconhecido', contexto:'', estadoAtual:''}));
+  app.querySelectorAll('[data-rlc-remover]').forEach(b => b.onclick = () => mudar(p => { p.relacoes = p.relacoes.filter(r => r.id !== b.dataset.rlcRemover); }));
+  app.querySelectorAll('[data-rlc-campo]').forEach(el => {
+    const [id, campo] = el.dataset.rlcCampo.split(':');
+    const evento = el.tagName==='SELECT' ? 'change' : 'input';
+    el.addEventListener(evento, () => mudarSemRedesenhar(p => { const r = p.relacoes.find(x=>x.id===id); if(r) r[campo] = el.value; }));
+  });
+
+  // Companheiros
+  const btNovoComp = app.querySelector('[data-novo-companheiro]');
+  if(btNovoComp) btNovoComp.onclick = () => mudar(p => p.companheiros.push({id:uid(), nome:'Companheiro', especie:'', personalidade:'', habilidades:''}));
+  app.querySelectorAll('[data-comp-remover]').forEach(b => b.onclick = () => mudar(p => { p.companheiros = p.companheiros.filter(c => c.id !== b.dataset.compRemover); }));
+  app.querySelectorAll('[data-comp-campo]').forEach(el => {
+    const [id, campo] = el.dataset.compCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const c = p.companheiros.find(x=>x.id===id); if(c) c[campo] = el.value; }));
+  });
+
+  // Projetos
+  const btNovoProjeto = app.querySelector('[data-novo-projeto]');
+  if(btNovoProjeto) btNovoProjeto.onclick = () => mudar(p => p.projetos.push({id:uid(), nome:'Projeto', descricao:'', progresso:0, total:4}));
+  app.querySelectorAll('[data-proj-remover]').forEach(b => b.onclick = () => mudar(p => { p.projetos = p.projetos.filter(pr => pr.id !== b.dataset.projRemover); }));
+  app.querySelectorAll('[data-proj-inc]').forEach(b => b.onclick = () => mudar(p => { const pr = p.projetos.find(x=>x.id===b.dataset.projInc); if(pr) pr.progresso = Math.min(pr.total, pr.progresso+1); }));
+  app.querySelectorAll('[data-proj-dec]').forEach(b => b.onclick = () => mudar(p => { const pr = p.projetos.find(x=>x.id===b.dataset.projDec); if(pr) pr.progresso = Math.max(0, pr.progresso-1); }));
+  app.querySelectorAll('[data-proj-total]').forEach(el => el.addEventListener('input', () => mudarSemRedesenhar(p => { const pr = p.projetos.find(x=>x.id===el.dataset.projTotal); if(pr) pr.total = Math.max(1, Number(el.value)||1); })));
+  app.querySelectorAll('[data-proj-campo]').forEach(el => {
+    const [id, campo] = el.dataset.projCampo.split(':');
+    el.addEventListener('input', () => mudarSemRedesenhar(p => { const pr = p.projetos.find(x=>x.id===id); if(pr) pr[campo] = el.value; }));
+  });
+
+  // Reputação
+  app.querySelectorAll('[data-rep-remover]').forEach(a => a.onclick = (ev) => { ev.preventDefault(); mudar(p => { p.reputacao = p.reputacao.filter(t => t !== a.dataset.repRemover); }); });
+  const btAddReputacao = app.querySelector('[data-add-reputacao]');
+  if(btAddReputacao) btAddReputacao.onclick = () => {
+    const tag = document.getElementById('novaReputacao').value.trim();
+    if(!tag) return;
+    mudar(p => { if(!p.reputacao.includes(tag)) p.reputacao.push(tag); });
+  };
 }
 
 document.getElementById('seletor').onchange = e => { estado.atualId = e.target.value; render(); };
