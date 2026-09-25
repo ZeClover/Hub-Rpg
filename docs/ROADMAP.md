@@ -2007,23 +2007,49 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       (Fabula Ultima, SAO...) continuam como estavam — a convenção é
       opcional, adotar fica pra quando cada um precisar
 
+- [x] **Modo Sessão do Mestre** (25/09/2026) — decisão #161. Painel
+      `public/hogwarts-rpg-mestre.html`, aberto pelo link "🧙 Modo
+      Sessão do Mestre" na tela da campanha: seleciona vários
+      personagens e aplica Condição, ajusta Vida/Tensão/Galeões, ou
+      concede Conteúdo de uma vez, sem abrir ficha por ficha. Sem
+      infraestrutura nova de escrita — reusa o `PATCH /api/personagens/
+      [id]` que já existia; só precisou de um `GET /api/campanhas/[id]/
+      personagens` pra listar as fichas (só existia `POST`)
+- [x] **Loja ao vivo** (25/09/2026) — decisão #162. Modelo novo
+      (`Loja`/`LojaItem`/`LojaCompra`, migração 0023) com compra
+      transacional de verdade: dois jogadores comprando a última
+      unidade ao mesmo tempo resultam numa compra só (UPDATE
+      condicional em SQL, não "ler em JS, decidir, escrever"). Fala a
+      língua específica do Hogwarts (`dados.galeoes`/`dados.itens`) de
+      propósito — generalizar pra outro sistema é decisão de quando um
+      segundo sistema precisar. Aba "Loja" na ficha do jogador, seção
+      "Lojas" no Modo Sessão do Mestre
+- [x] **Trocas de Sapos de Chocolate** (25/09/2026) — decisão #163.
+      Mesmo desenho da Loja, entre duas fichas: modelo `TrocaCarta`
+      (migração 0024), oferta aberta visível pra campanha, aceitar faz
+      dois UPDATEs condicionais atômicos (um em cada álbum). Seção
+      "Trocas" na aba Sapos de Chocolate da ficha
+
 ## O que ainda falta no Hogwarts RPG
 
-Tudo abaixo esbarra na mesma peça de infraestrutura que o chassi atual
-("ficha = 1 JSON por personagem", sem recurso compartilhado entre
-fichas) ainda não tem — não é falta de vontade de continuar fatiando,
-é decisão de arquitetura que vale para o Hub inteiro, não só para este
-sistema:
-
-- [ ] **Lojas ao vivo** com estoque compartilhado e concorrência real
-      (dois jogadores comprando a última unidade ao mesmo tempo)
-- [ ] **Trocas de Sapos de Chocolate** entre jogadores — a coleção em
-      si já existe (fatia 7), falta só a troca, que depende de um
-      recurso compartilhado entre duas fichas
-- [ ] **Modo Sessão do Mestre** com ações em lote pra vários jogadores
-      de uma vez (aplicar condição/revelar informação pra um grupo)
+- [ ] **Segredo por campo dentro de `dados._mestre` pra sistemas com
+      múltiplas informações ocultas por personagem** (ex.: revelar
+      individualmente pra cada jogador um campo de NPC compartilhado)
+      — hoje `_mestre` já é seguro (decisão #159), mas continua sendo
+      "tudo ou nada" por personagem; segredo por jogador diferente
+      exigiria uma peça de arquitetura nova (quem-pode-ver-o-quê por
+      usuário, não só por papel), decisão maior que vale pro Hub
+      inteiro
 - [ ] Quadribol, Clubes, Mapa Conhecido e Calendário de campanha —
       já eram "fase posterior"/opcionais no próprio documento de design
+
+## Pendência de configuração — Hogwarts RPG
+
+- [ ] Colar no Supabase (Storage → Query) as migrações 0023
+      (`lojas`/`loja_itens`/`loja_compras`) e 0024 (`trocas_cartas`) —
+      esta sessão não tem acesso ao banco (mesmo fluxo de sempre, ver
+      docs/ARQUITETURA.md). Sem isso, a aba Loja e a seção Trocas dão
+      erro 500/404 ao tentar ler ou escrever.
 
 ---
 

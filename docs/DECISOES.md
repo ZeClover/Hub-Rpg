@@ -7297,6 +7297,113 @@ futura sessão.
 `tsc --noEmit`, `eslint`, os 307 testes automáticos, `next build` e
 `node --check` no JavaScript da ficha continuam limpos.
 
+## 161. Modo Sessão do Mestre (25/09/2026)
+
+Zé pediu pra "finalizar o resto do sistema" — voltei ao que eu mesmo
+tinha deixado como pendência no ROADMAP da decisão #157/#158. Primeira
+peça: ações em lote numa campanha inteira, sem abrir ficha por ficha
+("aplicar condição em vários jogadores de uma vez" era o exemplo que
+eu mesmo tinha escrito).
+
+Não precisou de tabela nova nem rota de escrita nova: o mestre já pode
+editar qualquer ficha da própria campanha via `PATCH /api/personagens/
+[id]` (decisão #131), então este painel só reúne o que já existia numa
+tela que opera em várias fichas de uma vez. Precisou de uma peça de
+leitura que faltava — `GET /api/campanhas/[id]/personagens` só tinha
+`POST`. Só o mestre chama esse GET (`ehMestreOuAuxiliar`), então
+`dados` sai inteiro, `_mestre` incluso: quem está lendo JÁ é o mestre,
+não faz sentido filtrar dele mesmo.
+
+`Sistema.modoSessao` (novo campo em `src/lib/sistemas.ts`, `null` pros
+outros seis sistemas) segue o mesmo padrão de Escudo do Mestre/
+Grimório — um link na tela da campanha — só que aponta pra uma página
+que lê `?campanha=<id>` e busca dados de verdade, em vez de conteúdo
+estático.
+
+Painel novo `public/hogwarts-rpg-mestre.html`: seleciona vários
+personagens e aplica Condição, ajusta Vida/Tensão/Galeões, ou concede
+Conteúdo. `tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos.
+
+## 162. Loja ao vivo com concorrência real (25/09/2026)
+
+Segunda peça do "finalizar o resto do sistema": a Loja com estoque
+compartilhado que o ROADMAP registrava como pendente desde a decisão
+#158. Diferente do Modo Sessão, esta precisou de infraestrutura nova
+de verdade — nem o `Item` genérico (decisão #147, biblioteca pessoal/
+ficha/grupo/cofre) resolvia, porque `Item` não tem preço nem uma
+transação de compra, só "guardar objeto nalgum lugar".
+
+Modelo novo (`Loja`/`LojaItem`/`LojaCompra`, migração 0023) seguindo a
+mesma convenção de RLS das migrações 0018/0019 (`ENABLE ROW LEVEL
+SECURITY` sem política nenhuma cadastrada — a trava "cinto e
+suspensório" da decisão #2).
+
+A parte que importava de verdade: **concorrência real**. Dois
+jogadores comprando a última unidade ao mesmo tempo não podiam os dois
+passar. A rota de compra (`POST /api/lojas/[id]/comprar`) resolve isso
+com `UPDATE ... WHERE estoque > 0` direto em SQL (via `$executeRaw`
+dentro de `$transaction`) em vez de "ler o estoque em JavaScript,
+decidir, escrever" — a segunda tentativa simplesmente vê 0 linhas
+afetadas e falha com 409, não corrompe nada. O mesmo desenho decide se
+há Galeões suficientes: um segundo `UPDATE ... WHERE (dados->>
+'galeoes')::int >= preço` direto no jsonb da ficha, que já desconta e
+adiciona o item ao inventário na mesma instrução. Se a checagem de
+estoque passar mas a de Galeões falhar, um erro tipado (`FalhaDeCompra`)
+joga a transação inteira fora — o Postgres desfaz sozinho o estoque já
+decrementado, sem eu precisar escrever uma compensação manual (a
+primeira versão fazia isso manualmente; simplifiquei ao perceber que
+`$transaction` já resolve isso melhor que eu).
+
+**Decisão de escopo deliberada:** a rota de compra fala a língua
+específica do Hogwarts (`dados.galeoes`, `dados.itens`) — decisão #17
+diz que nenhum sistema empresta a forma do `dados` de outro, então uma
+Loja genérica pra qualquer sistema exigiria uma segunda convenção
+reservada (como `_mestre` já é pra segredo). Não construí essa
+generalização especulativamente; fica pra quando um segundo sistema
+precisar de verdade.
+
+Duas telas conectadas: aba "Loja" nova na ficha do jogador (só aparece
+quando a ficha pertence a uma campanha — `GET /api/personagens/[id]`
+passou a devolver `campanhaId` também) comprando e atualizando Galeões/
+Inventário na hora; seção "Lojas" no Modo Sessão do Mestre pra montar
+estoque, abrir/fechar.
+
+`tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos. `prisma generate` rodado — a migração
+0023 ainda precisa ser colada no Supabase por Zé (esta sessão não tem
+acesso ao banco, mesmo fluxo de sempre).
+
+## 163. Trocas de Sapos de Chocolate entre jogadores (25/09/2026)
+
+Terceira e última peça do "finalizar o resto do sistema" que ainda
+dava pra resolver sem uma decisão de arquitetura maior — completa a
+coleção da fatia 7 (decisão #158), que já tinha comprar/abrir/
+colecionar mas não trocar.
+
+Mesmo desenho da Loja (decisão #162), aplicado a duas fichas em vez de
+uma ficha + uma loja: modelo novo `TrocaCarta` (migração 0024) guarda
+uma oferta aberta ("ofereço carta X, quero carta Y"), visível pra toda
+a campanha. Aceitar (`POST /api/trocas/[id]/aceitar`) faz dois `UPDATE
+... WHERE (dados->'album'->>carta)::int >= 1` condicionais — um em
+cada ficha — dentro da mesma transação; se qualquer um dos dois falhar
+(a oferta não vale mais, ou quem está aceitando não tem a carta que a
+oferta pede), o erro tipado (`FalhaDeTroca`) desfaz tudo.
+
+Os `jsonb_set` desta vez vieram aninhados de propósito: o caminho
+`album.<idDaCarta>` tem dois níveis, e `jsonb_set` só cria
+automaticamente o ÚLTIMO elemento do caminho — se `album` não existisse
+ainda dentro de `dados`, o `jsonb_set` de fora garante que ele existe
+antes do de dentro mexer numa carta específica. Não precisei disso na
+Loja porque lá o caminho tinha um nível só (`itens`, `galeoes`).
+
+Seção "Trocas" nova na aba Sapos de Chocolate da ficha (só quando a
+ficha pertence a uma campanha): oferecer, aceitar, cancelar.
+
+`tsc`, `eslint`, os 307 testes automáticos, `next build` e
+`node --check` continuam limpos. Migração 0024 também ainda precisa
+ser colada no Supabase.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
