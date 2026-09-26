@@ -7742,6 +7742,28 @@ pelo Hub em nenhum momento além desta troca pontual de arquivo — não é
 upload de usuário, é ícone fixo do próprio app (decisão #5, custo
 zero: continua sendo só arquivo estático, nada de serviço pago).
 
+## 171. The Celestials — Guaras (moeda) na aba Inventário (26/09/2026)
+
+A aba Inventário (jogador e monstro) ganhou um campo numérico simples
+"💰 Guaras (moeda)" no topo, antes da lista de itens — Guaras é o nome
+da moeda de The Celestials. Sem loja nem preço de item cadastrado
+(fora de escopo por enquanto — decisão #26, uma fatia por vez): é só
+um contador livre, a mesa concede e cobra na hora, igual PV/PE/Nível já
+funcionam nesta ficha (campo `guaras` no personagem, editado por um
+`<input type="number" data-num="guaras">` que já reaproveita o
+handler genérico que `data-num` tem desde sempre — nenhum código de
+wiring novo).
+
+Campo `guaras: 0` novo em `novoPersonagem()`, com fallback `p.guaras||0`
+na exibição pra ficha salva antes desta mudança continuar funcionando
+sem erro. Espelhado nos dois arquivos
+(`sistema-do-savio.html`/`sistema-do-savio-inimigo.html`) porque um
+Monstro também pode carregar Guaras como parte do loot. Nenhuma
+mudança de schema (campo vive dentro do JSON do personagem, igual todo
+resto da ficha). Testado: `node -e "new Function(...)"` nos dois
+arquivos, `tsc --noEmit` e os 307 testes automáticos continuam
+passando.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

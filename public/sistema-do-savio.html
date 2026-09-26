@@ -1000,6 +1000,9 @@ function novoPersonagem(nome){
     arma: {nome:'', tamanho:'media', notas:''},
     // Itens gerais, fora do encaixe de arma — cada um: {nome, notas, equipado}.
     inventario: [],
+    // Guaras: a moeda de The Celestials. Controle livre do jogador (a
+    // mesa concede/cobra na hora), a ficha só guarda o total atual.
+    guaras: 0,
     // Ataques prontos: golpes/manobras que o jogador já deixa escritos com
     // o dano calculado, pra não ter que refazer conta toda vez na mesa —
     // cada um: {nome, dano, notas}.
@@ -3148,6 +3151,10 @@ function abaInventario(p){
       especial, poções, objetos de cena). Marcar <strong>Equipado</strong>
       só serve pra lembrar o que está em uso agora; a mesa é quem decide o
       efeito de um item especial.</p>
+    <div style="max-width:160px;margin-bottom:10px">
+      <label for="c-guaras">💰 Guaras (moeda)</label>
+      <input id="c-guaras" type="number" min="0" data-num="guaras" value="${p.guaras||0}">
+    </div>
     <p class="mini" style="${usado>maximo?'color:var(--alerta)':''}">
       <strong>Peso:</strong> ${usado} / ${maximo} pontos de peso (5 + 2×Força) —
       cada item gasta peso×quantidade.
