@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
-import { podeAcessarPersonagem } from "@/lib/dono-personagem";
+import { podeAcessarPersonagem, podeReceberFicha } from "@/lib/dono-personagem";
 import { usuarioAtual } from "@/lib/usuario";
 import { semSegredosDeMestre } from "@/lib/visibilidade";
 
@@ -16,7 +16,10 @@ type Contexto = { params: Promise<{ id: string }> };
   `podeAcessarPersonagem` (decisão #131: mestre da campanha pode editar a
   ficha do jogador, não só ler). Apagar é mais estrito — só o dono, nunca o
   mestre (`buscarSeFoiDono`) — perder a ficha de vez não é uma decisão que a
-  mesa deveria poder tomar pelo jogador.
+  mesa deveria poder tomar pelo jogador. Trocar o dono (`donoId` no PATCH,
+  decisão #172) usa a mesma checagem de quem PODE PEDIR a troca — dono ou
+  mestre — mais uma validação própria de quem pode SER o novo dono
+  (`podeReceberFicha`): só um participante da mesma campanha.
 */
 async function campanhasComoMestreDe(idDoUsuario: string) {
   return (
@@ -158,11 +161,37 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   const temStatus = typeof corpo?.status === "string" && STATUS_VALIDOS.includes(corpo.status);
   const temAvatar = typeof corpo?.avatarUrl === "string" || corpo?.avatarUrl === null;
   const temBanner = typeof corpo?.bannerUrl === "string" || corpo?.bannerUrl === null;
-  if (!temDados && !temCompartilhado && !temStatus && !temAvatar && !temBanner) {
+  // Trocar o dono (decisão #172): dono ou mestre já passaram por
+  // `buscarSeFoiDonoOuMestre` acima — falta só validar o DESTINO, que só
+  // existe quando a ficha está numa campanha (a lista de participações
+  // dela é quem pode virar dona). `!== existente.donoId` trata "mandar o
+  // mesmo dono de novo" como não-pedido, em vez de erro.
+  const temNovoDono = typeof corpo?.donoId === "string" && corpo.donoId !== existente.donoId;
+  if (!temDados && !temCompartilhado && !temStatus && !temAvatar && !temBanner && !temNovoDono) {
     return NextResponse.json(
-      { erro: "dados, compartilhado, status, avatarUrl ou bannerUrl é obrigatório" },
+      { erro: "dados, compartilhado, status, avatarUrl, bannerUrl ou donoId é obrigatório" },
       { status: 400 },
     );
+  }
+
+  if (temNovoDono) {
+    const participantes = existente.campanhaId
+      ? await banco.participacao.findMany({
+          where: { campanhaId: existente.campanhaId },
+          select: { usuarioId: true },
+        })
+      : [];
+    const idsParticipantes = participantes.map((p) => p.usuarioId);
+    if (!podeReceberFicha(existente, corpo.donoId, idsParticipantes)) {
+      return NextResponse.json(
+        {
+          erro: existente.campanhaId
+            ? "essa pessoa não participa da campanha desta ficha"
+            : "ficha fora de campanha (avulsa) não pode trocar de dono",
+        },
+        { status: 400 },
+      );
+    }
   }
 
   // O nome da ficha segue o que a pessoa digitou dentro dela — não precisa
@@ -200,10 +229,12 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
       ...(temStatus ? { status: corpo.status } : {}),
       ...(temAvatar ? { avatarUrl: corpo.avatarUrl } : {}),
       ...(temBanner ? { bannerUrl: corpo.bannerUrl } : {}),
+      ...(temNovoDono ? { donoId: corpo.donoId } : {}),
     },
     select: {
       id: true,
       nome: true,
+      donoId: true,
       compartilhado: true,
       status: true,
       avatarUrl: true,

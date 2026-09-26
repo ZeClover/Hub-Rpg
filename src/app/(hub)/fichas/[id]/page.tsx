@@ -11,6 +11,7 @@ import { Companheiros } from "../companheiros";
 import { CompartilharFicha } from "../compartilhar-ficha";
 import { CriarSandbox } from "../criar-sandbox";
 import { AvatarFicha, EditarImagemFicha, ROTULO_STATUS, StatusFicha } from "../organizacao-ficha";
+import { TransferirDono } from "../transferir-dono";
 
 /*
   Página geral do personagem (decisão #149, ideia #135) — gerenciamento ao
@@ -67,6 +68,18 @@ export default async function PaginaDoPersonagem({
     }),
   ]);
 
+  // Trocar o dono (decisão #172): só faz sentido pra ficha ligada numa
+  // campanha — é a lista de participações dela que diz pra quem dá pra
+  // passar. Ficha avulsa nem busca isso.
+  const outrosParticipantes = personagem.campanhaId
+    ? (
+        await banco.participacao.findMany({
+          where: { campanhaId: personagem.campanhaId, NOT: { usuarioId: usuario.id } },
+          select: { usuarioId: true, usuario: { select: { nome: true, email: true } } },
+        })
+      ).map((p) => ({ usuarioId: p.usuarioId, nome: p.usuario.nome ?? p.usuario.email }))
+    : [];
+
   const sistemaDef = SISTEMAS.find((s) => s.chave === personagem.sistema.chave);
   const arquivoFicha = personagem.ehMonstro ? sistemaDef?.fichaInimigo : sistemaDef?.ficha;
   const urlFicha = arquivoFicha ? `${arquivoFicha}?id=${personagem.id}` : null;
@@ -120,6 +133,22 @@ export default async function PaginaDoPersonagem({
       <p className="mt-2 text-xs text-texto-suave">
         Status atual: {ROTULO_STATUS[personagem.status] ?? personagem.status}
       </p>
+
+      {outrosParticipantes.length > 0 && (
+        <div className="mt-3">
+          <p className="text-xs text-texto-suave">
+            Transferir esta ficha pra outra pessoa da campanha:
+          </p>
+          <div className="mt-1">
+            <TransferirDono
+              personagemId={personagem.id}
+              nomeFicha={personagem.nome}
+              donoAtualId={personagem.donoId}
+              candidatos={outrosParticipantes}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="mt-3">
         <CriarSandbox personagemId={personagem.id} />

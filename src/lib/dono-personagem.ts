@@ -26,3 +26,22 @@ export function podeAcessarPersonagem(
     idsDeCampanhasOndeSouMestre.includes(personagem.campanhaId)
   );
 }
+
+/*
+  Trocar o dono de uma ficha (decisão #172): o mestre (titular ou auxiliar)
+  pode passar qualquer ficha da campanha pra qualquer participante dela, e o
+  próprio dono pode passar a sua pra outro participante — jogador pra
+  jogador tanto faz, é a mesma regra. `podeAcessarPersonagem` já decide QUEM
+  pode pedir a troca (dono ou mestre); esta função decide se o DESTINO é
+  válido: só existe uma lista de "gente que pode receber" quando a ficha
+  está numa campanha (é a lista de participações dela) — ficha avulsa não
+  tem pra quem passar, então nunca troca de dono aqui.
+*/
+export function podeReceberFicha(
+  personagem: PersonagemComDono,
+  novoDonoId: string,
+  idsDosParticipantesDaCampanha: string[],
+): boolean {
+  if (personagem.campanhaId == null) return false;
+  return idsDosParticipantesDaCampanha.includes(novoDonoId);
+}

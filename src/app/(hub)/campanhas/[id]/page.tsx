@@ -20,6 +20,7 @@ import { Equipes } from "./equipes";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { GerarCard } from "../../gerar-card";
 import { type ItemView } from "../../itens-compartilhados";
+import { TransferirDono } from "../../fichas/transferir-dono";
 import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
@@ -585,7 +586,7 @@ function VisaoDoMestre({
                                 )}
                               </p>
                               {personagens.length > 0 ? (
-                                <ul className="mt-1 space-y-0.5">
+                                <ul className="mt-1 space-y-1">
                                   {personagens.map((personagem) => (
                                     <li key={personagem.id}>
                                       {ficha ? (
@@ -600,6 +601,14 @@ function VisaoDoMestre({
                                           {personagem.nome}
                                         </p>
                                       )}
+                                      <div className="mt-1">
+                                        <TransferirDono
+                                          personagemId={personagem.id}
+                                          nomeFicha={personagem.nome}
+                                          donoAtualId={personagem.donoId}
+                                          candidatos={pessoas}
+                                        />
+                                      </div>
                                     </li>
                                   ))}
                                 </ul>
@@ -643,7 +652,7 @@ function VisaoDoMestre({
                   {personagensDoMestre.length > 0 && (
                     <ul className="mt-3 space-y-2">
                       {personagensDoMestre.map((personagem) => (
-                        <li key={personagem.id}>
+                        <li key={personagem.id} className="flex flex-wrap items-center gap-3">
                           {ficha ? (
                             <a
                               href={`${ficha}?id=${personagem.id}`}
@@ -654,6 +663,12 @@ function VisaoDoMestre({
                           ) : (
                             <span className="text-sm text-texto">{personagem.nome}</span>
                           )}
+                          <TransferirDono
+                            personagemId={personagem.id}
+                            nomeFicha={personagem.nome}
+                            donoAtualId={personagem.donoId}
+                            candidatos={pessoas}
+                          />
                         </li>
                       ))}
                     </ul>
@@ -684,6 +699,12 @@ function VisaoDoMestre({
                             <span className="text-sm text-texto">{monstro.nome}</span>
                           )}
                           <DuplicarInimigo campanhaId={campanhaId} personagemId={monstro.id} />
+                          <TransferirDono
+                            personagemId={monstro.id}
+                            nomeFicha={monstro.nome}
+                            donoAtualId={monstro.donoId}
+                            candidatos={pessoas}
+                          />
                         </li>
                       ))}
                     </ul>

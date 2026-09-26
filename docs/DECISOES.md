@@ -7764,6 +7764,47 @@ resto da ficha). Testado: `node -e "new Function(...)"` nos dois
 arquivos, `tsc --noEmit` e os 307 testes automáticos continuam
 passando.
 
+## 172. Trocar o dono de uma ficha (26/09/2026)
+
+O Zé pediu uma permissão pra substituir o dono de uma ficha "no geral":
+o mestre pode conceder a posse de qualquer ficha da campanha (dele ou
+de um jogador) pra qualquer participante, e um jogador pode passar a
+própria ficha pra outro jogador — "tanto faz" quem inicia, é a mesma
+regra dos dois lados.
+
+**Regra do servidor (decisão #13), não da tela.** `PATCH
+/api/personagens/[id]` ganhou um campo opcional `donoId`. Quem PODE
+PEDIR a troca é a mesma checagem que já existia pra editar a ficha
+(`buscarSeFoiDonoOuMestre` — dono, ou mestre/mestre auxiliar da
+campanha, decisão #131/#148); quem PODE SER o novo dono é uma
+validação nova, `podeReceberFicha()` em `src/lib/dono-personagem.ts`:
+só um participante (`Participacao`) da MESMA campanha da ficha — nunca
+uma conta qualquer do Hub, e nunca funciona numa ficha avulsa (sem
+campanha), porque aí não existe uma lista fechada de "pra quem dá pra
+passar". Como o resto do arquivo já faz, a função é pura e testada
+isoladamente (`dono-personagem.test.ts`): dono ou intruso não vira
+dono, participante vira, ficha avulsa nunca troca de dono.
+
+**Onde aparece.** Um componente só, `TransferirDono`
+(`src/app/(hub)/fichas/transferir-dono.tsx`), reaproveitado em três
+lugares:
+
+- Na campanha (`VisaoDoMestre`, aba Grupo): ao lado de cada ficha de
+  cada jogador, e das próprias fichas de personagem/monstro do mestre
+  — candidatos são todos os participantes da campanha (`pessoas`, já
+  existia pra outras telas).
+- Na Página geral do personagem (decisão #135/#149), que só o dono
+  enxerga: um seletor "Transferir esta ficha pra outra pessoa da
+  campanha", só aparece quando a ficha está numa campanha e existe
+  alguém além de quem está olhando pra virar dono.
+
+Pede confirmação (`confirm()`, igual `RemoverJogador` já fazia) porque
+quem perde a posse perde o direito de editar a ficha — só volta a
+editar se alguém devolver a posse depois. Nenhuma mudança de schema
+(`Personagem.donoId` já existia). Testado: `tsc --noEmit`, os 310
+testes automáticos (3 novos, cobrindo `podeReceberFicha`), `next lint`
+e `next build` completos, todos passando.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
