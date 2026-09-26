@@ -106,6 +106,9 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
         nome: personagem.nome,
         dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
         compartilhado: personagem.compartilhado,
+        // Imagem do token (decisão #168) — mesmo campo que a Página geral
+        // do personagem já usa; a própria ficha também mostra e edita.
+        avatarUrl: personagem.avatarUrl,
         // Campanha da ficha (decisão #162) — a ficha usa isto pra buscar as
         // Lojas abertas da própria mesa. null pra ficha avulsa (sem
         // campanha), que continua funcionando normalmente, só sem loja.

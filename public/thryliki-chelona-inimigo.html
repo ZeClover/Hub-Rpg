@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ficha de Inimigo — Thrylikí Chelóna</title>
+<link rel="icon" id="favicon-token" href="/favicon.ico">
 <style>
 /* Mesma paleta do Hub RPG e do resto de Thrylikí Chelóna. */
 :root{
@@ -63,6 +64,8 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
 .derivado .obs{font-size:11px; color:var(--suave); margin-top:2px}
 
 .linha{display:flex; align-items:center; gap:10px}
+.painel-aparencia{background:var(--superficie); border-bottom:1px solid var(--borda); padding:14px 16px}
+.painel-aparencia .linha{flex-wrap:wrap; gap:18px; align-items:flex-start}
 .aviso{border:1px solid rgba(156,55,70,.5); background:rgba(156,55,70,.1);
   border-radius:8px; padding:10px 12px; font-size:13px; margin-top:10px}
 .ok{color:var(--suave); font-size:13px; margin-top:10px}
@@ -93,10 +96,21 @@ main{max-width:940px; margin:0 auto; padding:20px 16px 80px}
   <select id="seletor" style="width:auto;min-width:170px"></select>
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
+  <button id="btToken" hidden title="Imagem do token — aparece no ícone desta aba do navegador">🖼️ Token</button>
   <button id="btExportar">Exportar</button>
   <button id="btImportar">Importar</button>
   <input type="file" id="arquivo" accept="application/json" hidden>
   <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<div id="painelToken" class="painel-aparencia" hidden>
+  <div class="linha" style="align-items:flex-start;gap:16px">
+    <img id="pa-token-preview" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--borda);background:var(--fundo)">
+    <div style="flex:1">
+      <label for="pa-token-url" style="margin-bottom:6px">URL da imagem do token</label>
+      <input id="pa-token-url" placeholder="https://..." style="width:100%">
+      <p class="mini" style="margin-top:6px">Um link de imagem (o Hub não guarda arquivo). Aparece no ícone desta aba do navegador.</p>
+    </div>
+  </div>
 </div>
 <main id="app"></main>
 <script>
@@ -272,9 +286,28 @@ const estado = {
   erroHub: null, // 'nao-encontrado' | null
   ehDono: false,
   podeEditar: false,
+  avatarUrl: '',
 };
 if(!MODO_HUB && estado.inimigos.length) estado.atualId = estado.inimigos[0].id;
 const atual = () => estado.inimigos.find(i => i.id === estado.atualId) || null;
+
+// Token/avatar do personagem (decisão #168) — mesmo campo `avatarUrl` que
+// a Página geral do personagem (decisão #149) já salva; usado também no
+// ícone desta aba do navegador.
+function atualizarFavicon(){
+  const link = document.getElementById('favicon-token');
+  if(link) link.href = estado.avatarUrl || '/favicon.ico';
+}
+function salvarAvatarUrl(url){
+  estado.avatarUrl = url;
+  atualizarFavicon();
+  render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({avatarUrl: url || null}),
+  }).catch(e => console.error('Falha ao salvar imagem do token', e));
+}
 
 async function iniciarModoHub(){
   try{
@@ -288,6 +321,8 @@ async function iniciarModoHub(){
     estado.atualId = inimigo.id;
     estado.ehDono = !!personagem.ehDono;
     estado.podeEditar = !!personagem.podeEditar;
+    estado.avatarUrl = personagem.avatarUrl || '';
+    atualizarFavicon();
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
@@ -347,6 +382,9 @@ function render(){
   }
 
   const inimigo = atual();
+  // Aba do navegador mostra o nome do inimigo, não só "Ficha de Inimigo
+  // — Thrylikí Chelóna" (decisão #168).
+  document.title = (inimigo && inimigo.nome) ? `${inimigo.nome} — Thrylikí Chelóna` : 'Ficha de Inimigo — Thrylikí Chelóna';
   if(!inimigo){
     app.innerHTML = `<div class="vazio"><h2>Nenhum inimigo ainda</h2>
       <p class="mini">Clique em "+ Novo" pra criar a primeira ficha, ou importe um arquivo exportado antes.</p></div>`;
@@ -382,6 +420,10 @@ function desenharBarra(){
     document.getElementById('btExcluir').hidden = true;
     document.getElementById('linkFichas').hidden = false;
     document.getElementById('btImportar').hidden = !estado.ehDono;
+
+    document.getElementById('btToken').hidden = !estado.podeEditar;
+    document.getElementById('pa-token-url').value = estado.avatarUrl || '';
+    document.getElementById('pa-token-preview').src = estado.avatarUrl || '';
     return;
   }
   const sel = document.getElementById('seletor');
@@ -670,6 +712,10 @@ document.getElementById('btExportar').onclick = () => {
   a.click();
   URL.revokeObjectURL(a.href);
 };
+document.getElementById('btToken').onclick = () => {
+  document.getElementById('painelToken').hidden = !document.getElementById('painelToken').hidden;
+};
+document.getElementById('pa-token-url').onchange = (e) => salvarAvatarUrl(e.target.value.trim());
 document.getElementById('btImportar').onclick = () => document.getElementById('arquivo').click();
 document.getElementById('arquivo').onchange = e => {
   const arquivo = e.target.files[0]; if(!arquivo) return;

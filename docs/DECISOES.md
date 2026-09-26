@@ -7607,6 +7607,55 @@ qualquer sessão que adicionou uma migração, se ela foi mesmo colada e
 rodada no Supabase — este caso ficou destrancado por sessões inteiras
 sem ninguém notar.
 
+## 168. Nome e token do personagem na aba do navegador, em todos os sistemas (26/09/2026)
+
+Duas melhorias de interface pedidas pelo Zé, "a partir de agora, em
+todos os sistemas": a aba do navegador (o título que aparece na parte
+de cima, no separador de abas) passa a mostrar o **nome do
+personagem** em vez do nome genérico do sistema, e ganha um **ícone
+próprio** (o token) em vez do ícone padrão do Hub.
+
+**Nome da aba.** Cada uma das 11 fichas do Hub (7 de jogador, 4 de
+monstro) já calculava `p = atual()` (ou equivalente) dentro do próprio
+`render()` — só precisou de uma linha ali, lendo o nome que já está na
+aba Perfil (`p.perfil.nome` na maioria dos sistemas; `p.nome` puro nas
+fichas de monstro de Fabula Ultima, Sistema SAO e Thrylikí Chelóna, que
+não têm objeto "perfil") e escrevendo em `document.title`. Atualiza
+sozinho a cada render — inclusive enquanto a pessoa ainda está
+digitando o nome.
+
+**Token na aba.** Reaproveita o campo `avatarUrl` que já existe desde a
+decisão #149 (Página geral do personagem) — o Hub nunca hospeda
+arquivo (decisão #5, custo zero), então "colocar uma imagem" sempre
+foi colar um link de onde ela já está (Discord, Imgur, Google Drive
+público etc.). A novidade é que agora dá pra colar esse link **de
+dentro da própria ficha**, sem precisar ir na página de gerenciamento
+separada:
+
+- Um botão novo "🖼️ Token" ao lado de "🎨 Aparência" (ou, nos sistemas
+  sem painel de Aparência — Fabula Ultima-inimigo, Sistema SAO,
+  Thrylikí Chelóna, D&D 5e, Hogwarts, e as fichas de monstro desses —
+  um botão avulso que abre o mesmo tipo de painel) abre um campo de
+  URL com pré-visualização circular.
+- O `<link rel="icon">` da página (adicionado de propósito em cada
+  arquivo — antes usava só o favicon padrão do Hub por herança) muda
+  pra essa URL sempre que ela existe, e volta pro favicon padrão
+  quando o campo fica vazio.
+- Salva no mesmo campo `avatarUrl` do personagem (PATCH
+  `/api/personagens/[id]`, decisão #134) — então o token colado aqui é
+  o mesmo que aparece na Página geral do personagem e vice-versa, sem
+  duplicar onde mora essa informação.
+- `GET /api/personagens/[id]` precisou passar a devolver `avatarUrl`
+  na resposta (não devolvia antes — só quem editava pela Página geral
+  é que lia direto do Server Component).
+- Só quem pode editar a ficha (dono ou mestre da campanha) vê o botão
+  — mesma regra de permissão que já vale pra editar a ficha inteira,
+  decisão #131.
+
+Nenhuma mudança de schema, nenhuma dependência nova. Testado: `node -e
+"new Function(...)"` nos 11 arquivos, `tsc --noEmit` e os 307 testes
+automáticos do projeto (`node --test`) continuam passando.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

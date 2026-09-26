@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ficha — Hogwarts RPG</title>
+<link rel="icon" id="favicon-token" href="/favicon.ico">
 <style>
 /* Paleta própria (dourado/vinho) pra diferenciar do resto do Hub — mesma
    base escura dos outros sistemas (decisão #17: cada sistema é um módulo,
@@ -51,6 +52,8 @@ main{max-width:980px; margin:0 auto; padding:16px}
 .grade{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px}
 .grade2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .linha{display:flex; gap:10px; align-items:center}
+.painel-aparencia{background:var(--superficie); border-bottom:1px solid var(--borda); padding:14px 16px}
+.painel-aparencia .linha{flex-wrap:wrap; gap:18px; align-items:flex-start}
 .mini{font-size:12.5px; color:var(--suave)}
 .vazio{padding:60px 16px; text-align:center}
 .pill{display:inline-block; padding:2px 9px; border-radius:999px; font-size:11.5px; border:1px solid var(--borda); color:var(--suave)}
@@ -82,7 +85,18 @@ main{max-width:980px; margin:0 auto; padding:16px}
   <button id="btNovo">+ Novo</button>
   <span class="cresce"></span>
   <span id="statusSalvo" class="status-salvo"></span>
+  <button id="btToken" hidden title="Imagem do token — aparece no ícone desta aba do navegador">🖼️ Token</button>
   <button id="btExcluir" class="perigo">Excluir</button>
+</div>
+<div id="painelToken" class="painel-aparencia" hidden>
+  <div class="linha" style="align-items:flex-start;gap:16px">
+    <img id="pa-token-preview" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--borda);background:var(--fundo)">
+    <div style="flex:1">
+      <label for="pa-token-url" style="margin-bottom:6px">URL da imagem do token</label>
+      <input id="pa-token-url" placeholder="https://..." style="width:100%">
+      <p class="mini" style="margin-top:6px">Um link de imagem (o Hub não guarda arquivo). Aparece no ícone desta aba do navegador.</p>
+    </div>
+  </div>
 </div>
 <main id="app"></main>
 <script>
@@ -690,7 +704,7 @@ const estado = {
   fichas: MODO_HUB ? [] : carregar(),
   atualId: null, aba:'perfil',
   carregandoHub: !!MODO_HUB, erroHub: null,
-  ehDono:false, podeEditar:false, compartilhado:false,
+  ehDono:false, podeEditar:false, compartilhado:false, avatarUrl:'',
   // Modo local (sem ?id=, fora do Hub) não passa pelo servidor — não tem
   // como vazar nada pra ninguém, então mostra tudo. Em Modo Hub, quem
   // decide é a resposta do servidor (decisão #159), nunca o navegador.
@@ -720,6 +734,8 @@ async function iniciarModoHub(){
     // de qualquer forma pra quem não é mestre).
     estado.ehMestre = !!personagem.ehMestre;
     estado.campanhaId = personagem.campanhaId || null;
+    estado.avatarUrl = personagem.avatarUrl || '';
+    atualizarFavicon();
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     estado.erroHub = 'nao-encontrado';
@@ -829,6 +845,20 @@ function alternarCompartilhado(valor){
   fetch(`/api/personagens/${MODO_HUB}`, {
     method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({compartilhado:valor}),
   }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+// Token/avatar do personagem (decisão #168) — mesmo campo `avatarUrl` que
+// a Página geral do personagem (decisão #149) já salva; usado também no
+// ícone desta aba do navegador.
+function atualizarFavicon(){
+  const link = document.getElementById('favicon-token');
+  if(link) link.href = estado.avatarUrl || '/favicon.ico';
+}
+function salvarAvatarUrl(url){
+  estado.avatarUrl = url; atualizarFavicon(); render();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({avatarUrl: url || null}),
+  }).catch(e => console.error('Falha ao salvar imagem do token', e));
 }
 
 function mudar(fn){
@@ -1675,6 +1705,9 @@ function render(){
     return;
   }
   const p = atual();
+  // Aba do navegador mostra o nome do personagem, não só "Ficha —
+  // Hogwarts RPG" (decisão #168) — atualiza a cada render.
+  document.title = (p && p.perfil && p.perfil.nome) ? `${p.perfil.nome} — Hogwarts RPG` : 'Ficha — Hogwarts RPG';
   if(!p){
     app.innerHTML = `<div class="vazio"><h2>Nenhum personagem ainda</h2><p class="mini">Clique em "+ Novo" para criar a primeira ficha.</p></div>`;
     return;
@@ -1703,6 +1736,9 @@ function desenharBarra(){
     const label = document.getElementById('labelCompartilhar');
     label.style.display = estado.ehDono ? 'flex' : 'none';
     document.getElementById('chkCompartilhar').checked = estado.compartilhado;
+    document.getElementById('btToken').hidden = !estado.podeEditar;
+    document.getElementById('pa-token-url').value = estado.avatarUrl || '';
+    document.getElementById('pa-token-preview').src = estado.avatarUrl || '';
     return;
   }
   const sel = document.getElementById('seletor');
@@ -2155,6 +2191,10 @@ document.getElementById('btNovo').onclick = () => {
   estado.fichas.push(p); estado.atualId = p.id;
   salvar(); render();
 };
+document.getElementById('btToken').onclick = () => {
+  document.getElementById('painelToken').hidden = !document.getElementById('painelToken').hidden;
+};
+document.getElementById('pa-token-url').onchange = (e) => salvarAvatarUrl(e.target.value.trim());
 document.getElementById('btExcluir').onclick = () => {
   const p = atual(); if(!p) return;
   if(!confirm(`Excluir "${p.perfil.nome}"? Não tem como desfazer.`)) return;

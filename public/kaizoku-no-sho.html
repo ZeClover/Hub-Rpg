@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ficha de Personagem — Kaizoku no Sho</title>
+<link rel="icon" id="favicon-token" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -332,6 +333,7 @@
     <a href="/kaizoku-no-sho-grimorio.html" target="_blank" style="font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--brass-bright); text-decoration:none; border:1px solid var(--line-strong); border-radius:var(--radius); padding:8px 14px;">📖 Grimório</a>
     <span id="statusSalvo" class="status-salvo" style="align-self:flex-end"></span>
     <button type="button" id="btAparencia" class="btn" style="align-self:flex-end" title="Cor do tema e tamanho da fonte">🎨 Aparência</button>
+    <button type="button" id="btToken" class="btn" hidden style="align-self:flex-end" title="Imagem do token — aparece no ícone desta aba do navegador">🖼️ Token</button>
     <button type="button" id="btnModoGuiado" class="btn" style="align-self:flex-end">🧭 Modo Guiado</button>
   </header>
 
@@ -377,6 +379,19 @@
         <label>Abas — reordenar e esconder</label>
         <div class="abas-gerenciar" id="pa-abas"></div>
         <p class="panel-note" style="margin-top:6px">Precisa deixar pelo menos uma visível. Só afeta este navegador, não o personagem.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="painelToken" class="painel-aparencia" hidden>
+    <div class="linha" style="align-items:flex-start;gap:16px">
+      <img id="pa-token-preview" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--line-strong);background:var(--navy-deep)">
+      <div class="field" style="flex:1">
+        <label for="pa-token-url">URL da imagem do token</label>
+        <input id="pa-token-url" placeholder="https://..." style="width:100%">
+        <p class="panel-note" style="margin-top:6px">Um link de imagem (o Hub não guarda arquivo — cole o link de onde ela já está
+          hospedada, ex.: Discord, Imgur, Google Drive público). Aparece no ícone desta aba do navegador,
+          pra achar a aba certa com várias fichas abertas.</p>
       </div>
     </div>
   </div>
@@ -3960,6 +3975,11 @@ function montarPainelAparencia(){
     const painel = document.getElementById('painelAparencia');
     painel.hidden = !painel.hidden;
   });
+  document.getElementById('btToken').addEventListener('click', () => {
+    const painel = document.getElementById('painelToken');
+    painel.hidden = !painel.hidden;
+  });
+  document.getElementById('pa-token-url').onchange = (e) => salvarAvatarUrl(e.target.value.trim());
 }
 
 // Indicador de "Salvando.../Salvo" — atualizado direto no elemento, sem
@@ -4250,6 +4270,7 @@ const state = {
   ehDono: false,
   podeEditar: false,
   compartilhado: false,
+  avatarUrl: '',
   // Resumo transitório do último Level Up — só de exibição, não é salvo na
   // ficha (some ao trocar de aba ou ao fechar).
   levelUpResumo: null,
@@ -4296,6 +4317,8 @@ async function iniciarModoHub(){
     state.ehDono = !!personagem.ehDono;
     state.podeEditar = !!personagem.podeEditar;
     state.compartilhado = !!personagem.compartilhado;
+    state.avatarUrl = personagem.avatarUrl || '';
+    atualizarFavicon();
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
     state.erroHub = 'nao-encontrado';
@@ -4314,6 +4337,24 @@ function alternarCompartilhado(valor){
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({compartilhado: valor}),
   }).catch(e => console.error('Falha ao mudar compartilhamento', e));
+}
+
+// Token/avatar do personagem (decisão #168) — mesmo campo `avatarUrl` que
+// a Página geral do personagem (decisão #149) já salva; usado também no
+// ícone desta aba do navegador.
+function atualizarFavicon(){
+  const link = document.getElementById('favicon-token');
+  if(link) link.href = state.avatarUrl || '/favicon.ico';
+}
+function salvarAvatarUrl(url){
+  state.avatarUrl = url;
+  atualizarFavicon();
+  renderRosterBar();
+  fetch(`/api/personagens/${MODO_HUB}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({avatarUrl: url || null}),
+  }).catch(e => console.error('Falha ao salvar imagem do token', e));
 }
 
 function personagemAtual(){
@@ -5280,6 +5321,10 @@ function renderRosterBarHub(){
     URL.revokeObjectURL(url);
   });
 
+  document.getElementById('btToken').hidden = !state.podeEditar;
+  document.getElementById('pa-token-url').value = state.avatarUrl || '';
+  document.getElementById('pa-token-preview').src = state.avatarUrl || '';
+
   if(!state.ehDono) return;
 
   document.getElementById('btnImportar').addEventListener('click', ()=>{
@@ -5635,6 +5680,9 @@ function renderAll(){
   }
 
   const p = personagemAtual();
+  // Aba do navegador mostra o nome do personagem, não só "Ficha de
+  // Personagem — Kaizoku no Sho" (decisão #168) — atualiza a cada render.
+  document.title = (p && p.perfil && p.perfil.nome) ? `${p.perfil.nome} — Kaizoku no Sho` : 'Ficha de Personagem — Kaizoku no Sho';
   aplicarTema(p ? p.temaCor : TEMA_PADRAO);
   if(!p){
     root.innerHTML = `<div class="empty-state"><h2>Nenhum personagem ainda</h2><p>Clique em "+ Novo" para criar sua primeira ficha, ou importe um arquivo JSON exportado anteriormente.</p></div>`;
