@@ -7656,6 +7656,66 @@ Nenhuma mudança de schema, nenhuma dependência nova. Testado: `node -e
 "new Function(...)"` nos 11 arquivos, `tsc --noEmit` e os 307 testes
 automáticos do projeto (`node --test`) continuam passando.
 
+## 169. The Celestials — Vantagem de Habilidade Imediata, Dano em Passiva e Combatente universal (26/09/2026)
+
+Quatro ajustes de mecânica em The Celestials (jogador e monstro), pedidos
+pelo Zé a partir de um exemplo real do traço Combatente ("Dano
+desarmado").
+
+**1. Passiva também pode mirar "Dano".** A aba Passivas ganhou o mesmo
+checkbox que Habilidade já tinha ("Também aplicar no Dano") assim que
+"Vantagem/Desvantagem" é marcado. Funções novas
+`bonusVantagemDanoPassiva`/`bonusPassivasDano`/`avisosDadoPassivasDano`
+espelham exatamente `bonusVantagemDano`/`bonusHabilidadesDano`/
+`avisosDadoHabilidadesDano` de Habilidade, e entram nos mesmos três
+lugares que já somavam o bônus de Habilidade: o card "⚔️ Dano Padrão de
+Ataques", o resumo expandido de cada Habilidade (aba Habilidades) e o
+resumo compacto de cada Habilidade (aba Combate) — uma Habilidade de
+Dano soma o Buff de uma Passiva do mesmo jeito que soma o de outra
+Habilidade ou de um item.
+
+**2. Vantagem de Habilidade Imediata conta um Nível acima.** Só pra
+coluna "Vantagem" da tabela (nunca pra Dano/Cura/Movimento/RD/Alcance/
+Duração): Nível efetivo 1 já lê a linha do Nível 2 (2d12/+12), Nível 2
+lê a linha 3, e assim por diante — Imediata é instantânea e "gasta" na
+hora, então a mesa topou ela valer mais nesse efeito específico. Função
+nova `vantagemNivelEfetivo(h)` = `habilidadeNivelEfetivo(h) + 1` só
+quando `tipo === 'imediata'` (senão é igual ao Nível efetivo normal),
+usada em todo lugar que antes lia `TABELA_HABILIDADE[...].vantagem`:
+`bonusVantagemDano`, `avisosDadoHabilidadesDano`,
+`bonusHabilidadesPericia`, `avisosDadoPericia` e a UI de cada
+Habilidade (`habilidadeLinha`, `habilidadeResumoCombate`).
+
+**3. Confirmação de design, sem código novo:** a Vantagem em Dano de
+uma Habilidade só conta enquanto ela vale agora
+(`habilidadeBonusContaAgora` — Sustentada/Duradoura só enquanto Ativa,
+Imediata sempre, regra que já existia). A Vantagem em Dano de uma
+Passiva **nunca** tem esse gatilho — por isso os `bonus*Passiva*` do
+item 1 não chamam `habilidadeBonusContaAgora` em lugar nenhum, ao
+contrário dos equivalentes de Habilidade.
+
+**4. Traço Combatente vira bônus passivo universal, não só desarmado.**
+Antes, `danoDesarmadoTexto(p)` devolvia "1d6 + Nd4" inteiro (dano de
+arma Pequena junto com o Nível÷4 d4 do traço), e só aparecia quando o
+personagem lutava desarmado. Agora ela devolve só o dado da arma
+Pequena (continua exclusivo de ataque desarmado — não faz sentido bater
+com espada E "sem arma" ao mesmo tempo); o Nível÷4 d4 virou a função
+`avisoDadoCombatente(p)`, que soma como aviso de dado extra em
+**qualquer** ataque de um Combatente — arma equipada, desarmado ou dano
+de Habilidade — porque é um traço passivo do personagem, não algo preso
+à luta desarmada. Entra no card "⚔️ Dano Padrão de Ataques" e no
+resumo de dano de cada Habilidade, do lado dos avisos de item/Habilidade/
+Passiva Buff em modo Dado (nunca simula rolagem — só lembra a pessoa de
+rolar).
+
+Tudo espelhado nos dois arquivos (`sistema-do-savio.html` e
+`sistema-do-savio-inimigo.html`), com a versão de monstro escalando
+pela Dificuldade do jeito que já fazia (`porDificuldade`/
+`comSufixoDificuldade`). Nenhuma mudança de schema. Testado: `node -e
+"new Function(...)"` nos dois arquivos, `tsc --noEmit` e os 307 testes
+automáticos (`node --test`) continuam passando, além de checagem manual
+de cada função nova/alterada fora do navegador.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

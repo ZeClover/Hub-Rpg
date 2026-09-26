@@ -391,12 +391,23 @@ const TAMANHOS_ARMA = [
 // de Habilidade+arma mostrava 2d6 de graça pra quem nem tinha arma nenhuma.
 function armaEquipada(p){ return !!(p.arma && p.arma.nome && p.arma.nome.trim()); }
 // Combatente ataca desarmado por natureza (traço "Dano desarmado", decisão
-// #123): dano de arma Pequena + Nível÷4 d4. Quando uma Habilidade marca
-// "Ataque com arma equipada" mas o personagem é Combatente e não tem arma
-// nomeada, o combo cai nesse valor em vez de não somar nada — sem isso, o
-// traço central da Especialização ficava fora do combo de Dano.
+// #123): dano de arma Pequena quando o soco/chute substitui a arma. Quando
+// uma Habilidade marca "Ataque com arma equipada" mas o personagem é
+// Combatente e não tem arma nomeada, o combo cai nesse valor em vez de não
+// somar nada — sem isso, o traço central da Especialização ficava fora do
+// combo de Dano. O Nível÷4 d4 do traço NÃO mora mais aqui: virou um bônus
+// passivo universal (avisoDadoCombatente) que soma em qualquer ataque,
+// armado ou não, não só no desarmado.
 function danoDesarmadoTexto(p){
-  return `${TAMANHOS_ARMA.find(t=>t.id==='pequena').dano} + ${combatenteBonusDados(p)}d4`;
+  return TAMANHOS_ARMA.find(t=>t.id==='pequena').dano;
+}
+// Combatente soma Nível÷4 d4 (mínimo 1d4) em QUALQUER dano — arma, ataque
+// desarmado ou efeito de Dano de Habilidade — não só desarmado (traço
+// "Dano desarmado" é passivo, não exclusivo de luta desarmada). Vira um
+// aviso de dado extra, igual item/Habilidade Buff no modo Dado, porque a
+// ficha nunca simula rolagem sozinha.
+function avisoDadoCombatente(p){
+  return p.especializacaoId === 'combatente' ? `${combatenteBonusDados(p)}d4 (traço Combatente)` : null;
 }
 
 // Tabela de bônus por Nível de Habilidade — o coração do sistema livre. O
@@ -493,6 +504,16 @@ function habilidadeNivelEfetivo(h){
   nivel -= Math.max(0, n - 1);
   return Math.max(1, Math.min(7, nivel));
 }
+// Habilidade Imediata concedendo Vantagem/Desvantagem conta 1 Nível acima
+// só pro VALOR da Vantagem (Nível 1 vale como o 2 — 2d12 —, Nível 2 vale
+// como o 3, e assim por diante): o efeito instantâneo de Vantagem é mais
+// fraco que Sustentada/Duradoura (que ficam ativas rodada após rodada),
+// isso compensa. Nunca mexe no Nível efetivo dos outros efeitos
+// (Dano/Cura/Movimento/RD) da mesma Habilidade — só a coluna Vantagem.
+function vantagemNivelEfetivo(h){
+  const nivel = habilidadeNivelEfetivo(h) + (h.tipo === 'imediata' ? 1 : 0);
+  return Math.max(1, Math.min(7, nivel));
+}
 // Traço automático de Especialização que soma direto no efeito de uma
 // Habilidade — hoje só Suporte (Cura) e Guerreiro Mágico (Dano ou Cura),
 // os dois na mesma fórmula: +2×Nível da Habilidade + maior Atributo.
@@ -525,7 +546,7 @@ function bonusVantagemDano(h){
   if(!h.efeitos || !h.efeitos.vantagem || !h.vantagemBuffaDano) return 0;
   if((h.tipoBonus||'soma') !== 'soma') return 0;
   if(!habilidadeBonusContaAgora(h)) return 0;
-  const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
+  const linhaTabela = TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1];
   return bonusFixoDoTexto(linhaTabela.vantagem);
 }
 // Soma o bonusVantagemDano de TODAS as Habilidades — usado em qualquer
@@ -540,7 +561,7 @@ function bonusHabilidadesDano(p){
 function avisosDadoHabilidadesDano(p){
   return (p.habilidades||[]).filter(h =>
     h.efeitos && h.efeitos.vantagem && h.vantagemBuffaDano && h.tipoBonus==='dado' && habilidadeBonusContaAgora(h)
-  ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
+  ).map(h => `${TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
 
 // Passivas evoluem em 3 degraus (Nível interno 0 → 1 → 2, via o mesmo
@@ -581,6 +602,29 @@ function passivaEfeitosEscolhidos(h){
 function passivaValorEfeito(h, chave){
   const evolucao = passivaEvolucaoInfo(h);
   return chave === 'alcance' ? evolucao.alcance : evolucao.valor;
+}
+
+// Vantagem/Desvantagem de uma Passiva pode mirar Dano em geral, igual a
+// Habilidade faz (mesmo checkbox "Também aplicar no Dano"). A diferença é
+// que a Passiva NUNCA tem gatilho de "só enquanto Ativa" — ela é sempre
+// ativa por natureza, então esse bônus conta o tempo todo, sem depender de
+// habilidadeBonusContaAgora.
+function bonusVantagemDanoPassiva(h){
+  if(!h.efeitos || !h.efeitos.vantagem || !h.vantagemBuffaDano) return 0;
+  if((h.tipoBonus||'soma') !== 'soma') return 0;
+  return bonusFixoDoTexto(passivaEvolucaoInfo(h).valor);
+}
+// Soma o bonusVantagemDanoPassiva de TODAS as Passivas — mesma ideia de
+// bonusHabilidadesDano, usado em qualquer lugar que mostra Dano.
+function bonusPassivasDano(p){
+  return (p.passivas||[]).reduce((total, h) => total + bonusVantagemDanoPassiva(h), 0);
+}
+// Passivas de Buff (Vantagem mirando Dano) no modo "Dado" — não somam no
+// Total, só viram um aviso de texto (mesma convenção de Habilidade/item).
+function avisosDadoPassivasDano(p){
+  return (p.passivas||[]).filter(h =>
+    h.efeitos && h.efeitos.vantagem && h.vantagemBuffaDano && h.tipoBonus==='dado'
+  ).map(h => `${passivaEvolucaoInfo(h).valor.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
 
 const TIPOS_HABILIDADE = [
@@ -1111,7 +1155,7 @@ function bonusHabilidadesPericia(p, periciaId){
     if((h.tipoBonus||'soma') !== 'soma') return total;
     if(!habilidadeBonusContaAgora(h)) return total;
     if(!h.efeitos || !h.efeitos.vantagem) return total;
-    const linhaTabela = TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1];
+    const linhaTabela = TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1];
     return total + bonusFixoDoTexto(linhaTabela.vantagem);
   }, 0);
 }
@@ -1125,7 +1169,7 @@ function avisosDadoPericia(p, periciaId){
     (h.periciasAlvo||[]).includes(periciaId) && (h.tipoBonus||'soma') === 'dado' &&
     habilidadeBonusContaAgora(h) &&
     h.efeitos && h.efeitos.vantagem
-  ).map(h => `${TABELA_HABILIDADE[habilidadeNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
+  ).map(h => `${TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1].vantagem.split(' ou ')[0]} de ${esc(h.nome)||'(sem nome)'}`);
 }
 // Total de uma Perícia: Atributo + (Nível ÷ 4, arredondado pra cima) +
 // (5 se for treinada, senão 0) + bônus fixo de Passivas apontadas pra
@@ -2361,9 +2405,13 @@ function abaClasse(p){
   ${p.especializacaoId === 'combatente' ? `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Dano desarmado</h3>
     <p class="mini">Ataque desarmado causa <strong>dano de arma Pequena
-      (${TAMANHOS_ARMA.find(t=>t.id==='pequena').dano}) + ${combatenteBonusDados(p)}d4</strong>
-      (Nível÷4, arredondado pra baixo, mínimo 1d4) em qualquer tipo de
-      dano.</p>
+      (${TAMANHOS_ARMA.find(t=>t.id==='pequena').dano})</strong> em qualquer
+      tipo de dano.</p>
+    <p class="mini" style="margin-top:8px">Além disso, <strong>${combatenteBonusDados(p)}d4</strong>
+      (Nível÷4, arredondado pra baixo, mínimo 1d4) é um bônus <strong>passivo</strong>
+      que soma em QUALQUER ataque — armado, desarmado ou dano de Habilidade —,
+      não só no golpe desarmado. Aparece como aviso de dado extra em "Dano
+      Padrão de Ataques" e em cada Habilidade de Dano.</p>
   </div>
   <div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">Reflexos ou Fortitude</h3>
@@ -2439,6 +2487,10 @@ function habilidadeLinha(h, i, p){
   const contagemEfeitos = habilidadeContagemEfeitos(h);
   const nivelEfetivo = habilidadeNivelEfetivo(h);
   const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
+  // Vantagem/Desvantagem usa a própria tabela (Imediata conta 1 Nível
+  // acima só pra ela — vantagemNivelEfetivo) — nunca a mesma linha de
+  // Dano/Cura/Movimento/RD da Habilidade.
+  const linhaTabelaVantagem = TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1];
   const tipoNome = (TIPOS_HABILIDADE.find(t=>t.id===h.tipo)||TIPOS_HABILIDADE[2]).nome;
   const expandida = estado.habExpandidas.has(i);
 
@@ -2501,16 +2553,21 @@ function habilidadeLinha(h, i, p){
           const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma`
             : ehCombatenteDesarmado ? ` + ${danoDesarmadoTexto(p)} desarmado (traço Combatente)` : '';
           const bonusVantDano = e.chave === 'dano' ? bonusHabilidadesDano(p) : 0;
+          const bonusVantDanoPas = e.chave === 'dano' ? bonusPassivasDano(p) : 0;
           const bonusItemDano = e.chave === 'dano' ? bonusItensDano(p) : 0;
+          const avisoCombatente = e.chave === 'dano' ? avisoDadoCombatente(p) : null;
           return `<div class="derivado">
           <div class="rot">${e.rotulo}</div>
-          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}${bonusVantDano ? ` + ${bonusVantDano}` : ''}${bonusItemDano ? ` + ${bonusItemDano}` : ''}</div>
+          <div class="val" style="font-size:16px">${linhaTabela[e.coluna]}${extraArma}${bonusVantDano ? ` + ${bonusVantDano}` : ''}${bonusVantDanoPas ? ` + ${bonusVantDanoPas}` : ''}${bonusItemDano ? ` + ${bonusItemDano}` : ''}</div>
           ${bonusClasse ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusClasse} do traço de ${especializacao(p).nome}</div>` : ''}
           ${bonusArma ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusArma} do traço de Mestre das Armas (maior Atributo com arma equipada)</div>` : ''}
           ${e.chave === 'dano' && h.usaArma && !armaEquipada(p) && !ehCombatenteDesarmado ? `<div class="obs" style="color:var(--alerta)">Marcado "com arma", mas não tem arma nomeada na aba Combate</div>` : ''}
           ${bonusVantDano ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusVantDano} da Vantagem/Desvantagem desta Habilidade</div>` : ''}
+          ${bonusVantDanoPas ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusVantDanoPas} da Vantagem/Desvantagem de uma Passiva</div>` : ''}
           ${bonusItemDano ? `<div class="obs" style="color:var(--roxo-forte)">+${bonusItemDano} de item Buff equipado (mira em Dano)</div>` : ''}
+          ${avisoCombatente ? `<div class="obs" style="color:var(--roxo-forte)">${avisoCombatente} extra no Dano (role junto, a ficha não soma)</div>` : ''}
           ${e.chave === 'dano' ? avisosDadoHabilidadesDano(p).map(txt => `<div class="obs" style="color:var(--roxo-forte)">${txt} extra no Dano (role junto, a ficha não soma)</div>`).join('') : ''}
+          ${e.chave === 'dano' ? avisosDadoPassivasDano(p).map(txt => `<div class="obs" style="color:var(--roxo-forte)">${txt} extra no Dano (role junto, a ficha não soma)</div>`).join('') : ''}
           ${e.chave === 'dano' ? avisosDadoItemDano(p).map(txt => `<div class="obs" style="color:var(--roxo-forte)">${txt} extra no Dano (role junto, a ficha não soma)</div>`).join('') : ''}
         </div>`;
         }).join('')}
@@ -2522,7 +2579,7 @@ function habilidadeLinha(h, i, p){
       ${h.efeitos && h.efeitos.vantagem ? (() => {
         const gatilho = h.tipo === 'imediata' ? '' : ' Só conta enquanto a Habilidade estiver Ativa.';
         return `<div style="margin-top:8px">
-        <label>Aplicar a Vantagem/Desvantagem (${linhaTabela.vantagem}) em quais Perícias? (opcional.${gatilho} Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
+        <label>Aplicar a Vantagem/Desvantagem (${linhaTabelaVantagem.vantagem}) em quais Perícias? (opcional.${gatilho} Não dá pra empilhar na mesma Perícia; apontar pra mais de uma Perícia conta como mais de um efeito combinado.)</label>
         ${(h.periciasAlvo||[]).length ? (h.periciasAlvo||[]).map((perId,pi) => {
           const per = PERICIAS.find(x=>x.id===perId);
           return `<div class="linha" style="margin-top:4px;align-items:center;gap:8px">
@@ -2541,11 +2598,11 @@ function habilidadeLinha(h, i, p){
           <input type="checkbox" data-hab-flag="${i}|vantagemBuffaDano" ${h.vantagemBuffaDano?'checked':''}> Também aplicar no Dano (arma equipada e qualquer Habilidade de Dano, soma junto no modo Soma — dá pra usar até numa Habilidade só de Buff, sem efeito de Dano nenhum)
         </label>
         ${(h.periciasAlvo||[]).length || h.vantagemBuffaDano ? `<select data-hab-select="${i}|tipoBonus" style="margin-top:8px">
-          <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabela.vantagem)} em cada, entra no Total)</option>
-          <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabela.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
+          <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(linhaTabelaVantagem.vantagem)} em cada, entra no Total)</option>
+          <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${linhaTabelaVantagem.vantagem.split(' ou ')[0]} em cada, rola na hora)</option>
         </select>` : ''}
-        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabela.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${gatilho ? ' enquanto esta Habilidade estiver Ativa.' : '.'}</p>` : ''}
-        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabela.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias)${gatilho ? ' enquanto esta Habilidade estiver Ativa' : ''} — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
+        ${(h.periciasAlvo||[]).length && (h.tipoBonus||'soma')==='soma' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">+${bonusFixoDoTexto(linhaTabelaVantagem.vantagem)} soma no Total de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${gatilho ? ' enquanto esta Habilidade estiver Ativa.' : '.'}</p>` : ''}
+        ${(h.periciasAlvo||[]).length && h.tipoBonus==='dado' ? `<p class="mini" style="color:var(--roxo-forte);margin-top:4px">Aviso de ${linhaTabelaVantagem.vantagem.split(' ou ')[0]} aparece junto de ${(h.periciasAlvo||[]).map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')} (aba Perícias)${gatilho ? ' enquanto esta Habilidade estiver Ativa' : ''} — role o dado extra na hora, a ficha não soma isso no Total.</p>` : ''}
       </div>`; })() : ''}
     </div>
     <div class="linha" style="margin-top:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 10px;border:1px solid var(--borda);border-radius:8px">
@@ -2838,7 +2895,10 @@ function passivaLinha(h, i){
           </select>
           <button data-pas-pericia-add="${i}">+ Perícia</button>
         </div>
-        ${(h.periciasAlvo||[]).length ? `<select data-pas-select="${i}|tipoBonus" style="margin-top:8px">
+        <label class="checagem" style="margin-top:8px;display:block">
+          <input type="checkbox" data-pas-flag="${i}|vantagemBuffaDano" ${h.vantagemBuffaDano?'checked':''}> Também aplicar no Dano (arma equipada e qualquer Habilidade de Dano, soma junto no modo Soma — a Passiva conta sempre, não só enquanto algo estiver Ativo)
+        </label>
+        ${(h.periciasAlvo||[]).length || h.vantagemBuffaDano ? `<select data-pas-select="${i}|tipoBonus" style="margin-top:8px">
           <option value="soma" ${(h.tipoBonus||'soma')==='soma'?'selected':''}>Soma (+${bonusFixoDoTexto(evolucao.valor)} em cada, entra no Total)</option>
           <option value="dado" ${h.tipoBonus==='dado'?'selected':''}>Dado (${evolucao.valor.split(' ou ')[0]} em cada, rola na hora)</option>
         </select>` : ''}
@@ -2881,6 +2941,7 @@ function habilidadeResumoCombate(h, i, p){
   const efeitosEscolhidos = habilidadeEfeitosEscolhidos(h);
   const nivelEfetivo = habilidadeNivelEfetivo(h);
   const linhaTabela = TABELA_HABILIDADE[nivelEfetivo-1];
+  const linhaTabelaVantagem = TABELA_HABILIDADE[vantagemNivelEfetivo(h)-1];
   const resumoEfeitos = [
     `Alcance ${linhaTabela.alcance}`,
     `Duração ${linhaTabela.duracao}`,
@@ -2890,8 +2951,10 @@ function habilidadeResumoCombate(h, i, p){
       const extraArma = (e.chave === 'dano' && h.usaArma && armaEquipada(p)) ? ` + ${TAMANHOS_ARMA.find(t=>t.id===p.arma.tamanho).dano}${bonusArma ? `+${bonusArma}` : ''} da arma`
         : (e.chave === 'dano' && h.usaArma && !armaEquipada(p) && p.especializacaoId === 'combatente') ? ` + ${danoDesarmadoTexto(p)} desarmado` : '';
       const bonusVantDano = e.chave === 'dano' ? bonusHabilidadesDano(p) : 0;
+      const bonusVantDanoPas = e.chave === 'dano' ? bonusPassivasDano(p) : 0;
       const bonusItemDano = e.chave === 'dano' ? bonusItensDano(p) : 0;
-      const valorTexto = `${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}${bonusVantDano ? ` +${bonusVantDano} (Vantagem)` : ''}${bonusItemDano ? ` +${bonusItemDano} (item)` : ''}`;
+      const avisoCombatente = e.chave === 'dano' ? avisoDadoCombatente(p) : null;
+      const valorTexto = `${linhaTabela[e.coluna]}${extraArma}${bonusClasse ? ` +${bonusClasse} (traço)` : ''}${bonusArma ? ` +${bonusArma} (traço Mestre das Armas)` : ''}${bonusVantDano ? ` +${bonusVantDano} (Vantagem)` : ''}${bonusVantDanoPas ? ` +${bonusVantDanoPas} (Passiva)` : ''}${bonusItemDano ? ` +${bonusItemDano} (item)` : ''}${avisoCombatente ? ` + ${avisoCombatente}` : ''}`;
       return `${e.rotulo}: ${e.chave === 'dano' ? `<strong>${valorTexto}</strong>` : valorTexto}`;
     }),
   ].join(' · ');
@@ -2905,7 +2968,7 @@ function habilidadeResumoCombate(h, i, p){
       <p class="mini">${tipoNome} · Nível ${h.nivel}${nivelEfetivo!==h.nivel?` (efetivo ${nivelEfetivo})`:''}${h.tipo === 'sustentada' ? ' · sem Dano/Cura' : ''}${h.reacao?' · reação':''}</p>
       ${resumoEfeitos ? `<p class="mini">${resumoEfeitos}</p>` : ''}
       ${h.efeito ? `<p class="mini">${esc(h.efeito)}</p>` : ''}
-      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabela.vantagem)}` : linhaTabela.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeBonusContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
+      ${(h.periciasAlvo||[]).length ? `<p class="mini" style="color:var(--roxo-forte)">${(h.tipoBonus||'soma')==='soma' ? `+${bonusFixoDoTexto(linhaTabelaVantagem.vantagem)}` : linhaTabelaVantagem.vantagem.split(' ou ')[0]} em ${h.periciasAlvo.map(id=>PERICIAS.find(per=>per.id===id).nome).join(', ')}${habilidadeBonusContaAgora(h) ? '' : ' (só enquanto Ativa)'}</p>` : ''}
       <span class="mini" style="${h.ativa?'color:var(--roxo-forte)':''}">
         ${h.tipo === 'imediata' ? 'Instantânea — não fica ativa'
           : h.ativa
@@ -2925,9 +2988,13 @@ function habilidadeResumoCombate(h, i, p){
 // sendo usada, por isso aparecem no card de cada Habilidade, não aqui),
 // toda Habilidade ATIVA marcada como Buff de Dano (bonusHabilidadesDano
 // já filtra por habilidadeBonusContaAgora — só conta Sustentada/Duradoura
-// enquanto ligada) e todo item Buff Equipado mirando Dano. Nunca simula
-// rolagem de dado (decisão do projeto): o "1d6"/"2d6" da arma continua
-// sendo a pessoa quem rola, só o bônus fixo é somado de verdade.
+// enquanto ligada), toda Passiva marcada como Buff de Dano (bonusPassivasDano
+// conta sempre, sem esse filtro — Passiva é sempre ativa) e todo item Buff
+// Equipado mirando Dano. O Nível÷4 d4 do traço Combatente também vira aviso
+// aqui, em qualquer ataque (armado ou não), não só desarmado. Nunca simula
+// rolagem de dado (decisão do projeto): o "1d6"/"2d6" da arma e os d4/d12
+// de aviso continuam sendo a pessoa quem rola, só o bônus fixo é somado de
+// verdade.
 function blocoDanoPadrao(p){
   const equipada = armaEquipada(p);
   const desarmadoComTraco = !equipada && p.especializacaoId === 'combatente';
@@ -2947,13 +3014,15 @@ function blocoDanoPadrao(p){
   // (bonusArmaMestreDasArmas), o traço não vale pra ataque desarmado.
   const bonusMestre = (equipada && p.especializacaoId === 'mestre-das-armas') ? maiorAtributo(p) : 0;
   const bonusHab = bonusHabilidadesDano(p);
+  const bonusPas = bonusPassivasDano(p);
   const bonusItem = bonusItensDano(p);
-  const totalFixo = bonusMestre + bonusHab + bonusItem;
+  const totalFixo = bonusMestre + bonusHab + bonusPas + bonusItem;
 
   const partes = [
     base,
     bonusMestre ? `+${bonusMestre} (traço Mestre das Armas)` : '',
     bonusHab ? `+${bonusHab} (Habilidade ativa de Buff)` : '',
+    bonusPas ? `+${bonusPas} (Passiva de Buff)` : '',
     bonusItem ? `+${bonusItem} (item Buff equipado)` : '',
   ].filter(Boolean).join(' ');
 
@@ -2961,11 +3030,12 @@ function blocoDanoPadrao(p){
   // único limiar de atributo em dado (os outros somam número puro, já
   // embutido em PV/PE/Sanidade), então nunca vira número aqui, só aviso.
   const avisosLimiarForca = limiaresAtivos(atributoEfetivo(p,'forca'),'forca').map(l => l.txt);
-  const avisos = [...avisosLimiarForca, ...avisosDadoHabilidadesDano(p), ...avisosDadoItemDano(p)];
+  const avisoCombatente = avisoDadoCombatente(p);
+  const avisos = [...avisosLimiarForca, ...(avisoCombatente ? [avisoCombatente] : []), ...avisosDadoHabilidadesDano(p), ...avisosDadoPassivasDano(p), ...avisosDadoItemDano(p)];
 
   return `<div class="cartao">
     <h3 style="font-size:16px;margin-bottom:10px">⚔️ Dano Padrão de Ataques</h3>
-    <p class="mini">Dano de um golpe comum agora — ${equipada ? 'com a arma equipada' : 'desarmado'} —, já somando todo traço de classe, Habilidade ativa e item Buff equipado que mirar Dano.</p>
+    <p class="mini">Dano de um golpe comum agora — ${equipada ? 'com a arma equipada' : 'desarmado'} —, já somando todo traço de classe, Habilidade ativa, Passiva e item Buff equipado que mirar Dano.</p>
     <p style="font-size:20px;font-weight:600;margin-top:8px">${partes}</p>
     <p class="mini" style="margin-top:4px">Base: ${origemBase}${totalFixo ? ` · bônus fixo somado: +${totalFixo}` : ' · nenhum bônus fixo ativo agora'} · esquiva: ${tam.esquiva}</p>
     ${avisos.length ? `<p class="mini" style="color:var(--roxo-forte);margin-top:6px">Role também: ${avisos.join(', ')} (modo Dado — não entra na soma, é a pessoa quem rola)</p>` : ''}
@@ -4077,7 +4147,7 @@ function ligarEventos(){
   app.querySelectorAll('[data-pas-remover]').forEach(b =>
     b.onclick = () => mudar(p => p.passivas.splice(Number(b.dataset.pasRemover), 1)));
   const addPas = document.getElementById('btAddPassiva');
-  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', nivelInterno:0, efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', inata:false}));
+  if(addPas) addPas.onclick = () => mudar(p => p.passivas.push({nome:'', nivelInterno:0, efeito:'', efeitos:{}, periciasAlvo:[], tipoBonus:'soma', inata:false, vantagemBuffaDano:false}));
 }
 
 /* --- Barra do topo ------------------------------------------------------ */
