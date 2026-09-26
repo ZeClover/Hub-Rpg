@@ -7716,6 +7716,32 @@ pela Dificuldade do jeito que já fazia (`porDificuldade`/
 automáticos (`node --test`) continuam passando, além de checagem manual
 de cada função nova/alterada fora do navegador.
 
+## 170. Ícone geral do Hub trocado pro d20 (26/09/2026)
+
+O Zé mandou uma imagem nova (um d20 brilhante dentro de um emblema
+ornamentado, com pontas coloridas nas quatro direções) pra virar o
+ícone geral do Hub — a aba do navegador quando nenhuma ficha está
+aberta, o ícone do app quando instalado como PWA (decisão #128) e o
+ícone da tela inicial no celular/iPhone.
+
+Três arquivos trocados, mesmos nomes de sempre (nenhuma referência em
+código precisou mudar):
+
+- `public/icone-192.png` (ícone principal, `<link rel="icon">` da
+  Página geral e ícone de instalação do PWA)
+- `public/icone-512.png` (ícone grande do manifesto do PWA)
+- `src/app/favicon.ico` (convenção de arquivo do Next.js — serve
+  sozinho em `/favicon.ico`; agora com três resoluções embutidas —
+  16, 32 e 48px — em vez de uma só, pra ficar nítido em qualquer
+  tamanho de aba)
+
+A imagem original (1292×1217, fundo transparente) foi redimensionada
+mantendo a proporção dentro de um quadrado transparente (sem cortar
+nem esticar) pras três resoluções acima. A imagem em si não passou
+pelo Hub em nenhum momento além desta troca pontual de arquivo — não é
+upload de usuário, é ícone fixo do próprio app (decisão #5, custo
+zero: continua sendo só arquivo estático, nada de serviço pago).
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.
