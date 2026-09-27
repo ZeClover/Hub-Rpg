@@ -215,11 +215,24 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   // requisição tenha mandado nesse campo (decisão #159): o dono não
   // escreve segredo de Mestre nem por engano nem de propósito.
   const ehMestre = !ehDono;
-  const dadosParaSalvar = !temDados
+  let dadosParaSalvar = !temDados
     ? undefined
     : ehMestre
       ? corpo.dados
       : { ...(corpo.dados as Record<string, unknown>), _mestre: (existente.dados as Record<string, unknown> | null)?._mestre };
+
+  // Conteúdos de Hogwarts são progressão, não um campo livre da ficha.
+  // Donos usam a rota validada de formação inicial; só o Mestre pode
+  // liberar/conceder/promover. Isto impede auto-concessão via PATCH manual.
+  if (temDados && ehDono) {
+    const sistema = await banco.sistema.findUnique({ where: { id: existente.sistemaId }, select: { chave: true } });
+    if (sistema?.chave === "hogwarts-rpg") {
+      dadosParaSalvar = {
+        ...(dadosParaSalvar as Record<string, unknown>),
+        conteudosConhecidos: (existente.dados as Record<string, unknown> | null)?.conteudosConhecidos ?? {},
+      };
+    }
+  }
 
   const personagem = await banco.personagem.update({
     where: { id },
