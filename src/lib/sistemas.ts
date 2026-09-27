@@ -162,7 +162,7 @@ export const SISTEMAS: Sistema[] = [
     fichaInimigo: null,
     escudoMestre: null,
     campoVidaInimigo: null,
-    grimorio: null,
+    grimorio: "/hogwarts-rpg-grimorio.html",
     modoSessao: "/hogwarts-rpg-mestre.html",
   },
   {
