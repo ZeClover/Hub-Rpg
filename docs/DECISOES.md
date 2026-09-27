@@ -7805,6 +7805,33 @@ editar se alguém devolver a posse depois. Nenhuma mudança de schema
 testes automáticos (3 novos, cobrindo `podeReceberFicha`), `next lint`
 e `next build` completos, todos passando.
 
+## 173. Grimório de Hogwarts RPG (26/09/2026)
+
+Pedido do Zé: analisar como os Grimórios dos outros sistemas foram feitos e
+dar o mesmo tratamento ao Hogwarts RPG. O padrão consolidado nas decisões
+#55, #56, #61, #64, #114, #115 e #153 foi mantido: página HTML estática,
+paleta da própria ficha, sumário com âncoras, explicação didática, exemplos e
+links de ida e volta — sem duplicar regra em código Next.js.
+
+O arquivo novo `public/hogwarts-rpg-grimorio.html` tem 20 seções e uma trilha
+para iniciantes. Ele documenta somente o que já está implementado nas decisões
+#157–#164 e no código da ficha: criação; Casa/Família/Origem/Varinha; cinco
+Atributos; dezesseis Perícias; Nível 1–35 e anos escolares; Vida, Tensão e
+Defesa; Condições e Ferimentos; Conteúdos; Bestiário; Poções e Cultivo;
+Acadêmico; Inventário e Relíquias; Sapos de Chocolate/Trocas; Conteúdos Únicos;
+Relações/Projetos; segurança de `_mestre`; Loja; Modo Sessão; e limites atuais.
+Não inventa fórmula geral de teste que a ficha não implementa e não reproduz
+texto de obras comerciais — o aviso no topo registra que é um projeto de fã.
+
+Conectado ao Hub pelo campo `grimorio` de `hogwarts-rpg` em
+`src/lib/sistemas.ts`, o que faz o link aparecer genericamente nas páginas de
+Sistemas e Campanha. A barra da própria ficha também ganhou o botão
+`📖 Grimório`, em nova aba, seguindo as outras fichas estáticas.
+
+Validação: todas as 20 âncoras do sumário resolvem para seções existentes, os
+links locais apontam para arquivos reais, o HTML não tem JavaScript próprio,
+`tsc --noEmit`, `eslint`, testes automáticos e `next build` continuam limpos.
+
 ## 31. Restrições registradas
 
 **Fabula Ultima é um sistema comercial de terceiros.** O Hub codifica as *mecânicas* (fórmulas, nomes de atributos, lógica de dados, condições de status). O Hub **não** reproduz o texto do livro — descrições de classe, texto de habilidades, ilustrações. Conteúdo descritivo no Hub é o que Zé escrever. Isso vale especialmente porque o acesso é aberto a qualquer conta Google.

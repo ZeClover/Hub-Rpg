@@ -2029,6 +2029,10 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       (migração 0024), oferta aberta visível pra campanha, aceitar faz
       dois UPDATEs condicionais atômicos (um em cada álbum). Seção
       "Trocas" na aba Sapos de Chocolate da ficha
+- [x] **Grimório de Hogwarts RPG** (26/09/2026) — decisão #173.
+      Manual estático com 20 seções, trilha para iniciantes, exemplos e
+      referência de todos os módulos já implementados. Conectado ao Hub
+      por `Sistema.grimorio` e linkado diretamente na ficha.
 
 ## O que ainda falta no Hogwarts RPG
 
