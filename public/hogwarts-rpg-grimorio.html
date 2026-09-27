@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grimório — Hogwarts RPG</title>
+<style>
+/* Mesma paleta dourado/vinho da ficha: identidade própria, família visual do Hub. */
+:root{
+  --fundo:#0c0a08; --superficie:#161009; --superficie-alta:#201709;
+  --borda:#3a2a14; --texto:#f2ead9; --suave:#b3a488;
+  --dourado:#c9a227; --dourado-forte:#e3bf49; --dourado-rgb:201,162,39;
+  --vinho:#8c3b3b; --alerta:#c4506b; --verde:#4c8c5b;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--fundo);color:var(--texto);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+h1,h2,h3,h4{font-family:Georgia,'Times New Roman',serif;font-weight:600;margin:0 0 10px;color:var(--dourado-forte)}
+a{color:var(--dourado-forte)}
+p{margin:0 0 12px}
+.mini{font-size:12.5px;color:var(--suave)}
+.barra{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 16px;background:var(--superficie);border-bottom:1px solid var(--borda)}
+.marca{font-family:Georgia,serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--dourado)}
+.cresce{flex:1}
+.barra a.voltar{color:var(--dourado);text-decoration:none;font-size:13px}
+main{max-width:930px;margin:0 auto;padding:24px 16px 90px}
+.hero{border-bottom:1px solid var(--borda);padding-bottom:22px;margin-bottom:26px}
+.hero h1{font-size:32px}
+.hero .sub{color:var(--suave);font-size:16px;margin-top:6px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{border:1px solid var(--borda);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--suave)}
+.aviso-legal{border:1px solid rgba(var(--dourado-rgb),.35);background:rgba(var(--dourado-rgb),.06);border-radius:10px;padding:12px 16px;margin-top:18px;font-size:13px;color:var(--suave)}
+.aviso-legal strong{color:var(--dourado)}
+.trilha{display:grid;gap:8px;margin-top:18px}
+.passo{display:flex;gap:10px;align-items:flex-start;background:var(--superficie);border:1px solid var(--borda);border-radius:9px;padding:10px 12px}
+.passo b{color:var(--dourado-forte)}
+nav.toc{background:var(--superficie);border:1px solid var(--borda);border-radius:12px;padding:16px 18px;margin-bottom:30px}
+nav.toc h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);margin-bottom:10px}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin-bottom:6px;font-size:13.5px;break-inside:avoid}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media(max-width:640px){nav.toc ol{columns:1}}
+section{margin-bottom:40px;scroll-margin-top:64px}
+section h2{font-size:22px;border-bottom:1px solid var(--borda);padding-bottom:10px;margin-bottom:14px}
+section h3{font-size:17px;margin-top:22px;color:var(--texto)}
+.cartao{background:var(--superficie);border:1px solid var(--borda);border-radius:12px;padding:16px 18px;margin:14px 0}
+.dica{border:1px solid rgba(var(--dourado-rgb),.4);background:rgba(var(--dourado-rgb),.08);border-radius:8px;padding:10px 14px;font-size:13.5px;margin:14px 0}
+.aviso{border:1px solid rgba(196,80,107,.5);background:rgba(196,80,107,.1);border-radius:8px;padding:10px 14px;font-size:13.5px;margin:14px 0}
+.exemplo{border:1px solid rgba(76,140,91,.5);background:rgba(76,140,91,.1);border-radius:10px;padding:14px 16px;margin:16px 0}
+.exemplo .rotulo{font-family:Georgia,serif;font-size:12.5px;color:#7fbd8d;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.conta{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--dourado-forte);background:var(--superficie-alta);border-radius:6px;padding:2px 7px;display:inline-block}
+.resumo{font-size:15px;background:var(--superficie-alta);border-left:3px solid var(--dourado);border-radius:0 8px 8px 0;padding:10px 14px;margin:14px 0 18px}
+.resumo strong{color:var(--dourado-forte)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--borda);vertical-align:top}
+th{color:var(--dourado);font-family:Georgia,serif;font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+.grade2{display:grid;gap:12px}
+@media(min-width:640px){.grade2{grid-template-columns:1fr 1fr}}
+details{background:var(--superficie);border:1px solid var(--borda);border-radius:10px;padding:10px 14px;margin:10px 0}
+details>summary{cursor:pointer;font-family:Georgia,serif;color:var(--dourado-forte);font-size:14.5px}
+details[open]>summary{margin-bottom:10px}
+ul,ol{padding-left:22px} li{margin-bottom:5px}
+.top{position:fixed;right:18px;bottom:18px;background:var(--superficie);border:1px solid var(--borda);border-radius:999px;padding:8px 14px;font-size:12px;color:var(--suave);text-decoration:none}
+@media print{.barra,.top{display:none}body{background:#fff;color:#111}section,.cartao,nav.toc{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="barra">
+  <span class="marca">Hogwarts RPG</span>
+  <span class="mini">Grimório — manual do jogador e do mestre</span>
+  <span class="cresce"></span>
+  <a class="voltar" href="/hogwarts-rpg.html">Ir para a ficha →</a>
+</div>
+
+<main id="topo">
+  <div class="hero">
+    <h1>Grimório de Hogwarts RPG</h1>
+    <p class="sub">Um guia para criar, aprender e conduzir personagens no homebrew escolar do Hub — da primeira varinha aos Caminhos Raros.</p>
+    <div class="badges">
+      <span class="badge">Homebrew do Zé</span>
+      <span class="badge">5 Atributos e 16 Perícias</span>
+      <span class="badge">Níveis 1–35 · sete anos escolares</span>
+      <span class="badge">Conteúdos, Poções, Bestiário e vida escolar</span>
+    </div>
+    <div class="aviso-legal"><strong>Aviso.</strong> Este é um sistema de fã, não oficial e sem afiliação com a franquia Harry Potter ou seus titulares. O Grimório documenta somente a mecânica homebrew já implementada no Hub; não reproduz texto de livros, filmes ou jogos.</div>
+    <div class="trilha" aria-label="Trilha para iniciantes">
+      <div class="passo"><b>1.</b><span>Leia <a href="#conceito">a ideia central</a> e siga a <a href="#criacao">ordem de criação</a>.</span></div>
+      <div class="passo"><b>2.</b><span>Entenda <a href="#atributos">Atributos</a>, <a href="#pericias">Perícias</a> e como os <a href="#conteudos">Conteúdos</a> dizem qual combinação usar.</span></div>
+      <div class="passo"><b>3.</b><span>Antes da primeira cena, revise <a href="#combate">Vida, Tensão e Defesa</a> e a <a href="#condicoes">referência de Condições</a>.</span></div>
+      <div class="passo"><b>4.</b><span>Depois, explore os módulos escolares: <a href="#academico">Acadêmico</a>, <a href="#pocoes">Poções</a>, <a href="#bestiario">Bestiário</a> e <a href="#unicos">Caminhos Raros</a>.</span></div>
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#conceito">🏰 1. O que é Hogwarts RPG</a></li>
+      <li><a href="#criacao">🧭 2. Como montar um personagem</a></li>
+      <li><a href="#identidade">🪄 3. Identidade, Casa, Família e Varinha</a></li>
+      <li><a href="#atributos">🎲 4. Atributos</a></li>
+      <li><a href="#pericias">📚 5. Perícias e testes</a></li>
+      <li><a href="#progressao">⭐ 6. Nível, ano e progressão</a></li>
+      <li><a href="#combate">⚔️ 7. Vida, Tensão e Defesa</a></li>
+      <li><a href="#condicoes">💫 8. Condições e Ferimentos Graves</a></li>
+      <li><a href="#conteudos">✨ 9. Conteúdos, feitiços e técnicas</a></li>
+      <li><a href="#bestiario">🐲 10. Bestiário e conhecimento</a></li>
+      <li><a href="#pocoes">⚗️ 11. Poções e cultivo</a></li>
+      <li><a href="#academico">🎓 12. Currículo, notas e exames</a></li>
+      <li><a href="#inventario">🎒 13. Galeões, itens e relíquias</a></li>
+      <li><a href="#sapos">🍫 14. Sapos de Chocolate e trocas</a></li>
+      <li><a href="#unicos">🌟 15. Conteúdos Únicos e Dons Latentes</a></li>
+      <li><a href="#social">🤝 16. Relações, companheiros e projetos</a></li>
+      <li><a href="#segredos">🔒 17. Segredos do Mestre</a></li>
+      <li><a href="#loja">🏪 18. Loja ao vivo</a></li>
+      <li><a href="#modo-mestre">🧙 19. Modo Sessão do Mestre</a></li>
+      <li><a href="#limites">🗺️ 20. O que ainda não existe</a></li>
+    </ol>
+  </nav>
+
+  <section id="conceito">
+    <h2>🏰 1. O que é Hogwarts RPG</h2>
+    <p>Hogwarts RPG é um homebrew escolar <strong>sem classes</strong>. O personagem é formado pela combinação de Atributos, Perícias, Conteúdos aprendidos, Casa, Família, Origem, Varinha e escolhas feitas ao longo dos sete anos.</p>
+    <p>A ficha é modular: cada aba cuida de uma parte da vida do bruxo. O Hub guarda tudo no mesmo personagem e usa o sistema de campanha, login e permissões que já existe para as outras fichas.</p>
+    <div class="resumo"><strong>Ideia central:</strong> Casa orienta a tradição, Família e Origem dão contexto e acesso, mas a competência do personagem vem de Atributos, Perícias e Conteúdos — nenhuma dessas escolhas vira uma “classe”.</div>
+  </section>
+
+  <section id="criacao">
+    <h2>🧭 2. Como montar um personagem</h2>
+    <ol>
+      <li><strong>Perfil:</strong> nome, Casa, status de sangue, Ambição, Medo e Vínculo.</li>
+      <li><strong>Casa & Família:</strong> escolha Família e Origem; leia o Conteúdo e o Acesso que elas oferecem.</li>
+      <li><strong>Varinha:</strong> registre madeira, núcleo, comprimento, flexibilidade e sintonia. A varinha é escolhida na mesa, não por um algoritmo.</li>
+      <li><strong>Atributos:</strong> distribua <strong>3 / 2 / 2 / 1 / 0</strong>.</li>
+      <li><strong>Perícias:</strong> distribua os treinamentos respeitando o teto do ano escolar.</li>
+      <li><strong>Conteúdos:</strong> marque o que está disponível, conhecido ou dominado pelo personagem.</li>
+      <li><strong>Vida escolar:</strong> complete Acadêmico, Inventário e as relações que já existirem.</li>
+    </ol>
+    <div class="dica">Abra a ficha na aba certa sem procurar: <a href="/hogwarts-rpg.html?aba=perfil">Perfil</a>, <a href="/hogwarts-rpg.html?aba=atributos">Atributos</a>, <a href="/hogwarts-rpg.html?aba=pericias">Perícias</a> ou <a href="/hogwarts-rpg.html?aba=conteudos">Conteúdos</a>.</div>
+  </section>
+
+  <section id="identidade">
+    <h2>🪄 3. Identidade, Casa, Família e Varinha</h2>
+    <h3>Casa</h3>
+    <table><tr><th>Casa</th><th>Foco</th><th>Tradição</th></tr>
+      <tr><td>Grifinória</td><td>coragem, proteção e risco</td><td>o Mestre pode conceder Vantagem ao agir primeiro, sob risco real, para proteger alguém.</td></tr>
+      <tr><td>Sonserina</td><td>ambição, segredos e controle</td><td>pode reconhecer vantagens escondidas em negociação ou intriga e receber uma pista extra.</td></tr>
+      <tr><td>Corvinal</td><td>análise, pesquisa e experimentação</td><td>preparar-se por alguns minutos pode conceder Vantagem no teste relacionado.</td></tr>
+      <tr><td>Lufa-Lufa</td><td>cooperação e perseverança</td><td>quando fizer sentido, Ajudar pode durar até o fim da cena.</td></tr>
+    </table>
+    <p><strong>Família</strong> fornece tags, condição financeira, Conteúdo Familiar e Acesso Familiar. Isso nunca significa dinheiro infinito nem acesso irrestrito a todos os segredos. <strong>Origem</strong> dá um benefício narrativo pequeno e específico.</p>
+    <p><strong>Varinha:</strong> os dados visíveis são madeira, núcleo, comprimento, flexibilidade e sintonia. Tendência, propriedade desperta, peculiaridade e lealdade ficam na área segura do Mestre.</p>
+  </section>
+
+  <section id="atributos">
+    <h2>🎲 4. Atributos</h2>
+    <p>Na criação, distribua <strong>3, 2, 2, 1 e 0</strong>. O teto normal é <strong>5</strong>; Marcos Extraordinários podem aumentar um Atributo.</p>
+    <table><tr><th>Atributo</th><th>Leitura prática</th></tr>
+      <tr><td>Arcano</td><td>controle e compreensão direta da magia.</td></tr>
+      <tr><td>Engenho</td><td>análise, método, investigação e solução criativa.</td></tr>
+      <tr><td>Pulso</td><td>velocidade, precisão, imposição e resposta sob pressão.</td></tr>
+      <tr><td>Presença</td><td>influência, expressão e força social.</td></tr>
+      <tr><td>Fibra</td><td>resistência física, emocional e mental.</td></tr>
+    </table>
+    <div class="exemplo"><div class="rotulo">🎲 Exemplo de criação</div><p>Uma duelista estudiosa pode começar com <span class="conta">Arcano 3 · Engenho 2 · Pulso 2 · Fibra 1 · Presença 0</span>. A soma é 8, exatamente como a ficha espera na criação.</p></div>
+  </section>
+
+  <section id="pericias">
+    <h2>📚 5. Perícias e testes</h2>
+    <p>Existem 16 Perícias. As oito matérias obrigatórias também são Perícias: Feitiços, Transfiguração, Poções, Herbologia, Defesa Contra as Artes das Trevas, História da Magia, Astronomia e Voo. Completam a lista Aritmancia, Runas Antigas, Adivinhação, Trato das Criaturas Mágicas, Estudos dos Trouxas, Investigação, Furtividade e Influência.</p>
+    <p>Quando um Conteúdo pede uma rolagem, a própria ficha dele informa a <strong>Perícia</strong> e o <strong>Atributo</strong> relevantes. Vantagem e Desvantagem vêm da situação, Tradição, Origem, Condição ou efeito — não são bônus permanentes empilháveis.</p>
+    <div class="dica"><strong>A ficha não rola por você.</strong> Ela registra números e descreve efeitos. A dificuldade e as circunstâncias continuam sendo decisão da mesa.</div>
+  </section>
+
+  <section id="progressao">
+    <h2>⭐ 6. Nível, ano e progressão</h2>
+    <p>O personagem vai do Nível <strong>1 ao 35</strong>. Cada cinco níveis formam um ano: níveis 1–5 são o 1º ano, 6–10 o 2º, até 31–35 no 7º.</p>
+    <table><tr><th>Ano</th><th>Níveis</th><th>Teto normal de Perícia</th></tr>
+      <tr><td>1º</td><td>1–5</td><td>2</td></tr><tr><td>2º</td><td>6–10</td><td>2</td></tr>
+      <tr><td>3º</td><td>11–15</td><td>3</td></tr><tr><td>4º</td><td>16–20</td><td>3</td></tr>
+      <tr><td>5º</td><td>21–25</td><td>4</td></tr><tr><td>6º</td><td>26–30</td><td>5</td></tr><tr><td>7º</td><td>31–35</td><td>5</td></tr>
+    </table>
+    <p>Nos níveis <strong>5, 10, 15, 20, 25, 30 e 35</strong>, acontece um Marco Extraordinário: <strong>+1 Atributo e +2 Escolhas Únicas</strong>. Nos demais níveis, a ficha lembra <strong>+1 Treinamento de Perícia e +2 escolhas de Conteúdo</strong>.</p>
+  </section>
+
+  <section id="combate">
+    <h2>⚔️ 7. Vida, Tensão e Defesa</h2>
+    <div class="grade2">
+      <div class="cartao"><h3>Vida</h3><p>A base é 5. Chegar a 0 não mata automaticamente: o Mestre escolhe entre Incapacitado, Ferimento Grave ou À Beira da Morte conforme a cena.</p></div>
+      <div class="cartao"><h3>Tensão Mágica</h3><p>Vai de 0 a 3. Efeitos e Caminhos Raros podem aumentar Tensão; a ficha mantém o limite visível.</p></div>
+    </div>
+    <p>A <strong>Defesa Passiva</strong> é <span class="conta">7 + Pulso</span>. Uma Defesa Ativa gasta a Reação e <strong>substitui</strong> a passiva — nunca soma com ela. Protego, por exemplo, usa <span class="conta">2d6 + Arcano + Defesa Contra as Artes das Trevas</span> contra o ataque.</p>
+    <p>As regras usam três recursos de turno: <strong>Ação, Movimento e Reação</strong>. Condições podem reduzir ou retirar um deles; um efeito só faz isso quando sua descrição diz.</p>
+  </section>
+
+  <section id="condicoes">
+    <h2>💫 8. Condições e Ferimentos Graves</h2>
+    <p>A ficha controla duração em rodadas e origem da Condição. As 13 condições são: Abalado, Desequilibrado, Desarmado, Imobilizado, Atordoado, Cego, Silenciado, Enredado, Em Chamas, Envenenado, Amaldiçoado, Incapacitado e Petrificado.</p>
+    <details><summary>Referência rápida das Condições</summary>
+      <ul><li><strong>Abalado:</strong> Desvantagem no próximo teste relevante.</li><li><strong>Desequilibrado:</strong> Movimento máximo 3 m e Esquiva em Desvantagem até o fim do próximo turno.</li><li><strong>Desarmado:</strong> perdeu a varinha, arma ou objeto principal.</li><li><strong>Imobilizado:</strong> Movimento 0; ainda pode agir se tiver liberdade suficiente.</li><li><strong>Atordoado:</strong> perde a Reação e escolhe Ação ou Movimento no turno.</li><li><strong>Cego:</strong> Desvantagem em ações dependentes de visão.</li><li><strong>Silenciado:</strong> sem conjuração verbal normal.</li><li><strong>Enredado:</strong> Movimento máximo 3 m; pode gastar Ação para escapar quando houver mecanismo.</li><li><strong>Em Chamas:</strong> sofre 1 dano no início do próximo turno.</li><li><strong>Envenenado/Amaldiçoado:</strong> a fonte define efeito, duração e cura.</li><li><strong>Incapacitado:</strong> sem Ação, Movimento ou Reação.</li><li><strong>Petrificado:</strong> Movimento 0, sem ações físicas normais nem Esquiva; Finite remove.</li></ul>
+    </details>
+    <p>Ferimentos Graves têm nome, consequência e estado: Não Tratado, Estabilizado, Em Tratamento ou Recuperado.</p>
+  </section>
+
+  <section id="conteudos">
+    <h2>✨ 9. Conteúdos, feitiços e técnicas</h2>
+    <p>Conteúdo é a unidade de aprendizado. Cada Feitiço ou Técnica guarda categoria, Perícia, Atributo, alcance, área, duração, concentração, dano, natureza e os efeitos de Sucesso, Elevado e Excepcional.</p>
+    <p>O estado é individual por personagem: Oculto, Descoberto, Bloqueado, Disponível, Formação Inicial, Conhecido, Dominado ou Assinatura. Favoritar só facilita encontrar; não altera poder.</p>
+    <div class="exemplo"><div class="rotulo">✨ Como ler um Conteúdo</div><p><strong>Expelliarmus</strong> usa Pulso + Defesa Contra as Artes das Trevas, alcance 15 m e natureza Não Letal. Sucesso desarma; Elevado lança o objeto para longe; Excepcional também deixa o alvo Desequilibrado.</p></div>
+    <div class="aviso">Conteúdos marcados como restritos só aparecem quando o Mestre libera a visualização. Saber que algo existe não significa que o personagem possa aprendê-lo ou usá-lo sem consequência.</div>
+    <p><a href="/hogwarts-rpg.html?aba=conteudos">Abrir o catálogo de Conteúdos na ficha →</a></p>
+  </section>
+
+  <section id="bestiario">
+    <h2>🐲 10. Bestiário e conhecimento</h2>
+    <p>O catálogo inclui criaturas de Fraca a Muito Forte e o modelo Catástrofe. Vida, Defesa e Movimento não contam a história inteira: traços, ações e reações definem como a criatura funciona.</p>
+    <p>Conhecimento é revelado <strong>campo a campo para o personagem</strong>: básico, comportamento, fraquezas ou abordagem segura, materiais e informação rara. Descobrir uma parte não entrega todas as outras.</p>
+    <div class="dica">Uma Catástrofe, como o modelo de Dragão Adulto, não usa uma ficha comum de Vida/Defesa: é tratada como encontro inteiro.</div>
+  </section>
+
+  <section id="pocoes">
+    <h2>⚗️ 11. Poções e cultivo</h2>
+    <p>O preparo automático exige três coisas: <strong>receita, Perícia Poções suficiente e todos os ingredientes</strong>. Cumprindo isso e respeitando o tempo, não há rolagem: o Hub desconta os ingredientes e adiciona a dose ao estoque.</p>
+    <div class="exemplo"><div class="rotulo">⚗️ Exemplo</div><p>Uma receita de custo 2 exige Poções 2 ou mais. Se o personagem tiver todos os ingredientes, o botão Preparar funciona. Pressa, substituição ou receita acima da capacidade voltam para uma decisão do Mestre na mesa.</p></div>
+    <p>Cultivo guarda planta, data, dias de crescimento e produção. Quando chega a hora real estimada, colher envia a produção ao inventário de ingredientes. A data do dispositivo é uma aproximação até existir Calendário de campanha.</p>
+  </section>
+
+  <section id="academico">
+    <h2>🎓 12. Currículo, notas e exames</h2>
+    <p>As oito matérias obrigatórias ficam sempre visíveis. A partir do 3º ano aparecem as eletivas: Aritmancia, Runas Antigas, Adivinhação, Trato das Criaturas Mágicas e Estudos dos Trouxas.</p>
+    <p>Dois Progressos na mesma matéria sinalizam que o personagem está pronto para um Conteúdo Extra Acadêmico; o Mestre concede manualmente. N.O.M.s aparecem no 5º ano e N.I.E.M.s no 7º. A escala de notas vai de Ótimo a Trasgo.</p>
+  </section>
+
+  <section id="inventario">
+    <h2>🎒 13. Galeões, itens e relíquias</h2>
+    <p>Galeões são o saldo mecânico; condição financeira da Família é contexto e acesso, não dinheiro infinito. Itens não têm limite universal de slots e podem estar Carregados, Guardados ou Confiscados.</p>
+    <p>A mesa usa a regra de <strong>um bônus numérico de equipamento por rolagem</strong>. Relíquias têm propriedades conhecidas, estado (Dormente, Desperta, Vinculada, Completa), vínculo e propriedades ocultas protegidas para o Mestre.</p>
+  </section>
+
+  <section id="sapos">
+    <h2>🍫 14. Sapos de Chocolate e trocas</h2>
+    <p>Cada Sapo custa 2 Galeões. Ao abrir, a carta é sorteada pelos pesos: Comum 55%, Incomum 25%, Rara 12%, Muito Rara 6% e Lendária 2%. A coleção usa figuras históricas ou mitológicas de domínio público e <strong>nunca concede bônus mecânico</strong>.</p>
+    <p>Em campanha, jogadores podem oferecer uma carta e pedir outra. Aceitar é uma troca atômica: ou as duas cartas mudam de dono, ou nada muda.</p>
+  </section>
+
+  <section id="unicos">
+    <h2>🌟 15. Conteúdos Únicos e Dons Latentes</h2>
+    <p>Cada Marco Extraordinário concede 2 Escolhas Únicas. Elas compram estágios de Caminhos Raros como Animagia, Legilimência, Oclumência, Magia Sem Varinha, Patrono Avançado, Criação de Feitiços, Metamorfomagia, Dom Profético, Ofidioglossia, Herança Familiar e Vínculos Extraordinários.</p>
+    <p>A ficha avisa se um estágio for marcado fora de ordem, mas não bloqueia: uma exceção aprovada pelo Mestre continua possível. Dons Latentes podem existir sem revelar sua natureza; o jogador vê “Dom Latente: ???” até o Mestre mostrar um nome.</p>
+  </section>
+
+  <section id="social">
+    <h2>🤝 16. Relações, companheiros e projetos</h2>
+    <p>Relações usam a escala Desconhecido → Conhecido → Próximo → Confidente → Vínculo, com contexto e estado atual livres. Companheiros registram espécie, personalidade, história e habilidades; não ganham automaticamente um turno completo.</p>
+    <p>Projetos são para objetivos longos — Animagia, criar feitiço, inventar poção ou pesquisa extensa. A escala sugerida é 2 passos para simples, 4 para elaborado, 6 para avançado e 8+ para extraordinário. Reputação, cargos e detenções são registros narrativos persistentes.</p>
+  </section>
+
+  <section id="segredos">
+    <h2>🔒 17. Segredos do Mestre</h2>
+    <p>Todo segredo mecânico fica dentro de <code>dados._mestre</code>. O servidor remove essa chave antes de responder para quem não é Mestre e impede que um jogador injete, apague ou substitua o conteúdo num salvamento.</p>
+    <p>Hoje isso protege: notas do Mestre, dados ocultos da Varinha, Segredos Familiares, propriedades ocultas de Relíquias e a natureza real dos Dons Latentes.</p>
+    <div class="resumo"><strong>Regra de segurança:</strong> esconder um campo na tela não conta. O dado secreto nunca chega ao navegador do jogador.</div>
+  </section>
+
+  <section id="loja">
+    <h2>🏪 18. Loja ao vivo</h2>
+    <p>Lojas pertencem à campanha, têm estoque, preço e estado aberto/fechado. Comprar desconta Galeões, baixa o estoque e adiciona o item ao inventário numa única transação.</p>
+    <p>Se dois jogadores tentarem comprar a última unidade, só um consegue. Se faltar estoque ou Galeões, a transação inteira é desfeita.</p>
+  </section>
+
+  <section id="modo-mestre">
+    <h2>🧙 19. Modo Sessão do Mestre</h2>
+    <p>O painel de sessão seleciona várias fichas da campanha e permite aplicar Condição, ajustar Vida, Tensão ou Galeões e conceder Conteúdo em lote. Também reúne a administração de Lojas.</p>
+    <p>Ele usa as mesmas rotas protegidas das fichas; abrir a página não contorna permissões. O servidor confirma que a pessoa é Mestre antes de listar ou alterar os personagens.</p>
+  </section>
+
+  <section id="limites">
+    <h2>🗺️ 20. O que ainda não existe</h2>
+    <p>Quadribol, Clubes, Mapa Conhecido e Calendário de campanha continuam fora do sistema atual. Também não existe revelação diferente do mesmo segredo para jogadores diferentes: <code>_mestre</code> é seguro, mas é “Mestre vê / jogador não vê”.</p>
+    <div class="aviso">Loja e Trocas dependem das migrações 0023 e 0024 no banco de produção. O código já existe, mas sem aplicar essas migrações as rotas retornam erro.</div>
+  </section>
+
+  <p class="mini" style="text-align:center;margin-top:40px">Grimório escrito a partir das decisões #157–#164 e do código-fonte da ficha de Hogwarts RPG do Hub.<br><a href="/hogwarts-rpg.html">← Voltar para a ficha</a></p>
+</main>
+<a class="top" href="#topo">↑ topo</a>
+</body>
+</html>
