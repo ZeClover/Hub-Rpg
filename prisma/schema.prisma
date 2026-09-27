@@ -120,6 +120,7 @@ model Sistema {
 
   campanhas   Campanha[]
   personagens Personagem[]
+  conteudos    ConteudoSistema[]
 
   @@map("sistemas")
 }
@@ -173,9 +174,55 @@ model Campanha {
   veiculos             Veiculo[]
   lojas                Loja[]
   trocasCartas         TrocaCarta[]
+  curriculoHogwarts    CurriculoHogwarts[]
 
   @@index([sistemaId])
   @@map("campanhas")
+}
+
+/// Catálogo-base de conteúdo de um sistema. O slug é estável e torna a
+/// sincronização idempotente; estados individuais continuam no JSON da ficha.
+model ConteudoSistema {
+  id                String   @id @default(uuid()) @db.Uuid
+  sistemaId         String   @db.Uuid
+  slug              String
+  nome              String
+  categoria         String
+  pericia           String
+  atributoPadrao    String
+  requisitoPericia  Int
+  custo             Int
+  anoNormal         Int
+  descricao         String
+  efeito            String
+  tags              String[] @default([])
+  fonte             String
+  restrito          Boolean  @default(false)
+  secreto           Boolean  @default(false)
+  atualizadoEm      DateTime @updatedAt
+
+  sistema Sistema @relation(fields: [sistemaId], references: [id], onDelete: Cascade)
+
+  @@unique([sistemaId, slug])
+  @@index([sistemaId, anoNormal])
+  @@map("conteudos_sistema")
+}
+
+/// Estado curricular por campanha. Ausência de linha equivale a PREVISTO;
+/// customização fica isolada da base e nunca é sobrescrita pelo seed.
+model CurriculoHogwarts {
+  id          String   @id @default(uuid()) @db.Uuid
+  campanhaId  String   @db.Uuid
+  slug        String
+  estado      String   @default("PREVISTO")
+  override    Json?
+  atualizadoEm DateTime @updatedAt
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+
+  @@unique([campanhaId, slug])
+  @@index([campanhaId, estado])
+  @@map("curriculo_hogwarts")
 }
 
 /// Liga uma pessoa a uma campanha, dizendo se ela é mestre ou jogadora.
