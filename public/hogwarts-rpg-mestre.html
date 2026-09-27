@@ -79,19 +79,21 @@ function normalizar(dados){
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 
-const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'', lojas:[] };
+const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'', lojas:[], curriculo:[], busca:'', filtroPericia:'' };
 
 async function carregar(){
   if(!CAMPANHA_ID){ estado.erro='sem-campanha'; estado.carregando=false; render(); return; }
   try{
-    const [respPersonagens, respLojas] = await Promise.all([
+    const [respPersonagens, respLojas, respCurriculo] = await Promise.all([
       fetch(`/api/campanhas/${CAMPANHA_ID}/personagens`),
       fetch(`/api/campanhas/${CAMPANHA_ID}/lojas`),
+      fetch(`/api/campanhas/${CAMPANHA_ID}/hogwarts-curriculo`),
     ]);
     if(!respPersonagens.ok){ estado.erro = respPersonagens.status === 401 ? 'nao-autenticado' : 'sem-acesso'; return; }
     const {personagens} = await respPersonagens.json();
     estado.personagens = personagens.map(p => ({...p, dados: normalizar(p.dados)}));
     if(respLojas.ok){ const {lojas} = await respLojas.json(); estado.lojas = lojas; }
+    if(respCurriculo.ok){ const {conteudos} = await respCurriculo.json(); estado.curriculo = conteudos; }
   }catch(e){
     console.error('Falha ao carregar campanha', e);
     estado.erro = 'sem-acesso';
@@ -111,6 +113,15 @@ async function salvarPersonagem(p){
 }
 
 function selecionados(){ return estado.personagens.filter(p => estado.selecionados.has(p.id)); }
+
+async function acaoCurriculo(slug, acao, extra={}){
+  const resposta = await fetch(`/api/campanhas/${CAMPANHA_ID}/hogwarts-curriculo`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({slug, acao, personagemIds:[...estado.selecionados], ...extra}),
+  });
+  if(!resposta.ok){ const e=await resposta.json().catch(()=>({})); mostrarStatus(e.erro||'Não foi possível alterar o currículo.'); return; }
+  mostrarStatus('Currículo atualizado. ✓'); await carregar();
+}
 
 async function aplicarEmLote(mutar, rotuloAcao){
   const alvos = selecionados();
@@ -193,6 +204,19 @@ function render(){
   const status = estado.status ? `<div class="ok">${esc(estado.status)}</div>` : '';
 
   app.innerHTML = status + `
+  <div class="cartao">
+    <h3 style="margin-bottom:6px">Hogwarts → Acadêmico → Currículo → 1º Ano</h3>
+    <p class="mini" style="margin-bottom:10px">59 conteúdos: ensinar libera para alunos aptos, mas não concede como Conhecido.</p>
+    <div class="linha" style="margin-bottom:12px">
+      <input id="buscaCurriculo" value="${esc(estado.busca)}" placeholder="Buscar conteúdo, perícia ou tag…" style="flex:1">
+      <select id="filtroCurriculo"><option value="">Todas as matérias/perícias</option>${[...new Set(estado.curriculo.map(c=>c.pericia))].map(p=>`<option ${estado.filtroPericia===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+    </div>
+    ${[...new Set(estado.curriculo.map(c=>c.pericia))].filter(p=>!estado.filtroPericia||p===estado.filtroPericia).map(pericia=>{
+      const itens=estado.curriculo.filter(c=>c.pericia===pericia && (!estado.busca || (c.nome+' '+c.categoria+' '+c.tags.join(' ')).toLowerCase().includes(estado.busca.toLowerCase())));
+      if(!itens.length)return '';
+      return `<h4 style="margin:14px 0 6px">${['Investigação','Furtividade','Influência'].includes(pericia)?'Conteúdos Gerais — ':''}${esc(pericia)}</h4>`+itens.map(c=>`<div class="linha-pj" style="flex-wrap:wrap"><span class="nome"><b>${esc(c.nome)}</b><span class="tag">${esc(c.categoria)}</span><br><span class="mini">${esc(c.pericia)} · requisito ${c.requisito_pericia} · ${esc(c.estadoCurricular)} · ${c.conhecidoPor.length} conhecem · ${c.disponivelPara.length} disponíveis</span></span><button data-curriculo="ensinar:${c.slug}" class="destaque">Ensinar turma</button><button data-curriculo="liberar:${c.slug}">Liberar para selecionados</button><button data-curriculo="conceder:${c.slug}">Conceder</button><button data-curriculo="ocultar:${c.slug}">Ocultar</button><button data-editar-conteudo="${c.slug}">Editar</button><button data-ver-personagens="${c.slug}">Ver personagens</button></div>`).join('');
+    }).join('')}
+  </div>
   <div class="cartao">
     <h3 style="margin-bottom:10px">Personagens da campanha</h3>
     <p class="mini" style="margin-bottom:10px">Marque quem vai receber a ação em lote. Fichas nunca abertas aparecem como "(sem nome ainda)".</p>
@@ -293,6 +317,13 @@ function ligarEventos(){
   if(btTodos) btTodos.onclick = () => { estado.personagens.forEach(p => estado.selecionados.add(p.id)); render(); };
   const btLimpar = app.querySelector('[data-limpar-selecao]');
   if(btLimpar) btLimpar.onclick = () => { estado.selecionados.clear(); render(); };
+  const buscaCurriculo=app.querySelector('#buscaCurriculo');
+  if(buscaCurriculo) buscaCurriculo.oninput=()=>{estado.busca=buscaCurriculo.value;render();};
+  const filtroCurriculo=app.querySelector('#filtroCurriculo');
+  if(filtroCurriculo) filtroCurriculo.onchange=()=>{estado.filtroPericia=filtroCurriculo.value;render();};
+  app.querySelectorAll('[data-curriculo]').forEach(b=>b.onclick=()=>{const [acao,slug]=b.dataset.curriculo.split(':'); acaoCurriculo(slug,acao);});
+  app.querySelectorAll('[data-editar-conteudo]').forEach(b=>b.onclick=()=>{const c=estado.curriculo.find(x=>x.slug===b.dataset.editarConteudo); const descricao=prompt('Descrição personalizada desta campanha:',c.descricao); if(descricao!==null) acaoCurriculo(c.slug,'editar',{override:{descricao,efeito:descricao}});});
+  app.querySelectorAll('[data-ver-personagens]').forEach(b=>b.onclick=()=>{const c=estado.curriculo.find(x=>x.slug===b.dataset.verPersonagens); const nomes=estado.personagens.filter(p=>c.conhecidoPor.includes(p.id)||c.disponivelPara.includes(p.id)).map(p=>p.nome); alert(nomes.length?nomes.join('\n'):'Nenhum personagem ainda.');});
 
   const btCondicao = app.querySelector('[data-acao-condicao]');
   if(btCondicao) btCondicao.onclick = () => {

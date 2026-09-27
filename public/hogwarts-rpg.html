@@ -591,7 +591,12 @@ function garantirMestre(p){
 function anoEscolar(nivel){ return Math.max(1, Math.min(7, Math.ceil(nivel/5))); }
 function limitePericia(ano){ return ano<=2?2 : ano<=4?3 : ano===5?4 : 5; }
 
-function todosConteudos(p){ return [...CONTEUDOS_SEED, ...p.conteudosCustom]; }
+function todosConteudos(p){
+  // No Hub, o catálogo curricular vem do servidor e já chega filtrado por
+  // acesso/requisito. O seed legado fica só para fichas locais antigas.
+  const base = MODO_HUB ? estado.catalogoHogwarts : CONTEUDOS_SEED;
+  return [...base, ...p.conteudosCustom];
+}
 function todasFamilias(p){ return [...FAMILIAS_SEED, ...p.familiasCustom]; }
 function todasOrigens(p){ return [...ORIGENS_SEED, ...p.origensCustom]; }
 function todasCriaturas(p){ return [...CRIATURAS_SEED, ...p.criaturasCustom]; }
@@ -711,6 +716,7 @@ const estado = {
   // decide é a resposta do servidor (decisão #159), nunca o navegador.
   ehMestre: !MODO_HUB,
   campanhaId: null, lojas: [], statusCompra: '',
+  catalogoHogwarts: [],
   trocas: [], statusTroca: '',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
@@ -736,6 +742,15 @@ async function iniciarModoHub(){
     estado.ehMestre = !!personagem.ehMestre;
     estado.campanhaId = personagem.campanhaId || null;
     estado.avatarUrl = personagem.avatarUrl || '';
+    const respConteudos = await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`);
+    if(respConteudos.ok){
+      const corpoConteudos = await respConteudos.json();
+      estado.catalogoHogwarts = corpoConteudos.conteudos.map(c => ({
+        ...c, id:c.slug, atributo:c.atributo_padrao, alcance:'—', area:'—',
+        duracao:'—', natureza:'—', sucesso:c.efeito, elevado:'—', excepcional:'—',
+        concentracao:false,
+      }));
+    }
     atualizarFavicon();
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -757,6 +772,15 @@ async function carregarTrocas(){
   }finally{
     render();
   }
+}
+
+async function escolherConteudoInicial(slug){
+  const resposta = await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slugs:[slug]}),
+  });
+  const corpo = await resposta.json().catch(()=>({}));
+  if(!resposta.ok){ alert(corpo.erro || 'Não foi possível escolher este conteúdo.'); return; }
+  await iniciarModoHub();
 }
 
 function mostrarStatusTroca(texto){ estado.statusTroca = texto; render(); setTimeout(() => { estado.statusTroca=''; render(); }, 2500); }
@@ -1198,7 +1222,7 @@ function abaConteudos(p){
       <label style="width:auto;font-size:12px;text-transform:none"><input type="checkbox" style="width:auto" data-mostrar-restritos ${p.mostrarRestritos?'checked':''}> Mostrar restritos (Artes das Trevas)</label>
     </div>
     ${filtrada.map(c => {
-      const estado = p.conteudosConhecidos[c.id] || 'oculto';
+      const estadoConteudo = c.estado || p.conteudosConhecidos[c.id] || 'oculto';
       const fav = p.favoritos.includes(c.id);
       return `<div class="item-conteudo">
         <h4>${esc(c.nome)} ${c.restrito?'<span class="pill" style="border-color:rgba(196,80,107,.5);color:#e58a9b">restrito</span>':''} ${c.concentracao?'<span class="pill">concentração</span>':''}</h4>
@@ -1214,10 +1238,11 @@ function abaConteudos(p){
         ${c.elevado!=='—' ? `<p class="mini"><b>Elevado:</b> ${esc(c.elevado)}</p>` : ''}
         ${c.excepcional!=='—' ? `<p class="mini"><b>Excepcional:</b> ${esc(c.excepcional)}</p>` : ''}
         <div class="linha" style="margin-top:8px;flex-wrap:wrap">
-          <select data-conteudo-estado="${c.id}" style="width:170px">
-            ${ESTADOS_CONTEUDO.map(e => `<option value="${e}" ${estado===e?'selected':''}>${ROTULO_ESTADO[e]}</option>`).join('')}
+          <select data-conteudo-estado="${c.id}" style="width:170px" ${MODO_HUB?'disabled title="Progressão controlada pelo Mestre"':''}>
+            ${ESTADOS_CONTEUDO.map(e => `<option value="${e}" ${estadoConteudo===e?'selected':''}>${ROTULO_ESTADO[e]}</option>`).join('')}
           </select>
           <button data-conteudo-favorito="${c.id}" class="${fav?'destaque':''}">${fav?'★ Favorito':'☆ Favoritar'}</button>
+          ${MODO_HUB && estadoConteudo==='disponivel' && Object.values(p.conteudosConhecidos).filter(e=>e==='formacao-inicial').length<4 ? `<button data-conteudo-inicial="${c.id}" class="destaque">Escolher para Formação Inicial</button>` : ''}
         </div>
       </div>`;
     }).join('')}
@@ -1396,13 +1421,16 @@ function abaAcademico(p){
   const ano = anoEscolar(p.nivel);
   const linhaMateria = (nome) => {
     const m = estadoMateria(p, nome);
-    return `<div class="linha-cond">
+    const conteudos = todosConteudos(p).filter(c => c.pericia === nome);
+    const porEstado = (nomes) => conteudos.filter(c => nomes.includes(c.estado || p.conteudosConhecidos[c.id] || 'oculto')).length;
+    return `<div class="linha-cond" style="align-items:flex-start;flex-wrap:wrap">
       <label style="width:auto;font-size:13px;text-transform:none;flex:1"><input type="checkbox" style="width:auto" data-mat-cursando="${esc(nome)}" ${m.cursando?'checked':''}> ${esc(nome)}</label>
       <span class="mini">Progresso:</span>
       <button data-mat-prog-dec="${esc(nome)}" style="padding:4px 10px">−</button>
       <span class="mini" style="width:20px;text-align:center">${m.progresso}</span>
       <button data-mat-prog-inc="${esc(nome)}" style="padding:4px 10px">+</button>
       ${m.progresso>=2 ? '<span class="pill on">Pronto: Conteúdo Extra Acadêmico</span>' : ''}
+      <span class="mini" style="flex-basis:100%;padding-left:24px">Perícia ${p.pericias[nome]||0} · Conhecidos ${porEstado(['conhecido','dominado','assinatura'])} · Formação ${porEstado(['formacao-inicial'])} · Disponíveis ${porEstado(['disponivel'])} · Bloqueados ${porEstado(['bloqueado'])}</span>
     </div>`;
   };
   return `<div class="cartao">
@@ -1855,6 +1883,7 @@ function ligarEventos(){
   const chkRestritos = app.querySelector('[data-mostrar-restritos]');
   if(chkRestritos) chkRestritos.onchange = () => mudar(p => { p.mostrarRestritos = chkRestritos.checked; });
   app.querySelectorAll('[data-conteudo-estado]').forEach(el => el.addEventListener('change', () => mudar(p => { p.conteudosConhecidos[el.dataset.conteudoEstado] = el.value; })));
+  app.querySelectorAll('[data-conteudo-inicial]').forEach(el => el.addEventListener('click', () => escolherConteudoInicial(el.dataset.conteudoInicial)));
   app.querySelectorAll('[data-conteudo-favorito]').forEach(b => b.onclick = () => mudar(p => {
     const id = b.dataset.conteudoFavorito;
     if(p.favoritos.includes(id)) p.favoritos = p.favoritos.filter(x=>x!==id);
