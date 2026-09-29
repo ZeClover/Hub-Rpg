@@ -227,9 +227,20 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   if (temDados && ehDono) {
     const sistema = await banco.sistema.findUnique({ where: { id: existente.sistemaId }, select: { chave: true } });
     if (sistema?.chave === "hogwarts-rpg") {
+      const dadosExistentes = (existente.dados as Record<string, unknown> | null) ?? {};
+      const academicoExistente = (dadosExistentes.academico as Record<string, unknown> | null) ?? {};
+      const dadosRecebidos = dadosParaSalvar as Record<string, unknown>;
+      const academicoRecebido = (dadosRecebidos.academico as Record<string, unknown> | null) ?? {};
+
       dadosParaSalvar = {
-        ...(dadosParaSalvar as Record<string, unknown>),
-        conteudosConhecidos: (existente.dados as Record<string, unknown> | null)?.conteudosConhecidos ?? {},
+        ...dadosRecebidos,
+        conteudosConhecidos: dadosExistentes.conteudosConhecidos ?? {},
+        academico: {
+          ...academicoRecebido,
+          ...(academicoExistente.formacaoInicialConcluida === true
+            ? { formacaoInicialConcluida: true }
+            : {}),
+        },
       };
     }
   }
