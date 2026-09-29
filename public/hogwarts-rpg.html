@@ -716,7 +716,8 @@ const estado = {
   // decide é a resposta do servidor (decisão #159), nunca o navegador.
   ehMestre: !MODO_HUB,
   campanhaId: null, lojas: [], statusCompra: '',
-  catalogoHogwarts: [],
+  catalogoHogwarts: [], erroConteudos:'',
+  selecaoInicialPendente:false, selecaoInicial:[],
   trocas: [], statusTroca: '',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
@@ -745,11 +746,18 @@ async function iniciarModoHub(){
     const respConteudos = await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`);
     if(respConteudos.ok){
       const corpoConteudos = await respConteudos.json();
+      estado.erroConteudos = '';
+      estado.selecaoInicialPendente = !!corpoConteudos.selecaoInicialPendente;
+      estado.selecaoInicial = Array.isArray(corpoConteudos.selecionadosIniciais) ? corpoConteudos.selecionadosIniciais : [];
       estado.catalogoHogwarts = corpoConteudos.conteudos.map(c => ({
         ...c, id:c.slug, atributo:c.atributo_padrao, alcance:'—', area:'—',
         duracao:'—', natureza:'—', sucesso:c.efeito, elevado:'—', excepcional:'—',
         concentracao:false,
       }));
+      if(estado.selecaoInicialPendente) estado.aba = 'conteudos';
+    }else{
+      const erroConteudos = await respConteudos.json().catch(()=>({}));
+      estado.erroConteudos = erroConteudos.erro || 'Não foi possível carregar o catálogo.';
     }
     atualizarFavicon();
   }catch(e){
@@ -774,9 +782,16 @@ async function carregarTrocas(){
   }
 }
 
-async function escolherConteudoInicial(slug){
+function alternarConteudoInicial(slug){
+  if(estado.selecaoInicial.includes(slug)) estado.selecaoInicial = estado.selecaoInicial.filter(id => id !== slug);
+  else if(estado.selecaoInicial.length < 4) estado.selecaoInicial.push(slug);
+  render();
+}
+
+async function confirmarConteudosIniciais(){
+  if(estado.selecaoInicial.length !== 4) return;
   const resposta = await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`, {
-    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slugs:[slug]}),
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({slugs:estado.selecaoInicial}),
   });
   const corpo = await resposta.json().catch(()=>({}));
   if(!resposta.ok){ alert(corpo.erro || 'Não foi possível escolher este conteúdo.'); return; }
@@ -1214,7 +1229,13 @@ function abaConteudos(p){
   const lista = todosConteudos(p).filter(c => p.mostrarRestritos || !c.restrito);
   const busca = (p._buscaConteudo || '').toLowerCase();
   const filtrada = busca ? lista.filter(c => c.nome.toLowerCase().includes(busca) || c.pericia.toLowerCase().includes(busca)) : lista;
-  return `<div class="cartao">
+  return `${estado.erroConteudos ? `<div class="cartao erro"><b>O catálogo não carregou:</b> ${esc(estado.erroConteudos)}. Atualize a página; se continuar, avise o Mestre.</div>` : ''}
+  ${estado.selecaoInicialPendente ? `<div class="cartao" style="border-color:var(--roxo)">
+    <h3 style="margin-bottom:6px">Escolha seus 4 Conteúdos iniciais</h3>
+    <p class="mini">Durante esta etapa você pode ver todo o catálogo do 1º ano. Conteúdos cujo requisito ainda não foi alcançado aparecem bloqueados. Depois de confirmar quatro, as outras opções somem e só reaparecem quando o Mestre ensiná-las.</p>
+    <div class="linha" style="margin-top:10px"><span class="pill on">${estado.selecaoInicial.length}/4 selecionados</span><button data-confirmar-conteudos-iniciais class="destaque" ${estado.selecaoInicial.length===4?'':'disabled'}>Confirmar os 4 escolhidos</button></div>
+  </div>` : ''}
+  <div class="cartao">
     <h3 style="margin-bottom:10px">Conteúdos (Feitiços, Técnicas...)</h3>
     <p class="mini" style="margin-bottom:10px">Perícia mede competência; Conteúdo mede possibilidade. Marque o estado de cada um conforme o personagem aprende.</p>
     <div class="linha busca">
@@ -1242,7 +1263,7 @@ function abaConteudos(p){
             ${ESTADOS_CONTEUDO.map(e => `<option value="${e}" ${estadoConteudo===e?'selected':''}>${ROTULO_ESTADO[e]}</option>`).join('')}
           </select>
           <button data-conteudo-favorito="${c.id}" class="${fav?'destaque':''}">${fav?'★ Favorito':'☆ Favoritar'}</button>
-          ${MODO_HUB && estadoConteudo==='disponivel' && Object.values(p.conteudosConhecidos).filter(e=>e==='formacao-inicial').length<4 ? `<button data-conteudo-inicial="${c.id}" class="destaque">Escolher para Formação Inicial</button>` : ''}
+          ${MODO_HUB && estado.selecaoInicialPendente && estadoConteudo==='disponivel' ? `<button data-conteudo-inicial="${c.id}" class="${estado.selecaoInicial.includes(c.id)?'destaque':''}">${estado.selecaoInicial.includes(c.id)?'✓ Selecionado':'Selecionar'}</button>` : ''}
         </div>
       </div>`;
     }).join('')}
@@ -1883,7 +1904,9 @@ function ligarEventos(){
   const chkRestritos = app.querySelector('[data-mostrar-restritos]');
   if(chkRestritos) chkRestritos.onchange = () => mudar(p => { p.mostrarRestritos = chkRestritos.checked; });
   app.querySelectorAll('[data-conteudo-estado]').forEach(el => el.addEventListener('change', () => mudar(p => { p.conteudosConhecidos[el.dataset.conteudoEstado] = el.value; })));
-  app.querySelectorAll('[data-conteudo-inicial]').forEach(el => el.addEventListener('click', () => escolherConteudoInicial(el.dataset.conteudoInicial)));
+  app.querySelectorAll('[data-conteudo-inicial]').forEach(el => el.addEventListener('click', () => alternarConteudoInicial(el.dataset.conteudoInicial)));
+  const btConfirmarIniciais = app.querySelector('[data-confirmar-conteudos-iniciais]');
+  if(btConfirmarIniciais) btConfirmarIniciais.onclick = confirmarConteudosIniciais;
   app.querySelectorAll('[data-conteudo-favorito]').forEach(b => b.onclick = () => mudar(p => {
     const id = b.dataset.conteudoFavorito;
     if(p.favoritos.includes(id)) p.favoritos = p.favoritos.filter(x=>x!==id);
