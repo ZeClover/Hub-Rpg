@@ -1,10 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { banco } from "@/lib/banco";
 import { usuarioAtual } from "@/lib/usuario";
-import { CONTEUDOS_HOGWARTS_1_ANO, SLUGS_CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
+import { CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
+import { catalogoDaFormacaoInicial, erroNaSelecaoInicial, formacaoInicialConcluida } from "@/lib/hogwarts/formacao-inicial";
 
 type Contexto = { params: Promise<{ id: string }> };
-type Dados = Record<string, unknown> & { conteudosConhecidos?: Record<string, string>; pericias?: Record<string, number> };
+type Dados = Record<string, unknown> & {
+  conteudosConhecidos?: Record<string, string>;
+  pericias?: Record<string, number>;
+  academico?: Record<string, unknown> & { formacaoInicialConcluida?: boolean };
+};
 
 export async function GET(_req: NextRequest, { params }: Contexto) {
   const { id } = await params;
@@ -13,10 +18,26 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
   const p = await banco.personagem.findUnique({ where: { id }, include: { sistema: { select: { chave: true } } } });
   if (!p || p.sistema.chave !== "hogwarts-rpg" || p.donoId !== usuario.id) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   const dados = p.dados as Dados;
+  const atuais = dados.conteudosConhecidos ?? {};
+  const selecaoConcluida = formacaoInicialConcluida(dados);
+
+  // Durante a criação, todo o catálogo do 1º ano fica visível. Requisito
+  // insuficiente só bloqueia a escolha; não esconde o conteúdo. Depois da
+  // confirmação atômica dos quatro iniciais, volta a valer o currículo
+  // progressivo da campanha e os demais somem até o Mestre liberá-los.
+  if (!selecaoConcluida) {
+    const conteudos = catalogoDaFormacaoInicial(dados);
+    return NextResponse.json({
+      conteudos,
+      selecaoInicialPendente: true,
+      selecionadosIniciais: Object.entries(atuais).filter(([, estado]) => estado === "formacao-inicial").map(([slug]) => slug),
+    });
+  }
+
   const curriculo = p.campanhaId ? await banco.curriculoHogwarts.findMany({ where: { campanhaId: p.campanhaId } }) : [];
   const estados = new Map(curriculo.map((c) => [c.slug, c.estado]));
   const conteudos = CONTEUDOS_HOGWARTS_1_ANO.flatMap((c) => {
-    const salvo = dados.conteudosConhecidos?.[c.slug];
+    const salvo = atuais[c.slug];
     const liberado = estados.get(c.slug) === "LIBERADO";
     if (!salvo && !liberado) return [];
     const cumpre = Number(dados.pericias?.[c.pericia] ?? 0) >= c.requisito_pericia;
@@ -24,7 +45,7 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
       ? salvo : liberado && cumpre ? "disponivel" : "bloqueado";
     return [{ ...c, estado }];
   });
-  return NextResponse.json({ conteudos });
+  return NextResponse.json({ conteudos, selecaoInicialPendente: false, selecionadosIniciais: [] });
 }
 
 export async function POST(req: NextRequest, { params }: Contexto) {
@@ -37,27 +58,27 @@ export async function POST(req: NextRequest, { params }: Contexto) {
   const slugs: string[] = Array.isArray(corpo?.slugs)
     ? [...new Set<string>(corpo.slugs.filter((s: unknown): s is string => typeof s === "string"))]
     : [];
-  if (slugs.length < 1 || slugs.length > 4 || slugs.some((s) => !SLUGS_CONTEUDOS_HOGWARTS_1_ANO.has(s))) {
-    return NextResponse.json({ erro: "escolha de 1 a 4 conteúdos válidos" }, { status: 400 });
-  }
   const dados = p.dados as Dados;
-  const atuais = { ...(dados.conteudosConhecidos ?? {}) };
-  const iniciais = Object.values(atuais).filter((e) => e === "formacao-inicial").length;
-  if (iniciais + slugs.filter((s) => !atuais[s]).length > 4) return NextResponse.json({ erro: "limite de 4 conteúdos iniciais" }, { status: 400 });
-  if (p.campanhaId) {
-    const liberados = await banco.curriculoHogwarts.findMany({
-      where: { campanhaId: p.campanhaId, slug: { in: slugs }, estado: "LIBERADO" }, select: { slug: true },
-    });
-    const autorizados = new Set(liberados.map((c) => c.slug));
-    if (slugs.some((slug) => !autorizados.has(slug))) {
-      return NextResponse.json({ erro: "o Mestre ainda não autorizou um dos conteúdos escolhidos" }, { status: 403 });
-    }
+  if (formacaoInicialConcluida(dados)) {
+    return NextResponse.json({ erro: "a formação inicial deste personagem já foi concluída" }, { status: 409 });
   }
-  for (const slug of slugs) {
-    const c = CONTEUDOS_HOGWARTS_1_ANO.find((x) => x.slug === slug)!;
-    if (Number(dados.pericias?.[c.pericia] ?? 0) < c.requisito_pericia) return NextResponse.json({ erro: `requisito não atendido: ${c.nome}` }, { status: 400 });
-    atuais[slug] = "formacao-inicial";
-  }
-  await banco.personagem.update({ where: { id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+
+  const erroSelecao = erroNaSelecaoInicial(slugs, dados.pericias);
+  if (erroSelecao) return NextResponse.json({ erro: erroSelecao }, { status: 400 });
+
+  const atuais = Object.fromEntries(
+    Object.entries(dados.conteudosConhecidos ?? {}).filter(([, estado]) => estado !== "formacao-inicial"),
+  );
+  for (const slug of slugs) atuais[slug] = "formacao-inicial";
+  await banco.personagem.update({
+    where: { id },
+    data: {
+      dados: {
+        ...dados,
+        conteudosConhecidos: atuais,
+        academico: { ...(dados.academico ?? {}), formacaoInicialConcluida: true },
+      },
+    },
+  });
   return NextResponse.json({ ok: true, estado: "formacao-inicial" });
 }
