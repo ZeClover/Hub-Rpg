@@ -3,7 +3,6 @@ import { banco } from "@/lib/banco";
 import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 import { CONTEUDOS_HOGWARTS_1_ANO, SLUGS_CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
-import { sincronizarConteudosHogwartsPrimeiroAno } from "@/lib/hogwarts/sincronizar-conteudos";
 
 type Contexto = { params: Promise<{ id: string }> };
 type DadosFicha = Record<string, unknown> & { conteudosConhecidos?: Record<string, string>; pericias?: Record<string, number> };
@@ -18,7 +17,6 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
   if (!await mestreDaCampanha(id)) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   const campanha = await banco.campanha.findUnique({ where: { id }, include: { sistema: { select: { chave: true } } } });
   if (!campanha || campanha.sistema.chave !== "hogwarts-rpg") return NextResponse.json({ erro: "campanha não é Hogwarts RPG" }, { status: 400 });
-  await sincronizarConteudosHogwartsPrimeiroAno();
 
   const [estados, personagens] = await Promise.all([
     banco.curriculoHogwarts.findMany({ where: { campanhaId: id } }),
