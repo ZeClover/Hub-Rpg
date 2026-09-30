@@ -79,7 +79,7 @@ function normalizar(dados){
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 
-const estado = { carregando:true, erro:null, personagens:[], selecionados:new Set(), status:'', lojas:[], curriculo:[], busca:'', filtroPericia:'' };
+const estado = { carregando:true, erro:null, erroCurriculo:'', personagens:[], selecionados:new Set(), status:'', lojas:[], curriculo:[], busca:'', filtroPericia:'' };
 
 async function carregar(){
   if(!CAMPANHA_ID){ estado.erro='sem-campanha'; estado.carregando=false; render(); return; }
@@ -93,7 +93,14 @@ async function carregar(){
     const {personagens} = await respPersonagens.json();
     estado.personagens = personagens.map(p => ({...p, dados: normalizar(p.dados)}));
     if(respLojas.ok){ const {lojas} = await respLojas.json(); estado.lojas = lojas; }
-    if(respCurriculo.ok){ const {conteudos} = await respCurriculo.json(); estado.curriculo = conteudos; }
+    if(respCurriculo.ok){
+      const {conteudos} = await respCurriculo.json();
+      estado.curriculo = Array.isArray(conteudos) ? conteudos : [];
+      estado.erroCurriculo = estado.curriculo.length ? '' : 'A API respondeu sem conteúdos.';
+    }else{
+      const falha = await respCurriculo.json().catch(()=>({}));
+      estado.erroCurriculo = falha.erro || `Falha ao carregar o currículo (HTTP ${respCurriculo.status}).`;
+    }
   }catch(e){
     console.error('Falha ao carregar campanha', e);
     estado.erro = 'sem-acesso';
@@ -206,13 +213,14 @@ function render(){
   app.innerHTML = status + `
   <div class="cartao">
     <h3 style="margin-bottom:6px">Hogwarts → Acadêmico → Currículo → 1º Ano</h3>
-    <p class="mini" style="margin-bottom:10px">59 conteúdos: ensinar libera para alunos aptos, mas não concede como Conhecido.</p>
+    <p class="mini" style="margin-bottom:10px">${estado.curriculo.length} conteúdos: ensinar libera para alunos aptos, mas não concede como Conhecido.</p>
+    ${estado.erroCurriculo ? `<div class="erro" style="margin-bottom:10px">${esc(estado.erroCurriculo)} Recarregue a página; se continuar, informe esta mensagem.</div>` : ''}
     <div class="linha" style="margin-bottom:12px">
       <input id="buscaCurriculo" value="${esc(estado.busca)}" placeholder="Buscar conteúdo, perícia ou tag…" style="flex:1">
       <select id="filtroCurriculo"><option value="">Todas as matérias/perícias</option>${[...new Set(estado.curriculo.map(c=>c.pericia))].map(p=>`<option ${estado.filtroPericia===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
     </div>
     ${[...new Set(estado.curriculo.map(c=>c.pericia))].filter(p=>!estado.filtroPericia||p===estado.filtroPericia).map(pericia=>{
-      const itens=estado.curriculo.filter(c=>c.pericia===pericia && (!estado.busca || (c.nome+' '+c.categoria+' '+c.tags.join(' ')).toLowerCase().includes(estado.busca.toLowerCase())));
+      const itens=estado.curriculo.filter(c=>c.pericia===pericia && (!estado.busca || (c.nome+' '+c.categoria+' '+(c.tags||[]).join(' ')).toLowerCase().includes(estado.busca.toLowerCase())));
       if(!itens.length)return '';
       return `<h4 style="margin:14px 0 6px">${['Investigação','Furtividade','Influência'].includes(pericia)?'Conteúdos Gerais — ':''}${esc(pericia)}</h4>`+itens.map(c=>`<div class="linha-pj" style="flex-wrap:wrap"><span class="nome"><b>${esc(c.nome)}</b><span class="tag">${esc(c.categoria)}</span><br><span class="mini">${esc(c.pericia)} · requisito ${c.requisito_pericia} · ${esc(c.estadoCurricular)} · ${c.conhecidoPor.length} conhecem · ${c.disponivelPara.length} disponíveis</span></span><button data-curriculo="ensinar:${c.slug}" class="destaque">Ensinar turma</button><button data-curriculo="liberar:${c.slug}">Liberar para selecionados</button><button data-curriculo="conceder:${c.slug}">Conceder</button><button data-curriculo="ocultar:${c.slug}">Ocultar</button><button data-editar-conteudo="${c.slug}">Editar</button><button data-ver-personagens="${c.slug}">Ver personagens</button></div>`).join('');
     }).join('')}
