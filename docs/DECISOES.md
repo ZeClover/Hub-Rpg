@@ -7847,3 +7847,21 @@ em 27/08/2026.
 **Permissão de campo é do servidor, não da tela.** Um campo marcado como "só mestre" nunca pode ser enviado ao navegador de quem não é mestre daquela campanha. Esconder na interface não é suficiente.
 
 **Plano gratuito é uma restrição de projeto, não um detalhe.** Imagens comprimidas na subida, banco enxuto, nada que exija processo rodando 24h.
+
+
+## 174. Histórico de atualizações do Hub (02/10/2026)
+
+Pedido do Zé: uma aba de patch notes com todas as atualizações em ordem
+cronológica e linguagem fácil de entender.
+
+A página `/atualizacoes` fica no menu do Hub e tem um atalho no painel.
+O histórico reúne as mudanças de uso registradas nos commits desde
+24/08/2026, agrupadas por dia. Textos explicam o resultado para mestre
+e jogadores, sem nomes internos de código ou registros repetidos de
+documentação. Datas são de registro, não confirmação de publicação.
+Recursos com configuração pendente são identificados no texto.
+
+A leitura começa pelas mais recentes e permite escolher “Desde o começo”.
+A busca ignora acentos e encontra assuntos ou datas, mostrando as novidades
+correspondentes. O conteúdo fica em `src/lib/atualizacoes.ts`, para acrescentar
+novas entradas junto das próximas mudanças. Não há custo nem tabela nova.

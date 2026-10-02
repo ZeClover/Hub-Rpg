@@ -171,6 +171,12 @@ export default async function Painel() {
         >
           Ver sistemas
         </Link>
+        <Link
+          href="/atualizacoes"
+          className="rounded border border-borda bg-superficie px-4 py-2 text-sm text-texto transition hover:border-ambar/40 hover:text-ambar-forte"
+        >
+          Ver atualizações
+        </Link>
       </section>
     </main>
   );

@@ -28,7 +28,7 @@ export default async function LayoutDoHub({
   return (
     <>
       <header className="border-b border-borda">
-        <div className="mx-auto flex w-full max-w-3xl items-center gap-4 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-4 px-6 py-4">
           <Link
             href="/painel"
             className="font-titulo text-xs uppercase tracking-[0.3em] text-ambar"
@@ -36,7 +36,7 @@ export default async function LayoutDoHub({
             Hub RPG
           </Link>
 
-          <nav className="flex gap-4 text-sm text-texto-suave">
+          <nav aria-label="Menu do Hub" className="order-last flex w-full flex-wrap gap-x-4 gap-y-2 text-sm text-texto-suave sm:order-none sm:w-auto">
             <Link href="/fichas" className="transition hover:text-texto">
               Fichas
             </Link>
@@ -48,6 +48,9 @@ export default async function LayoutDoHub({
             </Link>
             <Link href="/itens" className="transition hover:text-texto">
               Itens
+            </Link>
+            <Link href="/atualizacoes" className="transition hover:text-texto">
+              Atualizações
             </Link>
           </nav>
 

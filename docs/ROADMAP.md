@@ -2078,3 +2078,9 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       não tem logotipo nem mais de 10 domínios, o Google não pediu
       verificação: status virou **"Em produção"** direto. Confirmado pelo
       Zé com print do painel do Google Cloud
+
+
+## Histórico de atualizações
+
+- [x] **Aba Atualizações** (02/10/2026) — decisão #174. Histórico por data,
+      linguagem simples, busca por assunto e ordem de leitura selecionável.
