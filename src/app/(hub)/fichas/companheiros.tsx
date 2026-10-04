@@ -1,5 +1,9 @@
 "use client";
 
+import Link from "next/link";
+import { ImagemHub } from "@/components/hub/imagem";
+import { retratoPadrao } from "@/lib/visual";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -15,7 +19,7 @@ export function Companheiros({
   candidatas,
 }: {
   personagemId: string;
-  companheiros: { id: string; nome: string }[];
+  companheiros: { id: string; nome: string; avatarUrl?: string | null }[];
   candidatas: { id: string; nome: string }[];
 }) {
   const roteador = useRouter();
@@ -62,7 +66,7 @@ export function Companheiros({
           key={c.id}
           className="flex items-center gap-1 rounded-full border border-borda px-3 py-0.5 text-xs text-texto-suave"
         >
-          🐾 {c.nome}
+          <Link href={`/fichas/${c.id}`} className="flex items-center gap-2 py-2"><ImagemHub src={c.avatarUrl} fallback={retratoPadrao(c.nome)} className="h-12 w-12 rounded-full" /><span>{c.nome}</span></Link>
           <button
             type="button"
             onClick={() => remover(c.id)}

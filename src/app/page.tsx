@@ -1,112 +1,101 @@
-/*
-  Página inicial pública. É a porta de entrada de quem ainda não entrou.
-*/
-
-import { ROTULO_SITUACAO, SISTEMAS } from "@/lib/sistemas";
-
-const etapas = [
-  {
-    nome: "Kaizoku no Sho",
-    resumo:
-      "Ficha completa: 7 atributos, 22 perícias, Akuma no Mi, Haki, Budô.",
-    situacao: "pronta" as const,
-  },
-  {
-    nome: "Fabula Ultima",
-    resumo:
-      "Atributos, classes e condições já calculam. Poderes, feitiços e equipamento em construção.",
-    situacao: "em-construcao" as const,
-  },
-  {
-    nome: "Fichas ligadas ao Hub",
-    resumo:
-      "Personagem salvo na sua conta, acessível de qualquer aparelho, e compartilhado com a mesa.",
-    situacao: "planejada" as const,
-  },
-];
-
-
+import Link from "next/link";
+import { Icone } from "@/components/hub/icone";
+import { ImagemHub } from "@/components/hub/imagem";
+import { capaSistema, capaCatalogo, CAPAS_VERTICAIS } from "@/lib/visual";
+import { SISTEMAS, ROTULO_SITUACAO } from "@/lib/sistemas";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-24">
-      <header>
-        <p className="font-titulo text-xs uppercase tracking-[0.35em] text-ambar">
-          Hub RPG
-        </p>
-        <h1 className="mt-5 font-titulo text-4xl leading-tight sm:text-5xl">
-          As fichas dos seus sistemas —{" "}
-          <span className="text-ambar-forte">num lugar só</span>.
-        </h1>
-        <p className="mt-5 max-w-xl text-base leading-relaxed text-texto-suave">
-          Uma ficha por sistema de regras, cada uma sabendo fazer as contas
-          do sistema dela. Sem planilha, sem calculadora ao lado.
-        </p>
+    <main className="hub-home mx-auto w-full max-w-7xl px-6 py-8 sm:py-12">
+      <header className="mb-8 flex items-center justify-between">
+        <Link href="/" className="hub-brand">
+          <Icone nome="dados" width={30} height={30} />
+          <span>Hub RPG</span>
+        </Link>
+        <Link href="/entrar" className="hub-button">
+          Entrar <Icone nome="seta" />
+        </Link>
       </header>
-
-      <section className="mt-14">
-        <h2 className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
-          Sistemas
-        </h2>
-        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-          {SISTEMAS.map((sistema) => (
-            <li
-              key={sistema.chave}
-              className="rounded-lg border border-borda bg-superficie px-4 py-3"
-            >
-              <p className="font-titulo text-base">{sistema.nome}</p>
-              <p className="mt-0.5 text-sm text-texto-suave">
-                {ROTULO_SITUACAO[sistema.situacao]}
-              </p>
+      <section className="hub-feature">
+        <ImagemHub
+          src={capaSistema("fabula-ultima")}
+          className="hub-feature-image"
+          destaque
+        />
+        <div className="hub-feature-content">
+          <p className="hub-eyebrow">Personagens. Mundos. Histórias.</p>
+          <h1>
+            Seu próximo capítulo
+            <br />
+            <span className="text-ambar-forte">começa aqui.</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-sm leading-relaxed sm:text-base">
+            Reúna seus personagens e campanhas em um só lugar. Fichas com as
+            regras do seu sistema e ferramentas para jogar junto.
+          </p>
+          <Link href="/entrar" className="hub-button hub-button-primary mt-6">
+            Entrar com Google <Icone nome="seta" />
+          </Link>
+        </div>
+      </section>
+      <section className="mt-12">
+        <div className="hub-page-heading">
+          <div>
+            <p className="hub-eyebrow">Um lugar para cada aventura</p>
+            <h2 className="font-titulo text-3xl">Explore os sistemas</h2>
+            <p>Escolha o universo da sua próxima história.</p>
+          </div>
+        </div>
+        <ul className="hub-home-grid">
+          {SISTEMAS.map((s) => (
+            <li key={s.chave}>
+              <Link href={`/sistemas/${s.chave}`} className="hub-card">
+                <ImagemHub
+                  src={capaCatalogo(s.chave)}
+                  ajuste={CAPAS_VERTICAIS.has(s.chave) ? "contain" : "cover"}
+                  className="hub-cover"
+                />
+                <div className="hub-card-body">
+                  <h3 className="hub-card-title">{s.nome}</h3>
+                  <span className="hub-badge mt-2" data-status={s.situacao}>
+                    {ROTULO_SITUACAO[s.situacao]}
+                  </span>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
       </section>
-
-      <section className="mt-16">
-        <h2 className="font-titulo text-xs uppercase tracking-[0.25em] text-texto-suave">
-          Construção
-        </h2>
-        <ol className="mt-5 space-y-3">
-          {etapas.map((etapa) => (
-            <li
-              key={etapa.nome}
-              className="rounded-lg border border-borda bg-superficie p-5"
-            >
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h3 className="font-titulo text-lg">{etapa.nome}</h3>
-                <span
-                  className={
-                    etapa.situacao === "pronta"
-                      ? "shrink-0 rounded-full border border-ambar/40 bg-ambar/10 px-3 py-0.5 text-xs text-ambar-forte"
-                      : "shrink-0 rounded-full border border-borda px-3 py-0.5 text-xs text-texto-suave"
-                  }
-                >
-                  {ROTULO_SITUACAO[etapa.situacao]}
-                </span>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-texto-suave">
-                {etapa.resumo}
-              </p>
-            </li>
-          ))}
-        </ol>
+      <section className="hub-grid mt-12">
+        {[
+          {
+            nome: "Personagens com identidade",
+            texto: "Retratos, resumos e organização por sistema e campanha.",
+            icone: "personagem" as const,
+          },
+          {
+            nome: "Sua mesa reunida",
+            texto: "Campanhas, sessões, comunicação e elenco em um só lugar.",
+            icone: "campanha" as const,
+          },
+          {
+            nome: "Pronto para jogar",
+            texto:
+              "Fichas salvas na conta e Mesa ao Vivo para acompanhar a sessão.",
+            icone: "dados" as const,
+          },
+        ].map((r) => (
+          <article key={r.nome} className="hub-panel">
+            <Icone nome={r.icone} width={28} height={28} />
+            <h3 className="mt-4 font-titulo text-lg">{r.nome}</h3>
+            <p className="mt-2 text-sm text-texto-suave">{r.texto}</p>
+          </article>
+        ))}
       </section>
-
-      <div className="mt-16">
-        <a
-          href="/entrar"
-          className="inline-block rounded-lg border border-ambar/40 bg-ambar/10 px-5 py-3 font-titulo text-base text-ambar-forte transition hover:bg-ambar/20"
-        >
-          Entrar com Google
-        </a>
-      </div>
-
-      <footer className="mt-16 border-t border-borda pt-6 text-sm text-texto-suave">
-        As decisões do projeto estão em{" "}
-        <code className="text-texto">docs/DECISOES.md</code>.
+      <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-borda pt-6 text-xs text-texto-suave">
+        <span>Hub RPG · Suas histórias, reunidas.</span>
+        <Link href="/creditos">Créditos das imagens</Link>
       </footer>
     </main>
   );
 }
-

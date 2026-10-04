@@ -34,6 +34,8 @@ export function FavoritarSistema({
       } else {
         setFavorito(!novoValor);
       }
+    } catch {
+      setFavorito(!novoValor);
     } finally {
       setSalvando(false);
     }
@@ -44,11 +46,13 @@ export function FavoritarSistema({
       type="button"
       onClick={alternar}
       disabled={salvando}
+      aria-pressed={favorito}
+      aria-label={`${favorito ? "Remover dos favoritos" : "Favoritar"} ${chave}`}
       title={favorito ? "Remover dos favoritos" : "Favoritar"}
       className={
         favorito
-          ? "text-ambar-forte disabled:opacity-50"
-          : "text-texto-suave hover:text-ambar-forte disabled:opacity-50"
+          ? "hub-icon-button text-ambar-forte disabled:opacity-50"
+          : "hub-icon-button text-texto-suave hover:text-ambar-forte disabled:opacity-50"
       }
     >
       {favorito ? "★" : "☆"}

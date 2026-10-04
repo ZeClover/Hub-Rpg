@@ -6,12 +6,12 @@ import { useState } from "react";
 import { SISTEMAS_COM_HUB } from "@/lib/sistemas";
 
 /*
-  Botão "+ Criar ficha" da decisão #43: escolhe o sistema, cria a linha no
+  Botão "Criar personagem" da decisão #43: escolhe o sistema, cria a linha no
   banco e já abre a ficha em branco pronta pra editar.
 */
-export function CriarFicha() {
+export function CriarFicha({ sistemaInicial = "" }: { sistemaInicial?: string }) {
   const roteador = useRouter();
-  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_HUB[0]?.chave ?? "");
+  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_HUB.some(s => s.chave === sistemaInicial) ? sistemaInicial : SISTEMAS_COM_HUB[0]?.chave ?? "");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -39,8 +39,10 @@ export function CriarFicha() {
 
   return (
     <div className="mt-8 rounded-lg border border-borda bg-superficie p-5">
+      <h3 className="mb-3 font-titulo text-lg">Novo personagem</h3>
       <div className="flex flex-wrap items-center gap-3">
         <select
+          aria-label="Sistema para criar"
           value={sistemaChave}
           onChange={(evento) => setSistemaChave(evento.target.value)}
           className="rounded border border-borda bg-fundo px-3 py-2 text-sm"
@@ -57,7 +59,7 @@ export function CriarFicha() {
           disabled={criando}
           className="rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20 disabled:opacity-50"
         >
-          {criando ? "Criando…" : "+ Criar ficha"}
+          {criando ? "Criando…" : "Criar personagem"}
         </button>
       </div>
       {erro && <p className="mt-3 text-sm text-segredo">{erro}</p>}

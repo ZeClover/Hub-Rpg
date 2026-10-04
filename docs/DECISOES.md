@@ -7865,3 +7865,36 @@ A leitura começa pelas mais recentes e permite escolher “Desde o começo”.
 A busca ignora acentos e encontra assuntos ou datas, mostrando as novidades
 correspondentes. O conteúdo fica em `src/lib/atualizacoes.ts`, para acrescentar
 novas entradas junto das próximas mudanças. Não há custo nem tabela nova.
+
+
+## 175. Biblioteca visual e vitrine de sistemas (04/10/2026)
+
+Pedido do Zé: comparar com o eRPG, organizar o Hub com capas e retratos,
+resumir personagens e permitir imagens prontas ou próprias. Em seguida,
+pediu um seletor lateral inspirado em emuladores, com movimento dos ícones.
+
+A vitrine destaca a capa selecionada e inclina as vizinhas. Tem setas,
+teclado, gesto lateral e redução de movimento. Galeria, busca e favoritos
+continuam disponíveis. Personagens, painel, campanhas, companheiros e
+Mesa ao Vivo compartilham imagens e resumos públicos por sistema.
+
+As 25 imagens locais têm fontes e créditos em `/creditos`. A biblioteca
+reutilizável usa domínio público e David Revoy (CC BY 4.0). Conforme pedido
+explícito, capas de livros e artes de franquias identificam os sistemas no
+catálogo, com os direitos indicados; não entram na biblioteca reutilizável.
+The Celestials e Thrylikí Chelóna usam imagens temáticas abrangentes.
+
+Envio de JPG/PNG/WebP é comprimido no aparelho e persistido nos campos de
+imagem existentes, limitado a aproximadamente 165 KB por imagem. Não
+exige bucket nem migração. Seleção de enquadramento e imagem de reserva
+funcionam nos cards e nas páginas. Resumos não enviam `_mestre` ou dados
+brutos ao cliente. Nomes de NPCs também são filtrados antes de compor os
+dados de equipes para jogadores sem acesso.
+
+Detalhes, matriz da comparação, fontes e verificação estão em
+`docs/REDESIGN-VISUAL.md`. A verificação do navegador usa uma cópia isolada
+com dados de teste porque o banco real não aceitou conexão neste ambiente.
+Publicação autorizada pelo Zé em 04/10/2026 após a verificação.
+A publicação segue a integração existente da branch
+`claude/hub-rpg-organization-x1tbpd` com a Vercel.
+Endereço: `https://hub-rpg-eight.vercel.app`.

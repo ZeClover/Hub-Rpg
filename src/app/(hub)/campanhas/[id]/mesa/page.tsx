@@ -1,3 +1,5 @@
+import { ImagemHub } from "@/components/hub/imagem";
+import { capaSistema } from "@/lib/visual";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -32,7 +34,7 @@ export default async function PaginaMesaAoVivo({
 
   const campanha = await banco.campanha.findUnique({
     where: { id },
-    select: { id: true, nome: true, sistema: { select: { chave: true } } },
+    select: { id: true, nome: true, capaUrl: true, sistema: { select: { chave: true } } },
   });
   if (!campanha) notFound();
 
@@ -54,7 +56,7 @@ export default async function PaginaMesaAoVivo({
       >
         ← {campanha.nome}
       </Link>
-      <h1 className="mt-3 font-titulo text-3xl">Mesa ao vivo</h1>
+      <section className="hub-feature mt-5"><ImagemHub src={campanha.capaUrl} fallback={capaSistema(campanha.sistema.chave)} className="hub-feature-image" /><div className="hub-feature-content"><p className="hub-eyebrow">{campanha.nome}</p><h1>Mesa ao vivo</h1><span className="hub-badge mt-3">{souMestre ? "Conduzindo a sessão" : "Acompanhando a sessão"}</span></div></section>
       {souMestre ? (
         <p className="mt-2 text-sm text-texto-suave">
           Vida de jogadores e inimigos, acompanhada sozinha, e a ordem de

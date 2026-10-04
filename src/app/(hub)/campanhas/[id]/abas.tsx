@@ -1,46 +1,60 @@
 "use client";
+import { useId, useRef, useState } from "react";
 
-import { useState } from "react";
-
-/*
-  Abas genéricas da página da campanha (decisão #144, ideia #134 do
-  pedido original: "abas conforme os módulos forem existindo, não criar
-  seção vazia à toa"). Só reorganiza apresentação — cada seção continua
-  sendo exatamente o mesmo componente de sempre, só que agrupado; nenhum
-  dado novo, nenhuma rota nova.
-
-  Só a aba ativa é montada (não é CSS escondendo as outras): assim o Chat
-  e o Painel — que fazem polling sozinhos — não ficam pedindo dado à toa
-  pras abas que ninguém está olhando.
-*/
+// Somente a aba ativa é montada, para não multiplicar consultas do chat.
 export function Abas({
   abas,
 }: {
   abas: { id: string; rotulo: string; conteudo: React.ReactNode }[];
 }) {
   const [ativa, setAtiva] = useState(abas[0]?.id);
-
+  const id = useId();
+  const botoes = useRef<(HTMLButtonElement | null)[]>([]);
   return (
     <div className="mt-8">
-      <div role="tablist" className="flex flex-wrap gap-1 border-b border-borda">
-        {abas.map((aba) => (
+      <div
+        role="tablist"
+        aria-label="Seções da campanha"
+        className="hub-tabs hub-campaign-tabs"
+      >
+        {abas.map((aba, i) => (
           <button
             key={aba.id}
+            ref={(el) => {
+              botoes.current[i] = el;
+            }}
+            id={`${id}-${aba.id}`}
             type="button"
             role="tab"
             aria-selected={ativa === aba.id}
+            aria-controls={`${id}-painel`}
+            tabIndex={ativa === aba.id ? 0 : -1}
             onClick={() => setAtiva(aba.id)}
-            className={
-              ativa === aba.id
-                ? "rounded-t border border-b-0 border-borda bg-superficie px-4 py-2 text-sm text-ambar-forte"
-                : "rounded-t border border-b-0 border-transparent px-4 py-2 text-sm text-texto-suave transition hover:text-texto"
-            }
+            onKeyDown={(e) => {
+              let proximo = i;
+              if (e.key === "ArrowRight") proximo = (i + 1) % abas.length;
+              else if (e.key === "ArrowLeft")
+                proximo = (i - 1 + abas.length) % abas.length;
+              else if (e.key === "Home") proximo = 0;
+              else if (e.key === "End") proximo = abas.length - 1;
+              else return;
+              e.preventDefault();
+              setAtiva(abas[proximo].id);
+              botoes.current[proximo]?.focus();
+            }}
           >
             {aba.rotulo}
           </button>
         ))}
       </div>
-      <div className="mt-2">{abas.find((a) => a.id === ativa)?.conteudo}</div>
+      <div
+        id={`${id}-painel`}
+        role="tabpanel"
+        aria-labelledby={`${id}-${ativa}`}
+        className="mt-5"
+      >
+        {abas.find((a) => a.id === ativa)?.conteudo}
+      </div>
     </div>
   );
 }

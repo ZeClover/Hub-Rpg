@@ -1,5 +1,7 @@
 "use client";
 
+import { Icone } from "@/components/hub/icone";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -67,7 +69,7 @@ export function GerenciadorItens({
   return (
     <div className="rounded-lg border border-borda bg-superficie p-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-titulo text-sm">{titulo}</h3>
+        <h3 className="flex items-center gap-2 font-titulo text-base"><Icone nome="bolsa" />{titulo}<span className="hub-badge">{itens.length}</span></h3>
         {podeGerenciar && !criando && (
           <button
             type="button"
@@ -85,6 +87,7 @@ export function GerenciadorItens({
             type="text"
             value={nome}
             onChange={(evento) => setNome(evento.target.value)}
+            aria-label="Nome do item"
             placeholder="Nome do item"
             className="min-w-[140px] flex-1 rounded border border-borda bg-fundo px-2 py-1 text-sm text-texto"
           />
@@ -178,9 +181,9 @@ function ItemLinha({
   }
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-2 rounded border border-borda bg-fundo px-3 py-2">
+    <li className="hub-item-row flex flex-wrap items-center justify-between gap-2 rounded border border-borda bg-fundo px-3 py-2">
       <span className="text-sm text-texto">
-        {item.nome}
+        <Icone nome="bolsa" />{item.nome}
         {item.quantidade !== 1 && <span className="text-texto-suave"> ×{item.quantidade}</span>}
       </span>
 

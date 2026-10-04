@@ -1,3 +1,4 @@
+import { imagemHubValida } from "@/lib/imagem-hub";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
@@ -49,6 +50,9 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const corpo = await requisicao.json().catch(() => null);
+  if ((corpo?.capaUrl !== undefined && !imagemHubValida(corpo.capaUrl))) {
+    return NextResponse.json({ erro: "imagem inválida ou muito grande" }, { status: 400 });
+  }
   const temCapa = typeof corpo?.capaUrl === "string" || corpo?.capaUrl === null;
   const temDescricao = typeof corpo?.descricao === "string" || corpo?.descricao === null;
   const temTags =

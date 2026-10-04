@@ -41,17 +41,17 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
 
   const personagens = await banco.personagem.findMany({
     where: { campanhaId },
-    select: { id: true, nome: true, donoId: true, ehMonstro: true, dados: true },
+    select: { id: true, nome: true, donoId: true, ehMonstro: true, avatarUrl: true, dados: true },
   });
 
   const jogadores = personagens
     .filter((p) => !(p.ehMonstro && (souMestre ? p.donoId === usuario.id : true)))
-    .map((p) => ({ id: p.id, nome: p.nome, resumoVida: lerResumoVida(p.dados) }));
+    .map((p) => ({ id: p.id, nome: p.nome, avatarUrl: p.avatarUrl, resumoVida: lerResumoVida(p.dados) }));
 
   const inimigos = souMestre
     ? personagens
         .filter((p) => p.donoId === usuario.id && p.ehMonstro)
-        .map((p) => ({ id: p.id, nome: p.nome, resumoVida: lerResumoVida(p.dados) }))
+        .map((p) => ({ id: p.id, nome: p.nome, avatarUrl: p.avatarUrl, resumoVida: lerResumoVida(p.dados) }))
     : [];
 
   return NextResponse.json({ jogadores, inimigos });

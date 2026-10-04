@@ -9,9 +9,9 @@ import { SISTEMAS_COM_HUB } from "@/lib/sistemas";
   Criar campanha: escolhe o sistema e dá um nome pra mesa. Quem cria já
   nasce mestre dela (a API decide isso, não esta tela).
 */
-export function CriarCampanha() {
+export function CriarCampanha({ sistemaInicial = "" }: { sistemaInicial?: string }) {
   const roteador = useRouter();
-  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_HUB[0]?.chave ?? "");
+  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_HUB.some(s => s.chave === sistemaInicial) ? sistemaInicial : SISTEMAS_COM_HUB[0]?.chave ?? "");
   const [nome, setNome] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -46,12 +46,14 @@ export function CriarCampanha() {
       <p className="font-titulo text-sm text-texto-suave">Criar campanha</p>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <input
+          aria-label="Nome da campanha"
           value={nome}
           onChange={(evento) => setNome(evento.target.value)}
           placeholder="Nome da mesa"
           className="min-w-[180px] flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm"
         />
         <select
+          aria-label="Sistema para criar"
           value={sistemaChave}
           onChange={(evento) => setSistemaChave(evento.target.value)}
           className="rounded border border-borda bg-fundo px-3 py-2 text-sm"

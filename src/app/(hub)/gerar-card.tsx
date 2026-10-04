@@ -84,10 +84,11 @@ async function desenharCard(
       const escala = Math.max(LARGURA / img.width, ALTURA_IMAGEM / img.height);
       const larguraImg = img.width * escala;
       const alturaImg = img.height * escala;
+      const foco = imagemUrl.match(/#hub-pos=(top|center|bottom)$/)?.[1] ?? "center";
       ctx.drawImage(
         img,
         (LARGURA - larguraImg) / 2,
-        (ALTURA_IMAGEM - alturaImg) / 2,
+        foco === "top" ? 0 : foco === "bottom" ? ALTURA_IMAGEM - alturaImg : (ALTURA_IMAGEM - alturaImg) / 2,
         larguraImg,
         alturaImg,
       );

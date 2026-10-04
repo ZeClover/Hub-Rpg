@@ -1,3 +1,7 @@
+import { ImagemHub } from "@/components/hub/imagem";
+import { ResumoFicha } from "@/components/hub/resumo";
+import { capaSistema, retratoPadrao } from "@/lib/visual";
+import { resumirPersonagem } from "@/lib/sistemas/resumo-personagem";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,7 +14,11 @@ import { GerenciadorItens, type LocalItem } from "../../itens-compartilhados";
 import { Companheiros } from "../companheiros";
 import { CompartilharFicha } from "../compartilhar-ficha";
 import { CriarSandbox } from "../criar-sandbox";
-import { AvatarFicha, EditarImagemFicha, ROTULO_STATUS, StatusFicha } from "../organizacao-ficha";
+import {
+  EditarImagemFicha,
+  ROTULO_STATUS,
+  StatusFicha,
+} from "../organizacao-ficha";
 import { TransferirDono } from "../transferir-dono";
 
 /*
@@ -18,7 +26,7 @@ import { TransferirDono } from "../transferir-dono";
   redor da ficha oficial, sem duplicá-la: status, imagem, compartilhamento
   (com QR Code, ideia #132), companheiros, itens e veículos. A ficha em si
   — os números e regras do sistema — continua só no arquivo HTML daquele
-  sistema (decisão #17); esta página nunca lê nem escreve `dados`.
+  sistema (decisão #17); esta página só lê um resumo público de `dados`, sem refazer regras.
 */
 export default async function PaginaDoPersonagem({
   params,
@@ -33,6 +41,7 @@ export default async function PaginaDoPersonagem({
     select: {
       id: true,
       nome: true,
+      dados: true,
       donoId: true,
       status: true,
       avatarUrl: true,
@@ -50,7 +59,7 @@ export default async function PaginaDoPersonagem({
   const [outrosPersonagens, itens, veiculos, companheiros] = await Promise.all([
     banco.personagem.findMany({
       where: { donoId: usuario.id, id: { not: id } },
-      select: { id: true, nome: true },
+      select: { id: true, nome: true, avatarUrl: true },
       orderBy: { nome: "asc" },
     }),
     banco.item.findMany({
@@ -64,7 +73,9 @@ export default async function PaginaDoPersonagem({
     }),
     banco.companheiro.findMany({
       where: { personagemId: id },
-      select: { companheiro: { select: { id: true, nome: true } } },
+      select: {
+        companheiro: { select: { id: true, nome: true, avatarUrl: true } },
+      },
     }),
   ]);
 
@@ -74,23 +85,39 @@ export default async function PaginaDoPersonagem({
   const outrosParticipantes = personagem.campanhaId
     ? (
         await banco.participacao.findMany({
-          where: { campanhaId: personagem.campanhaId, NOT: { usuarioId: usuario.id } },
-          select: { usuarioId: true, usuario: { select: { nome: true, email: true } } },
+          where: {
+            campanhaId: personagem.campanhaId,
+            NOT: { usuarioId: usuario.id },
+          },
+          select: {
+            usuarioId: true,
+            usuario: { select: { nome: true, email: true } },
+          },
         })
-      ).map((p) => ({ usuarioId: p.usuarioId, nome: p.usuario.nome ?? p.usuario.email }))
+      ).map((p) => ({
+        usuarioId: p.usuarioId,
+        nome: p.usuario.nome ?? p.usuario.email,
+      }))
     : [];
 
   const sistemaDef = SISTEMAS.find((s) => s.chave === personagem.sistema.chave);
-  const arquivoFicha = personagem.ehMonstro ? sistemaDef?.fichaInimigo : sistemaDef?.ficha;
+  const arquivoFicha = personagem.ehMonstro
+    ? sistemaDef?.fichaInimigo
+    : sistemaDef?.ficha;
   const urlFicha = arquivoFicha ? `${arquivoFicha}?id=${personagem.id}` : null;
 
   const cabecalhos = await headers();
   const origem = `${cabecalhos.get("x-forwarded-proto") ?? "https"}://${cabecalhos.get("host")}`;
-  const linkCompartilhavel = urlFicha ? `${origem}${urlFicha}` : `${origem}/fichas/${personagem.id}`;
+  const linkCompartilhavel = urlFicha
+    ? `${origem}${urlFicha}`
+    : `${origem}/fichas/${personagem.id}`;
 
   const destinosDeItem: { rotulo: string; local: LocalItem }[] = [
     { rotulo: "Biblioteca pessoal", local: { donoId: usuario.id } },
-    ...outrosPersonagens.map((p) => ({ rotulo: p.nome, local: { personagemId: p.id } })),
+    ...outrosPersonagens.map((p) => ({
+      rotulo: p.nome,
+      local: { personagemId: p.id },
+    })),
   ];
 
   return (
@@ -102,15 +129,37 @@ export default async function PaginaDoPersonagem({
         ← Fichas
       </Link>
 
-      <div className="mt-4 flex items-start gap-4">
-        <AvatarFicha nome={personagem.nome} avatarUrl={personagem.avatarUrl} />
-        <div>
-          <h1 className="font-titulo text-3xl">{personagem.nome}</h1>
-          <p className="mt-1 text-sm text-texto-suave">
-            {personagem.sistema.nome}
-            {personagem.campanha && ` · ${personagem.campanha.nome}`}
-          </p>
+      <section className="hub-feature mt-5">
+        <ImagemHub
+          src={personagem.bannerUrl}
+          fallback={capaSistema(personagem.sistema.chave)}
+          className="hub-feature-image"
+          destaque
+        />
+        <div className="hub-feature-content flex flex-wrap items-end gap-5">
+          <ImagemHub
+            src={personagem.avatarUrl}
+            fallback={retratoPadrao(personagem.nome)}
+            className="hub-feature-avatar"
+            destaque
+          />
+          <div>
+            <p className="hub-eyebrow">{personagem.sistema.nome}</p>
+            <h1>{personagem.nome}</h1>
+            {personagem.campanha && (
+              <p className="mt-2 text-sm">{personagem.campanha.nome}</p>
+            )}
+          </div>
         </div>
+      </section>
+      <div className="hub-panel mt-5 max-w-xl">
+        <ResumoFicha
+          resumo={resumirPersonagem(
+            personagem.sistema.chave,
+            personagem.dados,
+            personagem.ehMonstro,
+          )}
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -193,7 +242,10 @@ export default async function PaginaDoPersonagem({
               >
                 {veiculo.nome}
                 {veiculo.capacidade !== null && (
-                  <span className="text-texto-suave"> · capacidade {veiculo.capacidade}</span>
+                  <span className="text-texto-suave">
+                    {" "}
+                    · capacidade {veiculo.capacidade}
+                  </span>
                 )}
               </li>
             ))}

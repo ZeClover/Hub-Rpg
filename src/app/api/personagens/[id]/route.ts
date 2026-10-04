@@ -1,3 +1,4 @@
+import { imagemHubValida } from "@/lib/imagem-hub";
 import { randomUUID } from "node:crypto";
 
 import { NextResponse, type NextRequest } from "next/server";
@@ -112,6 +113,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
         // Imagem do token (decisão #168) — mesmo campo que a Página geral
         // do personagem já usa; a própria ficha também mostra e edita.
         avatarUrl: personagem.avatarUrl,
+        bannerUrl: personagem.bannerUrl,
         // Campanha da ficha (decisão #162) — a ficha usa isto pra buscar as
         // Lojas abertas da própria mesa. null pra ficha avulsa (sem
         // campanha), que continua funcionando normalmente, só sem loja.
@@ -147,6 +149,9 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   }
 
   const corpo = await requisicao.json().catch(() => null);
+  if ((corpo?.avatarUrl !== undefined && !imagemHubValida(corpo.avatarUrl)) || (corpo?.bannerUrl !== undefined && !imagemHubValida(corpo.bannerUrl))) {
+    return NextResponse.json({ erro: "imagem inválida ou muito grande" }, { status: 400 });
+  }
   const temDados = corpo && typeof corpo.dados === "object" && corpo.dados !== null;
   // Compartilhar é do dono — o mestre edita a ficha, mas não decide se o
   // link de leitura dela fica público. Um PATCH de mestre com só esse campo

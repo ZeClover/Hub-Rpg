@@ -48,14 +48,7 @@ export default async function Itens() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-14">
-      <h1 className="font-titulo text-3xl">Itens</h1>
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-texto-suave">
-        Sua biblioteca pessoal e o que cada uma das suas fichas está
-        carregando. Mover um item pra uma ficha, pra outra ou de volta pra
-        cá é só escolher o destino — nenhuma ficha precisa entender o
-        inventário da outra.
-      </p>
-
+      <header className="hub-page-heading"><div><p className="hub-eyebrow">Equipamento para a próxima aventura</p><h1>Itens</h1><p>Organize sua biblioteca e os inventários dos personagens. Mova itens entre eles escolhendo o destino.</p></div></header>
       <div className="mt-8">
         <GerenciadorItens
           titulo="Biblioteca pessoal"

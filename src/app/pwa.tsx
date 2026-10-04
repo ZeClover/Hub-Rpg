@@ -21,7 +21,7 @@ export function Pwa() {
   const [avisoReconexao, setAvisoReconexao] = useState(false);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {
         // Sem service worker, o Hub continua funcionando normal — só sem
         // cache offline.
@@ -54,8 +54,8 @@ export function Pwa() {
       role="status"
       className={
         offline
-          ? "fixed inset-x-0 bottom-0 z-50 bg-segredo/90 px-4 py-2 text-center text-sm text-texto"
-          : "fixed inset-x-0 bottom-0 z-50 bg-ambar/90 px-4 py-2 text-center text-sm text-fundo"
+          ? "hub-connectivity fixed inset-x-0 bottom-0 z-50 bg-segredo/90 px-4 py-2 text-center text-sm text-texto"
+          : "hub-connectivity fixed inset-x-0 bottom-0 z-50 bg-ambar/90 px-4 py-2 text-center text-sm text-fundo"
       }
     >
       {offline

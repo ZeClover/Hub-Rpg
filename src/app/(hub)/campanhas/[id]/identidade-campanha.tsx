@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { SeletorImagem } from "@/components/hub/seletor-imagem";
+
 import { useEffect, useRef, useState } from "react";
 
 /*
@@ -19,6 +22,8 @@ export function IdentidadeCampanha({
   descricaoInicial: string;
   tagsIniciais: string;
 }) {
+  const roteador = useRouter();
+  const pendentes = useRef<Record<string, unknown>>({});
   const [capaUrl, setCapaUrl] = useState(capaUrlInicial);
   const [descricao, setDescricao] = useState(descricaoInicial);
   const [tags, setTags] = useState(tagsIniciais);
@@ -32,16 +37,22 @@ export function IdentidadeCampanha({
   }, []);
 
   function salvar(corpo: Record<string, unknown>) {
+    pendentes.current = { ...pendentes.current, ...corpo };
     if (debounce.current) clearTimeout(debounce.current);
     debounce.current = setTimeout(async () => {
+      const alteracoes = pendentes.current;
+      pendentes.current = {};
       try {
         const resposta = await fetch(`/api/campanhas/${campanhaId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(corpo),
+          body: JSON.stringify(alteracoes),
         });
         setErro(!resposta.ok);
+        if (resposta.ok) roteador.refresh();
+        else pendentes.current = { ...alteracoes, ...pendentes.current };
       } catch {
+        pendentes.current = { ...alteracoes, ...pendentes.current };
         setErro(true);
       }
     }, 600);
@@ -54,22 +65,27 @@ export function IdentidadeCampanha({
         Capa, descrição e tags aparecem pra todo mundo que já vê esta campanha.
       </p>
 
-      <label className="mt-4 block text-xs text-texto-suave" htmlFor="c-capa-url">
-        URL da capa (opcional — imagem hospedada em outro lugar)
-      </label>
-      <input
-        id="c-capa-url"
-        type="url"
-        value={capaUrl}
-        onChange={(evento) => {
-          setCapaUrl(evento.target.value);
-          salvar({ capaUrl: evento.target.value || null });
-        }}
-        placeholder="https://…"
-        className="mt-1 w-full rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto focus:border-ambar/60 focus:outline-none"
-      />
+      <details className="mt-5 rounded-lg border border-borda p-4">
+        <summary className="cursor-pointer text-sm text-ambar-forte">
+          Escolher ou enviar uma capa
+        </summary>
+        <div className="mt-4">
+          <SeletorImagem
+            tipo="banner"
+            rotulo="Capa da campanha"
+            valor={capaUrl}
+            aoMudar={(url) => {
+              setCapaUrl(url);
+              salvar({ capaUrl: url || null });
+            }}
+          />
+        </div>
+      </details>
 
-      <label className="mt-4 block text-xs text-texto-suave" htmlFor="c-descricao">
+      <label
+        className="mt-4 block text-xs text-texto-suave"
+        htmlFor="c-descricao"
+      >
         Descrição
       </label>
       <textarea

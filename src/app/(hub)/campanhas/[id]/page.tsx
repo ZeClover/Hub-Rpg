@@ -1,3 +1,11 @@
+import { ImagemHub } from "@/components/hub/imagem";
+import { Colecao } from "@/components/hub/colecao";
+import {
+  CartaoPersonagem,
+  type PersonagemVisual,
+} from "@/components/hub/cartao-personagem";
+import { capaSistema, ROTULOS_PAPEL } from "@/lib/visual";
+import { resumirPersonagem } from "@/lib/sistemas/resumo-personagem";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,6 +28,7 @@ import { Equipes } from "./equipes";
 import { ExcluirCampanha } from "./excluir-campanha";
 import { GerarCard } from "../../gerar-card";
 import { type ItemView } from "../../itens-compartilhados";
+import { EditarImagemFicha } from "../../fichas/organizacao-ficha";
 import { TransferirDono } from "../../fichas/transferir-dono";
 import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
@@ -75,7 +84,7 @@ export default async function PaginaCampanha({
   const grimorio = sistemaDef?.grimorio ?? null;
   const modoSessao = sistemaDef?.modoSessao ?? null;
 
-  const [participacoes, personagensDaCampanha] = await Promise.all([
+  const [participacoes, personagensBase] = await Promise.all([
     banco.participacao.findMany({
       where: { campanhaId: id },
       select: {
@@ -86,29 +95,49 @@ export default async function PaginaCampanha({
     }),
     banco.personagem.findMany({
       where: { campanhaId: id },
-      select: { id: true, nome: true, donoId: true, ehMonstro: true },
+      select: {
+        id: true,
+        nome: true,
+        donoId: true,
+        ehMonstro: true,
+        status: true,
+        avatarUrl: true,
+        bannerUrl: true,
+        dados: true,
+      },
     }),
   ]);
 
-  const minhaParticipacao = participacoes.find((p) => p.usuarioId === usuario.id);
+  const personagensDaCampanha = personagensBase.map(({ dados, ...p }) => ({
+    ...p,
+    sistema: campanha.sistema,
+    campanha: { nome: campanha.nome },
+    resumo: resumirPersonagem(campanha.sistema.chave, dados, p.ehMonstro),
+  }));
+
+  const minhaParticipacao = participacoes.find(
+    (p) => p.usuarioId === usuario.id,
+  );
   // Mestre auxiliar (decisão #148, ideia #115) tem os mesmos poderes do
   // mestre — inclusive ver esta tela inteira como mestre — com uma
   // exceção: nunca excluir a campanha nem mexer em quem é mestre. Por
   // isso duas variáveis: `souMestre` (poder de mestre, o comum) e
   // `souMestreTitular` (só o dono da campanha, pra essas duas exceções).
-  const souMestre = minhaParticipacao?.papel === "MESTRE" || minhaParticipacao?.papel === "MESTRE_AUXILIAR";
+  const souMestre =
+    minhaParticipacao?.papel === "MESTRE" ||
+    minhaParticipacao?.papel === "MESTRE_AUXILIAR";
   const souMestreTitular = minhaParticipacao?.papel === "MESTRE";
 
   // O Manual do Mestre só é buscado quando quem pergunta tem poder de
   // mestre — a consulta nem acontece pra jogador, então o campo nunca sai
   // do servidor pra quem não devia ver (decisão #13).
   const manualMestre = souMestre
-    ? (
+    ? ((
         await banco.campanha.findUnique({
           where: { id },
           select: { manualMestre: true },
         })
-      )?.manualMestre ?? ""
+      )?.manualMestre ?? "")
     : "";
 
   // Sessões (decisão #135): `notasMestre` segue a mesma regra do Manual do
@@ -128,7 +157,10 @@ export default async function PaginaCampanha({
       },
     }),
     souMestre
-      ? banco.sessao.findMany({ where: { campanhaId: id }, select: { id: true, notasMestre: true } })
+      ? banco.sessao.findMany({
+          where: { campanhaId: id },
+          select: { id: true, notasMestre: true },
+        })
       : Promise.resolve([]),
   ]);
   const notasMap = new Map(notasPorSessao.map((s) => [s.id, s.notasMestre]));
@@ -211,7 +243,12 @@ export default async function PaginaCampanha({
       select: {
         id: true,
         nome: true,
-        membros: { select: { personagemId: true, personagem: { select: { nome: true } } } },
+        membros: {
+          select: {
+            personagemId: true,
+            personagem: { select: { nome: true } },
+          },
+        },
         itens: {
           orderBy: { criadoEm: "desc" },
           select: { id: true, nome: true, descricao: true, quantidade: true },
@@ -226,18 +263,31 @@ export default async function PaginaCampanha({
     banco.veiculo.findMany({
       where: { campanhaId: id },
       orderBy: { criadoEm: "asc" },
-      select: { id: true, nome: true, descricao: true, capacidade: true, donoId: true },
+      select: {
+        id: true,
+        nome: true,
+        descricao: true,
+        capacidade: true,
+        donoId: true,
+      },
     }),
   ]);
   const grupos = gruposBase.map((g) => ({
     id: g.id,
     nome: g.nome,
-    membros: g.membros.map((m) => ({ personagemId: m.personagemId, nome: m.personagem.nome })),
+    membros: g.membros.map((m) => ({
+      personagemId: m.personagemId,
+      nome: m.personagem.nome,
+    })),
     itens: g.itens,
   }));
-  const fichasDaCampanha = personagensDaCampanha.map((p) => ({ id: p.id, nome: p.nome }));
+  const fichasDaCampanha = personagensDaCampanha
+    .filter((p) => souMestre || !p.ehMonstro || p.donoId === usuario.id)
+    .map((p) => ({ id: p.id, nome: p.nome }));
   const meusPersonagensIds = new Set(
-    personagensDaCampanha.filter((p) => p.donoId === usuario.id).map((p) => p.id),
+    personagensDaCampanha
+      .filter((p) => p.donoId === usuario.id)
+      .map((p) => p.id),
   );
 
   const cabecalhos = await headers();
@@ -251,16 +301,23 @@ export default async function PaginaCampanha({
       >
         ← Campanhas
       </Link>
-      {campanha.capaUrl && (
-        // eslint-disable-next-line @next/next/no-img-element -- capa é uma URL externa qualquer, não um asset otimizável pelo Next.
-        <img
+      <section className="hub-feature mt-5">
+        <ImagemHub
           src={campanha.capaUrl}
-          alt=""
-          className="mt-4 h-40 w-full rounded-lg border border-borda object-cover"
+          fallback={capaSistema(campanha.sistema.chave)}
+          className="hub-feature-image"
+          destaque
         />
-      )}
-      <h1 className="mt-3 font-titulo text-3xl">{campanha.nome}</h1>
-      <p className="mt-2 text-sm text-texto-suave">{campanha.sistema.nome}</p>
+        <div className="hub-feature-content">
+          <p className="hub-eyebrow">{campanha.sistema.nome}</p>
+          <h1>{campanha.nome}</h1>
+          <p className="mt-3 text-sm">
+            {minhaParticipacao
+              ? ROTULOS_PAPEL[minhaParticipacao.papel]
+              : "Convite para uma aventura"}
+          </p>
+        </div>
+      </section>
       {campanha.descricao && (
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-texto-suave">
           {campanha.descricao}
@@ -284,8 +341,11 @@ export default async function PaginaCampanha({
           dados={{
             titulo: campanha.nome,
             subtitulo: campanha.sistema.nome,
-            linhas: [campanha.descricao ?? "", campanha.tags.join(" · ")].filter(Boolean),
-            imagemUrl: campanha.capaUrl,
+            linhas: [
+              campanha.descricao ?? "",
+              campanha.tags.join(" · "),
+            ].filter(Boolean),
+            imagemUrl: campanha.capaUrl ?? capaSistema(campanha.sistema.chave),
           }}
           nomeArquivo={campanha.nome}
         />
@@ -338,14 +398,20 @@ export default async function PaginaCampanha({
           ficha={ficha}
           convidado={!minhaParticipacao}
           meuUsuarioId={usuario.id}
-          meusPersonagens={personagensDaCampanha.filter((p) => p.donoId === usuario.id)}
+          meusPersonagens={personagensDaCampanha.filter(
+            (p) => p.donoId === usuario.id,
+          )}
           minhasFichasDoSistema={await banco.personagem.findMany({
             // `campanhaId: null` de propósito (decisão #139): sem isto, uma
             // ficha já ligada a OUTRA campanha aparecia aqui como
             // "disponível" e o botão "Adicionar" a arrancava de lá em
             // silêncio, sem aviso nenhum. Mover ficha de campanha agora é
             // uma ação explícita própria, em `/fichas`.
-            where: { donoId: usuario.id, sistemaId: campanha.sistemaId, campanhaId: null },
+            where: {
+              donoId: usuario.id,
+              sistemaId: campanha.sistemaId,
+              campanhaId: null,
+            },
             select: { id: true, nome: true },
             orderBy: { atualizadoEm: "desc" },
           })}
@@ -419,7 +485,7 @@ function VisaoDoMestre({
     papel: string;
     usuario: { nome: string | null; email: string };
   }[];
-  personagensDaCampanha: { id: string; nome: string; donoId: string; ehMonstro: boolean }[];
+  personagensDaCampanha: (PersonagemVisual & { donoId: string })[];
   idDoMestre: string;
   souMestreTitular: boolean;
   manualMestre: string;
@@ -443,7 +509,9 @@ function VisaoDoMestre({
   fichasDaCampanha: { id: string; nome: string }[];
   meusPersonagensIds: Set<string>;
 }) {
-  const fichasDoMestre = personagensDaCampanha.filter((p) => p.donoId === idDoMestre);
+  const fichasDoMestre = personagensDaCampanha.filter(
+    (p) => p.donoId === idDoMestre,
+  );
   const monstros = fichasDoMestre.filter((p) => p.ehMonstro);
   const personagensDoMestre = fichasDoMestre.filter((p) => !p.ehMonstro);
 
@@ -504,11 +572,52 @@ function VisaoDoMestre({
             🧙 Abrir Modo Sessão do Mestre (ações em lote na campanha)
           </a>
         )}
-        {souMestreTitular && <ExcluirCampanha campanhaId={campanhaId} nome={nome} />}
+        {souMestreTitular && (
+          <ExcluirCampanha campanhaId={campanhaId} nome={nome} />
+        )}
       </section>
 
       <Abas
         abas={[
+          {
+            id: "elenco",
+            rotulo: "Elenco",
+            conteudo: (
+              <div className="pt-5">
+                <Colecao
+                  filtros={["status"]}
+                  tipos={["Personagens", "NPCs e monstros"]}
+                  vazio="O elenco aparecerá aqui quando as primeiras fichas forem ligadas à campanha."
+                  entradas={personagensDaCampanha
+                    .filter((p) => !p.ehMonstro || p.donoId === idDoMestre)
+                    .map((p) => ({
+                      id: p.id,
+                      nome: p.nome,
+                      status: p.status,
+                      tipo: p.ehMonstro ? "NPCs e monstros" : "Personagens",
+                      conteudo: (
+                        <CartaoPersonagem
+                          personagem={p}
+                          gerenciamento={p.donoId === idDoMestre}
+                          detalhes={
+                            <>
+                              <p className="mb-3 text-xs text-texto-suave">
+                                Personalize ou ajuste a ficha deste personagem.
+                              </p>
+                              <EditarImagemFicha
+                                id={p.id}
+                                avatarUrlInicial={p.avatarUrl}
+                                bannerUrlInicial={p.bannerUrl ?? null}
+                              />
+                            </>
+                          }
+                        />
+                      ),
+                    }))}
+                />
+              </div>
+            ),
+          },
           {
             id: "geral",
             rotulo: "Geral",
@@ -520,9 +629,20 @@ function VisaoDoMestre({
                   descricaoInicial={descricao}
                   tagsIniciais={tags.join(", ")}
                 />
-                <ManualDoMestre campanhaId={campanhaId} textoInicial={manualMestre} />
-                <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre />
-                <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre />
+                <ManualDoMestre
+                  campanhaId={campanhaId}
+                  textoInicial={manualMestre}
+                />
+                <CamposPersonalizados
+                  campanhaId={campanhaId}
+                  campos={campos}
+                  souMestre
+                />
+                <Conquistas
+                  campanhaId={campanhaId}
+                  conquistas={conquistas}
+                  souMestre
+                />
               </>
             ),
           },
@@ -558,13 +678,15 @@ function VisaoDoMestre({
           },
           {
             id: "grupo",
-            rotulo: "Grupo",
+            rotulo: "Organização",
             conteudo: (
               <>
                 <section>
                   <h2 className="font-titulo text-xl">Jogadores</h2>
                   {jogadores.length === 0 ? (
-                    <p className="mt-3 text-sm text-texto-suave">Ninguém entrou ainda.</p>
+                    <p className="mt-3 text-sm text-texto-suave">
+                      Ninguém entrou ainda.
+                    </p>
                   ) : (
                     <ul className="mt-4 space-y-3">
                       {jogadores.map((jogador) => {
@@ -623,13 +745,17 @@ function VisaoDoMestre({
                                 <MestreAuxiliar
                                   campanhaId={campanhaId}
                                   usuarioId={jogador.usuarioId}
-                                  ehAuxiliar={jogador.papel === "MESTRE_AUXILIAR"}
+                                  ehAuxiliar={
+                                    jogador.papel === "MESTRE_AUXILIAR"
+                                  }
                                 />
                               )}
                               <RemoverJogador
                                 campanhaId={campanhaId}
                                 usuarioId={jogador.usuarioId}
-                                nome={jogador.usuario.nome ?? jogador.usuario.email}
+                                nome={
+                                  jogador.usuario.nome ?? jogador.usuario.email
+                                }
                               />
                             </div>
                           </li>
@@ -640,7 +766,9 @@ function VisaoDoMestre({
                 </section>
 
                 <section className="mt-8">
-                  <h2 className="font-titulo text-xl">Fichas de personagem e monstro</h2>
+                  <h2 className="font-titulo text-xl">
+                    Fichas de personagem e monstro
+                  </h2>
                   <p className="mt-2 text-sm text-texto-suave">
                     Fichas suas, criadas já dentro desta campanha — os jogadores
                     não veem esta lista.
@@ -652,7 +780,10 @@ function VisaoDoMestre({
                   {personagensDoMestre.length > 0 && (
                     <ul className="mt-3 space-y-2">
                       {personagensDoMestre.map((personagem) => (
-                        <li key={personagem.id} className="flex flex-wrap items-center gap-3">
+                        <li
+                          key={personagem.id}
+                          className="flex flex-wrap items-center gap-3"
+                        >
                           {ficha ? (
                             <a
                               href={`${ficha}?id=${personagem.id}`}
@@ -661,7 +792,9 @@ function VisaoDoMestre({
                               {personagem.nome}
                             </a>
                           ) : (
-                            <span className="text-sm text-texto">{personagem.nome}</span>
+                            <span className="text-sm text-texto">
+                              {personagem.nome}
+                            </span>
                           )}
                           <TransferirDono
                             personagemId={personagem.id}
@@ -677,7 +810,8 @@ function VisaoDoMestre({
                     <CriarPersonagem campanhaId={campanhaId} ficha={ficha} />
                   ) : (
                     <p className="mt-3 text-sm text-texto-suave">
-                      O sistema desta campanha ainda não tem ficha própria no Hub.
+                      O sistema desta campanha ainda não tem ficha própria no
+                      Hub.
                     </p>
                   )}
 
@@ -687,7 +821,10 @@ function VisaoDoMestre({
                   {monstros.length > 0 && (
                     <ul className="mt-3 space-y-2">
                       {monstros.map((monstro) => (
-                        <li key={monstro.id} className="flex flex-wrap items-center gap-3">
+                        <li
+                          key={monstro.id}
+                          className="flex flex-wrap items-center gap-3"
+                        >
                           {fichaInimigo ? (
                             <a
                               href={`${fichaInimigo}?id=${monstro.id}`}
@@ -696,9 +833,14 @@ function VisaoDoMestre({
                               {monstro.nome}
                             </a>
                           ) : (
-                            <span className="text-sm text-texto">{monstro.nome}</span>
+                            <span className="text-sm text-texto">
+                              {monstro.nome}
+                            </span>
                           )}
-                          <DuplicarInimigo campanhaId={campanhaId} personagemId={monstro.id} />
+                          <DuplicarInimigo
+                            campanhaId={campanhaId}
+                            personagemId={monstro.id}
+                          />
                           <TransferirDono
                             personagemId={monstro.id}
                             nomeFicha={monstro.nome}
@@ -710,10 +852,14 @@ function VisaoDoMestre({
                     </ul>
                   )}
                   {fichaInimigo ? (
-                    <AdicionarInimigo campanhaId={campanhaId} ficha={fichaInimigo} />
+                    <AdicionarInimigo
+                      campanhaId={campanhaId}
+                      ficha={fichaInimigo}
+                    />
                   ) : (
                     <p className="mt-3 text-sm text-texto-suave">
-                      O sistema desta campanha ainda não tem ficha de monstro própria no Hub.
+                      O sistema desta campanha ainda não tem ficha de monstro
+                      própria no Hub.
                     </p>
                   )}
                 </section>
@@ -767,7 +913,7 @@ function VisaoDoJogador({
   ficha: string | null;
   convidado: boolean;
   meuUsuarioId: string;
-  meusPersonagens: { id: string; nome: string }[];
+  meusPersonagens: PersonagemVisual[];
   minhasFichasDoSistema: { id: string; nome: string }[];
   temFichasEmOutraCampanha: boolean;
   grimorio: string | null;
@@ -813,19 +959,40 @@ function VisaoDoJogador({
             📖 Abrir Grimório (aprenda o sistema)
           </a>
         )}
-        {!convidado && <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />}
+        {!convidado && (
+          <SairDaCampanha campanhaId={campanhaId} usuarioId={meuUsuarioId} />
+        )}
       </section>
 
       {!convidado && (
         <Abas
           abas={[
             {
+              id: "personagens",
+              rotulo: "Meus personagens",
+              conteudo: (
+                <div className="hub-grid pt-5">
+                  {meusPersonagens.map((p) => (
+                    <CartaoPersonagem key={p.id} personagem={p} gerenciamento />
+                  ))}
+                </div>
+              ),
+            },
+            {
               id: "geral",
               rotulo: "Geral",
               conteudo: (
                 <>
-                  <CamposPersonalizados campanhaId={campanhaId} campos={campos} souMestre={false} />
-                  <Conquistas campanhaId={campanhaId} conquistas={conquistas} souMestre={false} />
+                  <CamposPersonalizados
+                    campanhaId={campanhaId}
+                    campos={campos}
+                    souMestre={false}
+                  />
+                  <Conquistas
+                    campanhaId={campanhaId}
+                    conquistas={conquistas}
+                    souMestre={false}
+                  />
                 </>
               ),
             },
@@ -848,7 +1015,11 @@ function VisaoDoJogador({
               rotulo: "Comunicação",
               conteudo: (
                 <>
-                  <Avisos campanhaId={campanhaId} avisos={avisos} souMestre={false} />
+                  <Avisos
+                    campanhaId={campanhaId}
+                    avisos={avisos}
+                    souMestre={false}
+                  />
                   <Enquetes
                     campanhaId={campanhaId}
                     enquetes={enquetes}

@@ -2084,3 +2084,13 @@ edição do mestre, múltiplas fichas por jogador, etc.).
 
 - [x] **Aba Atualizações** (02/10/2026) — decisão #174. Histórico por data,
       linguagem simples, busca por assunto e ordem de leitura selecionável.
+
+## Biblioteca visual do Hub
+
+- [x] **Redesign e vitrine de sistemas** (04/10/2026) — decisão #175.
+      Capas e símbolos para os oito sistemas, seletor lateral em perspectiva,
+      galeria/lista, busca e favoritos. Personagens resumidos, retratos e
+      banners; painel, campanhas, elenco, companheiros e Mesa ao Vivo com
+      imagens. Biblioteca com créditos e envio de arquivos comprimidos nos
+      campos existentes, sem migração. Verificação visual com dados de teste;
+      publicação autorizada pelo Zé pela integração existente com a Vercel.

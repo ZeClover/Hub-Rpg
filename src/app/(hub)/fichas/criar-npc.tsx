@@ -12,9 +12,9 @@ import { SISTEMAS_COM_BESTIARIO } from "@/lib/sistemas";
   (decisão #139) pra dentro da campanha quando a hora chegar — a original
   continua limpa, reaproveitável de novo depois.
 */
-export function CriarNpc() {
+export function CriarNpc({ sistemaInicial = "" }: { sistemaInicial?: string }) {
   const roteador = useRouter();
-  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_BESTIARIO[0]?.chave ?? "");
+  const [sistemaChave, setSistemaChave] = useState(SISTEMAS_COM_BESTIARIO.some(s => s.chave === sistemaInicial) ? sistemaInicial : SISTEMAS_COM_BESTIARIO[0]?.chave ?? "");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -42,8 +42,10 @@ export function CriarNpc() {
 
   return (
     <div className="mt-4 rounded-lg border border-borda bg-superficie p-5">
+      <h3 className="mb-3 font-titulo text-lg">Novo NPC ou monstro</h3>
       <div className="flex flex-wrap items-center gap-3">
         <select
+          aria-label="Sistema para criar"
           value={sistemaChave}
           onChange={(evento) => setSistemaChave(evento.target.value)}
           className="rounded border border-borda bg-fundo px-3 py-2 text-sm"

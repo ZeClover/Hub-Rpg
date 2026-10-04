@@ -1,5 +1,7 @@
 "use client";
 
+import { Icone } from "@/components/hub/icone";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -71,10 +73,11 @@ export function SinoNotificacoes() {
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
-        className="relative text-texto-suave transition hover:text-texto"
+        className="hub-icon-button relative text-texto-suave transition hover:text-texto"
+        aria-expanded={aberto}
         aria-label="Notificações"
       >
-        🔔
+        <Icone nome="sino" />
         {naoLidas > 0 && (
           <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-ambar px-1 text-[10px] font-bold text-fundo">
             {naoLidas > 9 ? "9+" : naoLidas}
@@ -83,7 +86,7 @@ export function SinoNotificacoes() {
       </button>
 
       {aberto && (
-        <div className="absolute right-0 z-10 mt-2 w-80 rounded-lg border border-borda bg-superficie shadow-lg">
+        <div className="absolute right-0 z-10 mt-2 w-80 max-w-[calc(100vw-40px)] rounded-lg border border-borda bg-superficie shadow-lg">
           <div className="flex items-center justify-between border-b border-borda px-3 py-2">
             <p className="font-titulo text-xs uppercase tracking-wide text-texto-suave">
               Notificações

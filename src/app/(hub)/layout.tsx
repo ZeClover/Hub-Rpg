@@ -1,22 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-
 import { usuarioAtual } from "@/lib/usuario";
-
+import { Icone } from "@/components/hub/icone";
+import { NavegacaoHub } from "@/components/hub/navegacao";
 import { SinoNotificacoes } from "./sino-notificacoes";
 
-/*
-  Moldura de tudo que exige estar logado.
-
-  A pasta se chama "(hub)" entre parênteses: isso agrupa páginas sob um mesmo
-  layout sem virar um pedaço do endereço. A tela do painel continua em /painel,
-  não em /hub/painel.
-
-  A checagem de login mora aqui, num lugar só. Cada página nova que entrar nesta
-  pasta já nasce protegida, sem ninguém precisar lembrar de repetir a
-  verificação.
-*/
 export default async function LayoutDoHub({
   children,
 }: {
@@ -24,61 +13,70 @@ export default async function LayoutDoHub({
 }) {
   const usuario = await usuarioAtual();
   if (!usuario) redirect("/entrar");
-
   return (
-    <>
-      <header className="border-b border-borda">
-        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-4 px-6 py-4">
-          <Link
-            href="/painel"
-            className="font-titulo text-xs uppercase tracking-[0.3em] text-ambar"
-          >
+    <div className="hub-shell">
+      <a href="#conteudo-hub" className="hub-skip">
+        Ir para o conteúdo
+      </a>
+      <aside className="hub-sidebar sem-impressao">
+        <Link href="/painel" className="hub-brand">
+          <span className="hub-brand-icon">
+            <Icone nome="dados" width={29} height={29} />
+          </span>
+          <span>
+            Hub RPG<small>Suas histórias, reunidas.</small>
+          </span>
+        </Link>
+        <p className="hub-eyebrow mt-10 mb-4">Sua biblioteca</p>
+        <NavegacaoHub />
+        <div className="hub-sidebar-bottom">
+          <Link href="/creditos">Créditos das imagens</Link>
+          <span className="text-xs text-texto-suave">
+            Um lugar para cada aventura.
+          </span>
+        </div>
+      </aside>
+      <div className="hub-workspace">
+        <header className="hub-topbar sem-impressao">
+          <Link href="/painel" className="hub-mobile-brand">
+            <Icone nome="dados" />
             Hub RPG
           </Link>
-
-          <nav aria-label="Menu do Hub" className="order-last flex w-full flex-wrap gap-x-4 gap-y-2 text-sm text-texto-suave sm:order-none sm:w-auto">
-            <Link href="/fichas" className="transition hover:text-texto">
-              Fichas
-            </Link>
-            <Link href="/campanhas" className="transition hover:text-texto">
-              Campanhas
-            </Link>
-            <Link href="/sistemas" className="transition hover:text-texto">
-              Sistemas
-            </Link>
-            <Link href="/itens" className="transition hover:text-texto">
-              Itens
-            </Link>
-            <Link href="/atualizacoes" className="transition hover:text-texto">
-              Atualizações
-            </Link>
-          </nav>
-
-          <div className="ml-auto flex items-center gap-3">
+          <span className="hub-topbar-caption">
+            Entre mundos, escolha sua próxima história.
+          </span>
+          <div className="ml-auto flex items-center gap-4">
             <SinoNotificacoes />
             {usuario.avatarUrl && (
               <Image
                 src={usuario.avatarUrl}
                 alt=""
-                width={28}
-                height={28}
-                className="rounded-full"
+                width={32}
+                height={32}
                 unoptimized
+                className="rounded-full"
               />
             )}
-            <form action="/auth/sair" method="post">
+            <span className="hub-account-name">
+              {usuario.nome?.split(" ")[0] ?? "Sua conta"}
+            </span>
+            <form
+              action="/auth/sair"
+              method="post"
+              className="hub-desktop-signout"
+            >
               <button
                 type="submit"
-                className="text-sm text-texto-suave transition hover:text-texto"
+                className="text-sm text-texto-suave hover:text-texto"
               >
                 Sair
               </button>
             </form>
           </div>
-        </div>
-      </header>
-
-      {children}
-    </>
+        </header>
+        <div id="conteudo-hub">{children}</div>
+      </div>
+      <NavegacaoHub mobile />
+    </div>
   );
 }

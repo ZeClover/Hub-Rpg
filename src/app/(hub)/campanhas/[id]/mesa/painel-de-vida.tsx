@@ -1,9 +1,12 @@
 "use client";
 
+import { ImagemHub } from "@/components/hub/imagem";
+import { retratoPadrao } from "@/lib/visual";
+
 import { useEffect, useRef, useState } from "react";
 
 type ResumoVida = { atual: number; maxima: number; rotulo: string; derrotado?: boolean } | null;
-type Personagem = { id: string; nome: string; resumoVida: ResumoVida };
+type Personagem = { id: string; nome: string; avatarUrl?: string | null; resumoVida: ResumoVida };
 type Resposta = { jogadores: Personagem[]; inimigos: Personagem[] };
 type CorpoAjuste =
   | { delta: number }
@@ -216,7 +219,8 @@ function CartaoPersonagem({
 }) {
   return (
     <li className="rounded-lg border border-borda bg-superficie p-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <ImagemHub src={p.avatarUrl} fallback={retratoPadrao(p.nome)} className="h-16 w-16 shrink-0 rounded-full border border-borda" />
         {ficha ? (
           <a
             href={`${ficha}?id=${p.id}`}

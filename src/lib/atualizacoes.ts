@@ -8,6 +8,15 @@ export type Atualizacao = {
    As datas indicam o registro da mudança, não uma data de publicação confirmada.
    Acrescente novas entradas aqui, explicando o efeito para mestre e jogadores. */
 export const atualizacoes: Atualizacao[] = [
+  { data: "2026-10-04", titulo: "Suas histórias ganharam rosto",
+    novidades: [
+      "Galeria de personagens e NPCs com retratos, banners, resumos e filtros por sistema, campanha e status.",
+      "Vitrine de sistemas com capas em perspectiva, navegação lateral e ícones animados, além do catálogo com busca e páginas próprias.",
+      "Biblioteca de imagens prontas, envio de imagem do aparelho e ajuste de enquadramento para personagens e campanhas.",
+      "Painel com campanhas e personagens clicáveis, capas em destaque e retratos no elenco e na Mesa ao Vivo.",
+      "Navegação reorganizada no computador e barra inferior no celular.",
+    ],
+  },
   {
     data: "2026-08-24", titulo: "O começo do Hub RPG",
     novidades: [
