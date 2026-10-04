@@ -3,6 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+// Busca os dados enquanto o navegador carrega e prepara esta ficha.
+{
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) window.hubFichaInicial = {
+    id,
+    resposta: fetch(`/api/personagens/${encodeURIComponent(id)}`).catch(() => null),
+  };
+}
+</script>
 <title>Ficha de Monstro — The Celestials</title>
 <link rel="icon" id="favicon-token" href="/favicon.ico">
 <style>
@@ -1575,7 +1585,10 @@ const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
 
 async function iniciarModoHub(){
   try{
-    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    const inicial = window.hubFichaInicial;
+    delete window.hubFichaInicial;
+    const resposta = (inicial?.id === MODO_HUB ? await inicial.resposta : null)
+      ?? await fetch(`/api/personagens/${MODO_HUB}`);
     if(!resposta.ok){
       // Distingue "não é sua/não existe" (4xx — permissão, decisão #13) de
       // "quebrou de verdade" (5xx) — as duas caíam na mesma mensagem

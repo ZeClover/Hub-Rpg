@@ -62,6 +62,7 @@ export function SeletorImagem({
       <ImagemHub
         src={valor}
         alt={`Prévia de ${rotulo.toLowerCase()}`}
+        sizes={tipo === "retrato" ? "170px" : "640px"}
         className={`hub-image-preview ${tipo === "retrato" ? "is-portrait" : ""}`}
       />
       <div
@@ -96,7 +97,7 @@ export function SeletorImagem({
               aria-pressed={base === i.url}
               onClick={() => aoMudar(i.url)}
             >
-              <ImagemHub src={i.url} className="aspect-square" />
+              <ImagemHub src={i.url} className="aspect-square" sizes="120px" />
               <span>{i.nome}</span>
             </button>
           ))}

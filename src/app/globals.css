@@ -272,3 +272,10 @@ button:disabled { cursor: wait; }
 @media(max-width:767px) { body:has(.hub-shell) .hub-connectivity { bottom: calc(78px + env(safe-area-inset-bottom)); } }
 
 @media(max-width:767px) { .hub-secondary-filters { display: none; width: 100%; flex-wrap: wrap; gap: 12px; }.hub-secondary-filters[data-open=true] { display: flex; }.hub-filter-toggle { display: inline-flex; } }
+
+/* A navegação responde enquanto os dados chegam, sem animação contínua. */
+.hub-loading-title, .hub-loading-text, .hub-loading-card { border-radius: 12px; background: #b79c6b0d; border: 1px solid var(--cor-borda); }
+.hub-loading-title { width: min(320px,80%); height: 36px; }
+.hub-loading-text { width: min(560px,100%); height: 16px; margin-top: 18px; }
+.hub-loading-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 20px; margin-top: 36px; }
+.hub-loading-card { height: 260px; }

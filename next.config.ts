@@ -9,7 +9,17 @@ const nextConfig: NextConfig = {
   */
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
 
+  async headers() {
+    // Os nomes incluem o conteúdo: uma arte nova ganha outro endereço, então
+    // o navegador pode guardar estas versões pequenas sem atrasar atualizações.
+    return ["/imagens/miniaturas/:path*", "/fontes/:path*"].map((source) => ({
+      source,
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }));
+  },
+
   images: {
+    imageSizes: [32, 48, 64, 96, 128, 160, 256, 320, 384],
     /*
       As fotos de perfil vêm dos servidores do Google. O Next.js exige que a
       origem de cada imagem externa seja declarada aqui — é o que impede uma

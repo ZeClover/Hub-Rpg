@@ -19,6 +19,7 @@ export function CartaoSistema({
         <ImagemHub
           src={capaCatalogo(sistema.chave)}
           className="hub-cover"
+          sizes="(max-width: 767px) 100vw, 320px"
           ajuste={CAPAS_VERTICAIS.has(sistema.chave) ? "contain" : "cover"}
         />
         <span className="hub-sistema-symbol">

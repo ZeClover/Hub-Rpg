@@ -147,6 +147,7 @@ export default async function Painel() {
                       src={c.capaUrl}
                       fallback={capaSistema(c.sistema.chave)}
                       className="hub-recent-image"
+                      sizes="64px"
                     />
                     <span className="min-w-0 flex-1">
                       <strong className="block truncate font-titulo">
@@ -192,6 +193,7 @@ export default async function Painel() {
                         src={p.avatarUrl}
                         fallback={retratoPadrao(p.nome)}
                         className="hub-recent-image rounded-full"
+                        sizes="64px"
                       />
                       <span className="min-w-0 flex-1">
                         <strong className="block truncate font-titulo">

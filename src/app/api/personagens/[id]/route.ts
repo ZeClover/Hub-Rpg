@@ -72,7 +72,12 @@ async function buscarSeFoiDonoOuMestre(id: string, idDoUsuario: string) {
 export async function GET(_requisicao: NextRequest, { params }: Contexto) {
   const { id } = await params;
   try {
-    const personagem = await banco.personagem.findUnique({ where: { id } });
+    // Identidade e registro são independentes. Conferimos a permissão somente
+    // depois de ambos chegarem, sem somar a espera das duas consultas.
+    const [personagem, usuario] = await Promise.all([
+      banco.personagem.findUnique({ where: { id } }),
+      usuarioAtual(),
+    ]);
     if (!personagem) {
       return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
     }
@@ -81,7 +86,6 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     // continuam exclusivas do dono na tela (compartilhar, importar JSON).
     // `podeEditar` é o que decide se a ficha abre editável ou só de leitura
     // (decisão #131: dono OU mestre da campanha, os dois editam).
-    const usuario = await usuarioAtual();
     const ehDono = usuario ? personagem.donoId === usuario.id : false;
 
     const campanhasComoMestre =

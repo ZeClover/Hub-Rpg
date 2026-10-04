@@ -8,6 +8,14 @@ export type Atualizacao = {
    As datas indicam o registro da mudança, não uma data de publicação confirmada.
    Acrescente novas entradas aqui, explicando o efeito para mestre e jogadores. */
 export const atualizacoes: Atualizacao[] = [
+  { data: "2026-10-04", titulo: "Menos espera para jogar",
+    novidades: [
+      "Campanhas e páginas dos personagens buscam suas informações ao mesmo tempo para abrir mais rápido.",
+      "As fichas começam a carregar os dados enquanto a tela é preparada; Hogwarts também carrega seus conteúdos em paralelo.",
+      "Cards usam versões menores das imagens, e a biblioteca de retratos só carrega ao abrir a personalização.",
+      "Indicador de abertura ao trocar de página e fontes locais nas fichas de Kaizoku no Sho.",
+    ],
+  },
   { data: "2026-10-04", titulo: "Fantasia com uma cara mais atual",
     novidades: [
       "Novos retratos com estética de anime e fantasia digital na biblioteca e nas imagens padrão dos personagens.",

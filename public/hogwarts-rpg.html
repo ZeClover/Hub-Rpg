@@ -3,6 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+// Busca os dados enquanto o navegador carrega e prepara esta ficha.
+{
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) window.hubFichaInicial = {
+    id,
+    resposta: fetch(`/api/personagens/${encodeURIComponent(id)}`).catch(() => null),
+    conteudos: fetch(`/api/personagens/${encodeURIComponent(id)}/hogwarts-conteudos`).catch(() => null),
+  };
+}
+</script>
 <title>Ficha — Hogwarts RPG</title>
 <link rel="icon" id="favicon-token" href="/favicon.ico">
 <style>
@@ -725,7 +736,10 @@ const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
 
 async function iniciarModoHub(){
   try{
-    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    const inicial = window.hubFichaInicial;
+    delete window.hubFichaInicial;
+    const resposta = (inicial?.id === MODO_HUB ? await inicial.resposta : null)
+      ?? await fetch(`/api/personagens/${MODO_HUB}`);
     if(!resposta.ok){ estado.erroHub='nao-encontrado'; return; }
     const {personagem} = await resposta.json();
     const dados = personagem.dados;
@@ -743,7 +757,8 @@ async function iniciarModoHub(){
     estado.ehMestre = !!personagem.ehMestre;
     estado.campanhaId = personagem.campanhaId || null;
     estado.avatarUrl = personagem.avatarUrl || '';
-    const respConteudos = await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`);
+    const respConteudos = (inicial?.id === MODO_HUB ? await inicial.conteudos : null)
+      ?? await fetch(`/api/personagens/${MODO_HUB}/hogwarts-conteudos`);
     if(respConteudos.ok){
       const corpoConteudos = await respConteudos.json();
       estado.erroConteudos = '';

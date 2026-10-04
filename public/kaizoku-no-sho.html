@@ -3,10 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// Busca os dados enquanto o navegador carrega e prepara esta ficha.
+{
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) window.hubFichaInicial = {
+    id,
+    resposta: fetch(`/api/personagens/${encodeURIComponent(id)}`).catch(() => null),
+  };
+}
+</script>
 <title>Ficha de Personagem — Kaizoku no Sho</title>
 <link rel="icon" id="favicon-token" href="/favicon.ico">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/fontes/fichas-3505b79202a3.css" rel="stylesheet">
 <style>
   /* --navy-deep/--navy-mid/--brass/--brass-bright/--brass-rgb são
      reescritos em tempo real por aplicarTema() conforme a cor de tema do
@@ -4306,7 +4315,10 @@ if(!MODO_HUB && state.roster.length && !state.personagemId){
 // vendo a ficha de um jogador, ou o link de leitura de outra pessoa.
 async function iniciarModoHub(){
   try{
-    const resposta = await fetch(`/api/personagens/${MODO_HUB}`);
+    const inicial = window.hubFichaInicial;
+    delete window.hubFichaInicial;
+    const resposta = (inicial?.id === MODO_HUB ? await inicial.resposta : null)
+      ?? await fetch(`/api/personagens/${MODO_HUB}`);
     if(!resposta.ok){ state.erroHub = 'nao-encontrado'; return; }
     const {personagem} = await resposta.json();
     const dados = personagem.dados;

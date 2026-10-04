@@ -7915,3 +7915,32 @@ incluindo o enquadramento salvo, sem migração de banco. Imagens enviadas
 pelo usuário e links externos continuam preservados. Créditos, fontes,
 licenças e indicação dos recortes estão em `/creditos`. A publicação segue
 a autorização já dada pelo Zé e a integração existente com a Vercel.
+
+
+## 177. Navegação e abertura de fichas mais rápidas (04/10/2026)
+
+Pedido do Zé: reduzir o lag ao passar páginas e abrir fichas. A autorização
+de implementação e publicação já dada continua valendo para esta melhoria.
+
+Campanhas e páginas de personagem passam a consultar blocos independentes
+em paralelo, depois de confirmar o acesso. A API de leitura inicia a
+consulta de personagem junto da identidade e conserva todas as permissões.
+Manual, notas e `_mestre` seguem protegidos no servidor (#13). Não há cache
+compartilhado de informações privadas nem mudança na escrita das fichas.
+
+As 11 fichas HTML iniciam suas leituras no começo do documento; Hogwarts
+carrega os conteúdos junto. Arquivos públicos dispensam renovação de sessão.
+O proxy usa `getClaims()` para verificar/renovar, e `usuarioAtual()` mantém
+`getUser()` como verificação de conta antes de autorizar páginas e APIs.
+
+As 25 artes originais ficam intactas; cards escolhem 75 miniaturas locais
+com nomes derivados do conteúdo. Fontes de Kaizoku também ficam locais, com
+SIL OFL. Esses arquivos têm cache duradouro, sem impedir atualização, pois
+um conteúdo novo recebe endereço novo. A biblioteca de retratos só monta
+ao abrir a personalização e há um indicador leve na troca de páginas.
+
+Não exige serviço pago nem migração (#5). Build, lint, TypeScript, 324 testes
+e verificação das 11 fichas no navegador passaram. Em comparação isolada
+com atrasos iguais, campanhas reduziram a espera em 46–52% e a API da ficha
+em 39%; são números controlados, não medições do banco de produção.
+Método, limites e resultados: `docs/DESEMPENHO.md`.

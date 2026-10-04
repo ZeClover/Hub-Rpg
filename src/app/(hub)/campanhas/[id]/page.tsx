@@ -131,19 +131,15 @@ export default async function PaginaCampanha({
   // O Manual do Mestre só é buscado quando quem pergunta tem poder de
   // mestre — a consulta nem acontece pra jogador, então o campo nunca sai
   // do servidor pra quem não devia ver (decisão #13).
-  const manualMestre = souMestre
-    ? ((
-        await banco.campanha.findUnique({
-          where: { id },
-          select: { manualMestre: true },
-        })
-      )?.manualMestre ?? "")
-    : "";
+  // Após confirmar o papel, buscamos em paralelo os blocos independentes.
+  // Manual e notas continuam sendo consultados somente para mestre (#13).
+  const [manualBase, sessoesBase, notasPorSessao, avisosBase, enquetesBase,
+    camposBase, conquistasBase, gruposBase, itensCofre, veiculos,
+    minhasFichasDoSistema, quantidadeEmOutraCampanha] = await Promise.all([
+    souMestre ? banco.campanha.findUnique({
+      where: { id }, select: { manualMestre: true },
+    }) : Promise.resolve(null),
 
-  // Sessões (decisão #135): `notasMestre` segue a mesma regra do Manual do
-  // Mestre — a consulta que busca esse campo só roda quando quem pergunta
-  // já é confirmadamente mestre.
-  const [sessoesBase, notasPorSessao] = await Promise.all([
     banco.sessao.findMany({
       where: { campanhaId: id },
       orderBy: { numero: "desc" },
@@ -162,23 +158,7 @@ export default async function PaginaCampanha({
           select: { id: true, notasMestre: true },
         })
       : Promise.resolve([]),
-  ]);
-  const notasMap = new Map(notasPorSessao.map((s) => [s.id, s.notasMestre]));
-  const sessoes: SessaoView[] = sessoesBase.map((s) => ({
-    ...s,
-    data: s.data.toISOString(),
-    notasMestre: notasMap.get(s.id) ?? null,
-  }));
-  const pessoas = participacoes.map((p) => ({
-    usuarioId: p.usuarioId,
-    nome: p.usuario.nome ?? p.usuario.email,
-  }));
-  const agoraMs = new Date().getTime();
 
-  // Avisos e enquetes (decisão #136): sem campo de mestre nenhum aqui, então
-  // — diferente do Manual do Mestre e das notas de sessão — a mesma consulta
-  // serve pra mestre e jogador.
-  const [avisosBase, enquetesBase] = await Promise.all([
     banco.aviso.findMany({
       where: { campanhaId: id },
       orderBy: { criadoEm: "desc" },
@@ -196,20 +176,7 @@ export default async function PaginaCampanha({
         votos: { select: { usuarioId: true, opcaoIndex: true } },
       },
     }),
-  ]);
-  const avisos: AvisoView[] = avisosBase.map((a) => ({
-    ...a,
-    criadoEm: a.criadoEm.toISOString(),
-  }));
-  const enquetes: EnqueteView[] = enquetesBase.map((e) => ({
-    ...e,
-    criadoEm: e.criadoEm.toISOString(),
-  }));
 
-  // Campos personalizados e conquistas (decisão #140): mesmo caso de
-  // avisos/enquetes, sem nada de mestre aqui — a mesma consulta serve pra
-  // mestre e jogador.
-  const [camposBase, conquistasBase] = await Promise.all([
     banco.campoPersonalizado.findMany({
       where: { campanhaId: id },
       orderBy: { criadoEm: "asc" },
@@ -227,16 +194,7 @@ export default async function PaginaCampanha({
       orderBy: { criadoEm: "desc" },
       select: { id: true, titulo: true, descricao: true, criadoEm: true },
     }),
-  ]);
-  const campos: CampoView[] = camposBase;
-  const conquistas: ConquistaView[] = conquistasBase.map((c) => ({
-    ...c,
-    criadoEm: c.criadoEm.toISOString(),
-  }));
 
-  // Grupos, itens e veículos (decisão #147): mesmo caso de campos/enquetes —
-  // nada de mestre aqui, a mesma consulta serve pra mestre e jogador.
-  const [gruposBase, itensCofre, veiculos] = await Promise.all([
     banco.grupo.findMany({
       where: { campanhaId: id },
       orderBy: { criadoEm: "asc" },
@@ -271,7 +229,73 @@ export default async function PaginaCampanha({
         donoId: true,
       },
     }),
+    souMestre ? Promise.resolve([]) : banco.personagem.findMany({
+            // `campanhaId: null` de propósito (decisão #139): sem isto, uma
+            // ficha já ligada a OUTRA campanha aparecia aqui como
+            // "disponível" e o botão "Adicionar" a arrancava de lá em
+            // silêncio, sem aviso nenhum. Mover ficha de campanha agora é
+            // uma ação explícita própria, em `/fichas`.
+            where: {
+              donoId: usuario.id,
+              sistemaId: campanha.sistemaId,
+              campanhaId: null,
+            },
+            select: { id: true, nome: true },
+            orderBy: { atualizadoEm: "desc" },
+          }),
+    souMestre ? Promise.resolve(0) : banco.personagem.count({
+              where: {
+                donoId: usuario.id,
+                sistemaId: campanha.sistemaId,
+                campanhaId: { not: null },
+                NOT: { campanhaId: campanha.id },
+              },
+            }),
   ]);
+  const manualMestre = manualBase?.manualMestre ?? "";
+
+  // Sessões (decisão #135): `notasMestre` segue a mesma regra do Manual do
+  // Mestre — a consulta que busca esse campo só roda quando quem pergunta
+  // já é confirmadamente mestre.
+
+  const notasMap = new Map(notasPorSessao.map((s) => [s.id, s.notasMestre]));
+  const sessoes: SessaoView[] = sessoesBase.map((s) => ({
+    ...s,
+    data: s.data.toISOString(),
+    notasMestre: notasMap.get(s.id) ?? null,
+  }));
+  const pessoas = participacoes.map((p) => ({
+    usuarioId: p.usuarioId,
+    nome: p.usuario.nome ?? p.usuario.email,
+  }));
+  const agoraMs = new Date().getTime();
+
+  // Avisos e enquetes (decisão #136): sem campo de mestre nenhum aqui, então
+  // — diferente do Manual do Mestre e das notas de sessão — a mesma consulta
+  // serve pra mestre e jogador.
+
+  const avisos: AvisoView[] = avisosBase.map((a) => ({
+    ...a,
+    criadoEm: a.criadoEm.toISOString(),
+  }));
+  const enquetes: EnqueteView[] = enquetesBase.map((e) => ({
+    ...e,
+    criadoEm: e.criadoEm.toISOString(),
+  }));
+
+  // Campos personalizados e conquistas (decisão #140): mesmo caso de
+  // avisos/enquetes, sem nada de mestre aqui — a mesma consulta serve pra
+  // mestre e jogador.
+
+  const campos: CampoView[] = camposBase;
+  const conquistas: ConquistaView[] = conquistasBase.map((c) => ({
+    ...c,
+    criadoEm: c.criadoEm.toISOString(),
+  }));
+
+  // Grupos, itens e veículos (decisão #147): mesmo caso de campos/enquetes —
+  // nada de mestre aqui, a mesma consulta serve pra mestre e jogador.
+
   const grupos = gruposBase.map((g) => ({
     id: g.id,
     nome: g.nome,
@@ -401,30 +425,8 @@ export default async function PaginaCampanha({
           meusPersonagens={personagensDaCampanha.filter(
             (p) => p.donoId === usuario.id,
           )}
-          minhasFichasDoSistema={await banco.personagem.findMany({
-            // `campanhaId: null` de propósito (decisão #139): sem isto, uma
-            // ficha já ligada a OUTRA campanha aparecia aqui como
-            // "disponível" e o botão "Adicionar" a arrancava de lá em
-            // silêncio, sem aviso nenhum. Mover ficha de campanha agora é
-            // uma ação explícita própria, em `/fichas`.
-            where: {
-              donoId: usuario.id,
-              sistemaId: campanha.sistemaId,
-              campanhaId: null,
-            },
-            select: { id: true, nome: true },
-            orderBy: { atualizadoEm: "desc" },
-          })}
-          temFichasEmOutraCampanha={
-            (await banco.personagem.count({
-              where: {
-                donoId: usuario.id,
-                sistemaId: campanha.sistemaId,
-                campanhaId: { not: null },
-                NOT: { campanhaId: campanha.id },
-              },
-            })) > 0
-          }
+          minhasFichasDoSistema={minhasFichasDoSistema}
+          temFichasEmOutraCampanha={quantidadeEmOutraCampanha > 0}
           grimorio={grimorio}
           sessoes={sessoes}
           pessoas={pessoas}

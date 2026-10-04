@@ -32,6 +32,7 @@ export function CartaoCampanha({
           src={c.capaUrl}
           fallback={capaSistema(c.sistema.chave)}
           className="hub-cover"
+          sizes="(max-width: 767px) 100vw, 320px"
         />
         <span className="hub-card-media-label">{ROTULOS_PAPEL[papel]}</span>
       </Link>

@@ -56,7 +56,7 @@ export default async function PaginaDoPersonagem({
   });
   if (!personagem || personagem.donoId !== usuario.id) notFound();
 
-  const [outrosPersonagens, itens, veiculos, companheiros] = await Promise.all([
+  const [outrosPersonagens, itens, veiculos, companheiros, participantesBase] = await Promise.all([
     banco.personagem.findMany({
       where: { donoId: usuario.id, id: { not: id } },
       select: { id: true, nome: true, avatarUrl: true },
@@ -77,14 +77,7 @@ export default async function PaginaDoPersonagem({
         companheiro: { select: { id: true, nome: true, avatarUrl: true } },
       },
     }),
-  ]);
-
-  // Trocar o dono (decisão #172): só faz sentido pra ficha ligada numa
-  // campanha — é a lista de participações dela que diz pra quem dá pra
-  // passar. Ficha avulsa nem busca isso.
-  const outrosParticipantes = personagem.campanhaId
-    ? (
-        await banco.participacao.findMany({
+    personagem.campanhaId ? banco.participacao.findMany({
           where: {
             campanhaId: personagem.campanhaId,
             NOT: { usuarioId: usuario.id },
@@ -93,12 +86,16 @@ export default async function PaginaDoPersonagem({
             usuarioId: true,
             usuario: { select: { nome: true, email: true } },
           },
-        })
-      ).map((p) => ({
-        usuarioId: p.usuarioId,
-        nome: p.usuario.nome ?? p.usuario.email,
-      }))
-    : [];
+        }) : Promise.resolve([]),
+  ]);
+
+  // Trocar o dono (decisão #172): só faz sentido pra ficha ligada numa
+  // campanha — é a lista de participações dela que diz pra quem dá pra
+  // passar. Ficha avulsa nem busca isso.
+  const outrosParticipantes = participantesBase.map((p) => ({
+    usuarioId: p.usuarioId,
+    nome: p.usuario.nome ?? p.usuario.email,
+  }));
 
   const sistemaDef = SISTEMAS.find((s) => s.chave === personagem.sistema.chave);
   const arquivoFicha = personagem.ehMonstro

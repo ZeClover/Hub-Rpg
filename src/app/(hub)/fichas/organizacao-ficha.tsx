@@ -105,6 +105,7 @@ export function EditarImagemFicha({
   const roteador = useRouter();
   const dialogo = useRef<HTMLDialogElement>(null);
   const tituloId = useId();
+  const [aberto, setAberto] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(avatarUrlInicial ?? "");
   const [bannerUrl, setBannerUrl] = useState(bannerUrlInicial ?? "");
   const [preparando, setPreparando] = useState(false);
@@ -149,6 +150,7 @@ export function EditarImagemFicha({
           setAvatarUrl(avatarUrlInicial ?? "");
           setBannerUrl(bannerUrlInicial ?? "");
           setErro("");
+          setAberto(true);
           dialogo.current?.showModal();
         }}
       >
@@ -158,10 +160,12 @@ export function EditarImagemFicha({
         ref={dialogo}
         className="hub-dialog"
         aria-labelledby={tituloId}
+        onClose={() => setAberto(false)}
         onCancel={(e) => {
-          if (salvando) e.preventDefault();
+          if (salvando || preparando) e.preventDefault();
         }}
       >
+        {aberto && <>
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 id={tituloId} className="font-titulo text-2xl">
             Imagens do personagem
@@ -226,6 +230,7 @@ export function EditarImagemFicha({
             </button>
           </div>
         </form>
+        </>}
       </dialog>
     </>
   );

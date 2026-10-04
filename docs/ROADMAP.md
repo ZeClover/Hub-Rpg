@@ -2094,3 +2094,13 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       imagens. Biblioteca com créditos e envio de arquivos comprimidos nos
       campos existentes, sem migração. Verificação visual com dados de teste;
       publicação autorizada pelo Zé pela integração existente com a Vercel.
+
+
+## Desempenho do Hub
+
+- [x] **Navegação e abertura de fichas mais rápidas** (04/10/2026) — decisão
+      #177. Consultas independentes em paralelo, leitura antecipada nas 11
+      fichas, miniaturas locais, biblioteca montada ao abrir, fontes locais
+      de Kaizoku e indicador de abertura. Permissões verificadas no servidor;
+      324 testes e checagem no navegador. Comparação em bancada isolada e
+      limitações documentadas em `docs/DESEMPENHO.md`.

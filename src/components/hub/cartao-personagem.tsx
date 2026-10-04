@@ -56,12 +56,14 @@ export function CartaoPersonagem({
           src={p.bannerUrl || p.avatarUrl}
           fallback={retratoPadrao(p.nome)}
           className="hub-cover"
+          sizes="(max-width: 767px) 100vw, 320px"
         />
         {p.bannerUrl && (
           <ImagemHub
             src={p.avatarUrl}
             fallback={retratoPadrao(p.nome)}
             className="hub-card-portrait"
+            sizes="90px"
           />
         )}
       </a>

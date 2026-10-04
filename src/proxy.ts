@@ -33,16 +33,18 @@ export async function proxy(requisicao: NextRequest) {
     },
   );
 
-  // Não remova: é esta chamada que dispara a renovação do cookie.
-  await supabase.auth.getUser();
+  // Renova a sessão e verifica a assinatura do token. Com chaves assimétricas,
+  // reaproveita a chave pública; as páginas e APIs continuam conferindo a
+  // conta com getUser() em usuarioAtual(), antes de aplicar permissões.
+  await supabase.auth.getClaims();
 
   return resposta;
 }
 
 export const config = {
-  // Pula arquivos estáticos, imagens e os arquivos do PWA (decisão #150)
-  // — nenhum deles precisa de sessão renovada.
+  // As fichas HTML e seus recursos são públicos; os dados privados são
+  // protegidos nas APIs. Não atrasamos estes arquivos com uma consulta de sessão.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|fontes/|favicon.ico|manifest.json|sw.js|.*\\.(?:html|js|css|woff2?|ico|svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
