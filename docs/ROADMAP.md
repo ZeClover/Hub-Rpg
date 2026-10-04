@@ -2104,3 +2104,9 @@ edição do mestre, múltiplas fichas por jogador, etc.).
       de Kaizoku e indicador de abertura. Permissões verificadas no servidor;
       324 testes e checagem no navegador. Comparação em bancada isolada e
       limitações documentadas em `docs/DESEMPENHO.md`.
+
+- [x] **Vitrine e consultas em segundo plano** (04/10/2026) — decisão #178.
+      Cinco capas preparadas ao redor da seleção; rotas de ficha do aplicativo
+      sem recarregar documento; notificações, chat e leituras da Mesa ao Vivo
+      pausadas com a aba oculta e retomadas ao voltar, sem sobreposição.
+      327 testes e verificação no navegador.

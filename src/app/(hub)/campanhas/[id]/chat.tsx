@@ -1,12 +1,14 @@
 "use client";
 
+import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
+
 import { useEffect, useRef, useState } from "react";
 
 /*
   Chat simples da campanha (decisão #136). Diferente do resto da página,
   não recebe as mensagens como prop do Server Component — busca sozinho
   (GET) assim que monta e depois fica repetindo a cada alguns segundos
-  (polling simples com `setInterval`, sem WebSocket nem processo à parte:
+  (polling enquanto a aba está visível, sem WebSocket nem processo à parte:
   custo zero, decisão #5). `router.refresh()` não serviria aqui porque
   recarregaria a página inteira a cada mensagem nova de qualquer um.
 */
@@ -33,22 +35,14 @@ export function Chat({ campanhaId, meuUsuarioId }: { campanhaId: string; meuUsua
   const listaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let cancelado = false;
-
-    async function buscar() {
-      const resposta = await fetch(`/api/campanhas/${campanhaId}/chat`);
-      if (!resposta.ok || cancelado) return;
+    return consultarEnquantoVisivel(async (signal) => {
+      const resposta = await fetch(`/api/campanhas/${campanhaId}/chat`, { signal });
+      if (!resposta.ok || signal.aborted) return;
       const dados = await resposta.json();
+      if (signal.aborted) return;
       setMensagens(dados.mensagens);
       setCarregado(true);
-    }
-
-    buscar();
-    const intervalo = setInterval(buscar, INTERVALO_MS);
-    return () => {
-      cancelado = true;
-      clearInterval(intervalo);
-    };
+    }, INTERVALO_MS);
   }, [campanhaId]);
 
   useEffect(() => {

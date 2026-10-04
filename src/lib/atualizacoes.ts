@@ -14,6 +14,8 @@ export const atualizacoes: Atualizacao[] = [
       "As fichas começam a carregar os dados enquanto a tela é preparada; Hogwarts também carrega seus conteúdos em paralelo.",
       "Cards usam versões menores das imagens, e a biblioteca de retratos só carrega ao abrir a personalização.",
       "Indicador de abertura ao trocar de página e fontes locais nas fichas de Kaizoku no Sho.",
+      "A vitrine prepara as capas próximas da seleção, e os atalhos de Campanha Livre abrem sem recarregar o aplicativo inteiro.",
+      "Notificações, chat e Mesa ao Vivo pausam as consultas com a aba em segundo plano e atualizam ao voltar, evitando pedidos acumulados em conexão lenta.",
     ],
   },
   { data: "2026-10-04", titulo: "Fantasia com uma cara mais atual",

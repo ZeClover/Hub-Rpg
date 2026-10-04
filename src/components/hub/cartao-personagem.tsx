@@ -44,9 +44,11 @@ export function CartaoPersonagem({
   complemento?: ReactNode;
 }) {
   const url = urlFichaDe(p);
+  // Páginas do aplicativo usam a navegação do Next, sem recarregar o documento.
+  const LinkFicha = url?.split("?")[0].endsWith(".html") ? "a" : Link;
   return (
     <article className="hub-card hub-personagem-card">
-      <a
+      <LinkFicha
         href={url ?? `/fichas/${p.id}`}
         className={`hub-card-media ${p.bannerUrl ? "has-banner" : ""}`}
         tabIndex={-1}
@@ -66,11 +68,11 @@ export function CartaoPersonagem({
             sizes="90px"
           />
         )}
-      </a>
+      </LinkFicha>
       <div className="hub-card-body">
         <div className="flex items-start justify-between gap-2">
           <h2 className="hub-card-title">
-            <a href={url ?? `/fichas/${p.id}`}>{p.nome}</a>
+            <LinkFicha href={url ?? `/fichas/${p.id}`}>{p.nome}</LinkFicha>
           </h2>
           {p.status && (
             <span className="hub-badge" data-status={p.status}>
@@ -90,9 +92,9 @@ export function CartaoPersonagem({
         {complemento}
         <div className="hub-card-actions">
           {url && (
-            <a href={url} className="hub-button hub-button-primary">
+            <LinkFicha href={url} className="hub-button hub-button-primary">
               Abrir ficha <Icone nome="seta" />
-            </a>
+            </LinkFicha>
           )}
           {gerenciamento && (
             <Link href={`/fichas/${p.id}`} className="hub-button">

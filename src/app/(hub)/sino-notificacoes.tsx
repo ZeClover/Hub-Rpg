@@ -1,6 +1,7 @@
 "use client";
 
 import { Icone } from "@/components/hub/icone";
+import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -39,21 +40,13 @@ export function SinoNotificacoes() {
   const [aberto, setAberto] = useState(false);
 
   useEffect(() => {
-    let cancelado = false;
-
-    async function buscar() {
-      const resposta = await fetch("/api/notificacoes");
-      if (!resposta.ok || cancelado) return;
+    return consultarEnquantoVisivel(async (signal) => {
+      const resposta = await fetch("/api/notificacoes", { signal });
+      if (!resposta.ok || signal.aborted) return;
       const dados = await resposta.json();
+      if (signal.aborted) return;
       setNotificacoes(dados.notificacoes);
-    }
-
-    buscar();
-    const intervalo = setInterval(buscar, INTERVALO_MS);
-    return () => {
-      cancelado = true;
-      clearInterval(intervalo);
-    };
+    }, INTERVALO_MS);
   }, []);
 
   const naoLidas = notificacoes.filter((n) => !n.lida).length;

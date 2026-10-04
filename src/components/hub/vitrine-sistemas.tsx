@@ -97,13 +97,14 @@ export function VitrineSistemas({ sistemas }: { sistemas: Sistema[] }) {
                 arrastou.current = false;
               }}
             >
-              <ImagemHub
+              {Math.abs(distancia) <= 2 && <ImagemHub
                 src={capaCatalogo(s.chave)}
                 ajuste={CAPAS_VERTICAIS.has(s.chave) ? "contain" : "cover"}
                 alt=""
                 className="hub-vitrine-capa"
                 destaque={ativo}
-              />
+                sizes="(max-width: 767px) 174px, 210px"
+              />}
               <span className="hub-vitrine-nome">{s.nome}</span>
             </button>
           );

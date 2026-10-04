@@ -181,6 +181,8 @@ export default async function Painel() {
           {fichas.length ? (
             <ul className="hub-recent-list">
               {fichas.map((p) => {
+                const destino = urlFichaDe(p);
+                const LinkFicha = destino?.split("?")[0].endsWith(".html") ? "a" : Link;
                 const resumo = resumirPersonagem(
                   p.sistema.chave,
                   p.dados,
@@ -188,7 +190,7 @@ export default async function Painel() {
                 );
                 return (
                   <li key={p.id}>
-                    <a href={urlFichaDe(p) ?? `/fichas/${p.id}`}>
+                    <LinkFicha href={destino ?? `/fichas/${p.id}`}>
                       <ImagemHub
                         src={p.avatarUrl}
                         fallback={retratoPadrao(p.nome)}
@@ -205,7 +207,7 @@ export default async function Painel() {
                         </span>
                       </span>
                       <Icone nome="seta" />
-                    </a>
+                    </LinkFicha>
                   </li>
                 );
               })}

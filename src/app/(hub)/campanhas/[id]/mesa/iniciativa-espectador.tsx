@@ -1,5 +1,7 @@
 "use client";
 
+import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
+
 import { useEffect, useState } from "react";
 
 type Combatente = { id: string; nome: string; condicao: string };
@@ -18,22 +20,14 @@ export function IniciativaEspectador({ campanhaId }: { campanhaId: string }) {
   const [carregado, setCarregado] = useState(false);
 
   useEffect(() => {
-    let cancelado = false;
-
-    async function buscar() {
-      const resposta = await fetch(`/api/campanhas/${campanhaId}/iniciativa`);
-      if (!resposta.ok || cancelado) return;
+    return consultarEnquantoVisivel(async (signal) => {
+      const resposta = await fetch(`/api/campanhas/${campanhaId}/iniciativa`, { signal });
+      if (!resposta.ok || signal.aborted) return;
       const dados = await resposta.json();
+      if (signal.aborted) return;
       setEstado(dados.iniciativa);
       setCarregado(true);
-    }
-
-    buscar();
-    const intervalo = setInterval(buscar, INTERVALO_MS);
-    return () => {
-      cancelado = true;
-      clearInterval(intervalo);
-    };
+    }, INTERVALO_MS);
   }, [campanhaId]);
 
   return (

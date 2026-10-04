@@ -73,3 +73,41 @@ somente na cópia isolada usada para verificar, nunca no código publicado.
   HTML estático, fontes, miniaturas, service worker e arquivos do framework.
 - Os 25 arquivos de arte original foram comparados byte a byte com a versão
   anterior. Os scripts inline das fichas passaram na verificação de sintaxe.
+
+## Continuação — vitrine e atualizações automáticas
+
+Após o pedido para continuar, a decisão #178 acrescenta três ajustes:
+
+- A vitrine monta imagens somente na seleção e nas duas capas vizinhas de
+  cada lado: cinco imagens em vez de oito. O tamanho indicado ao navegador
+  corresponde aos 174 pixels no celular e 210 no computador. Setas, teclado,
+  gesto lateral e a apresentação em perspectiva permanecem disponíveis.
+- Atalhos do painel e dos cards para páginas do aplicativo, incluindo
+  Campanha Livre, usam a navegação do Next sem recarregar o documento.
+  Fichas HTML continuam usando os links nativos apropriados a esses arquivos.
+- Notificações, chat, vida e iniciativa do espectador consultam somente com
+  a aba visível, atualizam ao voltar e esperam a leitura terminar antes de
+  agendar outra. Ao sair da tela ou ocultar a aba, a leitura pendente é
+  cancelada. Falhas temporárias permitem tentar novamente; nada é escrito
+  por esse mecanismo e não há cache de dados compartilhado entre usuários.
+
+Na mesma bancada e em contextos novos de navegador, a soma dos arquivos
+usados pelas capas carregadas da vitrine na primeira abertura caiu assim:
+
+| Tela | Antes | Depois | Redução |
+| --- | ---: | ---: | ---: |
+| 1440 pixels, densidade 1 | 285.444 bytes | 189.544 bytes | 33,6% |
+| 390 pixels, densidade 2 | 514.946 bytes | 265.106 bytes | 48,5% |
+
+Essa tabela mede imagens da vitrine, não o tráfego total da página, tempo de
+renderização ou todos os aparelhos. O navegador pode reaproveitar uma versão
+maior já carregada no catálogo para evitar outra transferência.
+
+Os quatro componentes passaram na checagem com relógio controlado: uma
+leitura inicial, nenhuma leitura durante 60 segundos com a aba oculta,
+atualização imediata ao voltar e nova leitura no intervalo normal.
+Três testes automatizados cobrem conexão lenta sem pedidos sobrepostos,
+ocultar/mostrar durante uma leitura pendente, cancelamento e recuperação
+de falha de rede. A suíte completa passou com 327 testes; lint, TypeScript
+e build de produção concluíram. Os atalhos e todas as capas também foram
+verificados no navegador, incluindo teclado e gesto lateral.

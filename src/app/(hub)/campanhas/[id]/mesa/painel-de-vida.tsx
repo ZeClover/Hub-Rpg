@@ -1,6 +1,7 @@
 "use client";
 
 import { ImagemHub } from "@/components/hub/imagem";
+import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
 import { retratoPadrao } from "@/lib/visual";
 
 import { useEffect, useRef, useState } from "react";
@@ -48,25 +49,18 @@ export function PainelDeVida({
   const ajustando = useRef(new Set<string>());
 
   useEffect(() => {
-    let cancelado = false;
-    async function buscar() {
+    return consultarEnquantoVisivel(async (signal) => {
       try {
-        const resposta = await fetch(`/api/campanhas/${campanhaId}/vida`);
+        const resposta = await fetch(`/api/campanhas/${campanhaId}/vida`, { signal });
         if (!resposta.ok) throw new Error("falhou");
         const corpo = await resposta.json();
-        if (cancelado) return;
+        if (signal.aborted) return;
         setDados(corpo);
         setErro(false);
       } catch {
-        if (!cancelado) setErro(true);
+        if (!signal.aborted) setErro(true);
       }
-    }
-    buscar();
-    const intervalo = setInterval(buscar, INTERVALO_MS);
-    return () => {
-      cancelado = true;
-      clearInterval(intervalo);
-    };
+    }, INTERVALO_MS);
   }, [campanhaId]);
 
   async function ajustar(personagemId: string, corpo: CorpoAjuste) {

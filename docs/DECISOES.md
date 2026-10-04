@@ -7944,3 +7944,29 @@ e verificação das 11 fichas no navegador passaram. Em comparação isolada
 com atrasos iguais, campanhas reduziram a espera em 46–52% e a API da ficha
 em 39%; são números controlados, não medições do banco de produção.
 Método, limites e resultados: `docs/DESEMPENHO.md`.
+
+
+## 178. Vitrine mais leve e consultas somente com a aba visível (04/10/2026)
+
+O Zé pediu para continuar a melhoria de desempenho da decisão #177. A
+vitrine agora monta as imagens da capa selecionada e das duas vizinhas de
+cada lado, preparando a próxima troca sem carregar as oito ao mesmo tempo.
+Indica o tamanho real ao navegador. Preserva setas, teclado, gesto, animação
+e todas as artes. Em bancada, as capas carregadas da vitrine usaram 34–49%
+menos bytes; isso não representa todo o tráfego nem todos os aparelhos.
+
+Atalhos de personagem para rotas do aplicativo, incluindo Campanha Livre,
+usam a navegação do Next, sem recarregar o documento inteiro. Arquivos HTML
+continuam abrindo pelos links nativos.
+
+Notificações, chat e leituras de vida/iniciativa da Mesa ao Vivo pausam as
+consultas com a aba oculta e atualizam ao voltar. Cada leitura termina antes
+de marcar a próxima, evitando sobreposição em conexões lentas. O mecanismo
+compartilhado `consultarEnquantoVisivel` não guarda dados: controla somente
+o agendamento, a visibilidade e o cancelamento das leituras. As permissões
+seguem nas mesmas APIs (#13), sem infraestrutura nova ou custo (#5).
+
+Verificação no navegador dos quatro componentes, navegação e vitrine; três
+novos testes de agendamento e cancelamento, totalizando 327 aprovados. Lint,
+TypeScript e build de produção concluídos. Detalhes em `docs/DESEMPENHO.md`.
+A publicação segue a autorização e integração existentes.
