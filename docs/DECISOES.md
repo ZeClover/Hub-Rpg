@@ -7898,3 +7898,20 @@ Publicação autorizada pelo Zé em 04/10/2026 após a verificação.
 A publicação segue a integração existente da branch
 `claude/hub-rpg-organization-x1tbpd` com a Vercel.
 Endereço: `https://hub-rpg-eight.vercel.app`.
+
+## 176. Artes padrão de anime e fantasia digital (04/10/2026)
+
+O Zé não gostou das imagens padrão baseadas em pinturas clássicas e pediu
+uma estética mais atual, próxima de anime e fantasia. Os oito retratos
+clássicos e os oito cenários antigos foram substituídos por ilustrações
+digitais de David Revoy, com CC BY 4.0 verificada na página de cada obra.
+Há rostos legíveis, um guerreiro, um dragão, magia, ilhas flutuantes e
+aventuras no mar. Os quatro retratos modernos anteriores continuam na
+biblioteca; as cinco capas originais dos sistemas permanecem no catálogo.
+
+As 25 imagens locais totalizam aproximadamente 1,5 MB. Os endereços da
+biblioteca foram preservados para atualizar também as escolhas antigas,
+incluindo o enquadramento salvo, sem migração de banco. Imagens enviadas
+pelo usuário e links externos continuam preservados. Créditos, fontes,
+licenças e indicação dos recortes estão em `/creditos`. A publicação segue
+a autorização já dada pelo Zé e a integração existente com a Vercel.

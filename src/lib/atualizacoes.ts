@@ -8,6 +8,13 @@ export type Atualizacao = {
    As datas indicam o registro da mudança, não uma data de publicação confirmada.
    Acrescente novas entradas aqui, explicando o efeito para mestre e jogadores. */
 export const atualizacoes: Atualizacao[] = [
+  { data: "2026-10-04", titulo: "Fantasia com uma cara mais atual",
+    novidades: [
+      "Novos retratos com estética de anime e fantasia digital na biblioteca e nas imagens padrão dos personagens.",
+      "Cenários de aventuras no mar, ilhas flutuantes, dragões e magia nas campanhas e nos temas dos sistemas.",
+      "Artes de David Revoy com licença aberta e créditos; as capas originais dos sistemas continuam no catálogo.",
+    ],
+  },
   { data: "2026-10-04", titulo: "Suas histórias ganharam rosto",
     novidades: [
       "Galeria de personagens e NPCs com retratos, banners, resumos e filtros por sistema, campanha e status.",

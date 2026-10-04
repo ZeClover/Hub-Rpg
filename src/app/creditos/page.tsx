@@ -13,8 +13,8 @@ export default function Creditos() {
           <p className="hub-eyebrow">Quem dá vida às nossas imagens</p>
           <h1 className="font-titulo text-3xl">Créditos das imagens</h1>
           <p>
-            A biblioteca reúne ilustrações de domínio público e obras com
-            licença de reutilização. As capas originais identificam seus
+            A biblioteca reúne personagens e cenários de fantasia digital de
+            David Revoy, com licença CC BY 4.0. As capas originais identificam seus
             sistemas e pertencem aos respectivos autores e editoras.
           </p>
         </div>

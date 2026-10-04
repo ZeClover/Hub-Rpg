@@ -76,14 +76,14 @@ export const IMAGENS_PRONTAS: ImagemPronta[] = [
     sistema,
   })),
   ...[
-    "Viajante",
-    "Feiticeira",
-    "Guardião",
-    "Sonhadora",
-    "Aventureira",
-    "Contador de histórias",
-    "Exploradora",
-    "Místico",
+    "Exploradora da chuva",
+    "Feiticeira do lago",
+    "Guerreiro do crepúsculo",
+    "Rainha celeste",
+    "Aventureira arcana",
+    "Viajante da cidade",
+    "Maga solar",
+    "Dragão viajante",
   ].map((nome, i) => ({
     url: `/imagens/retratos/retrato-${i + 1}.webp`,
     nome,
@@ -112,7 +112,7 @@ const RETRATOS_ARTISTAS = [
     tipo: "retrato" as const,
   },
 ];
-IMAGENS_PRONTAS.unshift(...RETRATOS_ARTISTAS);
+IMAGENS_PRONTAS.push(...RETRATOS_ARTISTAS);
 
 export function retratoPadrao(nome: string) {
   const indice =
