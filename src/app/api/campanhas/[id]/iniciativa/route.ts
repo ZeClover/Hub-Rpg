@@ -1,3 +1,5 @@
+import { preservarDeclaracoes } from "@/lib/iniciativa-declarada";
+import { atualizarIniciativaAtomica } from "@/lib/atualizar-iniciativa-atomica";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
@@ -77,10 +79,8 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "estado de iniciativa inválido" }, { status: 400 });
   }
 
-  await banco.campanha.update({
-    where: { id: campanhaId },
-    data: { iniciativaAtual: corpo },
-  });
+  const atualizado = await atualizarIniciativaAtomica(campanhaId, atual => preservarDeclaracoes(corpo, atual));
+  if (!atualizado) return NextResponse.json({ erro: "A iniciativa mudou durante o salvamento. Tente novamente." }, { status: 409 });
 
   return NextResponse.json({ ok: true });
 }

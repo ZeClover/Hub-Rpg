@@ -1,3 +1,4 @@
+import { obterSistemaCadastrado } from "@/lib/sistema-cadastrado";
 import { randomUUID } from "node:crypto";
 
 import { NextResponse, type NextRequest } from "next/server";
@@ -32,7 +33,7 @@ export async function POST(requisicao: NextRequest) {
     );
   }
 
-  const sistema = await banco.sistema.findUnique({ where: { chave: sistemaChave } });
+  const sistema = await obterSistemaCadastrado(sistemaChave);
   if (!sistema) {
     return NextResponse.json({ erro: "sistema desconhecido" }, { status: 404 });
   }

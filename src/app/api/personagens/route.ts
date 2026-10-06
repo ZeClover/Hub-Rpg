@@ -1,3 +1,4 @@
+import { obterSistemaCadastrado } from "@/lib/sistema-cadastrado";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { banco } from "@/lib/banco";
@@ -49,7 +50,7 @@ export async function POST(requisicao: NextRequest) {
   // sistema certo, sem duplicar o conceito de biblioteca/template à toa.
   const ehMonstro = corpo?.ehMonstro === true;
 
-  const sistema = await banco.sistema.findUnique({ where: { chave: sistemaChave } });
+  const sistema = await obterSistemaCadastrado(sistemaChave);
   if (!sistema) {
     return NextResponse.json({ erro: "sistema desconhecido" }, { status: 404 });
   }

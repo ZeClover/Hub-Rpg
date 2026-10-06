@@ -4,7 +4,7 @@ import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
 
 import { useEffect, useState } from "react";
 
-type Combatente = { id: string; nome: string; condicao: string };
+type Combatente = { id: string; nome: string; condicao: string; resultado?: number };
 type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: number };
 
 const INTERVALO_MS = 6000;
@@ -55,7 +55,7 @@ export function IniciativaEspectador({ campanhaId }: { campanhaId: string }) {
                 }`}
               >
                 <span className="w-6 text-center text-xs text-texto-suave">{indice + 1}</span>
-                <span className="font-titulo text-sm">{c.nome}</span>
+                <span className="font-titulo text-sm">{c.nome}{c.resultado !== undefined ? ` · ${c.resultado}` : ""}</span>
                 {c.condicao && (
                   <span className="text-xs text-texto-suave">— {c.condicao}</span>
                 )}

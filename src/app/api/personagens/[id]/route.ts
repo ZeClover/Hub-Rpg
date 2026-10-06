@@ -1,3 +1,4 @@
+import { prepararFichaPathfinder, progressaoPermitidaPathfinder } from "@/lib/pathfinder/validar-ficha";
 import { imagemHubValida } from "@/lib/imagem-hub";
 import { randomUUID } from "node:crypto";
 
@@ -75,7 +76,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     // Identidade e registro são independentes. Conferimos a permissão somente
     // depois de ambos chegarem, sem somar a espera das duas consultas.
     const [personagem, usuario] = await Promise.all([
-      banco.personagem.findUnique({ where: { id } }),
+      banco.personagem.findUnique({ where: { id }, include: { sistema: { select: { chave: true } } } }),
       usuarioAtual(),
     ]);
     if (!personagem) {
@@ -89,7 +90,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
     const ehDono = usuario ? personagem.donoId === usuario.id : false;
 
     const campanhasComoMestre =
-      usuario && !ehDono && personagem.campanhaId
+      usuario && personagem.campanhaId
         ? await campanhasComoMestreDe(usuario.id)
         : [];
 
@@ -101,17 +102,22 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
       return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
     }
 
-    // Mestre de verdade: nem dono, nem link de leitura compartilhado — é
+    // Ser dono ou ter link não concede papel de mestre: é
     // estar na lista de campanhas onde a pessoa é mestre daquela campanha
     // específica. Só esse caso enxerga `dados._mestre` (decisão #160); dono
     // e quem só tem o link nunca veem, mesmo que `podeEditar` seja true pro
     // dono (ele edita a ficha, mas os segredos do Mestre não são dele).
     const ehMestre = personagem.campanhaId != null && campanhasComoMestre.includes(personagem.campanhaId);
 
+    const sistema = personagem.sistema;
     return NextResponse.json({
       personagem: {
         id: personagem.id,
         nome: personagem.nome,
+        atualizadoEm: personagem.atualizadoEm,
+        sistema,
+        ehMonstro: personagem.ehMonstro,
+        ...(sistema?.chave === "pathfinder-2e-remaster" ? { progressaoPermitida: progressaoPermitidaPathfinder(personagem.dados, !!personagem.campanhaId, ehMestre) } : {}),
         dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
         compartilhado: personagem.compartilhado,
         // Imagem do token (decisão #168) — mesmo campo que a Página geral
@@ -219,11 +225,11 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
   // um PATCH ingênuo salvaria a ficha inteira SEM os segredos do Mestre,
   // apagando-os de vez. `buscarSeFoiDonoOuMestre` só concede acesso a
   // exatamente duas pessoas (dono OU mestre), então `!ehDono` aqui
-  // significa mestre — quem não é mestre tem seu `_mestre` reescrito com o
+  // já não basta para determinar o papel — quem não é mestre tem `_mestre` reescrito com o
   // que já estava salvo, ignorando qualquer coisa que o corpo da
   // requisição tenha mandado nesse campo (decisão #159): o dono não
   // escreve segredo de Mestre nem por engano nem de propósito.
-  const ehMestre = !ehDono;
+  const ehMestre = existente.campanhaId != null && (await campanhasComoMestreDe(usuario.id)).includes(existente.campanhaId);
   let dadosParaSalvar = !temDados
     ? undefined
     : ehMestre
@@ -254,9 +260,26 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
     }
   }
 
-  const personagem = await banco.personagem.update({
-    where: { id },
+  const sistemaDaFicha = await banco.sistema.findUnique({ where: { id: existente.sistemaId }, select: { chave: true } });
+  const ehPathfinder = sistemaDaFicha?.chave === "pathfinder-2e-remaster";
+  const conferirVersao = ehPathfinder && (temDados || corpo?.atualizadoEmBase !== undefined);
+  if (conferirVersao) {
+    if (typeof corpo?.atualizadoEmBase !== "string") return NextResponse.json({ erro: "Reabra a ficha para obter sua versão antes de salvar." }, { status: 428 });
+    const versao = Date.parse(corpo.atualizadoEmBase);
+    if (!Number.isFinite(versao)) return NextResponse.json({ erro: "Versão inválida." }, { status: 400 });
+    if (versao !== existente.atualizadoEm.getTime()) return NextResponse.json({ erro: "A ficha mudou. Seu rascunho foi preservado; revise a versão mais recente." }, { status: 409 });
+    if (temDados) {
+      const preparado = prepararFichaPathfinder(existente.dados, dadosParaSalvar, { emCampanha: !!existente.campanhaId, ehMestre, ehMonstro: existente.ehMonstro });
+      if (preparado.erro) return NextResponse.json({ erro: preparado.erro }, { status: 400 });
+      dadosParaSalvar = preparado.dados;
+    }
+  }
+  let personagem;
+  try {
+  personagem = await banco.personagem.update({
+    where: { id, ...(conferirVersao ? { atualizadoEm: existente.atualizadoEm } : {}) },
     data: {
+      ...(ehPathfinder ? { atualizadoEm: new Date(Math.max(Date.now(), existente.atualizadoEm.getTime() + 1)) } : {}),
       ...(temDados ? { dados: dadosParaSalvar, nome } : {}),
       ...(temCompartilhado ? { compartilhado: corpo.compartilhado } : {}),
       ...(temStatus ? { status: corpo.status } : {}),
@@ -273,10 +296,18 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
       avatarUrl: true,
       bannerUrl: true,
       atualizadoEm: true,
+      ...(ehPathfinder ? { dados: true } : {}),
     },
   });
-
-  return NextResponse.json({ personagem });
+  } catch (erro) {
+    if (ehPathfinder && typeof erro === "object" && erro !== null && "code" in erro && erro.code === "P2025") return NextResponse.json({ erro: "A ficha mudou durante o salvamento. Revise seu rascunho." }, { status: 409 });
+    throw erro;
+  }
+  return NextResponse.json({ personagem: ehPathfinder ? {
+    ...personagem,
+    dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
+    progressaoPermitida: progressaoPermitidaPathfinder(personagem.dados, !!existente.campanhaId, ehMestre),
+  } : personagem });
 }
 
 export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {

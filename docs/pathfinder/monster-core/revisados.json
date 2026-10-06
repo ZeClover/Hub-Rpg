@@ -1,0 +1,932 @@
+{
+  "3241": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 9,
+        "map": [
+          9,
+          4,
+          -1
+        ],
+        "dano": "1d6+2",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Permite usar Derrubar após acertar."
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Derrubar",
+        "acoes": 1,
+        "descricao": "A última ação deve ter sido um Golpe bem-sucedido que indique Derrubar no dano. Tente Derrubar o alvo com Atletismo. Este teste não sofre nem aumenta a penalidade por ataques múltiplos."
+      },
+      {
+        "nome": "Ataque em Bando",
+        "acoes": 0,
+        "descricao": "Os Golpes do lobo causam 1d4 de dano adicional a uma criatura que esteja ao alcance de pelo menos dois aliados do lobo."
+      }
+    ],
+    "resumo": [
+      "Predador de nível 1: derruba após acertar e causa mais dano quando dois aliados ameaçam o alvo."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "3162": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 7,
+        "map": [
+          7,
+          3,
+          -1
+        ],
+        "dano": "1d6+1",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "ágil",
+          "acuidade"
+        ],
+        "efeito": "Transmite praga pútrida."
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Praga Pútrida",
+        "acoes": 0,
+        "descricao": "Doença; Fortitude CD 14. As condições enjoado e inconsciente causadas pela doença não terminam nem podem ser reduzidas antes da cura. Estágio 1: portador sem efeitos nocivos por 1d4 horas. Estágio 2: enjoado 1 por 1 dia. Estágio 3: enjoado 1 e lento 1 por 1 dia. Estágio 4: inconsciente por 1 dia. Estágio 5: morte."
+      }
+    ],
+    "resumo": [
+      "Rato de nível −1 com ataque ágil que transmite uma doença progressiva."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": [],
+    "excecoesPericias": [
+      "Atletismo +4 para Escalar ou Nadar, em vez de +2."
+    ]
+  },
+  "2887": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 10,
+        "map": [
+          10,
+          5,
+          0
+        ],
+        "dano": "1d10+4",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Permite usar Agarrar após acertar."
+      },
+      {
+        "nome": "Cauda",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 10,
+        "map": [
+          10,
+          6,
+          2
+        ],
+        "dano": "1d6+4",
+        "tipoDano": "contundente",
+        "tracos": [
+          "ágil"
+        ],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Agarrar",
+        "acoes": 1,
+        "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+      },
+      {
+        "nome": "Fôlego Profundo",
+        "acoes": 0,
+        "descricao": "Pode prender a respiração por aproximadamente 2 horas."
+      },
+      {
+        "nome": "Emboscada Aquática",
+        "acoes": 1,
+        "descricao": "Requer estar escondido na água, com uma criatura que não o detectou a até 35 pés. Mova até o deslocamento de natação +10 pés em direção a essa criatura, atravessando água e terra. Quando ela estiver ao alcance, faça um Golpe; ela está desprevenida contra esse ataque."
+      },
+      {
+        "nome": "Giro da Morte",
+        "acoes": 1,
+        "descricao": "Traço ataque; requer uma criatura agarrada. Faça um Golpe de mandíbulas contra ela com +2 de bônus de circunstância na jogada de ataque. Se acertar, também deixa o alvo caído. Se falhar, solta o alvo."
+      }
+    ],
+    "resumo": [
+      "Predador aquático de nível 2: espreita, agarra e gira para derrubar a vítima."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": [],
+    "excecoesPericias": [
+      "Furtividade +11 na água, em vez de +7."
+    ]
+  },
+  "2854": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Presas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 10,
+        "map": [
+          10,
+          5,
+          0
+        ],
+        "dano": "2d6+4",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Ferocidade",
+        "acoes": "reacao",
+        "descricao": "Gatilho: seria reduzido a 0 PV. Permanece com 1 PV em vez de cair inconsciente, mas aumenta seu valor de ferido em 1. Não pode usar esta reação quando estiver ferido 3."
+      },
+      {
+        "nome": "Investida do Javali",
+        "acoes": 2,
+        "descricao": "Anda duas vezes e então faz um Golpe de presas. Se tiver percorrido pelo menos 20 pés, recebe +2 de bônus de circunstância na jogada de ataque."
+      }
+    ],
+    "resumo": [
+      "Javali de nível 2 com investida e reação para resistir a cair a 0 PV."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "2866": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso; alcance não indicado no bloco"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 11,
+        "map": [
+          11,
+          6,
+          1
+        ],
+        "dano": "1d10+6",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Permite usar Agarrar após acertar."
+      },
+      {
+        "nome": "Garra",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 11,
+        "map": [
+          11,
+          7,
+          3
+        ],
+        "dano": "1d8+6",
+        "tipoDano": "cortante",
+        "tracos": [
+          "ágil"
+        ],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Agarrar",
+        "acoes": 1,
+        "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+      },
+      {
+        "nome": "Ataque em Bando",
+        "acoes": 0,
+        "descricao": "Causa 1d4 de dano adicional a uma criatura ao alcance de pelo menos dois aliados do leão."
+      },
+      {
+        "nome": "Bote",
+        "acoes": 1,
+        "descricao": "Anda e faz um Golpe ao final do movimento. Se iniciou esta ação escondido, permanece escondido até depois do Golpe."
+      },
+      {
+        "nome": "Ataque Furtivo",
+        "acoes": 0,
+        "descricao": "Causa 1d6 de dano de precisão adicional a criaturas desprevenidas."
+      }
+    ],
+    "resumo": [
+      "Felino de nível 3: combina bote furtivo, ataques em bando e agarrões."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "2867": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 13,
+        "map": [
+          13,
+          8,
+          3
+        ],
+        "dano": "1d10+7",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Permite usar Agarrar após acertar."
+      },
+      {
+        "nome": "Garra",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 13,
+        "map": [
+          13,
+          9,
+          5
+        ],
+        "dano": "1d8+7",
+        "tipoDano": "cortante",
+        "tracos": [
+          "ágil"
+        ],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Agarrar",
+        "acoes": 1,
+        "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+      },
+      {
+        "nome": "Bote",
+        "acoes": 1,
+        "descricao": "Anda e faz um Golpe ao final do movimento. Se iniciou a ação escondido, permanece escondido até depois do Golpe."
+      },
+      {
+        "nome": "Ataque Furtivo",
+        "acoes": 0,
+        "descricao": "Causa 1d6 de dano de precisão adicional a criaturas desprevenidas."
+      },
+      {
+        "nome": "Luta Corporal",
+        "acoes": 1,
+        "descricao": "Faça um Golpe de garra contra uma criatura que o tigre esteja agarrando. Se acertar, ela também fica caída."
+      }
+    ],
+    "resumo": [
+      "Felino de nível 4: salta da cobertura, agarra a presa e a derruba com as garras."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "3065": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 8,
+        "map": [
+          8,
+          3,
+          -2
+        ],
+        "dano": "1d8+3",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Permite usar Derrubar após acertar."
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Derrubar",
+        "acoes": 1,
+        "descricao": "A última ação deve ter sido um Golpe bem-sucedido que indique Derrubar no dano. Tente Derrubar o alvo com Atletismo. Este teste não sofre nem aumenta a penalidade por ataques múltiplos."
+      },
+      {
+        "nome": "Arrastar",
+        "acoes": 1,
+        "descricao": "Faça um Golpe de mandíbulas contra um inimigo caído. Se acertar, além de causar dano, a hiena Anda até 10 pés e arrasta o inimigo junto."
+      },
+      {
+        "nome": "Ataque em Bando",
+        "acoes": 0,
+        "descricao": "Causa 1d4 de dano adicional a uma criatura ao alcance de pelo menos dois aliados da hiena."
+      }
+    ],
+    "resumo": [
+      "Caçadora de nível 1 que derruba, arrasta e ataca em bando."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "2850": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 11,
+        "map": [
+          11,
+          6,
+          1
+        ],
+        "dano": "2d8+4",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": ""
+      },
+      {
+        "nome": "Garra",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 11,
+        "map": [
+          11,
+          7,
+          3
+        ],
+        "dano": "1d10+4",
+        "tipoDano": "cortante",
+        "tracos": [
+          "ágil"
+        ],
+        "efeito": "Permite usar Agarrar após acertar."
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Agarrar",
+        "acoes": 1,
+        "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+      },
+      {
+        "nome": "Espancador",
+        "acoes": 0,
+        "descricao": "Recebe +2 de bônus de circunstância nas rolagens de dano contra criaturas que esteja agarrando."
+      },
+      {
+        "nome": "Arrancada",
+        "acoes": 2,
+        "descricao": "Anda e faz um Golpe ao final desse movimento. Durante esse Andar, recebe +10 pés de bônus de circunstância no deslocamento."
+      }
+    ],
+    "resumo": [
+      "Urso de nível 3: arranca em direção à vítima e causa mais dano quando a agarra."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "2968": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra"
+    ],
+    "ataques": [
+      {
+        "nome": "Bico",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          1,
+          -4
+        ],
+        "dano": "1d6",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "acuidade"
+        ],
+        "efeito": ""
+      },
+      {
+        "nome": "Garras",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          2,
+          -2
+        ],
+        "dano": "1d4",
+        "tipoDano": "cortante",
+        "tracos": [
+          "ágil",
+          "acuidade"
+        ],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Mergulho da Águia",
+        "acoes": 2,
+        "descricao": "Voa em linha reta até o dobro de seu deslocamento de voo, descendo pelo menos 10 pés, e então faz um Golpe de garras."
+      }
+    ],
+    "resumo": [
+      "Ave de nível −1, veloz no ar, com ataque em mergulho."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "2924": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão na penumbra",
+      "Faro impreciso 30 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Mandíbulas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          1,
+          -4
+        ],
+        "dano": "1d4+1",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": ""
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Ataque em Bando",
+        "acoes": 0,
+        "descricao": "Se o alvo estiver ao alcance de pelo menos dois aliados do cão, seus Golpes causam 1d4 de dano adicional."
+      }
+    ],
+    "resumo": [
+      "Cão de nível −1 que se beneficia de aliados próximos à vítima."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": []
+  },
+  "3249": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão no escuro"
+    ],
+    "ataques": [
+      {
+        "nome": "Punho",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 7,
+        "map": [
+          7,
+          2,
+          -3
+        ],
+        "dano": "1d6+3",
+        "tipoDano": "contundente",
+        "tracos": [],
+        "efeito": "Permite usar Agarrar após acertar."
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Agarrar",
+        "acoes": 1,
+        "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+      },
+      {
+        "nome": "Lentidão",
+        "acoes": 0,
+        "descricao": "Está permanentemente lento 1 e não pode usar reações."
+      },
+      {
+        "nome": "Mordida do Zumbi",
+        "acoes": 1,
+        "descricao": "Requer uma criatura agarrada ou restringida pelo zumbi. Faça contra ela um Golpe corpo a corpo desarmado de mandíbulas, ataque +7 e dano 1d8+3 perfurante."
+      }
+    ],
+    "resumo": [
+      "Morto-vivo de nível −1: lento, resistente a várias condições e vulnerável a corte e vitalidade."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [
+      "sangramento",
+      "efeitos de morte",
+      "doença",
+      "mental",
+      "paralisado",
+      "veneno",
+      "inconsciente"
+    ],
+    "resistencias": [],
+    "fraquezas": [
+      {
+        "tipo": "cortante",
+        "valor": 5
+      },
+      {
+        "tipo": "vitalidade",
+        "valor": 5
+      }
+    ],
+    "idiomas": [],
+    "cura": "Cura pelo vazio: sofre dano de vitalidade e não recebe cura de efeitos de vitalidade. Não sofre dano de vazio. É curado por efeitos de vazio que especificamente curam mortos-vivos; dano de vazio, por si só, não o cura."
+  },
+  "3193": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão no escuro"
+    ],
+    "ataques": [
+      {
+        "nome": "Cimitarra",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          1,
+          -4
+        ],
+        "dano": "1d6+2",
+        "tipoDano": "cortante",
+        "tracos": [
+          "enérgica",
+          "amplitude"
+        ],
+        "efeito": ""
+      },
+      {
+        "nome": "Garra",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          2,
+          -2
+        ],
+        "dano": "1d4+2",
+        "tipoDano": "cortante",
+        "tracos": [
+          "ágil",
+          "acuidade"
+        ],
+        "efeito": ""
+      },
+      {
+        "nome": "Arco curto",
+        "tipo": "distancia",
+        "acoes": 1,
+        "bonus": 6,
+        "map": [
+          6,
+          1,
+          -4
+        ],
+        "dano": "1d6",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "mortal d10",
+          "incremento de distância 60 pés",
+          "recarga 0"
+        ],
+        "efeito": "",
+        "incrementoDistanciaPes": 60
+      }
+    ],
+    "acoes": [],
+    "resumo": [
+      "Esqueleto de nível −1 com cimitarra, arco e resistências que compensam seus poucos PV."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [
+      "sangramento",
+      "efeitos de morte",
+      "doença",
+      "mental",
+      "paralisado",
+      "veneno",
+      "inconsciente"
+    ],
+    "resistencias": [
+      {
+        "tipo": "frio",
+        "valor": 5
+      },
+      {
+        "tipo": "eletricidade",
+        "valor": 5
+      },
+      {
+        "tipo": "fogo",
+        "valor": 5
+      },
+      {
+        "tipo": "perfurante",
+        "valor": 5
+      },
+      {
+        "tipo": "cortante",
+        "valor": 5
+      }
+    ],
+    "fraquezas": [],
+    "idiomas": [],
+    "cura": "Cura pelo vazio: sofre dano de vitalidade e não recebe cura de efeitos de vitalidade. Não sofre dano de vazio. É curado por efeitos de vazio que especificamente curam mortos-vivos; dano de vazio, por si só, não o cura.",
+    "equipamentos": [
+      "Cimitarra",
+      "Arco curto",
+      "20 flechas"
+    ]
+  },
+  "3034": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão no escuro",
+      "Faro impreciso 60 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Bico",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 14,
+        "map": [
+          14,
+          9,
+          4
+        ],
+        "dano": "2d8+4",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "mortal d10"
+        ],
+        "efeito": ""
+      },
+      {
+        "nome": "Garras",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 14,
+        "map": [
+          14,
+          10,
+          6
+        ],
+        "dano": "2d6+4",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "ágil"
+        ],
+        "efeito": ""
+      },
+      {
+        "nome": "Asa",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 14,
+        "map": [
+          14,
+          9,
+          4
+        ],
+        "dano": "2d6+4",
+        "tipoDano": "contundente",
+        "tracos": [],
+        "efeito": "",
+        "alcancePes": 10
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Rasante",
+        "acoes": 2,
+        "descricao": "Voa até seu deslocamento de voo e faz dois Golpes de garras em qualquer ponto do movimento. Cada Golpe deve escolher uma criatura diferente. A penalidade por ataques múltiplos se aplica normalmente."
+      },
+      {
+        "nome": "Bote",
+        "acoes": 1,
+        "descricao": "Anda e faz um Golpe de garras ao final do movimento. Se iniciou a ação escondido, permanece escondido até depois do ataque."
+      },
+      {
+        "nome": "Grito Régio",
+        "acoes": 1,
+        "descricao": "Traços auditivo, emoção, medo e mental. Cada criatura em uma emanação de 60 pés faz Vontade CD 20. Sucesso crítico: sem efeito. Sucesso: assustado 1. Falha: assustado 2; animais também ficam lentos 1 enquanto estiverem assustados. Falha crítica: assustado 3; animais também ficam paralisados enquanto estiverem assustados. Independentemente do resultado, a criatura fica temporariamente imune aos Gritos Régios de todos os grifos por 10 minutos."
+      }
+    ],
+    "resumo": [
+      "Predador voador de nível 4: faz rasantes contra dois alvos e assusta com seu grito."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [],
+    "fraquezas": [],
+    "idiomas": [],
+    "variantes": [
+      {
+        "nome": "Alce (grifo sem asas)",
+        "descricao": "Deslocamento terrestre 35 pés. Remove o deslocamento de voo e a habilidade Rasante; os demais valores do bloco permanecem."
+      }
+    ]
+  },
+  "3184": {
+    "estadoTraducao": "revisado",
+    "sentidos": [
+      "Visão no escuro",
+      "Faro impreciso 30 pés",
+      "Telepatia 100 pés"
+    ],
+    "ataques": [
+      {
+        "nome": "Lança longa",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 17,
+        "map": [
+          17,
+          12,
+          7
+        ],
+        "dano": "1d8+11",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "",
+        "alcancePes": 10
+      },
+      {
+        "nome": "Presas",
+        "tipo": "corpo-a-corpo",
+        "acoes": 1,
+        "bonus": 17,
+        "map": [
+          17,
+          12,
+          7
+        ],
+        "dano": "1d8+11",
+        "tipoDano": "perfurante",
+        "tracos": [],
+        "efeito": "Transmite veneno do povo-serpente."
+      },
+      {
+        "nome": "Azagaia",
+        "tipo": "distancia",
+        "acoes": 1,
+        "bonus": 16,
+        "map": [
+          16,
+          11,
+          6
+        ],
+        "dano": "1d6+11",
+        "tipoDano": "perfurante",
+        "tracos": [
+          "incremento de distância 30 pés"
+        ],
+        "efeito": "",
+        "incrementoDistanciaPes": 30
+      }
+    ],
+    "acoes": [
+      {
+        "nome": "Escamas Lascadas",
+        "acoes": "reacao",
+        "descricao": "Frequência: uma vez por dia. Gatilho: prestes a sofrer dano perfurante ou cortante. Recebe resistência 15 contra esse dano, mas sua CA é reduzida em 2 por 1 dia, até as escamas crescerem novamente."
+      },
+      {
+        "nome": "Golpe Reativo",
+        "acoes": "reacao",
+        "descricao": "Quando uma criatura ao alcance usa uma ação de manipulação ou movimento, faz um ataque à distância ou deixa um quadrado durante uma ação de movimento, faça um Golpe corpo a corpo contra ela. O ataque não sofre nem aumenta a penalidade por ataques múltiplos. Em acerto crítico, interrompa a ação se ela tiver o traço manipulação."
+      },
+      {
+        "nome": "Lança Chocalhante",
+        "acoes": 1,
+        "descricao": "Traços auditivo, emoção e mental. Requer que a última ação tenha sido um Golpe bem-sucedido de lança longa. Faça um teste de Intimidação para Desmoralizar todos os inimigos a até 30 pés, comparando o resultado individualmente com a CD de Vontade de cada alvo."
+      },
+      {
+        "nome": "Veneno do Povo-serpente",
+        "acoes": 0,
+        "descricao": "Veneno; Fortitude CD 22; duração máxima 6 rodadas. Estágio 1: 1d4 de dano de veneno e enfraquecido 1 por 1 rodada. Estágio 2: 2d4 de dano de veneno e enfraquecido 1 por 1 rodada."
+      }
+    ],
+    "resumo": [
+      "Humanoide de nível 6: lança de alcance, veneno e escamas que podem absorver um golpe à custa da CA."
+    ],
+    "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+    "imunidades": [],
+    "resistencias": [
+      {
+        "tipo": "veneno",
+        "valor": 5
+      }
+    ],
+    "fraquezas": [],
+    "idiomas": [
+      "Aklo",
+      "Comum",
+      "Sakvroth"
+    ],
+    "excecoesDefesas": [
+      "CA 22 após usar Escamas Lascadas, em vez de 24.",
+      "Vontade recebe +2 de bônus de estado contra efeitos mentais."
+    ],
+    "equipamentos": [
+      "Lança longa",
+      "5 azagaias"
+    ]
+  }
+}

@@ -1,0 +1,598 @@
+{
+  "magias": [
+    {
+      "id": "membros-tentaculares",
+      "nome": "Membros Tentaculares",
+      "nomeOriginal": "tentacular limbs",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio",
+        "morfo"
+      ],
+      "descricao": "Duração: 1 minuto. Seus braços viram tentáculos longos e flexíveis. O alcance para entregar magias de toque e fazer Golpes desarmados com os braços, como punhos e garras, passa a 3 m. Isso não altera o alcance de ataques com armas corpo a corpo. Durante a duração, ao Conjurar Magia, pode acrescentar uma ação à conjuração para estender temporariamente seu alcance a 6 m para entregar aquela magia. Elevada (+2): ao acrescentar essa ação, o alcance temporário aumenta em mais 3 m.",
+      "resumo": [
+        "Por 1 minuto, toque e ataques desarmados com os braços alcançam 3 m; uma ação extra na conjuração amplia o toque a 6 m, com progressão a cada dois ranques."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 262,
+      "paginaPdf": 263,
+      "pagina": 263,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2090",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcanceToque": 3,
+        "alcanceDesarmadoBracos": 3,
+        "alcanceComAcaoExtra": {
+          "base": 6,
+          "elevacao": {
+            "intervalo": 2,
+            "valor": 3
+          }
+        },
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "mandibulas-glutonas",
+      "nome": "Mandíbulas Glutonas",
+      "nomeOriginal": "glutton's jaws",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "ataque",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m; alvo: uma criatura; defesa: CA. Uma boca salivante abre sob o alvo e tenta mordê-lo. Faça um ataque de magia. Em um acerto, causa 2d6 de dano perfurante e você recebe 1d4 PV temporários, que duram até o início do seu próximo turno. Elevada (+1): o dano aumenta em 2d6 e os PV temporários aumentam em 1d4.",
+      "resumo": [
+        "Ataque de magia que causa 2d6 perfurante e concede 1d4 PV temporários ao conjurador; ambos aumentam a cada ranque."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 263,
+      "paginaPdf": 264,
+      "pagina": 264,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2096",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "ataque": "magia",
+        "alcance": 9,
+        "dano": {
+          "base": "2d6",
+          "elevacao": {
+            "intervalo": 1,
+            "formula": "2d6"
+          },
+          "tipo": "perfurante"
+        },
+        "pvTemporariosNoAcerto": {
+          "base": "1d4",
+          "elevacao": {
+            "intervalo": 1,
+            "formula": "1d4"
+          },
+          "ateInicioProximoTurno": true
+        }
+      }
+    },
+    {
+      "id": "edito-diabolico",
+      "nome": "Édito Diabólico",
+      "nomeOriginal": "diabolic edict",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao"
+      ],
+      "descricao": "Alcance: 9 m; alvo: uma criatura viva voluntária; duração: 1 rodada. Você ordena que o alvo execute uma tarefa específica e oferece uma recompensa por cumpri-la. Ele recebe +1 de estado nas jogadas de ataque e testes de perícia relacionados à tarefa. Se recusar a tarefa proclamada, sofre −1 de estado em todas as jogadas de ataque e testes de perícia.",
+      "resumo": [
+        "Por 1 rodada, uma tarefa aceita dá +1 nos ataques e perícias relacionados; recusá-la dá −1 em todos esses testes."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 263,
+      "paginaPdf": 264,
+      "pagina": 264,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2099",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcance": 9,
+        "duracaoRodadas": 1,
+        "bonusCumprindoTarefa": {
+          "tipo": "estado",
+          "valor": 1
+        },
+        "penalidadeRecusandoTarefa": {
+          "tipo": "estado",
+          "valor": -1
+        }
+      }
+    },
+    {
+      "id": "rajada-de-garras",
+      "nome": "Rajada de Garras",
+      "nomeOriginal": "flurry of claws",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "ataque",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m; alvos: duas criaturas a no máximo 3 m uma da outra; defesa: CA. Garras de dragão surgem e golpeiam os dois inimigos. Faça um ataque de magia contra cada alvo. Conta como dois ataques para a penalidade por ataques múltiplos, mas a penalidade só aumenta depois dos dois ataques. Em um acerto, causa 1d8 cortante e 1d4 adicional conforme a tradição da linhagem: arcana, força; divina, espiritual; ocultista, mental; primal, fogo. Elevada (+1): o dano cortante aumenta em 1d8 e o adicional em 1d4. A referência atual do Archives of Nethys também permite o tipo associado a um exemplar dracônico específico; o PDF fornecido apresenta os quatro tipos por tradição.",
+      "resumo": [
+        "Dois ataques de magia usam a mesma penalidade atual; cada acerto causa dano cortante e dano da tradição, ambos crescendo por ranque."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 263,
+      "paginaPdf": 264,
+      "pagina": 264,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2102",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "ataques": 2,
+        "penalidadeMultiplaDepoisDosDois": true,
+        "alcance": 9,
+        "distanciaMaximaEntreAlvos": 3,
+        "dano": [
+          {
+            "base": "1d8",
+            "tipo": "cortante",
+            "elevacao": {
+              "intervalo": 1,
+              "formula": "1d8"
+            }
+          },
+          {
+            "base": "1d4",
+            "tipoPorTradicao": {
+              "arcana": "forca",
+              "divina": "espiritual",
+              "ocultista": "mental",
+              "primal": "fogo"
+            },
+            "elevacao": {
+              "intervalo": 1,
+              "formula": "1d4"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "arremesso-elemental",
+      "nome": "Arremesso Elemental",
+      "nomeOriginal": "elemental toss",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "ataque",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m; alvo: uma criatura; defesa: CA. Você arremessa matéria elemental com um movimento do pulso. Faça um ataque de magia à distância. Sucesso causa 1d8 de dano; sucesso crítico causa o dobro. O tipo de dano corresponde à sua influência elemental, como cortante para ar ou fogo para fogo, e a magia recebe o traço do elemento. Elevada (+1): o dano aumenta em 1d8.",
+      "resumo": [
+        "Ataque de magia em uma ação: 1d8 do tipo do seu elemento por ranque, dobrado no crítico."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 264,
+      "paginaPdf": 265,
+      "pagina": 265,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2105",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "ataque": "magia-distancia",
+        "alcance": 9,
+        "dano": {
+          "base": "1d8",
+          "elevacao": {
+            "intervalo": 1,
+            "formula": "1d8"
+          },
+          "tipoPorElemento": {
+            "ar": "cortante",
+            "terra": "contundente",
+            "fogo": "fogo",
+            "metal": "perfurante",
+            "agua": "contundente",
+            "madeira": "contundente"
+          }
+        }
+      }
+    },
+    {
+      "id": "po-de-fada",
+      "nome": "Pó de Fada",
+      "nomeOriginal": "faerie dust",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": "1 a 3",
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio",
+        "mental"
+      ],
+      "descricao": "Alcance: 9 m; área: explosão de 1,5 m de raio ou maior; duração inicial: 1 rodada; defesa: Vontade. Espalha poeira mágica que torna as criaturas na área mais fáceis de enganar. Cada criatura faz uma salvaguarda de Vontade. Para cada ação além da primeira usada na conjuração, aumente o raio em 1,5 m. Sucesso: sem efeito. Falha: não pode usar reações e sofre −2 de estado em testes de Percepção e salvaguardas de Vontade durante 1 rodada. Falha crítica: os mesmos efeitos da falha, e também −1 de estado em Percepção e Vontade durante 1 minuto. As penalidades de estado não se somam: a de −2 vale na primeira rodada e a de −1 permanece depois. Elevada (+3): o raio inicial aumenta em 1,5 m.",
+      "resumo": [
+        "Vontade evita uma rodada sem reações e com Percepção/Vontade reduzidas. Mais ações ampliam a área; falha crítica também deixa uma penalidade menor por 1 minuto."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 264,
+      "paginaPdf": 265,
+      "pagina": 265,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2108",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcance": 9,
+        "raio": {
+          "base": 1.5,
+          "porAcaoAdicional": 1.5,
+          "elevacao": {
+            "intervalo": 3,
+            "valor": 1.5
+          }
+        },
+        "salvaguarda": "vontade",
+        "duracaoRodadas": 1
+      }
+    },
+    {
+      "id": "sortilegio-ciumento",
+      "nome": "Sortilégio Ciumento",
+      "nomeOriginal": "jealous hex",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "maldicao"
+      ],
+      "descricao": "Alcance: 9 m; alvo: uma criatura; defesa: Vontade; duração: 1 minuto. A maldição prejudica o maior modificador de atributo do alvo: Força impõe enfraquecido; Destreza, desajeitado; Constituição, drenado; Inteligência, Sabedoria ou Carisma, estupefato. Se houver empate, o próprio alvo escolhe uma das condições correspondentes aos atributos empatados. Sucesso na salvaguarda: sem efeito. Falha: condição de valor 1. Falha crítica: valor 2. No início de cada um dos seus turnos, o alvo pode repetir a salvaguarda de Vontade; sucesso encerra a magia.",
+      "resumo": [
+        "Vontade evita uma condição ligada ao melhor atributo do alvo; falha crítica dobra seu valor e novas salvaguardas podem encerrar a maldição."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 264,
+      "paginaPdf": 265,
+      "pagina": 265,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2111",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcance": 9,
+        "salvaguarda": "vontade",
+        "condicaoPorAtributo": {
+          "for": "enfraquecido",
+          "des": "desajeitado",
+          "con": "drenado",
+          "int": "estupefato",
+          "sab": "estupefato",
+          "car": "estupefato"
+        },
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "memorias-ancestrais",
+      "nome": "Memórias Ancestrais",
+      "nomeOriginal": "ancestral memories",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao"
+      ],
+      "descricao": "Escolha um efeito: +1 de estado no próximo ataque de magia que fizer antes do fim do seu turno, ou um inimigo a até 18 m sofre −1 de estado na próxima salvaguarda contra uma magia sua conjurada antes do fim desse turno. Elevada (5ª): o bônus passa a +2 ou a penalidade a −2. Elevada (8ª): passa a +3 ou −3.",
+      "resumo": [
+        "Melhora seu próximo ataque de magia ou piora a próxima salvaguarda de um inimigo contra sua magia neste turno."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 265,
+      "paginaPdf": 266,
+      "pagina": 266,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2114",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcanceInimigo": 18,
+        "valorPorRanque": {
+          "1": 1,
+          "5": 2,
+          "8": 3
+        },
+        "tipoBonus": "estado",
+        "ateFimTurno": true
+      }
+    },
+    {
+      "id": "bencao-da-nao-morte",
+      "nome": "Bênção da Não Morte",
+      "nomeOriginal": "undeath's blessing",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio",
+        "vazio"
+      ],
+      "descricao": "Alcance: toque; alvo: uma criatura viva; duração: 1 minuto; defesa: Vontade. Durante o efeito, as magias Curar e Ferir tratam o alvo como morto-vivo. Além disso, Ferir recebe +2 de estado nos PV que restaura ao alvo. Um alvo involuntário pode fazer uma salvaguarda de Vontade para reduzir os efeitos. Sucesso crítico: sem efeito. Sucesso: por 1 rodada, recebe metade da cura de Curar e metade do dano de Ferir. Falha: efeitos completos descritos acima. Elevada (+1): o bônus de estado nos PV restaurados aumenta em 2.",
+      "resumo": [
+        "Curar e Ferir passam a tratar um alvo vivo como morto-vivo; Ferir cura com um bônus crescente. Vontade pode evitar ou reduzir o efeito."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 265,
+      "paginaPdf": 266,
+      "pagina": 266,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2117",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Texto do PDF fornecido, páginas impressas 262–265, conferido com o Archives of Nethys Remaster em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alteraCurarFerirParaMortoVivo": true,
+        "bonusCuraFerirPorRanque": 2,
+        "tipoBonus": "estado",
+        "salvaguarda": "vontade",
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "rajada-de-vento",
+      "nome": "Rajada de Vento",
+      "nomeOriginal": "gale blast",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "truque",
+        "concentracao",
+        "manuseio",
+        "ar"
+      ],
+      "descricao": "Área: emanação de 1,5 m; defesa: Fortitude. O vento sai de suas mãos e gira à sua volta. Cada criatura na área recebe 1d6 contundente e faz uma salvaguarda de Fortitude. Sucesso crítico: sem efeito. Sucesso: metade do dano. Falha: dano completo e é empurrada 1,5 m para longe de você. Falha crítica: dano dobrado e é empurrada 3 m. Elevada (+1): o dano aumenta em 1d6.",
+      "resumo": [
+        "Vento em volta de você causa dano contundente, reduzido por Fortitude, e empurra quem falhar."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 246,
+      "paginaPdf": 247,
+      "pagina": 247,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=1994",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Tradução manual do bloco no PDF fornecido; conferência com AoN Remaster.",
+      "automatizacaoCombate": {
+        "estado": "dano-estruturado-efeitos-secundarios-pendentes",
+        "semCalculoManual": true
+      },
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "1d6",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d6"
+        },
+        "tipoDano": "contundente",
+        "salvamentoBasico": true,
+        "salvaguarda": "fortitude"
+      },
+      "mecanica": {
+        "area": {
+          "tipo": "emanacao",
+          "raio": 1.5
+        },
+        "empurraoFalha": 1.5,
+        "empurraoFalhaCritica": 3
+      }
+    },
+    {
+      "id": "espalhar-cascalho",
+      "nome": "Espalhar Cascalho",
+      "nomeOriginal": "scatter scree",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "truque",
+        "concentracao",
+        "manuseio",
+        "terra"
+      ],
+      "descricao": "Alcance: 9 m; área: dois cubos contíguos de 1,5 m de lado; defesa: Reflexos básica; duração: 1 minuto. Pedras caem sobre a área e causam 2d4 contundente, com salvaguarda básica de Reflexos. O chão vira terreno difícil durante a duração. Uma criatura pode Interagir para limpar um quadrado do cascalho. Ao conjurar esta magia novamente, sua conjuração anterior de Espalhar Cascalho termina. Elevada (+1): o dano aumenta em 1d4.",
+      "resumo": [
+        "Dois quadrados adjacentes recebem dano e viram terreno difícil por 1 minuto; uma nova conjuração encerra a anterior."
+      ],
+      "fonte": "player-core-2",
+      "paginaImpressa": 250,
+      "paginaPdf": 251,
+      "pagina": 251,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2021",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Tradução manual do bloco no PDF fornecido; conferência com AoN Remaster.",
+      "automatizacaoCombate": {
+        "estado": "dano-estruturado-efeitos-secundarios-pendentes",
+        "semCalculoManual": true
+      },
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d4",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d4"
+        },
+        "tipoDano": "contundente",
+        "salvamentoBasico": true,
+        "salvaguarda": "reflexos"
+      },
+      "mecanica": {
+        "alcance": 9,
+        "area": {
+          "tipo": "cubos-contiguos",
+          "quantidade": 2,
+          "lado": 1.5
+        },
+        "terrenoDificil": true,
+        "duracaoRodadas": 10,
+        "encerraConjuracaoAnterior": true
+      }
+    }
+  ],
+  "fonte": {
+    "id": "player-core-2",
+    "estado": "blocos-iniciais-revisados"
+  },
+  "lacunas": [
+    "Onze blocos individuais foram traduzidos manualmente e revisados; execução completa de condições, auras, alcance, PV temporários e efeitos situacionais continua explicitamente pendente. Dano dos dois truques tem fórmula estruturada, sem representar aplicação completa do terreno ou empurrão."
+  ]
+}

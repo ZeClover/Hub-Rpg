@@ -1,0 +1,5385 @@
+{
+  "fonte": {
+    "id": "gm-core",
+    "nome": "GM Core — Livro do Mestre",
+    "edicao": "remaster",
+    "idiomaOriginal": "en",
+    "paginas": 338,
+    "estado": "parcial",
+    "nota": "Guia de consulta e entradas revisadas. A tradução integral das 338 páginas ainda está pendente.",
+    "entradasEquipamentoRevisadas": 120,
+    "paginasConsultaRevisadas": [
+      6,
+      22,
+      48,
+      52,
+      54,
+      56,
+      57,
+      58,
+      61,
+      75,
+      76,
+      83,
+      84,
+      85,
+      86,
+      90,
+      98,
+      109,
+      112,
+      130,
+      184,
+      187,
+      190,
+      192,
+      196,
+      200,
+      202,
+      206,
+      210,
+      219,
+      223,
+      224,
+      225,
+      259,
+      262,
+      282
+    ],
+    "creditos": "Pathfinder GM Core © 2023 Paizo Inc. Projeto de Logan Bonner e Mark Seifter. Adaptação de consulta em português a partir do PDF enviado, sem afirmar tradução oficial.",
+    "licenca": {
+      "nome": "ORC",
+      "avisoOriginal": "docs/pathfinder/gm-core/ORC-aviso-original.txt",
+      "resumoPt": "O livro licencia seu Material Licenciado sob ORC e reserva marcas, nomes próprios, ilustrações, personagens e narrativa. O aviso original é preservado; tradução não altera titularidade."
+    }
+  },
+  "classes": [],
+  "ancestralidades": [],
+  "biografias": [],
+  "talentos": [],
+  "magias": [],
+  "equipamentos": [
+    {
+      "id": "runa-potencia-arma-1",
+      "nome": "Runa de potência de arma +1",
+      "nivel": 2,
+      "precoPo": 35,
+      "preco": "35 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Concede +1 de item aos ataques da arma e permite 1 runa(s) de propriedade. Fabricar exige especialista em Manufatura. Melhoria cobra diferença entre versões; bônus não somam.",
+      "resumo": [
+        "+1 de item ao ataque; até 1 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusAtaqueItem": 1,
+      "limiteRunasPropriedade": 1,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "potencia",
+        "valor": 1,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-potencia-arma-2",
+      "nome": "Runa de potência de arma +2",
+      "nivel": 10,
+      "precoPo": 935,
+      "preco": "935 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Concede +2 de item aos ataques da arma e permite 2 runa(s) de propriedade. Fabricar exige mestre em Manufatura. Melhoria cobra diferença entre versões; bônus não somam.",
+      "resumo": [
+        "+2 de item ao ataque; até 2 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusAtaqueItem": 2,
+      "limiteRunasPropriedade": 2,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "potencia",
+        "valor": 2,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-potencia-arma-3",
+      "nome": "Runa de potência de arma +3",
+      "nivel": 16,
+      "precoPo": 8935,
+      "preco": "8935 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Concede +3 de item aos ataques da arma e permite 3 runa(s) de propriedade. Fabricar exige lendário em Manufatura. Melhoria cobra diferença entre versões; bônus não somam.",
+      "resumo": [
+        "+3 de item ao ataque; até 3 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusAtaqueItem": 3,
+      "limiteRunasPropriedade": 3,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "potencia",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-impactante",
+      "nome": "Runa impactante",
+      "nivel": 4,
+      "precoPo": 65,
+      "preco": "65 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Aumenta para 2 os dados de dano da arma, sem multiplicar modificadores e todos os danos extras. É fundamental e não ocupa propriedade. Melhoria exige fórmula maior e diferença de preço.",
+      "resumo": [
+        "2 dados de dano de arma; não multiplica todos os bônus."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "dadosDanoArma": 2,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "impactante",
+        "valor": 2,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-impactante-maior",
+      "nome": "Runa impactante maior",
+      "nivel": 12,
+      "precoPo": 1065,
+      "preco": "1065 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Aumenta para 3 os dados de dano da arma, sem multiplicar modificadores e todos os danos extras. É fundamental e não ocupa propriedade. Melhoria exige fórmula maior e diferença de preço.",
+      "resumo": [
+        "3 dados de dano de arma; não multiplica todos os bônus."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "dadosDanoArma": 3,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "impactante",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-impactante-superior",
+      "nome": "Runa impactante superior",
+      "nivel": 19,
+      "precoPo": 31065,
+      "preco": "31065 po",
+      "pagina": 236,
+      "fonte": "gm-core",
+      "descricao": "Aumenta para 4 os dados de dano da arma, sem multiplicar modificadores e todos os danos extras. É fundamental e não ocupa propriedade. Melhoria exige fórmula maior e diferença de preço.",
+      "resumo": [
+        "4 dados de dano de arma; não multiplica todos os bônus."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "dadosDanoArma": 4,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "arma",
+        "familia": "impactante",
+        "valor": 4,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-potencia-armadura-1",
+      "nome": "Runa de potência de armadura +1",
+      "nivel": 5,
+      "precoPo": 160,
+      "preco": "160 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Aumenta em 1 o bônus de item da armadura à CA e permite 1 propriedade(s). Fabricar exige especialista em Manufatura. Precisa investir a armadura; runa fundamental não ocupa propriedade.",
+      "resumo": [
+        "+1 à CA de item e até 1 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusCaItem": 1,
+      "limiteRunasPropriedade": 1,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "potencia",
+        "valor": 1,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-potencia-armadura-2",
+      "nome": "Runa de potência de armadura +2",
+      "nivel": 11,
+      "precoPo": 1060,
+      "preco": "1060 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Aumenta em 2 o bônus de item da armadura à CA e permite 2 propriedade(s). Fabricar exige mestre em Manufatura. Precisa investir a armadura; runa fundamental não ocupa propriedade.",
+      "resumo": [
+        "+2 à CA de item e até 2 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusCaItem": 2,
+      "limiteRunasPropriedade": 2,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "potencia",
+        "valor": 2,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-potencia-armadura-3",
+      "nome": "Runa de potência de armadura +3",
+      "nivel": 18,
+      "precoPo": 20560,
+      "preco": "20560 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Aumenta em 3 o bônus de item da armadura à CA e permite 3 propriedade(s). Fabricar exige lendário em Manufatura. Precisa investir a armadura; runa fundamental não ocupa propriedade.",
+      "resumo": [
+        "+3 à CA de item e até 3 propriedade(s)."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusCaItem": 3,
+      "limiteRunasPropriedade": 3,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "potencia",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-resiliente",
+      "nome": "Runa resiliente",
+      "nivel": 8,
+      "precoPo": 340,
+      "preco": "340 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Enquanto usa a armadura investida, concede +1 de item às salvaguardas. Não soma com bônus de item à mesma salvaguarda e não ocupa propriedade por ser fundamental.",
+      "resumo": [
+        "+1 de item às salvaguardas com armadura investida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusSalvaguardaItem": 1,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "resiliente",
+        "valor": 1,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-resiliente-maior",
+      "nome": "Runa resiliente maior",
+      "nivel": 14,
+      "precoPo": 3440,
+      "preco": "3440 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Enquanto usa a armadura investida, concede +2 de item às salvaguardas. Não soma com bônus de item à mesma salvaguarda e não ocupa propriedade por ser fundamental.",
+      "resumo": [
+        "+2 de item às salvaguardas com armadura investida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusSalvaguardaItem": 2,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "resiliente",
+        "valor": 2,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-resiliente-superior",
+      "nome": "Runa resiliente superior",
+      "nivel": 20,
+      "precoPo": 49440,
+      "preco": "49440 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Enquanto usa a armadura investida, concede +3 de item às salvaguardas. Não soma com bônus de item à mesma salvaguarda e não ocupa propriedade por ser fundamental.",
+      "resumo": [
+        "+3 de item às salvaguardas com armadura investida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "bonusSalvaguardaItem": 3,
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "resiliente",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "aplicacao": "passiva",
+        "tipoBonus": "item"
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-minima",
+      "nome": "Runa reforçadora mínima",
+      "nivel": 4,
+      "precoPo": 75,
+      "preco": "75 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 3, PV em 44 e Limiar de Quebra em 22, com máximos finais de 8, 64 e 32. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+3 Dureza, +44 PV, +22 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "reforco": {
+        "dureza": 3,
+        "pv": 44,
+        "limiarQuebra": 22,
+        "maxDureza": 8,
+        "maxPv": 64,
+        "maxLimiarQuebra": 32
+      },
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 3,
+          "pv": 44,
+          "limiarQuebra": 22,
+          "maxDureza": 8,
+          "maxPv": 64,
+          "maxLimiarQuebra": 32
+        }
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-menor",
+      "nome": "Runa reforçadora menor",
+      "nivel": 7,
+      "precoPo": 300,
+      "preco": "300 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 3, PV em 52 e Limiar de Quebra em 26, com máximos finais de 10, 80 e 40. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+3 Dureza, +52 PV, +26 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "reforco": {
+        "dureza": 3,
+        "pv": 52,
+        "limiarQuebra": 26,
+        "maxDureza": 10,
+        "maxPv": 80,
+        "maxLimiarQuebra": 40
+      },
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 3,
+          "pv": 52,
+          "limiarQuebra": 26,
+          "maxDureza": 10,
+          "maxPv": 80,
+          "maxLimiarQuebra": 40
+        }
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-moderada",
+      "nome": "Runa reforçadora moderada",
+      "nivel": 10,
+      "precoPo": 900,
+      "preco": "900 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 3, PV em 64 e Limiar de Quebra em 32, com máximos finais de 13, 104 e 52. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+3 Dureza, +64 PV, +32 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "reforco": {
+        "dureza": 3,
+        "pv": 64,
+        "limiarQuebra": 32,
+        "maxDureza": 13,
+        "maxPv": 104,
+        "maxLimiarQuebra": 52
+      },
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 3,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 3,
+          "pv": 64,
+          "limiarQuebra": 32,
+          "maxDureza": 13,
+          "maxPv": 104,
+          "maxLimiarQuebra": 52
+        }
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-maior",
+      "nome": "Runa reforçadora maior",
+      "nivel": 13,
+      "precoPo": 2500,
+      "preco": "2500 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 5, PV em 80 e Limiar de Quebra em 42, com máximos finais de 15, 120 e 60. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+5 Dureza, +80 PV, +42 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "pendente-errata",
+      "reforco": {
+        "dureza": 5,
+        "pv": 80,
+        "limiarQuebra": 42,
+        "maxDureza": 15,
+        "maxPv": 120,
+        "maxLimiarQuebra": 60
+      },
+      "observacaoEditorial": "Fonte imprime +42 LQ com +80 PV; preservado, sem corrigir silenciosamente.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "pendente-errata",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 5,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 5,
+          "pv": 80,
+          "limiarQuebra": 42,
+          "maxDureza": 15,
+          "maxPv": 120,
+          "maxLimiarQuebra": 60
+        },
+        "motivo": "Limiar de Quebra da fonte diverge de seus PV. Não aplicar valores por aproximação ou correção silenciosa."
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-superior",
+      "nome": "Runa reforçadora superior",
+      "nivel": 16,
+      "precoPo": 8000,
+      "preco": "8000 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 5, PV em 84 e Limiar de Quebra em 42, com máximos finais de 17, 136 e 68. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+5 Dureza, +84 PV, +42 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "reforco": {
+        "dureza": 5,
+        "pv": 84,
+        "limiarQuebra": 42,
+        "maxDureza": 17,
+        "maxPv": 136,
+        "maxLimiarQuebra": 68
+      },
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 5,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 5,
+          "pv": 84,
+          "limiarQuebra": 42,
+          "maxDureza": 17,
+          "maxPv": 136,
+          "maxLimiarQuebra": 68
+        }
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-reforcadora-suprema",
+      "nome": "Runa reforçadora suprema",
+      "nivel": 19,
+      "precoPo": 32000,
+      "preco": "32000 po",
+      "pagina": 232,
+      "fonte": "gm-core",
+      "descricao": "Aumenta Dureza em 7, PV em 108 e Limiar de Quebra em 54, com máximos finais de 20, 160 e 80. Escudos só recebem runa reforçadora, não propriedades ou runas de arma/armadura.",
+      "resumo": [
+        "+7 Dureza, +108 PV, +54 Limiar de Quebra, respeitando limites."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "reforco": {
+        "dureza": 7,
+        "pv": 108,
+        "limiarQuebra": 54,
+        "maxDureza": 20,
+        "maxPv": 160,
+        "maxLimiarQuebra": 80
+      },
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "escudo",
+        "familia": "reforcadora",
+        "valor": 7,
+        "exigeBase": true,
+        "exigeInvestimento": false,
+        "aplicacao": "passiva",
+        "tipoBonus": "item",
+        "reforco": {
+          "dureza": 7,
+          "pv": 108,
+          "limiarQuebra": 54,
+          "maxDureza": 20,
+          "maxPv": 160,
+          "maxLimiarQuebra": 80
+        }
+      },
+      "tipo": "runa"
+    },
+    {
+      "id": "runa-antimagia",
+      "nome": "Runa antimagia",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "+1 de estado às salvaguardas contra magia. Reação diária quando magia afeta você tenta neutralizar como Dissipar Magia de 7º círculo, modificador +26. Fabricar exige uma conjuração de Dissipar Magia.",
+      "resumo": [
+        "+1 contra magia; reação diária neutraliza com círculo 7 e +26."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em item compatível",
+      "ativacao": "Reação; uma vez por dia; gatilho: magia afeta você",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-resistente-energia",
+      "nome": "Runa resistente a energia",
+      "nivel": 8,
+      "precoPo": 420,
+      "preco": "420 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Resistência 5 a ácido, frio, eletricidade ou fogo, escolhido ao fabricar. Várias runas desta família coexistem se protegerem contra tipos diferentes; cada uma ocupa propriedade. Não somam resistência ao mesmo tipo.",
+      "resumo": [
+        "Resistência 5 a uma energia definida na fabricação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-resistente-energia-maior",
+      "nome": "Runa resistente a energia maior",
+      "nivel": 12,
+      "precoPo": 1650,
+      "preco": "1650 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Resistência 10 a ácido, frio, eletricidade ou fogo, escolhido ao fabricar. Várias runas desta família coexistem se protegerem contra tipos diferentes; cada uma ocupa propriedade. Não somam resistência ao mesmo tipo.",
+      "resumo": [
+        "Resistência 10 a uma energia definida na fabricação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-fortificacao",
+      "nome": "Runa de fortificação",
+      "nivel": 12,
+      "precoPo": 2000,
+      "preco": "2000 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Quando receber crítico, faça verificação simples CD 17; sucesso transforma em acerto normal. Aumenta Volume em 1 e requisito de Força para reduzir penalidades em 2. Só armadura média ou pesada.",
+      "resumo": [
+        "CD simples 17 converte crítico em acerto; aumenta Volume e Força exigida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura média ou pesada",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-fortificacao-maior",
+      "nome": "Runa de fortificação maior",
+      "nivel": 18,
+      "precoPo": 24000,
+      "preco": "24000 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Quando receber crítico, faça verificação simples CD 14; sucesso transforma em acerto normal. Aumenta Volume em 1 e requisito de Força para reduzir penalidades em 2. Só armadura média ou pesada.",
+      "resumo": [
+        "CD simples 14 converte crítico em acerto; aumenta Volume e Força exigida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura média ou pesada",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-invisibilidade",
+      "nome": "Runa de invisibilidade",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Uma ação de concentração concede Invisibilidade de 2º círculo por 1 minuto, com suas limitações. 1 uso(s) por dia. Só armadura leve. Fabricar exige uma conjuração de Invisibilidade.",
+      "resumo": [
+        "Invisibilidade por 1 minuto, 1 uso(s) diário(s), uma ação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura leve",
+      "ativacao": "Uma ação; concentração",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-invisibilidade-maior",
+      "nome": "Runa de invisibilidade maior",
+      "nivel": 10,
+      "precoPo": 1000,
+      "preco": "1000 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Uma ação de concentração concede Invisibilidade de 2º círculo por 1 minuto, com suas limitações. 3 uso(s) por dia. Só armadura leve. Fabricar exige uma conjuração de Invisibilidade.",
+      "resumo": [
+        "Invisibilidade por 1 minuto, 3 uso(s) diário(s), uma ação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura leve",
+      "ativacao": "Uma ação; concentração",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-vestimenta",
+      "nome": "Runa de vestimenta",
+      "nivel": 5,
+      "precoPo": 140,
+      "preco": "140 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Uma ação de concentração muda aparência da armadura para roupas comuns ou finas imaginadas, sem alterar estatísticas. Só criatura com Visão da Verdade ou equivalente pode desacreditar, CD 25.",
+      "resumo": [
+        "Disfarça armadura em roupa, sem mudar estatísticas; CD 25 com visão especial."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "Uma ação; concentração",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-prontidao",
+      "nome": "Runa de prontidão",
+      "nivel": 6,
+      "precoPo": 200,
+      "preco": "200 po",
+      "pagina": 226,
+      "fonte": "gm-core",
+      "descricao": "Veste armadura leve em uma ação ou média/pesada em duas. As peças se atraem magicamente; estatísticas não mudam.",
+      "resumo": [
+        "Veste armadura leve em uma ação ou média/pesada em duas."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-prontidao-maior",
+      "nome": "Runa de prontidão maior",
+      "nivel": 11,
+      "precoPo": 1200,
+      "preco": "1200 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "Veste qualquer armadura gravada em uma ação. As peças se atraem magicamente; estatísticas não mudam.",
+      "resumo": [
+        "Veste qualquer armadura gravada em uma ação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-sombra",
+      "nome": "Runa de sombra",
+      "nivel": 5,
+      "precoPo": 55,
+      "preco": "55 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+1 de item em Furtividade usando armadura leve ou média. Aparência escura e difusa; não soma bônus de item à mesma verificação.",
+      "resumo": [
+        "+1 de item em Furtividade com armadura leve ou média."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura leve ou média",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-sombra-maior",
+      "nome": "Runa de sombra maior",
+      "nivel": 9,
+      "precoPo": 650,
+      "preco": "650 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+2 de item em Furtividade usando armadura leve ou média. Aparência escura e difusa; não soma bônus de item à mesma verificação.",
+      "resumo": [
+        "+2 de item em Furtividade com armadura leve ou média."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura leve ou média",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-sombra-superior",
+      "nome": "Runa de sombra superior",
+      "nivel": 17,
+      "precoPo": 14000,
+      "preco": "14000 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+3 de item em Furtividade usando armadura leve ou média. Aparência escura e difusa; não soma bônus de item à mesma verificação.",
+      "resumo": [
+        "+3 de item em Furtividade com armadura leve ou média."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura leve ou média",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-escorregadia",
+      "nome": "Runa escorregadia",
+      "nivel": 5,
+      "precoPo": 45,
+      "preco": "45 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+1 de item em Acrobatismo para Escapar e Espremer-se, não em toda utilização da perícia. A superfície parece coberta por óleo fino.",
+      "resumo": [
+        "+1 de item para Escapar e Espremer-se."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-escorregadia-maior",
+      "nome": "Runa escorregadia maior",
+      "nivel": 8,
+      "precoPo": 450,
+      "preco": "450 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+2 de item em Acrobatismo para Escapar e Espremer-se, não em toda utilização da perícia. A superfície parece coberta por óleo fino.",
+      "resumo": [
+        "+2 de item para Escapar e Espremer-se."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-escorregadia-superior",
+      "nome": "Runa escorregadia superior",
+      "nivel": 16,
+      "precoPo": 9000,
+      "preco": "9000 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "+3 de item em Acrobatismo para Escapar e Espremer-se, não em toda utilização da perícia. A superfície parece coberta por óleo fino.",
+      "resumo": [
+        "+3 de item para Escapar e Espremer-se."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-mudar-tamanho",
+      "nome": "Runa de mudança de tamanho",
+      "nivel": 7,
+      "precoPo": 350,
+      "preco": "350 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "Uma ação de concentração, uma vez por dia, conjura Ampliar ou Encolher no usuário, à escolha. Armadura muda junto; aplique limitações da magia.",
+      "resumo": [
+        "Conjura Ampliar ou Encolher, uma vez por dia."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "Uma ação; concentração; uma vez por dia",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-alada",
+      "nome": "Runa alada",
+      "nivel": 13,
+      "precoPo": 2500,
+      "preco": "2500 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "Duas ações de concentração e manuseio tornam asas tangíveis, concedendo voo de 7,5 metros ou deslocamento terrestre, o menor. Uma vez por hora; dura 5 minutos ou até Dispensar. Asas etéreas reaparecem uma hora depois do fim.",
+      "resumo": [
+        "Voo até 7,5 metros ou deslocamento terrestre, o menor; 5 minutos por hora."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "Duas ações; concentração e manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-alada-maior",
+      "nome": "Runa alada maior",
+      "nivel": 19,
+      "precoPo": 35000,
+      "preco": "35000 po",
+      "pagina": 227,
+      "fonte": "gm-core",
+      "descricao": "Duas ações de concentração e manuseio tornam asas tangíveis, concedendo voo de 7,5 metros ou deslocamento terrestre, o menor. Dura indefinidamente, podendo Dispensar e reativar sem espera.",
+      "resumo": [
+        "Voo até 7,5 metros ou deslocamento terrestre, o menor; duração indefinida."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em armadura",
+      "ativacao": "Duas ações; concentração e manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-amedrontadora",
+      "nome": "Runa amedrontadora",
+      "nivel": 5,
+      "precoPo": 160,
+      "preco": "160 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Crítico com a arma aplica assustado 1. Traços emoção, medo, mágico e mental; não ocorre em acerto normal.",
+      "resumo": [
+        "Acerto crítico deixa alvo assustado 1."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-amedrontadora-maior",
+      "nome": "Runa amedrontadora maior",
+      "nivel": 12,
+      "precoPo": 2000,
+      "preco": "2000 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Crítico com a arma aplica assustado 2. Traços emoção, medo, mágico e mental; não ocorre em acerto normal.",
+      "resumo": [
+        "Acerto crítico deixa alvo assustado 2."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-flamejante",
+      "nome": "Runa flamejante",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de fogo. Crítico causa 1d10 de fogo persistente.",
+      "resumo": [
+        "+1d6 de fogo; Crítico causa 1d10 de fogo persistente."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-flamejante-maior",
+      "nome": "Runa flamejante maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de fogo. Crítico causa 1d10 de fogo persistente. Crítico aumenta persistente para 2d10. Todo fogo da arma, inclusive persistente, ignora resistência.",
+      "resumo": [
+        "+1d6 de fogo; Crítico aumenta persistente para 2d10. Todo fogo da arma, inclusive persistente, ignora resistência."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-corrosiva",
+      "nome": "Runa corrosiva",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de ácido. Crítico causa 3d6 de ácido à armadura, antes da Dureza; escudo erguido sofre em vez dela.",
+      "resumo": [
+        "+1d6 de ácido; Crítico causa 3d6 de ácido à armadura, antes da Dureza; escudo erguido sofre em vez dela."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-corrosiva-maior",
+      "nome": "Runa corrosiva maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de ácido. Crítico causa 3d6 de ácido à armadura, antes da Dureza; escudo erguido sofre em vez dela. Ignora resistência a ácido; dano à armadura/escudo em crítico passa a 6d6.",
+      "resumo": [
+        "+1d6 de ácido; Ignora resistência a ácido; dano à armadura/escudo em crítico passa a 6d6."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-eletrica",
+      "nome": "Runa elétrica",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de eletricidade. Crítico ricocheteia igual dano elétrico em até duas criaturas escolhidas a 3 metros do alvo.",
+      "resumo": [
+        "+1d6 de eletricidade; Crítico ricocheteia igual dano elétrico em até duas criaturas escolhidas a 3 metros do alvo."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-eletrica-maior",
+      "nome": "Runa elétrica maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Golpe bem-sucedido causa +1d6 de eletricidade. Crítico ricocheteia igual dano elétrico em até duas criaturas escolhidas a 3 metros do alvo. Ignora resistência elétrica do alvo e das criaturas do ricochete.",
+      "resumo": [
+        "+1d6 de eletricidade; Ignora resistência elétrica do alvo e das criaturas do ricochete."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-gelo",
+      "nome": "Runa de gelo",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "+1d6 de frio em Golpe. Crítico aplica lento 1 até fim do seu próximo turno, salvo Fortitude CD 24.",
+      "resumo": [
+        "+1d6 frio; crítico exige Fortitude 24 para evitar lento 1."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-trovao",
+      "nome": "Runa trovejante",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "+1d6 sônico em Golpe. Crítico exige Fortitude CD 24; falha causa surdez por 1 minuto, falha crítica por 1 hora.",
+      "resumo": [
+        "+1d6 sônico; crítico exige Fortitude 24 contra surdez."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-decadente",
+      "nome": "Runa decadente",
+      "nivel": 8,
+      "precoPo": 500,
+      "preco": "500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "+1d4 de vazio no acerto. Crítico causa 2d4 persistente de vazio ao alvo e ao escudo erguido. Portador rola verificação simples para cessar dano do escudo; mestre rola se sem portador. Corrói também objetos e constructos.",
+      "resumo": [
+        "+1d4 vazio, 2d4 persistente no crítico; corrói objetos."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-gelo-maior",
+      "nome": "Runa de gelo maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "+1d6 de frio em Golpe. Crítico aplica lento 1 até fim do seu próximo turno, salvo Fortitude CD 34. Frio da arma ignora resistência.",
+      "resumo": [
+        "+1d6 frio; crítico exige Fortitude 34 para evitar lento 1."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-trovao-maior",
+      "nome": "Runa trovejante maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "+1d6 sônico em Golpe. Crítico exige Fortitude CD 34; falha causa surdez permanente. Ignora resistência sônica.",
+      "resumo": [
+        "+1d6 sônico; crítico exige Fortitude 34 contra surdez."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-decadente-maior",
+      "nome": "Runa decadente maior",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "+1d4 de vazio no acerto. Crítico causa 4d4 persistente de vazio ao alvo e ao escudo erguido. Portador rola verificação simples para cessar dano do escudo; mestre rola se sem portador. Corrói também objetos e constructos. Ignora resistência e imunidade a vazio.",
+      "resumo": [
+        "+1d4 vazio, 4d4 persistente no crítico; corrói objetos."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-toque-fantasma",
+      "nome": "Runa toque fantasma",
+      "nivel": 4,
+      "precoPo": 75,
+      "preco": "75 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "Permite ferir criaturas incorpóreas, conforme suas vulnerabilidades específicas. Incorpóreas podem tocar, segurar e empunhar a arma. Não remove todas as resistências automaticamente.",
+      "resumo": [
+        "Atinge e pode ser empunhada por incorpóreos."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-retornante",
+      "nome": "Runa retornante",
+      "nivel": 3,
+      "precoPo": 55,
+      "preco": "55 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "Depois de Golpe de arremesso, retorna à mão. Se mãos cheias, cai no chão no seu espaço.",
+      "resumo": [
+        "Retorna após arremesso; precisa de mão livre."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma de arremesso",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-afiada",
+      "nome": "Runa afiada",
+      "nivel": 13,
+      "precoPo": 3000,
+      "preco": "3000 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "19 natural é crítico somente se resultado total já for sucesso. Não melhora resultado de falha.",
+      "resumo": [
+        "19 natural vira crítico apenas se já houver sucesso."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo perfurante/cortante",
+      "ativacao": "",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-golpe-rapido",
+      "nome": "Runa golpe rápido",
+      "nivel": 16,
+      "precoPo": 10000,
+      "preco": "10000 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "Enquanto empunha, fica acelerado, mas ação adicional só para Golpear com esta arma. Não soma várias fontes de acelerado.",
+      "resumo": [
+        "Ação extra apenas para Golpear com esta arma."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "raro",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-feridora",
+      "nome": "Runa feridora",
+      "nivel": 7,
+      "precoPo": 340,
+      "preco": "340 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Acerto causa +1d6 persistente de sangramento. Aplique regras de persistente, sem somar fontes do mesmo tipo automaticamente.",
+      "resumo": [
+        "+1d6 de sangramento persistente no acerto."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo perfurante/cortante",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-transformadora",
+      "nome": "Runa transformadora",
+      "nivel": 6,
+      "precoPo": 225,
+      "preco": "225 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "Uma ação de manuseio transforma em outra arma corpo a corpo com mesmo número básico de mãos. Runas e material permanecem; propriedades incompatíveis ficam suprimidas. Traço duas mãos não altera requisito básico para esta escolha. Não altera mãos atualmente usadas.",
+      "resumo": [
+        "Troca a forma mantendo requisito de mãos; propriedades incompatíveis são suprimidas."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-vorpal",
+      "nome": "Runa vorpal",
+      "nivel": 17,
+      "precoPo": 15000,
+      "preco": "15000 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Reação de concentração, morte e incapacitação quando obtiver 20 natural, crítico e dano cortante contra alvo com cabeça. Fortitude CD 37 ou decapitação. Mata quem precisa de cabeça; com várias, normalmente só a última mata.",
+      "resumo": [
+        "20 natural e crítico cortante permite reação: Fortitude 37 contra decapitação."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo cortante",
+      "ativacao": "Reação; gatilho específico",
+      "raridade": "raro",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-extensora",
+      "nome": "Runa extensora",
+      "nivel": 9,
+      "precoPo": 700,
+      "preco": "700 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Duas ações de manuseio fazem um Golpe com alcance 18 metros, somente para esse Golpe. Não muda outros ataques/reação permanentemente.",
+      "resumo": [
+        "Duas ações: único Golpe com 18 metros de alcance."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo",
+      "ativacao": "Duas ações; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-extensora-maior",
+      "nome": "Runa extensora maior",
+      "nivel": 13,
+      "precoPo": 3000,
+      "preco": "3000 po",
+      "pagina": 237,
+      "fonte": "gm-core",
+      "descricao": "Duas ações de manuseio fazem um Golpe com alcance 36 metros, somente para esse Golpe. Não muda outros ataques/reação permanentemente.",
+      "resumo": [
+        "Duas ações: único Golpe com 36 metros de alcance."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma corpo a corpo",
+      "ativacao": "Duas ações; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-sagrada",
+      "nome": "Runa sagrada",
+      "nivel": 11,
+      "precoPo": 1400,
+      "preco": "1400 po",
+      "pagina": 238,
+      "fonte": "gm-core",
+      "descricao": "Golpes ganham traço sagrada e +1d4 espiritual, ou +2d4 contra profano. Usuário profano fica enfraquecido 2 carregando ou empunhando. Não aceita arma com traço oposto; fabricar exige você possuir traço compatível. Uma vez por dia, após crítico contra criatura profano, reação de concentração cura você em PV iguais ao dobro do nível do alvo; traços cura e vitalidade.",
+      "resumo": [
+        "+1d4 espiritual, +2d4 contra oposto; reação diária após crítico."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma compatível",
+      "ativacao": "Reação; uma vez por dia; gatilho específico",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-profana",
+      "nome": "Runa profana",
+      "nivel": 11,
+      "precoPo": 1400,
+      "preco": "1400 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Golpes ganham traço profana e +1d4 espiritual, ou +2d4 contra sagrado. Usuário sagrado fica enfraquecido 2 carregando ou empunhando. Não aceita arma com traço oposto; fabricar exige você possuir traço compatível. Uma vez por dia, após crítico contra criatura sagrado, reação de concentração causa ao alvo sangramento persistente de 1d8 por dado de dano da arma.",
+      "resumo": [
+        "+1d4 espiritual, +2d4 contra oposto; reação diária após crítico."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma compatível",
+      "ativacao": "Reação; uma vez por dia; gatilho específico",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-vitalizante",
+      "nome": "Runa vitalizante",
+      "nivel": 5,
+      "precoPo": 150,
+      "preco": "150 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Contra mortos-vivos, +1d6 de vitalidade persistente. Crítico aplica enfraquecido 1 até fim do seu próximo turno.",
+      "resumo": [
+        "Vitalidade persistente contra mortos-vivos; crítico aplica condições."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "runa-vitalizante-maior",
+      "nome": "Runa vitalizante maior",
+      "nivel": 14,
+      "precoPo": 4300,
+      "preco": "4300 po",
+      "pagina": 239,
+      "fonte": "gm-core",
+      "descricao": "Contra mortos-vivos, +2d6 de vitalidade persistente. Crítico aplica enfraquecido 1 e estupefato 1 enquanto persistir o dano.",
+      "resumo": [
+        "Vitalidade persistente contra mortos-vivos; crítico aplica condições."
+      ],
+      "categoria": "runa",
+      "uso": "Gravada em arma",
+      "ativacao": "",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-cura-minima",
+      "nome": "Poção de cura mínima",
+      "nivel": 1,
+      "precoPo": 4,
+      "preco": "4 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recupera 1d8 PV ao beber com uma ação de manuseio, consumindo a poção. Traços consumível, cura, mágico, poção e vitalidade. Pode alimentar criatura disposta ou indefesa ao alcance.",
+      "resumo": [
+        "Cura 1d8 PV, uma ação e consumo."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "cura": "1d8",
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "consumivel",
+        "estado": "dados-revisados",
+        "categoria": "pocao",
+        "acao": "curar",
+        "aplicacao": "ao-usar",
+        "acoes": 1,
+        "consomeQuantidade": 1,
+        "exigeAlvo": true,
+        "alvo": "usuario-ou-criatura-disposta-ou-indefesa-ao-alcance",
+        "cura": {
+          "expressao": "1d8",
+          "quantidadeDados": 1,
+          "facesDados": 8,
+          "fixo": 0
+        },
+        "tracos": [
+          "manuseio",
+          "consumivel",
+          "cura",
+          "magico",
+          "pocao",
+          "vitalidade"
+        ]
+      },
+      "tipo": "consumivel"
+    },
+    {
+      "id": "pocao-cura-menor",
+      "nome": "Poção de cura menor",
+      "nivel": 3,
+      "precoPo": 12,
+      "preco": "12 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recupera 2d8+5 PV ao beber com uma ação de manuseio, consumindo a poção. Traços consumível, cura, mágico, poção e vitalidade. Pode alimentar criatura disposta ou indefesa ao alcance.",
+      "resumo": [
+        "Cura 2d8+5 PV, uma ação e consumo."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "cura": "2d8+5",
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "consumivel",
+        "estado": "dados-revisados",
+        "categoria": "pocao",
+        "acao": "curar",
+        "aplicacao": "ao-usar",
+        "acoes": 1,
+        "consomeQuantidade": 1,
+        "exigeAlvo": true,
+        "alvo": "usuario-ou-criatura-disposta-ou-indefesa-ao-alcance",
+        "cura": {
+          "expressao": "2d8+5",
+          "quantidadeDados": 2,
+          "facesDados": 8,
+          "fixo": 5
+        },
+        "tracos": [
+          "manuseio",
+          "consumivel",
+          "cura",
+          "magico",
+          "pocao",
+          "vitalidade"
+        ]
+      },
+      "tipo": "consumivel"
+    },
+    {
+      "id": "pocao-cura-moderada",
+      "nome": "Poção de cura moderada",
+      "nivel": 6,
+      "precoPo": 50,
+      "preco": "50 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recupera 3d8+10 PV ao beber com uma ação de manuseio, consumindo a poção. Traços consumível, cura, mágico, poção e vitalidade. Pode alimentar criatura disposta ou indefesa ao alcance.",
+      "resumo": [
+        "Cura 3d8+10 PV, uma ação e consumo."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "cura": "3d8+10",
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "consumivel",
+        "estado": "dados-revisados",
+        "categoria": "pocao",
+        "acao": "curar",
+        "aplicacao": "ao-usar",
+        "acoes": 1,
+        "consomeQuantidade": 1,
+        "exigeAlvo": true,
+        "alvo": "usuario-ou-criatura-disposta-ou-indefesa-ao-alcance",
+        "cura": {
+          "expressao": "3d8+10",
+          "quantidadeDados": 3,
+          "facesDados": 8,
+          "fixo": 10
+        },
+        "tracos": [
+          "manuseio",
+          "consumivel",
+          "cura",
+          "magico",
+          "pocao",
+          "vitalidade"
+        ]
+      },
+      "tipo": "consumivel"
+    },
+    {
+      "id": "pocao-cura-maior",
+      "nome": "Poção de cura maior",
+      "nivel": 12,
+      "precoPo": 400,
+      "preco": "400 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recupera 6d8+20 PV ao beber com uma ação de manuseio, consumindo a poção. Traços consumível, cura, mágico, poção e vitalidade. Pode alimentar criatura disposta ou indefesa ao alcance.",
+      "resumo": [
+        "Cura 6d8+20 PV, uma ação e consumo."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "cura": "6d8+20",
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "consumivel",
+        "estado": "dados-revisados",
+        "categoria": "pocao",
+        "acao": "curar",
+        "aplicacao": "ao-usar",
+        "acoes": 1,
+        "consomeQuantidade": 1,
+        "exigeAlvo": true,
+        "alvo": "usuario-ou-criatura-disposta-ou-indefesa-ao-alcance",
+        "cura": {
+          "expressao": "6d8+20",
+          "quantidadeDados": 6,
+          "facesDados": 8,
+          "fixo": 20
+        },
+        "tracos": [
+          "manuseio",
+          "consumivel",
+          "cura",
+          "magico",
+          "pocao",
+          "vitalidade"
+        ]
+      },
+      "tipo": "consumivel"
+    },
+    {
+      "id": "pocao-cura-superior",
+      "nome": "Poção de cura superior",
+      "nivel": 18,
+      "precoPo": 5000,
+      "preco": "5000 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recupera 8d8+30 PV ao beber com uma ação de manuseio, consumindo a poção. Traços consumível, cura, mágico, poção e vitalidade. Pode alimentar criatura disposta ou indefesa ao alcance.",
+      "resumo": [
+        "Cura 8d8+30 PV, uma ação e consumo."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "estruturada",
+      "cura": "8d8+30",
+      "automatizavel": true,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "consumivel",
+        "estado": "dados-revisados",
+        "categoria": "pocao",
+        "acao": "curar",
+        "aplicacao": "ao-usar",
+        "acoes": 1,
+        "consomeQuantidade": 1,
+        "exigeAlvo": true,
+        "alvo": "usuario-ou-criatura-disposta-ou-indefesa-ao-alcance",
+        "cura": {
+          "expressao": "8d8+30",
+          "quantidadeDados": 8,
+          "facesDados": 8,
+          "fixo": 30
+        },
+        "tracos": [
+          "manuseio",
+          "consumivel",
+          "cura",
+          "magico",
+          "pocao",
+          "vitalidade"
+        ]
+      },
+      "tipo": "consumivel"
+    },
+    {
+      "id": "pergaminho-magico-1",
+      "nome": "Pergaminho mágico de 1º círculo",
+      "nivel": 1,
+      "precoPo": 4,
+      "preco": "4 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 1º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 1º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 1,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-2",
+      "nome": "Pergaminho mágico de 2º círculo",
+      "nivel": 3,
+      "precoPo": 12,
+      "preco": "12 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 2º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 2º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 2,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-3",
+      "nome": "Pergaminho mágico de 3º círculo",
+      "nivel": 5,
+      "precoPo": 30,
+      "preco": "30 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 3º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 3º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 3,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-4",
+      "nome": "Pergaminho mágico de 4º círculo",
+      "nivel": 7,
+      "precoPo": 70,
+      "preco": "70 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 4º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 4º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 4,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-5",
+      "nome": "Pergaminho mágico de 5º círculo",
+      "nivel": 9,
+      "precoPo": 150,
+      "preco": "150 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 5º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 5º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 5,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-6",
+      "nome": "Pergaminho mágico de 6º círculo",
+      "nivel": 11,
+      "precoPo": 300,
+      "preco": "300 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 6º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 6º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 6,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-7",
+      "nome": "Pergaminho mágico de 7º círculo",
+      "nivel": 13,
+      "precoPo": 600,
+      "preco": "600 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 7º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 7º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 7,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-8",
+      "nome": "Pergaminho mágico de 8º círculo",
+      "nivel": 15,
+      "precoPo": 1300,
+      "preco": "1300 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 8º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 8º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 8,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-9",
+      "nome": "Pergaminho mágico de 9º círculo",
+      "nivel": 17,
+      "precoPo": 3000,
+      "preco": "3000 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 9º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 9º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 9,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pergaminho-magico-10",
+      "nome": "Pergaminho mágico de 10º círculo",
+      "nivel": 19,
+      "precoPo": 8000,
+      "preco": "8000 po",
+      "pagina": 262,
+      "fonte": "gm-core",
+      "descricao": "Guarda uma magia de 10º círculo da lista do usuário. Uma mão e ações normais para conjurar usando seu ataque e CD; consumido ao conjurar. Não guarda truques, foco ou rituais. Custos foram pagos ao fabricar e acrescentam ao preço, mas locus continua necessário. Raridade segue a magia. Fabricar exige conjuração de espaço por pergaminho; lotes de quatro têm mesma magia e círculo.",
+      "resumo": [
+        "Magia de 10º círculo usando suas estatísticas, uma única vez."
+      ],
+      "categoria": "pergaminho",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; consumido",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 10,
+      "magiaEscolhidaObrigatoria": true,
+      "observacaoEditorial": "Fonte imprime frequência de varinha por erro; seção determina consumo único, sem sobrecarga.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-1",
+      "nome": "Varinha mágica de 1º círculo",
+      "nivel": 3,
+      "precoPo": 60,
+      "preco": "60 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 1º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 1º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 1,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-2",
+      "nome": "Varinha mágica de 2º círculo",
+      "nivel": 5,
+      "precoPo": 160,
+      "preco": "160 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 2º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 2º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 2,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-3",
+      "nome": "Varinha mágica de 3º círculo",
+      "nivel": 7,
+      "precoPo": 360,
+      "preco": "360 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 3º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 3º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 3,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-4",
+      "nome": "Varinha mágica de 4º círculo",
+      "nivel": 9,
+      "precoPo": 700,
+      "preco": "700 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 4º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 4º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 4,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-5",
+      "nome": "Varinha mágica de 5º círculo",
+      "nivel": 11,
+      "precoPo": 1500,
+      "preco": "1500 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 5º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 5º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 5,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-6",
+      "nome": "Varinha mágica de 6º círculo",
+      "nivel": 13,
+      "precoPo": 3000,
+      "preco": "3000 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 6º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 6º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 6,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-7",
+      "nome": "Varinha mágica de 7º círculo",
+      "nivel": 15,
+      "precoPo": 6500,
+      "preco": "6500 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 7º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 7º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 7,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-8",
+      "nome": "Varinha mágica de 8º círculo",
+      "nivel": 17,
+      "precoPo": 15000,
+      "preco": "15000 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 8º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 8º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 8,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "varinha-magica-9",
+      "nome": "Varinha mágica de 9º círculo",
+      "nivel": 19,
+      "precoPo": 40000,
+      "preco": "40000 po",
+      "pagina": 282,
+      "fonte": "gm-core",
+      "descricao": "Guarda magia de 9º círculo da lista do usuário, sem truques, foco ou rituais. Uma mão e ações normais, usando seu ataque e CD; paga custos e exige locus ao usar. Uma conjuração diária. Segunda pode sobrecarregar: conjura e CD simples 10; sucesso quebra e falha destrói. Nova sobrecarga no mesmo dia destrói sem conjurar, mesmo reparada. Fabricar exige magia de espaço sem custo próprio da magia; raridade segue a magia.",
+      "resumo": [
+        "Magia de 9º círculo por dia; sobrecarga arrisca quebrar ou destruir."
+      ],
+      "categoria": "varinha",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Conjurar uma Magia; uma vez por dia mais sobrecarga",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "circulo": 9,
+      "magiaEscolhidaObrigatoria": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-sopro-energia-menor",
+      "nome": "Poção de sopro de energia menor",
+      "nivel": 7,
+      "precoPo": 70,
+      "preco": "70 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Por 1 hora após beber, ganha ação Sopro de Energia: uma ação causa 4d6, salvaguarda básica CD 23; recarga 1d4 rodadas. Tipo definido na criação: ácido/eletricidade linha 9 metros Reflexos; frio/fogo cone 4,5 metros Reflexos; sônico cone 4,5 metros Fortitude. Tem traço da energia.",
+      "resumo": [
+        "Sopro 4d6, CD 23, recarga 1d4 rodadas por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação para beber e por sopro",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-sopro-energia-moderada",
+      "nome": "Poção de sopro de energia moderada",
+      "nivel": 12,
+      "precoPo": 400,
+      "preco": "400 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Por 1 hora após beber, ganha ação Sopro de Energia: uma ação causa 6d6, salvaguarda básica CD 29; recarga 1d4 rodadas. Tipo definido na criação: ácido/eletricidade linha 9 metros Reflexos; frio/fogo cone 4,5 metros Reflexos; sônico cone 4,5 metros Fortitude. Tem traço da energia.",
+      "resumo": [
+        "Sopro 6d6, CD 29, recarga 1d4 rodadas por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação para beber e por sopro",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-sopro-energia-maior",
+      "nome": "Poção de sopro de energia maior",
+      "nivel": 17,
+      "precoPo": 3000,
+      "preco": "3000 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Por 1 hora após beber, ganha ação Sopro de Energia: uma ação causa 10d6, salvaguarda básica CD 37; recarga 1d4 rodadas. Tipo definido na criação: ácido/eletricidade linha 9 metros Reflexos; frio/fogo cone 4,5 metros Reflexos; sônico cone 4,5 metros Fortitude. Tem traço da energia.",
+      "resumo": [
+        "Sopro 10d6, CD 37, recarga 1d4 rodadas por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação para beber e por sopro",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-lagartixa",
+      "nome": "Poção de lagartixa",
+      "nivel": 1,
+      "precoPo": 3,
+      "preco": "3 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Por 5 minutos, +1 de item para Escalar, Ocultar um Objeto na Mão e CD de Reflexos contra Desarmar. Não vale para todas as utilizações das perícias. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "+1 para escalar, ocultar na mão e resistir a Desarmar, 5 minutos."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-invisibilidade",
+      "nome": "Poção de invisibilidade",
+      "nivel": 4,
+      "precoPo": 20,
+      "preco": "20 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Recebe Invisibilidade de 2º círculo com duração e limitações da magia. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Invisibilidade de 2º círculo com suas restrições."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-carvalho",
+      "nome": "Poção de carvalho",
+      "nivel": 4,
+      "precoPo": 15,
+      "preco": "15 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Pele engrossa como casca; recebe Resiliência de Carvalho de 2º círculo por 10 minutos. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Resiliência de Carvalho por 10 minutos."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-panaceia",
+      "nome": "Panaceia",
+      "nivel": 13,
+      "precoPo": 450,
+      "preco": "450 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Tenta neutralizar todas as maldições e doenças, e cego/surdo causados por magias. Círculo de neutralização 7, modificador +20; não é remoção automática. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Neutralização de círculo 7, +20, contra doenças e maldições."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-fuga-emergencial",
+      "nome": "Poção de fuga emergencial",
+      "nivel": 1,
+      "precoPo": 3,
+      "preco": "3 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Fica em fuga por 1 minuto; +12 metros de estado a todos os deslocamentos enquanto em fuga. Anda imediatamente e continua limitado pela condição. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Em fuga, +12 metros por 1 minuto e Anda imediatamente."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-salto",
+      "nome": "Poção de salto",
+      "nivel": 5,
+      "precoPo": 21,
+      "preco": "21 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Por 1 minuto, cada Salto recebe efeito de Saltar de 1º círculo. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Saltar de 1º círculo em cada Salto por 1 minuto."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-rapidez",
+      "nome": "Poção de rapidez",
+      "nivel": 8,
+      "precoPo": 90,
+      "preco": "90 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Recebe Acelerar por 1 minuto; ação extra continua limitada pela magia. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Acelerar por 1 minuto, com restrições normais da ação extra."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-memorias-compartilhadas",
+      "nome": "Poção de memórias compartilhadas",
+      "nivel": 1,
+      "precoPo": 4,
+      "preco": "4 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Para armazenar, segura e concentra-se 1 minuto em evento, pessoa, lugar ou experiência de aproximadamente 1 minuto. Consumidor lembra vividamente como experiência própria; indisposto pode recusar. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Armazena uma memória breve; consumidor pode recebê-la ou recusar."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-fala-universal",
+      "nome": "Poção de fala universal",
+      "nivel": 12,
+      "precoPo": 320,
+      "preco": "320 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Por 4 horas, fala e entende todos os idiomas, sem capacidade de ler suas formas escritas. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Fala e entende todos os idiomas por 4 horas, sem ler."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-indetectabilidade",
+      "nome": "Poção de indetectabilidade",
+      "nivel": 18,
+      "precoPo": 4400,
+      "preco": "4400 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Por 10 minutos, impede detecção como Mente Oculta, sem bônus contra efeitos mentais. Também Invisibilidade de 4º círculo protegida contra Ver o Invisível até 8º círculo e CD 36 contra Visão da Verdade. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Impede detecção e concede invisibilidade protegida por 10 minutos."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-respirar-na-agua",
+      "nome": "Poção de respirar na água",
+      "nivel": 3,
+      "precoPo": 11,
+      "preco": "11 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Recebe Respirar na Água de 2º círculo por 1 hora. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Respiração aquática por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-escudo-temporal",
+      "nome": "Poção de escudo temporal",
+      "nivel": 13,
+      "precoPo": 600,
+      "preco": "600 po",
+      "pagina": 261,
+      "fonte": "gm-core",
+      "descricao": "Fora do tempo por 2d4 rodadas: não age nem pode ser alvo, imune a tudo e desaparece. Suspende durações atuais. Retorna ao espaço anterior ou desocupado mais próximo e retoma efeitos como se não passou tempo. Novas áreas e mudanças do ambiente afetam você ao voltar. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Sai do tempo por 2d4 rodadas sem agir; volta e retoma durações."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-visao-verdade",
+      "nome": "Poção de visão da verdade",
+      "nivel": 16,
+      "precoPo": 1500,
+      "preco": "1500 po",
+      "pagina": 261,
+      "fonte": "gm-core",
+      "descricao": "Recebe Visão da Verdade de 7º círculo, neutralização +25; aplique regras da magia. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "Visão da Verdade de 7º círculo com +25."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-verdade",
+      "nome": "Poção de verdade",
+      "nivel": 6,
+      "precoPo": 46,
+      "preco": "46 po",
+      "pagina": 261,
+      "fonte": "gm-core",
+      "descricao": "Vontade CD 19 ao beber, podendo escolher falhar. Sucesso ou crítico não afeta. Falha impede mentir por 10 minutos. Falha crítica também exige Vontade 19 contra perguntas: falha obriga resposta verdadeira se possível; sucesso protege contra repetição da mesma pergunta durante duração. Beber usa uma ação de manuseio e consome a poção.",
+      "resumo": [
+        "CD 19 pode impedir mentiras por 10 minutos; crítico falho pode obrigar respostas."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "incomum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-voo",
+      "nome": "Poção de voo",
+      "nivel": 8,
+      "precoPo": 100,
+      "preco": "100 po",
+      "pagina": 259,
+      "fonte": "gm-core",
+      "descricao": "Concede deslocamento de voo de 12 metros por 1 minuto. Ações e verificações de voo continuam necessárias. Consumida ao beber.",
+      "resumo": [
+        "Voo 12 metros por 1 minuto."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-voo-maior",
+      "nome": "Poção de voo maior",
+      "nivel": 15,
+      "precoPo": 1000,
+      "preco": "1000 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Concede deslocamento de voo de 12 metros por 1 hora. Ações e verificações de voo continuam necessárias. Consumida ao beber.",
+      "resumo": [
+        "Voo 12 metros por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-natacao",
+      "nome": "Poção de natação",
+      "nivel": 6,
+      "precoPo": 50,
+      "preco": "50 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Natação igual ao deslocamento terrestre por 10 minutos. Não concede respiração aquática. Consumida ao beber.",
+      "resumo": [
+        "Natação igual ao terrestre por 10 minutos, sem respirar na água."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-natacao-maior",
+      "nome": "Poção de natação maior",
+      "nivel": 11,
+      "precoPo": 250,
+      "preco": "250 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Natação igual ao deslocamento terrestre por 1 hora. Não concede respiração aquática. Consumida ao beber.",
+      "resumo": [
+        "Natação igual ao terrestre por 1 hora, sem respirar na água."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-resistencia-menor",
+      "nome": "Poção de resistência menor",
+      "nivel": 6,
+      "precoPo": 45,
+      "preco": "45 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Resistência 5 por 1 hora a ácido, frio, eletricidade, fogo ou sônico, escolhido na criação, não pelo usuário a cada uso. Consumida ao beber.",
+      "resumo": [
+        "Resistência 5 a uma energia por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-resistencia-moderada",
+      "nome": "Poção de resistência moderada",
+      "nivel": 10,
+      "precoPo": 180,
+      "preco": "180 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Resistência 10 por 1 hora a ácido, frio, eletricidade, fogo ou sônico, escolhido na criação, não pelo usuário a cada uso. Consumida ao beber.",
+      "resumo": [
+        "Resistência 10 a uma energia por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-resistencia-maior",
+      "nome": "Poção de resistência maior",
+      "nivel": 14,
+      "precoPo": 850,
+      "preco": "850 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Resistência 15 por 1 hora a ácido, frio, eletricidade, fogo ou sônico, escolhido na criação, não pelo usuário a cada uso. Consumida ao beber.",
+      "resumo": [
+        "Resistência 15 a uma energia por 1 hora."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-encolhimento",
+      "nome": "Poção de encolhimento",
+      "nivel": 4,
+      "precoPo": 15,
+      "preco": "15 po",
+      "pagina": 261,
+      "fonte": "gm-core",
+      "descricao": "Encolhe você e equipamento. Após início de 1 minuto, dura 10 minutos.",
+      "resumo": [
+        "Encolhe usuário e equipamento; 10 minutos após início de 1 minuto."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "pocao-encolhimento-maior",
+      "nome": "Poção de encolhimento maior",
+      "nivel": 8,
+      "precoPo": 90,
+      "preco": "90 po",
+      "pagina": 261,
+      "fonte": "gm-core",
+      "descricao": "Encolhe você e equipamento. Sem início, Encolher de 4º círculo dura 1 hora e concede +2 de item em Furtividade enquanto encolhido.",
+      "resumo": [
+        "Encolhe usuário e equipamento; 1 hora sem início, +2 em Furtividade."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "soro-mudanca-sexual",
+      "nome": "Soro de mudança sexual",
+      "nivel": 7,
+      "precoPo": 60,
+      "preco": "60 po",
+      "pagina": 260,
+      "fonte": "gm-core",
+      "descricao": "Muda instantaneamente biologia para características sexuais escolhidas, com controle limitado dos detalhes e semelhança com aparência anterior. Nova anatomia saudável e funcional, reprodução conforme ancestralidade. Não pode neutralizar; outro soro reverte ou muda novamente. Sem efeito na gravidez ou ancestralidade sem diferenciação sexual.",
+      "resumo": [
+        "Muda características sexuais instantaneamente; outro soro pode reverter."
+      ],
+      "categoria": "poção",
+      "uso": "Uma mão; Volume leve",
+      "ativacao": "Uma ação; manuseio",
+      "raridade": "comum",
+      "automacao": "consulta",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "selo-pai-forja",
+      "nome": "Selo do Pai da Forja",
+      "nivel": 24,
+      "precoPo": null,
+      "preco": "Sem preço de mercado",
+      "pagina": 300,
+      "fonte": "gm-core",
+      "descricao": "Criado por Torag para seus artesãos e guerreiros, também tem versões para outras divindades com magia de reação diferente. Em pedra rúnica, soa como martelo em bigorna. Só armadura que comporte duas ou mais propriedades; ocupa dois espaços.\n\nUsando a armadura, resistência a fogo 40, ignora penalidades de verificação e deslocamento; leve/média aumenta bônus de item à CA em 1. Escudo empunhado recupera 10 PV no início de cada turno.\n\nRepulsão Retributiva — reação de manuseio, uma vez por hora, quando atingido por ataque: reduz dano em 100 e conjura Terremoto CD 40 centrado no atacante. Escolhe área do tamanho da criatura até explosão de 18 metros. Versão de Sarenrae usa Explosão Solar.\n\nSelo de Reparação — três ações de manuseio, uma vez por dia: Refazer restaura todos os PV de item ao alcance, mesmo destruído, se maior parte estiver disponível. Inclui mágicos e artefatos do nível do selo ou menor. Reparação automática de escudos fica inativa até preparação diária seguinte.\n\nSacrifício Inabalável — ação livre de concentração, antes de agir no turno: criaturas escolhidas a 18 metros recuperam todos os PV; mortas voltam com metade dos PV máximos. +4 de estado à CA e salvaguardas e cura acelerada 15 por 1 hora. Pode ressuscitar quem exige Desejo ou intervenção divina, mas nesse caso não escolhe outras criaturas. Você vira estátua de pedra ou metal e nunca pode ser restaurado. Selo permanece e pode ser transferido.\n\nDestruição: ressuscitar um semideus maligno com o selo provoca explosão que destrói selo e estátua, apagando todo conhecimento do usuário da existência; o semideus volta. Maligno é a expressão narrativa impressa, sem criar alinhamento na ficha Remaster.",
+      "resumo": [
+        "Resistência a fogo 40, defesa, reparação e reação de Terremoto.",
+        "Sacrifício cura ou ressuscita aliados, tornando usuário estátua irreversível."
+      ],
+      "categoria": "artefato",
+      "uso": "Armadura; dois espaços de propriedade",
+      "ativacao": "Reação, três ações ou ação livre, conforme entrada",
+      "raridade": "raro",
+      "automacao": "consulta",
+      "somenteMestre": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "espelho-sorshen",
+      "nome": "Espelho de Sorshen",
+      "nivel": 25,
+      "precoPo": null,
+      "preco": "Sem preço de mercado",
+      "pagina": 301,
+      "fonte": "gm-core",
+      "descricao": "Espelho oval de vidro prateado, moldura escura com gemas verdes e duas figuras humanoides. Vincula-se a conjurador lendário em Arcanismo ou Ocultismo. Dono percebe tudo refletido e usa ativações independentemente da distância enquanto vínculo existir.\n\nCriatura inteligente vê imagem pessoalmente atraente, diferente por observador. Cada rodada exige Vontade CD 35 ou fica fascinada. Na falha, encara enquanto visível e, depois, o último lugar por vários minutos. Emoção, incapacitação e visual. Hostilidade contra ela ou aliados não encerra automaticamente: permite Vontade CD 30 para terminar. Mestre pode tornar imune quem for verdadeiramente inocente ou renunciou aos prazeres mundanos.\n\nSegundo Olhar — duas ações de concentração, emoção, incapacitação e visual: força criatura olhando a fazer nova salvaguarda contra fascinação, mesmo após sucesso anterior.\n\nDesejo Irresistível — três ações de concentração, emoção, incapacitação e mental, alvo fascinado: controle por 30 dias como falha crítica contra Dominar. Ver o espelho antes do fim renova por 30 dias desde novo olhar. Sem salvaguarda inicial; CD para libertar-se por ordem contrária à natureza é 35.\n\nDestruição: criatura inteligente e completamente inocente resiste à atração e derruba acidentalmente, quebrando em mil pedaços.",
+      "resumo": [
+        "Vincula conjurador lendário, fascina observadores e controla alvo fascinado por 30 dias.",
+        "Destruição exige inocente resistir e derrubá-lo acidentalmente."
+      ],
+      "categoria": "artefato",
+      "uso": "Vinculado; Volume leve",
+      "ativacao": "Duas ou três ações, conforme entrada",
+      "raridade": "unico",
+      "automacao": "consulta",
+      "somenteMestre": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "extrator-filosofal",
+      "nome": "Extrator filosofal",
+      "nivel": 28,
+      "precoPo": null,
+      "preco": "Sem preço de mercado",
+      "pagina": 301,
+      "fonte": "gm-core",
+      "descricao": "Arranjo de frascos, tubos e instrumentos, Volume 8; kit alquímico excepcional com +4 de item à Manufatura alquímica. Fabricar nele ou usá-lo na preparação diária com reagentes infundidos cria itens impecáveis: máximo resultado numérico de rolagens, duração dobrada e sem desvantagens.\n\nSíntese Acelerada — três ações de manuseio, uma vez por minuto: cria item alquímico do seu nível ou menor cuja fórmula conheça. Total diário de 56 níveis de itens: dois de nível 19 mais dois de 9, ou oito de 7, por exemplo.\n\nTransmutação da Essência — uma hora de manuseio: filtra ao menos dois terços da massa original de criatura, produzindo mutagênico transmutador. Até dez simultaneamente se massa suficiente. Beber concede por 1 hora habilidade fisiológica escolhida pelo mestre, como sopro, voo, visão no escuro, presença aterradora ou imunidade a sono. Não concede magia/conjuração. Usa CD de classe ou magia do consumidor, a maior.\n\nPodem coexistir vários, ao contrário de mutagênicos/polimorfia comuns. Diferentes espécies dão suas habilidades; doses da mesma espécie dão habilidade adicional e +1 hora de duração para aquele tipo. Com outro ativo, após beber faz CD simples igual ao total ativo. Falha transforma completamente na espécie da dose mais recente e quase sempre provoca fúria descontrolada; mestre decide memórias e personalidade restantes.\n\nDestruição: introduzir simultaneamente partes grandes de éon, anjo, arconte, azata, daemon, demônio, diabo, proteano e psicopompo, todos nível 14+, com pedra filosofal, faz explodir. Criaturas a 18 metros fazem Reflexos CD 55 ou mistura as transforma em combinação de ao menos duas criaturas usadas.",
+      "resumo": [
+        "Produz alquimia impecável e até 56 níveis de itens por dia.",
+        "Mutagênicos fisiológicos coexistem, com risco de transformação descontrolada."
+      ],
+      "categoria": "artefato",
+      "uso": "Volume 8; kit alquímico",
+      "ativacao": "Três ações por síntese ou uma hora por transmutação",
+      "raridade": "raro",
+      "automacao": "consulta",
+      "somenteMestre": true,
+      "observacaoEditorial": "Fonte cita reagentes infundidos anteriores à revisão do alquimista em Player Core 2. Preservado para consulta, sem converter automaticamente a novos recursos.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "serithtial",
+      "nome": "Serithtial",
+      "nivel": 23,
+      "precoPo": null,
+      "preco": "Sem preço de mercado",
+      "pagina": 302,
+      "fonte": "gm-core",
+      "descricao": "Iomedae teria forjado esta espada inteligente: bastarda +4 impactante superior sagrada, Volume 1, uma mão em forma básica. Aço também conta como ferro frio e prata. Percepção +28; visão/audição normais 18 metros; empatia só com parceiro; Saber de Iomedae +29, Religião +26, Saber de Zon-Kuthon +29; INT +2, SAB +1, CAR +2, Vontade +30.\n\nLuz de tocha pode ser suspensa/retomada por você ou espada com uma ação de concentração. +2d6 de dano contra adoradores de Zon-Kuthon. Empunhando, contra efeitos de seguidores dele recebe Movimento Desimpedido, +4 de estado contra morte/vazio, resistência vazio 10 e suprime condenado. Proteções têm limite de fonte do efeito.\n\nSem portador, volta a bastarda. Detecta preferência e usa ação para virar adaga, espada curta/longa, cimitarra, falcione, espada de duas mãos, rapieira ou bastarda quando empunhada. Usuário pode pedir outra forma por ação de concentração; ela usa ação para mudar.\n\nAceita parceiro dedicado a derrotar Kazavon e Zon-Kuthon. Se abandonar objetivos, tenta tomar corpo: Vontade CD 45 para resistir, normalmente controla até achar parceiro melhor; nova salvaguarda a cada dia.\n\nGraça da Herdeira — concentração, uma vez por hora: a espada usa ações apropriadas e conjura Curar de 9º círculo ou Anel da Verdade, CD 45.\n\nDestruição: Kazavon ou grande dragão das sombras adorador de Zon-Kuthon usa sopro sobre a espada não empunhada, derretendo em ferro comum.",
+      "resumo": [
+        "Espada inteligente +4 com poderes contra seguidores de Zon-Kuthon.",
+        "Pode curar e tentar controlar portador que abandone sua missão."
+      ],
+      "categoria": "artefato",
+      "uso": "Uma mão; Volume 1; inteligente",
+      "ativacao": "Ações e ativações da espada conforme entrada",
+      "raridade": "unico",
+      "automacao": "consulta",
+      "somenteMestre": true,
+      "observacaoEditorial": "Potência +4 é exceção do artefato, não quarta versão comum de runa.",
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    },
+    {
+      "id": "projetil-primeiro-cofre",
+      "nome": "Projétil do Primeiro Cofre",
+      "nivel": 23,
+      "precoPo": null,
+      "preco": "Sem preço de mercado",
+      "pagina": 303,
+      "fonte": "gm-core",
+      "descricao": "Munição de Abadar que adapta-se a qualquer arma à distância ao ser pega e reconhece dono até outra criatura pegá-la. Dono pode ativar após disparo. Em vez de rolar dados da arma, usa 25 como resultado e soma bônus/danos adicionais; tipo é o normal.\n\nAo danificar, fragmenta e ricocheteia contra outros inimigos a 9 metros com mesmo bônus de ataque. Fragmentos ficam presos, causando desajeitado 2. Remover exige três Interagir no total em si ou adjacente, ou uma ação com Medicina CD 30; crítico falho causa 10 de sangramento persistente.\n\nOrdem de Recarga — uma ação de concentração: volta e recarrega a arma; fragmentos presos arrancam-se causando 15 de sangramento persistente aos alvos antes de se reunir.\n\nDepósito no Cofre — três ações de manuseio, carregado ou à mão se recarga 0: faz Golpe e tenta levar alvo ao Cofre. Salvo crítico falho do ataque, Reflexos CD 45 com incapacitação. Crítico: sem efeito. Sucesso: move 1d20 × 15 metros na direção do tiro; colisão sólida causa 50 contundente. Falha: lugar aleatório em Axis. Falha crítica: Primeiro Cofre, provavelmente sem escapar sozinho. Projétil retorna ao Cofre independentemente do resultado.\n\nDestruição: dez projéteis acertam o mesmo grupo de proteanos keketar ou izfiitar em até 1 minuto e são chamados de volta; colidem ao recompor e viram pó.",
+      "resumo": [
+        "Usa 25 nos dados da arma e ricocheteia, deixando fragmentos.",
+        "Pode recarregar a si mesmo ou transportar alvo a Axis/Primeiro Cofre."
+      ],
+      "categoria": "artefato",
+      "uso": "Munição de qualquer arma à distância",
+      "ativacao": "Uma ação para recarga; três para depósito",
+      "raridade": "raro",
+      "automacao": "consulta",
+      "somenteMestre": true,
+      "automatizavel": false,
+      "mecanica": {
+        "versao": 1,
+        "tipo": "referencia",
+        "estado": "nao-implementado",
+        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
+      }
+    }
+  ],
+  "secoes": [
+    {
+      "id": "papel-mestre",
+      "nome": "O papel do mestre e a preparação",
+      "pagina": 6,
+      "texto": "O mestre descreve o mundo, interpreta personagens não jogadores, apresenta desafios e resolve regras. Prepare situações, objetivos dos adversários e consequências possíveis, deixando os jogadores escolherem o caminho. Combine proposta, limites e opções disponíveis antes da campanha.\n\nAntes da sessão, revise acontecimentos, objetivos, lugares e encontros prováveis. Apresente o que os personagens podem perceber. Quando houver dúvida, tome uma decisão clara para a situação, consulte a regra depois e mantenha decisões futuras consistentes.",
+      "resumo": [
+        "Prepare situações e consequências, deixando as escolhas conduzirem a história."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "raridade-acesso",
+      "nome": "Raridade e acesso às opções",
+      "pagina": 22,
+      "texto": "Raridades: comum, incomum, raro e único; sem indicação, a opção é comum. Raridade descreve disponibilidade, não força. O mestre decide quais opções incomuns ou raras se encaixam na campanha.\n\nUma condição de acesso permite obter aquela opção quando cumprida, sem torná-la comum para todos. Descoberta, treinamento e organizações podem oferecer acesso. Identificação ou conhecimento podem ter CD ajustada por raridade: incomum +2, raro +5 e único +10, quando a tarefa manda aplicar o ajuste.",
+      "resumo": [
+        "Raridade significa disponibilidade; acesso e autorização são definidos por opção."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "cds",
+      "nome": "Escolher uma Classe de Dificuldade",
+      "pagina": 52,
+      "texto": "Use CD simples para uma dificuldade própria da tarefa: 10 destreinado, 15 treinado, 20 especialista, 30 mestre e 40 lendário. Esses nomes indicam dificuldade, não exigem proficiência mínima por si só. Uma tarefa envolvendo criatura, item ou perigo com nível usa a CD daquele nível. Para identificar ou aprender magia, use a CD por círculo.\n\nAjustes: incrivelmente fácil −10, muito fácil −5, fácil −2, difícil +2, muito difícil +5 e incrivelmente difícil +10. Não torne uma tarefa simples mais difícil só porque o personagem subiu de nível. Requisitos mínimos explícitos, como em fechaduras e perigos, continuam obrigatórios. Normalmente, tarefas até nível 2 não exigem especialista, até nível 6 não exigem mestre e até nível 14 não exigem lendário.",
+      "resumo": [
+        "CD simples para a tarefa; CD por nível para um elemento com nível."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "recordar-conhecimento",
+      "nome": "Recordar Conhecimento e identificar",
+      "pagina": 54,
+      "texto": "Conhecimento geral usa CD simples. Criatura, perigo ou assunto com nível usa CD por nível, ajustada por raridade. Um Saber realmente adequado ou assunto notório pode reduzir a dificuldade; uma perícia alternativa menos direta pode aumentá-la.\n\nIdentificar criatura com sucesso revela uma característica conhecida importante; crítico acrescenta algo mais sutil, como fraqueza ou gatilho de reação. Após sucesso, verificações adicionais podem revelar mais, mas ficam mais difíceis. Depois de falha ou de tentativa incrivelmente difícil, novas tentativas deixam de render informação. Identificar Magia, Identificar Alquimia e Aprender Magia usam CD do círculo ou nível do item, ajustada por raridade.",
+      "resumo": [
+        "Sucesso revela uma característica útil; crítico acrescenta informação sutil."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "experiencia",
+      "nome": "Experiência, avanços e feitos",
+      "pagina": 56,
+      "texto": "O avanço padrão exige 1.000 XP por nível; subtraia 1.000 e conserve excedentes. O grupo pode combinar 800 XP para avanço rápido, 1.200 para lento ou avanço por marcos.\n\nXP de encontros vai integralmente a cada personagem, sem divisão. Ajustar orçamento para tamanho do grupo não muda a recompensa equivalente para quatro personagens. Triviais normalmente não concedem XP. Feitos menores, moderados e maiores concedem 10, 30 e 80 XP; moderados e maiores também costumam justificar Ponto de Heroísmo. Não permita repetição trivial para gerar XP indefinidamente.",
+      "resumo": [
+        "Cada personagem recebe o prêmio inteiro; avanço padrão exige 1.000 XP."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "heroismo",
+      "nome": "Pontos de Heroísmo",
+      "pagina": 57,
+      "texto": "Comece cada sessão com 1 Ponto de Heroísmo, máximo de 3. O mestre costuma conceder aproximadamente um por hora de jogo para contribuições heroicas, criativas ou memoráveis. Pontos restantes expiram no fim da sessão.\n\nGaste 1 para rerrolar uma verificação, usando o segundo resultado: efeito de fortuna. Ou gaste todos, pelo menos 1, quando seu valor de morrendo aumentaria, para perder morrendo e estabilizar em 0 PV sem ganhar ferido por esse resgate. Contribuições importantes não precisam ser ataques; distribua reconhecimento entre papéis diferentes.",
+      "resumo": [
+        "Um ponto permite rerrolagem; todos permitem evitar morrer."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "encontros",
+      "nome": "Construir encontros e ajustar o grupo",
+      "pagina": 75,
+      "texto": "Para quatro personagens, escolha ameaça e orçamento: trivial até 40 XP, baixa 60, moderada 80, severa 120, extrema 160. Cada personagem além de quatro acrescenta 10, 20, 20, 30 ou 40 XP, respectivamente; cada personagem faltante subtrai o mesmo ajuste.\n\nCompare nível de criatura e grupo: diferenças de −4 a +4 custam 10, 15, 20, 30, 40, 60, 80, 120 e 160 XP. Some criaturas e perigos conforme suas tabelas. Geralmente use esse intervalo de níveis. Grupo de criaturas menores e adversário único muito forte produzem desafios diferentes.\n\nModerada exige bons recursos e táticas. Severa pode matar personagens; extrema pode derrotar o grupo todo. Considere terreno, preparação, retirada e descanso. O ajuste de tamanho altera orçamento, mas o prêmio continua equivalente a quatro personagens.",
+      "resumo": [
+        "Some custos e compare ao orçamento; severa e extrema exigem intenção."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "variar-encontros",
+      "nome": "Variedade de encontros",
+      "pagina": 76,
+      "texto": "Alterne terreno, dificuldade, quantidade de inimigos e objetivos. Cobertura, plataformas, água e portas tornam movimento relevante. Confrontos podem começar com negociação ou aproximação furtiva e terminar com rendição ou fuga.\n\nVitória pode significar proteger alguém, impedir ritual ou sobreviver até ajuda. Guarde complexidade alta para momentos importantes. Apresente sinais de ameaças para permitir decisões: esconder toda informação transforma escolhas em arbitrariedade.",
+      "resumo": [
+        "Varie cenário, adversários e objetivos, incluindo retirada e negociação."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "tesouro-grupo",
+      "nome": "Tesouro por nível do grupo",
+      "pagina": 58,
+      "texto": "A tabela indica tesouro para quatro personagens durante um nível inteiro de aventuras, não por encontro. Valor total é aproximado; permanentes, consumíveis e moeda sugerem sua composição. Moeda inclui arte, gemas e materiais vendáveis.\n\nPor personagem extra, acrescente um permanente do nível do grupo ou um acima, dois consumíveis geralmente desses níveis e a moeda da coluna adicional. Em grupos menores, pode subtrair o equivalente ou conservar um pouco mais para compensar papéis ausentes. Entregue itens úteis: moeda sem acesso a compra ou fabricação não garante equipamento adequado. Compare preços e efeitos ao trocar níveis.",
+      "resumo": [
+        "Tesouro vale para um nível inteiro; equipamento útil importa tanto quanto dinheiro."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "riqueza-novo-personagem",
+      "nome": "Equipar novos personagens em níveis maiores",
+      "pagina": 61,
+      "texto": "Escolha os permanentes e moeda da tabela ou, se o mestre permitir, o valor único alternativo em moeda. Não receba ambas as alternativas. Permanentes indicados são versões básicas: propriedades e materiais preciosos são adicionais.\n\nEscolher item de nível menor não devolve moeda automaticamente. Na alternativa em moeda, nível máximo de item é um abaixo do personagem. Incomuns e raros dependem do mestre. Pode acrescentar um item do nível atual se a campanha já avançou bastante nele; considere equipamento de mortos ou aposentados mantido pelo grupo para não duplicar riqueza.",
+      "resumo": [
+        "Escolha itens mais moeda ou valor único; propriedades e materiais são adicionais."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "comprar-vender",
+      "nome": "Compra, venda e mercado",
+      "pagina": 48,
+      "texto": "Compra e venda geralmente ocorrem no recesso. Venda normal rende metade do preço; arte, gemas e materiais brutos costumam valer o preço integral. A disponibilidade depende do povoado e história.\n\nNível do assentamento ajuda a determinar itens e serviços. Dinheiro não garante acesso a item raro ou de nível alto. Pode abstrair vendas ou exigir compradores específicos quando relevante; combine o detalhamento com o grupo.",
+      "resumo": [
+        "Venda normal pela metade; arte, gemas e materiais podem valer preço integral."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "perigos",
+      "nome": "Perigos simples e complexos",
+      "pagina": 98,
+      "texto": "Perigos podem ser armadilhas mecânicas, mágicas, ambientais ou assombrações. Furtividade fornece CD de detecção ou modificador de iniciativa de complexo; somar 10 ao modificador fornece CD quando necessário. Proficiência mínima continua obrigatória.\n\nSimples geralmente usam reação uma vez; complexos rolam iniciativa e executam rotina com ações indicadas. Leia gatilho, desarme, rotina e reinício. Superar por desarme, evasão ou resistência concede XP uma vez; reativar não concede de novo.\n\nQuando danificável, aplique Dureza, PV e Limiar de Quebra. Quebrado deixa de funcionar mas pode ser reparado; 0 PV significa destruído e não reparável. Não invente estatísticas ausentes. Atacar pode ativar a armadilha; destruir em um golpe quase nunca ativa.",
+      "resumo": [
+        "Simples usa reação; complexo tem iniciativa e rotina; recompensa uma única vez."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "construir-perigos",
+      "nome": "Criar perigos",
+      "pagina": 109,
+      "texto": "Defina cena, gatilho, sinais, efeito e formas de lidar com o perigo. Escolha nível, simples ou complexo e métodos de desarme. Compare CDs, defesa e dano às tabelas de criação, sem usar a ficha de um personagem como modelo numérico.\n\nDescreva partes ou sucessos necessários; neutralização mágica precisa de círculo e CD. Registre gatilho, reação, iniciativa, rotina, duração e reinício para um procedimento verificável.",
+      "resumo": [
+        "Informe gatilho, detecção, desarme, efeito e reinício."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "criaturas-pnjs",
+      "nome": "Criar criaturas e PNJs",
+      "pagina": 112,
+      "texto": "Crie estatísticas adequadas ao nível, não uma ficha completa de jogador. Escolha conceito, função e estatísticas altas, moderadas e baixas. Compare defesa, ataques, dano, CDs e PV às tabelas. Não maximize tudo.\n\nHabilidades especiais precisam de ações, alcance, gatilho, salvaguarda, duração e limites. Revise especialmente incapacitação e remoção de ações. PNJs podem ter competência profissional maior que seu nível de combate; registre separadamente. Criaturas e PNJs ficam no bestiário, sem misturar às fichas pessoais.",
+      "resumo": [
+        "Estatísticas por nível e função, com pontos fortes e fracos."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "criar-itens",
+      "nome": "Criar e avaliar itens",
+      "pagina": 130,
+      "texto": "Compare com itens publicados de nível semelhante, analisando bônus, dano, defesa, ações, frequência e duração. Preço sozinho não determina equilíbrio. Mesmo sem acumular bônus do mesmo tipo, uma opção que concede ações ou elimina limitações pode ser muito forte.\n\nPermanentes que reproduzem magia precisam considerar frequência e círculo; consumíveis têm outra economia. Artefatos podem superar padrões e não entram automaticamente em mercado comum.",
+      "resumo": [
+        "Compare efeitos, frequência e ações, além do preço."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "fabricar-melhorar",
+      "nome": "Fabricação e melhoria",
+      "pagina": 223,
+      "texto": "Melhorar uma versão permitida geralmente cobra a diferença entre preços. Segue Manufaturar e os requisitos da entrada; o efeito novo só funciona depois de terminar. Itens mágicos exigem capacidade apropriada.\n\nUse a atividade Remaster do Livro do Jogador para tempo, fórmula e custo: este PDF ainda cita tempos antigos em exemplos. Não automatize essas comparações. Os preços do catálogo são aquisição total; melhoria cobra a diferença válida.",
+      "resumo": [
+        "Melhorias cobram diferença quando permitidas; use Manufaturar Remaster."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "runas",
+      "nome": "Runas fundamentais e de propriedade",
+      "pagina": 224,
+      "texto": "Armas usam potência para ataques e impactante para dados de dano. Armaduras usam potência para CA e resiliente para salvaguardas. Escudos usam reforçadora, limitada pela versão.\n\nPotência +1, +2 e +3 permite uma, duas ou três propriedades. Fundamentais não ocupam esses espaços. Escudos não aceitam propriedades ou runas de arma/armadura. Roupa de explorador aceita runas de armadura, mas não as que exigem categoria que ela não tem.\n\nNível final é o maior entre base e runas. Versões da mesma runa não se somam, salvo exceção explícita para energias distintas. Armadura com runas precisa de investimento.",
+      "resumo": [
+        "Potência limita propriedades; nível final é o maior entre base e runas."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "transferir-runas",
+      "nome": "Transferir e trocar runas",
+      "pagina": 225,
+      "texto": "Use Manufaturar e capacidade de fabricar itens mágicos. Pode mover uma runa ou trocar duas; ambas devem ser fundamentais ou ambas propriedades. Destino incompatível causa falha crítica automática.\n\nCD usa nível e custo é 10% do preço, salvo transferência de pedra rúnica, gratuita. Trocas usam maior nível e preço entre as runas. Transferir demora um dia, podendo continuar para desconto conforme atividade. Propriedades excedendo capacidade ficam dormentes até potência suficiente ou transferência.",
+      "resumo": [
+        "Um dia; 10% do preço, salvo pedra rúnica; exige destino compatível."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "pergaminhos",
+      "nome": "Pergaminhos mágicos",
+      "pagina": 262,
+      "texto": "Guarda uma magia em círculo específico, sem truques, foco ou rituais. Uma mão e ações normais de conjuração; deve estar na lista do usuário e usa seu ataque e CD. É consumido na conjuração. Custos físicos foram pagos na fabricação, mas locus exigido continua necessário.\n\nMagia comum da lista ou conhecida é identificada automaticamente com Recordar Conhecimento; outras exigem Identificar Magia. Raridade segue a magia. Fabricar exige uma conjuração por pergaminho a partir de espaço, não de outro item. Lote de quatro deve ter mesma magia e círculo. O bloco imprime frequência de varinha por engano: não concede sobrecarga ao consumível.",
+      "resumo": [
+        "Uma conjuração usando suas estatísticas; pergaminho é consumido."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "varinhas",
+      "nome": "Varinhas e sobrecarga",
+      "pagina": 282,
+      "texto": "Uma mão, magia na sua lista e ações normais; usa seu ataque e CD. Não guarda truques, foco ou rituais. Custos de magia são pagos ao usar e locus continua necessário.\n\nUma conjuração por dia. Pode sobrecarregar uma segunda vez: conjura e faz verificação simples CD 10; sucesso quebra, falha destrói. Outra sobrecarga no mesmo dia destrói sem conjurar, mesmo após reparar. Raridade segue a magia; fabricar exige conjuração de espaço mas não pagamento do custo próprio da magia. Varinhas especiais alteram essas regras conforme entrada.",
+      "resumo": [
+        "Uma magia diária; sobrecarga arrisca quebra ou destruição."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "pocoes",
+      "nome": "Poções e uso em outra criatura",
+      "pagina": 259,
+      "texto": "Beber ou alimentar outra criatura normalmente usa Interagir, uma ação com uma mão, consumindo a poção. Só pode alimentar alguém ao alcance disposto ou tão indefeso que não resista.\n\nA entrada determina duração e efeito. Cura mágica de poção é diferente de elixir alquímico. Não transforme efeito temporário em permanente nem elimine ação para beber.",
+      "resumo": [
+        "Uma ação Interagir, consumida; só alimente criatura disposta ou indefesa."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "investimento-ativacao",
+      "nome": "Investir e ativar itens",
+      "pagina": 219,
+      "texto": "Itens investidos exigem investimento para benefícios; máximo normal de dez por dia. Item mágico sem esse traço não ocupa limite. Investir não substitui requisito de ativação.\n\nConfira ações, traços, frequência, gatilho e requisitos. Reação exige gatilho; trocar dono não multiplica usos diários. Bônus de item do mesmo tipo não somam para a mesma estatística; geralmente vale o maior.",
+      "resumo": [
+        "Até dez investidos; ações, frequência e gatilhos continuam obrigatórios."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "aflicoes",
+      "nome": "Aflições, doenças e maldições",
+      "pagina": 86,
+      "texto": "Leia exposição, início, estágio, intervalo, duração e salvaguardas. A exposição pode ter efeito imediato ou atraso. Cada resultado altera estágio conforme a regra da aflição.\n\nCurar PV não remove automaticamente doença ou maldição. Registre estágio, próximo intervalo e efeitos atuais separadamente para não repetir dano. Não invente campos ausentes.",
+      "resumo": [
+        "Controle estágio e intervalo; recuperar PV não remove a aflição."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "ambiente",
+      "nome": "Ambiente, terreno e desastres",
+      "pagina": 90,
+      "texto": "Apresente riscos e proteções de frio, calor, água, altura, terreno, portas e paredes, exceto surpresa legítima da cena. Objetos usam Dureza, PV e Limiar de Quebra de seu material. Exposição usa regras próprias do ambiente.\n\nDesastres podem ser perigos ou cenas com objetivos. Evite dano repetido sem escolhas; ofereça sinais e formas de escapar ou proteger pessoas.",
+      "resumo": [
+        "Ambiente deve oferecer riscos compreensíveis e escolhas."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "pontos-vitoria",
+      "nome": "Pontos de Vitória",
+      "pagina": 184,
+      "texto": "Defina objetivo, atividades, CDs, oportunidades e patamares antes da cena. Pode haver prazo ou oposição. Acúmulo padrão: crítico +2, sucesso +1, falha 0, falha crítica −1.\n\nReserva decrescente: crítico recupera 1 se possível, sucesso preserva, falha perde 1, falha crítica perde 2. São modelos; subsistemas podem mudar resultados. Nomeie pontos conforme cena e permita competências diferentes.",
+      "resumo": [
+        "Defina objetivo e patamares; pontos representam progresso verificável."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "influencia",
+      "nome": "Influência social",
+      "pagina": 187,
+      "texto": "A cena usa rodadas com oportunidades para investigar interlocutores ou influenciá-los. PNJs têm preferências, resistências, perícias adequadas e patamares de resultado. Descobrir preferências permite boas abordagens.\n\nPontos produzem benefícios definidos, não controle mental nem obediência irrestrita. Registre participantes e patamares separadamente.",
+      "resumo": [
+        "Descobertas melhoram abordagens; influência não significa obediência universal."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "pesquisa",
+      "nome": "Pesquisa com prazo",
+      "pagina": 190,
+      "texto": "Defina coleção, perícias, CDs, tempo e informações reveladas por patamares de pesquisa. Diferentes fontes permitem métodos e conhecimento diferentes. Avanços devem entregar informação útil.\n\nNão gere conhecimento ilimitado na mesma fonte. Uma revelação pode indicar novo lugar ou método; prazos precisam de consequências compreensíveis.",
+      "resumo": [
+        "Fontes, tempo e patamares estruturam revelações úteis."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "perseguicoes",
+      "nome": "Perseguições",
+      "pagina": 192,
+      "texto": "Obstáculos sucessivos têm formas de superação e pontos necessários. Defina distância inicial, prazo e efeitos de perder terreno.\n\nPermita alternativas plausíveis, como escalar, saltar, negociar ou abrir caminho. Resultados seguem cada obstáculo e preservam decisões. A cena vai além de comparar deslocamentos.",
+      "resumo": [
+        "Obstáculos com alternativas e progresso tornam escolhas relevantes."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "infiltracao",
+      "nome": "Infiltração, alerta e vantagens",
+      "pagina": 196,
+      "texto": "Contra obstáculo, crítico dá 2 pontos de infiltração, sucesso 1; falha gera 1 de alerta e falha crítica 2. Ajuda automática geralmente concede 1 ou 2 quando excepcional.\n\nAlerta padrão: 5 aumenta CDs em 1 e gera complicação na primeira vez; 10 gera outra; 15 aumenta total de CD para +2 e nova complicação; 20 causa falha da missão. Tempo pode elevar alerta. Vantagens obtidas na preparação convertem falha ou falha crítica em sucesso gastando um ponto, respeitando restrições da vantagem.",
+      "resumo": [
+        "Progresso e alerta separados; vantagem pode corrigir uma falha específica."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "reputacao",
+      "nome": "Reputação com organizações",
+      "pagina": 200,
+      "texto": "Pontos de reputação variam de −50 a +50 por facção. Favores menores, moderados e maiores normalmente dão 1, 2 e 5 pontos; prejuízos retiram equivalentes, podendo superar 5 se especialmente graves.\n\nPatamares: ignorados −4 a +4; apreciados +5 a +14; admirados +15 a +29; reverenciados +30 a +50; malvistos −5 a −14; odiados −15 a −29; caçados −30 a −50. Patamares limitam favores e prejuízos relevantes conforme tabela. Opinião individual pode variar; mudanças decisivas na história justificam reconsiderar reputação.",
+      "resumo": [
+        "Reputação separada por facção; benefícios e limites seguem o patamar."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "duelos",
+      "nome": "Duelos combinados",
+      "pagina": 202,
+      "texto": "Combine ferramentas, participantes, interferência e penalidades antes do duelo. Quebrar regra e ser descoberto causa derrota conforme combinado.\n\nA variante permite escolhas de iniciativa como Enganação, Intimidação ou Percepção por rodada e reações para treinados. Pode criar dois turnos seguidos; considere durações até início do próximo turno. Não mude todos os combates por causa desse subsistema.",
+      "resumo": [
+        "Duelos têm acordo próprio e não mudam automaticamente o combate padrão."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "hexploracao",
+      "nome": "Exploração em hexágonos",
+      "pagina": 206,
+      "texto": "Hexágonos organizam viagem, reconhecimento e outras tarefas. Terreno, velocidade, tamanho e tempo determinam atividades diárias.\n\nVisitar não significa investigar tudo. Marque áreas exploradas e pontos de interesse; aplique recursos, descanso e clima consistentemente.",
+      "resumo": [
+        "Passar por uma região não revela tudo; investigação exige atividades."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "veiculos",
+      "nome": "Veículos",
+      "pagina": 210,
+      "texto": "Veículo tem espaço, tripulação, passageiros, propulsão, deslocamento, defesa e estrutura. Use atividades e perícia próprias de pilotagem, não regras automáticas de montaria.\n\nControle ações do piloto, direção e obstáculos em encontros; Dureza, PV e Limiar de Quebra determinam danos. Colisões e passageiros seguem suas regras. Viagem tranquila pode usar exploração.",
+      "resumo": [
+        "Ficha do veículo e pilotagem controlam movimento e danos."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "arquetipo-livre",
+      "nome": "Variante: arquétipo livre",
+      "pagina": 84,
+      "texto": "Concede trilha extra de talentos de arquétipo nos níveis pares, separada de talentos de classe. O mestre pode permitir escolha ampla ou tema comum.\n\nDepende de autorização; requisitos de talentos e dedicações continuam, salvo adaptação expressa do mestre. Não concede níveis de outra classe nem substitui talentos normais.",
+      "resumo": [
+        "Talentos extras nos níveis pares quando autorizados, preservando a progressão normal."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "progressao-bonus",
+      "nome": "Variante: progressão automática de bônus",
+      "pagina": 83,
+      "texto": "Substitui muitos bônus de item por potência conforme nível, removendo necessidade de runas de potência, impactante e resiliente, mas preservando bônus básico da armadura à CA. Itens podem continuar com propriedades especiais.\n\nMuda ataque, dados, defesa, percepção, salvaguardas e perícias escolhidas. Ajuste recompensas; não some com runas substituídas. O trecho de ápice no PDF usa pontuações antigas, não modificadores Remaster; consulte errata antes de aplicar. Variante não está automatizada.",
+      "resumo": [
+        "Substitui bônus, não acumula com eles; exige ajuste de tesouro."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "proficiencia-sem-nivel",
+      "nome": "Variante: proficiência sem nível",
+      "pagina": 85,
+      "texto": "Remover nível da proficiência exige ajustar criaturas, perigos, CDs e encontros, não apenas fichas de jogador. Muda distribuição de críticos e intervalo de adversários ameaçadores.\n\nUse tabelas próprias da variante e aplique a todo grupo. Permanece fora da automação padrão enquanto os caminhos afetados não forem consistentes.",
+      "resumo": [
+        "Muda o grupo e adversários; não é preferência isolada de uma ficha."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    }
+  ],
+  "tabelas": {
+    "cdSimples": [
+      {
+        "grau": 0,
+        "nome": "Destreinado",
+        "cd": 10
+      },
+      {
+        "grau": 1,
+        "nome": "Treinado",
+        "cd": 15
+      },
+      {
+        "grau": 2,
+        "nome": "Especialista",
+        "cd": 20
+      },
+      {
+        "grau": 3,
+        "nome": "Mestre",
+        "cd": 30
+      },
+      {
+        "grau": 4,
+        "nome": "Lendário",
+        "cd": 40
+      }
+    ],
+    "cdPorNivel": [
+      {
+        "nivel": 0,
+        "cd": 14
+      },
+      {
+        "nivel": 1,
+        "cd": 15
+      },
+      {
+        "nivel": 2,
+        "cd": 16
+      },
+      {
+        "nivel": 3,
+        "cd": 18
+      },
+      {
+        "nivel": 4,
+        "cd": 19
+      },
+      {
+        "nivel": 5,
+        "cd": 20
+      },
+      {
+        "nivel": 6,
+        "cd": 22
+      },
+      {
+        "nivel": 7,
+        "cd": 23
+      },
+      {
+        "nivel": 8,
+        "cd": 24
+      },
+      {
+        "nivel": 9,
+        "cd": 26
+      },
+      {
+        "nivel": 10,
+        "cd": 27
+      },
+      {
+        "nivel": 11,
+        "cd": 28
+      },
+      {
+        "nivel": 12,
+        "cd": 30
+      },
+      {
+        "nivel": 13,
+        "cd": 31
+      },
+      {
+        "nivel": 14,
+        "cd": 32
+      },
+      {
+        "nivel": 15,
+        "cd": 34
+      },
+      {
+        "nivel": 16,
+        "cd": 35
+      },
+      {
+        "nivel": 17,
+        "cd": 36
+      },
+      {
+        "nivel": 18,
+        "cd": 38
+      },
+      {
+        "nivel": 19,
+        "cd": 39
+      },
+      {
+        "nivel": 20,
+        "cd": 40
+      },
+      {
+        "nivel": 21,
+        "cd": 42
+      },
+      {
+        "nivel": 22,
+        "cd": 44
+      },
+      {
+        "nivel": 23,
+        "cd": 46
+      },
+      {
+        "nivel": 24,
+        "cd": 48
+      },
+      {
+        "nivel": 25,
+        "cd": 50
+      }
+    ],
+    "cdPorCirculo": [
+      {
+        "circulo": 1,
+        "cd": 15
+      },
+      {
+        "circulo": 2,
+        "cd": 18
+      },
+      {
+        "circulo": 3,
+        "cd": 20
+      },
+      {
+        "circulo": 4,
+        "cd": 23
+      },
+      {
+        "circulo": 5,
+        "cd": 26
+      },
+      {
+        "circulo": 6,
+        "cd": 28
+      },
+      {
+        "circulo": 7,
+        "cd": 31
+      },
+      {
+        "circulo": 8,
+        "cd": 34
+      },
+      {
+        "circulo": 9,
+        "cd": 36
+      },
+      {
+        "circulo": 10,
+        "cd": 39
+      }
+    ],
+    "ajustesCd": [
+      {
+        "nome": "Incrivelmente fácil",
+        "ajuste": -10
+      },
+      {
+        "nome": "Muito fácil",
+        "ajuste": -5
+      },
+      {
+        "nome": "Fácil",
+        "ajuste": -2
+      },
+      {
+        "nome": "Difícil",
+        "ajuste": 2
+      },
+      {
+        "nome": "Muito difícil",
+        "ajuste": 5
+      },
+      {
+        "nome": "Incrivelmente difícil",
+        "ajuste": 10
+      }
+    ],
+    "orcamentoEncontro": [
+      {
+        "id": "trivial",
+        "nome": "Trivial",
+        "xp": 40,
+        "ajustePorPersonagem": 10,
+        "grupoBase": 4
+      },
+      {
+        "id": "baixo",
+        "nome": "Baixa",
+        "xp": 60,
+        "ajustePorPersonagem": 20,
+        "grupoBase": 4
+      },
+      {
+        "id": "moderado",
+        "nome": "Moderada",
+        "xp": 80,
+        "ajustePorPersonagem": 20,
+        "grupoBase": 4
+      },
+      {
+        "id": "severo",
+        "nome": "Severa",
+        "xp": 120,
+        "ajustePorPersonagem": 30,
+        "grupoBase": 4
+      },
+      {
+        "id": "extremo",
+        "nome": "Extrema",
+        "xp": 160,
+        "ajustePorPersonagem": 40,
+        "grupoBase": 4
+      }
+    ],
+    "xpCriaturas": [
+      {
+        "diferencaNivel": -4,
+        "xp": 10
+      },
+      {
+        "diferencaNivel": -3,
+        "xp": 15
+      },
+      {
+        "diferencaNivel": -2,
+        "xp": 20
+      },
+      {
+        "diferencaNivel": -1,
+        "xp": 30
+      },
+      {
+        "diferencaNivel": 0,
+        "xp": 40
+      },
+      {
+        "diferencaNivel": 1,
+        "xp": 60
+      },
+      {
+        "diferencaNivel": 2,
+        "xp": 80
+      },
+      {
+        "diferencaNivel": 3,
+        "xp": 120
+      },
+      {
+        "diferencaNivel": 4,
+        "xp": 160
+      }
+    ],
+    "xpPerigos": [
+      {
+        "diferencaNivel": -4,
+        "simples": 2,
+        "complexo": 10
+      },
+      {
+        "diferencaNivel": -3,
+        "simples": 3,
+        "complexo": 15
+      },
+      {
+        "diferencaNivel": -2,
+        "simples": 4,
+        "complexo": 20
+      },
+      {
+        "diferencaNivel": -1,
+        "simples": 6,
+        "complexo": 30
+      },
+      {
+        "diferencaNivel": 0,
+        "simples": 8,
+        "complexo": 40
+      },
+      {
+        "diferencaNivel": 1,
+        "simples": 12,
+        "complexo": 60
+      },
+      {
+        "diferencaNivel": 2,
+        "simples": 16,
+        "complexo": 80
+      },
+      {
+        "diferencaNivel": 3,
+        "simples": 24,
+        "complexo": 120
+      },
+      {
+        "diferencaNivel": 4,
+        "simples": 30,
+        "complexo": 150
+      }
+    ],
+    "ajustesRaridade": [
+      {
+        "raridade": "Comum",
+        "ajusteCd": 0
+      },
+      {
+        "raridade": "Incomum",
+        "ajusteCd": 2
+      },
+      {
+        "raridade": "Raro",
+        "ajusteCd": 5
+      },
+      {
+        "raridade": "Único",
+        "ajusteCd": 10
+      }
+    ],
+    "xpPerigosNota": "A fonte p. 57 e 99 imprime +4 como 30/150, em conflito com regra textual de simples um quinto e complexo igual à criatura (32/160). Preservado para consulta, separado do orçamento de criaturas; confrontar errata ou decisão do mestre antes de automatizar.",
+    "feitos": [
+      {
+        "nome": "Menor",
+        "xp": 10
+      },
+      {
+        "nome": "Moderado",
+        "xp": 30
+      },
+      {
+        "nome": "Maior",
+        "xp": 80
+      }
+    ],
+    "tesouroPorNivel": [
+      {
+        "nivel": 1,
+        "valorTotalPo": 175,
+        "permanentes": [
+          {
+            "nivel": 2,
+            "quantidade": 2
+          },
+          {
+            "nivel": 1,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 2,
+            "quantidade": 2
+          },
+          {
+            "nivel": 1,
+            "quantidade": 3
+          }
+        ],
+        "moedaPo": 40,
+        "moedaPorPersonagemExtraPo": 10,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 2,
+        "valorTotalPo": 300,
+        "permanentes": [
+          {
+            "nivel": 3,
+            "quantidade": 2
+          },
+          {
+            "nivel": 2,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 3,
+            "quantidade": 2
+          },
+          {
+            "nivel": 2,
+            "quantidade": 2
+          },
+          {
+            "nivel": 1,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 70,
+        "moedaPorPersonagemExtraPo": 18,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 3,
+        "valorTotalPo": 500,
+        "permanentes": [
+          {
+            "nivel": 4,
+            "quantidade": 2
+          },
+          {
+            "nivel": 3,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 4,
+            "quantidade": 2
+          },
+          {
+            "nivel": 3,
+            "quantidade": 2
+          },
+          {
+            "nivel": 2,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 120,
+        "moedaPorPersonagemExtraPo": 30,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 4,
+        "valorTotalPo": 850,
+        "permanentes": [
+          {
+            "nivel": 5,
+            "quantidade": 2
+          },
+          {
+            "nivel": 4,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 5,
+            "quantidade": 2
+          },
+          {
+            "nivel": 4,
+            "quantidade": 2
+          },
+          {
+            "nivel": 3,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 200,
+        "moedaPorPersonagemExtraPo": 50,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 5,
+        "valorTotalPo": 1350,
+        "permanentes": [
+          {
+            "nivel": 6,
+            "quantidade": 2
+          },
+          {
+            "nivel": 5,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 6,
+            "quantidade": 2
+          },
+          {
+            "nivel": 5,
+            "quantidade": 2
+          },
+          {
+            "nivel": 4,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 320,
+        "moedaPorPersonagemExtraPo": 80,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 6,
+        "valorTotalPo": 2000,
+        "permanentes": [
+          {
+            "nivel": 7,
+            "quantidade": 2
+          },
+          {
+            "nivel": 6,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 7,
+            "quantidade": 2
+          },
+          {
+            "nivel": 6,
+            "quantidade": 2
+          },
+          {
+            "nivel": 5,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 500,
+        "moedaPorPersonagemExtraPo": 125,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 7,
+        "valorTotalPo": 2900,
+        "permanentes": [
+          {
+            "nivel": 8,
+            "quantidade": 2
+          },
+          {
+            "nivel": 7,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 8,
+            "quantidade": 2
+          },
+          {
+            "nivel": 7,
+            "quantidade": 2
+          },
+          {
+            "nivel": 6,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 720,
+        "moedaPorPersonagemExtraPo": 180,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 8,
+        "valorTotalPo": 4000,
+        "permanentes": [
+          {
+            "nivel": 9,
+            "quantidade": 2
+          },
+          {
+            "nivel": 8,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 9,
+            "quantidade": 2
+          },
+          {
+            "nivel": 8,
+            "quantidade": 2
+          },
+          {
+            "nivel": 7,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 1000,
+        "moedaPorPersonagemExtraPo": 250,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 9,
+        "valorTotalPo": 5700,
+        "permanentes": [
+          {
+            "nivel": 10,
+            "quantidade": 2
+          },
+          {
+            "nivel": 9,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 10,
+            "quantidade": 2
+          },
+          {
+            "nivel": 9,
+            "quantidade": 2
+          },
+          {
+            "nivel": 8,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 1400,
+        "moedaPorPersonagemExtraPo": 350,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 10,
+        "valorTotalPo": 8000,
+        "permanentes": [
+          {
+            "nivel": 11,
+            "quantidade": 2
+          },
+          {
+            "nivel": 10,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 11,
+            "quantidade": 2
+          },
+          {
+            "nivel": 10,
+            "quantidade": 2
+          },
+          {
+            "nivel": 9,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 2000,
+        "moedaPorPersonagemExtraPo": 500,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 11,
+        "valorTotalPo": 11500,
+        "permanentes": [
+          {
+            "nivel": 12,
+            "quantidade": 2
+          },
+          {
+            "nivel": 11,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 12,
+            "quantidade": 2
+          },
+          {
+            "nivel": 11,
+            "quantidade": 2
+          },
+          {
+            "nivel": 10,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 2800,
+        "moedaPorPersonagemExtraPo": 700,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 12,
+        "valorTotalPo": 16500,
+        "permanentes": [
+          {
+            "nivel": 13,
+            "quantidade": 2
+          },
+          {
+            "nivel": 12,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 13,
+            "quantidade": 2
+          },
+          {
+            "nivel": 12,
+            "quantidade": 2
+          },
+          {
+            "nivel": 11,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 4000,
+        "moedaPorPersonagemExtraPo": 1000,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 13,
+        "valorTotalPo": 25000,
+        "permanentes": [
+          {
+            "nivel": 14,
+            "quantidade": 2
+          },
+          {
+            "nivel": 13,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 14,
+            "quantidade": 2
+          },
+          {
+            "nivel": 13,
+            "quantidade": 2
+          },
+          {
+            "nivel": 12,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 6000,
+        "moedaPorPersonagemExtraPo": 1500,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 14,
+        "valorTotalPo": 36500,
+        "permanentes": [
+          {
+            "nivel": 15,
+            "quantidade": 2
+          },
+          {
+            "nivel": 14,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 15,
+            "quantidade": 2
+          },
+          {
+            "nivel": 14,
+            "quantidade": 2
+          },
+          {
+            "nivel": 13,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 9000,
+        "moedaPorPersonagemExtraPo": 2250,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 15,
+        "valorTotalPo": 54500,
+        "permanentes": [
+          {
+            "nivel": 16,
+            "quantidade": 2
+          },
+          {
+            "nivel": 15,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 16,
+            "quantidade": 2
+          },
+          {
+            "nivel": 15,
+            "quantidade": 2
+          },
+          {
+            "nivel": 14,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 13000,
+        "moedaPorPersonagemExtraPo": 3250,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 16,
+        "valorTotalPo": 82500,
+        "permanentes": [
+          {
+            "nivel": 17,
+            "quantidade": 2
+          },
+          {
+            "nivel": 16,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 17,
+            "quantidade": 2
+          },
+          {
+            "nivel": 16,
+            "quantidade": 2
+          },
+          {
+            "nivel": 15,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 20000,
+        "moedaPorPersonagemExtraPo": 5000,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 17,
+        "valorTotalPo": 128000,
+        "permanentes": [
+          {
+            "nivel": 18,
+            "quantidade": 2
+          },
+          {
+            "nivel": 17,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 18,
+            "quantidade": 2
+          },
+          {
+            "nivel": 17,
+            "quantidade": 2
+          },
+          {
+            "nivel": 16,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 30000,
+        "moedaPorPersonagemExtraPo": 7500,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 18,
+        "valorTotalPo": 208000,
+        "permanentes": [
+          {
+            "nivel": 19,
+            "quantidade": 2
+          },
+          {
+            "nivel": 18,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 19,
+            "quantidade": 2
+          },
+          {
+            "nivel": 18,
+            "quantidade": 2
+          },
+          {
+            "nivel": 17,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 48000,
+        "moedaPorPersonagemExtraPo": 12000,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 19,
+        "valorTotalPo": 355000,
+        "permanentes": [
+          {
+            "nivel": 20,
+            "quantidade": 2
+          },
+          {
+            "nivel": 19,
+            "quantidade": 2
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 20,
+            "quantidade": 2
+          },
+          {
+            "nivel": 19,
+            "quantidade": 2
+          },
+          {
+            "nivel": 18,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 80000,
+        "moedaPorPersonagemExtraPo": 20000,
+        "grupoBase": 4
+      },
+      {
+        "nivel": 20,
+        "valorTotalPo": 490000,
+        "permanentes": [
+          {
+            "nivel": 20,
+            "quantidade": 4
+          }
+        ],
+        "consumiveis": [
+          {
+            "nivel": 20,
+            "quantidade": 4
+          },
+          {
+            "nivel": 19,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 140000,
+        "moedaPorPersonagemExtraPo": 35000,
+        "grupoBase": 4
+      }
+    ],
+    "riquezaNovoPersonagem": [
+      {
+        "nivel": 1,
+        "permanentes": [],
+        "moedaPo": 15,
+        "valorUnicoAlternativoPo": 15
+      },
+      {
+        "nivel": 2,
+        "permanentes": [
+          {
+            "nivel": 1,
+            "quantidade": 1
+          }
+        ],
+        "moedaPo": 20,
+        "valorUnicoAlternativoPo": 30
+      },
+      {
+        "nivel": 3,
+        "permanentes": [
+          {
+            "nivel": 2,
+            "quantidade": 1
+          },
+          {
+            "nivel": 1,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 25,
+        "valorUnicoAlternativoPo": 75
+      },
+      {
+        "nivel": 4,
+        "permanentes": [
+          {
+            "nivel": 3,
+            "quantidade": 1
+          },
+          {
+            "nivel": 2,
+            "quantidade": 2
+          },
+          {
+            "nivel": 1,
+            "quantidade": 1
+          }
+        ],
+        "moedaPo": 30,
+        "valorUnicoAlternativoPo": 140
+      },
+      {
+        "nivel": 5,
+        "permanentes": [
+          {
+            "nivel": 4,
+            "quantidade": 1
+          },
+          {
+            "nivel": 3,
+            "quantidade": 2
+          },
+          {
+            "nivel": 2,
+            "quantidade": 1
+          },
+          {
+            "nivel": 1,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 50,
+        "valorUnicoAlternativoPo": 270
+      },
+      {
+        "nivel": 6,
+        "permanentes": [
+          {
+            "nivel": 5,
+            "quantidade": 1
+          },
+          {
+            "nivel": 4,
+            "quantidade": 2
+          },
+          {
+            "nivel": 3,
+            "quantidade": 1
+          },
+          {
+            "nivel": 2,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 80,
+        "valorUnicoAlternativoPo": 450
+      },
+      {
+        "nivel": 7,
+        "permanentes": [
+          {
+            "nivel": 6,
+            "quantidade": 1
+          },
+          {
+            "nivel": 5,
+            "quantidade": 2
+          },
+          {
+            "nivel": 4,
+            "quantidade": 1
+          },
+          {
+            "nivel": 3,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 125,
+        "valorUnicoAlternativoPo": 720
+      },
+      {
+        "nivel": 8,
+        "permanentes": [
+          {
+            "nivel": 7,
+            "quantidade": 1
+          },
+          {
+            "nivel": 6,
+            "quantidade": 2
+          },
+          {
+            "nivel": 5,
+            "quantidade": 1
+          },
+          {
+            "nivel": 4,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 180,
+        "valorUnicoAlternativoPo": 1100
+      },
+      {
+        "nivel": 9,
+        "permanentes": [
+          {
+            "nivel": 8,
+            "quantidade": 1
+          },
+          {
+            "nivel": 7,
+            "quantidade": 2
+          },
+          {
+            "nivel": 6,
+            "quantidade": 1
+          },
+          {
+            "nivel": 5,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 250,
+        "valorUnicoAlternativoPo": 1600
+      },
+      {
+        "nivel": 10,
+        "permanentes": [
+          {
+            "nivel": 9,
+            "quantidade": 1
+          },
+          {
+            "nivel": 8,
+            "quantidade": 2
+          },
+          {
+            "nivel": 7,
+            "quantidade": 1
+          },
+          {
+            "nivel": 6,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 350,
+        "valorUnicoAlternativoPo": 2300
+      },
+      {
+        "nivel": 11,
+        "permanentes": [
+          {
+            "nivel": 10,
+            "quantidade": 1
+          },
+          {
+            "nivel": 9,
+            "quantidade": 2
+          },
+          {
+            "nivel": 8,
+            "quantidade": 1
+          },
+          {
+            "nivel": 7,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 500,
+        "valorUnicoAlternativoPo": 3200
+      },
+      {
+        "nivel": 12,
+        "permanentes": [
+          {
+            "nivel": 11,
+            "quantidade": 1
+          },
+          {
+            "nivel": 10,
+            "quantidade": 2
+          },
+          {
+            "nivel": 9,
+            "quantidade": 1
+          },
+          {
+            "nivel": 8,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 700,
+        "valorUnicoAlternativoPo": 4500
+      },
+      {
+        "nivel": 13,
+        "permanentes": [
+          {
+            "nivel": 12,
+            "quantidade": 1
+          },
+          {
+            "nivel": 11,
+            "quantidade": 2
+          },
+          {
+            "nivel": 10,
+            "quantidade": 1
+          },
+          {
+            "nivel": 9,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 1000,
+        "valorUnicoAlternativoPo": 6400
+      },
+      {
+        "nivel": 14,
+        "permanentes": [
+          {
+            "nivel": 13,
+            "quantidade": 1
+          },
+          {
+            "nivel": 12,
+            "quantidade": 2
+          },
+          {
+            "nivel": 11,
+            "quantidade": 1
+          },
+          {
+            "nivel": 10,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 1500,
+        "valorUnicoAlternativoPo": 9300
+      },
+      {
+        "nivel": 15,
+        "permanentes": [
+          {
+            "nivel": 14,
+            "quantidade": 1
+          },
+          {
+            "nivel": 13,
+            "quantidade": 2
+          },
+          {
+            "nivel": 12,
+            "quantidade": 1
+          },
+          {
+            "nivel": 11,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 2250,
+        "valorUnicoAlternativoPo": 13500
+      },
+      {
+        "nivel": 16,
+        "permanentes": [
+          {
+            "nivel": 15,
+            "quantidade": 1
+          },
+          {
+            "nivel": 14,
+            "quantidade": 2
+          },
+          {
+            "nivel": 13,
+            "quantidade": 1
+          },
+          {
+            "nivel": 12,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 3250,
+        "valorUnicoAlternativoPo": 20000
+      },
+      {
+        "nivel": 17,
+        "permanentes": [
+          {
+            "nivel": 16,
+            "quantidade": 1
+          },
+          {
+            "nivel": 15,
+            "quantidade": 2
+          },
+          {
+            "nivel": 14,
+            "quantidade": 1
+          },
+          {
+            "nivel": 13,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 5000,
+        "valorUnicoAlternativoPo": 30000
+      },
+      {
+        "nivel": 18,
+        "permanentes": [
+          {
+            "nivel": 17,
+            "quantidade": 1
+          },
+          {
+            "nivel": 16,
+            "quantidade": 2
+          },
+          {
+            "nivel": 15,
+            "quantidade": 1
+          },
+          {
+            "nivel": 14,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 7500,
+        "valorUnicoAlternativoPo": 45000
+      },
+      {
+        "nivel": 19,
+        "permanentes": [
+          {
+            "nivel": 18,
+            "quantidade": 1
+          },
+          {
+            "nivel": 17,
+            "quantidade": 2
+          },
+          {
+            "nivel": 16,
+            "quantidade": 1
+          },
+          {
+            "nivel": 15,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 12000,
+        "valorUnicoAlternativoPo": 69000
+      },
+      {
+        "nivel": 20,
+        "permanentes": [
+          {
+            "nivel": 19,
+            "quantidade": 1
+          },
+          {
+            "nivel": 18,
+            "quantidade": 2
+          },
+          {
+            "nivel": 17,
+            "quantidade": 1
+          },
+          {
+            "nivel": 16,
+            "quantidade": 2
+          }
+        ],
+        "moedaPo": 20000,
+        "valorUnicoAlternativoPo": 112000
+      }
+    ],
+    "infiltracaoAlerta": [
+      {
+        "pontos": 5,
+        "ajusteCdTotal": 1,
+        "complicacaoPrimeiraVez": true
+      },
+      {
+        "pontos": 10,
+        "ajusteCdTotal": 1,
+        "complicacaoPrimeiraVez": true
+      },
+      {
+        "pontos": 15,
+        "ajusteCdTotal": 2,
+        "complicacaoPrimeiraVez": true
+      },
+      {
+        "pontos": 20,
+        "falha": true
+      }
+    ],
+    "reputacao": [
+      {
+        "nome": "Caçados",
+        "minimo": -50,
+        "maximo": -30,
+        "sobeCom": [
+          "moderado",
+          "maior"
+        ],
+        "desceCom": [
+          "maior"
+        ]
+      },
+      {
+        "nome": "Odiados",
+        "minimo": -29,
+        "maximo": -15,
+        "sobeCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ],
+        "desceCom": [
+          "maior"
+        ]
+      },
+      {
+        "nome": "Malvistos",
+        "minimo": -14,
+        "maximo": -5,
+        "sobeCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ],
+        "desceCom": [
+          "moderado",
+          "maior"
+        ]
+      },
+      {
+        "nome": "Ignorados",
+        "minimo": -4,
+        "maximo": 4,
+        "sobeCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ],
+        "desceCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ]
+      },
+      {
+        "nome": "Apreciados",
+        "minimo": 5,
+        "maximo": 14,
+        "sobeCom": [
+          "moderado",
+          "maior"
+        ],
+        "desceCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ]
+      },
+      {
+        "nome": "Admirados",
+        "minimo": 15,
+        "maximo": 29,
+        "sobeCom": [
+          "maior"
+        ],
+        "desceCom": [
+          "menor",
+          "moderado",
+          "maior"
+        ]
+      },
+      {
+        "nome": "Reverenciados",
+        "minimo": 30,
+        "maximo": 50,
+        "sobeCom": [
+          "maior"
+        ],
+        "desceCom": [
+          "moderado",
+          "maior"
+        ]
+      }
+    ]
+  },
+  "lacunas": [
+    "Tradução integral das 338 páginas não concluída; os guias presentes não substituem todo o livro.",
+    "Catálogo contém somente entradas explicitamente revisadas: ainda faltam armas específicas, alquimia, talismãs, itens vestidos, amaldiçoados e relíquias.",
+    "Tabelas completas de criação de criaturas, perigos e itens ainda não transcritas; os guias não geram estatísticas oficiais por aproximação.",
+    "Geografia, facções, divindades e cosmologia ainda não traduzidas integralmente.",
+    "Variantes e subsistemas são consulta; nenhuma mudança automática na ficha padrão."
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "fonte": {
+    "id": "player-core-2",
+    "estado": "focos-iniciais-revisados",
+    "metodo": "Tradução manual de blocos English no PDF fornecido; páginas impressas 256–257,260,262 conferidas visualmente. AoN Remaster cotejado; paginação AoN para Escudos difere da impressão fornecida."
+  },
+  "magias": [
+    {
+      "id": "escudos-do-espirito",
+      "nome": "Escudos do Espírito",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "campeao",
+        "concentracao",
+        "foco",
+        "santificado",
+        "espirito"
+      ],
+      "descricao": "Você precisa estar empunhando um escudo. Você Ergue seu Escudo e escudos espirituais efêmeros flutuam na sua aura de campeão. Eles duram até o início do seu próximo turno ou até você deixar de erguer o escudo, o que ocorrer primeiro. Enquanto um aliado estiver na aura, recebe +1 de bônus de estado na CA; cada vez que um inimigo atacar esse aliado, o inimigo sofre 1d4 de dano espiritual, mesmo se errar. O benefício termina para um aliado que sair da aura e passa a valer para quem entrar depois. Você não conta como seu próprio aliado e não recebe esses benefícios. Elevada (+2): o dano aumenta em 1d4.",
+      "resumo": [
+        "Exige escudo empunhado; Erguer Escudo cria proteção na aura até seu próximo turno ou até baixar o escudo.",
+        "Aliados na aura recebem +1 de estado na CA; inimigo que os atacar sofre 1d4 espiritual mesmo errando. Você não recebe o benefício. Aumenta 1d4 a cada 2 ranques."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 256,
+      "paginaPdf": 257,
+      "secoes": [],
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2049",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "aura-incendiaria",
+      "nome": "Aura Incendiária",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "aura",
+        "concentracao",
+        "fogo",
+        "foco",
+        "manuseio",
+        "oraculo"
+      ],
+      "descricao": "Você envolve seu corpo numa aura combustível, em uma emanação de 3 metros por 1 minuto. Cada vez que uma criatura na emanação sofre dano de fogo, ela pega fogo e sofre 2d4 de dano persistente de fogo. Elevada (+2): o dano persistente aumenta em 1d4 e o raio da emanação aumenta em 1,5 metro.",
+      "resumo": [
+        "Emanação de 3 m por 1 minuto: sempre que uma criatura nela sofrer dano de fogo, recebe 2d4 persistente de fogo.",
+        "A cada 2 ranques adicionais, o dano persistente aumenta 1d4 e o raio aumenta 1,5 m."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 261,
+      "secoes": [],
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2078",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "halo-angelical",
+      "nome": "Halo Angelical",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "aura",
+        "concentracao",
+        "foco",
+        "sagrado",
+        "feiticeiro"
+      ],
+      "descricao": "Você recebe um halo angelical com uma aura que aumenta a cura de aliados pela magia Curar. Durante 1 minuto, aliados na emanação de 4,5 metros do halo que forem curados por Curar recebem um bônus de estado nos PVs recuperados igual ao dobro do ranque de Curar. Esclarecimento Paizo: ao conjurar Curar em um aliado na aura, o bônus de estado de Potência Feiticeira e o bônus do halo afetam a mesma cura; aplique somente o maior, que é o do halo.",
+      "resumo": [
+        "Emanação de 4,5 m por 1 minuto: aliados curados por Curar recebem bônus de estado na cura igual ao dobro do ranque de Curar.",
+        "O bônus depende da magia Curar aplicada, não do ranque do halo. Bônus de estado de Potência Feiticeira não se acumula; usa-se o maior."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 263,
+      "secoes": [],
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2093",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true
+      }
+    }
+  ],
+  "lacunas": [
+    "Concessão, reserva e ranque de foco podem ser automáticos; gatilhos condicionais de aura, dano persistente e bônus de cura ainda exigem integração específica de motor. Não tratar fórmula de dano como aplicação completa da aura."
+  ]
+}

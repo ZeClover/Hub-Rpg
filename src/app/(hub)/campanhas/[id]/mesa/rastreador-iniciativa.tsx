@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
+import { incorporarDeclaracoes, type CombatenteDeclarado } from "@/lib/iniciativa-declarada";
+
 import { useAtalhoTeclado } from "@/lib/use-atalho-teclado";
 
-type Combatente = { id: string; nome: string; condicao: string };
-type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: number };
+type Combatente = CombatenteDeclarado;
+type EstadoIniciativa = { combatentes: Combatente[]; vezDe: number; rodada: number; declaracoesProcessadas?: string[] };
 
 const ESTADO_VAZIO: EstadoIniciativa = { combatentes: [], vezDe: 0, rodada: 1 };
 
@@ -38,6 +41,7 @@ function lerEstadoSalvo(campanhaId: string, sandbox: boolean): EstadoIniciativa 
       combatentes: estado.combatentes ?? [],
       vezDe: estado.vezDe ?? 0,
       rodada: estado.rodada ?? 1,
+      declaracoesProcessadas: estado.declaracoesProcessadas ?? [],
     };
   } catch {
     return ESTADO_VAZIO;
@@ -96,6 +100,18 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
       if (temporizadorSync.current) clearTimeout(temporizadorSync.current);
     };
   }, [campanhaId, sandbox, estado]);
+
+  // Só as declarações são incorporadas: a ordem local, condições e vez do
+  // mestre permanecem intactas. Não roda no sandbox nem na aba oculta.
+  useEffect(() => {
+    if (sandbox) return;
+    return consultarEnquantoVisivel(async (signal) => {
+      const resposta = await fetch(`/api/campanhas/${campanhaId}/iniciativa`, { signal });
+      if (!resposta.ok) return;
+      const corpo = await resposta.json();
+      if (!signal.aborted) setEstado(e => incorporarDeclaracoes(e, corpo.iniciativa?.declaracoes));
+    }, 3000);
+  }, [campanhaId, sandbox]);
 
   function adicionar() {
     const nome = nomeNovo.trim();
@@ -175,7 +191,7 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
   }
 
   function limpar() {
-    setEstado(ESTADO_VAZIO);
+    setEstado(e => ({ ...ESTADO_VAZIO, declaracoesProcessadas: e.declaracoesProcessadas ?? [] }));
     setSelecionados(new Set());
   }
 
@@ -281,7 +297,7 @@ export function RastreadorDeIniciativa({ campanhaId }: { campanhaId: string }) {
                 />
               )}
               <span className="w-6 text-center text-xs text-texto-suave">{indice + 1}</span>
-              <span className="font-titulo text-sm">{c.nome}</span>
+              <span className="font-titulo text-sm">{c.nome}{c.resultado !== undefined && <small className="ml-2 text-ambar-forte">{c.resultado}</small>}</span>
               <input
                 value={c.condicao}
                 onChange={(e) => condicao(c.id, e.target.value)}

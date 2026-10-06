@@ -62,6 +62,7 @@ export default async function Fichas({
             monstros por sistema, campanha e status.
           </p>
         </div>
+        <Link href="/bestiario" className="text-ambar-forte">Abrir Bestiário →</Link>
         <LinkCriacao>
           <Icone nome="mais" /> Criar personagem
         </LinkCriacao>

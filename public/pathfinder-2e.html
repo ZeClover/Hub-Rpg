@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR" data-hub-ficha>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pathfinder 2e Remaster · Ficha</title>
+  <meta name="description" content="Ficha Pathfinder 2e Remaster, criação e evolução guiadas, perícias, magias e ações de sessão.">
+  <link rel="stylesheet" href="/css/pathfinder.css">
+</head>
+<body>
+<header class="barra">
+  <a id="voltar" href="/sistemas">← Sistemas</a><a id="grimorio" href="/pathfinder-grimorio.html">Grimório</a><span class="cresce"></span>
+  <span id="status" role="status">Carregando…</span><button id="exportar" disabled>Exportar</button>
+  <label class="botao" id="importar-label" hidden>Importar JSON<input id="importar" type="file" accept=".json,application/json" hidden></label><button id="imprimir">Imprimir</button>
+</header>
+<main>
+  <section class="hero"><p class="eyebrow">SEGUNDA EDIÇÃO · REMASTER</p><h1>PATHFINDER<span>SUA HISTÓRIA, SUAS ESCOLHAS.</span></h1><div id="resumo" class="resumo"></div></section>
+  <p id="modo"></p><p id="aviso" class="aviso" role="status" aria-live="polite"></p><p id="cobertura" class="mini"></p>
+  <div id="acoes" class="acoes" hidden><button id="criar" class="primario">Criar · modo guiado</button><button id="evoluir">Evoluir · modo guiado</button><button id="salvar">Salvar agora</button><button id="exportar-guia-pausado" hidden>Exportar guia pausado</button><button id="descartar-guia-pausado" hidden>Descartar guia pausado</button></div>
+  <nav id="abas" aria-label="Seções da ficha"></nav><div id="ficha" aria-busy="true"></div><select id="seletor" aria-label="Identidade local da ficha" hidden></select>
+</main>
+<footer>Pathfinder 2e Remaster · referências por livro e página. Exceções e opções incompletas são conferidas com o mestre. O Livro Básico anterior ao Remaster não é utilizado.</footer>
+<dialog id="guia" aria-labelledby="guia-titulo">
+  <div class="linha"><h2 id="guia-titulo">Criação guiada</h2><button id="guia-fechar">Pausar e fechar</button></div>
+  <p id="guia-contexto" class="mini"></p><nav id="guia-passos" aria-label="Etapas do guia"></nav>
+  <form id="guia-form"><div id="guia-conteudo"></div><p id="guia-aviso" role="status" aria-live="polite"></p>
+    <div class="acoes"><button type="button" id="guia-voltar">← Anterior</button><button type="button" id="guia-proximo">Próxima →</button><button type="button" id="guia-confirmar" class="primario" hidden>Confirmar e salvar</button><button type="button" id="guia-exportar">Exportar rascunho</button><button type="button" id="guia-cancelar">Descartar guia</button></div>
+  </form>
+</dialog>
+<dialog id="detalhes" aria-labelledby="detalhes-titulo"><div class="linha"><h2 id="detalhes-titulo">O que esta opção faz</h2><button id="detalhes-fechar">Fechar</button></div><div id="detalhes-conteudo"></div></dialog>
+<dialog id="rolagem" aria-labelledby="rolagem-titulo"><div class="linha"><h2 id="rolagem-titulo">Teste automático</h2><button id="rolagem-fechar">Fechar</button></div><p id="rolagem-contexto"></p><label>CD do alvo, informada pelo mestre (opcional)<input id="rolagem-cd" type="number" min="0" max="999"></label><div class="acoes"><button id="rolagem-rolar" class="primario">Rolar e resolver</button><button id="rolagem-dano" hidden>Rolar dano</button></div><div id="rolagem-resultado" role="status" aria-live="polite"></div></dialog>
+<dialog id="conjurar" aria-labelledby="conjurar-titulo"><div class="linha"><h2 id="conjurar-titulo">Conjurar</h2><button id="conjurar-fechar">Fechar</button></div><div id="conjurar-escolhas"></div><button id="conjurar-executar" class="primario">Conjurar e resolver</button><div id="conjurar-resultado" role="status" aria-live="polite"></div><button id="conjurar-aplicar" hidden>Aplicar a cura nesta ficha</button></dialog>
+<script src="/js/pathfinder-regras.js"></script><script src="/js/pathfinder-combate.js"></script><script src="/js/pathfinder-interface.js"></script>
+</body></html>

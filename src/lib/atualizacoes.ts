@@ -8,6 +8,17 @@ export type Atualizacao = {
    As datas indicam o registro da mudança, não uma data de publicação confirmada.
    Acrescente novas entradas aqui, explicando o efeito para mestre e jogadores. */
 export const atualizacoes: Atualizacao[] = [
+  { data: "2026-10-06", titulo: "Pathfinder Remaster: ficha, grimório e bestiário",
+    novidades: [
+      "Ficha própria de Pathfinder 2e Remaster, com criação e evolução guiadas em rascunho, comparação dos ganhos e cancelamento sem substituir o personagem.",
+      "Cálculo de atributos, PV, proficiências, CA, testes e ataques múltiplos; progressão em campanha respeita XP e autorização do mestre.",
+      "Equipamentos e runas revisados aplicam seus valores automaticamente; o motor de combate calcula dano, críticos, cura e PV temporários conforme os efeitos implementados.",
+      "Declaração de iniciativa pela própria ficha envia somente o nome salvo e o resultado à mesa, preservando as informações reservadas do mestre.",
+      "Grimório nativo em português com busca, filtros por livro e indicação das referências ainda pendentes de revisão. Livros antigos não são misturados ao Remaster.",
+      "Bestiário de Pathfinder separado da ficha do jogador, com modelos revisados e salvamento explícito; notas do mestre continuam reservadas.",
+      "Salvamento de Pathfinder verifica a versão da ficha para impedir que um rascunho antigo sobrescreva alterações da mesa. Conteúdos e efeitos ainda não revisados ficam identificados como pendentes.",
+    ],
+  },
   { data: "2026-10-04", titulo: "Menos espera para jogar",
     novidades: [
       "Campanhas e páginas dos personagens buscam suas informações ao mesmo tempo para abrir mais rápido.",

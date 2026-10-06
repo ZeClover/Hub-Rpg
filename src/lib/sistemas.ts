@@ -68,6 +68,15 @@ export type Sistema = {
 
 export const SISTEMAS: Sistema[] = [
   {
+    chave: "pathfinder-2e-remaster",
+    nome: "Pathfinder 2e · Remaster",
+    descricao: "Criação e evolução guiadas, grimório nativo e bestiário. Player Core, Player Core 2, GM Core e Monster Core; catálogo em revisão, sem misturar regras antigas.",
+    ficha: "/pathfinder-2e.html", situacao: "em-construcao", salvaNoHub: true,
+    fichaInimigo: "/pathfinder-bestiario.html", campoVidaInimigo: ["vida", "atual"],
+    escudoMestre: "/pathfinder-grimorio.html?fonte=gm-core",
+    grimorio: "/pathfinder-grimorio.html", modoSessao: null,
+  },
+  {
     chave: "kaizoku-no-sho",
     nome: "Kaizoku no Sho",
     descricao:

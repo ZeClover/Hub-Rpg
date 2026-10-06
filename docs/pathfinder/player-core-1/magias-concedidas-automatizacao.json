@@ -1,0 +1,1270 @@
+{
+  "fonte": {
+    "id": "player-core",
+    "estado": "magias-concedidas-revisadas",
+    "metodo": "Blocos PT fornecidos pelo usuário, revisão individual; cabeçalhos e continuações conferidos."
+  },
+  "magias": [
+    {
+      "id": "orientacao",
+      "nome": "Orientação",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "ORIENTAÇÃO [1 ação] TRUQUE 1\n\nCONCENTRAÇÃO TRUQUE Tradições divina, ocultista, primal Distância 9 metros; Alvos 1 criatura Duração até o início do seu próximo turno Você pede a orientação de entidades sobrenaturais, concedendo ao alvo +1 de bônus de estado em um teste de ataque, de Percepção, de perícia ou de salvamento que ele tentar antes do fim da\n\nduração. O alvo escolhe em qual jogada usar o bônus antes de fazê-la. Se o alvo usar o bônus, esta magia se encerra. Quando esta magia se encerrar, o alvo fica temporariamente imune a ela por 1 hora.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Duração até o início do seu próximo turno"
+      ],
+      "fonte": "player-core",
+      "pagina": 354,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-355"
+      ],
+      "acoes": "1"
+    },
+    {
+      "id": "mau-pressagio",
+      "nome": "Mau Presságio",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "MAU PRESSÁGIO [2 ações] MAGIA 1\n\nCONCENTRAÇÃO MALDIÇÃO MANUSEIO INFORTÚNIO Tradições ocultista Distância 9 metros; Alvos 1 criatura Defesa Vontade Duração 1 rodada O alvo é atingido pelo infortúnio, ficando desequilibrado. Ele precisa fazer um salvamento de Vontade. Sucesso O alvo não é afetado. Falha Enquanto esta magia durar, na primeira vez que o alvo fizer um teste de ataque ou de perícia, ele precisa jogar duas vezes e usar o pior resultado. Falha crítica Enquanto esta magia durar, sempre que o alvo fizer um teste de ataque ou de perícia, ele precisa jogar duas vezes e usar o pior resultado.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa Vontade",
+        "Duração 1 rodada"
+      ],
+      "fonte": "player-core",
+      "pagina": 348,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-349",
+        "pc1-pdf-350"
+      ]
+    },
+    {
+      "id": "portador-fantasmagorico",
+      "nome": "Portador Fantasmagórico",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "PORTADOR FANTASMAGÓRICO [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, ocultista Distância 36 metros Duração 1 minuto Você cria uma figura Minúscula e semicorpórea com a forma que você escolher. Ela paira perto de você ao longo da duração. Ao Conjurar uma Magia que tem uma distância de toque, você pode fazer o portador se mover dentro da distância, aplicar a magia e retornar até você. Se o portador precisar fazer um teste de ataque com magia, ele usará seus bônus normais. Ele tem a sua CA e seus salvamentos, mas é destruído se sofrer qualquer dano.",
+      "resumo": [
+        "Distância 36 metros",
+        "Duração 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 356,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-357"
+      ]
+    },
+    {
+      "id": "escudo-mistico",
+      "nome": "Escudo Místico",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "ESCUDO MÍSTICO [1 ação] TRUQUE 1\n\nFORÇA CONCENTRAÇÃO TRUQUE Tradições arcana, divina, ocultista Duração até o início do seu próximo turno Você ergue um escudo de força mágica. Isso conta como usar a ação Erguer Escudo, concedendo-lhe +1 de bônus de circunstância na CA até o início de seu próximo turno, mas ele não requer nenhuma mão para ser usado. Enquanto esta magia estiver em vigor, você pode usar a reação Bloqueio com Escudo usando seu escudo mágico (p. 252). O escudo tem Dureza 5. Você pode usar a reação desta magia para reduzir o dano de qualquer magia ou efeito mágico, até mesmo os que não causam dano físico. Após usar Bloqueio com Escudo, esta magia se encerra e você não pode conjurá-la novamente por 10 minutos. Elevada (+2) A resistência do escudo aumenta em 5.",
+      "resumo": [
+        "Duração até o início do seu próximo turno"
+      ],
+      "fonte": "player-core",
+      "pagina": 334,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-335"
+      ],
+      "acoes": "1"
+    },
+    {
+      "id": "golpe-certeiro",
+      "nome": "Golpe Certeiro",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "GOLPE CERTEIRO [1 ação] MAGIA 1\n\nCONCENTRAÇÃO FORTÚNIO Tradições arcana, ocultista Duração até o fim do seu turno Um vislumbre do futuro garante que seu próximo golpe seja certeiro. Antes do fim do seu turno, na próxima vez que você fizer um teste de ataque, jogue duas vezes e use o melhor resultado. O ataque ignora penalidades de circunstância e qualquer teste simples necessário devido ao alvo estar escondido ou ocultado. Após isso você fica imune a Golpe Certeiro por 10 minutos.",
+      "resumo": [
+        "Duração até o fim do seu turno"
+      ],
+      "fonte": "player-core",
+      "pagina": 343,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-344"
+      ],
+      "acoes": "1"
+    },
+    {
+      "id": "manobra-telecinetica",
+      "nome": "Manobra Telecinética",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "MANOBRA TELECINÉTICA [2 ações] MAGIA 2\n\nATAQUE CONCENTRAÇÃO FORÇA MANUSEIO Tradições arcana, ocultista Distância 18 metros; Alvos 1 criatura Com uma onda de poder telecinético, você move um inimigo ou algo que ele está carregando. Você pode tentar Derrubar, Desarmar, Empurrar ou Reposicionar o alvo com um teste de ataque com magia, em vez de usar Atletismo.",
+      "resumo": [
+        "Distância 18 metros; Alvos 1 criatura"
+      ],
+      "fonte": "player-core",
+      "pagina": 348,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-349"
+      ]
+    },
+    {
+      "id": "distorcao-do-vazio",
+      "nome": "Distorção Do Vazio",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "DISTORÇÃO DO VAZIO [2 ações] TRUQUE 1\n\nTRUQUE CONCENTRAÇÃO MANUSEIO EVERSÃO Tradições arcana, divina, ocultista Distância 9 metros; Alvos 1 criatura viva Defesa Fortitude básica Você invoca o Vazio para prejudicar a força vital. O alvo sofre 2d4 de dano eversivo, com direito a um salvamento básico de Fortitude. Em caso de falha crítica, ele também fica enfraquecido 1 até o início do seu próximo turno Elevada (+1) O dano aumenta em 1d4.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura viva",
+        "Defesa Fortitude básica"
+      ],
+      "fonte": "player-core",
+      "pagina": 331,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-332"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d4",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d4"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "vazio"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "gavinhas-sombrias",
+      "nome": "Gavinhas Sombrias",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "GAVINHAS SOMBRIAS [2 ações] MAGIA 1\n\nCONCENTRAÇÃO EVERSÃO MANUSEIO Tradições arcana, ocultista Área Linha de 9 metros Defesa Fortitude Gavinhas feitas de escuridão saem das pontas dos seus dedos e correm pelo ar. Você causa 2d4 de dano eversivo e 1 de dano persistente de sangramento a todas as criaturas vivas que estiverem na linha. Cada uma precisa fazer um salvamento de Fortitude. Sucesso crítico A criatura não é afetada. Sucesso A criatura sofre metade do dano eversivo e não sofre o dano persistente de sangramento. Falha A criatura sofre o dano inteiro. Falha crítica A criatura sofre o dobro do dano eversivo e o dobro do dano persistente de sangramento. Elevada (+1) O dano eversivo aumenta em 2d4 e o dano persistente de sangramento em 1.",
+      "resumo": [
+        "Área Linha de 9 metros",
+        "Defesa Fortitude"
+      ],
+      "fonte": "player-core",
+      "pagina": 342,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-343"
+      ]
+    },
+    {
+      "id": "vitalidade-falsa",
+      "nome": "Vitalidade Falsa",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "VITALIDADE FALSA [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, ocultista Duração 8 horas Você aprimora a sua carne com as energias normalmente usadas para manipular os mortos-vivos. Você recebe 10 PVs temporários. Elevada (+1) Os PVs temporários aumentam em 3.",
+      "resumo": [
+        "Duração 8 horas"
+      ],
+      "fonte": "player-core",
+      "pagina": 369,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-370"
+      ]
+    },
+    {
+      "id": "luz",
+      "nome": "Luz",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "LUZ [2 ações] TRUQUE 1\n\nTRUQUE CONCENTRAÇÃO LUZ MANUSEIO Tradições arcana, divina, ocultista, primal Distância 36 metros Duração até as suas próximas preparações diárias Você cria um orbe de luz que emite luz forte em um raio de 6 metros (e luz fraca pelos próximos 6 metros), na cor que você quiser. Se criar a luz no mesmo espaço de uma criatura voluntária, você pode anexar a luz a ela, fazendo com que o orbe flutue perto dessa criatura enquanto esta se mover. Você pode Sustentar esta Magia para mover a luz até 18 metros; você pode anexá-la ou desanexá-la de uma criatura como parte desse movimento. Você pode Dispensar esta magia. Se você Conjurar esta Magia enquanto já tiver quatro magias luz ativas, precisará escolher uma das já existentes para encerrar. Elevada (4º) O orbe emite luz forte em um raio de 18 metros (e luz fraca pelos próximos 18 metros).",
+      "resumo": [
+        "Distância 36 metros",
+        "Duração até as suas próximas preparações diárias"
+      ],
+      "fonte": "player-core",
+      "pagina": 346,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-347"
+      ],
+      "acoes": "2"
+    },
+    {
+      "id": "cores-estonteantes",
+      "nome": "Cores Estonteantes",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "CORES ESTONTEANTES [2 ações] MAGIA 1\n\nCONCENTRAÇÃO ILUSÃO INCAPACITAÇÃO MANUSEIO VISUAL Tradições arcana, ocultista Área cone de 4,5 metros Defesa Vontade; Duração 1 ou mais rodadas (a seguir) Você desencadeia várias cores rodopiantes que sobrecarregam os sentidos das criaturas com base em seus salvamentos de Vontade. Sucesso crítico A criatura não é afetada. Sucesso A criatura fica ofuscada por 1 rodada. Falha A criatura fica atordoada 1, cegada por 1 rodada e ofuscada por 1 minuto. Falha crítica A criatura fica atordoada por 1 rodada e cegada por 1 minuto.",
+      "resumo": [
+        "Área cone de 4,5 metros",
+        "Defesa Vontade; Duração 1 ou mais rodadas (a seguir)"
+      ],
+      "fonte": "player-core",
+      "pagina": 326,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-327"
+      ]
+    },
+    {
+      "id": "escuridao",
+      "nome": "Escuridão",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "ESCURIDÃO [3 ações] MAGIA 2\n\nCONCENTRAÇÃO ESCURIDÃO MANUSEIO Tradições arcana, divina, ocultista, primal Distância 36 metros; Área explosão de 6 metros Duração 1 minuto Você cria uma mortalha de escuridão que impede a luz de penetrar ou emanar dentro da área. A luz não entra na área e quaisquer fontes de luz mundana, como uma tocha ou lanterna, não emitem nenhuma luz enquanto estiverem dentro dela, mesmo que seu raio de luz se estenda para além da escuridão. Isso também suprime luz mágica do ranque da sua magia escuridão ou menor. A luz não consegue atravessar, então as criaturas que estiverem na área não conseguem ver o exterior. Do lado de fora, a área parece um globo de pura escuridão. Elevada (4º) Até mesmo criaturas com visão no escuro (mas não visão no escuro maior) mal conseguem ver através da escuridão. Elas tratam os alvos vistos através da escuridão como ocultados.",
+      "resumo": [
+        "Distância 36 metros; Área explosão de 6 metros",
+        "Duração 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 334,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-335"
+      ]
+    },
+    {
+      "id": "ignicao",
+      "nome": "Ignição",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "IGNIÇÃO [2 ações] TRUQUE 1\n\nATAQUE CONCENTRAÇÃO FOGO MANUSEIO TRUQUE Tradições arcana, primal Distância 9 metros; Alvos 1 criatura Defesa CA Você estala os dedos e aponta para um alvo, que começa a arder. Faça um teste de ataque com magia contra a CA do alvo, causando 2d4 de dano de fogo se acertar. Se o alvo estiver ao seu alcance, você pode escolher fazer um ataque com magia corpo a corpo com a chama, em vez de um à distância, o que aumenta todos os dados de dano da magia para d6. Sucesso crítico O alvo sofre o dobro do dano e 1d4 de dano persistente de fogo. Sucesso O alvo sofre o dano inteiro. Elevada (+1) O dano inicial aumenta em 1d4 e o dano persistente de fogo do acerto crítico aumenta em 1d4.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa CA"
+      ],
+      "fonte": "player-core",
+      "pagina": 343,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-344"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d4",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d4"
+        },
+        "salvamentoBasico": false,
+        "tipoDano": "fogo"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial à distância",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "soprar-fogo",
+      "nome": "Soprar Fogo",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "SOPRAR FOGO [2 ações] MAGIA 1\n\nCONCENTRAÇÃO FOGO MANUSEIO Tradições arcana, primal Área cone de 4,5 metros Defesa Reflexos básico Uma labareda de chamas sai da sua boca. Você causa 2d6 de dano às criaturas que estiverem na área, que fazem um salvamento básico de Reflexos. Elevada (+1) O dano aumenta em 2d6.",
+      "resumo": [
+        "Área cone de 4,5 metros",
+        "Defesa Reflexos básico"
+      ],
+      "fonte": "player-core",
+      "pagina": 363,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-364"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d6",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "2d6"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "fogo"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": false
+      }
+    },
+    {
+      "id": "raio-flamejante",
+      "nome": "Raio Flamejante",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "RAIO FLAMEJANTE [1 ação] A [3 ações] MAGIA 2\n\nATAQUE CONCENTRAÇÃO FOGO MANUSEIO Tradições arcana, primal Distância 18 metros; Alvos 1 ou mais criaturas Defesa CA Você dispara um raio de calor e chamas. Faça um teste de ataque com magia contra uma única criatura. Se acertar, ela sofre 2d6 de dano de fogo; no caso de um acerto crítico, sofre o dobro de dano. Para cada ação adicional que usar ao conjurar esta magia, você pode disparar um raio adicional contra um alvo diferente, até um máximo de três raios contra três alvos diferentes para 3 ações. Cada um desses ataques aumenta sua penalidade por ataques múltiplos, mas isso só acontece após fazer todos os testes de ataque com magia para raio flamejante. Se você gastar 2 ou mais ações Conjurando esta Magia, o dano aumenta para 4d6 de dano de fogo se acertar, causando o dobro de dano em um acerto crítico. Elevada (+1) O dano contra cada alvo aumenta em 1d6 para a versão de 1 ação, ou em 2d6 para as versões de 2 e 3 ações.",
+      "resumo": [
+        "Distância 18 metros; Alvos 1 ou mais criaturas",
+        "Defesa CA"
+      ],
+      "fonte": "player-core",
+      "pagina": 359,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-360"
+      ]
+    },
+    {
+      "id": "acoite-de-vitalidade",
+      "nome": "Açoite De Vitalidade",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "divina",
+        "primal"
+      ],
+      "descricao": "AÇOITE DE VITALIDADE [2 ações] TRUQUE 1\n\nCONCENTRAÇÃO MANUSEIO TRUQUE VITALIDADE Tradições divina, primal Distância 9 metros; Alvos 1 criatura morta-viva ou que tem cura eversiva Defesa Fortitude básica Você destrói a essência corrompida do alvo com a energia da Forja da Criação. O alvo sofre 2d6 de dano vital, com direito a um salvamento básico de Fortitude. Se a criatura obtiver uma falha crítica, ela também fica enfraquecida 1 até o início do seu próximo turno. Elevada (+1) O dano aumenta em 1d6.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura morta-viva ou que tem",
+        "Defesa Fortitude básica"
+      ],
+      "fonte": "player-core",
+      "pagina": 314,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-315"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d6",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d6"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "vitalidade"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "ler-aura",
+      "nome": "Ler Aura",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "LER AURA TRUQUE 1\n\nCONCENTRAÇÃO DETECÇÃO MANUSEIO TRUQUE Tradições arcana, divina, ocultista, primal Execução 1 minuto Distância 9 metros; Alvos 1 objeto Você se concentra no objeto alvo, abrindo sua mente para perceber auras mágicas. Quando a conjuração for concluída, você saberá se o item alvo é mágico. O conjurador ou qualquer pessoa que ele aconselhe sobre a aura do item recebe +2 de bônus de circunstância para Identificar Magia nele. Se o objeto for ilusório, isso é detectado apenas se a graduação do efeito for menor que a graduação de ler aura. Elevada (4º) Você pode visar até 10 criaturas. Elevada (6º) Você visar qualquer quantidade de objetos.",
+      "resumo": [
+        "Execução 1 minuto",
+        "Distância 9 metros; Alvos 1 objeto"
+      ],
+      "fonte": "player-core",
+      "pagina": 345,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-346"
+      ]
+    },
+    {
+      "id": "vinculo-mental",
+      "nome": "Vínculo Mental",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "VÍNCULO MENTAL [2 ações] MAGIA 1\n\nCONCENTRAÇÃO MANUSEIO MENTAL Tradições arcana, ocultista Distância toque; Alvos 1 criatura voluntária Você vincula sua mente à mente do alvo e transmite mentalmente, em instantes, uma quantidade de informações que poderia ser transmitida por outros meios em 10 minutos.",
+      "resumo": [
+        "Distância toque; Alvos 1 criatura voluntária"
+      ],
+      "fonte": "player-core",
+      "pagina": 368,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-369"
+      ]
+    },
+    {
+      "id": "arco-eletrico",
+      "nome": "Arco Elétrico",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "ARCO ELÉTRICO [2 ações] TRUQUE 1\n\nCONCENTRAÇÃO ELETRICIDADE MANUSEIO TRUQUE Tradições arcana, primal Distância 9 metros; Alvos 1 ou 2 criaturas Defesa Reflexos básico Um arco de relâmpago salta de um alvo para outro. Cada alvo sofre 2d4 de dano de eletricidade, com direito a um salvamento básico de Reflexos. Elevada (+1) O dano aumenta em 1d4.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 ou 2 criaturas",
+        "Defesa Reflexos básico"
+      ],
+      "fonte": "player-core",
+      "pagina": 315,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-316"
+      ],
+      "acoes": "2",
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "2d4",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d4"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "eletricidade"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": false
+      }
+    },
+    {
+      "id": "trovoada",
+      "nome": "Trovoada",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "TROVOADA [2 ações] MAGIA 1\n\nCONCENTRAÇÃO ELETRICIDADE MANUSEIO SÔNICO Tradições arcana, primal Distância 36 metros; Alvos 1 criatura Defesa Reflexos básico Você convoca um relâmpago que estrondeia com trovoadas, causando 1d12 de dano de eletricidade e 1d4 de dano sônico ao alvo, com direito a um salvamento básico de Reflexos. Se o alvo estiver equipado com uma armadura de metal ou feita de metal, ele sofre –1 de penalidade de circunstância no teste de salvamento, e ele fica desajeitado 1 por 1 rodada se sofrer dano devido a esta magia. Elevada (+1) O dano aumenta em 1d12 de eletricidade e +1d4 sônico.",
+      "resumo": [
+        "Distância 36 metros; Alvos 1 criatura",
+        "Defesa Reflexos básico"
+      ],
+      "fonte": "player-core",
+      "pagina": 366,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-367",
+        "pc1-pdf-368"
+      ]
+    },
+    {
+      "id": "pasmar",
+      "nome": "Pasmar",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "PASMAR [2 ações] TRUQUE 1\n\nTRUQUE CONCENTRAÇÃO MANUSEIO MENTAL NÃO LETAL Tradições arcana, divina, ocultista Distância 18 metros; Alvos 1 criatura Defesa Vontade; Duração 1 rodada Você entra na mente do alvo e o pasma com um choque mental. Esse choque causa 1d6 de dano mental, com direito a um salvamento básico de Vontade. Se o alvo obtiver uma falha crítica, ele também fica atordoado 1. Elevada (+2) O dano aumenta em 1d6.",
+      "resumo": [
+        "Distância 18 metros; Alvos 1 criatura",
+        "Defesa Vontade; Duração 1 rodada"
+      ],
+      "fonte": "player-core",
+      "pagina": 355,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-356"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "1d6",
+        "ampliacao": {
+          "intervalo": 2,
+          "formula": "1d6"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "mental"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "dor-fantasma",
+      "nome": "Dor Fantasma",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "DOR FANTASMA [2 ações] MAGIA 1\n\nCONCENTRAÇÃO ILUSÃO MANUSEIO MENTAL NÃO LETAL Tradições ocultista Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração 1 minuto Uma dor ilusória assola o alvo, causando 2d4 de dano mental e 1d4 de dano persistente mental, com direito a um salvamento de Vontade. Sucesso crítico O alvo não é afetado. Sucesso O alvo sofre o dano inicial completo, mas nenhum dano persistente, e esta magia se encerra imediatamente. Falha O alvo sofre o dano inicial e o dano persistente total, ficando enjoado 1. Se ele se recuperar de estar enjoado, o dano persistente se encerra e esta magia também. Falha crítica Como na falha, mas o alvo fica enjoado 2. Elevada (+1) O dano aumenta em 2d4 e o dano persistente em 1d4.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa Vontade; Duração 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 332,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-333"
+      ]
+    },
+    {
+      "id": "estupefazer",
+      "nome": "Estupefazer",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "ESTUPEFAZER [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO MENTAL Tradições arcana, ocultista Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração varia Você entorpece a mente do alvo, dependendo do salvamento de Vontade dele. Sucesso crítico O alvo não é afetado. Sucesso O alvo fica estupefato 1 até o início do seu próximo turno. Falha O alvo fica estupefato 2 por 1 minuto. Falha crítica O alvo fica estupefato 3 por 1 minuto.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa Vontade; Duração varia"
+      ],
+      "fonte": "player-core",
+      "pagina": 335,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-336"
+      ]
+    },
+    {
+      "id": "armamento-espiritual",
+      "nome": "Armamento Espiritual",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "ARMAMENTO ESPIRITUAL [2 ações] MAGIA 2\n\nCONCENTRAÇÃO ESPÍRITO MANUSEIO SANTIFICADO Tradições divina, ocultista Distância 36 metros; Alvos 1 criatura Defesa CA; Duração sustentada por até 1 minuto Você cria um eco mágico e fantasmagórico de uma arma que está empunhando ou equipando e a arremessa. Faça um teste de ataque com magia contra a CA do alvo, causando 2d8 de dano se acertar (o dobro em um acerto crítico). O tipo de dano é o mesmo da arma escolhida (ou qualquer um de seus tipos, para uma arma versátil). Em vez disso, o ataque causa dano espiritual, se essa opção for mais nociva à criatura (ao critério do Mestre). Esse ataque usa e contribui para a sua penalidade por ataques múltiplos. Após o ataque, a arma retorna ao seu lado. Se você santificar esta magia, os ataques também são santificados. Sempre que Sustentar esta Magia, você pode repetir o ataque contra qualquer criatura que estiver a até 36 metros. Elevada (+2) O dano aumenta em 1d8.",
+      "resumo": [
+        "Distância 36 metros; Alvos 1 criatura",
+        "Defesa CA; Duração sustentada por até 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 316,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-317"
+      ]
+    },
+    {
+      "id": "bolha-caustica",
+      "nome": "Bolha Cáustica",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "BOLHA CÁUSTICA [2 ações] TRUQUE 1\n\nÁCIDO TRUQUE CONCENTRAÇÃO MANUSEIO Tradições arcana, primal Distância 9 metros; Área explosão de 1,5 metro Defesa Reflexos básico Você lança uma grande bolha de ácido, que detona imediatamente, atingindo criaturas próximas. As criaturas que estiverem na área sofrem 1d8 de dano de ácido, com direito a um salvamento básico de Reflexos; em caso de falha crítica, a criatura também sofre 1 de dano persistente de ácido. Elevada (+2) O dano inicial aumenta em 1d8 e o dano persistente da falha crítica em 1.",
+      "resumo": [
+        "Distância 9 metros; Área explosão de 1,5 metro",
+        "Defesa Reflexos básico"
+      ],
+      "fonte": "player-core",
+      "pagina": 319,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-320"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 1,
+        "formulaBase": "1d8",
+        "ampliacao": {
+          "intervalo": 2,
+          "formula": "1d8"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "acido"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "medo",
+      "nome": "Medo",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "MEDO [2 ações] MAGIA 1\n\nCONCENTRAÇÃO EMOÇÃO MEDO MANUSEIO MENTAL Tradições arcana, divina, ocultista, primal Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração varia Você planta o medo no seu alvo, que precisa fazer um salvamento de Vontade. Sucesso crítico O alvo não é afetado. Sucesso O alvo fica assustado 1. Falha O alvo fica assustado 2. Falha crítica O alvo fica assustado 3 e fugindo por 1 rodada. Elevada (5º) Você pode visar até 5 criaturas.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa Vontade; Duração varia"
+      ],
+      "fonte": "player-core",
+      "pagina": 349,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-350"
+      ],
+      "acoes": "2"
+    },
+    {
+      "id": "aumentar",
+      "nome": "Aumentar",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "AUMENTAR [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO POLIMORFIA Tradições arcana, primal Distância 9 metros; Alvos 1 criatura voluntária Duração 5 minutos Reforçado pelo poder mágico, o alvo cresce até o tamanho Grande. O equipamento cresce com ele, mas retorna ao tamanho natural se for removido. O alvo fica desajeitado 1. O alcance dele aumenta em 1,5 metro (ou em 3 metros, se ele tiver começado como Minúsculo) e ele recebe +2 de bônus de estado para o dano corpo a corpo. Esta magia não surte efeito em criaturas Grandes ou maiores. Elevada (4º) A criatura cresce até o tamanho Enorme. O bônus de estado em dano corpo a corpo é +4 e o alcance dela aumenta em 3 metros (ou em 4,5 metros, se tiver começado como Minúscula). Esta magia não surte efeito em criaturas Enormes ou maiores. Elevada (6º) Escolha a versão de 2º ou 4º ranque desta magia e aplique seus efeitos em até 10 criaturas voluntárias.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura voluntária",
+        "Duração 5 minutos"
+      ],
+      "fonte": "player-core",
+      "pagina": 316,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-317",
+        "pc1-pdf-318"
+      ]
+    },
+    {
+      "id": "cativar",
+      "nome": "Cativar",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "CATIVAR [2 ações] MAGIA 1\n\nCONCENTRAÇÃO EMOÇÃO INCAPACITAÇÃO MANUSEIO MENTAL SUTIL Tradições arcana, ocultista, primal Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração 1 hora Para o alvo, suas palavras são como mel e seu rosto parece banhado por uma névoa feita de sonhos. Ele precisa fazer um salvamento de Vontade, com +4 de bônus de circunstância se você ou seus aliados o ameaçaram ou usaram ações hostis recentemente contra ele. Você pode Dispensar esta magia. Se você usar qualquer ação hostil contra o alvo, esta magia se encerra. Quando ela se encerrar, o alvo não necessariamente percebe que foi cativado, a menos que a amizade dele com você ou as ações que você o convenceu a tomar entrem em conflito com expectativas que ele tem, o que significa que você poderia potencialmente convencer o alvo a continuar sendo seu amigo por meios mundanos. Sucesso crítico O alvo não é afetado e percebe que você tentou cativá-lo. Sucesso O alvo não é afetado, mas pensa que sua magia foi algo inofensivo em vez de cativar, a menos que ele a identifique (ver “Identificando magias”, p. 303).\n\nFalha A atitude do alvo em relação a você fica amistosa. Se ela já for amistosa, torna-se prestativa. Ela não pode usar ações hostis contra você. Falha crítica A atitude do alvo em relação a você fica prestativa e ele não pode usar ações hostis contra você. Elevada (4º) A magia dura até as suas próximas preparações diárias. Elevada (8º) A magia dura até as suas próximas preparações diárias e você pode visar até 10 criaturas.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura",
+        "Defesa Vontade; Duração 1 hora"
+      ],
+      "fonte": "player-core",
+      "pagina": 322,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-323"
+      ]
+    },
+    {
+      "id": "chama-flutuante",
+      "nome": "Chama Flutuante",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "CHAMA FLUTUANTE [2 ações] MAGIA 2\n\nCONCENTRAÇÃO FOGO MANUSEIO Tradições arcana, primal Distância 9 metros; Alvos 1 quadrado de 1,5 metro Defesa Reflexos; Duração sustentada por até 1 minuto Você cria uma chama que queima sem combustível e se move de acordo com suas ordens. A chama causa 3d6 de dano de fogo às criaturas que estiverem no quadrado em que ela aparecer, com direito a um salvamento básico de Reflexos. Ao Sustentar esta Magia, você pode levitar a chama até 3 metros em qualquer direção. Em seguida, ela causa dano a cada criatura cujo espaço compartilhou em qualquer ponto durante seu voo. Isso usa o mesmo dano e salvamento, e você joga o dano uma vez a cada rodada que Sustentar. Cada criatura pode sofrer dano da chama flutuante apenas uma vez por rodada. Elevada (+1) O dano aumenta em 1d6.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 quadrado de 1,5 metro",
+        "Defesa Reflexos; Duração sustentada por até 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 322,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-323",
+        "pc1-pdf-324"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 2,
+        "formulaBase": "3d6",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d6"
+        },
+        "salvamentoBasico": true,
+        "tipoDano": "fogo"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": false
+      }
+    },
+    {
+      "id": "resistir-a-energia",
+      "nome": "Resistir A Energia",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "RESISTIR A ENERGIA [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, divina, ocultista, primal Distância toque; Alvos 1 criatura Duração 10 minutos Um escudo de energia elemental protege uma criatura contra um tipo de dano de energia. Escolha entre dano de ácido, eletricidade, fogo, frio ou sônico. O alvo e os equipamentos dele adquirem resistência 5 contra o tipo de dano escolhido. Elevada (4º) A resistência aumenta para 10, e você pode visar até 2 criaturas. Elevada (7º) A resistência aumenta para 15, e você pode visar até 5 criaturas.",
+      "resumo": [
+        "Distância toque; Alvos 1 criatura",
+        "Duração 10 minutos"
+      ],
+      "fonte": "player-core",
+      "pagina": 360,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-361",
+        "pc1-pdf-362"
+      ]
+    },
+    {
+      "id": "ficcao",
+      "nome": "Ficção",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "FICÇÃO [2 ações] TRUQUE 1\n\nTRUQUE CONCENTRAÇÃO ILUSÃO MANUSEIO SUTIL Tradições arcana, ocultista Distância 9 metros Duração sustentada Você cria uma ilusão sonora ou visual simples. Um som concede o traço auditivo à magia e não pode incluir palavras inteligíveis ou música elaborada. Uma visão concede o traço visual, não pode ser maior que um cubo de 1,5 metro de lado e é claramente grosseira e sem detalhes se for vista a até 4,5 metros. Ao Conjurar ou Sustentar esta Magia, você pode Criar uma Distração com a ilusão, recebendo +2 de bônus de circunstância no seu teste de\n\nDissimulação. Se a tentativa falhar contra uma criatura, ela desacreditará ficção.",
+      "resumo": [
+        "Distância 9 metros",
+        "Duração sustentada"
+      ],
+      "fonte": "player-core",
+      "pagina": 337,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-338"
+      ]
+    },
+    {
+      "id": "crise-de-risos",
+      "nome": "Crise De Risos",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "CRISE DE RISOS [2 ações] MAGIA 2\n\nCONCENTRAÇÃO EMOÇÃO MANUSEIO MENTAL Tradições arcana, ocultista Distância 9 metros; Alvos 1 criatura viva Defesa Vontade; Duração sustentada O alvo é dominado por uma risada incontrolável. Ele precisa fazer um salvamento de Vontade. Sucesso crítico O alvo não é afetado. Sucesso O alvo é afligido com uma risada incontrolável. Ele não pode usar reações. Falha O alvo fica desacelerado 1 e não pode usar reações. Falha crítica O alvo cai prostrado e não pode usar ações ou reações por 1 rodada. Depois disso ele sofre os efeitos da falha.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura viva",
+        "Defesa Vontade; Duração sustentada"
+      ],
+      "fonte": "player-core",
+      "pagina": 328,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-329"
+      ]
+    },
+    {
+      "id": "disfarce-ilusorio",
+      "nome": "Disfarce Ilusório",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "DISFARCE ILUSÓRIO [2 ações] MAGIA 1\n\nCONCENTRAÇÃO ILUSÃO MANUSEIO VISUAL Tradições arcana, ocultista Distância 9 metros; Alvos 1 criatura voluntária Duração 1 hora Você cria uma ilusão que faz com que o alvo pareça outra criatura com o mesmo formato corporal e com altura e peso semelhante ao seu (diferença de até 15 centímetros e 25 kg). O disfarce normalmente é bom o suficiente para esconder sua identidade, mas não para personificar um indivíduo específico. A magia muda sua aparência e voz, mas não seus maneirismos. Você pode alterar a aparência das suas roupas e itens equipados, como fazer com que sua armadura pareça um vestido. Itens segurados não são afetados e qualquer item equipado removido da criatura retorna à sua aparência verdadeira. Conjurar disfarce ilusório conta como criar um disfarce para os propósitos da ação Personificar; ele ignora as penalidades de circunstância que o alvo pode ter por se disfarçar de uma criatura diferente dele, concedendo +4 de bônus de estado em testes de Dissimulação para impedir que outras pessoas vejam através do disfarce, permitindo que o alvo adicione seu nível ao teste, mesmo que seja destreinado. Você pode Dispensar esta magia. Elevada (3º) O alvo pode aparecer como qualquer criatura do mesmo tamanho, até mesmo um indivíduo específico. Você precisa ter visto um indivíduo para replicar a aparência dele e ouvido a voz para poder replicá-la. Elevada (4º) Você pode visar até 10 criaturas voluntárias. Se esta magia for usada em mais de uma criatura, é possível escolher um disfarce diferente para cada alvo, mas nenhum poderá personificar um indivíduo específico. Você pode Dispensar cada disfarce individualmente ou todos de uma vez. Elevada (7º) Como no 4º ranque, mas você pode escolher disfarces que personifiquem indivíduos específicos. Você precisa ter visto um indivíduo para replicar a aparência dele e ouvido a voz para poder replicá-la.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura voluntária",
+        "Duração 1 hora"
+      ],
+      "fonte": "player-core",
+      "pagina": 331,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-332"
+      ]
+    },
+    {
+      "id": "detectar-magia",
+      "nome": "Detectar Magia",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "DETECTAR MAGIA [2 ações] TRUQUE 1\n\nCONCENTRAÇÃO DETECÇÃO MANUSEIO TRUQUE\n\nTradições arcana, divina, ocultista, primal Área emanação de 9 metros Você emite um pulso que registra a presença de magia. Isso só indica a presença ou ausência de magia. É possível optar por ignorar a magia da qual se tem plena consciência, como as de itens mágicos e magias contínuas suas e dos seus aliados. Você detecta magias de ilusão apenas se o efeito dela for de um ranque menor do que o de detectar magia. No entanto, itens que têm uma aura de ilusão, mas não têm aparência enganosa (como uma poção de invisibilidade) costumam ser detectados normalmente. Elevada (3º) Você descobre o ranque ou nível do efeito mágico mais poderoso que a magia detectar, ao critério do Mestre. Elevada (4º) Como no 3º ranque, mas você também identifica a fonte da magia de ranque mais alto. Como ocorre com um sentido impreciso, você não descobre a localização exata, mas pode restringir a fonte a um cubo com 1,5 metro de lado (ou o mais próximo, se for maior que isso).",
+      "resumo": [
+        "Área emanação de 9 metros"
+      ],
+      "fonte": "player-core",
+      "pagina": 330,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-331"
+      ],
+      "acoes": "2"
+    },
+    {
+      "id": "barragem-de-forca",
+      "nome": "Barragem De Força",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "BARRAGEM DE FORÇA [1 ação] A [3 ações] MAGIA 1\n\nCONCENTRAÇÃO FORÇA MANUSEIO Tradições arcana, ocultista Distância 36 metros; Alvos 1 criatura Esta magia dispara um estilhaço de magia solidificada em direção a uma criatura que você pode ver. Ele acerta automaticamente e causa 1d4+1 de dano de força. Para cada ação adicional que usar ao Conjurar esta Magia, você pode disparar um estilhaço adicional em um alvo diferente, até um máximo de três estilhaços contra três alvos diferentes com 3 ações. Você escolhe o alvo de cada estilhaço individualmente. Se você disparar mais de um estilhaço no mesmo alvo, combine o dano antes de aplicar bônus ou penalidades de dano, fraquezas, resistências e assim por diante. Elevada (+2) Você dispara um fragmento adicional com cada ação que gastar.",
+      "resumo": [
+        "Distância 36 metros; Alvos 1 criatura"
+      ],
+      "fonte": "player-core",
+      "pagina": 318,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-319"
+      ]
+    },
+    {
+      "id": "dissipar-magia",
+      "nome": "Dissipar Magia",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "DISSIPAR MAGIA [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, divina, ocultista, primal Distância 36 metros; Alvos 1 efeito de magia ou item mágico desapossado Você desfaz a magia por trás de uma magia ou efeito. Faça um teste de neutralização contra o alvo (p. 431). Se você for bem-sucedido contra um item mágico, ele se tornará um item mundano do tipo dele por 10 minutos. Isso não altera as propriedades mundanas do item. Se o alvo for um artefato ou item parecido, você falhará automaticamente.",
+      "resumo": [
+        "Distância 36 metros; Alvos 1 efeito de magia ou item mágico"
+      ],
+      "fonte": "player-core",
+      "pagina": 331,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-332"
+      ]
+    },
+    {
+      "id": "ferir",
+      "nome": "Ferir",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "divina"
+      ],
+      "descricao": "FERIR [1 ação] A [3 ações] MAGIA 1\n\nMANUSEIO EVERSÃO Tradições divina Distância varia; Alvos 1 criatura viva ou 1 criatura morta-viva voluntária Você canaliza a energia do Vazio para ferir os vivos ou curar os mortos-vivos. Se o alvo for uma criatura viva, você causa 1d8 de dano eversivo, com direito a um teste básico de Fortitude. Se o alvo for uma criatura morta-viva voluntária, você recupera essa mesma quantidade de PVs. A quantidade de ações que você gastar ao Conjurar esta Magia determina seus alvos, distância, área e outros parâmetros. [1 ação] Esta magia tem distância de toque. [2 ações] (concentração) Esta magia tem 9 metros de distância. Se você estiver curando uma criatura morta-viva, aumente os PVs restaurados em 8. [3 ações] (concentração) Você dispersa a energia eversiva do Vazio em uma emanação de 9 metros. Isso tem como alvo todas as criaturas vivas e mortas-vivas que estiverem na área. Elevada (+1) A quantidade de cura ou dano aumenta em 1d8, e a cura extra para a versão de 2 ações aumenta em 8.",
+      "resumo": [
+        "Distância varia; Alvos 1 criatura viva ou 1 criatura morta-viva"
+      ],
+      "fonte": "player-core",
+      "pagina": 337,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-338"
+      ],
+      "efeitoCombate": {
+        "tipo": "cura",
+        "tipoCura": "vazio",
+        "ranqueBase": 1,
+        "variantes": {
+          "1": {
+            "formulaBase": "1d8",
+            "ampliacao": {
+              "intervalo": 1,
+              "formula": "1d8"
+            }
+          },
+          "2": {
+            "formulaBase": "1d8+8",
+            "ampliacao": {
+              "intervalo": 1,
+              "formula": "1d8+8"
+            }
+          }
+        }
+      },
+      "automatizacaoCombate": {
+        "escopo": "cura de morto-vivo voluntário nas variantes de 1 e 2 ações",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "ver-o-que-nao-e-visto",
+      "nome": "Ver O Que Não É Visto",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "VER O QUE NÃO É VISTO [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO REVELAÇÃO Tradições arcana, divina, ocultista Duração 10 minutos Seu olhar atravessa ilusões e encontra criaturas e espíritos invisíveis. Você pode ver criaturas invisíveis como se não fossem invisíveis, embora as características delas fiquem desfocadas, fazendo com que fiquem ocultadas e difíceis de identificar. Você também pode ver criaturas incorpóreas, como fantasmas, passando por dentro de um objeto a até 3 metros da superfície de um objeto. Essas criaturas parecem formas borradas quando são vistas através de objetos. Pistas mais sutis também concedem a você +2 de bônus de estado em testes para desacreditar ilusões. Elevada (5º) Esta magia tem duração de 8 horas.",
+      "resumo": [
+        "Duração 10 minutos"
+      ],
+      "fonte": "player-core",
+      "pagina": 367,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-368",
+        "pc1-pdf-369"
+      ]
+    },
+    {
+      "id": "estilhacar",
+      "nome": "Estilhaçar",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "ESTILHAÇAR [2 ações] MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO SÔNICO Tradições ocultista, primal Distância 9 metros; Alvos 1 objeto desapossado Um ataque sônico de alta frequência estilhaça um objeto próximo. Você causa 2d10 de dano sônico ao objeto, ignorando a Dureza dele, se ela for 4 ou menor. Elevada (+1) O dano aumenta em 1d10 e a Dureza que a magia ignora em 2.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 objeto desapossado"
+      ],
+      "fonte": "player-core",
+      "pagina": 334,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-335"
+      ],
+      "efeitoCombate": {
+        "tipo": "dano",
+        "ranqueBase": 2,
+        "formulaBase": "2d10",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d10"
+        },
+        "salvamentoBasico": false,
+        "tipoDano": "sonico"
+      },
+      "automatizacaoCombate": {
+        "escopo": "dano inicial",
+        "efeitosAdicionaisNaDescricao": true
+      }
+    },
+    {
+      "id": "vinganca-de-sangue",
+      "nome": "Vingança De Sangue",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "VINGANÇA DE SANGUE [reação] MAGIA 2\n\nMALDIÇÃO Tradições arcana, divina, ocultista Acionamento Uma criatura causa dano persistente cortante, perfurante ou de sangramento a você; Requerimentos Você pode sangrar. Distância 9 metros; Alvos a criatura acionadora Defesa Vontade; Duração varia Você amaldiçoa o alvo, punindo-o pela audácia de derramar seu sangue. Ele sofre 2d6 de dano persistente de sangramento e precisa fazer um salvamento de Vontade. Sucesso crítico O alvo não é afetado. Sucesso O alvo sofre metade do dano persistente de sangramento. Falha O alvo sofre o dano persistente de sangramento total. Até que o sangramento pare, o alvo fica com fraqueza 1 contra danos cortantes e perfurantes. Falha crítica Como na falha, mas o alvo sofre o dobro do dano persistente de sangramento. Elevada (+2) O dano persistente de sangramento aumenta em 2d6.",
+      "resumo": [
+        "Distância 9 metros; Alvos a criatura acionadora",
+        "Defesa Vontade; Duração varia"
+      ],
+      "fonte": "player-core",
+      "pagina": 368,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-369"
+      ]
+    },
+    {
+      "id": "augurio",
+      "nome": "Augúrio",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "AUGÚRIO MAGIA 2\n\nCONCENTRAÇÃO MANUSEIO PREDIÇÃO Tradições divina, ocultista Execução 10 minutos Você recebe um vago vislumbre do futuro. Durante a conjuração desta magia, pergunte sobre os resultados de um determinado curso de ação. A magia pode prever resultados até 30 minutos no futuro e revelar o melhor palpite do Mestre entre os seguintes resultados: bom, ruim, misto (os resultados serão uma mistura de bom e ruim) e nada (não haverá resultados particularmente bons ou ruins). O Mestre faz secretamente um teste simples CD 6. Com uma falha, o resultado é sempre “nada”. Isso torna impossível dizer se um resultado de “nada” é preciso. Se alguém perguntar sobre o mesmo tópico da primeira conjuração de augúrio durante uma conjuração adicional, o Mestre usará o resultado do teste secreto da primeira conjuração. Se as circunstâncias mudarem, é possível receber um resultado diferente.",
+      "resumo": [
+        "Execução 10 minutos"
+      ],
+      "fonte": "player-core",
+      "pagina": 316,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-317"
+      ]
+    },
+    {
+      "id": "abrandar",
+      "nome": "Abrandar",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "ABRANDAR [2 ações] MAGIA 1\n\nCONCENTRAÇÃO CURA EMOÇÃO MANUSEIO MENTAL Tradições ocultista Distância 9 metros; Alvos 1 criatura voluntária Duração 1 minuto Você agracia a mente do alvo, incrementando as defesas mentais e curando os ferimentos dele. O alvo recupera 1d10+4 PVs no momento da conjuração e recebe +2 de bônus de estado em testes de salvamento contra efeitos mentais enquanto esta magia durar. Elevada (+1) A cura aumenta em 1d10+4.",
+      "resumo": [
+        "Distância 9 metros; Alvos 1 criatura voluntária",
+        "Duração 1 minuto"
+      ],
+      "fonte": "player-core",
+      "pagina": 314,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-315"
+      ],
+      "efeitoCombate": {
+        "tipo": "cura",
+        "ranqueBase": 1,
+        "formulaBase": "1d10+4",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d10+4"
+        },
+        "salvamentoBasico": false
+      },
+      "automatizacaoCombate": {
+        "escopo": "cura",
+        "efeitosAdicionaisNaDescricao": false
+      }
+    },
+    {
+      "id": "abertura-edificante",
+      "nome": "Abertura Edificante",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "composicao": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "ABERTURA EDIFICANTE [1 ação] TRUQUE 1\n\nINCOMUM BARDO COMPOSIÇÃO CONCENTRAÇÃO EMOÇÃO MENTAL TRUQUE Musa maestro Distância 18 metros; Alvos 1 aliado Duração 1 rodada Sua performance faz com que seus aliados sintam-se como se pudessem fazer qualquer coisa. Isso conta como se você estivesse se preparado para Auxiliar seu aliado em um teste de perícia à sua escolha. Ao usar a reação Auxiliar, você pode usar Performance, em vez do teste de perícia normal; adicionalmente, se você jogar uma falha, em vez disso, trate como um sucesso. Se você for lendário em Performance, você conseguirá um sucesso crítico automático. O Mestre pode determinar que você não pode usar esta habilidade se o ato de encorajar o seu aliado interferir no teste de perícia (como um teste para Esgueirar-se silenciosamente ou ficar disfarçado).",
+      "resumo": [
+        "1 ação; duração 1 rodada."
+      ],
+      "somenteConsulta": false,
+      "revisao": "revisado",
+      "fonte": "player-core",
+      "pagina": 370,
+      "secoes": [
+        "pc1-pdf-371"
+      ]
+    },
+    {
+      "id": "cancao-de-forca",
+      "nome": "Canção de Força",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "composicao": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "CANÇÃO DE FORÇA [1 ação] TRUQUE 1\n\nINCOMUM BARDO COMPOSIÇÃO CONCENTRAÇÃO EMOÇÃO MENTAL TRUQUE Musa combatente Área emanação de 18 metros Duração 1 rodada Você amplifica a força física dos seus aliados com uma performance emocionante. Você e os seus aliados recebem +1 de bônus de estado em Atletismo e nas CDs contra ações da perícia Atletismo, como Derrubar, Desarmar, Empurrar e Reposicionar.",
+      "resumo": [
+        "1 ação; duração 1 rodada."
+      ],
+      "somenteConsulta": false,
+      "revisao": "revisado",
+      "fonte": "player-core",
+      "pagina": 370,
+      "secoes": [
+        "pc1-pdf-371"
+      ]
+    }
+  ],
+  "correcoesReferencias": [
+    {
+      "classeId": "oraculo",
+      "opcaoClasseId": "vida",
+      "idAnterior": "acalmar",
+      "idCorreto": "abrandar",
+      "motivo": "Soothe AoN1678 é Abrandar ranque 1; Acalmar é Calm ranque 2."
+    }
+  ],
+  "lacunas": [
+    "efeitoCombate estrutura apenas fórmulas compatíveis com o motor atual; efeitos condicionais, persistentes e sem dano exigem resolução automática adicional no motor. Não tratar dano inicial estruturado como automatização integral."
+  ]
+}

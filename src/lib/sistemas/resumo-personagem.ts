@@ -87,6 +87,10 @@ export function resumirPersonagem(
         ];
         progressao = numero(dados.nc) === null ? null : `NC ${dados.nc}`;
         break;
+      case "pathfinder-2e-remaster":
+        identidade = [rotulo(sistema, dados.ancestralidadeId), rotulo(sistema, dados.classeId)];
+        progressao = nivel(dados.nivel);
+        break;
       case "dnd-5e":
         identidade = [
           rotulo(sistema, perfil.racaId),

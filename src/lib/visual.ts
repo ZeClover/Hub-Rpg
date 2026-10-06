@@ -7,6 +7,7 @@ export type VisualSistema = {
   frase: string;
 };
 export const VISUAIS: Record<string, VisualSistema> = {
+  "pathfinder-2e-remaster": { imagem: "dnd", icone: "dados", tema: "Exploração e fantasia", frase: "Três ações. Muitas possibilidades." },
   "kaizoku-no-sho": {
     imagem: "kaizoku",
     icone: "ancora",

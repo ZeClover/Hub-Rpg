@@ -1,0 +1,2587 @@
+{
+  "opcoes": {
+    "alquimista": [
+      {
+        "id": "bombardeiro",
+        "nome": "Bombardeiro",
+        "pagina": 61,
+        "fonte": "player-core-2",
+        "descricao": "Aprende duas fórmulas de bombas comuns de 1º nível. Ao lançar bomba com dispersão, pode limitar dispersão ao alvo primário. Frascos podem causar frio, eletricidade ou fogo em vez de ácido.",
+        "resumo": [
+          "Aprende duas fórmulas de bombas comuns de 1º nível. Ao lançar bomba com dispersão, pode limitar dispersão ao alvo primário. Frascos podem causar frio, eletricidade ou fogo em vez de ácido."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "cirurgiao",
+        "nome": "Cirurgião",
+        "pagina": 62,
+        "fonte": "player-core-2",
+        "descricao": "Aprende duas fórmulas de elixires comuns de 1º nível com cura. Pode usar grau de Manufatura em requisitos de Medicina e modificador de Manufatura nos testes de Medicina. Frasco pode curar criatura viva pelo seu dano inicial: beber ou lançar em alvo voluntário até20pés com Interagir. Ganha coagulante: imunidade temporária à cura por coagulantes por 10minutos.",
+        "resumo": [
+          "Aprende duas fórmulas de elixires comuns de 1º nível com cura. Pode usar grau de Manufatura em requisitos de Medicina e modificador de Manufatura nos testes de Medicina. Frasco pode curar criatura viva pelo seu dano inicial: beber ou lançar em alvo voluntário até20pés com Interagir. Ganha coagulante: imunidade temporária à cura por coagulantes por 10minutos."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "mutagenista",
+        "nome": "Mutagenista",
+        "pagina": 62,
+        "fonte": "player-core-2",
+        "descricao": "Aprende duas fórmulas de mutagênicos comuns de 1º nível. Ao usar um, recebe PV temporários Inteligência (mínimo0)+metade do nível, por 1minuto ou duração do mutagênico, o que acabar primeiro; só recebe novamente após1minuto. Beber frasco suprime uma desvantagem de um mutagênico até início do próximo turno.",
+        "resumo": [
+          "Aprende duas fórmulas de mutagênicos comuns de 1º nível. Ao usar um, recebe PV temporários Inteligência (mínimo0)+metade do nível, por 1minuto ou duração do mutagênico, o que acabar primeiro; só recebe novamente após1minuto. Beber frasco suprime uma desvantagem de um mutagênico até início do próximo turno."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "toxicologista",
+        "nome": "Toxicologista",
+        "pagina": 63,
+        "fonte": "player-core-2",
+        "descricao": "Aprende duas fórmulas de venenos comuns de 1º nível. Aplica veneno de ferimento segurado a arma/munição empunhada com uma ação em vez de duas. Venenos infundidos causam ácido contra imunidade a veneno ou se isso for mais prejudicial, conforme mestre. Frascos causam veneno e podem ser aplicados como veneno de ferimento; tornam-se inertes ao fim do turno.",
+        "resumo": [
+          "Aprende duas fórmulas de venenos comuns de 1º nível. Aplica veneno de ferimento segurado a arma/munição empunhada com uma ação em vez de duas. Venenos infundidos causam ácido contra imunidade a veneno ou se isso for mais prejudicial, conforme mestre. Frascos causam veneno e podem ser aplicados como veneno de ferimento; tornam-se inertes ao fim do turno."
+        ],
+        "periciasFixas": []
+      }
+    ],
+    "barbaro": [
+      {
+        "id": "animal",
+        "nome": "Instinto Animal",
+        "pagina": 75,
+        "fonte": "player-core-2",
+        "descricao": "Em Fúria recebe ataques desarmados do animal escolhido e não pode usar armas. Fúria ganha morfo/primal. Dados e traços dependem do animal. Especialização aumenta dado um passo e dano de Fúria a5 no nível 7,12 com Especialização Maior; resiste a perfurante/cortante. Escolha de animal e ataques ainda exige registro manual.",
+        "resumo": [
+          "Em Fúria recebe ataques desarmados do animal escolhido e não pode usar armas. Fúria ganha morfo/primal. Dados e traços dependem do animal. Especialização aumenta dado um passo e dano de Fúria a5 no nível 7,12 com Especialização Maior; resiste a perfurante/cortante. Escolha de animal e ataques ainda exige registro manual."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "dragao",
+        "nome": "Instinto de Dragão",
+        "pagina": 75,
+        "fonte": "player-core-2",
+        "descricao": "Escolhe dragão. Em Fúria pode elevar dano adicional de 2para 4 e mudá-lo para o tipo do sopro; ganha tradição e traço de dano pertinente. Especialização aumenta a8 no nível 7,16 com Especialização Maior. Resiste a perfurante e tipo do sopro. Tipos são os dragões Remaster; escolha exige registro.",
+        "resumo": [
+          "Escolhe dragão. Em Fúria pode elevar dano adicional de 2para 4 e mudá-lo para o tipo do sopro; ganha tradição e traço de dano pertinente. Especialização aumenta a8 no nível 7,16 com Especialização Maior. Resiste a perfurante e tipo do sopro. Tipos são os dragões Remaster; escolha exige registro."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "furia",
+        "nome": "Instinto de Fúria",
+        "pagina": 76,
+        "fonte": "player-core-2",
+        "descricao": "Dano de Fúria passa de 2para 3; recebe talento extra de bárbaro de 1º nível. Especialização aumenta a7 no nível 7,13 com Especialização Maior. Resiste a dano físico de armas, não a ataques desarmados/outras fontes.",
+        "resumo": [
+          "Dano de Fúria passa de 2para 3; recebe talento extra de bárbaro de 1º nível. Especialização aumenta a7 no nível 7,13 com Especialização Maior. Resiste a dano físico de armas, não a ataques desarmados/outras fontes."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "gigante",
+        "nome": "Instinto de Gigante",
+        "pagina": 76,
+        "fonte": "player-core-2",
+        "descricao": "Pequeno/Médio pode usar arma para Grande; outro tamanho pode usar arma uma categoria acima. Recebe uma arma comum ou acessível de preço até9po sem ajuste de tamanho, grátis e sem revenda antes de runas. Com arma maior, Fúria causa+6 e fica desajeitado 1 sem poder ignorar/remover; especialização10 no nível 7 e18 com Maior. Resiste a contundente e frio, eletricidade ou fogo à escolha.",
+        "resumo": [
+          "Pequeno/Médio pode usar arma para Grande; outro tamanho pode usar arma uma categoria acima. Recebe uma arma comum ou acessível de preço até9po sem ajuste de tamanho, grátis e sem revenda antes de runas. Com arma maior, Fúria causa+6 e fica desajeitado 1 sem poder ignorar/remover; especialização10 no nível 7 e18 com Maior. Resiste a contundente e frio, eletricidade ou fogo à escolha."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "espirito",
+        "nome": "Instinto de Espírito",
+        "pagina": 77,
+        "fonte": "player-core-2",
+        "descricao": "Em Fúria pode aumentar dano a3 e torná-lo espiritual; só nessa escolha armas/ataques ganham toque fantasma e Fúria ganha divino/espírito. Especialização7 no nível 7,13 com Maior. Resiste a vazio e dano de ataques/habilidades de mortos-vivos, qualquer tipo.",
+        "resumo": [
+          "Em Fúria pode aumentar dano a3 e torná-lo espiritual; só nessa escolha armas/ataques ganham toque fantasma e Fúria ganha divino/espírito. Especialização7 no nível 7,13 com Maior. Resiste a vazio e dano de ataques/habilidades de mortos-vivos, qualquer tipo."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "supersticao",
+        "nome": "Instinto de Superstição",
+        "pagina": 77,
+        "fonte": "player-core-2",
+        "descricao": "É anátema aprender/Conjurar Magia ou usar item ativável para Conjurar Magia; violar remove habilidades/talentos do instinto até1dia de recesso recentrando-se. Em Fúria +2 estado em salvaguardas contra magia e dano de Fúria3, ou4 contra criatura vista conjurando na última hora. Ao entrar, cura PV iguais aos temporários recebidos uma vez a cada10minutos. Aceitar magia/efeito enquanto em Fúria impõe assustado 1 que não reduz enquanto afetado. Receber magia não é o antigo anátema. Resistência cobre duas tradições associadas escolhidas conforme livro; detalhamento pendente.",
+        "resumo": [
+          "É anátema aprender/Conjurar Magia ou usar item ativável para Conjurar Magia; violar remove habilidades/talentos do instinto até1dia de recesso recentrando-se. Em Fúria +2 estado em salvaguardas contra magia e dano de Fúria3, ou4 contra criatura vista conjurando na última hora. Ao entrar, cura PV iguais aos temporários recebidos uma vez a cada10minutos. Aceitar magia/efeito enquanto em Fúria impõe assustado 1 que não reduz enquanto afetado. Receber magia não é o antigo anátema. Resistência cobre duas tradições associadas escolhidas conforme livro; detalhamento pendente."
+        ],
+        "periciasFixas": []
+      }
+    ],
+    "campeao": [
+      {
+        "id": "profanacao",
+        "nome": "Profanação",
+        "pagina": 92,
+        "fonte": "player-core-2",
+        "descricao": "Causa profana e incomum. Escudo Egoísta: reação quando inimigo na aura o fere; resistência ao dano acionador2+metade do nível. Golpes contra agressor causam+1 espiritual até fim do próximo turno (+2 no 9,+3 no 16). No nível 9, se Carisma≥3, resistência é Carisma+metade do nível. No nível 11, inimigos na aura recebem−1 estado em ataques contra você até início do próximo turno.",
+        "resumo": [
+          "Causa profana e incomum. Escudo Egoísta: reação quando inimigo na aura o fere; resistência ao dano acionador2+metade do nível. Golpes contra agressor causam+1 espiritual até fim do próximo turno (+2 no 9,+3 no 16). No nível 9, se Carisma≥3, resistência é Carisma+metade do nível. No nível 11, inimigos na aura recebem−1 estado em ataques contra você até início do próximo turno."
+        ],
+        "periciasFixas": [],
+        "santificacao": "profana"
+      },
+      {
+        "id": "grandeza",
+        "nome": "Grandeza",
+        "pagina": 92,
+        "fonte": "player-core-2",
+        "descricao": "Exige sagrado. Clarão de Grandeza: reação quando inimigo causa dano a aliado, ambos na aura; resistência ao aliado2+nível contra dano acionador e Luz Reveladora no inimigo por 1rodada. No nível 9 causa espiritual persistente igual a Carisma, irrecuperável enquanto sob sua luz. No nível 11, outros inimigos na aura também recebem Luz Reveladora.",
+        "resumo": [
+          "Exige sagrado. Clarão de Grandeza: reação quando inimigo causa dano a aliado, ambos na aura; resistência ao aliado2+nível contra dano acionador e Luz Reveladora no inimigo por 1rodada. No nível 9 causa espiritual persistente igual a Carisma, irrecuperável enquanto sob sua luz. No nível 11, outros inimigos na aura também recebem Luz Reveladora."
+        ],
+        "periciasFixas": [],
+        "santificacao": "sagrada"
+      },
+      {
+        "id": "iniquidade",
+        "nome": "Iniquidade",
+        "pagina": 93,
+        "fonte": "player-core-2",
+        "descricao": "Causa profana e incomum. Vingança Destrutiva: ao inimigo na aura feri-lo, reação aumenta seu dano recebido1d6 e causa1d6 espiritual nele; dados aumentam2d6 no 5,3d6 no 9,4d6 no 12,5d6 no 16,6d6 no 19. Golpes contra ele+2 espiritual até fim do próximo turno (+4 no 9,+6 no 16). No nível 9 dano inicial também dá espiritual persistente igual a Carisma. No11, demais inimigos na aura sofrem metade do dano da reação.",
+        "resumo": [
+          "Causa profana e incomum. Vingança Destrutiva: ao inimigo na aura feri-lo, reação aumenta seu dano recebido1d6 e causa1d6 espiritual nele; dados aumentam2d6 no 5,3d6 no 9,4d6 no 12,5d6 no 16,6d6 no 19. Golpes contra ele+2 espiritual até fim do próximo turno (+4 no 9,+6 no 16). No nível 9 dano inicial também dá espiritual persistente igual a Carisma. No11, demais inimigos na aura sofrem metade do dano da reação."
+        ],
+        "periciasFixas": [],
+        "santificacao": "profana"
+      },
+      {
+        "id": "justica",
+        "nome": "Justiça",
+        "pagina": 93,
+        "fonte": "player-core-2",
+        "descricao": "Golpe Retributivo: reação quando inimigo causa dano a aliado, ambos na aura. Aliado recebe resistência2+nível ao dano acionador; se inimigo ao alcance, Golpe corpo a corpo nele. No nível 9, acerto causa espiritual persistente igual a Carisma. No11, aliados na aura com alvo ao alcance podem gastar reação para Golpe com−5. Segue lei/autoridade legítima; explorar outros/trapacear é anátema.",
+        "resumo": [
+          "Golpe Retributivo: reação quando inimigo causa dano a aliado, ambos na aura. Aliado recebe resistência2+nível ao dano acionador; se inimigo ao alcance, Golpe corpo a corpo nele. No nível 9, acerto causa espiritual persistente igual a Carisma. No11, aliados na aura com alvo ao alcance podem gastar reação para Golpe com−5. Segue lei/autoridade legítima; explorar outros/trapacear é anátema."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "libertacao",
+        "nome": "Libertação",
+        "pagina": 93,
+        "fonte": "player-core-2",
+        "descricao": "Passo Libertador: reação quando inimigo fere, agarra ou restringe aliado, ambos na aura. Se acionado por dano, resistência2+nível. Aliado pode repetir salvaguarda permitida contra restrição, imobilização/paralisia ou Escapar livre; depois Passo livre se puder mover. No9, quem impunha restrição sofre espiritual persistente igual a Carisma. No11, você e demais aliados na aura também podem dar Passo. Opõe-se à tirania; forçar escolhas dos outros é anátema.",
+        "resumo": [
+          "Passo Libertador: reação quando inimigo fere, agarra ou restringe aliado, ambos na aura. Se acionado por dano, resistência2+nível. Aliado pode repetir salvaguarda permitida contra restrição, imobilização/paralisia ou Escapar livre; depois Passo livre se puder mover. No9, quem impunha restrição sofre espiritual persistente igual a Carisma. No11, você e demais aliados na aura também podem dar Passo. Opõe-se à tirania; forçar escolhas dos outros é anátema."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "obediencia",
+        "nome": "Obediência",
+        "pagina": 94,
+        "fonte": "player-core-2",
+        "descricao": "Comando de Ferro: reação divina/emocional/mental quando inimigo na aura o fere. Ele escolhe prostrar-se livremente ou sofrer1d6 mental (2d6 no 5,3d6 no 9,4d6 no 12,5d6 no 16,6d6 no 19). Golpes contra ele+1 espiritual até fim do próximo turno (+2 no 9,+3 no 16). No9 recusa também dá espiritual persistente igual a Carisma. No11 outros inimigos escolhem prostrar-se ou dano mínimo dos dados, sem melhorias. Defende hierarquias legítimas; aceitar poder de inferior é anátema.",
+        "resumo": [
+          "Comando de Ferro: reação divina/emocional/mental quando inimigo na aura o fere. Ele escolhe prostrar-se livremente ou sofrer1d6 mental (2d6 no 5,3d6 no 9,4d6 no 12,5d6 no 16,6d6 no 19). Golpes contra ele+1 espiritual até fim do próximo turno (+2 no 9,+3 no 16). No9 recusa também dá espiritual persistente igual a Carisma. No11 outros inimigos escolhem prostrar-se ou dano mínimo dos dados, sem melhorias. Defende hierarquias legítimas; aceitar poder de inferior é anátema."
+        ],
+        "periciasFixas": []
+      },
+      {
+        "id": "redencao",
+        "nome": "Redenção",
+        "pagina": 94,
+        "fonte": "player-core-2",
+        "descricao": "Exige sagrado. Vislumbre de Redenção: reação quando inimigo fere aliado, ambos na aura; escolhe Arrepender-se (aliado sem dano acionador) ou Recusar (resistência2+nível, agressor enfraquecido 2 até fim do próximo turno dele). Sem mente/incapaz de arrepender usa Recusar. No9 recusa causa espiritual persistente igual a Carisma. No11 pode estender resistência a todos aliados/você na aura, reduzindo-a em2. Matar sapiente sem oferecer redenção é anátema.",
+        "resumo": [
+          "Exige sagrado. Vislumbre de Redenção: reação quando inimigo fere aliado, ambos na aura; escolhe Arrepender-se (aliado sem dano acionador) ou Recusar (resistência2+nível, agressor enfraquecido 2 até fim do próximo turno dele). Sem mente/incapaz de arrepender usa Recusar. No9 recusa causa espiritual persistente igual a Carisma. No11 pode estender resistência a todos aliados/você na aura, reduzindo-a em2. Matar sapiente sem oferecer redenção é anátema."
+        ],
+        "periciasFixas": [],
+        "santificacao": "sagrada"
+      }
+    ],
+    "investigador": [
+      {
+        "id": "ciencias-alquimicas",
+        "nome": "Ciências Alquímicas",
+        "pagina": 104,
+        "fonte": "player-core-2",
+        "descricao": "Treina Manufatura; recebe Manufatura Alquímica, livro de fórmulas e duas fórmulas comuns de 1º nível de elixir/ferramenta, além das do talento. Aprende uma nova fórmula por nível. Prepara frascos iguais a Inteligência. Tintura Rápida: uma ação, um frasco, mão livre e ferramentas; cria elixir/ferramenta de seu nível ou menor potente até fim do turno.",
+        "resumo": [
+          "Treina Manufatura; recebe Manufatura Alquímica, livro de fórmulas e duas fórmulas comuns de 1º nível de elixir/ferramenta, além das do talento. Aprende uma nova fórmula por nível. Prepara frascos iguais a Inteligência. Tintura Rápida: uma ação, um frasco, mão livre e ferramentas; cria elixir/ferramenta de seu nível ou menor potente até fim do turno."
+        ],
+        "periciasFixas": [
+          "manufatura"
+        ]
+      },
+      {
+        "id": "empirismo",
+        "nome": "Empirismo",
+        "pagina": 105,
+        "fonte": "player-core-2",
+        "descricao": "Treina perícia de Inteligência à escolha e recebe Isso É Estranho. Inspeção Expedita: ação livre uma vez por 10minutos para Recordar Conhecimento, Buscar ou Sentir Motivação.",
+        "resumo": [
+          "Treina perícia de Inteligência à escolha e recebe Isso É Estranho. Inspeção Expedita: ação livre uma vez por 10minutos para Recordar Conhecimento, Buscar ou Sentir Motivação."
+        ],
+        "periciasFixas": [],
+        "periciasEscolha": [
+          "arcanismo",
+          "ocultismo",
+          "sociedade",
+          "manufatura"
+        ]
+      },
+      {
+        "id": "medicina-forense",
+        "nome": "Medicina Forense",
+        "pagina": 105,
+        "fonte": "player-core-2",
+        "descricao": "Treina Medicina e recebe Acuidade Forense e Medicina de Batalha. Em sucesso com Medicina de Batalha cura PV extras iguais ao nível e imunidade temporária dura1hora, não1dia.",
+        "resumo": [
+          "Treina Medicina e recebe Acuidade Forense e Medicina de Batalha. Em sucesso com Medicina de Batalha cura PV extras iguais ao nível e imunidade temporária dura1hora, não1dia."
+        ],
+        "periciasFixas": [
+          "medicina"
+        ]
+      },
+      {
+        "id": "interrogacao",
+        "nome": "Interrogação",
+        "pagina": 105,
+        "fonte": "player-core-2",
+        "descricao": "Treina Diplomacia e recebe Sem Motivo para Alarme. Pode Seguir uma Pista enquanto Causa Impressão com pergunta pertinente. Pergunta Incisiva: uma ação, Diplomacia contra Vontade; sucesso exige resposta não necessariamente verdadeira, +2 na CD de Percepção contra mentiras e alvo desprevenido contra Estratagema até fim do turno. Crítico dá+4; falha permite recusa; crítica também piora atitude um passo. Imunidade 1hora.",
+        "resumo": [
+          "Treina Diplomacia e recebe Sem Motivo para Alarme. Pode Seguir uma Pista enquanto Causa Impressão com pergunta pertinente. Pergunta Incisiva: uma ação, Diplomacia contra Vontade; sucesso exige resposta não necessariamente verdadeira, +2 na CD de Percepção contra mentiras e alvo desprevenido contra Estratagema até fim do turno. Crítico dá+4; falha permite recusa; crítica também piora atitude um passo. Imunidade 1hora."
+        ],
+        "periciasFixas": [
+          "diplomacia"
+        ]
+      }
+    ],
+    "oraculo": [
+      {
+        "id": "ancestrais",
+        "nome": "Ancestrais",
+        "pagina": 136,
+        "fonte": "player-core-2",
+        "descricao": "Treina Sociedade e recebe Sussurros de Fraqueza. Revelação Toque Ancestral. Magias: Orientação (truque), Mau Agouro1, Mensageiro Fantasmagórico2, Potencial Onírico5. Amaldiçoado impõe desajeitado de valor igual.",
+        "resumo": [
+          "Treina Sociedade e recebe Sussurros de Fraqueza. Revelação Toque Ancestral. Magias: Orientação (truque), Mau Agouro1, Mensageiro Fantasmagórico2, Potencial Onírico5. Amaldiçoado impõe desajeitado de valor igual."
+        ],
+        "periciasFixas": [
+          "sociedade"
+        ],
+        "talentosConcedidos": [
+          "oraculo-sussurros-fraqueza"
+        ]
+      },
+      {
+        "id": "batalha",
+        "nome": "Batalha",
+        "pagina": 136,
+        "fonte": "player-core-2",
+        "descricao": "Treina Atletismo e recebe Aviso Oracular. Revelação Transe da Arma. Magias: Escudo (truque), Golpe Certeiro1, Manobra Telecinética2, Tempestade de Armas4. Amaldiçoado1 dá fraqueza2 a dano de magias e suprime resistência/imunidade;2 dá−1 estado nas salvaguardas contra magias;3 fraqueza igual ao nível;4 penalidade−2.",
+        "resumo": [
+          "Treina Atletismo e recebe Aviso Oracular. Revelação Transe da Arma. Magias: Escudo (truque), Golpe Certeiro1, Manobra Telecinética2, Tempestade de Armas4. Amaldiçoado1 dá fraqueza2 a dano de magias e suprime resistência/imunidade;2 dá−1 estado nas salvaguardas contra magias;3 fraqueza igual ao nível;4 penalidade−2."
+        ],
+        "periciasFixas": [
+          "atletismo"
+        ],
+        "talentosConcedidos": [
+          "oraculo-aviso"
+        ]
+      },
+      {
+        "id": "ossos",
+        "nome": "Ossos",
+        "pagina": 136,
+        "fonte": "player-core-2",
+        "descricao": "Treina Medicina e recebe Inclinar a Balança. Revelação Sifão da Alma. Magias: Distorção do Vazio (truque), Tentáculos Sombrios1, Vitalidade Falsa2, Arma Fantasmagórica3. Amaldiçoado1 fraqueza2 a vitalidade/vazio, podendo ferir e suprimindo resistência/imunidade;2 −1 estado em Fortitude;3 fraqueza5+nível;4 penalidade−2.",
+        "resumo": [
+          "Treina Medicina e recebe Inclinar a Balança. Revelação Sifão da Alma. Magias: Distorção do Vazio (truque), Tentáculos Sombrios1, Vitalidade Falsa2, Arma Fantasmagórica3. Amaldiçoado1 fraqueza2 a vitalidade/vazio, podendo ferir e suprimindo resistência/imunidade;2 −1 estado em Fortitude;3 fraqueza5+nível;4 penalidade−2."
+        ],
+        "periciasFixas": [
+          "medicina"
+        ],
+        "talentosConcedidos": [
+          "oraculo-inclinar-balanca"
+        ]
+      },
+      {
+        "id": "cosmos",
+        "nome": "Cosmos",
+        "pagina": 137,
+        "fonte": "player-core-2",
+        "descricao": "Treina Natureza e recebe Aviso Oracular. Revelação Chuva de Estrelas. Magias: Luz (truque), Cores Atordoantes1, Escuridão2, Frenesi Lunar5. Amaldiçoado impõe enfraquecido de valor igual e penalidade de estado do mesmo valor nas salvaguardas/CDs contra movimento forçado.",
+        "resumo": [
+          "Treina Natureza e recebe Aviso Oracular. Revelação Chuva de Estrelas. Magias: Luz (truque), Cores Atordoantes1, Escuridão2, Frenesi Lunar5. Amaldiçoado impõe enfraquecido de valor igual e penalidade de estado do mesmo valor nas salvaguardas/CDs contra movimento forçado."
+        ],
+        "periciasFixas": [
+          "natureza"
+        ],
+        "talentosConcedidos": [
+          "oraculo-aviso"
+        ]
+      },
+      {
+        "id": "chamas",
+        "nome": "Chamas",
+        "pagina": 137,
+        "fonte": "player-core-2",
+        "descricao": "Treina Acrobacia e recebe Prever Dano. Revelação Aura Incendiária. Magias: Ignição (truque), Soprar Fogo1, Raio Flamejante2, Bola de Fogo3. Amaldiçoado causa fogo persistente igual ao valor e luz de tocha; submerso mantém calor sem chamas. Cessa ao começar Refocar ou inconsciente; retorna se interromper Refocar ou acordar.",
+        "resumo": [
+          "Treina Acrobacia e recebe Prever Dano. Revelação Aura Incendiária. Magias: Ignição (truque), Soprar Fogo1, Raio Flamejante2, Bola de Fogo3. Amaldiçoado causa fogo persistente igual ao valor e luz de tocha; submerso mantém calor sem chamas. Cessa ao começar Refocar ou inconsciente; retorna se interromper Refocar ou acordar."
+        ],
+        "periciasFixas": [
+          "acrobacia"
+        ],
+        "talentosConcedidos": [
+          "oraculo-prever-dano"
+        ]
+      },
+      {
+        "id": "vida",
+        "nome": "Vida",
+        "pagina": 138,
+        "fonte": "player-core-2",
+        "descricao": "Treina Medicina e recebe Inclinar a Balança. Revelação Vínculo Vital. Magias: Chicote de Vitalidade (truque), Acalmar1, Vitalidade Falsa2, Crescimentos Macabros5. Cura mágica recebida sofre penalidade de estado igual ao nível (mínimo1)×valor de amaldiçoado.",
+        "resumo": [
+          "Treina Medicina e recebe Inclinar a Balança. Revelação Vínculo Vital. Magias: Chicote de Vitalidade (truque), Acalmar1, Vitalidade Falsa2, Crescimentos Macabros5. Cura mágica recebida sofre penalidade de estado igual ao nível (mínimo1)×valor de amaldiçoado."
+        ],
+        "periciasFixas": [
+          "medicina"
+        ],
+        "talentosConcedidos": [
+          "oraculo-inclinar-balanca"
+        ]
+      },
+      {
+        "id": "conhecimento",
+        "nome": "Conhecimento",
+        "pagina": 138,
+        "fonte": "player-core-2",
+        "descricao": "Treina Ocultismo e recebe Sussurros de Fraqueza. Também treina um Saber à escolha. Revelação Drenar Mente. Magias: Ler Aura (truque), Vínculo Mental1, Hipercognição3, Mente Vazia6. Percepção/Vontade sofrem penalidade de estado igual a amaldiçoado; no 4 não fala, não usa efeitos linguísticos nem comunica com aliados e fica estupefato 1.",
+        "resumo": [
+          "Treina Ocultismo e recebe Sussurros de Fraqueza. Também treina um Saber à escolha. Revelação Drenar Mente. Magias: Ler Aura (truque), Vínculo Mental1, Hipercognição3, Mente Vazia6. Percepção/Vontade sofrem penalidade de estado igual a amaldiçoado; no 4 não fala, não usa efeitos linguísticos nem comunica com aliados e fica estupefato 1."
+        ],
+        "periciasFixas": [
+          "ocultismo"
+        ],
+        "talentosConcedidos": [
+          "oraculo-sussurros-fraqueza"
+        ],
+        "periciaSaberEscolha": true
+      },
+      {
+        "id": "tempestade",
+        "nome": "Tempestade",
+        "pagina": 138,
+        "fonte": "player-core-2",
+        "descricao": "Treina Natureza e recebe Prever Dano. Revelação Toque da Tempestade. Magias: Arco Elétrico (truque), Golpe Trovejante1, Torrente Hidráulica4, Relâmpago em Cadeia6. Amaldiçoado1 fraqueza2 eletricidade, suprime resistência/imunidade elétrica e conta como metal;2 −2 circunstância em ataques à distância;3 fraqueza5+nível;4 −10 pés estado nos Deslocamentos.",
+        "resumo": [
+          "Treina Natureza e recebe Prever Dano. Revelação Toque da Tempestade. Magias: Arco Elétrico (truque), Golpe Trovejante1, Torrente Hidráulica4, Relâmpago em Cadeia6. Amaldiçoado1 fraqueza2 eletricidade, suprime resistência/imunidade elétrica e conta como metal;2 −2 circunstância em ataques à distância;3 fraqueza5+nível;4 −10 pés estado nos Deslocamentos."
+        ],
+        "periciasFixas": [
+          "natureza"
+        ],
+        "talentosConcedidos": [
+          "oraculo-prever-dano"
+        ]
+      }
+    ],
+    "feiticeiro": [
+      {
+        "id": "aberrante",
+        "nome": "Aberrante",
+        "pagina": 151,
+        "fonte": "player-core-2",
+        "descricao": "Tradição ocultista. Treina Ocultismo, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição ocultista. Treina Ocultismo, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "ocultismo",
+          "intimidacao"
+        ],
+        "tradicao": "ocultista",
+        "conjuracao": {
+          "tradicao": "ocultista",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "angelical",
+        "nome": "Angelical",
+        "pagina": 151,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Religião, Diplomacia. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição divina. Treina Religião, Diplomacia. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "religiao",
+          "diplomacia"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "demoniaca",
+        "nome": "Demoníaca",
+        "pagina": 151,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Religião, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição divina. Treina Religião, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "religiao",
+          "intimidacao"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "diabolica",
+        "nome": "Diabólica",
+        "pagina": 151,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Religião, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição divina. Treina Religião, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "religiao",
+          "enganacao"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "elemental",
+        "nome": "Elemental",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição primal. Treina Natureza, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição primal. Treina Natureza, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "natureza",
+          "intimidacao"
+        ],
+        "tradicao": "primal",
+        "conjuracao": {
+          "tradicao": "primal",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "feerica",
+        "nome": "Feérica",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição primal. Treina Natureza, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição primal. Treina Natureza, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "natureza",
+          "enganacao"
+        ],
+        "tradicao": "primal",
+        "conjuracao": {
+          "tradicao": "primal",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "bruxa",
+        "nome": "Bruxa",
+        "pagina": 153,
+        "fonte": "player-core-2",
+        "descricao": "Tradição ocultista. Treina Ocultismo, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição ocultista. Treina Ocultismo, Enganação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "ocultismo",
+          "enganacao"
+        ],
+        "tradicao": "ocultista",
+        "conjuracao": {
+          "tradicao": "ocultista",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "imperial",
+        "nome": "Imperial",
+        "pagina": 153,
+        "fonte": "player-core-2",
+        "descricao": "Tradição arcana. Treina Arcanismo, Sociedade. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição arcana. Treina Arcanismo, Sociedade. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "arcanismo",
+          "sociedade"
+        ],
+        "tradicao": "arcana",
+        "conjuracao": {
+          "tradicao": "arcana",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "morta-viva",
+        "nome": "Morta-viva",
+        "pagina": 153,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Religião, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes.",
+        "resumo": [
+          "Tradição divina. Treina Religião, Intimidação. Linhagem concede magias, foco inicial e magia sanguínea próprios; corpos/listas completos ainda pendentes."
+        ],
+        "periciasFixas": [
+          "religiao",
+          "intimidacao"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-adamante",
+        "nome": "Dracônica — Adamante",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição primal. Treina Intimidação e Natureza. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição primal. Treina Intimidação e Natureza. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "natureza"
+        ],
+        "tradicao": "primal",
+        "conjuracao": {
+          "tradicao": "primal",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-conspirador",
+        "nome": "Dracônica — Conspirador",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição ocultista. Treina Intimidação e Ocultismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição ocultista. Treina Intimidação e Ocultismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "ocultismo"
+        ],
+        "tradicao": "ocultista",
+        "conjuracao": {
+          "tradicao": "ocultista",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-diabolico",
+        "nome": "Dracônica — Diabólico",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Intimidação e Religião. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição divina. Treina Intimidação e Religião. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "religiao"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-empireo",
+        "nome": "Dracônica — Empíreo",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição divina. Treina Intimidação e Religião. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição divina. Treina Intimidação e Religião. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "religiao"
+        ],
+        "tradicao": "divina",
+        "conjuracao": {
+          "tradicao": "divina",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-fortuna",
+        "nome": "Dracônica — Fortuna",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição arcana. Treina Intimidação e Arcanismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição arcana. Treina Intimidação e Arcanismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "arcanismo"
+        ],
+        "tradicao": "arcana",
+        "conjuracao": {
+          "tradicao": "arcana",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-cornudo",
+        "nome": "Dracônica — Cornudo",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição primal. Treina Intimidação e Natureza. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição primal. Treina Intimidação e Natureza. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "natureza"
+        ],
+        "tradicao": "primal",
+        "conjuracao": {
+          "tradicao": "primal",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-miragem",
+        "nome": "Dracônica — Miragem",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição arcana. Treina Intimidação e Arcanismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição arcana. Treina Intimidação e Arcanismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "arcanismo"
+        ],
+        "tradicao": "arcana",
+        "conjuracao": {
+          "tradicao": "arcana",
+          "atributo": "car",
+          "grau": 1
+        }
+      },
+      {
+        "id": "draconica-pressagio",
+        "nome": "Dracônica — Presságio",
+        "pagina": 152,
+        "fonte": "player-core-2",
+        "descricao": "Tradição ocultista. Treina Intimidação e Ocultismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente.",
+        "resumo": [
+          "Tradição ocultista. Treina Intimidação e Ocultismo. Recebe Dons do Dragão como foco inicial. Magia sanguínea concede +1 estado na CA por 1rodada após magia concedida/foco. Lista completa de magias ainda pendente."
+        ],
+        "periciasFixas": [
+          "intimidacao",
+          "ocultismo"
+        ],
+        "tradicao": "ocultista",
+        "conjuracao": {
+          "tradicao": "ocultista",
+          "atributo": "car",
+          "grau": 1
+        }
+      }
+    ],
+    "espadachim": [
+      {
+        "id": "dancarino",
+        "nome": "Dançarino de Batalha",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Performance. Recebe Performance Fascinante; Atuar ganha bravata.",
+        "resumo": [
+          "Treina Performance. Recebe Performance Fascinante; Atuar ganha bravata."
+        ],
+        "periciasFixas": [
+          "performance"
+        ]
+      },
+      {
+        "id": "fanfarrao",
+        "nome": "Fanfarrão",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Intimidação. Desmoralizar ganha bravata.",
+        "resumo": [
+          "Treina Intimidação. Desmoralizar ganha bravata."
+        ],
+        "periciasFixas": [
+          "intimidacao"
+        ]
+      },
+      {
+        "id": "esgrimista",
+        "nome": "Esgrimista",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Enganação. Criar Distração e Fintar ganham bravata.",
+        "resumo": [
+          "Treina Enganação. Criar Distração e Fintar ganham bravata."
+        ],
+        "periciasFixas": [
+          "enganacao"
+        ]
+      },
+      {
+        "id": "ginasta",
+        "nome": "Ginasta",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Atletismo. Agarrar, Reposicionar, Empurrar e Derrubar ganham bravata.",
+        "resumo": [
+          "Treina Atletismo. Agarrar, Reposicionar, Empurrar e Derrubar ganham bravata."
+        ],
+        "periciasFixas": [
+          "atletismo"
+        ]
+      },
+      {
+        "id": "malandro",
+        "nome": "Malandro",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Ladroagem. Recebe Truque Sujo; Truque Sujo ganha bravata.",
+        "resumo": [
+          "Treina Ladroagem. Recebe Truque Sujo; Truque Sujo ganha bravata."
+        ],
+        "periciasFixas": [
+          "ladroagem"
+        ]
+      },
+      {
+        "id": "sagaz",
+        "nome": "Sagaz",
+        "pagina": 162,
+        "fonte": "player-core-2",
+        "descricao": "Treina Diplomacia. Recebe Bon Mot; Bon Mot ganha bravata.",
+        "resumo": [
+          "Treina Diplomacia. Recebe Bon Mot; Bon Mot ganha bravata."
+        ],
+        "periciasFixas": [
+          "diplomacia"
+        ]
+      }
+    ]
+  },
+  "ancestralidades": [
+    {
+      "id": "povo-gato",
+      "nome": "Povo-gato",
+      "pv": 8,
+      "deslocamento": 25,
+      "tamanho": "medio",
+      "incrementos": [
+        "des",
+        "car"
+      ],
+      "livres": 1,
+      "descricao": "Visão na penumbra; ao cair sofre metade do dano normal e não fica prostrado.",
+      "resumo": [
+        "Visão na penumbra; ao cair sofre metade do dano normal e não fica prostrado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 10,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "povo-gato-garras",
+          "nome": "Garras",
+          "descricao": "Garra desarmada1d6 cortante, pugilato, ágil/acuidade.",
+          "resumo": [
+            "Garra desarmada1d6 cortante, pugilato, ágil/acuidade."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-cacador",
+          "nome": "Caçador",
+          "descricao": "Faro impreciso30pés; +2 circunstância para Rastrear cheiro conhecido. Vento pode dobrar ou reduzir alcance à metade.",
+          "resumo": [
+            "Faro impreciso30pés; +2 circunstância para Rastrear cheiro conhecido. Vento pode dobrar ou reduzir alcance à metade."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-selva",
+          "nome": "Selva",
+          "descricao": "Ignora terreno difícil de vegetação; vegetação difícil maior vira apenas difícil.",
+          "resumo": [
+            "Ignora terreno difícil de vegetação; vegetação difícil maior vira apenas difícil."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-liminar",
+          "nome": "Liminar",
+          "descricao": "Detectar Magia inato ocultista à vontade, elevado a metade do nível arredondada para cima; +1 circunstância em Ocultismo para Recordar Conhecimento sobre criaturas de planos além do Universo.",
+          "resumo": [
+            "Detectar Magia inato ocultista à vontade, elevado a metade do nível arredondada para cima; +1 circunstância em Ocultismo para Recordar Conhecimento sobre criaturas de planos além do Universo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-nove-vidas",
+          "nome": "Nove Vidas",
+          "descricao": "Recebe Duro de Matar; não soma morrendo à CD de recuperação, normalmente10.",
+          "resumo": [
+            "Recebe Duro de Matar; não soma morrendo à CD de recuperação, normalmente10."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-ouvidos-agucados",
+          "nome": "Ouvidos Aguçados",
+          "descricao": "+2 circunstância para Buscar criatura não detectada audível até30pés; se a percebe por som, uma vez/rodada pode Apontar para todos aliados como ação livre.",
+          "resumo": [
+            "+2 circunstância para Buscar criatura não detectada audível até30pés; se a percebe por som, uma vez/rodada pode Apontar para todos aliados como ação livre."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        },
+        {
+          "id": "povo-gato-inverno",
+          "nome": "Inverno",
+          "descricao": "Resistência a frio metade do nível, mínimo1; frio ambiental uma categoria menos extremo.",
+          "resumo": [
+            "Resistência a frio metade do nível, mínimo1; frio ambiental uma categoria menos extremo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 10
+        }
+      ],
+      "defeito": "sab"
+    },
+    {
+      "id": "hobgoblin",
+      "nome": "Hobgoblin",
+      "pv": 8,
+      "deslocamento": 25,
+      "tamanho": "medio",
+      "incrementos": [
+        "con",
+        "int"
+      ],
+      "livres": 1,
+      "descricao": "Visão no escuro; herança reflete adaptações de sua linhagem.",
+      "resumo": [
+        "Visão no escuro; herança reflete adaptações de sua linhagem."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 14,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "hobgoblin-antielfo",
+          "nome": "Antielfo",
+          "descricao": "Reação antes de salvaguarda contra efeito mágico: +1 circunstância, +2 se arcano.",
+          "resumo": [
+            "Reação antes de salvaguarda contra efeito mágico: +1 circunstância, +2 se arcano."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        },
+        {
+          "id": "hobgoblin-chefe-goblin",
+          "nome": "Chefe Goblin",
+          "descricao": "Coerção em Grupo; sucesso ao Coagir goblin vira crítico, falha crítica vira falha.",
+          "resumo": [
+            "Coerção em Grupo; sucesso ao Coagir goblin vira crítico, falha crítica vira falha."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        },
+        {
+          "id": "hobgoblin-pernas-curtas",
+          "nome": "Pernas Curtas",
+          "descricao": "Cavalgar; não fica desprevenido ao Escalar.",
+          "resumo": [
+            "Cavalgar; não fica desprevenido ao Escalar."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        },
+        {
+          "id": "hobgoblin-fumaceiro",
+          "nome": "Fumaceiro",
+          "descricao": "Resistência a fogo metade do nível mínimo1; sucesso automático no teste simples CD5 contra criatura ocultada só por fumaça.",
+          "resumo": [
+            "Resistência a fogo metade do nível mínimo1; sucesso automático no teste simples CD5 contra criatura ocultada só por fumaça."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        },
+        {
+          "id": "hobgoblin-marcha",
+          "nome": "Marcha de Guerra",
+          "descricao": "Falha não crítica para Subsistir no ermo ainda fornece refeições ruins; pode Apressar-se por dobro do tempo.",
+          "resumo": [
+            "Falha não crítica para Subsistir no ermo ainda fornece refeições ruins; pode Apressar-se por dobro do tempo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        },
+        {
+          "id": "hobgoblin-toca",
+          "nome": "Criado na Toca",
+          "descricao": "No subterrâneo reduz teste simples contra ocultado a CD3 e escondido a CD9; sucesso em Espremer-se vira crítico.",
+          "resumo": [
+            "No subterrâneo reduz teste simples contra ocultado a CD3 e escondido a CD9; sucesso em Espremer-se vira crítico."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 14
+        }
+      ],
+      "defeito": "sab"
+    },
+    {
+      "id": "kholo",
+      "nome": "Kholo",
+      "pv": 8,
+      "deslocamento": 25,
+      "tamanho": "medio",
+      "incrementos": [
+        "for",
+        "int"
+      ],
+      "livres": 1,
+      "descricao": "Visão na penumbra e mordida desarmada1d6 perfurante, pugilato.",
+      "resumo": [
+        "Visão na penumbra e mordida desarmada1d6 perfurante, pugilato."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 18,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "kholo-formiga",
+          "nome": "Formiga",
+          "descricao": "Tamanho Pequeno; treina Enganação ou outra se já treinado. +1 circunstância em Mentir alegando inocência, CD de Enganação contra Sentir Motivação nessas mentiras e iniciativa por Enganação.",
+          "resumo": [
+            "Tamanho Pequeno; treina Enganação ou outra se já treinado. +1 circunstância em Mentir alegando inocência, CD de Enganação contra Sentir Motivação nessas mentiras e iniciativa por Enganação."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18,
+          "tamanho": "pequeno",
+          "periciasFixas": [
+            "enganacao"
+          ]
+        },
+        {
+          "id": "kholo-caverna",
+          "nome": "Caverna",
+          "descricao": "Visão no escuro.",
+          "resumo": [
+            "Visão no escuro."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18
+        },
+        {
+          "id": "kholo-cachorro",
+          "nome": "Cachorro",
+          "descricao": "Com duas mãos livres, corre de quatro com Deslocamento30pés.",
+          "resumo": [
+            "Com duas mãos livres, corre de quatro com Deslocamento30pés."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18
+        },
+        {
+          "id": "kholo-grande",
+          "nome": "Grande",
+          "descricao": "PV de ancestralidade 10; +1 circunstância em Atletismo para Reposicionar, Empurrar ou Derrubar.",
+          "resumo": [
+            "PV de ancestralidade 10; +1 circunstância em Atletismo para Reposicionar, Empurrar ou Derrubar."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18,
+          "pv": 10
+        },
+        {
+          "id": "kholo-halito-doce",
+          "nome": "Hálito Doce",
+          "descricao": "Treina Diplomacia ou outra se já treinado; +1 circunstância em Causar Impressão se alvo cheira seu hálito.",
+          "resumo": [
+            "Treina Diplomacia ou outra se já treinado; +1 circunstância em Causar Impressão se alvo cheira seu hálito."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18,
+          "periciasFixas": [
+            "diplomacia"
+          ]
+        },
+        {
+          "id": "kholo-inverno",
+          "nome": "Inverno",
+          "descricao": "Resistência a frio metade do nível mínimo1; frio ambiental uma categoria menos extremo.",
+          "resumo": [
+            "Resistência a frio metade do nível mínimo1; frio ambiental uma categoria menos extremo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18
+        },
+        {
+          "id": "kholo-feiticeiro",
+          "nome": "Feiticeiro",
+          "descricao": "Quimera inato ocultista à vontade, elevado a metade do nível arredondada para cima; +1 circunstância para Criar Distração/Personificar só com voz.",
+          "resumo": [
+            "Quimera inato ocultista à vontade, elevado a metade do nível arredondada para cima; +1 circunstância para Criar Distração/Personificar só com voz."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 18
+        }
+      ],
+      "defeito": "sab"
+    },
+    {
+      "id": "kobold",
+      "nome": "Kobold",
+      "pv": 6,
+      "deslocamento": 25,
+      "tamanho": "pequeno",
+      "incrementos": [
+        "des",
+        "car"
+      ],
+      "livres": 1,
+      "descricao": "Visão no escuro; benfeitor influenciou adaptações.",
+      "resumo": [
+        "Visão no escuro; benfeitor influenciou adaptações."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 22,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "kobold-caverna",
+          "nome": "Espreitador da Caverna",
+          "descricao": "Ao Escalar pedra natural move metade do Deslocamento em sucesso e todo em crítico; com Escalada Rápida move todo em sucesso. Não afeta Deslocamento de escalada. Sucesso em Espremer-se vira crítico.",
+          "resumo": [
+            "Ao Escalar pedra natural move metade do Deslocamento em sucesso e todo em crítico; com Escalada Rápida move todo em sucesso. Não afeta Deslocamento de escalada. Sucesso em Espremer-se vira crítico."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22
+        },
+        {
+          "id": "kobold-escamas-draconicas",
+          "nome": "Escamas Dracônicas",
+          "descricao": "PV de ancestralidade 10; +1 circunstância contra sopro de dragão, sono e paralisia.",
+          "resumo": [
+            "PV de ancestralidade 10; +1 circunstância contra sopro de dragão, sono e paralisia."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22,
+          "pv": 10
+        },
+        {
+          "id": "kobold-coracao-elemental",
+          "nome": "Coração Elemental",
+          "descricao": "Escolhe benfeitor e resistência metade do nível mínimo1: ar/frio, terra/eletricidade, fogo/fogo, metal/sônico, água/ácido, madeira/veneno.",
+          "resumo": [
+            "Escolhe benfeitor e resistência metade do nível mínimo1: ar/frio, terra/eletricidade, fogo/fogo, metal/sônico, água/ácido, madeira/veneno."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22
+        },
+        {
+          "id": "kobold-chifre-magico",
+          "nome": "Chifre Mágico",
+          "descricao": "Escolhe truque arcano comum inato à vontade, elevado a metade do nível arredondada para cima; treinado em ataques/CD de magia, Carisma.",
+          "resumo": [
+            "Escolhe truque arcano comum inato à vontade, elevado a metade do nível arredondada para cima; treinado em ataques/CD de magia, Carisma."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22
+        },
+        {
+          "id": "kobold-mandibula-forte",
+          "nome": "Mandíbula Forte",
+          "descricao": "Mandíbula desarmada1d6 perfurante, pugilato/acuidade.",
+          "resumo": [
+            "Mandíbula desarmada1d6 perfurante, pugilato/acuidade."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22
+        },
+        {
+          "id": "kobold-tuneis-alagados",
+          "nome": "Túneis Alagados",
+          "descricao": "Deslocamento de natação15pés.",
+          "resumo": [
+            "Deslocamento de natação15pés."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22,
+          "deslocamentoNatacao": 15
+        },
+        {
+          "id": "kobold-cauda-venenosa",
+          "nome": "Cauda Venenosa",
+          "descricao": "Toxina da Cauda: ação manipular uma vez/dia, exige arma perfurante/cortante empunhada. Próximo Golpe com ela até fim do próximo turno que acerta e causa dano aplica veneno persistente igual ao nível.",
+          "resumo": [
+            "Toxina da Cauda: ação manipular uma vez/dia, exige arma perfurante/cortante empunhada. Próximo Golpe com ela até fim do próximo turno que acerta e causa dano aplica veneno persistente igual ao nível."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 22
+        }
+      ],
+      "defeito": "con"
+    },
+    {
+      "id": "povo-lagarto",
+      "nome": "Povo-lagarto",
+      "pv": 8,
+      "deslocamento": 25,
+      "tamanho": "medio",
+      "incrementos": [
+        "for",
+        "sab"
+      ],
+      "livres": 1,
+      "descricao": "Garra desarmada1d4 cortante, pugilato/ágil/acuidade; recebe Controle da Respiração.",
+      "resumo": [
+        "Garra desarmada1d4 cortante, pugilato/ágil/acuidade; recebe Controle da Respiração."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 26,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "povo-lagarto-escalador",
+          "nome": "Escamas de Penhasco",
+          "descricao": "Escalador de Combate; sem calçados pode Escalar com pés e mãos livres; sucesso em Escalar vira crítico.",
+          "resumo": [
+            "Escalador de Combate; sem calçados pode Escalar com pés e mãos livres; sucesso em Escalar vira crítico."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        },
+        {
+          "id": "povo-lagarto-saltador-nuvens",
+          "nome": "Saltador das Nuvens",
+          "descricao": "Se pode agir e tem espaço suficiente segundo mestre, abre membranas para evitar dano de queda.",
+          "resumo": [
+            "Se pode agir e tem espaço suficiente segundo mestre, abre membranas para evitar dano de queda."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        },
+        {
+          "id": "povo-lagarto-franja",
+          "nome": "Franja",
+          "descricao": "Desmoralizar torna-se visual, sem penalidade por idioma. Aproximação Ameaçadora: uma ação para Andar adjacente e Desmoralizar; sucesso impõe assustado 2 em vez de 1.",
+          "resumo": [
+            "Desmoralizar torna-se visual, sem penalidade por idioma. Aproximação Ameaçadora: uma ação para Andar adjacente e Desmoralizar; sucesso impõe assustado 2 em vez de 1."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        },
+        {
+          "id": "povo-lagarto-areia",
+          "nome": "Andarilho das Areias",
+          "descricao": "Resistência fogo metade do nível mínimo1; calor uma categoria menos extremo; aguenta dez vezes mais sem comida/água. Sem abrigo/proteção, frio uma categoria mais extremo.",
+          "resumo": [
+            "Resistência fogo metade do nível mínimo1; calor uma categoria menos extremo; aguenta dez vezes mais sem comida/água. Sem abrigo/proteção, frio uma categoria mais extremo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        },
+        {
+          "id": "povo-lagarto-camuflado",
+          "nome": "Camuflado",
+          "descricao": "Mudar cor pequena exige uma ação, grande 1hora. Com coloração similar ao ambiente, ação ajusta padrão e dá +2 circunstância Furtividade até mudar ambiente/padrão.",
+          "resumo": [
+            "Mudar cor pequena exige uma ação, grande 1hora. Com coloração similar ao ambiente, ação ajusta padrão e dá +2 circunstância Furtividade até mudar ambiente/padrão."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        },
+        {
+          "id": "povo-lagarto-pantano",
+          "nome": "Habitante do Pântano",
+          "descricao": "Deslocamento de natação15pés.",
+          "resumo": [
+            "Deslocamento de natação15pés."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26,
+          "deslocamentoNatacao": 15
+        },
+        {
+          "id": "povo-lagarto-mata",
+          "nome": "Espreitador da Mata",
+          "descricao": "Pode Obter Cobertura na floresta/selva sem obstáculo normal; recebe Espreitador de Terreno para vegetação mesmo sem Furtividade treinada.",
+          "resumo": [
+            "Pode Obter Cobertura na floresta/selva sem obstáculo normal; recebe Espreitador de Terreno para vegetação mesmo sem Furtividade treinada."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 26
+        }
+      ],
+      "defeito": "int"
+    },
+    {
+      "id": "povo-rato",
+      "nome": "Povo-rato",
+      "pv": 6,
+      "deslocamento": 25,
+      "tamanho": "pequeno",
+      "incrementos": [
+        "des",
+        "int"
+      ],
+      "livres": 1,
+      "descricao": "Visão na penumbra e mandíbula desarmada1d4 perfurante, pugilato/ágil/acuidade.",
+      "resumo": [
+        "Visão na penumbra e mandíbula desarmada1d4 perfurante, pugilato/ágil/acuidade."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 30,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "povo-rato-profundezas",
+          "nome": "Profundezas",
+          "descricao": "Visão no escuro.",
+          "resumo": [
+            "Visão no escuro."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        },
+        {
+          "id": "povo-rato-deserto",
+          "nome": "Deserto",
+          "descricao": "Mãos livres: corre de quatro com30pés. Calor menos extremo; dez vezes mais sem comida/água. Sem proteção, frio mais extremo.",
+          "resumo": [
+            "Mãos livres: corre de quatro com30pés. Calor menos extremo; dez vezes mais sem comida/água. Sem proteção, frio mais extremo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        },
+        {
+          "id": "povo-rato-focinho-longo",
+          "nome": "Focinho Longo",
+          "descricao": "Faro impreciso30pés, vento pode dobrar/reduzir; +2 circunstância em Buscar no alcance do faro.",
+          "resumo": [
+            "Faro impreciso30pés, vento pode dobrar/reduzir; +2 circunstância em Buscar no alcance do faro."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        },
+        {
+          "id": "povo-rato-esgoto",
+          "nome": "Esgoto",
+          "descricao": "Imune à praga pútrida; +1 circunstância contra doenças/venenos. Sucesso vira crítico; se outra habilidade já melhora, falha crítica vira falha.",
+          "resumo": [
+            "Imune à praga pútrida; +1 circunstância contra doenças/venenos. Sucesso vira crítico; se outra habilidade já melhora, falha crítica vira falha."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        },
+        {
+          "id": "povo-rato-sombra",
+          "nome": "Sombra",
+          "descricao": "Treina Intimidação ou outra se já treinado; Coage animais e Desmoraliza sem penalidade por idioma. Atitude de animais começa uma categoria pior.",
+          "resumo": [
+            "Treina Intimidação ou outra se já treinado; Coage animais e Desmoraliza sem penalidade por idioma. Atitude de animais começa uma categoria pior."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30,
+          "periciasFixas": [
+            "intimidacao"
+          ]
+        },
+        {
+          "id": "povo-rato-neve",
+          "nome": "Neve",
+          "descricao": "Resistência frio metade do nível mínimo1; frio ambiental menos extremo.",
+          "resumo": [
+            "Resistência frio metade do nível mínimo1; frio ambiental menos extremo."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        },
+        {
+          "id": "povo-rato-tunel",
+          "nome": "Túnel",
+          "descricao": "Espremer-se Rápido mesmo sem treino em Acrobacia; espaços estreitos que não exigem Espremer-se não são terreno difícil.",
+          "resumo": [
+            "Espremer-se Rápido mesmo sem treino em Acrobacia; espaços estreitos que não exigem Espremer-se não são terreno difícil."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 30
+        }
+      ],
+      "defeito": "for"
+    },
+    {
+      "id": "tengu",
+      "nome": "Tengu",
+      "pv": 6,
+      "deslocamento": 25,
+      "tamanho": "medio",
+      "incrementos": [
+        "des"
+      ],
+      "livres": 1,
+      "descricao": "Visão na penumbra; bico desarmado1d6 perfurante, pugilato/acuidade.",
+      "resumo": [
+        "Visão na penumbra; bico desarmado1d6 perfurante, pugilato/acuidade."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 34,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "tengu-dentes",
+          "nome": "Dentes de Cão",
+          "descricao": "Bico ganha mortal d8, acrescentando dado no crítico. Não recebe fatal nem muda seu dado básico.",
+          "resumo": [
+            "Bico ganha mortal d8, acrescentando dado no crítico. Não recebe fatal nem muda seu dado básico."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-azarado",
+          "nome": "Azarado",
+          "descricao": "Sucesso contra maldição/infortúnio vira crítico. Ao ganhar condenado, teste simples CD17 pode reduzir valor recebido1.",
+          "resumo": [
+            "Sucesso contra maldição/infortúnio vira crítico. Ao ganhar condenado, teste simples CD17 pode reduzir valor recebido1."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-guardiao-montanha",
+          "nome": "Guardião da Montanha",
+          "descricao": "Chicote de Vitalidade inato primal à vontade elevado a metade do nível arredondada para cima; em cada magia de herança/talento tengu pode escolher tradição divina/primal.",
+          "resumo": [
+            "Chicote de Vitalidade inato primal à vontade elevado a metade do nível arredondada para cima; em cada magia de herança/talento tengu pode escolher tradição divina/primal."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-ceu",
+          "nome": "Nascido no Céu",
+          "descricao": "Não sofre dano de queda, qualquer distância.",
+          "resumo": [
+            "Não sofre dano de queda, qualquer distância."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-tempestade",
+          "nome": "Arremessado pela Tempestade",
+          "descricao": "Resistência eletricidade metade do nível mínimo1; sucesso automático para mirar criatura ocultada só por chuva/névoa.",
+          "resumo": [
+            "Resistência eletricidade metade do nível mínimo1; sucesso automático para mirar criatura ocultada só por chuva/névoa."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-garras",
+          "nome": "Garras",
+          "descricao": "Garras1d4 cortante, pugilato/ágil/acuidade/versátil perfurante.",
+          "resumo": [
+            "Garras1d4 cortante, pugilato/ágil/acuidade/versátil perfurante."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34
+        },
+        {
+          "id": "tengu-mergulhador",
+          "nome": "Mergulhador",
+          "descricao": "Deslocamento de natação15pés.",
+          "resumo": [
+            "Deslocamento de natação15pés."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 34,
+          "deslocamentoNatacao": 15
+        }
+      ]
+    },
+    {
+      "id": "tripkee",
+      "nome": "Tripkee",
+      "pv": 6,
+      "deslocamento": 25,
+      "tamanho": "pequeno",
+      "incrementos": [
+        "des",
+        "sab"
+      ],
+      "livres": 1,
+      "descricao": "Visão na penumbra e +2 circunstância em Atletismo para Escalar.",
+      "resumo": [
+        "Visão na penumbra e +2 circunstância em Atletismo para Escalar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 38,
+      "raridade": "incomum",
+      "herancas": [
+        {
+          "id": "tripkee-pele-venenosa",
+          "nome": "Pele Venenosa",
+          "descricao": "Pele Tóxica: reação uma vez/hora quando tocado, incluindo Agarrar, acerto desarmado ou magia de toque;1d4 veneno, Fortitude básica pela maior CD de classe/magia. +1d4 no nível 3 e cada dois seguintes.",
+          "resumo": [
+            "Pele Tóxica: reação uma vez/hora quando tocado, incluindo Agarrar, acerto desarmado ou magia de toque;1d4 veneno, Fortitude básica pela maior CD de classe/magia. +1d4 no nível 3 e cada dois seguintes."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38
+        },
+        {
+          "id": "tripkee-rio",
+          "nome": "Ribeirinho",
+          "descricao": "Deslocamento natação15pés.",
+          "resumo": [
+            "Deslocamento natação15pés."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38,
+          "deslocamentoNatacao": 15
+        },
+        {
+          "id": "tripkee-lingua",
+          "nome": "Língua Rápida",
+          "descricao": "Língua entrega magias de toque e Interage de forma simples. Não faz tarefas com dedos/destreza significativa, testes ou segurar itens. Esta impressão não fornece alcance numérico; não foi inventado.",
+          "resumo": [
+            "Língua entrega magias de toque e Interage de forma simples. Não faz tarefas com dedos/destreza significativa, testes ou segurar itens. Esta impressão não fornece alcance numérico; não foi inventado."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38
+        },
+        {
+          "id": "tripkee-dedos-aderentes",
+          "nome": "Dedos Aderentes",
+          "descricao": "+2 circunstância CDs Fortitude/Reflexos contra Desarmar/Empurrar/Reposicionar/Derrubar; sucesso para Escalar árvores, vinhas e vegetação vira crítico.",
+          "resumo": [
+            "+2 circunstância CDs Fortitude/Reflexos contra Desarmar/Empurrar/Reposicionar/Derrubar; sucesso para Escalar árvores, vinhas e vegetação vira crítico."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38
+        },
+        {
+          "id": "tripkee-pele-grossa",
+          "nome": "Pele Grossa",
+          "descricao": "PV de ancestralidade 8; +1 circunstância contra doenças/venenos.",
+          "resumo": [
+            "PV de ancestralidade 8; +1 circunstância contra doenças/venenos."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38,
+          "pv": 8
+        },
+        {
+          "id": "tripkee-membranas",
+          "nome": "Membranas ao Vento",
+          "descricao": "Com uma mão livre, não sofre dano de queda, qualquer distância.",
+          "resumo": [
+            "Com uma mão livre, não sofre dano de queda, qualquer distância."
+          ],
+          "fonte": "player-core-2",
+          "pagina": 38
+        }
+      ],
+      "defeito": "for"
+    }
+  ],
+  "talentos": [
+    {
+      "id": "povo-gato-cochilo",
+      "nome": "Cochilo Felino",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Uma vez por hora dorme 10 minutos e recebe PV temporários iguais ao nível por 1 hora.",
+      "resumo": [
+        "Uma vez por hora dorme 10 minutos e recebe PV temporários iguais ao nível por 1 hora."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 11,
+      "ancestralidade": "povo-gato"
+    },
+    {
+      "id": "povo-gato-dentes-sabre",
+      "nome": "Dentes de Sabre",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Recebe mandíbula desarmada 1d6 perfurante, grupo pugilato.",
+      "resumo": [
+        "Recebe mandíbula desarmada 1d6 perfurante, grupo pugilato."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 11,
+      "ancestralidade": "povo-gato"
+    },
+    {
+      "id": "povo-gato-viajante",
+      "nome": "Viajante Acolhedor",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Treina Diplomacia ou outra perícia se já treinado por outra fonte; recebe Socializador.",
+      "resumo": [
+        "Treina Diplomacia ou outra perícia se já treinado por outra fonte; recebe Socializador."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 11,
+      "ancestralidade": "povo-gato"
+    },
+    {
+      "id": "povo-gato-danca",
+      "nome": "Dança Felina",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Uma ação: Acrobacia contra CD de Reflexos de criatura adjacente. Sucesso dá −2 circunstância em Reflexos até início do próximo turno; crítico também deixa alvo desprevenido.",
+      "resumo": [
+        "Uma ação: Acrobacia contra CD de Reflexos de criatura adjacente. Sucesso dá −2 circunstância em Reflexos até início do próximo turno; crítico também deixa alvo desprevenido."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 11,
+      "ancestralidade": "povo-gato"
+    },
+    {
+      "id": "povo-gato-garras-escalada",
+      "nome": "Garras de Escalada",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Deslocamento de escalada 10 pés.",
+      "resumo": [
+        "Deslocamento de escalada 10 pés."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 11,
+      "ancestralidade": "povo-gato"
+    },
+    {
+      "id": "hobgoblin-reforco",
+      "nome": "Reforço Cantoriano",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Sucesso em salvaguarda contra doença/veneno vira crítico. Se outra habilidade já melhora assim, falha crítica vira falha.",
+      "resumo": [
+        "Sucesso em salvaguarda contra doença/veneno vira crítico. Se outra habilidade já melhora assim, falha crítica vira falha."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 15,
+      "ancestralidade": "hobgoblin"
+    },
+    {
+      "id": "hobgoblin-chicote",
+      "nome": "Chicote Impiedoso",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Ao acertar Golpe com arma corpo a corpo em inimigo assustado, ele não pode reduzir assustado abaixo de 1 até início do próximo turno.",
+      "resumo": [
+        "Ao acertar Golpe com arma corpo a corpo em inimigo assustado, ele não pode reduzir assustado abaixo de 1 até início do próximo turno."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 15,
+      "ancestralidade": "hobgoblin"
+    },
+    {
+      "id": "hobgoblin-rosto-pedra",
+      "nome": "Rosto de Pedra",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "+1 circunstância em salvaguardas contra medo; +2 circunstância na CD de Vontade contra ações de Intimidação.",
+      "resumo": [
+        "+1 circunstância em salvaguardas contra medo; +2 circunstância na CD de Vontade contra ações de Intimidação."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 15,
+      "ancestralidade": "hobgoblin"
+    },
+    {
+      "id": "hobgoblin-saude-vigorosa",
+      "nome": "Saúde Vigorosa",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Quando receberia drenado, pode fazer teste simples CD17; sucesso evita a condição.",
+      "resumo": [
+        "Quando receberia drenado, pode fazer teste simples CD17; sucesso evita a condição."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 15,
+      "ancestralidade": "hobgoblin"
+    },
+    {
+      "id": "hobgoblin-repreensao",
+      "nome": "Repreensão Agonizante",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Desmoralizar com sucesso faz alvo sofrer 1d4 mental no início dos turnos, 2d4 se mestre em Intimidação ou 3d4 se lendário. Termina sem assustado, além de 30 pés ou após 1 minuto.",
+      "resumo": [
+        "Desmoralizar com sucesso faz alvo sofrer 1d4 mental no início dos turnos, 2d4 se mestre em Intimidação ou 3d4 se lendário. Termina sem assustado, além de 30 pés ou após 1 minuto."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 15,
+      "ancestralidade": "hobgoblin"
+    },
+    {
+      "id": "kholo-esmigalhar",
+      "nome": "Esmigalhar",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Mandíbula passa de 1d6 para 1d8 perfurante e ganha agarrar.",
+      "resumo": [
+        "Mandíbula passa de 1d6 para 1d8 perfurante e ganha agarrar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 19,
+      "ancestralidade": "kholo"
+    },
+    {
+      "id": "kholo-cacador-matilha",
+      "nome": "Caçador de Matilha",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "+2 circunstância nos testes para Ajudar; aliados também recebem +2 para Ajudá-lo.",
+      "resumo": [
+        "+2 circunstância nos testes para Ajudar; aliados também recebem +2 para Ajudá-lo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 19,
+      "ancestralidade": "kholo"
+    },
+    {
+      "id": "kholo-familiar",
+      "nome": "Familiar Hiena",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Recebe uma hiena Minúscula como familiar.",
+      "resumo": [
+        "Recebe uma hiena Minúscula como familiar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 19,
+      "ancestralidade": "kholo"
+    },
+    {
+      "id": "kholo-nariz",
+      "nome": "Nariz Sensível",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "Somente nível 1; não permite retreino.",
+      "descricao": "Recebe faro impreciso 30 pés. Só escolhe no nível 1 e não pode retreinar para entrar ou sair.",
+      "resumo": [
+        "Recebe faro impreciso 30 pés. Só escolhe no nível 1 e não pode retreinar para entrar ou sair."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 19,
+      "ancestralidade": "kholo"
+    },
+    {
+      "id": "kholo-resistencia",
+      "nome": "Resistência a Aflições",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "+1 circunstância contra doença/veneno; sucesso vira crítico. Se outra habilidade já melhora assim, falha crítica vira falha.",
+      "resumo": [
+        "+1 circunstância contra doença/veneno; sucesso vira crítico. Se outra habilidade já melhora assim, falha crítica vira falha."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 19,
+      "ancestralidade": "kholo"
+    },
+    {
+      "id": "kobold-encolher",
+      "nome": "Encolher-se",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Reação quando criatura de que tem consciência acerta crítico em Golpe que causaria dano: reduz dano por penalidade circunstancial nível+2, após dobrar pelo crítico. Atacante imune por 24 horas.",
+      "resumo": [
+        "Reação quando criatura de que tem consciência acerta crítico em Golpe que causaria dano: reduz dano por penalidade circunstancial nível+2, após dobrar pelo crítico. Atacante imune por 24 horas."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 23,
+      "ancestralidade": "kobold"
+    },
+    {
+      "id": "kobold-fugir",
+      "nome": "Escapulir",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Uma ação, adjacente a inimigo: Anda com +5 pés estado e +2 circunstância na CA contra reações do movimento; termina sem ficar adjacente a inimigo.",
+      "resumo": [
+        "Uma ação, adjacente a inimigo: Anda com +5 pés estado e +2 circunstância na CA contra reações do movimento; termina sem ficar adjacente a inimigo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 23,
+      "ancestralidade": "kobold"
+    },
+    {
+      "id": "kobold-presenca-dragao",
+      "nome": "Presença do Dragão",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "Herança Escamas Dracônicas.",
+      "descricao": "Sucesso contra medo vira crítico, mas falha vira falha crítica. +1 circunstância para Desmoralizar inimigo de seu nível ou menor.",
+      "resumo": [
+        "Sucesso contra medo vira crítico, mas falha vira falha crítica. +1 circunstância para Desmoralizar inimigo de seu nível ou menor."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 23,
+      "ancestralidade": "kobold"
+    },
+    {
+      "id": "kobold-abrigo-aliado",
+      "nome": "Abrigo do Aliado",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Reação de fortuna uma vez por dia, antes de rolar salvaguarda e adjacente a aliado: usa modificador correspondente de um aliado adjacente.",
+      "resumo": [
+        "Reação de fortuna uma vez por dia, antes de rolar salvaguarda e adjacente a aliado: usa modificador correspondente de um aliado adjacente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 23,
+      "ancestralidade": "kobold"
+    },
+    {
+      "id": "povo-lagarto-falar-repteis",
+      "nome": "Falar com Répteis",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Pode perguntar, receber respostas e usar Diplomacia com animais répteis; mestre decide quais contam.",
+      "resumo": [
+        "Pode perguntar, receber respostas e usar Diplomacia com animais répteis; mestre decide quais contam."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 27,
+      "ancestralidade": "povo-lagarto"
+    },
+    {
+      "id": "povo-lagarto-armamentos",
+      "nome": "Armamentos Iruxi",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Escolhe: garras 1d6 cortante e versátil perfurante; presas 1d8 perfurante/pugilato; cauda 1d6 contundente/pugilato/varredura. No nível 5 os ataques concedidos ou melhorados ganham especialização crítica. Pode repetir escolhendo diferente.",
+      "resumo": [
+        "Escolhe: garras 1d6 cortante e versátil perfurante; presas 1d8 perfurante/pugilato; cauda 1d6 contundente/pugilato/varredura. No nível 5 os ataques concedidos ou melhorados ganham especialização crítica. Pode repetir escolhendo diferente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 27,
+      "ancestralidade": "povo-lagarto"
+    },
+    {
+      "id": "povo-lagarto-magia-osso",
+      "nome": "Magia dos Ossos",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Escolhe truque ocultista ou primal e tradição de suas magias inatas deste talento. Conjura à vontade, elevado a metade do nível arredondada para cima. A tradição também se aplica aos talentos que exigem Magia dos Ossos.",
+      "resumo": [
+        "Escolhe truque ocultista ou primal e tradição de suas magias inatas deste talento. Conjura à vontade, elevado a metade do nível arredondada para cima. A tradição também se aplica aos talentos que exigem Magia dos Ossos."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 27,
+      "ancestralidade": "povo-lagarto"
+    },
+    {
+      "id": "povo-lagarto-cauda-flexivel",
+      "nome": "Cauda Flexível",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Cauda faz Interagir simples, como abrir porta destrancada. Não realiza tarefas com dedos/destreza significativa, testes ou segurar itens.",
+      "resumo": [
+        "Cauda faz Interagir simples, como abrir porta destrancada. Não realiza tarefas com dedos/destreza significativa, testes ou segurar itens."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 27,
+      "ancestralidade": "povo-lagarto"
+    },
+    {
+      "id": "povo-rato-bochechas",
+      "nome": "Bolsas nas Bochechas",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Guarda até quatro itens de Volume leve ou menor, nenhuma dimensão maior que 1 pé. Fala fica difícil de entender com itens. Guardar/retirar cada um exige Interagir. Uma ação esvazia tudo no chão de seu quadrado.",
+      "resumo": [
+        "Guarda até quatro itens de Volume leve ou menor, nenhuma dimensão maior que 1 pé. Fala fica difícil de entender com itens. Guardar/retirar cada um exige Interagir. Uma ação esvazia tudo no chão de seu quadrado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 31,
+      "ancestralidade": "povo-rato"
+    },
+    {
+      "id": "povo-rato-acumulador",
+      "nome": "Acumulador",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Recipientes/veículos mundanos comportam 50% mais Volume. Não reduz Volume dos itens nem amplia armazenamento mágico/extradimensional.",
+      "resumo": [
+        "Recipientes/veículos mundanos comportam 50% mais Volume. Não reduz Volume dos itens nem amplia armazenamento mágico/extradimensional."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 31,
+      "ancestralidade": "povo-rato"
+    },
+    {
+      "id": "povo-rato-familiar",
+      "nome": "Familiar Rato",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Recebe familiar rato. Forma básica permanece rato; recebe habilidades normalmente.",
+      "resumo": [
+        "Recebe familiar rato. Forma básica permanece rato; recebe habilidades normalmente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 31,
+      "ancestralidade": "povo-rato"
+    },
+    {
+      "id": "povo-rato-falar-roedores",
+      "nome": "Falar com Roedores",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Pode perguntar, receber respostas e usar Diplomacia com roedores, não outros mamíferos. Mestre decide quais contam.",
+      "resumo": [
+        "Pode perguntar, receber respostas e usar Diplomacia com roedores, não outros mamíferos. Mestre decide quais contam."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 31,
+      "ancestralidade": "povo-rato"
+    },
+    {
+      "id": "povo-rato-incisivos",
+      "nome": "Incisivos Cruéis",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Mandíbula passa de 1d4 para 1d6 perfurante e ganha ataque pelas costas. Pode escolher em qualquer nível e retreinar normalmente.",
+      "resumo": [
+        "Mandíbula passa de 1d4 para 1d6 perfurante e ganha ataque pelas costas. Pode escolher em qualquer nível e retreinar normalmente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 31,
+      "ancestralidade": "povo-rato"
+    },
+    {
+      "id": "tengu-incendio-marinheiro",
+      "nome": "Fogo do Marinheiro",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Ignição inato primal à vontade, elevado a metade do nível arredondada para cima. Forma orbes de fogo e pode conjurar debaixo d’água.",
+      "resumo": [
+        "Ignição inato primal à vontade, elevado a metade do nível arredondada para cima. Forma orbes de fogo e pode conjurar debaixo d’água."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 34,
+      "ancestralidade": "tengu"
+    },
+    {
+      "id": "tengu-salto-dedo",
+      "nome": "Salto de Um Dedo",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Uma ação para Salto vertical sem acionar reações de movimento/entrada/saída de quadrado.",
+      "resumo": [
+        "Uma ação para Salto vertical sem acionar reações de movimento/entrada/saída de quadrado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 35,
+      "ancestralidade": "tengu"
+    },
+    {
+      "id": "tengu-buscar",
+      "nome": "Busca do Catador",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "+2 circunstância para localizar objetos, incluindo portas secretas/perigos, até 30 pés usando Buscar.",
+      "resumo": [
+        "+2 circunstância para localizar objetos, incluindo portas secretas/perigos, até 30 pés usando Buscar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 35,
+      "ancestralidade": "tengu"
+    },
+    {
+      "id": "tengu-grasnar",
+      "nome": "Grasnar!",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Reação quando falha criticamente em Enganação, Diplomacia ou Intimidação contra criatura sem tengu: vira falha. Testemunhas imunes por 24 horas.",
+      "resumo": [
+        "Reação quando falha criticamente em Enganação, Diplomacia ou Intimidação contra criatura sem tengu: vira falha. Testemunhas imunes por 24 horas."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 35,
+      "ancestralidade": "tengu"
+    },
+    {
+      "id": "tengu-chicote-tempestade",
+      "nome": "Chicote da Tempestade",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Arco Elétrico inato primal à vontade, elevado a metade do nível arredondada para cima.",
+      "resumo": [
+        "Arco Elétrico inato primal à vontade, elevado a metade do nível arredondada para cima."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 35,
+      "ancestralidade": "tengu"
+    },
+    {
+      "id": "tripkee-falar-coaxos",
+      "nome": "Falar por Coaxos",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Pode perguntar, receber respostas e usar Diplomacia com animais anfíbios, normalmente de traço anfíbio.",
+      "resumo": [
+        "Pode perguntar, receber respostas e usar Diplomacia com animais anfíbios, normalmente de traço anfíbio."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 38,
+      "ancestralidade": "tripkee"
+    },
+    {
+      "id": "tripkee-defesa-cacador",
+      "nome": "Defesa do Caçador",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "Treinado em Natureza.",
+      "descricao": "Reação uma vez por hora quando animal, besta, elemental, feérico, fungo ou planta visível o ataca: ataque usa CD de Natureza em vez de CA. Condições/efeitos que penalizariam CA continuam existindo para outros propósitos, como dano furtivo.",
+      "resumo": [
+        "Reação uma vez por hora quando animal, besta, elemental, feérico, fungo ou planta visível o ataca: ataque usa CD de Natureza em vez de CA. Condições/efeitos que penalizariam CA continuam existindo para outros propósitos, como dano furtivo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 38,
+      "requisitosEstruturados": {
+        "pericias": {
+          "natureza": 1
+        }
+      },
+      "ancestralidade": "tripkee"
+    },
+    {
+      "id": "tripkee-andar-selva",
+      "nome": "Andarilho da Selva",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Ignora terreno difícil em floresta/selva. Ao Equilibrar em superfície estreita/irregular de material vegetal, não fica desprevenido e sucesso vira crítico.",
+      "resumo": [
+        "Ignora terreno difícil em floresta/selva. Ao Equilibrar em superfície estreita/irregular de material vegetal, não fica desprevenido e sucesso vira crítico."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 39,
+      "ancestralidade": "tripkee"
+    },
+    {
+      "id": "tripkee-noturno",
+      "nome": "Tripkee Noturno",
+      "nivel": 1,
+      "tipo": "ancestralidade",
+      "requisitos": "Somente nível 1; não permite retreino.",
+      "descricao": "Visão no escuro; só escolhe no nível 1 e não pode retreinar para entrar ou sair.",
+      "resumo": [
+        "Visão no escuro; só escolhe no nível 1 e não pode retreinar para entrar ou sair."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 39,
+      "ancestralidade": "tripkee"
+    },
+    {
+      "id": "tripkee-saltos",
+      "nome": "Saltos Fantásticos",
+      "nivel": 5,
+      "tipo": "ancestralidade",
+      "requisitos": "",
+      "descricao": "Salto ganha 10 pés de distância máxima horizontal e 5 pés vertical.",
+      "resumo": [
+        "Salto ganha 10 pés de distância máxima horizontal e 5 pés vertical."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 39,
+      "ancestralidade": "tripkee"
+    },
+    {
+      "id": "alquimista-familiar",
+      "nome": "Familiar Alquímico",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Familiar com habilidade constructo permanente, sem exigir resistente e sem contar no limite normal de habilidades. Usa Inteligência em Percepção, Acrobacia e Furtividade.",
+      "resumo": [
+        "Familiar com habilidade constructo permanente, sem exigir resistente e sem contar no limite normal de habilidades. Usa Inteligência em Percepção, Acrobacia e Furtividade."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 64,
+      "classe": "alquimista"
+    },
+    {
+      "id": "alquimista-avaliacao",
+      "nome": "Avaliação Alquímica",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "Treinado em Manufatura.",
+      "descricao": "Identificar Alquimia de item segurado exige uma ação em vez de 10 minutos.",
+      "resumo": [
+        "Identificar Alquimia de item segurado exige uma ação em vez de 10 minutos."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 64,
+      "requisitosEstruturados": {
+        "pericias": {
+          "manufatura": 1
+        }
+      },
+      "classe": "alquimista"
+    },
+    {
+      "id": "alquimista-arremesso-longo",
+      "nome": "Arremesso Longo",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Incremento de alcance de bombas alquímicas passa de 20 para 30 pés.",
+      "resumo": [
+        "Incremento de alcance de bombas alquímicas passa de 20 para 30 pés."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 64,
+      "classe": "alquimista"
+    },
+    {
+      "id": "alquimista-bombardeiro-rapido",
+      "nome": "Bombardeiro Rápido",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação: Interagir para sacar bomba/frasco ou Alquimia Rápida para criar bomba; então Golpe com ela. Mesmo criando duas, só ataca com uma.",
+      "resumo": [
+        "Uma ação: Interagir para sacar bomba/frasco ou Alquimia Rápida para criar bomba; então Golpe com ela. Mesmo criando duas, só ataca com uma."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 64,
+      "classe": "alquimista"
+    },
+    {
+      "id": "alquimista-frascos-calmantes",
+      "nome": "Frascos Calmantes",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "Campo Cirurgião.",
+      "descricao": "Criatura viva afetada por efeito mental que cura PV de seu frasco versátil pode repetir salvaguarda de Vontade para encerrar um efeito mental à escolha, +1 de item.",
+      "resumo": [
+        "Criatura viva afetada por efeito mental que cura PV de seu frasco versátil pode repetir salvaguarda de Vontade para encerrar um efeito mental à escolha, +1 de item."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 64,
+      "classe": "alquimista"
+    },
+    {
+      "id": "alquimista-mutagenico-revitalizante",
+      "nome": "Mutagênico Revitalizante",
+      "nivel": 2,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação sob mutagênico: cura 1d6 PV por cada dois níveis do item, mínimo 1d6, e termina o mutagênico.",
+      "resumo": [
+        "Uma ação sob mutagênico: cura 1d6 PV por cada dois níveis do item, mínimo 1d6, e termina o mutagênico."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 65,
+      "classe": "alquimista"
+    },
+    {
+      "id": "barbaro-visao-agucada",
+      "nome": "Visão Aguçada",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Em Fúria recebe visão no escuro.",
+      "resumo": [
+        "Em Fúria recebe visão no escuro."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "barbaro-adrenalina",
+      "nome": "Explosão de Adrenalina",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Em Fúria, limites de Volume sobrecarregado/máximo +2 e +1 estado em Atletismo para levantar, Escapar e Forçar Abertura.",
+      "resumo": [
+        "Em Fúria, limites de Volume sobrecarregado/máximo +2 e +1 estado em Atletismo para levantar, Escapar e Forçar Abertura."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "barbaro-clareza",
+      "nome": "Momento de Clareza",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de concentração/fúria: até fim do turno pode usar concentração sem traço fúria.",
+      "resumo": [
+        "Uma ação de concentração/fúria: até fim do turno pode usar concentração sem traço fúria."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "barbaro-intimidacao",
+      "nome": "Intimidação Furiosa",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Em Fúria, Desmoralizar/Matar de Susto ganham fúria. Recebe Olhar Intimidador e Matar de Susto assim que cumpre requisitos.",
+      "resumo": [
+        "Em Fúria, Desmoralizar/Matar de Susto ganham fúria. Recebe Olhar Intimidador e Matar de Susto assim que cumpre requisitos."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "barbaro-arremessador",
+      "nome": "Arremessador Furioso",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Dano de Fúria aplica a armas arremessadas. Crítico Brutal/Devastador também, se possuir.",
+      "resumo": [
+        "Dano de Fúria aplica a armas arremessadas. Crítico Brutal/Devastador também, se possuir."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "barbaro-investida",
+      "nome": "Investida Súbita",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Duas ações com floreio: Anda duas vezes e se termina ao alcance corpo a corpo de inimigo pode Golpear. Pode usar Escavar/Escalar/Voar/Nadar se possui Deslocamento correspondente.",
+      "resumo": [
+        "Duas ações com floreio: Anda duas vezes e se termina ao alcance corpo a corpo de inimigo pode Golpear. Pode usar Escavar/Escalar/Voar/Nadar se possui Deslocamento correspondente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 78,
+      "classe": "barbaro"
+    },
+    {
+      "id": "campeao-avanco",
+      "nome": "Avanço Defensivo",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Duas ações com floreio: Ergue Escudo e Anda; se termina ao alcance corpo a corpo de inimigo pode Golpear. Outros movimentos exigem Deslocamento correspondente.",
+      "resumo": [
+        "Duas ações com floreio: Ergue Escudo e Anda; se termina ao alcance corpo a corpo de inimigo pode Golpear. Outros movimentos exigem Deslocamento correspondente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 94,
+      "classe": "campeao"
+    },
+    {
+      "id": "campeao-oracao",
+      "nome": "Oração Desesperada",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Ação livre uma vez por dia ao começar turno sem foco: ganha 1 Ponto de Foco só para devoção; perde se não gastar até fim do turno.",
+      "resumo": [
+        "Ação livre uma vez por dia ao começar turno sem foco: ganha 1 Ponto de Foco só para devoção; perde se não gastar até fim do turno."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 94,
+      "classe": "campeao"
+    },
+    {
+      "id": "campeao-dominio",
+      "nome": "Domínio da Divindade",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Escolhe domínio de sua divindade e recebe magia inicial como devoção.",
+      "resumo": [
+        "Escolhe domínio de sua divindade e recebe magia inicial como devoção."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 94,
+      "classe": "campeao"
+    },
+    {
+      "id": "campeao-corcel",
+      "nome": "Corcel Fiel",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Companheiro animal jovem como montaria, normalmente com habilidade montaria. Mestre pode permitir outro. Se sagrado/profano, montaria e Golpes ganham traço.",
+      "resumo": [
+        "Companheiro animal jovem como montaria, normalmente com habilidade montaria. Mestre pode permitir outro. Se sagrado/profano, montaria e Golpes ganham traço."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 95,
+      "classe": "campeao"
+    },
+    {
+      "id": "investigador-pistas-falsas",
+      "nome": "Eliminar Pistas Falsas",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Falha crítica em Recordar Conhecimento ligado à pergunta de investigação ativa vira falha.",
+      "resumo": [
+        "Falha crítica em Recordar Conhecimento ligado à pergunta de investigação ativa vira falha."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 107,
+      "classe": "investigador"
+    },
+    {
+      "id": "investigador-estudos",
+      "nome": "Estudos Flexíveis",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Nas preparações treina temporariamente uma perícia até próxima preparação. Treino temporário não vale como requisito para escolha permanente.",
+      "resumo": [
+        "Nas preparações treina temporariamente uma perícia até próxima preparação. Treino temporário não vale como requisito para escolha permanente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 107,
+      "classe": "investigador"
+    },
+    {
+      "id": "monge-postura-grou",
+      "nome": "Postura do Grou",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de postura sem armadura. +1 circunstância CA; só asa do grou: 1d6 contundente, pugilato/ágil/acuidade/não letal. CDs de Salto em Altura/Distância −5; Salto +5 pés horizontal/+2 vertical.",
+      "resumo": [
+        "Uma ação de postura sem armadura. +1 circunstância CA; só asa do grou: 1d6 contundente, pugilato/ágil/acuidade/não letal. CDs de Salto em Altura/Distância −5; Salto +5 pés horizontal/+2 vertical."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "monge-postura-dragao",
+      "nome": "Postura do Dragão",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de postura sem armadura. Cauda do dragão 1d10 contundente, pugilato/retorno/não letal; ignora primeiro quadrado de terreno difícil ao Andar.",
+      "resumo": [
+        "Uma ação de postura sem armadura. Cauda do dragão 1d10 contundente, pugilato/retorno/não letal; ignora primeiro quadrado de terreno difícil ao Andar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "monge-postura-montanha",
+      "nome": "Postura da Montanha",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de postura sem armadura e tocando chão. Só pedra caindo: 1d8 contundente, pugilato/vigoroso/não letal. +4 item CA, +2 circunstância contra movimento forçado/Reposicionar/Empurrar/Derrubar; limite Destreza CA0 e Deslocamentos−5 pés. Bônus soma com potência nas roupas de explorador, Armadura Mística e braceletes de força.",
+      "resumo": [
+        "Uma ação de postura sem armadura e tocando chão. Só pedra caindo: 1d8 contundente, pugilato/vigoroso/não letal. +4 item CA, +2 circunstância contra movimento forçado/Reposicionar/Empurrar/Derrubar; limite Destreza CA0 e Deslocamentos−5 pés. Bônus soma com potência nas roupas de explorador, Armadura Mística e braceletes de força."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "monge-postura-tigre",
+      "nome": "Postura do Tigre",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de postura sem armadura. Garras 1d8 cortante, pugilato/ágil/acuidade/não letal. Crítico com dano dá 1d4 sangramento persistente. Com Deslocamento≥20 pés pode dar Passos de 10 pés.",
+      "resumo": [
+        "Uma ação de postura sem armadura. Garras 1d8 cortante, pugilato/ágil/acuidade/não letal. Crítico com dano dá 1d4 sangramento persistente. Com Deslocamento≥20 pés pode dar Passos de 10 pés."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "monge-postura-lobo",
+      "nome": "Postura do Lobo",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação de postura sem armadura. Mandíbula 1d8 perfurante, pugilato/ágil/ataque pelas costas/acuidade/não letal. Contra alvo flanqueado ganha derrubar.",
+      "resumo": [
+        "Uma ação de postura sem armadura. Mandíbula 1d8 perfurante, pugilato/ágil/ataque pelas costas/acuidade/não letal. Contra alvo flanqueado ganha derrubar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "monge-magias-qi",
+      "nome": "Magias de Qi",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Recebe Agitação Interior, Impulso de Qi ou outra magia de qi de 1ª graduação acessível. Escolhe divina/ocultista, usa Sabedoria, treinado em ataques/CD de magia e ganha1foco. Refocar 10 minutos estabiliza mente/respiração; foco elevado a metade do nível arredondada para cima.",
+      "resumo": [
+        "Recebe Agitação Interior, Impulso de Qi ou outra magia de qi de 1ª graduação acessível. Escolhe divina/ocultista, usa Sabedoria, treinado em ataques/CD de magia e ganha1foco. Refocar 10 minutos estabiliza mente/respiração; foco elevado a metade do nível arredondada para cima."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 120,
+      "classe": "monge"
+    },
+    {
+      "id": "oraculo-sussurros-fraqueza",
+      "nome": "Sussurros de Fraqueza",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação divina ligada à maldição: criatura até60 pés, aprende fraquezas e menor salvaguarda; +2 estado no próximo ataque/teste de perícia como ataque contra ela até fim do turno. Imune por 1dia.",
+      "resumo": [
+        "Uma ação divina ligada à maldição: criatura até60 pés, aprende fraquezas e menor salvaguarda; +2 estado no próximo ataque/teste de perícia como ataque contra ela até fim do turno. Imune por 1dia."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 139,
+      "classe": "oraculo"
+    },
+    {
+      "id": "oraculo-aviso",
+      "nome": "Aviso Oracular",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Ação livre ligada à maldição ao prestes a rolar iniciativa: aliados até20 pés +2 estado na iniciativa e PV temporários metade do nível por 1minuto. Bônus+3 se amaldiçoado 2 no uso, +4 se3.",
+      "resumo": [
+        "Ação livre ligada à maldição ao prestes a rolar iniciativa: aliados até20 pés +2 estado na iniciativa e PV temporários metade do nível por 1minuto. Bônus+3 se amaldiçoado 2 no uso, +4 se3."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 139,
+      "classe": "oraculo"
+    },
+    {
+      "id": "oraculo-prever-dano",
+      "nome": "Prever Dano",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Ação livre ligada à maldição uma vez/rodada; ação anterior Conjurar Magia não truque com dano. Início do próximo turno do alvo, sofre dano do mesmo tipo igual ao dobro da graduação. Imune por 24 horas.",
+      "resumo": [
+        "Ação livre ligada à maldição uma vez/rodada; ação anterior Conjurar Magia não truque com dano. Início do próximo turno do alvo, sofre dano do mesmo tipo igual ao dobro da graduação. Imune por 24 horas."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 139,
+      "classe": "oraculo"
+    },
+    {
+      "id": "oraculo-inclinar-balanca",
+      "nome": "Inclinar a Balança",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação ligada à maldição: cura2+duas vezes nível a criatura até30 pés, viva/morta-viva. Nas preparações escolhe vida (cura vital normal) ou morte (cura do vazio e outras curas de mortos-vivos).",
+      "resumo": [
+        "Uma ação ligada à maldição: cura2+duas vezes nível a criatura até30 pés, viva/morta-viva. Nas preparações escolhe vida (cura vital normal) ou morte (cura do vazio e outras curas de mortos-vivos)."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 139,
+      "classe": "oraculo"
+    },
+    {
+      "id": "espadachim-esquiva",
+      "nome": "Esquiva Vistosa",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Reação ao ser alvo de ataque de criatura visível, não sobrecarregado: +2 circunstância CA contra ataque acionador; se Golpe errar, panache até fim do próximo turno.",
+      "resumo": [
+        "Reação ao ser alvo de ataque de criatura visível, não sobrecarregado: +2 circunstância CA contra ataque acionador; se Golpe errar, panache até fim do próximo turno."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 164,
+      "classe": "espadachim"
+    },
+    {
+      "id": "espadachim-broquel",
+      "nome": "Broquel Elegante",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Erguer Escudo com broquel concede +2 circunstância em vez de+1. Com broquel erguido, crítico de falha em Golpe contra você concede panache até fim do próximo turno.",
+      "resumo": [
+        "Erguer Escudo com broquel concede +2 circunstância em vez de+1. Com broquel erguido, crítico de falha em Golpe contra você concede panache até fim do próximo turno."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 164,
+      "classe": "espadachim"
+    },
+    {
+      "id": "espadachim-desarme",
+      "nome": "Desarme Estiloso",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Desarmar ganha bravata.",
+      "resumo": [
+        "Desarmar ganha bravata."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 164,
+      "classe": "espadachim"
+    },
+    {
+      "id": "espadachim-lamina-voadora",
+      "nome": "Lâmina Voadora",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Golpe Preciso aplica a Golpes com arma arremessada ágil/acuidade no primeiro incremento. Permite usá-los em Finalização Confiante e outras finalizações que se beneficiem de Golpe Preciso.",
+      "resumo": [
+        "Golpe Preciso aplica a Golpes com arma arremessada ágil/acuidade no primeiro incremento. Permite usá-los em Finalização Confiante e outras finalizações que se beneficiem de Golpe Preciso."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 164,
+      "classe": "espadachim"
+    },
+    {
+      "id": "feiticeiro-ungir-aliado",
+      "nome": "Ungir Aliado",
+      "nivel": 2,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação manipular: runa em aliado adjacente por 1minuto. Quando você/aliado receberia magia sanguínea, pode abdicar para conceder ao ungido mesmo fora dos alvos. Só um ungido por vez.",
+      "resumo": [
+        "Uma ação manipular: runa em aliado adjacente por 1minuto. Quando você/aliado receberia magia sanguínea, pode abdicar para conceder ao ungido mesmo fora dos alvos. Só um ungido por vez."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 154,
+      "classe": "feiticeiro"
+    },
+    {
+      "id": "feiticeiro-expansao-truques",
+      "nome": "Expansão de Truques",
+      "nivel": 2,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Adiciona dois truques de sua lista ao repertório.",
+      "resumo": [
+        "Adiciona dois truques de sua lista ao repertório."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 154,
+      "classe": "feiticeiro"
+    },
+    {
+      "id": "feiticeiro-sangrar",
+      "nome": "Sangrar",
+      "nivel": 2,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "Uma ação, anterior Conjurar Magia não truque: ataque de magia à distância contra CA de alvo até60 pés; sangramento persistente igual à graduação da magia anterior.",
+      "resumo": [
+        "Uma ação, anterior Conjurar Magia não truque: ataque de magia à distância contra CA de alvo até60 pés; sangramento persistente igual à graduação da magia anterior."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 154,
+      "classe": "feiticeiro"
+    }
+  ],
+  "lacunas": [
+    "Tradução integral das 322 páginas ainda não concluída. Este catálogo não substitui o livro completo.",
+    "Arquétipos, maioria dos talentos, magias gerais/de foco, tesouros, descrições culturais e índice ainda precisam de tradução e revisão.",
+    "Oráculo: prosa inicial diz dois espaços, tabela diz três de 1ª graduação; cotejo de errata necessário antes de automatizar quantidade por essa prosa.",
+    "Escolhas de divindade, animal, dragão, elemento, caminhos e magias devem ser registradas; o catálogo não presume decisões.",
+    "Heranças versáteis dhampir, sangue de dragão e andarilho do crepúsculo ainda não integradas.",
+    "Conversão automática dos efeitos de talentos, heranças, instintos e magias é limitada; bônus situacionais não são aplicados silenciosamente."
+  ]
+}

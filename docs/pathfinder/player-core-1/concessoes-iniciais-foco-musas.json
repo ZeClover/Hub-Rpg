@@ -1,0 +1,1266 @@
+{
+  "magias": [
+    {
+      "id": "avivar-o-coracao",
+      "nome": "Avivar o Coração",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "divina"
+      ],
+      "descricao": "AVIVAR O CORAÇÃO [1 ação] TRUQUE 1\n\nINCOMUM BRUXO CONCENTRAÇÃO EMOÇÃO SORTILÉGIO TRUQUE Patrono O Guardião da Fé Irrefreável Distância 9 metros; Alvos 1 criatura Duração sustentada por até 1 minuto Seu patrono enche uma criatura de fervor, fortalecendo os golpes dela. O alvo recebe +2 de bônus de estado em jogadas de dano. Elevada (+2) O bônus de estado no dano aumenta em 1.",
+      "resumo": [
+        "Um alvo a 9 m recebe +2 de estado no dano enquanto sustentada, até 1 minuto; aumenta +1 a cada 2 ranques."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "palavra-dos-ermos",
+      "nome": "Palavra dos Ermos",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "PALAVRA DOS ERMOS [1 ação] TRUQUE 1\n\nINCOMUM BRUXO MENTAL SORTILÉGIO TRUQUE Patrono O Sentinela dos Ermos Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração sustentada por até 1 minuto A majestade do seu patrono — ou o descontentamento dele — é evocada em um grunhido saído da sua garganta, fazendo com que outras criaturas relutem em feri-lo. O alvo precisará fazer um salvamento de Vontade; se a criatura for um animal, fungo ou planta, sofre –1 de penalidade de circunstância no salvamento. Sucesso crítico O alvo não é afetado. Sucesso Quando o alvo fizer um teste de ataque ou perícia que feri-lo ou atrapalhá-lo diretamente, ele sofre –2 de penalidade de estado. Falha Como na falha, mas o alvo fica enjoado 1 sempre que causar dano a você. Falha crítica Como na falha, mas o valor da condição enjoado é 2.",
+      "resumo": [
+        "Um alvo a 9 m testa Vontade; penaliza ações contra você e pode causar enjoado quando ele lhe causar dano. Animais, fungos e plantas têm −1 no salvamento."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "discernir-segredos",
+      "nome": "Discernir Segredos",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "DISCERNIR SEGREDOS [1 ação] TRUQUE 1\n\nINCOMUM BRUXO MANUSEIO SORTILÉGIO TRUQUE Patrono A Inscrito Distância 9 metros; Alvos 1 criatura Duração sustentada por até 1 minuto Seu patrono se digna a sussurrar alguns segredos. O alvo pode Buscar, Recordar Conhecimento ou Sentir Motivação como uma ação livre. Ele também recebe +1 de bônus de estado na estatística usada para a jogada (uma perícia ou Percepção) enquanto você Sustentar esta Magia. O alvo fica temporariamente imune a discernir segredos por 1 minuto. Elevada (5º) Você pode ter até 2 criaturas como alvo.",
+      "resumo": [
+        "Concede Buscar, Recordar Conhecimento ou Sentir Motivação como ação livre e +1 de estado na estatística usada enquanto sustentada; alvo fica imune por 1 minuto."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "mau-olhado",
+      "nome": "Mau-Olhado",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "MAU-OLHADO [1 ação] TRUQUE 1\n\nINCOMUM BRUXO MALDIÇÃO MANUSEIO SORTILÉGIO TRUQUE Patrono O Ressentimento Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração sustentada por até 1 minuto O ressentimento do seu patrono se manifesta através de um olhar sinistro e invejoso. O alvo fica enjoado 1 se falhar em um salvamento de Vontade (ou enjoado 2, em caso de falha crítica). O valor dessa condição não pode ser reduzido para abaixo de 1 enquanto esta magia estiver ativa e você puder ver o alvo.",
+      "resumo": [
+        "Vontade determina enjoado 1 ou 2; enquanto sustentada e você enxergar o alvo, o valor não pode cair abaixo de 1."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "gelo-duradouro",
+      "nome": "Gelo Duradouro",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "GELO DURADOURO [1 ação] TRUQUE 1\n\nINCOMUM BRUXO FRIO MANUSEIO SORTILÉGIO TRUQUE Patrono O Silêncio Invernal\n\nDistância 9 metros; Alvos 1 criatura Defesa Reflexos; Duração sustentada por até 1 minuto Granizo congelante e neve pesada se acumulam sobre os pés e pernas do alvo, causando 1d4 de dano de frio e outros efeitos, dependendo do salvamento de Reflexos dele. Sucesso crítico O alvo não é afetado. Sucesso O alvo sofre metade do dano. Falha O alvo sofre o dano total e –1,5 metro de penalidade de circunstância nas Velocidades dele até esta magia se encerrar. Falha crítica O alvo sofre o dobro do dano e –3 metros de penalidade de circunstância nas Velocidades dele até esta magia se encerrar. Elevada (+1) O dano aumenta em 1d4.",
+      "resumo": [
+        "Um alvo a 9 m sofre 1d4 de frio conforme Reflexos; falha também reduz Velocidades durante a sustentação. O dano aumenta 1d4 por ranque."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "mortalha-da-noite",
+      "nome": "Mortalha da Noite",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "MORTALHA DA NOITE [1 ação] TRUQUE 1\n\nINCOMUM BRUXO ESCURIDÃO MANUSEIO SORTILÉGIO TRUQUE Patrono A Sombra Inconstelada Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração sustentada por até 1 minuto Seu patrono cobre os olhos do alvo com escuridão. Se você conjurar este sortilégio em um aliado voluntário (por exemplo, um com cegueira à luz), ele pode escolher qual resultado quer sem precisar fazer testes. Sucesso O alvo não é afetado. Falha O alvo é envolvido por uma escuridão turva. Ele trata luz forte como luz fraca e, a menos que tenha visão no escuro maior, todas as criaturas ficam ocultadas para ele.",
+      "resumo": [
+        "Vontade pode envolver o alvo em escuridão, alterando visão de luz forte e ocultando criaturas; aliado voluntário pode escolher o resultado."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "tocar-o-destino",
+      "nome": "Tocar o Destino",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "truque",
+      "truque": true,
+      "foco": false,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "TOCAR O DESTINO [1 ação] TRUQUE 1\n\nINCOMUM BRUXO CONCENTRAÇÃO SORTILÉGIO TRUQUE Patrono O Tecelão de Destinos Distância 9 metros; Alvos 1 criatura Duração 1 minuto Basta que seu patrono mova um pouco o carretel dele para que destinos sejam alterados. Quando o alvo falhar em um teste de ataque, de perícia ou salvamento e um bônus de estado de +1 fosse transformar uma falha crítica em uma falha, ou falha em um sucesso, você concede +1 de bônus de estado retroativamente ao alvo, alterando o resultado do teste. Depois disso, esta magia se encerra. Se você conjurar tocar o destino enquanto uma conjuração anterior deste sortilégio ainda estiver em efeito, ela se encerra.",
+      "resumo": [
+        "Durante 1 minuto, concede retroativamente +1 de estado se isso melhorar uma falha ou falha crítica em ataque, perícia ou salvamento; encerra após ativar."
+      ],
+      "fonte": "player-core",
+      "pagina": 374,
+      "secoes": [
+        "pc1-pdf-375",
+        "pc1-pdf-376"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "curar-animal",
+      "nome": "Curar Animal",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "CURAR ANIMAL [1 ação] A [2 ações] FOCO 1\n\nINCOMUM DRUIDA FOCO CURA MANUSEIO VITALIDADE Distância toque ou 9 metros (ver texto); Alvos 1 animal vivo voluntário Você cura os ferimentos de um animal, restaurando 1d8 PVs do alvo. A quantidade de ações que você gastar ao Conjurar esta Magia determina seus efeitos. [1 ação] Esta magia tem distância de toque. [2 ações] (concentração) Esta magia tem distância de 9 metros e restaura 8 PVs adicionais do alvo. Elevada (+1) A quantidade de cura aumenta em 1d8, e a cura adicional da versão de 2 ações aumenta em 8.",
+      "resumo": [
+        "Cura um animal vivo voluntário: 1 ação por toque ou 2 ações a 9 m. A cura é 1d8 por ranque, com mais 8 por ranque na variante de 2 ações."
+      ],
+      "fonte": "player-core",
+      "pagina": 385,
+      "secoes": [
+        "pc1-pdf-386"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "efeitoCombate": {
+        "tipo": "cura",
+        "tipoCura": "vitalidade",
+        "ranqueBase": 1,
+        "variantes": {
+          "1": {
+            "formulaBase": "1d8",
+            "ampliacao": {
+              "intervalo": 1,
+              "formula": "1d8"
+            }
+          },
+          "2": {
+            "formulaBase": "1d8+8",
+            "ampliacao": {
+              "intervalo": 1,
+              "formula": "1d8+8"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cornucopia",
+      "nome": "Cornucópia",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "CORNUCÓPIA [2 ações] FOCO 1\n\nINCOMUM CONCENTRAÇÃO CURA DRUIDA FOCO MANUSEIO PLANTA VITALIDADE Duração 10 minutos Gavinhas se entrelaçam em um chifre de vime em suas mãos e derramam uma única fruta, noz ou fruto de tamanho semelhante. Quem comer desse fruto com uma ação de Interagir recupera 1d6+4 PVs. A cornucópia, assim como quaisquer pedaços de fruta não consumidos, murcham ao final da duração desta magia. Elevada (+1) A cornucópia produz um fruto adicional. É possível consumir qualquer quantidade de comida da mesma conjuração com uma única ação de Interagir. Comer seis frutos da cornucópia fornece tanto alimento quanto uma refeição substancial para um ser humano típico.",
+      "resumo": [
+        "Produz um fruto que cura 1d6+4 PV ao ser comido com Interagir; produz mais um fruto por ranque adicional e os frutos duram 10 minutos."
+      ],
+      "fonte": "player-core",
+      "pagina": 384,
+      "secoes": [
+        "pc1-pdf-385"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "transformacao-indomavel",
+      "nome": "Transformação Indomável",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "TRANSFORMAÇÃO INDOMÁVEL [1 ação] A [2 ações] FOCO 1\n\nINCOMUM CONCENTRAÇÃO DRUIDA FOCO MANUSEIO MORFIA Duração 1 minuto Você transforma apenas uma parte do seu corpo. Escolha qualquer efeito que corresponda a um talento da ordem indomável que você tem. • Forma indomada Suas mãos se transformam em garras bastante afiadas. Garras indomáveis são um ataque desarmado, têm os traços acuidade e ágil, e causam 1d6 de dano cortante. Você ainda pode segurar e usar itens com as mãos enquanto elas estiverem transformadas por esta magia, mas precisa ter uma mão livre para atacar com ela. • Aspecto de inseto Sua boca se transforma em mandíbulas mortais. Mandíbulas indomadas são um ataque desarmado que causa 1d8 de dano perfurante. • Aspecto de elemental Você muda seu corpo para se tornar parcialmente composto por matéria elemental, o que concede resistência 5 a acertos críticos e danos de precisão. • Aspecto de planta Os seus braços se transformam em longos cipós, aumentando seu alcance para 3 metros (ou 4,5 metros com uma arma de alcance). • Aspecto alado Ao conjurar esta magia usando duas ações você recebe este benefício. Asas crescem das suas costas, concedendo uma Velocidade de voo de 9 metros. Elevada (6º) Você pode escolher até dois efeitos da lista. Garras indomadas possibilitam ferimentos terríveis e irregulares que também causam 2d6 de dano persistente de sangramento se acertarem, e as mandíbulas indomadas são peçonhentas, também causando 2d6 de dano persistente de veneno se acertarem. Elevada (10º) Você pode escolher até três efeitos da lista. Garras indomadas causam 4d6 de dano persistente de sangramento se acertarem, e as mandíbulas indomadas causam 4d6 de dano persistente de veneno se acertarem.",
+      "resumo": [
+        "Transforma partes do corpo por 1 minuto conforme seus talentos; garras básicas causam 1d6 cortante. Aspecto alado requer 2 ações; ranques 6 e 10 permitem combinar efeitos."
+      ],
+      "fonte": "player-core",
+      "pagina": 385,
+      "secoes": [
+        "pc1-pdf-386",
+        "pc1-pdf-387"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "surto-de-tempestade",
+      "nome": "Surto de Tempestade",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "SURTO DE TEMPESTADE[2 ações] FOCO 1\n\nINCOMUM AR CONCENTRAÇÃO DRUIDA ELETRICIDADE FOCO MANUSEIO Distância 9 metros; Alvos 1 criatura Defesa Reflexos básico\n\nVocê envolve um adversário em uma tempestade rodopiante de ventos violentos, nuvens agitadas e relâmpagos crepitantes. Ela causa 1d12 de dano de eletricidade ao alvo, com direito a um salvamento básico de Reflexos. Em caso de falha, o alvo também fica desajeitado 2 por 1 rodada. Elevada (+1) O dano inicial aumenta em 1d12",
+      "resumo": [
+        "Um alvo a 9 m sofre 1d12 de eletricidade por ranque com Reflexos básico; falhar também causa desajeitado 2 por 1 rodada."
+      ],
+      "fonte": "player-core",
+      "pagina": 385,
+      "secoes": [
+        "pc1-pdf-386"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "efeitoCombate": {
+        "tipo": "dano",
+        "tipoDano": "eletricidade",
+        "ranqueBase": 1,
+        "formulaBase": "1d12",
+        "ampliacao": {
+          "intervalo": 1,
+          "formula": "1d12"
+        },
+        "salvamentoBasico": true
+      }
+    },
+    {
+      "id": "forma-indomavel",
+      "nome": "Forma Indomável",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "FORMA INDOMÁVEL [2 ações] FOCO 1\n\nINCOMUM CONCENTRAÇÃO DRUIDA FOCO MANUSEIO POLIMORFIA Duração varia Você busca por uma parte diferente de si mesmo e a liberta, transformando seu corpo em outra forma. Você se transforma em qualquer forma listada em forma de peste, com duração de 10 minutos. Todas as outras formas indomáveis duram 1 minuto. Você pode adicionar mais formas à sua lista de forma indomável com talentos de druida, que podem conceder algumas ou todas as formas de uma determinada magia de polimorfa. Quando assumir a forma concedida por uma magia, você recebe todos os efeitos dela, mas de uma versão elevada ao ranque da sua forma indomável. Forma indomável permite que você use seu próprio treinamento de metamorfose com mais facilidade do que a maioria das magias de polimorfia. Ao escolher usar seu próprio modificador de ataque enquanto estiver transformado, em vez do modificador de ataque padrão da forma, você recebe +2 de bônus de estado nos seus testes de ataque. Elevada (2º) Você pode se transformar nas formas listadas em forma de animal.",
+      "resumo": [
+        "Transforma em forma de peste por 10 minutos; a partir do ranque 2 inclui forma de animal. Outras formas duram 1 minuto; ao usar seu próprio ataque, recebe +2 de estado."
+      ],
+      "fonte": "player-core",
+      "pagina": 385,
+      "secoes": [
+        "pc1-pdf-386"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "guarita-de-protecao",
+      "nome": "Guarita de Proteção",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "GUARITA DE PROTEÇÃO [1 ação] FOCO 1\n\nINCOMUM AURA FOCO MAGO MANUSEIO Área emanação de 1,5 metro centrada em você Duração sustentada por até 1 minuto Você expande um anel de glifos que protege seus aliados. Você e todos os aliados dentro da área recebem +1 de bônus de estado na CA. Sempre que Sustentar esta Magia, o raio da emanação aumenta em 1,5 metro, até um máximo de 9 metros.",
+      "resumo": [
+        "Aura concede +1 de estado na CA a você e aliados; começa com 1,5 m e cresce 1,5 m a cada Sustentar, até 9 m, por até 1 minuto."
+      ],
+      "fonte": "player-core",
+      "pagina": 386,
+      "secoes": [
+        "pc1-pdf-387"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "embaralhar-corpo",
+      "nome": "Embaralhar Corpo",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "EMBARALHAR CORPO [2 ações] FOCO 1\n\nINCOMUM CONCENTRAÇÃO FOCO MAGO MANUSEIO Distância 9 metros; Alvos 1 criatura viva Defesa Fortitude Sua magia desorganiza a biologia da criatura, causando náusea, febre e outras condições desagradáveis. Sucesso O alvo não é afetado. Falha O alvo fica enjoado 1. Falha crítica O alvo fica enjoado 2, e desacelerado 1 enquanto estiver enjoado.",
+      "resumo": [
+        "Um alvo vivo a 9 m testa Fortitude: falha causa enjoado 1; falha crítica causa enjoado 2 e desacelerado 1 enquanto enjoado."
+      ],
+      "fonte": "player-core",
+      "pagina": 386,
+      "secoes": [
+        "pc1-pdf-387"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "fortificar-convocacao",
+      "nome": "Fortificar Convocação",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "FORTIFICAR CONVOCAÇÃO [1 ação] FOCO 1\n\nINCOMUM CONCENTRAÇÃO FOCO MAGO Distância 9 metros; Alvos 1 criatura que você convocou Ao convocar uma criatura, sua magia transforma o corpo dela, amplificando-lhe a ferocidade e a resiliência. O alvo recebe +1 de bônus de estado em todos os testes e CDs (incluindo a CA) enquanto a convocação durar, até 1 minuto.",
+      "resumo": [
+        "Uma criatura que você convocou a até 9 m recebe +1 de estado em testes e CDs, incluindo CA, enquanto a convocação durar, até 1 minuto."
+      ],
+      "fonte": "player-core",
+      "pagina": 387,
+      "secoes": [
+        "pc1-pdf-388"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "dardo-de-forca",
+      "nome": "Dardo de Força",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "DARDO DE FORÇA [1 ação] FOCO 1\n\nINCOMUM FOCO FORÇA MANUSEIO MAGO Distância 9 metros; Alvos 1 criatura Você dispara um dardo de força em forma de flecha, uma das formas mais comuns e confiáveis de magia bélica. Ele acerta automaticamente e causa 1d4+1 de dano de força. Elevada (+2) O dano aumenta em 1d4+1.",
+      "resumo": [
+        "Um alvo visível a 9 m é atingido automaticamente por 1d4+1 de força; aumenta 1d4+1 a cada 2 ranques."
+      ],
+      "fonte": "player-core",
+      "pagina": 386,
+      "secoes": [
+        "pc1-pdf-387"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "efeitoCombate": {
+        "tipo": "dano",
+        "tipoDano": "forca",
+        "ranqueBase": 1,
+        "formulaBase": "1d4+1",
+        "ampliacao": {
+          "intervalo": 2,
+          "formula": "1d4+1"
+        },
+        "salvamentoBasico": false
+      }
+    },
+    {
+      "id": "desnivelar",
+      "nome": "Desnivelar",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "DESNIVELAR [1 ação] A [3 ações] FOCO 1\n\nINCOMUM CONCENTRAÇÃO FOCO MAGO MANUSEIO TERRA Distância 18 metros; Área explosão de 1,5 metro ou mais Duração 1 minuto Com uma ondulação da terra, você ergue pequenas barreiras do solo. O chão da área se torna terreno difícil. A área desta magia é uma explosão de 1,5 metro se você gastar 1 ação para conjurá-la, de 3 metros se gastar 2 ações, ou de 4,5 metros se gastar 3 ações. Criaturas podem Interagir para eliminar as barreiras de um quadrado de 1,5 metro adjacente a elas. Elevada (4º) Você faz as barreiras flutuarem, fazendo com que a magia funcione como terreno difícil para criaturas voadoras.",
+      "resumo": [
+        "Cria terreno difícil por 1 minuto a até 18 m; explosão de 1,5/3/4,5 m conforme 1/2/3 ações. Interagir remove barreiras adjacentes; ranque 4 também atrapalha voo."
+      ],
+      "fonte": "player-core",
+      "pagina": 386,
+      "secoes": [
+        "pc1-pdf-387",
+        "pc1-pdf-388"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "impeto-cativante",
+      "nome": "Ímpeto Cativante",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "ÍMPETO CATIVANTE [1 ação] FOCO 1\n\nINCOMUM CONCENTRAÇÃO FOCO INCAPACITAÇÃO MAGO MENTAL Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração até o início do seu próximo turno Você empurra a mente do alvo para desviar a ira dele. O alvo precisa fazer um salvamento de Vontade. Sucesso crítico O alvo não é afetado. Sucesso O alvo sofre –1 de penalidade de circunstância em todos os testes de ataque e jogadas de dano contra você. Falha O alvo não pode usar ações hostis contra você. Falha crítica O alvo fica atordoado 1 e não pode usar ações hostis contra você.",
+      "resumo": [
+        "Vontade determina penalidade de ataque e dano contra você, proibição de ações hostis e possível atordoado 1; dura até o início do seu próximo turno."
+      ],
+      "fonte": "player-core",
+      "pagina": 387,
+      "secoes": [
+        "pc1-pdf-388"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "mao-do-aprendiz",
+      "nome": "Mão do Aprendiz",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "descricao": "MÃO DO APRENDIZ [1 ação] FOCO 1\n\nINCOMUM ATAQUE FOCO MAGO MANUSEIO Distância 150 metros; Alvos 1 criatura Defesa CA Você aproveita uma das lições mais fundamentais da magia para levitar e impulsionar sua arma. Você arremessa uma arma corpo a corpo com a qual é treinado, fazendo um teste de ataque com magia contra o alvo. Se obtiver um sucesso, você causa o dano da arma como se tivesse atingido com um Golpe corpo a corpo, mas adiciona seu modificador de atributo de conjuração ao dano, em vez do de Força. Se obtiver um sucesso crítico, você causa o dobro do dano e aplica o efeito de especialização de crítico da arma. Independente do resultado, a arma retorna voando para a sua mão.",
+      "resumo": [
+        "Arremessa uma arma corpo a corpo na qual é treinado até 150 m, usando ataque com magia e atributo de conjuração no dano; crítico dobra dano e aplica especialização. A arma retorna."
+      ],
+      "fonte": "player-core",
+      "pagina": 387,
+      "secoes": [
+        "pc1-pdf-388"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "contraperformance",
+      "nome": "Contraperformance",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "CONTRAPERFORMANCE [reação] FOCO 1\n\nINCOMUM BARDO COMPOSIÇÃO CONCENTRAÇÃO FOCO FORTÚNIO MENTAL Acionamento Você ou um aliado a até 18 metros faz um teste de salvamento contra um efeito auditivo ou visual. Área emanação de 18 metros Sua performance protege você e seus aliados. Faça um teste de Performance de um tipo apropriado: uma performance auditiva se o acionamento for auditivo ou uma visual, se o acionamento for visual. Você e aliados que estiverem na área podem usar o melhor resultado entre seu teste de Performance e o de salvamento.",
+      "resumo": [
+        "Reação a salvamento contra efeito auditivo ou visual: você e aliados na emanação de 18 m podem usar o melhor entre sua Performance e o próprio salvamento."
+      ],
+      "fonte": "player-core",
+      "pagina": 371,
+      "secoes": [
+        "pc1-pdf-372"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "composicao-prolongada",
+      "nome": "Composição Prolongada",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "descricao": "COMPOSIÇÃO PROLONGADA [ação livre] FOCO 1\n\nINCOMUM BARDO CONCENTRAÇÃO FOCO MOLDAMAGIA Musa maestro Você acrescenta um floreio à sua composição para prolongar os benefícios dela. Se a sua próxima ação for conjurar um Truque de composição com duração de 1 rodada, faça um teste de Performance. A CD normalmente é uma CD padrão do mesmo nível que o alvo de maior nível afetado por sua composição, mas o Mestre pode determinar uma CD a depender das circunstâncias. O efeito depende do resultado desse teste. Sucesso crítico A composição dura 4 rodadas. Sucesso A composição dura 3 rodadas. Falha A composição dura 1 rodada, mas você não gasta Ponto de Foco conjurando esta magia.",
+      "resumo": [
+        "Ação livre antes de um truque de composição de 1 rodada: Performance define duração de 1/3/4 rodadas; na falha não gasta Ponto de Foco."
+      ],
+      "fonte": "player-core",
+      "pagina": 371,
+      "secoes": [
+        "pc1-pdf-372"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "desvanecer-familiar",
+      "nome": "Desvanecer Familiar",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [],
+      "descricao": "DESVANECER FAMILIAR [reação] FOCO 1\n\nINCOMUM BRUXO FOCO MANUSEIO SORTILÉGIO Acionamento Seu familiar sofreria dano. Distância 18 metros; Alvos seu familiar Seu patrono transporta momentaneamente o seu familiar para o éter, alterando-o da sua forma física sólida para uma versão fantasmagórica de si mesmo. Contra o dano acionador, seu familiar adquire resistência 5 a todo tipo de dano e fica imune a dano de precisão. Elevada (+1) A resistência aumenta em +2.",
+      "resumo": [
+        "Reação quando seu familiar sofreria dano a até 18 m: contra esse dano recebe resistência 5 e imunidade a precisão; resistência aumenta 2 por ranque."
+      ],
+      "fonte": "player-core",
+      "pagina": 372,
+      "secoes": [
+        "pc1-pdf-373"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "fantoche-do-patrono",
+      "nome": "Fantoche do Patrono",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [],
+      "descricao": "FANTOCHE DO PATRONO [ação livre] FOCO 1\n\nINCOMUM BRUXO FOCO SORTILÉGIO Acionamento Seu turno começou. A seu pedido não proferido, seu patrono assume temporariamente o controle do seu familiar. Você Comanda seu familiar, permitindo que ele faça as ações normais dele neste turno. O Comando não tem os traços auditivo e concentração; seu patrono move o agente dele diretamente.",
+      "resumo": [
+        "Ação livre quando seu turno começa para Comandar o familiar sem os traços auditivo e concentração, permitindo as ações normais dele."
+      ],
+      "fonte": "player-core",
+      "pagina": 372,
+      "secoes": [
+        "pc1-pdf-373"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "lacaio-fantasmagorico",
+      "nome": "Lacaio Fantasmagórico",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "ocultista"
+      ],
+      "descricao": "LACAIO FANTASMAGÓRICO [3 ações] MAGIA 1\n\nCONCENTRAÇÃO CONVOCAÇÃO MANUSEIO Tradições arcana, ocultista Distância 18 metros Duração sustentada Convoca um lacaio fantasmagórico (ver caixa) de forma vagamente humanoide. Você pode optar por ele ser invisível ou ter aparência efêmera, mas é obviamente um efeito mágico, não uma criatura real.\n\nEstatísticas do lacaio: LACAIO FANTASMAGÓRICO CRIATURA –1 MÉDIO FORÇA ACÉFALO Percepção +0; visão no escuro Idiomas nenhum (entende o seu criador) Perícias Furtividade +8 For –4, Des +2, Con +0, Int –5, Sab +0, Car +0 Corpo de Força O corpo dos lacaios fantasmagóricos são compostos por força mágica. Eles não podem usar ações de ataque. Embora não tenham peso físico, podem se mover e usar ações de Interagir para fazer coisas como pegar objetos, abrir portas destrancadas que não estão emperradas, segurar cadeiras e limpar. Estas criaturas não conseguem atravessar objetos sólidos. CA 13; Fort +0, Ref +4, Von +0 PVs 4; Imunidades ataques mundanos, doença, espírito, inconsciente, mental, paralisia, precisão, veneno; Resistências todo dano 5 (exceto força ou toque fantasma) Velocidade voo 9 metros",
+      "resumo": [
+        "Convoca a até 18 m um lacaio sustentado, invisível ou efêmero. Não pode atacar; voa 9 m e usa Interagir para tarefas simples, sem atravessar objetos sólidos."
+      ],
+      "fonte": "player-core",
+      "pagina": 345,
+      "secoes": [
+        "pc1-pdf-346"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "comando",
+      "nome": "Comando",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "COMANDO [2 ações] MAGIA 1\n\nAUDITIVO CONCENTRAÇÃO LINGUÍSTICO MANUSEIO MENTAL Tradições arcana, divina, ocultista Distância 9 metros; Alvos 1 criatura Defesa Vontade; Duração até o fim do próximo turno do alvo Você emite um comando que é difícil de ignorar. Você pode ordenar que o alvo se aproxime de você, fuja (como se ele estivesse com a condição fugindo), solte o que está segurando, caia prostrado ou fique parado. Ele não pode Adiar ou usar quaisquer reações até que tenha obedecido ao seu comando. Os efeitos dependem do salvamento de Vontade do alvo. Sucesso A criatura não é afetada. Falha A criatura precisa gastar a primeira ação do próximo turno dela para obedecer ao seu comando. Falha crítica A criatura precisa gastar todas as ações do próximo turno dela para obedecer ao seu comando. Elevada (5º) Você pode visar até 10 criaturas.",
+      "resumo": [
+        "Um alvo testa Vontade para obedecer uma ordem simples; falha obriga uma ação especificada e falha crítica pode comprometer todas as ações do próximo turno."
+      ],
+      "fonte": "player-core",
+      "pagina": 324,
+      "secoes": [
+        "pc1-pdf-325"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "arma-runica",
+      "nome": "Arma Rúnica",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "descricao": "ARMA RÚNICA [2 ações] MAGIA 1\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, divina, ocultista, primal Distância toque; Alvos 1 arma desapossada ou empunhada por uma criatura voluntária Duração 1 minuto A arma brilha com magia enquanto runas temporárias surgem nela. O alvo torna-se uma arma +1 impactante, recebendo +1 de bônus de item nos testes de ataque e aumentando a quantidade de dados de dano para dois. Elevada (6º) A arma é +2 impactante maior. Elevada (9º) A arma é +3 impactante superior.",
+      "resumo": [
+        "Por 1 minuto, arma recebe benefícios mágicos de potência +1 e impactante, sem acumular com runas existentes do mesmo tipo."
+      ],
+      "fonte": "player-core",
+      "pagina": 315,
+      "secoes": [
+        "pc1-pdf-316",
+        "pc1-pdf-317"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "enfraquecer",
+      "nome": "Enfraquecer",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista"
+      ],
+      "descricao": "ENFRAQUECER [2 ações] MAGIA 1\n\nCONCENTRAÇÃO MANUSEIO Tradições arcana, divina, ocultista Distância 9 metros; Alvos 1 criatura Defesa Fortitude; Duração varia Você enfraquece o alvo, dependendo do resultado do salvamento de Fortitude dele. Sucesso crítico O alvo não é afetado. Sucesso O alvo fica enfraquecido 1 até o início do seu próximo turno. Falha O alvo fica enfraquecido 2 por 1 minuto Falha crítica O alvo fica enfraquecido 3 por 1 minuto",
+      "resumo": [
+        "Um alvo a 9 m testa Fortitude: sucesso causa enfraquecido 1 até seu próximo turno; falha causa enfraquecido 2 por 1 minuto e falha crítica, 3 por 1 minuto."
+      ],
+      "fonte": "player-core",
+      "pagina": 333,
+      "secoes": [
+        "pc1-pdf-334"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "lufada-de-vento",
+      "nome": "Lufada de Vento",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "LUFADA DE VENTO [2 ações] MAGIA 1\n\nAR CONCENTRAÇÃO MANUSEIO Tradições arcana, primal Área Linha de 18 metros Defesa Fortitude; Duração até o início do seu próximo turno Um vendaval violento sai de sua palma, soprando do ponto de onde você estava quando Conjurou esta Magia até a extremidade oposta da linha. O vento extingue pequenas chamas mundanas, dispersa neblina e névoa, leva embora objetos de Volume leve ou menor e empurra objetos maiores. Todas as criaturas Grandes ou menores que estiverem na área precisam fazer um salvamento de Fortitude. Criaturas Grandes ou menores que se moverem para a área da lufada precisam fazer esse teste ao entrar. Sucesso crítico A criatura não é afetada. Sucesso A criatura não pode se mover contra o vento. Falha A criatura cai prostrada. Se ela estiver voando, em vez disso, sofre os efeitos de uma falha crítica. Falha crítica A criatura é empurrada 9 metros na direção do vento, é derrubada prostrada e sofre 2d6 de dano contundente.",
+      "resumo": [
+        "Uma linha de vento exige Fortitude e pode impedir movimento contra o vento, derrubar ou repelir criaturas voadoras; extingue pequenas chamas mundanas."
+      ],
+      "fonte": "player-core",
+      "pagina": 346,
+      "secoes": [
+        "pc1-pdf-347"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "convocar-animal",
+      "nome": "Convocar Animal",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "arcana",
+        "primal"
+      ],
+      "descricao": "CONVOCAR ANIMAL [3 ações] MAGIA 1\n\nCONCENTRAÇÃO CONVOCAÇÃO MANUSEIO Tradições arcana, primal Distância 9 metros Duração sustentada por até 1 minuto Você conjura uma criatura para lutar por você. Ela precisa ter o traço animal e nível –1. Elevada Conforme listado no traço convocação (p. 325).",
+      "resumo": [
+        "Convoca um animal de nível −1 no ranque 1; sustentação mantém a convocação até 1 minuto e ranques maiores seguem os limites do traço convocação."
+      ],
+      "fonte": "player-core",
+      "pagina": 325,
+      "secoes": [
+        "pc1-pdf-326"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    },
+    {
+      "id": "convocar-planta-ou-fungo",
+      "nome": "Convocar Planta ou Fungo",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "magia",
+      "truque": false,
+      "foco": false,
+      "tradicoes": [
+        "primal"
+      ],
+      "descricao": "CONVOCAR PLANTA OU FUNGO [3 ações] MAGIA 1\n\nCONCENTRAÇÃO CONVOCAÇÃO MANUSEIO Tradições primal Distância 9 metros Duração sustentada por até 1 minuto Você conjura uma criatura para lutar por você. Ela precisa ter o traço fungo ou planta e nível –1. Elevada Conforme listado no traço convocação (p. 325).",
+      "resumo": [
+        "Convoca uma planta ou fungo de nível −1 no ranque 1; sustentação mantém a convocação até 1 minuto e ranques maiores seguem o traço convocação."
+      ],
+      "fonte": "player-core",
+      "pagina": 326,
+      "secoes": [
+        "pc1-pdf-327"
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false
+    }
+  ],
+  "talentos": [
+    {
+      "id": "bardo-performance-marcial",
+      "nome": "Performance Marcial",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "BARDO Pré-requisitos musa combatente Sua musa lhe ensinou a utilizar mais armas do que a maioria dos bardos, permitindo que você mescle sua performance com ferramentas de combate facilmente. Quando você tiver um truque mágico de composição antífona da coragem ativo e causar dano a um inimigo com um Golpe, a duração é estendida em 1 rodada. Cada conjuração pode ser estendida dessa forma apenas uma vez. Se adquirir o truque mágico de composição antífona instigadora ou canção de força, você também pode aplicar esse benefício a eles.",
+      "resumo": [],
+      "fonte": "player-core",
+      "pagina": 101,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-102"
+      ],
+      "classe": "bardo",
+      "efeitos": []
+    },
+    {
+      "id": "bardo-saber-bardico",
+      "nome": "Saber Bárdico",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "BARDO Pré-requisitos musa enigma Seus estudos lhe ensinaram sobre todos os assuntos. Você é treinado em Saber Bárdico, uma perícia de Saber especial que pode ser usada apenas para Recordar Conhecimento, mas sobre qualquer tópico. Se for lendário em Ocultismo, você se torna especialista em Saber Bárdico. Sua graduação de proficiência em Saber Bárdico não pode ser aumentada de nenhuma outra forma.",
+      "resumo": [],
+      "fonte": "player-core",
+      "pagina": 101,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-102"
+      ],
+      "classe": "bardo",
+      "efeitos": []
+    },
+    {
+      "id": "bardo-composicao-prolongada",
+      "nome": "Composição Prolongada",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "BARDO Pré-requisitos musa maestro Ao acrescentar um floreio, você faz suas composições durarem mais. Você adquire a magia de foco composição prolongada (p. 371).",
+      "resumo": [],
+      "fonte": "player-core",
+      "pagina": 101,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-102"
+      ],
+      "classe": "bardo",
+      "efeitos": [],
+      "magiasConcedidas": [
+        {
+          "id": "composicao-prolongada",
+          "tipo": "foco",
+          "graduacao": 1
+        }
+      ]
+    },
+    {
+      "id": "bardo-performance-versatil",
+      "nome": "Performance Versátil",
+      "nivel": 1,
+      "tipo": "classe",
+      "requisitos": "",
+      "descricao": "BARDO Pré-requisitos musa polímata Você confia na grandeza de suas performances em vez de perícias sociais convencionais. Você pode usar Performance, em vez de Diplomacia, para Impressionar; e no lugar de Intimidação para Desmoralizar. Você também pode usar uma Performance de atuação, em vez de Dissimulação, para Personificar. Além disso, você pode usar sua graduação de proficiência em Performance para atender aos pré-requisitos de talentos de perícia que exijam uma graduação de proficiência específica em Diplomacia, Dissimulação ou Intimidação.",
+      "resumo": [],
+      "fonte": "player-core",
+      "pagina": 101,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "pc1-pdf-102"
+      ],
+      "classe": "bardo",
+      "efeitos": []
+    }
+  ],
+  "patchesClasses": [
+    {
+      "classeId": "bardo",
+      "opcaoId": "combatente",
+      "magiasConcedidas": [
+        {
+          "id": "medo",
+          "nome": "medo",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": [
+        "bardo-performance-marcial"
+      ]
+    },
+    {
+      "classeId": "bardo",
+      "opcaoId": "enigma",
+      "magiasConcedidas": [
+        {
+          "id": "golpe-certeiro",
+          "nome": "golpe-certeiro",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": [
+        "bardo-saber-bardico"
+      ]
+    },
+    {
+      "classeId": "bardo",
+      "opcaoId": "maestro",
+      "magiasConcedidas": [
+        {
+          "id": "abrandar",
+          "nome": "abrandar",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": [
+        "bardo-composicao-prolongada"
+      ]
+    },
+    {
+      "classeId": "bardo",
+      "opcaoId": "polimata",
+      "magiasConcedidas": [
+        {
+          "id": "lacaio-fantasmagorico",
+          "nome": "Lacaio Fantasmagórico",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": [
+        "bardo-performance-versatil"
+      ]
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "guardiao-fe-irrefreavel",
+      "magiasConcedidas": [
+        {
+          "id": "avivar-o-coracao",
+          "nome": "Avivar o Coração",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "comando",
+          "nome": "Comando",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "sentinela-ermos",
+      "magiasConcedidas": [
+        {
+          "id": "palavra-dos-ermos",
+          "nome": "Palavra dos Ermos",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "inscrito",
+      "magiasConcedidas": [
+        {
+          "id": "discernir-segredos",
+          "nome": "Discernir Segredos",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "arma-runica",
+          "nome": "Arma Rúnica",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "ressentimento",
+      "magiasConcedidas": [
+        {
+          "id": "mau-olhado",
+          "nome": "Mau-Olhado",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "enfraquecer",
+          "nome": "Enfraquecer",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "silencio-invernal",
+      "magiasConcedidas": [
+        {
+          "id": "gelo-duradouro",
+          "nome": "Gelo Duradouro",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "lufada-de-vento",
+          "nome": "Lufada de Vento",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "sombra-inconstelada",
+      "magiasConcedidas": [
+        {
+          "id": "mortalha-da-noite",
+          "nome": "Mortalha da Noite",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "medo",
+          "nome": "medo",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "tecelao-destinos",
+      "magiasConcedidas": [
+        {
+          "id": "tocar-o-destino",
+          "nome": "Tocar o Destino",
+          "tipo": "truque",
+          "graduacao": 0,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "golpe-certeiro",
+          "nome": "golpe-certeiro",
+          "tipo": "magia",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "druida",
+      "opcaoId": "animais",
+      "magiasConcedidas": [
+        {
+          "id": "curar-animal",
+          "nome": "Curar Animal",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "druida",
+      "opcaoId": "folha",
+      "magiasConcedidas": [
+        {
+          "id": "cornucopia",
+          "nome": "Cornucópia",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "druida",
+      "opcaoId": "indomavel",
+      "magiasConcedidas": [
+        {
+          "id": "transformacao-indomavel",
+          "nome": "Transformação Indomável",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        },
+        {
+          "id": "forma-indomavel",
+          "nome": "Forma Indomável",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "druida",
+      "opcaoId": "tempestade",
+      "magiasConcedidas": [
+        {
+          "id": "surto-de-tempestade",
+          "nome": "Surto de Tempestade",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "ars-grammatica",
+      "magiasConcedidas": [
+        {
+          "id": "guarita-de-protecao",
+          "nome": "Guarita de Proteção",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "forma-proteana",
+      "magiasConcedidas": [
+        {
+          "id": "embaralhar-corpo",
+          "nome": "Embaralhar Corpo",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "limiares",
+      "magiasConcedidas": [
+        {
+          "id": "fortificar-convocacao",
+          "nome": "Fortificar Convocação",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "magia-belica",
+      "magiasConcedidas": [
+        {
+          "id": "dardo-de-forca",
+          "nome": "Dardo de Força",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "magia-civica",
+      "magiasConcedidas": [
+        {
+          "id": "desnivelar",
+          "nome": "Desnivelar",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "mentalismo",
+      "magiasConcedidas": [
+        {
+          "id": "impeto-cativante",
+          "nome": "Ímpeto Cativante",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    },
+    {
+      "classeId": "mago",
+      "opcaoId": "teoria-magica-unificada",
+      "magiasConcedidas": [
+        {
+          "id": "mao-do-aprendiz",
+          "nome": "Mão do Aprendiz",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ],
+      "talentosConcedidos": []
+    }
+  ],
+  "lacunas": [
+    "Magias revisadas podem ser concedidas na criação. Fórmulas de combate cobrem apenas curar animal, dardo de força e dano inicial do surto; demais efeitos condicionais ainda precisam motor, não cálculo manual.",
+    "Bruxo Sentinela exige escolha convocar animal ou convocar planta ou fungo; bruxo classe exige escolha desvanecer familiar ou fantoche do patrono.",
+    "Clérigo sacerdote enclausurado exige escolher domínio da divindade; magias de domínio ainda fora deste overlay."
+  ],
+  "escolhasObrigatorias": [
+    {
+      "classeId": "bruxo",
+      "id": "sortilegio-inicial",
+      "quantidade": 1,
+      "opcoes": [
+        "desvanecer-familiar",
+        "fantoche-do-patrono"
+      ],
+      "pagina": 112
+    },
+    {
+      "classeId": "bruxo",
+      "opcaoId": "sentinela-ermos",
+      "id": "magia-familiar-inicial",
+      "quantidade": 1,
+      "opcoes": [
+        "convocar-animal",
+        "convocar-planta-ou-fungo"
+      ],
+      "pagina": 114
+    }
+  ],
+  "magiasClasse": [
+    {
+      "classeId": "bardo",
+      "magiasConcedidas": [
+        {
+          "id": "contraperformance",
+          "tipo": "foco",
+          "graduacao": 1,
+          "nivelConcessao": 1,
+          "consomeVaga": false
+        }
+      ]
+    }
+  ]
+}

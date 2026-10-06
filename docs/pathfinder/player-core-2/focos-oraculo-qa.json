@@ -1,0 +1,853 @@
+{
+  "magias": [
+    {
+      "id": "toque-ancestral",
+      "nome": "Toque Ancestral",
+      "nomeOriginal": "Ancestral Touch",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "emocao",
+        "medo",
+        "manuseio",
+        "mental",
+        "oraculo"
+      ],
+      "alcance": "toque",
+      "alvos": "1 criatura viva",
+      "descricao": "Você toca uma criatura viva e a obriga a ver e sentir os ancestrais que o cercam. O alvo sofre 2d4 de dano mental e faz uma salvaguarda de Vontade.\n\nSucesso crítico: não é afetado. Sucesso: sofre metade do dano. Falha: sofre o dano completo e fica assustado 1. Falha crítica: sofre o dobro do dano e fica assustado 2.\n\nElevada (+1): o dano mental aumenta em 1d4.",
+      "resumo": [
+        "Toque em criatura viva; 2d4 mental contra Vontade.",
+        "Falha aplica assustado 1; falha crítica aplica assustado 2 e dobra o dano. Acrescenta 1d4 por círculo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "paginaFonteAon": 258,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2066",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-toque-ancestral"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "defesa": "vontade",
+        "danos": [
+          {
+            "tipo": "mental",
+            "quantidadeDados": 2,
+            "facesDados": 4,
+            "fixo": 0
+          }
+        ],
+        "resultadoSalvaguarda": {
+          "sucessoCritico": {
+            "multiplicadorDano": 0
+          },
+          "sucesso": {
+            "multiplicadorDano": 0.5
+          },
+          "falha": {
+            "multiplicadorDano": 1,
+            "condicoes": [
+              {
+                "id": "assustado",
+                "valor": 1
+              }
+            ]
+          },
+          "falhaCritica": {
+            "multiplicadorDano": 2,
+            "condicoes": [
+              {
+                "id": "assustado",
+                "valor": 2
+              }
+            ]
+          }
+        },
+        "elevacao": {
+          "passo": 1,
+          "aumentoDadosPorPasso": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "observacaoEditorial": "AoN referencia página 258; no PDF fornecido, esta entrada aparece na página impressa 259. As referências são mantidas separadas."
+    },
+    {
+      "id": "transe-da-arma",
+      "nome": "Transe da Arma",
+      "nomeOriginal": "Weapon Trance",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "concentracao",
+        "oraculo"
+      ],
+      "alcance": "pessoal",
+      "alvos": "você",
+      "descricao": "A serenidade da violência preenche sua mente, tornando claro onde suas armas precisam estar. Por 1 minuto, sua proficiência com armas marciais fica igual à sua proficiência com armas simples. A magia não concede um grau fixo nem aumenta armas simples; usa o grau que você já possui nessas armas.\n\nEsta entrada segue o texto Remaster vigente no Archives of Nethys: duração de 1 minuto. A impressão do PDF fornecido diz sustentada por até 1 minuto e acrescenta sustentação automática como ação livre na primeira vez que você acerta com um Golpe de arma em cada rodada. Essa sustentação não consta do texto atual do AoN; as duas versões não são combinadas.",
+      "resumo": [
+        "Durante 1 minuto, armas marciais usam sua proficiência com armas simples.",
+        "Texto vigente AoN não exige Sustentar; a impressão diferente do PDF está registrada."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "paginaFonteAon": 258,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2069",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-transe-da-arma"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "proficienciaTemporaria": {
+          "destino": "armas.marciais",
+          "igualAoCampo": "armas.simples"
+        },
+        "duracaoSegundos": 60,
+        "exigeSustentar": false,
+        "referenciaRegraVigente": "AoN Remaster 2069"
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "duracao": "1 minuto",
+      "observacaoEditorial": "AoN referencia página 258; no PDF fornecido, esta entrada aparece na página impressa 259. As referências são mantidas separadas. A duração e a sustentação diferem entre as fontes; adotado texto vigente AoN, mantendo divergência explícita."
+    },
+    {
+      "id": "sifao-da-alma",
+      "nome": "Sifão da Alma",
+      "nomeOriginal": "Soul Siphon",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "manuseio",
+        "oraculo",
+        "vazio"
+      ],
+      "alcance": "9 metros",
+      "alvos": "1 criatura viva",
+      "descricao": "Você retira uma parte da alma de uma criatura viva para reforçar sua própria vitalidade. O alvo faz uma salvaguarda de Fortitude contra 1d4 de dano de vazio. Você recebe PV temporários iguais ao total de PV realmente perdidos pelo alvo, incluindo os PV perdidos ao ficar drenado. Não use apenas o dano rolado para esse total: ele depende do resultado e das regras efetivamente aplicadas ao alvo.\n\nSucesso crítico: a criatura não é afetada. Sucesso: sofre metade do dano. Falha: sofre o dano completo e fica drenada 1. Falha crítica: sofre o dobro do dano e fica drenada 2.\n\nElevada (+1): o dano aumenta em 1d4.",
+      "resumo": [
+        "Dano de vazio contra Fortitude; falha aplica drenado 1, falha crítica drenado 2.",
+        "Ganha PV temporários iguais aos PV realmente perdidos pelo alvo, incluindo drenado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "paginaFonteAon": 258,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2072",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-sifao-da-alma"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "defesa": "fortitude",
+        "danos": [
+          {
+            "tipo": "vazio",
+            "quantidadeDados": 1,
+            "facesDados": 4,
+            "fixo": 0
+          }
+        ],
+        "resultadoSalvaguarda": {
+          "sucessoCritico": {
+            "multiplicadorDano": 0
+          },
+          "sucesso": {
+            "multiplicadorDano": 0.5
+          },
+          "falha": {
+            "multiplicadorDano": 1,
+            "condicoes": [
+              {
+                "id": "drenado",
+                "valor": 1
+              }
+            ]
+          },
+          "falhaCritica": {
+            "multiplicadorDano": 2,
+            "condicoes": [
+              {
+                "id": "drenado",
+                "valor": 2
+              }
+            ]
+          }
+        },
+        "pvTemporarios": {
+          "origem": "pv-realmente-perdidos-pelo-alvo",
+          "incluiPerdaPorDrenado": true
+        },
+        "elevacao": {
+          "passo": 1,
+          "aumentoDadosPorPasso": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "observacaoEditorial": "AoN referencia página 258; no PDF fornecido, esta entrada aparece na página impressa 259. As referências são mantidas separadas."
+    },
+    {
+      "id": "chuva-de-estrelas",
+      "nome": "Chuva de Estrelas",
+      "nomeOriginal": "Spray of Stars",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "concentracao",
+        "fogo",
+        "luz",
+        "manuseio",
+        "oraculo"
+      ],
+      "alcance": "cone de 4,5 metros",
+      "alvos": "criaturas na área",
+      "descricao": "Você lança um jato de pequenas estrelas cadentes em um cone de 4,5 metros, causando 2d4 de dano de fogo. Cada criatura na área faz uma salvaguarda de Reflexos.\n\nSucesso crítico: não é afetada. Sucesso: sofre metade do dano e fica ofuscada por 1 rodada. Falha: sofre o dano completo e fica ofuscada por 3 rodadas. Falha crítica: sofre o dobro do dano e fica ofuscada por 1 minuto.\n\nElevada (+1): o dano aumenta em 1d4.",
+      "resumo": [
+        "Cone de 4,5 metros: 2d4 fogo contra Reflexos.",
+        "Ofuscado dura 1 rodada no sucesso, 3 na falha e 1 minuto na falha crítica; crítico bem-sucedido evita tudo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "paginaFonteAon": 260,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2075",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-chuva-de-estrelas"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "defesa": "reflexos",
+        "area": {
+          "tipo": "cone",
+          "comprimentoMetros": 4.5
+        },
+        "danos": [
+          {
+            "tipo": "fogo",
+            "quantidadeDados": 2,
+            "facesDados": 4,
+            "fixo": 0
+          }
+        ],
+        "resultadoSalvaguarda": {
+          "sucessoCritico": {
+            "multiplicadorDano": 0
+          },
+          "sucesso": {
+            "multiplicadorDano": 0.5,
+            "condicoes": [
+              {
+                "id": "ofuscado",
+                "rodadas": 1
+              }
+            ]
+          },
+          "falha": {
+            "multiplicadorDano": 1,
+            "condicoes": [
+              {
+                "id": "ofuscado",
+                "rodadas": 3
+              }
+            ]
+          },
+          "falhaCritica": {
+            "multiplicadorDano": 2,
+            "condicoes": [
+              {
+                "id": "ofuscado",
+                "duracaoSegundos": 60
+              }
+            ]
+          }
+        },
+        "elevacao": {
+          "passo": 1,
+          "aumentoDadosPorPasso": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      }
+    },
+    {
+      "id": "vinculo-vital",
+      "nome": "Vínculo Vital",
+      "nomeOriginal": "Life Link",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "cura",
+        "manuseio",
+        "oraculo",
+        "vitalidade"
+      ],
+      "alcance": "9 metros",
+      "alvos": "1 criatura diferente de você",
+      "descricao": "Você conecta sua energia vital à de uma criatura diferente de você a até 9 metros, distribuindo o sofrimento entre ambos. Ao conjurar pela primeira vez, o alvo recupera 1d4 PV. Durante 1 minuto, na primeira vez em cada rodada que esse alvo sofre dano, reduza o dano em até 3, até o mínimo de 0. Você perde 3 PV, ou o total daquele dano se ele for menor que 3. Essa perda ignora suas imunidades e resistências e não pode ser mitigada de qualquer outra forma.\n\nA magia termina imediatamente se você ficar inconsciente. Você pode Dispensá-la.\n\nElevada (3º): pode afetar 2 criaturas diferentes de você; cura inicial 3d4 e redução/perda máximas de 5. Elevada (6º): 3 criaturas; cura inicial 6d4 e redução/perda máximas de 10. Elevada (9º): 4 criaturas; cura inicial 9d4 e redução/perda máximas de 15. Esses são patamares específicos, não aumentos contínuos a cada círculo.",
+      "resumo": [
+        "Cura inicial e vínculo de 1 minuto com outro alvo; absorve até 3 de seu primeiro dano por rodada.",
+        "A perda do conjurador não admite mitigação. Patamares 3, 6 e 9 ampliam alvos, cura e absorção."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "paginaFonteAon": 260,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2081",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-vinculo-vital"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "duracaoSegundos": 60,
+        "alvoExcluiConjurador": true,
+        "terminaSeConjuradorInconsciente": true,
+        "podeDispensar": true,
+        "limitePorRodadaPorAlvo": 1,
+        "transferencia": {
+          "maximo": 3,
+          "limitaAoDanoReal": true,
+          "naoPodeMitigarPerdaConjurador": true
+        },
+        "curaInicial": {
+          "quantidadeDados": 1,
+          "facesDados": 4,
+          "fixo": 0
+        },
+        "elevacao": {
+          "tipo": "patamares",
+          "patamares": [
+            {
+              "ranque": 3,
+              "alvos": 2,
+              "curaDados": 3,
+              "maximoTransferencia": 5
+            },
+            {
+              "ranque": 6,
+              "alvos": 3,
+              "curaDados": 6,
+              "maximoTransferencia": 10
+            },
+            {
+              "ranque": 9,
+              "alvos": 4,
+              "curaDados": 9,
+              "maximoTransferencia": 15
+            }
+          ]
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "duracao": "1 minuto"
+    },
+    {
+      "id": "drenar-mente",
+      "nome": "Drenar Mente",
+      "nomeOriginal": "Brain Drain",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "concentracao",
+        "manuseio",
+        "mental",
+        "oraculo"
+      ],
+      "alcance": "9 metros",
+      "alvos": "1 criatura",
+      "descricao": "Você investiga a mente de uma criatura a até 9 metros para obter conhecimento, causando 1d8 de dano mental com uma salvaguarda básica de Vontade. No sucesso crítico, não sofre dano; sucesso causa metade, falha causa dano completo e falha crítica causa o dobro.\n\nSe o alvo falhar na salvaguarda, você examina as memórias roubadas para tentar uma única verificação de Recordar Conhecimento. Escolha uma perícia que possua essa ação e use o modificador de perícia do alvo, em vez do seu. A revelação não concede treinamento permanente nem acesso irrestrito a toda a memória.\n\nElevada (+1): o dano mental aumenta em 1d8.",
+      "resumo": [
+        "1d8 mental contra Vontade básica, a até 9 metros.",
+        "Se o alvo falhar, uma verificação de Recordar Conhecimento usa o modificador de perícia dele."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "paginaFonteAon": 261,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2084",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-drenar-mente"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "defesa": "vontade",
+        "salvaguardaBasica": true,
+        "danos": [
+          {
+            "tipo": "mental",
+            "quantidadeDados": 1,
+            "facesDados": 8,
+            "fixo": 0
+          }
+        ],
+        "conhecimento": {
+          "gatilho": [
+            "falha",
+            "falhaCritica"
+          ],
+          "verificacoes": 1,
+          "acao": "recordar-conhecimento",
+          "origemModificador": "alvo",
+          "exigePericiaComAcao": true
+        },
+        "elevacao": {
+          "passo": 1,
+          "aumentoDadosPorPasso": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      }
+    },
+    {
+      "id": "toque-da-tempestade",
+      "nome": "Toque da Tempestade",
+      "nomeOriginal": "Tempest Touch",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "frio",
+        "manuseio",
+        "oraculo",
+        "agua"
+      ],
+      "alcance": "toque",
+      "alvos": "1 criatura",
+      "descricao": "Seu toque invoca uma massa turbulenta de água gelada que se prende ao alvo, causando 1d4 de dano contundente e 1d4 de frio. O alvo faz uma salvaguarda de Fortitude.\n\nSucesso crítico: não é afetado. Sucesso: sofre metade do dano e −1,5 metro de penalidade de circunstância a seus deslocamentos até o fim do seu próximo turno. Falha: sofre o dano completo e −3 metros de penalidade de circunstância a seus deslocamentos até o fim do seu próximo turno. Falha crítica: como falha, mas sofre o dobro do dano.\n\nElevada (+1): os danos contundente e de frio aumentam cada um em 1d4.",
+      "resumo": [
+        "Toque: dano contundente e frio contra Fortitude; cada tipo cresce separadamente.",
+        "Sucesso reduz deslocamentos em 1,5 metro; falha/crítico falho em 3 metros, até o fim do próximo turno do conjurador."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "paginaFonteAon": 261,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2087",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-toque-da-tempestade"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "defesa": "fortitude",
+        "danos": [
+          {
+            "tipo": "contundente",
+            "quantidadeDados": 1,
+            "facesDados": 4,
+            "fixo": 0
+          },
+          {
+            "tipo": "frio",
+            "quantidadeDados": 1,
+            "facesDados": 4,
+            "fixo": 0
+          }
+        ],
+        "resultadoSalvaguarda": {
+          "sucessoCritico": {
+            "multiplicadorDano": 0
+          },
+          "sucesso": {
+            "multiplicadorDano": 0.5,
+            "penalidadeDeslocamento": {
+              "tipo": "circunstancia",
+              "metros": -1.5,
+              "ate": "fim-proximo-turno-conjurador"
+            }
+          },
+          "falha": {
+            "multiplicadorDano": 1,
+            "penalidadeDeslocamento": {
+              "tipo": "circunstancia",
+              "metros": -3,
+              "ate": "fim-proximo-turno-conjurador"
+            }
+          },
+          "falhaCritica": {
+            "multiplicadorDano": 2,
+            "penalidadeDeslocamento": {
+              "tipo": "circunstancia",
+              "metros": -3,
+              "ate": "fim-proximo-turno-conjurador"
+            }
+          }
+        },
+        "elevacao": {
+          "passo": 1,
+          "aumentoDadosPorPassoPorTipo": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      }
+    },
+    {
+      "id": "imposicao-das-maos",
+      "nome": "Imposição das Mãos",
+      "nomeOriginal": "Lay on Hands",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "campeao",
+        "cura",
+        "manuseio",
+        "vitalidade"
+      ],
+      "alcance": "toque",
+      "alvos": "1 criatura viva disposta ou 1 morto-vivo",
+      "descricao": "Suas mãos se enchem de vitalidade capaz de curar uma criatura viva disposta ou ferir um morto-vivo com um toque.\n\nCriatura viva disposta: recupera 6 PV. Se for alguém diferente de você, também recebe +2 de bônus de estado à CA por 1 rodada.\n\nMorto-vivo: sofre 1d6 de dano de vitalidade com salvaguarda básica de Fortitude; em falha, também sofre −2 de penalidade de estado à CA por 1 rodada. A salvaguarda básica causa nenhum dano no crítico, metade no sucesso, completo na falha e dobro na falha crítica.\n\nElevada (+1): cura aumenta em 6 PV e dano contra morto-vivo aumenta em 1d6.",
+      "resumo": [
+        "Cura criatura viva disposta; outro alvo também recebe +2 de estado à CA por 1 rodada.",
+        "Contra morto-vivo, causa vitalidade contra Fortitude básica e penalidade à CA na falha; cresce por círculo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 257,
+      "paginaPdf": 257,
+      "paginaImpressa": 256,
+      "paginaFonteAon": 255,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2047",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-imposicao-das-maos"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "ramificacoes": [
+          {
+            "alvo": "criatura-viva-disposta",
+            "curaFixa": 6,
+            "bonusCa": {
+              "tipo": "estado",
+              "valor": 2,
+              "rodadas": 1,
+              "somenteOutroAlvo": true
+            }
+          },
+          {
+            "alvo": "morto-vivo",
+            "defesa": "fortitude",
+            "salvaguardaBasica": true,
+            "danos": [
+              {
+                "tipo": "vitalidade",
+                "quantidadeDados": 1,
+                "facesDados": 6,
+                "fixo": 0
+              }
+            ],
+            "naFalha": {
+              "bonusCa": {
+                "tipo": "estado",
+                "valor": -2,
+                "rodadas": 1
+              }
+            }
+          }
+        ],
+        "elevacao": {
+          "passo": 1,
+          "aumentoCuraFixa": 6,
+          "aumentoDadosDano": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "observacaoEditorial": "AoN referencia página 255; no PDF fornecido, esta entrada aparece na página impressa 256. As referências são mantidas separadas."
+    },
+    {
+      "id": "toque-do-vazio",
+      "nome": "Toque do Vazio",
+      "nomeOriginal": "Touch of the Void",
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "campeao",
+        "manuseio",
+        "vazio"
+      ],
+      "alcance": "toque",
+      "alvos": "1 morto-vivo disposto ou 1 criatura viva",
+      "descricao": "Você preenche o alvo com energia de vazio, curando um morto-vivo disposto ou ferindo uma criatura viva.\n\nMorto-vivo disposto: recupera 6 PV. Se o alvo for você, também recebe +2 de bônus de estado às rolagens de dano por 1 rodada. Esse bônus específico não é dado a outro alvo.\n\nCriatura viva: sofre 1d6 de dano de vazio com salvaguarda básica de Fortitude; em falha, também sofre −2 de penalidade de estado à CA por 1 rodada. A salvaguarda básica causa nenhum dano no crítico, metade no sucesso, completo na falha e dobro na falha crítica.\n\nElevada (+1): cura aumenta em 6 PV e dano contra criatura viva aumenta em 1d6.",
+      "resumo": [
+        "Cura morto-vivo disposto; se o próprio conjurador for o alvo, +2 de estado ao dano por 1 rodada.",
+        "Contra vivo, dano de vazio contra Fortitude básica e penalidade à CA na falha; cresce por círculo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 257,
+      "paginaPdf": 257,
+      "paginaImpressa": 256,
+      "paginaFonteAon": 255,
+      "referenciaAon": "https://2e.aonprd.com/Spells.aspx?ID=2048",
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "secoes": [
+        "magia-toque-do-vazio"
+      ],
+      "mecanicaFoco": {
+        "custoPontosFoco": 1,
+        "elevacaoAutomatica": "metade-do-nivel-arredondada-para-cima",
+        "ramificacoes": [
+          {
+            "alvo": "morto-vivo-disposto",
+            "curaFixa": 6,
+            "bonusDano": {
+              "tipo": "estado",
+              "valor": 2,
+              "rodadas": 1,
+              "somenteConjurador": true
+            }
+          },
+          {
+            "alvo": "criatura-viva",
+            "defesa": "fortitude",
+            "salvaguardaBasica": true,
+            "danos": [
+              {
+                "tipo": "vazio",
+                "quantidadeDados": 1,
+                "facesDados": 6,
+                "fixo": 0
+              }
+            ],
+            "naFalha": {
+              "bonusCa": {
+                "tipo": "estado",
+                "valor": -2,
+                "rodadas": 1
+              }
+            }
+          }
+        ],
+        "elevacao": {
+          "passo": 1,
+          "aumentoCuraFixa": 6,
+          "aumentoDadosDano": 1
+        }
+      },
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Concessão, ações e regras revisadas; executor de alvos, dano e efeitos temporários precisa usar as condições verificadas, sem bônus preenchidos por aproximação."
+      },
+      "observacaoEditorial": "AoN referencia página 255; no PDF fornecido, esta entrada aparece na página impressa 256. As referências são mantidas separadas."
+    }
+  ],
+  "auditoria": {
+    "escopo": "Sete magias de foco iniciais do Oráculo e duas devoções do Campeão ausentes no QA de concessões.",
+    "estado": "revisado-para-concessao",
+    "fontes": [
+      {
+        "idAon": 2066,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2066.txt",
+        "sha256Texto": "c116c6fad70b9da7275c45f702c44448c88a1c1f5702a7f7a8af67ee1e39c7c4"
+      },
+      {
+        "idAon": 2069,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2069.txt",
+        "sha256Texto": "7505ce42300ecec3ca570ec03cdd4ce31639a27cedb6920148019738ef7d3590"
+      },
+      {
+        "idAon": 2072,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2072.txt",
+        "sha256Texto": "98ee2db38c0236bb98fcfa0fe0ae57014ba0b8478a45533eeb68fb7e23817417"
+      },
+      {
+        "idAon": 2075,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2075.txt",
+        "sha256Texto": "f4a26d4cda22058394a2742a651516bc9d75aceae65b679c91a64d3cba56878a"
+      },
+      {
+        "idAon": 2081,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2081.txt",
+        "sha256Texto": "a9203bd4c073eace7555cceb81105dacdd9ef45e1ab8eeb0a2bda340a00d376f"
+      },
+      {
+        "idAon": 2084,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2084.txt",
+        "sha256Texto": "e2f1a796df5be0774236b90dd730c1f816aaebcd809e8abf17e0582e48b0d4d0"
+      },
+      {
+        "idAon": 2087,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2087.txt",
+        "sha256Texto": "a0f9459536927a76993c4b63a71ad54f971854cd65f314cb95e486d314238d1a"
+      },
+      {
+        "idAon": 2047,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2047.txt",
+        "sha256Texto": "864ada7330eefdf990170096cbcd239629e814df0b704dfc6f9425758e3a86d5"
+      },
+      {
+        "idAon": 2048,
+        "textoFonteLocal": "/workspace/artifacts/pathfinder-fontes/focos-qa/2048.txt",
+        "sha256Texto": "4429b998504b9b4f83f5f6ec3e0f556d803a811b25d3790dacae3d931f9e4670"
+      }
+    ],
+    "paginasPdfConferidasVisualmente": [
+      257,
+      260,
+      261,
+      262
+    ],
+    "paginasImpressasPdf": [
+      256,
+      259,
+      260,
+      261
+    ],
+    "divergencias": [
+      "As referências AoN de página diferem em três focos iniciais do Oráculo e nas devoções; paginaFonteAon e paginaImpressa ficam separadas.",
+      "Transe da Arma adota texto Remaster vigente AoN: duração 1 minuto. PDF tem duração sustentada e autosustentação ao acertar, registrada na descrição sem combinar regras."
+    ],
+    "limite": "Texto e mecânicas de fonte revisados; executor completo de combate condicional ainda precisa ser validado. Não calcular PV temporários ou transferência por fórmula inventada.",
+    "qaConcessoes": {
+      "casos": 58,
+      "classes": [
+        "oraculo",
+        "campeao"
+      ],
+      "niveis": [
+        1,
+        2
+      ],
+      "resultado": "PASS",
+      "escopo": "Overlay aplicado a cópia do catálogo em memória; nenhum bloqueio de magia desconhecida ou não revisada para os nove focos. Não declara ausência de outros erros da ficha nem execução completa de combate."
+    }
+  }
+}

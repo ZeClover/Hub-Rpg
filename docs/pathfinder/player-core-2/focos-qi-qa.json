@@ -1,0 +1,123 @@
+{
+  "magias": [
+    {
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "concentracao",
+        "foco",
+        "monge"
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Conferência visual da página impressa 257, física 258, do PDF Player Core 2 enviado; tradução manual em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Texto e concessão revisados; ação composta e estados temporários exigem executor próprio."
+      },
+      "id": "agitacao-interior",
+      "nome": "Agitação Interior",
+      "nomeOriginal": "Inner Upheaval",
+      "descricao": "Você concentra seu qi em ataques mágicos devastadores. Faça um Golpe desarmado ou uma Rajada de Golpes. Isso não altera o limite de uma única ação com o traço floreio por turno. Recebe +1 de estado nas jogadas de ataque desses Golpes, e cada Golpe causa 1d6 de dano adicional. Escolha o tipo de dano cada vez que Golpear: força, espiritual, vitalidade ou vazio. Elevada (+4): o dano adicional aumenta em 1d6.",
+      "resumo": [
+        "Uma ação faz um Golpe desarmado ou Rajada de Golpes, com +1 de estado no ataque e 1d6 de dano adicional por Golpe.",
+        "Escolha força, espiritual, vitalidade ou vazio por Golpe; o dano sobe 1d6 a cada quatro graduações. Rajada continua sujeita ao limite de floreio."
+      ],
+      "mecanica": {
+        "acaoComposta": [
+          "golpe-desarmado",
+          "rajada-de-golpes"
+        ],
+        "bonusAtaque": {
+          "tipo": "estado",
+          "valor": 1
+        },
+        "danoAdicional": {
+          "base": "1d6",
+          "elevacao": {
+            "intervalo": 4,
+            "formula": "1d6"
+          },
+          "tiposEscolha": [
+            "forca",
+            "espiritual",
+            "vitalidade",
+            "vazio"
+          ]
+        },
+        "naoIgnoraLimiteFloreio": true
+      }
+    },
+    {
+      "ranque": 1,
+      "nivel": 1,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "concentracao",
+        "foco",
+        "monge"
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "revisaoFonte": "Conferência visual da página impressa 257, física 258, do PDF Player Core 2 enviado; tradução manual em 2026-10-06.",
+      "automatizacaoCombate": {
+        "estado": "efeito-condicional-pendente",
+        "semCalculoManual": true,
+        "nota": "Texto e concessão revisados; ação composta e estados temporários exigem executor próprio."
+      },
+      "id": "impulso-de-qi",
+      "nome": "Impulso de Qi",
+      "nomeOriginal": "Qi Rush",
+      "descricao": "Acelerado por seu qi, você se move tão depressa que fica difícil enxergá-lo. Mova-se duas vezes: duas ações Andar, duas ações Passo, ou uma de cada, em qualquer ordem. Recebe a condição ocultado durante esse movimento e até o início do seu próximo turno.",
+      "resumo": [
+        "Uma ação permite dois movimentos: Andar e/ou Passo, em qualquer ordem.",
+        "Fica ocultado durante o movimento e até o início do próximo turno."
+      ],
+      "mecanica": {
+        "acaoCompostaMovimento": {
+          "quantidade": 2,
+          "opcoes": [
+            "andar",
+            "passo"
+          ],
+          "qualquerOrdem": true
+        },
+        "condicao": {
+          "id": "ocultado",
+          "ateInicioProximoTurno": true
+        }
+      }
+    }
+  ],
+  "auditoria": {
+    "fontePrimaria": "PDF enviado, parte 3, física 258/impressa 257",
+    "traducao": "manual",
+    "cobertura": "Duas magias iniciais de qi oferecidas pelo talento; execução de ação composta pendente."
+  }
+}
