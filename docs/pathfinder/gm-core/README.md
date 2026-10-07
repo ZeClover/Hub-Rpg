@@ -29,3 +29,11 @@ O vínculo da ficha é `runasEquipamento:{arma:{potencia,impactante},armadura:{p
 Poções de cura usam `mecanica:{tipo:'consumivel',acao:'curar',acoes:1,consomeQuantidade:1,cura:{expressao,quantidadeDados,facesDados,fixo},alvo}`. Essas estruturas conservam 1d8, 2d8+5, 3d8+10, 6d8+20 e 8d8+30. O executor deve validar posse/quantidade, disponibilidade da ação, alvo, imunidades aplicáveis, limites de PV e consumo único antes de persistir. Dados estruturados não são um executor nem comprovam integração publicada.
 
 Não há itens ápice nesse recorte: não foi inventado incremento de atributo a partir de descrições de artefatos. Propriedades condicionais, magias em itens e poderes de artefatos continuam pendentes de executores completos.
+
+## Ampliação editorial: construção e sombra
+
+O gerador agora contém 39 guias e 19 tabelas (mais uma nota). Foram acrescentadas seis tabelas conferidas: Furtividade/desativação de perigos e proficiência mínima (p.110), ofensiva de perigos (p.111), CA de criaturas (p.117), salvaguardas (p.118) e PV (p.118–119). As tabelas numéricas cobrem níveis −1 a 24; intervalos de PV/CD são preservados. Três guias adicionais explicam seleção de estatísticas e rotinas, sem criar estatísticas de personagem automaticamente.
+
+As runas sombra, sombra maior e sombra superior recebem dados mecânicos com +1, +2 e +3 de item em Furtividade, respectivamente (p.227), para armadura leve ou média investida. Ocupam propriedade, pertencem ao mesmo grupo sombra e não somam bônus. Passam a existir 25 entradas com estruturas executáveis; o motor ainda precisa validar capacidade, equipamento e investimento.
+
+Validação do gerador foi isolada, interceptando sua escrita: não houve regeneração pública nesta ampliação. Para integrar, executar `python docs/pathfinder/gm-core/reconstruir.py` e depois compilar o catálogo compartilhado. Ainda faltam tabelas de atributos, perícias, ataques/dano de criaturas, defesas de perigos e construção de itens; não declarar livro completo.

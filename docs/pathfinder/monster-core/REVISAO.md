@@ -3,8 +3,8 @@
 - **411 URLs únicas** da fonte AoN 221 capturadas sem falhas; IDs e URLs Remaster preservados.
 - **411 nomes editoriais em português**, mantendo nomes próprios sem tradução arbitrária. `nomeOriginal` identifica a entrada da fonte.
 - Todos os registros têm nível, página, PV, CA, percepção, seis modificadores de atributos e salvaguardas básicos. Traços genéricos traduzidos; nomes de povos e categorias próprios preservados.
-- **14 blocos mecânicos redigidos e revisados em português**, com ataques, ações, sentidos, imunidades, resistências, fraquezas e exceções aplicáveis.
-- **397 referências pendentes de redação e revisão das habilidades**; não são blocos de combate completos. Suas exceções de valores básicos podem estar ausentes. Devem consultar a fonte, sem importação como monstro completo.
+- **52 blocos mecânicos redigidos e revisados em português**, com ataques, ações, sentidos, imunidades, resistências, fraquezas e exceções aplicáveis.
+- **359 referências pendentes de redação e revisão das habilidades**; não são blocos de combate completos. Suas exceções de valores básicos podem estar ausentes. Devem consultar a fonte, sem importação como monstro completo.
 - Estado global `parcial`. Extração de HTML não equivale a tradução integral do livro.
 
 ## Blocos revisados
@@ -44,3 +44,7 @@ Traços de cimitarra conferidos no Player Core PT: **amplitude** e **enérgica**
 - `creditos.json` e `LICENCA.md`: atribuições e ORC.
 - `scripts/importar-pf2-monster-core.py`: captura reproduzível, quatro acessos concorrentes, cache e escrita atômica.
 - Originais ingleses: `/workspace/artifacts/pathfinder-fontes/monster-core`, fora da leitura pública.
+
+## Ampliação de 6 de outubro
+
+Mais 38 blocos receberam redação individual de ataques, ações e exceções, totalizando 52. Os IDs adicionais estão preservados em revisados.json; as 359 referências restantes continuam bloqueadas para importação. Tradução de habilidades não equivale à execução automática de cada ação de monstro.

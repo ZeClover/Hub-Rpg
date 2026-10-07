@@ -142,6 +142,22 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
       assert.ok((await equipado.page.locator('#rolagem-resultado').textContent()).includes('Sucesso crítico'));
       await equipado.page.locator('#rolagem-dano').click();assert.ok((await equipado.page.locator('#rolagem-resultado').textContent()).includes('(2d4+4)*2'));
       await equipado.page.locator('#rolagem-fechar').click();assert.deepEqual(equipado.errors,[]);await equipado.context.close();testes++;
+      {
+        const sombra=await ambiente({real:{pc1,pc2,gm,base:primeiraFichaReal}});
+        await sombra.page.locator('[data-aba="personagem"]').click();
+        await sombra.page.locator('[data-editar="armaduraId"]').selectOption('couro');
+        await sombra.page.locator('[data-editar="runasEquipamento.armadura.potencia"]').selectOption('runa-potencia-armadura-1');
+        await sombra.page.locator('[data-editar="armaduraInvestida"]').check();
+        await sombra.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
+        const furtividade=R.calcular(sombra.estado.dados,combinado).pericias.furtividade;
+        await sombra.page.locator('[data-editar="runasEquipamento.armadura.propriedade1"]').selectOption('runa-sombra');
+        await sombra.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
+        assert.equal(R.calcular(sombra.estado.dados,combinado).pericias.furtividade,furtividade+1);
+        await sombra.page.locator('[data-editar="armaduraInvestida"]').uncheck();
+        await sombra.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
+        assert.equal(R.calcular(sombra.estado.dados,combinado).pericias.furtividade,furtividade);
+        assert.deepEqual(sombra.errors,[]);await sombra.context.close();testes++;
+      }
       // A fonte PC1 completa pode ser atualizada antes dos índices gerados pelo build.
       // Este cenário usa regras reais e API simulada; os demais cenários reais validam a API canônica.
       const fonteEscudo=JSON.parse(await fs.readFile(path.join(raiz,'pathfinder/player-core.json'),'utf8'));

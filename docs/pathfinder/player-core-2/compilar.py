@@ -90,6 +90,8 @@ from automacao import aplicar
 aplicar(cat)
 from talentos_evolucao import aplicar as aplicar_talentos_evolucao
 aplicar_talentos_evolucao(cat)
+from talentos_intermediarios import aplicar as aplicar_talentos_intermediarios
+aplicar_talentos_intermediarios(cat)
 focos=json.loads((ROOT/'docs/pathfinder/player-core-1/focos-pc2-fixtures.json').read_text())
 for m in focos['magias']:
  m['paginaImpressa']=m['pagina'];m['pagina']=m['paginaPdf'];m['secoes']=['magia-'+m['id']]

@@ -563,6 +563,13 @@ for c in j['classes']:
    if gid not in grants or isinstance(g,dict):grants[gid]=g
   if 'talentosConcedidos' in r:r['talentosConcedidos']=list(grants.values())
 
+# Textos individuais revisados; pendências situacionais não entram no modo guiado.
+editorial = json.loads((ROOT/'docs/pathfinder/player-core-1/talentos-iniciais-editorial.json').read_text())
+por_id = {t['id']:t for t in j['talentos']}
+for entrada in editorial['talentos']:
+ if entrada['id'] not in por_id:raise ValueError('Talento editorial desconhecido: '+entrada['id'])
+ por_id[entrada['id']].update(entrada)
+
 # Cobertura declarada sem apresentar índices como dados revisados.
 j['cobertura']={'classes':8,'ancestralidades':8,'herancas':45,'biografias':40,'paginasNativas':470,'talentosRevisados':sum(t.get('revisao')=='revisado' for t in j['talentos']),'magiasRevisadas':sum(m.get('revisao')=='revisado' for m in j['magias']),'talentosIndexados':len(j['talentos']),'magiasIndexadas':len(j['magias']),'equipamentosRevisados':len(j['equipamentos'])}
 j['lacunas'].extend(['Não são revisados individualmente todos os talentos e magias indexados. Talentos/magias somente consulta não concedem efeitos na ficha.','Concessões iniciais estruturadas de musas, patronos, ordens, escolas e teses são revisadas; poderes condicionais, domínios e opções adicionais dependem dos respectivos overlays declarados.','Divindades, currículos detalhados, poderes de companheiros/familiares, dedicação multiclasse e condições situacionais exigem metadados adicionais, não interpretação automática de texto.','Equipamentos revisados cobrem as entradas declaradas na cobertura das tabelas iniciais; não equivalem a todos os itens de todos os suplementos.'])

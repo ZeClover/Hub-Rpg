@@ -221,11 +221,19 @@
       runas[tipo] = {};
       Object.keys(obj(obj(p.runasEquipamento)[tipo])).forEach(function (slot) {
         var idRuna = p.runasEquipamento[tipo][slot]; if (!idRuna) return;
-        var r = encontrar(catalogo, 'equipamentos', idRuna), m = obj(r && r.mecanica), familia = slot === 'reforco' ? 'reforcadora' : slot;
+        var r = encontrar(catalogo, 'equipamentos', idRuna), m = obj(r && r.mecanica), familia = slot === 'reforco' ? 'reforcadora' : /^propriedade[123]$/.test(slot) ? 'propriedade' : slot;
         if (!r || r.somenteConsulta === true || r.automatizavel !== true || m.tipo !== 'runa' || m.categoria !== tipo || m.familia !== familia || !equipamento[tipo] || tipo === 'armadura' && equipamento.armadura.id === 'sem-armadura') { problemas.push('Runa inválida ou sem equipamento-base: ' + idRuna + '.'); return; }
+        if (lista(m.restricoesArmadura).length && lista(m.restricoesArmadura).indexOf(equipamento[tipo].grau) === -1) { problemas.push('A runa ' + r.nome + ' não pode ser gravada nesta categoria de armadura.'); return; }
         if (m.exigeInvestimento && p.armaduraInvestida !== true) return;
         runas[tipo][slot] = copia(r);
       });
+    });
+    ['arma', 'armadura'].forEach(function (tipo) {
+      var propriedades = Object.keys(runas[tipo]).filter(function (slot) { return /^propriedade[123]$/.test(slot); });
+      var capacidade = numero(obj(obj(runas[tipo].potencia).mecanica).valor, 0), grupos = {}, invalido = propriedades.length > capacidade;
+      if (invalido) problemas.push('A quantidade de propriedades excede a potência de ' + tipo + '.');
+      propriedades.forEach(function (slot) { var m = obj(runas[tipo][slot].mecanica), grupo = m.propriedadeGrupo || runas[tipo][slot].id; if (grupos[grupo]) { invalido = true; problemas.push('Não combine versões da mesma propriedade: ' + grupo + '.'); } grupos[grupo] = true; });
+      if (invalido) propriedades.forEach(function (slot) { delete runas[tipo][slot]; });
     });
     var reforco = obj(obj(runas.escudo.reforco).mecanica).reforco || obj(runas.escudo.reforco).reforco;
     if (equipamento.escudo && reforco) {
@@ -311,7 +319,9 @@
     var graduacaoArma = grau(prof.armas[grauArma]);
     if (divindade && arma.id === (divindade.armaFavorecidaId || divindade.armaFavorecida)) graduacaoArma = Math.max(graduacaoArma, grau(prof.armas.simples));
     lista(classe && classe.proficienciasGruposArma).filter(function (r) { return r.nivel <= n && obj(p.escolhasClasse)[r.escolha] === arma.grupo; }).sort(function (a, b) { return a.nivel - b.nivel; }).forEach(function (r) { graduacaoArma = Math.max(graduacaoArma, grau(r[grauArma])); });
-    var efeitos = efeitosAtivos(p, catalogo, h, resolvido.equipamento, graduacaoArma), extrasTreino = ajuste(p, 'treinamentos', efeitos);
+    var efeitos = efeitosAtivos(p, catalogo, h, resolvido.equipamento, graduacaoArma);
+    ['arma', 'armadura'].forEach(function (tipo) { Object.keys(resolvido.runas[tipo]).forEach(function (slot) { if (/^propriedade[123]$/.test(slot)) efeitos = efeitos.concat(lista(obj(resolvido.runas[tipo][slot].mecanica).efeitos)); }); });
+    var extrasTreino = ajuste(p, 'treinamentos', efeitos);
     function total(alvo, atributo, g, extras) { return at[atributo] + proficiencia(g, n) + ajuste(p, alvo, [penalidadeEstado(c, atributo, alvo)].concat(efeitos, extras || [])); }
     var potenciaArmadura = numero(obj(obj(resolvido.runas.armadura.potencia).mecanica).valor, 0);
     var def = [{ alvo: 'ca', tipo: 'item', valor: numero(arm.ca, 0) + potenciaArmadura }, penalidadeEstado(c, 'des', 'ca')].concat(efeitos);

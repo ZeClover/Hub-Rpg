@@ -223,5 +223,14 @@
     "license": "Todos os direitos reservados · imagem de identificação do universo",
     "licenseUrl": "https://www.hogwartslegacy.com/en-gb/media",
     "modificacoes": "Miniatura WebP; representa Hogwarts, não uma edição oficial do RPG do Hub"
+  },
+  {
+    "arquivo": "/imagens/capas/pathfinder-remaster.webp",
+    "title": "Pathfinder Second Edition — Player Core (Remaster)",
+    "artist": "Paizo",
+    "source": "https://cdn.paizo.com/image/product/catalog/PZO/PZO12001.png",
+    "license": "Todos os direitos reservados · capa para identificação do sistema",
+    "licenseUrl": "https://paizo.com",
+    "modificacoes": "Miniatura WebP da imagem oficial"
   }
 ]

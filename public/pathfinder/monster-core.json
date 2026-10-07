@@ -7,7 +7,7 @@
     "estado": "parcial",
     "url": "https://2e.aonprd.com/Sources.aspx?ID=221",
     "totalCriaturas": 411,
-    "criaturasRevisadas": 14,
+    "criaturasRevisadas": 52,
     "licenca": "ORC — Open RPG Creative License. Regras e adaptações mecânicas sob ORC; marcas e material reservado permanecem com seus titulares.",
     "licencaUrl": "https://paizo.com/orclicense",
     "creditos": "Pathfinder Monster Core © 2024 Paizo Inc. Consulta: Archives of Nethys, fonte 221. Adaptação editorial das regras em português: Hub-Rpg, 2026. Créditos completos documentados em docs/pathfinder/monster-core/LICENCA.md.",
@@ -726,17 +726,87 @@
       "pericias": {
         "atletismo": 9
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Glaive",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d8+4",
+          "tipoDano": "cortante",
+          "tracos": [
+            "mortal d8",
+            "vigoroso",
+            "mágico",
+            "alcance 10 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Manopla",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            5,
+            1
+          ],
+          "dano": "1d6+4",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "mão livre",
+            "mágico"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Armadura de Construto",
+          "acoes": 0,
+          "descricao": "Dureza 9: reduz todo dano sofrido nesse valor. Quando os PV ficam abaixo da metade do máximo, ou imediatamente ao sofrer dano de um acerto crítico, a armadura quebra: perde a Dureza e sua CA passa a 13."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Construto animado: sua proteção quebra com dano crítico ou quando fica abaixo da metade dos PV."
       ],
       "fonte": "monster-core",
       "pagina": 18,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2819&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "719b63383d7ead8949dfc7b22863f7b5cddbf60f2116d58e56208f36e8a213c8"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "719b63383d7ead8949dfc7b22863f7b5cddbf60f2116d58e56208f36e8a213c8",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "efeitos de morte",
+        "doença",
+        "condenado",
+        "drenado",
+        "fatigado",
+        "cura",
+        "mental",
+        "ataques não letais",
+        "paralisado",
+        "veneno",
+        "enjoado",
+        "espírito",
+        "inconsciente",
+        "vitalidade",
+        "vazio"
+      ],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2894",
@@ -1312,17 +1382,54 @@
         "acrobacia": 6,
         "atletismo": 4
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 8,
+          "map": [
+            8,
+            4,
+            0
+          ],
+          "dano": "1d4+1",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil",
+            "acuidade"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Aura Luminescente",
+          "acoes": 0,
+          "descricao": "Traços aura e luz; raio 10 pés. Seus órgãos bioluminescentes iluminam a área com luz intensa."
+        },
+        {
+          "nome": "Clarão Luminoso",
+          "acoes": 1,
+          "descricao": "Traços concentração e luz. Todas as criaturas em sua aura devem passar em Fortitude CD 17 ou ficam ofuscadas por 1 minuto. Seu brilho se apaga, desativando a aura por 24 horas; nesse período, não pode usar Clarão Luminoso."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Besouro de nível −1: ilumina a área e pode gastar sua luz para ofuscar criaturas."
       ],
       "fonte": "monster-core",
       "pagina": 42,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2852&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "1c78917397bb63eecf178ebc48ccbf8dcc452368fe75d138ca6e4b129b86640d"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "1c78917397bb63eecf178ebc48ccbf8dcc452368fe75d138ca6e4b129b86640d",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2853",
@@ -1796,17 +1903,100 @@
         "furtividade": 8,
         "ladroagem": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Adaga",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            7,
+            3
+          ],
+          "dano": "1d4+6",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil",
+            "versátil cortante"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Foice",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            7,
+            3
+          ],
+          "dano": "1d4+6",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil",
+            "derrubar"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Adaga",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            6,
+            2
+          ],
+          "dano": "1d4+6",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil",
+            "arremesso 10 pés",
+            "versátil cortante"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ataque Furtivo",
+          "acoes": 0,
+          "descricao": "Causa 1d6 de dano de precisão adicional a criaturas desprevenidas."
+        },
+        {
+          "nome": "Finta Dupla",
+          "acoes": 2,
+          "descricao": "Faz um Golpe com cada uma de suas duas armas corpo a corpo contra o mesmo alvo. O alvo fica automaticamente desprevenido contra o segundo ataque. Aplica a penalidade por ataques múltiplos normalmente."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Bugbear de nível 3: combina armas ágeis, finta dupla e dano de precisão."
       ],
       "fonte": "monster-core",
       "pagina": 47,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2861&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "56882325d564ed245dd5e939e98b183e5622f2b02659cf26df5980517a4d154c"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "56882325d564ed245dd5e939e98b183e5622f2b02659cf26df5980517a4d154c",
+      "sentidos": [
+        "Visão no escuro",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Comum",
+        "Goblin"
+      ],
+      "equipamento": [
+        "Camisão de malha",
+        "Adaga",
+        "2 foices"
+      ]
     },
     {
       "id": "aon-monstro-2860",
@@ -1844,17 +2034,97 @@
         "intimidacao": 4,
         "furtividade": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Espada Bastarda",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d8+4",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "duas mãos d12"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Punho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            6,
+            2
+          ],
+          "dano": "1d4+4",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "não letal"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Azagaia",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 8,
+          "map": [
+            8,
+            3,
+            -2
+          ],
+          "dano": "1d6+4",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "arremesso 30 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Emboscada Brutal",
+          "acoes": 1,
+          "descricao": "Anda até 10 pés e tenta Agarrar uma criatura que não o detectou. Se tiver sucesso, também causa o dano de seu punho à criatura."
+        },
+        {
+          "nome": "Espancador",
+          "acoes": 0,
+          "descricao": "Recebe +3 de bônus de circunstância nas rolagens de dano contra criaturas que esteja agarrando."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Bugbear de nível 2: embosca vítimas desavisadas e causa mais dano enquanto as agarra."
       ],
       "fonte": "monster-core",
       "pagina": 47,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2860&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "7fb169f2216db7a8a5dd9fb338d65c2ea5a37dfef29fa7dacdd5ec2bc9c8e686"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "7fb169f2216db7a8a5dd9fb338d65c2ea5a37dfef29fa7dacdd5ec2bc9c8e686",
+      "sentidos": [
+        "Visão no escuro",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Comum",
+        "Goblin"
+      ],
+      "equipamento": [
+        "Espada bastarda",
+        "3 azagaias",
+        "Armadura de couro"
+      ]
     },
     {
       "id": "aon-monstro-2990",
@@ -2814,17 +3084,48 @@
         "atletismo": 2,
         "furtividade": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            1,
+            -4
+          ],
+          "dano": "1d4-1",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "acuidade"
+          ],
+          "efeito": "Veneno de Centopeia Gigante."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Veneno de Centopeia Gigante",
+          "acoes": 0,
+          "descricao": "Traço veneno. Fortitude CD 14; duração máxima 6 rodadas. Estágio 1: 1d4 de dano de veneno (1 rodada). Estágio 2: 1d4 de dano de veneno e desprevenido (1 rodada). Estágio 3: 1d4 de dano de veneno, desajeitado 1 e fatigado (1 rodada)."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Centopeia de nível −1: escala e injeta veneno que piora em estágios."
       ],
       "fonte": "monster-core",
       "pagina": 59,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2875&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "83c1420cb41a97b69398c36f47d56bc5ae74162b2e8120aa58543ebbfd4223fe"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "83c1420cb41a97b69398c36f47d56bc5ae74162b2e8120aa58543ebbfd4223fe",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3165",
@@ -3146,17 +3447,51 @@
         "acrobacia": 6,
         "furtividade": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 7,
+          "map": [
+            7,
+            3,
+            -1
+          ],
+          "dano": "1d6",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil",
+            "acuidade",
+            "alcance 0 pés"
+          ],
+          "efeito": "Veneno de Compsognato."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Veneno de Compsognato",
+          "acoes": 0,
+          "descricao": "Traço veneno. Fortitude CD 16; duração máxima 4 rodadas. Estágio 1: 1d6 de dano de veneno e enfraquecido 1 (1 rodada). Estágio 2: 1d8 de dano de veneno e enfraquecido 1 (1 rodada)."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Dinossauro de nível −1: pequeno predador com mordida ágil e veneno debilitante."
       ],
       "fonte": "monster-core",
       "pagina": 96,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2914&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "eb441a5a7ff4758e89c77dcfdab7065576a3a2640afef926493cb68c63b021e5"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "eb441a5a7ff4758e89c77dcfdab7065576a3a2640afef926493cb68c63b021e5",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2884",
@@ -3714,17 +4049,65 @@
         "atletismo": 11,
         "sobrevivencia": 9
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            6,
+            1
+          ],
+          "dano": "1d10+6",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": "Permite usar Derrubar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Derrubar",
+          "acoes": 1,
+          "descricao": "A última ação deve ter sido um Golpe bem-sucedido que indique Derrubar no dano. Tente Derrubar o alvo com Atletismo. Este teste não sofre nem aumenta a penalidade por ataques múltiplos."
+        },
+        {
+          "nome": "Sentido de Cristais",
+          "acoes": 0,
+          "descricao": "Percebe cristais ou gemas a até 60 pés como se usasse faro."
+        },
+        {
+          "nome": "Deslizar pela Terra",
+          "acoes": 0,
+          "descricao": "Pode Escavar qualquer matéria terrestre, incluindo rocha, com seu deslocamento de escavação completo. Não deixa túneis nem sinais de passagem."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Cão elemental de nível 3: atravessa terra e rocha e rastreia cristais."
       ],
       "fonte": "monster-core",
       "pagina": 142,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2977&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "fd6cf65bc7539704535bfd474ba7c09d3c40aa513073118b65baa6a2af84b91a"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "fd6cf65bc7539704535bfd474ba7c09d3c40aa513073118b65baa6a2af84b91a",
+      "sentidos": [
+        "Visão no escuro",
+        "Sentido de cristais impreciso 60 pés"
+      ],
+      "imunidades": [
+        "sangramento",
+        "paralisado",
+        "veneno",
+        "sono"
+      ],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Sobrevivência +11 para Rastrear, em vez de +9."
+      ]
     },
     {
       "id": "aon-monstro-3028",
@@ -3905,17 +4288,52 @@
         "atletismo": 12,
         "sobrevivencia": 10
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presa",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 14,
+          "map": [
+            14,
+            9,
+            4
+          ],
+          "dano": "2d8+6",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ferocidade",
+          "acoes": "reacao",
+          "descricao": "Gatilho: seria reduzido a 0 PV. Permanece com 1 PV em vez de cair inconsciente, mas aumenta seu valor de ferido em 1. Não pode usar esta reação quando estiver ferido 3."
+        },
+        {
+          "nome": "Investida do Daeodon",
+          "acoes": 2,
+          "descricao": "Anda duas vezes e faz um Golpe de presa. Se percorreu pelo menos 20 pés, recebe +2 de bônus de circunstância na jogada de ataque. Um alvo Médio ou menor atingido deve passar em Reflexos CD 19 ou fica caído."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Daeodon de nível 4: investe para derrubar e usa Ferocidade para evitar cair inconsciente."
       ],
       "fonte": "monster-core",
       "pagina": 43,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2855&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "ba651a640a1fd358a3ca545fddf3e286658b661e5aeab2fbaaa2e944847ecc7f"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "ba651a640a1fd358a3ca545fddf3e286658b661e5aeab2fbaaa2e944847ecc7f",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2888",
@@ -3998,17 +4416,72 @@
         "atletismo": 9,
         "furtividade": 7
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            4,
+            -1
+          ],
+          "dano": "2d6+3",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Garras",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            5,
+            1
+          ],
+          "dano": "1d6+3",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": "Mais 1d4 de sangramento persistente."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ataque Relâmpago",
+          "acoes": 1,
+          "descricao": "Anda até 10 pés e faz um Golpe, ou faz um Golpe e depois Anda até 10 pés."
+        },
+        {
+          "nome": "Vantagem do Predador",
+          "acoes": 0,
+          "descricao": "Criaturas que estejam sangrando ficam desprevenidas contra o deinonico."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Deinonico de nível 2: ataca em movimento e explora o sangramento da presa."
       ],
       "fonte": "monster-core",
       "pagina": 97,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2916&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "b374ff4da08707b784aa6c991df2da409f5a29c40a958364a071d901dc4944ac"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "b374ff4da08707b784aa6c991df2da409f5a29c40a958364a071d901dc4944ac",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Atletismo +12 para saltar, em vez de +9."
+      ]
     },
     {
       "id": "aon-monstro-2903",
@@ -6353,17 +6826,68 @@
         "atletismo": 6,
         "furtividade": 7
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            1,
+            -4
+          ],
+          "dano": "1d6+3",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Cauda",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            2,
+            -2
+          ],
+          "dano": "1d4+1",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": "Mais 1d4 de dano de eletricidade e Choque Atordoante em acerto crítico."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Choque Atordoante",
+          "acoes": 0,
+          "descricao": "Traço incapacitação. Uma criatura atingida criticamente pela cauda faz Fortitude CD 17. Sucesso crítico: nenhum efeito. Sucesso: atordoado 1. Falha: atordoado 2. Falha crítica: atordoado 3."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Enguia de nível 1: cauda elétrica que pode atordoar em acerto crítico."
       ],
       "fonte": "monster-core",
       "pagina": 138,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2970&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "7dfddb484b3e2f3d72c21d2765e8d7f71027d5159b564ea9e5de5a9879cd83be"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "7dfddb484b3e2f3d72c21d2765e8d7f71027d5159b564ea9e5de5a9879cd83be",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [
+        {
+          "tipo": "eletricidade",
+          "valor": 7
+        }
+      ],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3206",
@@ -7313,17 +7837,70 @@
       "pericias": {
         "atletismo": 11
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Punho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            6,
+            1
+          ],
+          "dano": "1d8+6",
+          "tipoDano": "contundente",
+          "tracos": [
+            "mágico"
+          ],
+          "efeito": "Permite usar Agarrar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Armadura de Construto",
+          "acoes": 0,
+          "descricao": "Dureza 6: reduz todo dano sofrido nesse valor. Quando os PV ficam abaixo da metade do máximo, ou imediatamente ao sofrer dano de um acerto crítico, a armadura quebra: perde a Dureza e sua CA passa a 15."
+        },
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Construto animado: sua proteção quebra com dano crítico ou quando fica abaixo da metade dos PV."
       ],
       "fonte": "monster-core",
       "pagina": 19,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2820&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "b82b3cade33542680d652c4310270bc6596c85ccff83e1cae4edf1e9e6266b2a"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "b82b3cade33542680d652c4310270bc6596c85ccff83e1cae4edf1e9e6266b2a",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "efeitos de morte",
+        "doença",
+        "condenado",
+        "drenado",
+        "fatigado",
+        "cura",
+        "mental",
+        "ataques não letais",
+        "paralisado",
+        "veneno",
+        "enjoado",
+        "espírito",
+        "inconsciente",
+        "vitalidade",
+        "vazio"
+      ],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2821",
@@ -7451,17 +8028,54 @@
         "acrobacia": 13,
         "furtividade": 11
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Asa",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            7,
+            3
+          ],
+          "dano": "1d8+4",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil",
+            "acuidade"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ataque Circular",
+          "acoes": 2,
+          "descricao": "Voa até metade de seu deslocamento de voo, faz dois Golpes de asa e Voa novamente até metade do deslocamento para retornar à posição original. A segunda metade do movimento não desencadeia reações. Ambos os ataques contam para a penalidade por ataques múltiplos, mas ela aumenta somente após ambos serem feitos."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Falcão elemental de nível 3: voa em círculo, ataca duas vezes e retorna sem provocar reações."
       ],
       "fonte": "monster-core",
       "pagina": 140,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2973&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "133207578af7b038797d74449393578b4b73f7e8ed18d2783c8471a1534fdd3c"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "133207578af7b038797d74449393578b4b73f7e8ed18d2783c8471a1534fdd3c",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "paralisado",
+        "veneno",
+        "sono"
+      ],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3008",
@@ -8572,17 +9186,72 @@
       "pericias": {
         "atletismo": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Focinho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            1,
+            -4
+          ],
+          "dano": "1d6+2",
+          "tipoDano": "contundente",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            1,
+            -4
+          ],
+          "dano": "1d6+2",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ecolocalização Aquática",
+          "acoes": 0,
+          "descricao": "Usa sua audição como sentido preciso a até 120 pés, somente debaixo d’água."
+        },
+        {
+          "nome": "Fôlego Profundo",
+          "acoes": 0,
+          "descricao": "Pode prender a respiração por 2 horas."
+        },
+        {
+          "nome": "Velocidade de Abalroamento",
+          "acoes": 2,
+          "descricao": "Nada duas vezes e faz um Golpe de focinho. Se percorreu pelo menos 20 pés, recebe +1 de bônus de circunstância na jogada de ataque. Uma criatura Grande ou menor atingida deve passar em Fortitude CD 16 ou fica lenta 1 por 1 rodada."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Golfinho de nível 0: localiza alvos debaixo d’água e os abalroa para reduzir suas ações."
       ],
       "fonte": "monster-core",
       "pagina": 103,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2926&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "2d6728dedfab1675354d5359c4e9fbc0fa8a6a9d80ad28b4f890b0e403e78d12"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "2d6728dedfab1675354d5359c4e9fbc0fa8a6a9d80ad28b4f890b0e403e78d12",
+      "sentidos": [
+        "Visão na penumbra",
+        "Ecolocalização aquática precisa 120 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3155",
@@ -8670,17 +9339,67 @@
         "atletismo": 11,
         "furtividade": 7
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Punho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            7,
+            3
+          ],
+          "dano": "2d6+4",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "alcance 10 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            6,
+            1
+          ],
+          "dano": "1d8+4",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "alcance 5 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Exibição Amedrontadora",
+          "acoes": 2,
+          "descricao": "Traços auditivo, emoção, medo e mental. Bate no peito; criaturas a até 30 pés fazem Vontade CD 20. Sucesso crítico: nenhum efeito e imunidade temporária por 1 minuto. Sucesso: nenhum efeito. Falha: assustado 1. Falha crítica: assustado 2. Enquanto estiver assustada por esta habilidade, a criatura está desprevenida contra o gorila."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Gorila de nível 3: intimida inimigos próximos e usa punhos ágeis com alcance."
       ],
       "fonte": "monster-core",
       "pagina": 23,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2827&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "4b6d8acd544f8eb38a605c5b25893ea6f1ea547f4e5bc2c4d796127ef7b9dd2f"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "4b6d8acd544f8eb38a605c5b25893ea6f1ea547f4e5bc2c4d796127ef7b9dd2f",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3125",
@@ -9367,17 +10086,72 @@
         "atletismo": 5,
         "medicina": 4
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Tridente",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 7,
+          "map": [
+            7,
+            2,
+            -3
+          ],
+          "dano": "1d8+2",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Tridente",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            4,
+            -1
+          ],
+          "dano": "1d8+2",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "arremesso 20 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Arrancada Aquática",
+          "acoes": 2,
+          "descricao": "Escolhe uma sequência: Nada duas vezes e faz um Golpe ao fim do movimento; ou Nada uma vez e faz um Golpe em qualquer ponto do movimento."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Guerreiro do povo-do-mar de nível 1: nada e ataca na mesma sequência."
       ],
       "fonte": "monster-core",
       "pagina": 231,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3097&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "6df896def5dec86bfeea509639ccacd94e19d5043cceeb372a9ca46d2dfe7aae"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "6df896def5dec86bfeea509639ccacd94e19d5043cceeb372a9ca46d2dfe7aae",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Comum",
+        "Talássico"
+      ],
+      "excecoesPericias": [
+        "Atletismo +7 para Nadar, em vez de +5."
+      ],
+      "equipamento": [
+        "2 tridentes"
+      ]
     },
     {
       "id": "aon-monstro-3039",
@@ -9657,17 +10431,73 @@
         "furtividade": 5,
         "ladroagem": 5
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Frigideira",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            4,
+            -1
+          ],
+          "dano": "1d4-1",
+          "tipoDano": "contundente",
+          "tracos": [
+            "fatal d8"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Bastão de Funda Halfling",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 7,
+          "map": [
+            7,
+            2,
+            -3
+          ],
+          "dano": "1d10-1",
+          "tipoDano": "contundente",
+          "tracos": [
+            "propulsivo",
+            "incremento de distância 80 pés",
+            "recarga 1"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Olhos Aguçados",
+          "acoes": 0,
+          "descricao": "Recebe +2 de bônus de circunstância ao Buscar criaturas escondidas ou não detectadas a até 30 pés. Ao atacar um alvo ocultado, reduz a CD do teste simples para 3; contra um alvo escondido, reduz para 9."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Vigia halfling de nível −1: detecta ameaças ocultas e usa funda e frigideira."
       ],
       "fonte": "monster-core",
       "pagina": 192,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3044&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "11639eb80fe8c4f41a16e125e054815f716d026e237b0f106dcf709f2f1c9282"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "11639eb80fe8c4f41a16e125e054815f716d026e237b0f106dcf709f2f1c9282",
+      "sentidos": [],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Comum",
+        "Halfling"
+      ],
+      "equipamento": [
+        "Frigideira",
+        "Bastão de funda halfling",
+        "Armadura de couro"
+      ]
     },
     {
       "id": "aon-monstro-3046",
@@ -9935,17 +10765,62 @@
         "atletismo": 12,
         "furtividade": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 12,
+          "map": [
+            12,
+            7,
+            2
+          ],
+          "dano": "1d10+5",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": "Permite usar Derrubar após acertar; Mordida Esmagadora de Ossos em acerto crítico."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Derrubar",
+          "acoes": 1,
+          "descricao": "A última ação deve ter sido um Golpe bem-sucedido que indique Derrubar no dano. Tente Derrubar o alvo com Atletismo. Este teste não sofre nem aumenta a penalidade por ataques múltiplos."
+        },
+        {
+          "nome": "Mordida Esmagadora de Ossos",
+          "acoes": 0,
+          "descricao": "Uma criatura atingida criticamente deve passar em Fortitude CD 20 ou fica ferida 1, pois suas mandíbulas esmagam ossos ou cartilagem."
+        },
+        {
+          "nome": "Arrastar",
+          "acoes": 1,
+          "descricao": "Faz um Golpe de mandíbulas contra um inimigo caído. Se acertar, além do dano, Anda até 10 pés e arrasta o inimigo junto."
+        },
+        {
+          "nome": "Ataque em Bando",
+          "acoes": 0,
+          "descricao": "Causa 1d6 de dano adicional a uma criatura ao alcance de pelo menos dois aliados do hyaenodon."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Hyaenodon de nível 3: derruba, arrasta e esmaga os ossos em acertos críticos."
       ],
       "fonte": "monster-core",
       "pagina": 205,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3066&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "718ef2966a494d3c1c5b0aa3c7eca9c2bf198b76b6adcdaa32e04eeb945017c5"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "718ef2966a494d3c1c5b0aa3c7eca9c2bf198b76b6adcdaa32e04eeb945017c5",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3050",
@@ -11240,17 +12115,97 @@
         "furtividade": 7,
         "sobrevivencia": 5
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Machado de Batalha",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d8+4",
+          "tipoDano": "cortante",
+          "tracos": [
+            "varredura"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            6,
+            2
+          ],
+          "dano": "1d8+2",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Arco Curto",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d6",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "mortal d10",
+            "incremento de distância 60 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ataque em Bando",
+          "acoes": 0,
+          "descricao": "Causa 1d4 de dano adicional a criaturas ao alcance de pelo menos dois aliados do caçador."
+        },
+        {
+          "nome": "Viagem em Terreno Acidentado",
+          "acoes": 0,
+          "descricao": "Ignora o primeiro quadrado de terreno difícil em que entra cada vez que Dá um Passo ou Anda."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Caçador kholo de nível 2: combate em bando e atravessa terreno difícil."
       ],
       "fonte": "monster-core",
       "pagina": 208,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3069&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "ae8c4727824805619afcc1c46f5ab1efcd1f2c7d01ce9578c87a68b9193f37aa"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "ae8c4727824805619afcc1c46f5ab1efcd1f2c7d01ce9578c87a68b9193f37aa",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Comum",
+        "Kholo"
+      ],
+      "equipamento": [
+        "Machado de batalha",
+        "Armadura de couro",
+        "Arco curto",
+        "20 flechas"
+      ]
     },
     {
       "id": "aon-monstro-3070",
@@ -11481,17 +12436,49 @@
         "atletismo": 5,
         "furtividade": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 8,
+          "map": [
+            8,
+            3,
+            -2
+          ],
+          "dano": "1d8+2",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Escalador Extraordinário",
+          "acoes": 0,
+          "descricao": "Seus pés permitem escalar praticamente qualquer superfície, por mais lisa ou íngreme. Uma falha crítica em Atletismo para Escalar torna-se falha."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Lagartixa de nível 1: escala superfícies difíceis e evita falhas críticas na escalada."
       ],
       "fonte": "monster-core",
       "pagina": 224,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3087&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "a0e45eff740094e0bce335b4f114f2f7b38a66c2575e2c23f713bf1242795cf9"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "a0e45eff740094e0bce335b4f114f2f7b38a66c2575e2c23f713bf1242795cf9",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Atletismo +9 para Escalar, em vez de +5."
+      ]
     },
     {
       "id": "aon-monstro-3089",
@@ -11528,17 +12515,67 @@
         "atletismo": 14,
         "furtividade": 10
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            11,
+            6
+          ],
+          "dano": "2d8+7",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "alcance 10 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Cauda",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            12,
+            8
+          ],
+          "dano": "2d6+7",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "alcance 10 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Exibição Intimidadora",
+          "acoes": 2,
+          "descricao": "Traços auditivo, emoção, medo, mental e visual. Anda. Se terminar adjacente a pelo menos uma outra criatura, abre sua gola colorida e sibila. Cada criatura adjacente faz Vontade CD 21; falha: assustado 2; falha crítica: assustado 3. Depois, a criatura fica temporariamente imune à Exibição Intimidadora por 1 minuto."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Lagarto de nível 5: aproxima-se e usa a gola para assustar criaturas adjacentes."
       ],
       "fonte": "monster-core",
       "pagina": 225,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3089&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "a45bb2a4b0ccd606e4c7f671aa4fce75dcd3ef50a3188746290b02f82fdc549b"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "a45bb2a4b0ccd606e4c7f671aa4fce75dcd3ef50a3188746290b02f82fdc549b",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3088",
@@ -11622,17 +12659,85 @@
         "atletismo": 7,
         "furtividade": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d10+3",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "acuidade"
+          ],
+          "efeito": "Permite usar Agarrar após acertar."
+        },
+        {
+          "nome": "Garra",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            6,
+            2
+          ],
+          "dano": "1d6+3",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil",
+            "acuidade"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        },
+        {
+          "nome": "Despedaçar",
+          "acoes": 1,
+          "descricao": "Faz dois Golpes de garra contra uma criatura que esteja agarrando. Ambos contam para a penalidade por ataques múltiplos, mas a penalidade aumenta somente depois dos dois ataques."
+        },
+        {
+          "nome": "Bote",
+          "acoes": 1,
+          "descricao": "Anda e faz um Golpe ao fim do movimento. Se começou escondido, permanece escondido até depois do Golpe."
+        },
+        {
+          "nome": "Ataque Furtivo",
+          "acoes": 0,
+          "descricao": "Causa 1d4 de dano de precisão adicional a criaturas desprevenidas."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Leopardo de nível 2: aproxima-se furtivamente, agarra e desfere duas garras."
       ],
       "fonte": "monster-core",
       "pagina": 50,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2865&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "24251ac979885ac199452cdb2efc07186591894b03bca94ec61dc4288983bde6"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "24251ac979885ac199452cdb2efc07186591894b03bca94ec61dc4288983bde6",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Furtividade +11 na vegetação rasteira, em vez de +8."
+      ]
     },
     {
       "id": "aon-monstro-2893",
@@ -12780,17 +13885,72 @@
         "acrobacia": 14,
         "atletismo": 19
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Punho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 21,
+          "map": [
+            21,
+            17,
+            13
+          ],
+          "dano": "2d8+10",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "alcance 20 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 21,
+          "map": [
+            21,
+            16,
+            11
+          ],
+          "dano": "2d10+10",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "alcance 10 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Dilacerar Mutilante",
+          "acoes": 2,
+          "descricao": "Faz dois Golpes de punho contra o mesmo alvo, aplicando normalmente a penalidade por ataques múltiplos. Se ambos acertarem, causa mais 2d6 de dano contundente; o alvo fica desprevenido e sofre –20 pés de penalidade de estado em todos os deslocamentos até o fim do próximo turno dele."
+        },
+        {
+          "nome": "Exibição Aterrorizante",
+          "acoes": 2,
+          "descricao": "Traços auditivo, emoção, medo e mental. Criaturas a até 50 pés fazem Vontade CD 27. Sucesso crítico: nenhum efeito e imunidade temporária por 1 minuto. Sucesso: nenhum efeito. Falha: assustado 1. Falha crítica: assustado 2 e fugindo até o fim do próximo turno. Enquanto estiver assustada por esta habilidade, a criatura está desprevenida contra o megaprimatus e gorilas."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Primata de nível 8: pune com dois punhos e espalha medo em uma área ampla."
       ],
       "fonte": "monster-core",
       "pagina": 23,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2828&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "ea5d6b4f8ca56f293432fba92c31575996e495ca28bfe5bd740e838e800d179e"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "ea5d6b4f8ca56f293432fba92c31575996e495ca28bfe5bd740e838e800d179e",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3031",
@@ -12973,17 +14133,69 @@
         "atletismo": 8,
         "furtividade": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            4,
+            -1
+          ],
+          "dano": "1d10+4",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Asa",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 9,
+          "map": [
+            9,
+            5,
+            1
+          ],
+          "dano": "1d6+4",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Ecolocalização",
+          "acoes": 0,
+          "descricao": "Usa a audição como sentido preciso a até 40 pés."
+        },
+        {
+          "nome": "Debater de Asas",
+          "acoes": "reacao",
+          "descricao": "Gatilho: um inimigo adjacente causa dano ao morcego. Faz um ou dois Golpes de asa: um contra a criatura que desencadeou a reação e, opcionalmente, outro contra uma segunda criatura adjacente."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Morcego de nível 2: localiza por audição e reage ao dano com ataques de asas."
       ],
       "fonte": "monster-core",
       "pagina": 40,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2849&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "ea921b97fa9cdaf0f5ba65fd9f39f4ad40f48d81f6da12642650b2d2dc27cf6a"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "ea921b97fa9cdaf0f5ba65fd9f39f4ad40f48d81f6da12642650b2d2dc27cf6a",
+      "sentidos": [
+        "Ecolocalização precisa 40 pés",
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2971",
@@ -13901,17 +15113,68 @@
         "atletismo": 12,
         "intimidacao": 9
       },
-      "ataques": [],
+      "ataques": [
+        {
+          "nome": "Gancho de Ogro",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 12,
+          "map": [
+            12,
+            7,
+            2
+          ],
+          "dano": "1d10+7",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "mortal d10",
+            "alcance 10 pés",
+            "derrubar"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Azagaia",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            1,
+            -4
+          ],
+          "dano": "1d6+7",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "arremesso 30 pés"
+          ],
+          "efeito": ""
+        }
+      ],
       "acoes": [],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Ogro de nível 3: gancho de longo alcance e seis azagaias."
       ],
       "fonte": "monster-core",
       "pagina": 250,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3118&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "6b08d96a1a8510f934533c5b418f9d38b7930edc2e3c6e1f5ce448cdc4bd65eb"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "6b08d96a1a8510f934533c5b418f9d38b7930edc2e3c6e1f5ce448cdc4bd65eb",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Jotun"
+      ],
+      "equipamento": [
+        "Armadura de peles",
+        "6 azagaias",
+        "Gancho de ogro"
+      ]
     },
     {
       "id": "aon-monstro-2898",
@@ -15310,17 +16573,47 @@
         "acrobacia": 10,
         "atletismo": 7
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Bico",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 10,
+          "map": [
+            10,
+            5,
+            0
+          ],
+          "dano": "1d10+3",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Rasante",
+          "acoes": 2,
+          "descricao": "Voa até seu deslocamento de voo e faz um Golpe de bico em qualquer ponto desse movimento."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Pteranodonte de nível 2: ataca com o bico durante um rasante."
       ],
       "fonte": "monster-core",
       "pagina": 278,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3151&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "a6120e621974b0a81af9d0c99f057a23d65c40aa8998e22b26c19580e75c2384"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "a6120e621974b0a81af9d0c99f057a23d65c40aa8998e22b26c19580e75c2384",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3032",
@@ -17442,17 +18735,79 @@
         "atletismo": 16,
         "furtividade": 12
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            11,
+            6
+          ],
+          "dano": "2d10+6",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": "Permite usar Agarrar após acertar."
+        },
+        {
+          "nome": "Garra",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            12,
+            8
+          ],
+          "dano": "2d8+6",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": "Permite usar Agarrar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        },
+        {
+          "nome": "Perfurar Armadura",
+          "acoes": 1,
+          "descricao": "Faz um Golpe de presas contra uma criatura agarrada ou restringida. Se acertar, deixa o alvo caído; se ele veste armadura de Dureza 10 ou menor, a armadura fica quebrada. Se o Golpe quebrar a armadura ou causar dano a um alvo sem armadura ou com armadura quebrada, também causa 2d6 de sangramento persistente. Não causa dano adicional a uma armadura já quebrada."
+        },
+        {
+          "nome": "Bote",
+          "acoes": 1,
+          "descricao": "Anda e faz um Golpe ao fim do movimento. Se começou escondido, permanece escondido até depois do Golpe."
+        },
+        {
+          "nome": "Ataque Furtivo",
+          "acoes": 0,
+          "descricao": "Causa 1d6 de dano de precisão adicional a criaturas desprevenidas."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Smilodon de nível 6: agarra, derruba, quebra armaduras e provoca sangramento."
       ],
       "fonte": "monster-core",
       "pagina": 51,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2868&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "b26073ca88d9e4e9e642bc14b6253c859fefa49972e1a1e01f53106b384795eb"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "b26073ca88d9e4e9e642bc14b6253c859fefa49972e1a1e01f53106b384795eb",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 60 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3186",
@@ -17584,17 +18939,79 @@
         "natureza": 3,
         "furtividade": 5
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Garra",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 7,
+          "map": [
+            7,
+            3,
+            -1
+          ],
+          "dano": "1d4+1",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil",
+            "acuidade",
+            "alcance 0 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Lasca",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 7,
+          "map": [
+            7,
+            2,
+            -3
+          ],
+          "dano": "1d4",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "incremento de distância 30 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Salto entre Espinheiros",
+          "acoes": 3,
+          "descricao": "Traços planta, primal, teleporte e madeira. Requer estar na vegetação rasteira. Entra na vegetação e se teleporta instantaneamente para um quadrado de vegetação rasteira a até 60 pés. Esse movimento não desencadeia reações."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Pequena fada vegetal de nível −1: atira lascas e se teleporta entre trechos de vegetação."
       ],
       "fonte": "monster-core",
       "pagina": 332,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3221&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "4ef2dc79e3b5c1066ea484891b1d390dae61d90ad07ec46163a78bb21543d04c"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "4ef2dc79e3b5c1066ea484891b1d390dae61d90ad07ec46163a78bb21543d04c",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [
+        {
+          "tipo": "machados",
+          "valor": 2
+        },
+        {
+          "tipo": "fogo",
+          "valor": 2
+        }
+      ],
+      "idiomas": [
+        "Comum",
+        "Feérico"
+      ]
     },
     {
       "id": "aon-monstro-3210",
@@ -17832,17 +19249,73 @@
         "atletismo": 16,
         "furtividade": 11
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 17,
+          "map": [
+            17,
+            12,
+            7
+          ],
+          "dano": "2d8+8",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": "Veneno de Tarântula Gigante."
+        },
+        {
+          "nome": "Perna",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 17,
+          "map": [
+            17,
+            12,
+            7
+          ],
+          "dano": "1d12+8",
+          "tipoDano": "contundente",
+          "tracos": [
+            "alcance 10 pés"
+          ],
+          "efeito": "Permite usar Derrubar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Derrubar",
+          "acoes": 1,
+          "descricao": "A última ação deve ter sido um Golpe bem-sucedido que indique Derrubar no dano. Tente Derrubar o alvo com Atletismo. Este teste não sofre nem aumenta a penalidade por ataques múltiplos."
+        },
+        {
+          "nome": "Veneno de Tarântula Gigante",
+          "acoes": 0,
+          "descricao": "Traço veneno. Fortitude CD 23; duração máxima 8 rodadas. Estágio 1: 1d10 de dano de veneno (1 rodada). Estágio 2: 1d12 de dano de veneno, desajeitado 1 e desprevenido (1 rodada). Estágio 3: 2d6 de dano de veneno, desajeitado 2 e desprevenido (1 rodada). Estágio 4: 2d6 de dano de veneno e paralisado (1 rodada)."
+        },
+        {
+          "nome": "Barragem de Pelos",
+          "acoes": 2,
+          "descricao": "Lança pelos espinhosos em um cone de 15 pés. Causa 4d6 de dano perfurante; salvaguarda básica de Reflexos CD 25."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Tarântula de nível 6: derruba, envenena e lança pelos em um cone."
       ],
       "fonte": "monster-core",
       "pagina": 321,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3208&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "8781364610552932bd666b29d6e14e6ea00e082b88f1e5e926c1b120c5954e57"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "8781364610552932bd666b29d6e14e6ea00e082b88f1e5e926c1b120c5954e57",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3215",
@@ -18486,17 +19959,61 @@
         "furtividade": 11,
         "sobrevivencia": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            6,
+            1
+          ],
+          "dano": "1d12+7",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": "Permite usar Agarrar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        },
+        {
+          "nome": "Mergulho Profundo",
+          "acoes": 1,
+          "descricao": "Nada duas vezes em linha reta para baixo. Se mantém uma criatura agarrada ou restringida, leva-a junto."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Tubarão elemental de nível 3: agarra a vítima e a arrasta para as profundezas."
       ],
       "fonte": "monster-core",
       "pagina": 148,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2989&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "2c26e935c53403a882240fcea507e100b1f60a8ed31a3bfc659b780663589430"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "2c26e935c53403a882240fcea507e100b1f60a8ed31a3bfc659b780663589430",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "paralisado",
+        "veneno",
+        "sono"
+      ],
+      "resistencias": [
+        {
+          "tipo": "fogo",
+          "valor": 5
+        }
+      ],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3188",
@@ -18724,17 +20241,74 @@
         "atletismo": 16,
         "sobrevivencia": 11
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            11,
+            6
+          ],
+          "dano": "2d10+6",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Garra",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            12,
+            8
+          ],
+          "dano": "2d8+6",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": "Permite usar Agarrar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        },
+        {
+          "nome": "Espancador",
+          "acoes": 0,
+          "descricao": "Recebe +4 de bônus de circunstância nas rolagens de dano contra criaturas que esteja agarrando."
+        },
+        {
+          "nome": "Arrancada",
+          "acoes": 2,
+          "descricao": "Anda e faz um Golpe ao fim do movimento. Durante esse Andar, recebe +10 pés de bônus de circunstância no deslocamento."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Urso de nível 6: agarra com as garras e causa dano adicional à presa agarrada."
       ],
       "fonte": "monster-core",
       "pagina": 41,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2851&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "2183025ac08aac251452ff43c08f2527ce922718e82c50caac217a152669a759"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "2183025ac08aac251452ff43c08f2527ce922718e82c50caac217a152669a759",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3237",
@@ -19131,17 +20705,72 @@
       "pericias": {
         "atletismo": 5
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Cerdas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            2,
+            -2
+          ],
+          "dano": "1d4",
+          "tipoDano": "contundente",
+          "tracos": [
+            "ágil",
+            "mágico",
+            "acuidade"
+          ],
+          "efeito": "Poeira."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Armadura de Construto",
+          "acoes": 0,
+          "descricao": "Dureza 2: reduz todo dano sofrido nesse valor. Quando os PV ficam abaixo da metade do máximo, ou imediatamente ao sofrer dano de um acerto crítico, a armadura quebra: perde a Dureza e sua CA passa a 13."
+        },
+        {
+          "nome": "Poeira",
+          "acoes": 0,
+          "descricao": "Uma criatura atingida pelas cerdas deve passar em Fortitude CD 15 ou gastar sua próxima ação tossindo. Mesmo atingida por várias aplicações, gasta somente 1 ação para limpar a poeira. Criaturas que não respiram são imunes."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Construto animado: sua proteção quebra com dano crítico ou quando fica abaixo da metade dos PV."
       ],
       "fonte": "monster-core",
       "pagina": 18,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2818&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "4bf6a895947c3e55e83cb68527b5589928e235027812176ddda4d0cc995cf658"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "4bf6a895947c3e55e83cb68527b5589928e235027812176ddda4d0cc995cf658",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "efeitos de morte",
+        "doença",
+        "condenado",
+        "drenado",
+        "fatigado",
+        "cura",
+        "mental",
+        "ataques não letais",
+        "paralisado",
+        "veneno",
+        "enjoado",
+        "espírito",
+        "inconsciente",
+        "vitalidade",
+        "vazio"
+      ],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-2915",
@@ -19178,17 +20807,75 @@
         "atletismo": 5,
         "furtividade": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Mandíbulas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 8,
+          "map": [
+            8,
+            3,
+            -2
+          ],
+          "dano": "1d6+3",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "acuidade"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Garras",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 8,
+          "map": [
+            8,
+            4,
+            0
+          ],
+          "dano": "1d4+3",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil",
+            "acuidade"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Investida Saltadora",
+          "acoes": 1,
+          "descricao": "Anda até 10 pés, ignorando terreno difícil ao saltar sobre obstáculos, e faz um Golpe de garras com +1 de bônus de circunstância na jogada de ataque."
+        },
+        {
+          "nome": "Ataque em Bando",
+          "acoes": 0,
+          "descricao": "Causa 1d4 de dano adicional a criaturas ao alcance de pelo menos dois de seus aliados."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Velociraptor de nível 1: salta obstáculos para atacar e se beneficia do bando."
       ],
       "fonte": "monster-core",
       "pagina": 96,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2915&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "289d545c1c8480e9dfadb98472e822d9fd103b28d9cec3c18b14202c8030bc5e"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "289d545c1c8480e9dfadb98472e822d9fd103b28d9cec3c18b14202c8030bc5e",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Atletismo +8 para saltar, em vez de +5."
+      ]
     },
     {
       "id": "aon-monstro-2892",
@@ -19464,17 +21151,58 @@
         "acrobacia": 11,
         "atletismo": 9
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Ferrão",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 12,
+          "map": [
+            12,
+            7,
+            2
+          ],
+          "dano": "1d12+4",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "veneno"
+          ],
+          "efeito": "Veneno de Vespa Gigante."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Veneno de Vespa Gigante",
+          "acoes": 0,
+          "descricao": "Traços incapacitação e veneno. Fortitude CD 19; duração máxima 6 rodadas. Estágio 1: nenhum efeito (1 rodada). Estágio 2: desajeitado 2 (1 rodada). Estágio 3: paralisado (1 rodada)."
+        },
+        {
+          "nome": "Implantar Ovos",
+          "acoes": 1,
+          "descricao": "Põe ovos em uma criatura adjacente paralisada ou inconsciente, expondo-a à doença Larva de Vespa."
+        },
+        {
+          "nome": "Larva de Vespa",
+          "acoes": 0,
+          "descricao": "Traço doença. Fortitude CD 21. Estágio 1: portador sem efeitos nocivos (1d6 dias). Estágio 2: drenado 1 (1d4 dias). Estágio 3: 5d6 de dano; a larva emerge e a doença termina."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Vespa de nível 3: paralisa com veneno e pode implantar ovos em vítimas incapacitadas."
       ],
       "fonte": "monster-core",
       "pagina": 343,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3233&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "3cdaa2840d974cc14206b42d620c2b52e828479b3d3ac03932e8aa8d53c612ec"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "3cdaa2840d974cc14206b42d620c2b52e828479b3d3ac03932e8aa8d53c612ec",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3104",
@@ -19766,17 +21494,59 @@
         "furtividade": 5,
         "sobrevivencia": 3
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 6,
+          "map": [
+            6,
+            2,
+            -2
+          ],
+          "dano": "1d8-3",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "ágil",
+            "acuidade",
+            "alcance 0 pés"
+          ],
+          "efeito": "Veneno de Víbora."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Esgueirar-se",
+          "acoes": "reacao",
+          "descricao": "Gatilho: uma criatura termina seu movimento adjacente à víbora ou no espaço dela. A víbora Anda, Escala ou Nada até 10 pés, limitado ao deslocamento relevante se ele for menor. Deve terminar em um lugar que não esteja a até 5 pés de um inimigo. Esse movimento não desencadeia reações."
+        },
+        {
+          "nome": "Veneno de Víbora",
+          "acoes": 0,
+          "descricao": "Traço veneno. Fortitude CD 16; duração máxima 4 rodadas. Estágio 1: 1d8 de dano de veneno (1 rodada)."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Víbora de nível −1: morde com veneno e se afasta em reação à aproximação."
       ],
       "fonte": "monster-core",
       "pagina": 316,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3200&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "4f93e992a50f76f6928ef4b71d060a6df61ea4a345dab931f423de928c589da9"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "4f93e992a50f76f6928ef4b71d060a6df61ea4a345dab931f423de928c589da9",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [],
+      "excecoesPericias": [
+        "Atletismo +4 para Escalar, em vez de +1."
+      ]
     },
     {
       "id": "aon-monstro-3202",
@@ -19815,17 +21585,59 @@
         "furtividade": 8,
         "sobrevivencia": 6
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Presas",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 11,
+          "map": [
+            11,
+            6,
+            1
+          ],
+          "dano": "1d8+3",
+          "tipoDano": "perfurante",
+          "tracos": [
+            "acuidade"
+          ],
+          "efeito": "Veneno de Víbora Gigante."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Golpe Enrolado",
+          "acoes": "reacao",
+          "descricao": "Somente enquanto estiver Enrolada. Gatilho: uma criatura ao alcance usa uma ação de manipulação ou movimento, faz um ataque à distância, ou sai de um quadrado durante uma ação de movimento. Faz um Golpe corpo a corpo contra ela. Se acertar criticamente e o gatilho for uma ação de manipulação, interrompe a ação. O ataque não sofre nem aumenta a penalidade por ataques múltiplos."
+        },
+        {
+          "nome": "Enrolar-se",
+          "acoes": 1,
+          "descricao": "Enrola o corpo. Enquanto estiver Enrolada, o alcance das presas passa a 10 pés e recebe a reação Golpe Reativo. Depois que faz um Golpe de presas, deixa de estar Enrolada."
+        },
+        {
+          "nome": "Veneno de Víbora Gigante",
+          "acoes": 0,
+          "descricao": "Traço veneno. Fortitude CD 17; duração máxima 6 rodadas. Estágio 1: 1d6 de dano de veneno (1 rodada). Estágio 2: 1d6 de dano de veneno e drenado 1. A duração do estágio 2 não é indicada no bloco original."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Víbora de nível 2: enrola-se para ameaçar uma área maior e reagir a movimentos."
       ],
       "fonte": "monster-core",
       "pagina": 317,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3202&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "9170e000baab5d9527c78cefe61e803c7c706d7d7aa59c58ecd41a7936a43f27"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "9170e000baab5d9527c78cefe61e803c7c706d7d7aa59c58ecd41a7936a43f27",
+      "sentidos": [
+        "Visão na penumbra",
+        "Faro impreciso 30 pés"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3230",
@@ -20547,17 +22359,98 @@
       "pericias": {
         "atletismo": 18
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Pedaço de Carne",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 17,
+          "map": [
+            17,
+            12,
+            7
+          ],
+          "dano": "2d10+9",
+          "tipoDano": "contundente",
+          "tracos": [
+            "alcance 15 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Cadáver",
+          "tipo": "a-distancia",
+          "acoes": 1,
+          "bonus": 17,
+          "map": [
+            17,
+            12,
+            7
+          ],
+          "dano": "2d6+9",
+          "tipoDano": "contundente",
+          "tracos": [
+            "brutal",
+            "incremento de distância 30 pés"
+          ],
+          "efeito": ""
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Lento",
+          "acoes": 0,
+          "descricao": "Está permanentemente lento 1 e não pode usar reações."
+        },
+        {
+          "nome": "Cura pelo Vazio",
+          "acoes": 0,
+          "descricao": "Sofre dano de vitalidade, não sofre dano de vazio e é curado por efeitos de vazio que curam mortos-vivos. Efeitos de cura de vitalidade não o beneficiam."
+        },
+        {
+          "nome": "Arremessar Cadáveres",
+          "acoes": 0,
+          "descricao": "Pode arremessar cadáveres Médios ou menores. Também pode arremessar zumbis Médios ou menores: eles sofrem tanto dano quanto o alvo atingido. Um zumbi que sobreviva ao arremesso fica caído."
+        },
+        {
+          "nome": "Golpe Amplo",
+          "acoes": 1,
+          "descricao": "Faz dois Golpes de pedaço de carne contra alvos diferentes ao alcance, aplicando normalmente a penalidade por ataques múltiplos."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Zumbi de nível 6: lento, sem reações, arremessa cadáveres e ataca dois alvos."
       ],
       "fonte": "monster-core",
       "pagina": 357,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=3252&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "68927571e2bb6acaef5b59def934f049f331fd2933082631b0a50686866a8422"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "68927571e2bb6acaef5b59def934f049f331fd2933082631b0a50686866a8422",
+      "sentidos": [
+        "Visão no escuro"
+      ],
+      "imunidades": [
+        "sangramento",
+        "efeitos de morte",
+        "doença",
+        "mental",
+        "paralisado",
+        "veneno",
+        "inconsciente"
+      ],
+      "resistencias": [],
+      "fraquezas": [
+        {
+          "tipo": "cortante",
+          "valor": 10
+        },
+        {
+          "tipo": "vitalidade",
+          "valor": 10
+        }
+      ],
+      "idiomas": []
     },
     {
       "id": "aon-monstro-3250",
@@ -20734,17 +22627,81 @@
         "acrobacia": 11,
         "atletismo": 8
       },
-      "ataques": [],
-      "acoes": [],
+      "ataques": [
+        {
+          "nome": "Bico",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 12,
+          "map": [
+            12,
+            7,
+            2
+          ],
+          "dano": "2d8+5",
+          "tipoDano": "perfurante",
+          "tracos": [],
+          "efeito": ""
+        },
+        {
+          "nome": "Garras",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 12,
+          "map": [
+            12,
+            8,
+            4
+          ],
+          "dano": "1d10+5",
+          "tipoDano": "cortante",
+          "tracos": [
+            "ágil"
+          ],
+          "efeito": "Permite usar Agarrar após acertar."
+        }
+      ],
+      "acoes": [
+        {
+          "nome": "Agarrar",
+          "acoes": 1,
+          "descricao": "Após acertar um Golpe que indica Agarrar no dano, tente Agarrar com Atletismo usando a parte do corpo que atacou. Este teste não sofre nem aumenta a penalidade por ataques múltiplos. Alternativamente, uma criatura já agarrada ou restringida por um apêndice com esta habilidade permanece nessa condição até o fim do próximo turno do monstro, sem novo teste."
+        },
+        {
+          "nome": "Manobras Evasivas",
+          "acoes": 0,
+          "descricao": "Quando obtém sucesso em uma salvaguarda de Reflexos, obtém sucesso crítico em vez disso."
+        },
+        {
+          "nome": "Carregar",
+          "acoes": 0,
+          "descricao": "Pode Voar com metade do deslocamento enquanto mantém uma criatura agarrada ou restringida nas garras, levando-a junto."
+        },
+        {
+          "nome": "Mergulho da Águia",
+          "acoes": 2,
+          "descricao": "Voa em linha reta até o dobro de seu deslocamento de voo, descendo pelo menos 10 pés, e faz um Golpe de garras."
+        }
+      ],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Águia de nível 3: mergulha, agarra e transporta presas; seus sucessos em Reflexos tornam-se críticos."
       ],
       "fonte": "monster-core",
       "pagina": 137,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2969&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "e1649d5e73a695b7a1491b4873eb718de4311cf135160b470f8cfaafae0a406a"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "e1649d5e73a695b7a1491b4873eb718de4311cf135160b470f8cfaafae0a406a",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [],
+      "fraquezas": [],
+      "idiomas": [
+        "Feérico",
+        "Sussurano; compreende os idiomas, mas não pode falar."
+      ]
     },
     {
       "id": "aon-monstro-2791",
@@ -20828,17 +22785,82 @@
         "atletismo": 14,
         "furtividade": 9
       },
-      "ataques": [],
+      "ataques": [
+        {
+          "nome": "Galho",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            11,
+            6
+          ],
+          "dano": "2d8+6",
+          "tipoDano": "contundente",
+          "tracos": [
+            "alcance 15 pés"
+          ],
+          "efeito": ""
+        },
+        {
+          "nome": "Raiz",
+          "tipo": "corpo-a-corpo",
+          "acoes": 1,
+          "bonus": 16,
+          "map": [
+            16,
+            11,
+            6
+          ],
+          "dano": "2d6+6",
+          "tipoDano": "contundente",
+          "tracos": [
+            "derrubar"
+          ],
+          "efeito": ""
+        }
+      ],
       "acoes": [],
       "resumo": [
-        "Referência do Monster Core Remaster. Consulte a fonte para habilidades e exceções ainda não revisadas em português."
+        "Árvore de nível 6: ataques de galhos e raízes, resistência física e vulnerabilidade a fogo e machados."
       ],
       "fonte": "monster-core",
       "pagina": 25,
       "url": "https://2e.aonprd.com/Monsters.aspx?ID=2830&NoRedirect=1",
-      "estadoTraducao": "referencia",
-      "nota": "Valores básicos extraídos da fonte. Resistências, imunidades, exceções e habilidades não estão completas em referências pendentes; não importar como bloco de combate completo.",
-      "sha256Fonte": "92359c4c937ae15af02837098c87a234bda31924f311a90449c030ba49621d37"
+      "estadoTraducao": "revisado",
+      "nota": "Bloco mecânico revisado em português. Nomes traduzidos editorialmente; a fonte original permanece identificada. Deslocamentos e alcances em pés.",
+      "sha256Fonte": "92359c4c937ae15af02837098c87a234bda31924f311a90449c030ba49621d37",
+      "sentidos": [
+        "Visão na penumbra"
+      ],
+      "imunidades": [],
+      "resistencias": [
+        {
+          "tipo": "contundente",
+          "valor": 5
+        },
+        {
+          "tipo": "perfurante",
+          "valor": 5
+        }
+      ],
+      "fraquezas": [
+        {
+          "tipo": "machados",
+          "valor": 5
+        },
+        {
+          "tipo": "fogo",
+          "valor": 10
+        }
+      ],
+      "idiomas": [
+        "Arbóreo; compreende, mas não pode falar qualquer idioma."
+      ],
+      "excecoesPericias": [
+        "Furtividade +14 em florestas, em vez de +9."
+      ]
     }
   ],
   "secoes": [
@@ -20846,14 +22868,14 @@
       "id": "cobertura-monster-core",
       "nome": "Cobertura e consulta",
       "pagina": null,
-      "texto": "Catálogo de 411 criaturas Remaster. 14 blocos mecânicos foram redigidos e revisados em português. As demais entradas são referências básicas incompletas: habilidades, magias, exceções, imunidades e resistências devem ser consultadas na fonte antes de usá-las em combate. Distâncias em pés. Versões Legacy não foram incluídas.",
+      "texto": "Catálogo de 411 criaturas Remaster. 52 blocos mecânicos foram redigidos e revisados em português. As demais entradas são referências básicas incompletas: habilidades, magias, exceções, imunidades e resistências devem ser consultadas na fonte antes de usá-las em combate. Distâncias em pés. Versões Legacy não foram incluídas.",
       "resumo": [
         "411 referências Remaster; somente entradas com estado revisado são fichas de combate importáveis."
       ]
     }
   ],
   "lacunas": [
-    "397 criaturas aguardam redação e revisão de suas habilidades em português.",
+    "359 criaturas aguardam redação e revisão de suas habilidades em português.",
     "Valores básicos das referências não contemplam todas as exceções. Não importar referências como fichas completas."
   ]
 }

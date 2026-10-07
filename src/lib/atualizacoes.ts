@@ -8,6 +8,8 @@ export type Atualizacao = {
    As datas indicam o registro da mudança, não uma data de publicação confirmada.
    Acrescente novas entradas aqui, explicando o efeito para mestre e jogadores. */
 export const atualizacoes: Atualizacao[] = [
+  { data: "2026-10-06", titulo: "Mais conteúdo do Pathfinder Remaster", novidades: ["Mais 38 blocos de criaturas revisados em português no bestiário, totalizando 52 modelos.", "Textos individuais de 65 talentos de ancestralidade e 37 talentos de classe; habilidades ainda sem executor ficam somente para consulta.", "Seis tabelas adicionais e três guias para criar criaturas e perigos.", "Runas de sombra aplicam automaticamente o bônus de Furtividade, respeitando investimento, categoria da armadura, capacidade de potência e versões incompatíveis."] },
+  { data: "2026-10-06", titulo: "Capa oficial do Pathfinder Remaster", novidades: ["O catálogo e as imagens padrão de Pathfinder usam a capa oficial do Player Core, com créditos à Paizo."] },
   { data: "2026-10-06", titulo: "Pathfinder Remaster: ficha, grimório e bestiário",
     novidades: [
       "Ficha própria de Pathfinder 2e Remaster, com criação e evolução guiadas em rascunho, comparação dos ganhos e cancelamento sem substituir o personagem.",

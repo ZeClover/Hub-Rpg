@@ -27,7 +27,10 @@
       90,
       98,
       109,
+      110,
+      111,
       112,
+      117,
       130,
       184,
       187,
@@ -1017,14 +1020,31 @@
       "uso": "Gravada em armadura leve ou média",
       "ativacao": "",
       "raridade": "comum",
-      "automacao": "consulta",
-      "automatizavel": false,
+      "automacao": "estruturada",
+      "automatizavel": true,
       "mecanica": {
         "versao": 1,
-        "tipo": "referencia",
-        "estado": "nao-implementado",
-        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
-      }
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "propriedade",
+        "propriedadeGrupo": "sombra",
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "restricoesArmadura": [
+          "leve",
+          "media"
+        ],
+        "aplicacao": "passiva",
+        "efeitos": [
+          {
+            "alvo": "pericia:furtividade",
+            "tipo": "item",
+            "valor": 1
+          }
+        ]
+      },
+      "tipo": "runa"
     },
     {
       "id": "runa-sombra-maior",
@@ -1042,14 +1062,31 @@
       "uso": "Gravada em armadura leve ou média",
       "ativacao": "",
       "raridade": "comum",
-      "automacao": "consulta",
-      "automatizavel": false,
+      "automacao": "estruturada",
+      "automatizavel": true,
       "mecanica": {
         "versao": 1,
-        "tipo": "referencia",
-        "estado": "nao-implementado",
-        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
-      }
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "propriedade",
+        "propriedadeGrupo": "sombra",
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "restricoesArmadura": [
+          "leve",
+          "media"
+        ],
+        "aplicacao": "passiva",
+        "efeitos": [
+          {
+            "alvo": "pericia:furtividade",
+            "tipo": "item",
+            "valor": 2
+          }
+        ]
+      },
+      "tipo": "runa"
     },
     {
       "id": "runa-sombra-superior",
@@ -1067,14 +1104,31 @@
       "uso": "Gravada em armadura leve ou média",
       "ativacao": "",
       "raridade": "comum",
-      "automacao": "consulta",
-      "automatizavel": false,
+      "automacao": "estruturada",
+      "automatizavel": true,
       "mecanica": {
         "versao": 1,
-        "tipo": "referencia",
-        "estado": "nao-implementado",
-        "motivo": "Efeito específico ainda sem executor completo; leitura disponível, sem conceder efeito calculado por aproximação."
-      }
+        "tipo": "runa",
+        "estado": "dados-revisados",
+        "categoria": "armadura",
+        "familia": "propriedade",
+        "propriedadeGrupo": "sombra",
+        "exigeBase": true,
+        "exigeInvestimento": true,
+        "restricoesArmadura": [
+          "leve",
+          "media"
+        ],
+        "aplicacao": "passiva",
+        "efeitos": [
+          {
+            "alvo": "pericia:furtividade",
+            "tipo": "item",
+            "valor": 3
+          }
+        ]
+      },
+      "tipo": "runa"
     },
     {
       "id": "runa-escorregadia",
@@ -3868,6 +3922,39 @@
       ],
       "fonte": "gm-core",
       "tipo": "guia-revisado"
+    },
+    {
+      "id": "construir-perigos-estatisticas",
+      "nome": "Construir perigos: detecção, desativação e defesas",
+      "pagina": 110,
+      "texto": "Defina nível, tipo e se o perigo é simples ou complexo antes de selecionar estatísticas. Furtividade e desativação usam valores extremos, altos ou baixos segundo o conceito. Um perigo costuma ter uma estatística extrema, mas não todas. A tabela de proficiência mínima é orientação: métodos alternativos podem exigir grau menor com CD maior. Sem grau indicado junto à Furtividade, o perigo pode ser notado sem Procurar; um perigo mágico sem grau normalmente não impede Detectar Magia. Para iniciativa de um perigo complexo, subtraia 10 da CD de Furtividade. Componentes físicos podem ter CA, Fortitude, Reflexos, Dureza e PV; perigos sem matéria podem dispensar essas defesas. Limiar de Quebra costuma ser metade dos PV. Dividir componentes e posições pode incentivar cooperação e movimento.",
+      "resumo": [
+        "Escolha as CDs por conceito e nível, mantendo métodos alternativos e requisitos explícitos."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "construir-perigos-rotinas",
+      "nome": "Construir perigos: gatilhos e rotinas",
+      "pagina": 111,
+      "texto": "Perigos simples geralmente causam cerca do dobro do dano de um perigo complexo do mesmo nível: o efeito ocorre poucas vezes, enquanto um complexo age rodada após rodada. Não basta aumentar dano: um gatilho, consequência duradoura ou interação com o encontro torna o perigo relevante. Perigos complexos têm rotina coerente com sua natureza. Uma descarga de lava não escolhe adversários como uma criatura inteligente; pode atingir áreas aleatórias ou todos ao alcance. Determine as ações necessárias para a rotina. Desativar componentes pode retirar ações e demonstrar progresso. Esses valores de construção não concedem automaticamente ataques, ações ou dano à ficha.",
+      "resumo": [
+        "Gatilhos, alvos e rotinas devem seguir a natureza do perigo; progresso parcial pode reduzir suas ações."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
+    },
+    {
+      "id": "construir-criaturas-defesas",
+      "nome": "Construir criaturas: equilibrar CA, salvaguardas e PV",
+      "pagina": 117,
+      "texto": "As tabelas de construção são padrões de projeto por nível, não resultados calculados dos atributos de um personagem. CA alta é comum em combatentes; extrema deve representar defesa excepcional e normalmente exigir compensação em PV ou outra área. CA baixa pode combinar com mais PV ou Fortitude forte. Para salvaguardas, uma alta, uma moderada e uma baixa é um ponto de partida; ajuste ao conceito. Quase nenhuma criatura deve ter mais de uma salvaguarda extrema. PV moderados são o padrão; conjuradores frequentemente têm baixos e criaturas brutas podem ter altos, compensados por opções táticas ou defesas piores. Resistências, fraquezas, imunidades e cura mudam a durabilidade e devem ser revisadas junto dos PV.",
+      "resumo": [
+        "Distribua pontos fortes e fracos; não atribua CA, PV e todas as salvaguardas máximas simultaneamente."
+      ],
+      "fonte": "gm-core",
+      "tipo": "guia-revisado"
     }
   ],
   "tabelas": {
@@ -5373,12 +5460,1230 @@
           "maior"
         ]
       }
+    ],
+    "perigosFurtividadeDesativar": [
+      {
+        "nivel": -1,
+        "extrema": 18,
+        "alta": 15,
+        "baixaMin": 11,
+        "baixaMax": 12,
+        "pagina": 110
+      },
+      {
+        "nivel": 0,
+        "extrema": 19,
+        "alta": 16,
+        "baixaMin": 12,
+        "baixaMax": 13,
+        "pagina": 110
+      },
+      {
+        "nivel": 1,
+        "extrema": 20,
+        "alta": 17,
+        "baixaMin": 13,
+        "baixaMax": 14,
+        "pagina": 110
+      },
+      {
+        "nivel": 2,
+        "extrema": 21,
+        "alta": 18,
+        "baixaMin": 14,
+        "baixaMax": 15,
+        "pagina": 110
+      },
+      {
+        "nivel": 3,
+        "extrema": 23,
+        "alta": 20,
+        "baixaMin": 15,
+        "baixaMax": 17,
+        "pagina": 110
+      },
+      {
+        "nivel": 4,
+        "extrema": 25,
+        "alta": 22,
+        "baixaMin": 17,
+        "baixaMax": 18,
+        "pagina": 110
+      },
+      {
+        "nivel": 5,
+        "extrema": 26,
+        "alta": 23,
+        "baixaMin": 18,
+        "baixaMax": 20,
+        "pagina": 110
+      },
+      {
+        "nivel": 6,
+        "extrema": 28,
+        "alta": 25,
+        "baixaMin": 19,
+        "baixaMax": 21,
+        "pagina": 110
+      },
+      {
+        "nivel": 7,
+        "extrema": 30,
+        "alta": 27,
+        "baixaMin": 21,
+        "baixaMax": 23,
+        "pagina": 110
+      },
+      {
+        "nivel": 8,
+        "extrema": 31,
+        "alta": 28,
+        "baixaMin": 22,
+        "baixaMax": 24,
+        "pagina": 110
+      },
+      {
+        "nivel": 9,
+        "extrema": 33,
+        "alta": 30,
+        "baixaMin": 23,
+        "baixaMax": 26,
+        "pagina": 110
+      },
+      {
+        "nivel": 10,
+        "extrema": 35,
+        "alta": 32,
+        "baixaMin": 25,
+        "baixaMax": 27,
+        "pagina": 110
+      },
+      {
+        "nivel": 11,
+        "extrema": 36,
+        "alta": 33,
+        "baixaMin": 26,
+        "baixaMax": 29,
+        "pagina": 110
+      },
+      {
+        "nivel": 12,
+        "extrema": 38,
+        "alta": 35,
+        "baixaMin": 27,
+        "baixaMax": 30,
+        "pagina": 110
+      },
+      {
+        "nivel": 13,
+        "extrema": 40,
+        "alta": 37,
+        "baixaMin": 29,
+        "baixaMax": 32,
+        "pagina": 110
+      },
+      {
+        "nivel": 14,
+        "extrema": 41,
+        "alta": 38,
+        "baixaMin": 30,
+        "baixaMax": 33,
+        "pagina": 110
+      },
+      {
+        "nivel": 15,
+        "extrema": 43,
+        "alta": 40,
+        "baixaMin": 31,
+        "baixaMax": 35,
+        "pagina": 110
+      },
+      {
+        "nivel": 16,
+        "extrema": 45,
+        "alta": 42,
+        "baixaMin": 33,
+        "baixaMax": 36,
+        "pagina": 110
+      },
+      {
+        "nivel": 17,
+        "extrema": 46,
+        "alta": 43,
+        "baixaMin": 34,
+        "baixaMax": 38,
+        "pagina": 110
+      },
+      {
+        "nivel": 18,
+        "extrema": 48,
+        "alta": 45,
+        "baixaMin": 35,
+        "baixaMax": 39,
+        "pagina": 110
+      },
+      {
+        "nivel": 19,
+        "extrema": 50,
+        "alta": 47,
+        "baixaMin": 37,
+        "baixaMax": 41,
+        "pagina": 110
+      },
+      {
+        "nivel": 20,
+        "extrema": 51,
+        "alta": 48,
+        "baixaMin": 38,
+        "baixaMax": 42,
+        "pagina": 110
+      },
+      {
+        "nivel": 21,
+        "extrema": 53,
+        "alta": 50,
+        "baixaMin": 39,
+        "baixaMax": 44,
+        "pagina": 110
+      },
+      {
+        "nivel": 22,
+        "extrema": 55,
+        "alta": 52,
+        "baixaMin": 41,
+        "baixaMax": 45,
+        "pagina": 110
+      },
+      {
+        "nivel": 23,
+        "extrema": 56,
+        "alta": 53,
+        "baixaMin": 42,
+        "baixaMax": 46,
+        "pagina": 110
+      },
+      {
+        "nivel": 24,
+        "extrema": 58,
+        "alta": 55,
+        "baixaMin": 43,
+        "baixaMax": 48,
+        "pagina": 110
+      }
+    ],
+    "perigosProficienciaMinima": [
+      {
+        "nivelMin": -1,
+        "nivelMax": 0,
+        "alta": "destreinado",
+        "moderada": "destreinado",
+        "pagina": 110
+      },
+      {
+        "nivelMin": 1,
+        "nivelMax": 4,
+        "alta": "treinado",
+        "altaPercepcao": "especialista",
+        "moderada": "treinado",
+        "pagina": 110
+      },
+      {
+        "nivelMin": 5,
+        "nivelMax": 8,
+        "alta": "especialista",
+        "moderada": "treinado",
+        "pagina": 110
+      },
+      {
+        "nivelMin": 9,
+        "nivelMax": 18,
+        "alta": "mestre",
+        "moderada": "especialista",
+        "pagina": 110
+      },
+      {
+        "nivelMin": 19,
+        "nivelMax": 24,
+        "alta": "lendario",
+        "moderada": "mestre",
+        "pagina": 110
+      }
+    ],
+    "criaturasCa": [
+      {
+        "nivel": -1,
+        "extrema": 18,
+        "alta": 15,
+        "moderada": 14,
+        "baixa": 12,
+        "pagina": 117
+      },
+      {
+        "nivel": 0,
+        "extrema": 19,
+        "alta": 16,
+        "moderada": 15,
+        "baixa": 13,
+        "pagina": 117
+      },
+      {
+        "nivel": 1,
+        "extrema": 19,
+        "alta": 16,
+        "moderada": 15,
+        "baixa": 13,
+        "pagina": 117
+      },
+      {
+        "nivel": 2,
+        "extrema": 21,
+        "alta": 18,
+        "moderada": 17,
+        "baixa": 15,
+        "pagina": 117
+      },
+      {
+        "nivel": 3,
+        "extrema": 22,
+        "alta": 19,
+        "moderada": 18,
+        "baixa": 16,
+        "pagina": 117
+      },
+      {
+        "nivel": 4,
+        "extrema": 24,
+        "alta": 21,
+        "moderada": 20,
+        "baixa": 18,
+        "pagina": 117
+      },
+      {
+        "nivel": 5,
+        "extrema": 25,
+        "alta": 22,
+        "moderada": 21,
+        "baixa": 19,
+        "pagina": 117
+      },
+      {
+        "nivel": 6,
+        "extrema": 27,
+        "alta": 24,
+        "moderada": 23,
+        "baixa": 21,
+        "pagina": 117
+      },
+      {
+        "nivel": 7,
+        "extrema": 28,
+        "alta": 25,
+        "moderada": 24,
+        "baixa": 22,
+        "pagina": 117
+      },
+      {
+        "nivel": 8,
+        "extrema": 30,
+        "alta": 27,
+        "moderada": 26,
+        "baixa": 24,
+        "pagina": 117
+      },
+      {
+        "nivel": 9,
+        "extrema": 31,
+        "alta": 28,
+        "moderada": 27,
+        "baixa": 25,
+        "pagina": 117
+      },
+      {
+        "nivel": 10,
+        "extrema": 33,
+        "alta": 30,
+        "moderada": 29,
+        "baixa": 27,
+        "pagina": 117
+      },
+      {
+        "nivel": 11,
+        "extrema": 34,
+        "alta": 31,
+        "moderada": 30,
+        "baixa": 28,
+        "pagina": 117
+      },
+      {
+        "nivel": 12,
+        "extrema": 36,
+        "alta": 33,
+        "moderada": 32,
+        "baixa": 30,
+        "pagina": 117
+      },
+      {
+        "nivel": 13,
+        "extrema": 37,
+        "alta": 34,
+        "moderada": 33,
+        "baixa": 31,
+        "pagina": 117
+      },
+      {
+        "nivel": 14,
+        "extrema": 39,
+        "alta": 36,
+        "moderada": 35,
+        "baixa": 33,
+        "pagina": 117
+      },
+      {
+        "nivel": 15,
+        "extrema": 40,
+        "alta": 37,
+        "moderada": 36,
+        "baixa": 34,
+        "pagina": 117
+      },
+      {
+        "nivel": 16,
+        "extrema": 42,
+        "alta": 39,
+        "moderada": 38,
+        "baixa": 36,
+        "pagina": 117
+      },
+      {
+        "nivel": 17,
+        "extrema": 43,
+        "alta": 40,
+        "moderada": 39,
+        "baixa": 37,
+        "pagina": 117
+      },
+      {
+        "nivel": 18,
+        "extrema": 45,
+        "alta": 42,
+        "moderada": 41,
+        "baixa": 39,
+        "pagina": 117
+      },
+      {
+        "nivel": 19,
+        "extrema": 46,
+        "alta": 43,
+        "moderada": 42,
+        "baixa": 40,
+        "pagina": 117
+      },
+      {
+        "nivel": 20,
+        "extrema": 48,
+        "alta": 45,
+        "moderada": 44,
+        "baixa": 42,
+        "pagina": 117
+      },
+      {
+        "nivel": 21,
+        "extrema": 49,
+        "alta": 46,
+        "moderada": 45,
+        "baixa": 43,
+        "pagina": 117
+      },
+      {
+        "nivel": 22,
+        "extrema": 51,
+        "alta": 48,
+        "moderada": 47,
+        "baixa": 45,
+        "pagina": 117
+      },
+      {
+        "nivel": 23,
+        "extrema": 52,
+        "alta": 49,
+        "moderada": 48,
+        "baixa": 46,
+        "pagina": 117
+      },
+      {
+        "nivel": 24,
+        "extrema": 54,
+        "alta": 51,
+        "moderada": 50,
+        "baixa": 48,
+        "pagina": 117
+      }
+    ],
+    "criaturasSalvaguardas": [
+      {
+        "nivel": -1,
+        "extrema": 9,
+        "alta": 8,
+        "moderada": 5,
+        "baixa": 2,
+        "terrivel": 0,
+        "pagina": 118
+      },
+      {
+        "nivel": 0,
+        "extrema": 10,
+        "alta": 9,
+        "moderada": 6,
+        "baixa": 3,
+        "terrivel": 1,
+        "pagina": 118
+      },
+      {
+        "nivel": 1,
+        "extrema": 11,
+        "alta": 10,
+        "moderada": 7,
+        "baixa": 4,
+        "terrivel": 2,
+        "pagina": 118
+      },
+      {
+        "nivel": 2,
+        "extrema": 12,
+        "alta": 11,
+        "moderada": 8,
+        "baixa": 5,
+        "terrivel": 3,
+        "pagina": 118
+      },
+      {
+        "nivel": 3,
+        "extrema": 14,
+        "alta": 12,
+        "moderada": 9,
+        "baixa": 6,
+        "terrivel": 4,
+        "pagina": 118
+      },
+      {
+        "nivel": 4,
+        "extrema": 15,
+        "alta": 14,
+        "moderada": 11,
+        "baixa": 8,
+        "terrivel": 6,
+        "pagina": 118
+      },
+      {
+        "nivel": 5,
+        "extrema": 17,
+        "alta": 15,
+        "moderada": 12,
+        "baixa": 9,
+        "terrivel": 7,
+        "pagina": 118
+      },
+      {
+        "nivel": 6,
+        "extrema": 18,
+        "alta": 17,
+        "moderada": 14,
+        "baixa": 11,
+        "terrivel": 8,
+        "pagina": 118
+      },
+      {
+        "nivel": 7,
+        "extrema": 20,
+        "alta": 18,
+        "moderada": 15,
+        "baixa": 12,
+        "terrivel": 10,
+        "pagina": 118
+      },
+      {
+        "nivel": 8,
+        "extrema": 21,
+        "alta": 19,
+        "moderada": 16,
+        "baixa": 13,
+        "terrivel": 11,
+        "pagina": 118
+      },
+      {
+        "nivel": 9,
+        "extrema": 23,
+        "alta": 21,
+        "moderada": 18,
+        "baixa": 15,
+        "terrivel": 12,
+        "pagina": 118
+      },
+      {
+        "nivel": 10,
+        "extrema": 24,
+        "alta": 22,
+        "moderada": 19,
+        "baixa": 16,
+        "terrivel": 14,
+        "pagina": 118
+      },
+      {
+        "nivel": 11,
+        "extrema": 26,
+        "alta": 24,
+        "moderada": 21,
+        "baixa": 18,
+        "terrivel": 15,
+        "pagina": 118
+      },
+      {
+        "nivel": 12,
+        "extrema": 27,
+        "alta": 25,
+        "moderada": 22,
+        "baixa": 19,
+        "terrivel": 16,
+        "pagina": 118
+      },
+      {
+        "nivel": 13,
+        "extrema": 29,
+        "alta": 26,
+        "moderada": 23,
+        "baixa": 20,
+        "terrivel": 18,
+        "pagina": 118
+      },
+      {
+        "nivel": 14,
+        "extrema": 30,
+        "alta": 28,
+        "moderada": 25,
+        "baixa": 22,
+        "terrivel": 19,
+        "pagina": 118
+      },
+      {
+        "nivel": 15,
+        "extrema": 32,
+        "alta": 29,
+        "moderada": 26,
+        "baixa": 23,
+        "terrivel": 20,
+        "pagina": 118
+      },
+      {
+        "nivel": 16,
+        "extrema": 33,
+        "alta": 30,
+        "moderada": 28,
+        "baixa": 25,
+        "terrivel": 22,
+        "pagina": 118
+      },
+      {
+        "nivel": 17,
+        "extrema": 35,
+        "alta": 32,
+        "moderada": 29,
+        "baixa": 26,
+        "terrivel": 23,
+        "pagina": 118
+      },
+      {
+        "nivel": 18,
+        "extrema": 36,
+        "alta": 33,
+        "moderada": 30,
+        "baixa": 27,
+        "terrivel": 24,
+        "pagina": 118
+      },
+      {
+        "nivel": 19,
+        "extrema": 38,
+        "alta": 35,
+        "moderada": 32,
+        "baixa": 29,
+        "terrivel": 26,
+        "pagina": 118
+      },
+      {
+        "nivel": 20,
+        "extrema": 39,
+        "alta": 36,
+        "moderada": 33,
+        "baixa": 30,
+        "terrivel": 27,
+        "pagina": 118
+      },
+      {
+        "nivel": 21,
+        "extrema": 41,
+        "alta": 38,
+        "moderada": 35,
+        "baixa": 32,
+        "terrivel": 28,
+        "pagina": 118
+      },
+      {
+        "nivel": 22,
+        "extrema": 43,
+        "alta": 39,
+        "moderada": 36,
+        "baixa": 33,
+        "terrivel": 30,
+        "pagina": 118
+      },
+      {
+        "nivel": 23,
+        "extrema": 44,
+        "alta": 40,
+        "moderada": 37,
+        "baixa": 34,
+        "terrivel": 31,
+        "pagina": 118
+      },
+      {
+        "nivel": 24,
+        "extrema": 46,
+        "alta": 42,
+        "moderada": 38,
+        "baixa": 36,
+        "terrivel": 32,
+        "pagina": 118
+      }
+    ],
+    "criaturasPv": [
+      {
+        "nivel": -1,
+        "altaMin": 9,
+        "altaMax": 9,
+        "moderadaMin": 7,
+        "moderadaMax": 8,
+        "baixaMin": 5,
+        "baixaMax": 6,
+        "pagina": 118
+      },
+      {
+        "nivel": 0,
+        "altaMin": 17,
+        "altaMax": 20,
+        "moderadaMin": 14,
+        "moderadaMax": 16,
+        "baixaMin": 11,
+        "baixaMax": 13,
+        "pagina": 118
+      },
+      {
+        "nivel": 1,
+        "altaMin": 24,
+        "altaMax": 26,
+        "moderadaMin": 19,
+        "moderadaMax": 21,
+        "baixaMin": 14,
+        "baixaMax": 16,
+        "pagina": 118
+      },
+      {
+        "nivel": 2,
+        "altaMin": 36,
+        "altaMax": 40,
+        "moderadaMin": 28,
+        "moderadaMax": 32,
+        "baixaMin": 21,
+        "baixaMax": 25,
+        "pagina": 118
+      },
+      {
+        "nivel": 3,
+        "altaMin": 53,
+        "altaMax": 59,
+        "moderadaMin": 42,
+        "moderadaMax": 48,
+        "baixaMin": 31,
+        "baixaMax": 37,
+        "pagina": 118
+      },
+      {
+        "nivel": 4,
+        "altaMin": 72,
+        "altaMax": 78,
+        "moderadaMin": 57,
+        "moderadaMax": 63,
+        "baixaMin": 42,
+        "baixaMax": 48,
+        "pagina": 118
+      },
+      {
+        "nivel": 5,
+        "altaMin": 91,
+        "altaMax": 97,
+        "moderadaMin": 72,
+        "moderadaMax": 78,
+        "baixaMin": 53,
+        "baixaMax": 59,
+        "pagina": 118
+      },
+      {
+        "nivel": 6,
+        "altaMin": 115,
+        "altaMax": 123,
+        "moderadaMin": 91,
+        "moderadaMax": 99,
+        "baixaMin": 67,
+        "baixaMax": 75,
+        "pagina": 118
+      },
+      {
+        "nivel": 7,
+        "altaMin": 140,
+        "altaMax": 148,
+        "moderadaMin": 111,
+        "moderadaMax": 119,
+        "baixaMin": 82,
+        "baixaMax": 90,
+        "pagina": 118
+      },
+      {
+        "nivel": 8,
+        "altaMin": 165,
+        "altaMax": 173,
+        "moderadaMin": 131,
+        "moderadaMax": 139,
+        "baixaMin": 97,
+        "baixaMax": 105,
+        "pagina": 118
+      },
+      {
+        "nivel": 9,
+        "altaMin": 190,
+        "altaMax": 198,
+        "moderadaMin": 151,
+        "moderadaMax": 159,
+        "baixaMin": 112,
+        "baixaMax": 120,
+        "pagina": 118
+      },
+      {
+        "nivel": 10,
+        "altaMin": 215,
+        "altaMax": 223,
+        "moderadaMin": 171,
+        "moderadaMax": 179,
+        "baixaMin": 127,
+        "baixaMax": 135,
+        "pagina": 118
+      },
+      {
+        "nivel": 11,
+        "altaMin": 240,
+        "altaMax": 248,
+        "moderadaMin": 191,
+        "moderadaMax": 199,
+        "baixaMin": 142,
+        "baixaMax": 150,
+        "pagina": 118
+      },
+      {
+        "nivel": 12,
+        "altaMin": 265,
+        "altaMax": 273,
+        "moderadaMin": 211,
+        "moderadaMax": 219,
+        "baixaMin": 157,
+        "baixaMax": 165,
+        "pagina": 118
+      },
+      {
+        "nivel": 13,
+        "altaMin": 290,
+        "altaMax": 298,
+        "moderadaMin": 231,
+        "moderadaMax": 239,
+        "baixaMin": 172,
+        "baixaMax": 180,
+        "pagina": 118
+      },
+      {
+        "nivel": 14,
+        "altaMin": 315,
+        "altaMax": 323,
+        "moderadaMin": 251,
+        "moderadaMax": 259,
+        "baixaMin": 187,
+        "baixaMax": 195,
+        "pagina": 118
+      },
+      {
+        "nivel": 15,
+        "altaMin": 340,
+        "altaMax": 348,
+        "moderadaMin": 271,
+        "moderadaMax": 279,
+        "baixaMin": 202,
+        "baixaMax": 210,
+        "pagina": 118
+      },
+      {
+        "nivel": 16,
+        "altaMin": 365,
+        "altaMax": 373,
+        "moderadaMin": 291,
+        "moderadaMax": 299,
+        "baixaMin": 217,
+        "baixaMax": 225,
+        "pagina": 118
+      },
+      {
+        "nivel": 17,
+        "altaMin": 390,
+        "altaMax": 398,
+        "moderadaMin": 311,
+        "moderadaMax": 319,
+        "baixaMin": 232,
+        "baixaMax": 240,
+        "pagina": 118
+      },
+      {
+        "nivel": 18,
+        "altaMin": 415,
+        "altaMax": 423,
+        "moderadaMin": 331,
+        "moderadaMax": 339,
+        "baixaMin": 247,
+        "baixaMax": 255,
+        "pagina": 118
+      },
+      {
+        "nivel": 19,
+        "altaMin": 440,
+        "altaMax": 448,
+        "moderadaMin": 351,
+        "moderadaMax": 359,
+        "baixaMin": 262,
+        "baixaMax": 270,
+        "pagina": 119
+      },
+      {
+        "nivel": 20,
+        "altaMin": 465,
+        "altaMax": 473,
+        "moderadaMin": 371,
+        "moderadaMax": 379,
+        "baixaMin": 277,
+        "baixaMax": 285,
+        "pagina": 119
+      },
+      {
+        "nivel": 21,
+        "altaMin": 495,
+        "altaMax": 505,
+        "moderadaMin": 395,
+        "moderadaMax": 405,
+        "baixaMin": 295,
+        "baixaMax": 305,
+        "pagina": 119
+      },
+      {
+        "nivel": 22,
+        "altaMin": 532,
+        "altaMax": 544,
+        "moderadaMin": 424,
+        "moderadaMax": 436,
+        "baixaMin": 317,
+        "baixaMax": 329,
+        "pagina": 119
+      },
+      {
+        "nivel": 23,
+        "altaMin": 569,
+        "altaMax": 581,
+        "moderadaMin": 454,
+        "moderadaMax": 466,
+        "baixaMin": 339,
+        "baixaMax": 351,
+        "pagina": 119
+      },
+      {
+        "nivel": 24,
+        "altaMin": 617,
+        "altaMax": 633,
+        "moderadaMin": 492,
+        "moderadaMax": 508,
+        "baixaMin": 367,
+        "baixaMax": 383,
+        "pagina": 119
+      }
+    ],
+    "perigosOfensiva": [
+      {
+        "nivel": -1,
+        "ataqueSimples": 10,
+        "ataqueComplexo": 8,
+        "danoSimples": "2d4+1",
+        "danoComplexo": "1d4+1",
+        "cdExtrema": 19,
+        "cdAlta": 16,
+        "pagina": 111
+      },
+      {
+        "nivel": 0,
+        "ataqueSimples": 11,
+        "ataqueComplexo": 8,
+        "danoSimples": "2d6+3",
+        "danoComplexo": "1d6+2",
+        "cdExtrema": 19,
+        "cdAlta": 16,
+        "pagina": 111
+      },
+      {
+        "nivel": 1,
+        "ataqueSimples": 13,
+        "ataqueComplexo": 9,
+        "danoSimples": "2d6+5",
+        "danoComplexo": "1d6+3",
+        "cdExtrema": 20,
+        "cdAlta": 17,
+        "pagina": 111
+      },
+      {
+        "nivel": 2,
+        "ataqueSimples": 14,
+        "ataqueComplexo": 11,
+        "danoSimples": "2d10+7",
+        "danoComplexo": "1d10+4",
+        "cdExtrema": 22,
+        "cdAlta": 18,
+        "pagina": 111
+      },
+      {
+        "nivel": 3,
+        "ataqueSimples": 16,
+        "ataqueComplexo": 12,
+        "danoSimples": "2d10+13",
+        "danoComplexo": "1d10+6",
+        "cdExtrema": 23,
+        "cdAlta": 20,
+        "pagina": 111
+      },
+      {
+        "nivel": 4,
+        "ataqueSimples": 17,
+        "ataqueComplexo": 14,
+        "danoSimples": "4d8+10",
+        "danoComplexo": "2d8+5",
+        "cdExtrema": 25,
+        "cdAlta": 21,
+        "pagina": 111
+      },
+      {
+        "nivel": 5,
+        "ataqueSimples": 19,
+        "ataqueComplexo": 15,
+        "danoSimples": "4d8+14",
+        "danoComplexo": "2d8+7",
+        "cdExtrema": 26,
+        "cdAlta": 22,
+        "pagina": 111
+      },
+      {
+        "nivel": 6,
+        "ataqueSimples": 20,
+        "ataqueComplexo": 17,
+        "danoSimples": "4d8+18",
+        "danoComplexo": "2d8+9",
+        "cdExtrema": 27,
+        "cdAlta": 24,
+        "pagina": 111
+      },
+      {
+        "nivel": 7,
+        "ataqueSimples": 22,
+        "ataqueComplexo": 18,
+        "danoSimples": "4d10+18",
+        "danoComplexo": "2d10+9",
+        "cdExtrema": 29,
+        "cdAlta": 25,
+        "pagina": 111
+      },
+      {
+        "nivel": 8,
+        "ataqueSimples": 23,
+        "ataqueComplexo": 20,
+        "danoSimples": "4d10+22",
+        "danoComplexo": "2d10+11",
+        "cdExtrema": 30,
+        "cdAlta": 26,
+        "pagina": 111
+      },
+      {
+        "nivel": 9,
+        "ataqueSimples": 25,
+        "ataqueComplexo": 21,
+        "danoSimples": "4d10+26",
+        "danoComplexo": "2d10+13",
+        "cdExtrema": 32,
+        "cdAlta": 28,
+        "pagina": 111
+      },
+      {
+        "nivel": 10,
+        "ataqueSimples": 26,
+        "ataqueComplexo": 23,
+        "danoSimples": "4d12+26",
+        "danoComplexo": "2d12+13",
+        "cdExtrema": 33,
+        "cdAlta": 29,
+        "pagina": 111
+      },
+      {
+        "nivel": 11,
+        "ataqueSimples": 28,
+        "ataqueComplexo": 24,
+        "danoSimples": "4d12+30",
+        "danoComplexo": "2d12+15",
+        "cdExtrema": 34,
+        "cdAlta": 30,
+        "pagina": 111
+      },
+      {
+        "nivel": 12,
+        "ataqueSimples": 29,
+        "ataqueComplexo": 26,
+        "danoSimples": "6d10+27",
+        "danoComplexo": "3d10+14",
+        "cdExtrema": 36,
+        "cdAlta": 32,
+        "pagina": 111
+      },
+      {
+        "nivel": 13,
+        "ataqueSimples": 31,
+        "ataqueComplexo": 27,
+        "danoSimples": "6d10+31",
+        "danoComplexo": "3d10+16",
+        "cdExtrema": 37,
+        "cdAlta": 33,
+        "pagina": 111
+      },
+      {
+        "nivel": 14,
+        "ataqueSimples": 32,
+        "ataqueComplexo": 29,
+        "danoSimples": "6d10+35",
+        "danoComplexo": "3d10+18",
+        "cdExtrema": 39,
+        "cdAlta": 34,
+        "pagina": 111
+      },
+      {
+        "nivel": 15,
+        "ataqueSimples": 34,
+        "ataqueComplexo": 30,
+        "danoSimples": "6d12+33",
+        "danoComplexo": "3d12+17",
+        "cdExtrema": 40,
+        "cdAlta": 36,
+        "pagina": 111
+      },
+      {
+        "nivel": 16,
+        "ataqueSimples": 35,
+        "ataqueComplexo": 32,
+        "danoSimples": "6d12+35",
+        "danoComplexo": "3d12+18",
+        "cdExtrema": 41,
+        "cdAlta": 37,
+        "pagina": 111
+      },
+      {
+        "nivel": 17,
+        "ataqueSimples": 37,
+        "ataqueComplexo": 33,
+        "danoSimples": "6d12+37",
+        "danoComplexo": "3d12+19",
+        "cdExtrema": 43,
+        "cdAlta": 38,
+        "pagina": 111
+      },
+      {
+        "nivel": 18,
+        "ataqueSimples": 38,
+        "ataqueComplexo": 35,
+        "danoSimples": "6d12+41",
+        "danoComplexo": "3d12+20",
+        "cdExtrema": 44,
+        "cdAlta": 40,
+        "pagina": 111
+      },
+      {
+        "nivel": 19,
+        "ataqueSimples": 40,
+        "ataqueComplexo": 36,
+        "danoSimples": "8d10+40",
+        "danoComplexo": "4d10+20",
+        "cdExtrema": 46,
+        "cdAlta": 41,
+        "pagina": 111
+      },
+      {
+        "nivel": 20,
+        "ataqueSimples": 41,
+        "ataqueComplexo": 38,
+        "danoSimples": "8d10+44",
+        "danoComplexo": "4d10+22",
+        "cdExtrema": 47,
+        "cdAlta": 42,
+        "pagina": 111
+      },
+      {
+        "nivel": 21,
+        "ataqueSimples": 43,
+        "ataqueComplexo": 39,
+        "danoSimples": "8d10+48",
+        "danoComplexo": "4d10+24",
+        "cdExtrema": 48,
+        "cdAlta": 44,
+        "pagina": 111
+      },
+      {
+        "nivel": 22,
+        "ataqueSimples": 44,
+        "ataqueComplexo": 41,
+        "danoSimples": "8d10+52",
+        "danoComplexo": "4d10+26",
+        "cdExtrema": 50,
+        "cdAlta": 45,
+        "pagina": 111
+      },
+      {
+        "nivel": 23,
+        "ataqueSimples": 46,
+        "ataqueComplexo": 42,
+        "danoSimples": "8d12+48",
+        "danoComplexo": "4d12+24",
+        "cdExtrema": 51,
+        "cdAlta": 46,
+        "pagina": 111
+      },
+      {
+        "nivel": 24,
+        "ataqueSimples": 47,
+        "ataqueComplexo": 44,
+        "danoSimples": "8d12+52",
+        "danoComplexo": "4d12+26",
+        "cdExtrema": 52,
+        "cdAlta": 48,
+        "pagina": 111
+      }
     ]
   },
   "lacunas": [
     "Tradução integral das 338 páginas não concluída; os guias presentes não substituem todo o livro.",
     "Catálogo contém somente entradas explicitamente revisadas: ainda faltam armas específicas, alquimia, talismãs, itens vestidos, amaldiçoados e relíquias.",
-    "Tabelas completas de criação de criaturas, perigos e itens ainda não transcritas; os guias não geram estatísticas oficiais por aproximação.",
+    "Tabelas de CA, salvaguardas, PV e detecção/desativação revisadas; ainda faltam outras tabelas de construção de criaturas, perigos e itens. Os guias não geram estatísticas por aproximação.",
     "Geografia, facções, divindades e cosmologia ainda não traduzidas integralmente.",
     "Variantes e subsistemas são consulta; nenhuma mudança automática na ficha padrão."
   ]

@@ -12780,16 +12780,33 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página44 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe bônus de circunstância no dano de armas e ataques desarmados contra criaturas com os traços gigante, goblin, hryngar ou orc. O bônus é +1 para um dado de dano e passa à quantidade de dados da arma ou ataque desarmado quando houver mais de um. Se uma criatura causar dano em você com um acerto crítico, recebe esse bônus contra ela por 1 minuto, mesmo sem esses traços. O mestre pode acrescentar inimigos ancestrais conforme sua comunidade.",
+      "resumo": [
+        "Mais dano contra inimigos ancestrais; também funciona por um minuto contra quem ferir você com um crítico."
+      ],
       "fonte": "player-core",
       "pagina": 44,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-45"
       ],
-      "ancestralidade": "anao"
+      "ancestralidade": "anao",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "danoCondicional": {
+        "tipo": "circunstancia",
+        "tracosAlvo": [
+          "gigante",
+          "goblin",
+          "hryngar",
+          "orc"
+        ],
+        "valor": "dados-da-arma",
+        "criticoRecebidoDuracaoRodadas": 10
+      }
     },
     {
       "id": "anao-familiaridade-com-armas-enanicas",
@@ -12797,16 +12814,35 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página44 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço anao. Familiaridade com as armas desse traço e com machado de batalha, martelo de guerra, picareta. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 44,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-45"
       ],
-      "ancestralidade": "anao"
+      "ancestralidade": "anao",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "anao"
+        ],
+        "ids": [
+          "machado-de-batalha",
+          "martelo-de-guerra",
+          "picareta"
+        ],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "anao-ferro-desimpedido",
@@ -12833,16 +12869,37 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página44 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em Manufatura; se já era treinado, recebe Especialidade de Manufatura para alvenaria. Recebe +2 de circunstância em Percepção para notar detalhes estranhos em obras de pedra, inclusive armadilhas mecânicas feitas ou escondidas nelas. Mesmo sem Buscar ativamente, o mestre faz um teste secreto para notar esses detalhes, sem aplicar o bônus +2.",
+      "resumo": [
+        "Treina Manufatura ou especializa alvenaria; melhora a busca de detalhes e armadilhas em pedra."
+      ],
       "fonte": "player-core",
       "pagina": 44,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-45"
       ],
-      "ancestralidade": "anao"
+      "ancestralidade": "anao",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "manufatura"
+      ],
+      "efeitosCondicionais": [
+        {
+          "alvo": "percepcao",
+          "tipo": "circunstancia",
+          "valor": 2,
+          "condicao": "buscar-detalhes-pedra"
+        }
+      ],
+      "alternativaTreinoExistente": {
+        "talento": "especialidade-de-manufatura",
+        "escolha": "alvenaria"
+      }
     },
     {
       "id": "anao-saber-enanico",
@@ -12850,16 +12907,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página44 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em manufatura, religiao. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Anões), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 44,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-45"
       ],
-      "ancestralidade": "anao"
+      "ancestralidade": "anao",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "manufatura",
+        "religiao"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Anões",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "anao-valentia-enanica",
@@ -12867,16 +12939,25 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página44 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "No fim do seu turno, reduza sua condição assustado em 2, em vez da redução normal de 1. Não concede bônus a salvamentos e não remove a condição antes do fim do turno.",
+      "resumo": [
+        "Assustado diminui dois pontos no fim do seu turno."
+      ],
       "fonte": "player-core",
       "pagina": 44,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-45"
       ],
-      "ancestralidade": "anao"
+      "ancestralidade": "anao",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "reducoesCondicoes": {
+        "assustadoFimTurno": 2
+      }
     },
     {
       "id": "anao-desafiar-a-escuridao",
@@ -13116,33 +13197,68 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página48 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço elfo. Familiaridade com as armas desse traço e com arco curto composto, arco longo composto, arco curto, arco longo, rapieira. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 48,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-49"
       ],
-      "ancestralidade": "elfo"
+      "ancestralidade": "elfo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "elfo"
+        ],
+        "ids": [
+          "arco-curto-composto",
+          "arco-longo-composto",
+          "arco-curto",
+          "arco-longo",
+          "rapieira"
+        ],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "elfo-longevidade-ancestral",
       "nome": "Longevidade Ancestral",
       "nivel": 1,
       "tipo": "ancestralidade",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página48 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Pelo menos 100 anos",
+      "descricao": "Exige pelo menos 100 anos. Durante preparações diárias, escolhe uma perícia e fica treinado nela até a próxima preparação. Esse treinamento temporário não atende a pré-requisitos de incrementos de perícia, talentos ou outras escolhas permanentes.",
+      "resumo": [
+        "Escolhe diariamente uma perícia treinada temporária, sem liberar opções permanentes."
+      ],
       "fonte": "player-core",
       "pagina": 48,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-49"
       ],
-      "ancestralidade": "elfo"
+      "ancestralidade": "elfo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "requisitosEstruturados": {
+        "idadeMinima": 100
+      },
+      "escolhaPericiaTemporaria": {
+        "graduacao": 1,
+        "duracao": "preparacoes-diarias",
+        "validaPrerequisitos": false
+      }
     },
     {
       "id": "elfo-magia-extraterrena",
@@ -13150,16 +13266,28 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página48 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Escolhe um truque arcano e pode conjurá-lo como magia arcana inata à vontade. Seu ranque acompanha metade do nível arredondada para cima, como os demais truques.",
+      "resumo": [
+        "Um truque arcano inato à vontade, elevado automaticamente com o nível."
+      ],
       "fonte": "player-core",
       "pagina": 48,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-49"
       ],
-      "ancestralidade": "elfo"
+      "ancestralidade": "elfo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "escolhaMagiaInata": {
+        "tipo": "truque",
+        "tradicao": "arcana",
+        "quantidade": 1,
+        "frequencia": "a-vontade"
+      }
     },
     {
       "id": "elfo-saber-elfico",
@@ -13167,16 +13295,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página48 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em arcanismo, natureza. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Elfos), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 48,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-49"
       ],
-      "ancestralidade": "elfo"
+      "ancestralidade": "elfo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "arcanismo",
+        "natureza"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Elfos",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "elfo-semblante-inabalavel",
@@ -13184,16 +13327,34 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página48 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Quando uma magia mental afetar você por pelo menos 2 rodadas, pode reduzir sua duração em 1 rodada. Melhora em um grau os salvamentos contra efeitos que fariam você dormir. Isso não protege contra outras causas de inconsciência e não dispensa sono natural.",
+      "resumo": [
+        "Encurta magias mentais duradouras e melhora salvamentos contra sono."
+      ],
       "fonte": "player-core",
       "pagina": 48,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-49"
       ],
-      "ancestralidade": "elfo"
+      "ancestralidade": "elfo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "reduzirDuracao": {
+        "traco": "mental",
+        "minimoRodadas": 2,
+        "reducaoRodadas": 1
+      },
+      "grausCondicionais": [
+        {
+          "alvo": "salvaguarda",
+          "condicao": "sono",
+          "melhora": 1
+        }
+      ]
     },
     {
       "id": "elfo-experiencia-marcial",
@@ -13371,16 +13532,34 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Ação livre], uma vez por hora. Quando deixar uma criatura cegada ou ofuscada, aumenta em 1 rodada a duração daquela condição que você aplicou.",
+      "resumo": [
+        "Prolonga cegado ou ofuscado em uma rodada, uma vez por hora."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "livre",
+      "frequencia": {
+        "quantidade": 1,
+        "periodo": "hora"
+      },
+      "aumentarDuracaoCondicoes": {
+        "condicoes": [
+          "cegado",
+          "ofuscado"
+        ],
+        "rodadas": 1
+      }
     },
     {
       "id": "gnomo-cumplice-animal",
@@ -13429,16 +13608,33 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Pode fazer perguntas, receber respostas e usar Diplomacia com animais, compreendendo suas vocalizações. Animais selvagens geralmente ao menos escutam. Recebe +1 de circunstância para Impressionar animais; a comunicação não os torna automaticamente amigáveis.",
+      "resumo": [
+        "Conversa com animais e recebe +1 para Impressioná-los."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "comunicacao": [
+        "animais"
+      ],
+      "efeitosCondicionais": [
+        {
+          "alvo": "pericia:diplomacia",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "impressionar-animal"
+        }
+      ]
     },
     {
       "id": "gnomo-familiaridade-com-armas-gnomicas",
@@ -13446,16 +13642,34 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço gnomo. Também tem acesso a kukris.. Familiaridade com as armas desse traço e com glaive, kukri. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "gnomo"
+        ],
+        "ids": [
+          "glaive",
+          "kukri"
+        ],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "gnomo-magia-do-primeiro-mundo",
@@ -13463,16 +13677,28 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Escolhe um truque primal e pode conjurá-lo como magia primal inata à vontade. O truque eleva-se a metade do nível arredondada para cima.",
+      "resumo": [
+        "Um truque primal inato à vontade, elevado com o nível."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "escolhaMagiaInata": {
+        "tipo": "truque",
+        "tradicao": "primal",
+        "quantidade": 1,
+        "frequencia": "a-vontade"
+      }
     },
     {
       "id": "gnomo-obsessao-gnomica",
@@ -13480,16 +13706,28 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe Saber Adicional e Certeza para a subcategoria de Saber escolhida. Pode retreinar este talento para outro Saber com apenas 1 dia de recesso.",
+      "resumo": [
+        "Escolhe um Saber com Certeza e pode trocar sua obsessão em um dia."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "talentosConcedidos": [
+        "saber-adicional",
+        "certeza"
+      ],
+      "escolhaSaber": true,
+      "retreinamentoDias": 1
     },
     {
       "id": "gnomo-sentir-ilusao",
@@ -13497,16 +13735,37 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página52 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +1 de circunstância em Percepção e salvamentos de Vontade contra efeitos de ilusão. A até 3 m de uma ilusão que possa ser desacreditada, o mestre faz um teste secreto para desacreditá-la mesmo sem você gastar uma ação para Interagir.",
+      "resumo": [
+        "Melhora detecção e defesa contra ilusões e testa secretamente para desacreditar ilusões próximas."
+      ],
       "fonte": "player-core",
       "pagina": 52,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-53"
       ],
-      "ancestralidade": "gnomo"
+      "ancestralidade": "gnomo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "efeitosCondicionais": [
+        {
+          "alvo": "percepcao",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "ilusao"
+        },
+        {
+          "alvo": "vontade",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "ilusao"
+        }
+      ],
+      "desacreditarPassivoMetros": 3
     },
     {
       "id": "gnomo-fonte-energizada",
@@ -13667,16 +13926,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +1 de circunstância para Subsistir e pode usar Sobrevivência ou Sociedade em assentamentos. Ao Subsistir em uma cidade, pode Ganhar Proventos com uma dessas perícias ao mesmo tempo, sem dias adicionais, também com +1 de circunstância. A herança bucho-de-ferro aumenta os bônus para +2.",
+      "resumo": [
+        "Subsiste e ganha dinheiro simultaneamente em cidades; +1 nos testes, ou +2 com bucho-de-ferro."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "atividadesCombinadas": [
+        "subsistir",
+        "ganhar-proventos"
+      ],
+      "bonusSubsistir": 1,
+      "bonusHeranca": {
+        "herancaId": "goblin-bucho-de-ferro",
+        "valor": 2
+      }
     },
     {
       "id": "goblin-cavaleiro-brusco",
@@ -13706,16 +13980,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço goblin. Familiaridade com as armas desse traço. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "goblin"
+        ],
+        "ids": [],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "goblin-funileiro-de-sucata",
@@ -13723,16 +14012,28 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Pode Manufaturar itens de nível 0, inclusive armas e armaduras, a partir de lixo por um quarto do Preço. São de baixa qualidade, mas você ignora as penalidades desses itens feitos por você. Também pode incorporar sucata em qualquer item: recebe a redução de custo equivalente a 1 dia adicional de trabalho. O aspecto de sucata pode reduzir o preço de revenda a critério do mestre.",
+      "resumo": [
+        "Fabrica equipamento inicial barato com sucata e ignora suas penalidades; outros projetos recebem um dia extra de desconto."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "manufaturaSucata": {
+        "nivelMaximoItem": 0,
+        "multiplicadorPreco": 0.25,
+        "ignoraBaixaQualidadePropria": true,
+        "diasReducaoExtra": 1
+      }
     },
     {
       "id": "goblin-muito-sorrateiro",
@@ -13740,16 +14041,27 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Pode percorrer 1,5 m adicionais ao Esgueirar-se, sem ultrapassar sua Velocidade. Enquanto continuar Esgueirando-se com sucesso, não se torna observado no fim do turno se terminar com cobertura, cobertura maior ou ocultação. Pode realizar outras ações no turno desde que termine nas condições indicadas.",
+      "resumo": [
+        "Esgueira-se mais longe e conserva a ocultação ao terminar o turno protegido."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "movimentoCondicional": {
+        "acao": "esgueirar-se",
+        "metrosExtra": 1.5,
+        "limite": "velocidade"
+      }
     },
     {
       "id": "goblin-passadela-de-goblin",
@@ -13757,16 +14069,28 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Reação]. Quando um aliado terminar uma ação de movimento adjacente a você, você Dá um Passo.",
+      "resumo": [
+        "Usa uma reação para Dar um Passo quando um aliado termina movimento ao seu lado."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "reacao",
+      "gatilho": "aliado-termina-movimento-adjacente",
+      "movimento": {
+        "acao": "passo",
+        "metros": 1.5
+      }
     },
     {
       "id": "goblin-saber-goblinico",
@@ -13774,16 +14098,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página56 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em natureza, furtividade. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Goblins), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 56,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-57"
       ],
-      "ancestralidade": "goblin"
+      "ancestralidade": "goblin",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "natureza",
+        "furtividade"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Goblins",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "goblin-cantar-alto",
@@ -13968,16 +14307,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Transmite mensagem codificada com três palavras básicas. O destinatário testa Percepção CD 20; a CD cai em 5 se for halfling ou tiver este talento, e em 10 se ambos forem verdadeiros. Ouvintes indesejados testam Percepção contra sua CD de Dissimulação. Bônus e penalidades de Sentir Motivação aplicam-se a esses testes.",
+      "resumo": [
+        "Envia mensagens de três palavras; halflings e conhecedores do código entendem com maior facilidade."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "mensagemCodificada": {
+        "palavras": 3,
+        "cdBase": 20,
+        "reducaoCadaFator": 5,
+        "fatores": [
+          "halfling",
+          "talento-expressoes-idiomaticas"
+        ]
+      }
     },
     {
       "id": "halfling-familiaridade-com-armas-de-halfling",
@@ -13985,16 +14339,34 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço halfling. Familiaridade com as armas desse traço e com funda, espada curta. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "halfling"
+        ],
+        "ids": [
+          "funda",
+          "espada-curta"
+        ],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "halfling-fundeiro-titanico",
@@ -14002,16 +14374,27 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Quando acertar criatura Grande ou maior usando arma do grupo fundas, aumenta o dado de dano da arma em um passo. Não concede bônus contra criaturas menores nem aumenta a quantidade de dados.",
+      "resumo": [
+        "Contra criaturas Grandes ou maiores, a funda usa um dado de dano maior."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "dadoDanoCondicional": {
+        "grupo": "funda",
+        "tamanhoAlvoMinimo": "Grande",
+        "passos": 1
+      }
     },
     {
       "id": "halfling-halfling-atento",
@@ -14019,16 +14402,30 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +2 de circunstância em Percepção para Sentir Motivação e notar criaturas encantadas ou possuídas. Sem procurar ativamente, o mestre ainda faz um teste secreto, sem esse bônus. Pode Auxiliar salvamentos ou outros testes de outra criatura para superar encantamento ou possessão, gastando uma ação para encorajá-la como na preparação normal de Auxiliar.",
+      "resumo": [
+        "Detecta encantamento e possessão e pode Auxiliar alguém a se libertar."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "efeitosCondicionais": [
+        {
+          "alvo": "percepcao",
+          "tipo": "circunstancia",
+          "valor": 2,
+          "condicao": "sentir-motivacao-encantamento-possessao"
+        }
+      ]
     },
     {
       "id": "halfling-halfling-liberto",
@@ -14036,16 +14433,44 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Sucesso em Escapar ou em salvamento contra efeito que deixaria você agarrado, imobilizado ou restringido torna-se sucesso crítico. Falha de uma criatura ao tentar Agarrar você torna-se falha crítica.",
+      "resumo": [
+        "Melhora suas fugas e dificulta tentativas de Agarrar você."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "grausCondicionais": [
+        {
+          "acao": "escapar",
+          "resultado": "sucesso",
+          "novoResultado": "sucesso-critico"
+        },
+        {
+          "alvo": "salvaguarda",
+          "condicoes": [
+            "agarrado",
+            "imobilizado",
+            "restringido"
+          ],
+          "resultado": "sucesso",
+          "novoResultado": "sucesso-critico"
+        },
+        {
+          "acaoInimiga": "agarrar",
+          "resultado": "falha",
+          "novoResultado": "falha-critica"
+        }
+      ]
     },
     {
       "id": "halfling-pes-firmes",
@@ -14053,16 +14478,38 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Sucesso em Acrobatismo para Equilibrar-se ou Atletismo para Escalar torna-se sucesso crítico. Você não fica desprevenido ao tentar essas duas ações.",
+      "resumo": [
+        "Equilibra-se e escala com mais segurança; sucesso vira crítico sem deixar você desprevenido."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "grausCondicionais": [
+        {
+          "acao": "equilibrar-se",
+          "resultado": "sucesso",
+          "novoResultado": "sucesso-critico"
+        },
+        {
+          "acao": "escalar",
+          "resultado": "sucesso",
+          "novoResultado": "sucesso-critico"
+        }
+      ],
+      "ignoraDesprevenidoAcoes": [
+        "equilibrar-se",
+        "escalar"
+      ]
     },
     {
       "id": "halfling-saber-halfling",
@@ -14070,16 +14517,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em acrobacia, furtividade. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Halflings), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "acrobacia",
+        "furtividade"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Halflings",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "halfling-sorte-de-halfling",
@@ -14087,16 +14549,35 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página60 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Ação livre], fortúnio, uma vez por dia. Quando falhar em uma perícia ou salvamento, pode rejogar esse teste. Precisa aceitar o novo resultado mesmo se for pior.",
+      "resumo": [
+        "Uma vez por dia, rejoga uma perícia ou salvamento malsucedido e aceita o resultado novo."
+      ],
       "fonte": "player-core",
       "pagina": 60,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-61"
       ],
-      "ancestralidade": "halfling"
+      "ancestralidade": "halfling",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "livre",
+      "tracos": [
+        "fortunio",
+        "halfling"
+      ],
+      "frequencia": {
+        "quantidade": 1,
+        "periodo": "dia"
+      },
+      "rerrolagem": {
+        "gatilho": "falha-pericia-ou-salvamento",
+        "resultado": "novo-obrigatorio"
+      }
     },
     {
       "id": "halfling-adaptabilidade-cultural",
@@ -14300,16 +14781,30 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página64 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +4 de circunstância nos testes feitos para Auxiliar. O bônus se aplica ao seu teste de Auxiliar, não diretamente ao teste de quem recebe a ajuda.",
+      "resumo": [
+        "+4 nos seus testes para Auxiliar."
+      ],
       "fonte": "player-core",
       "pagina": 64,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-65"
       ],
-      "ancestralidade": "humano"
+      "ancestralidade": "humano",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "efeitosCondicionais": [
+        {
+          "alvo": "pericia",
+          "tipo": "circunstancia",
+          "valor": 4,
+          "condicao": "auxiliar"
+        }
+      ]
     },
     {
       "id": "humano-obstinacao-altiva",
@@ -14317,16 +14812,35 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página64 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Sucesso em salvamento contra efeito mental que controla diretamente suas ações torna-se sucesso crítico. Falha de uma criatura ao usar Intimidação para Coagir você torna-se falha crítica, impedindo nova tentativa de Coagir por 1 semana.",
+      "resumo": [
+        "Resiste melhor ao controle mental e pune tentativas malsucedidas de Coagir."
+      ],
       "fonte": "player-core",
       "pagina": 64,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-65"
       ],
-      "ancestralidade": "humano"
+      "ancestralidade": "humano",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "grausCondicionais": [
+        {
+          "alvo": "salvaguarda",
+          "condicao": "controle-mental-direto",
+          "resultado": "sucesso",
+          "novoResultado": "sucesso-critico"
+        },
+        {
+          "acaoInimiga": "coagir",
+          "resultado": "falha",
+          "novoResultado": "falha-critica"
+        }
+      ]
     },
     {
       "id": "humano-pericia-natural",
@@ -14385,17 +14899,28 @@
       "nome": "Truque Mágico Adaptado",
       "nivel": 1,
       "tipo": "ancestralidade",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página64 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Conjuração como característica de classe",
+      "descricao": "Exige conjuração como característica de classe. Escolhe um truque de outra tradição: preparado ganha acesso à opção nas preparações; espontâneo substitui um truque conhecido pelo escolhido. Conjura o truque como se fosse da tradição da própria classe. Retreinar permite escolher outro truque da mesma tradição alternativa ou de outra.",
+      "resumo": [
+        "Adapta um truque de outra tradição à magia da classe; substitui um conhecido se for espontâneo."
+      ],
       "fonte": "player-core",
       "pagina": 64,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-65"
       ],
-      "ancestralidade": "humano"
+      "ancestralidade": "humano",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "escolhaMagiaAdaptada": {
+        "tipo": "truque",
+        "tradicaoDiferente": true,
+        "substituiConhecidaEspontaneo": true
+      }
     },
     {
       "id": "humano-discipulo-adaptativo",
@@ -14607,16 +15132,30 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página68 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Ao empunhar arma corpo a corpo de duas mãos, sem alcance e com dano de pelo menos d 6, pode Interagir para alternar entre empunhadura normal e estendida. A estendida oferece alcance de 3 m, mas reduz o dado de dano em um passo. Outra ação Interagir retorna à empunhadura normal.",
+      "resumo": [
+        "Troca uma ação por alcance de 3 m em arma de duas mãos, com um dado de dano menor."
+      ],
       "fonte": "player-core",
       "pagina": 68,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-69"
       ],
-      "ancestralidade": "leshy"
+      "ancestralidade": "leshy",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "posturaEmpunhadura": {
+        "acoes": 1,
+        "maos": 2,
+        "dadoMinimo": 6,
+        "proibeTraco": "alcance",
+        "alcanceMetros": 3,
+        "passosDano": -1
+      }
     },
     {
       "id": "leshy-disparar-sementes",
@@ -14643,16 +15182,32 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página68 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe Pedido Descarado como talento bônus. Também recebe +1 de circunstância na iniciativa quando usar Dissimulação para iniciativa.",
+      "resumo": [
+        "Recebe Pedido Descarado e +1 na iniciativa com Dissimulação."
+      ],
       "fonte": "player-core",
       "pagina": 68,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-69"
       ],
-      "ancestralidade": "leshy"
+      "ancestralidade": "leshy",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "talentosConcedidos": [
+        "pedido-descarado"
+      ],
+      "efeitos": [
+        {
+          "alvo": "iniciativa:enganacao",
+          "tipo": "circunstancia",
+          "valor": 1
+        }
+      ]
     },
     {
       "id": "leshy-impavido",
@@ -14679,16 +15234,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página68 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em furtividade, natureza. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Leshies), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 68,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-69"
       ],
-      "ancestralidade": "leshy"
+      "ancestralidade": "leshy",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "furtividade",
+        "natureza"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Leshies",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "leshy-sombra-dos-ermos",
@@ -14696,16 +15266,26 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página68 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Fora de ambientes urbanos, você sempre é considerado como se estivesse Cobrindo Rastros, mesmo ao escolher outra atividade de exploração. Não elimina todos os rastros nem substitui as demais regras daquela atividade.",
+      "resumo": [
+        "Cobre rastros automaticamente enquanto explora ambientes não urbanos."
+      ],
       "fonte": "player-core",
       "pagina": 68,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-69"
       ],
-      "ancestralidade": "leshy"
+      "ancestralidade": "leshy",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "atividadeExploracaoPassiva": {
+        "id": "cobrir-rastros",
+        "foraUrbano": true
+      }
     },
     {
       "id": "leshy-supersticao-leshyn",
@@ -14713,16 +15293,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página68 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Reação]. Antes de rolar um salvamento contra magia ou efeito mágico, pode concentrar-se em um objeto de sorte e receber +1 de circunstância naquele salvamento.",
+      "resumo": [
+        "Usa reação antes do dado para +1 no salvamento contra magia."
+      ],
       "fonte": "player-core",
       "pagina": 68,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-69"
       ],
-      "ancestralidade": "leshy"
+      "ancestralidade": "leshy",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "reacao",
+      "efeitosCondicionais": [
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "magia-reacao-supersticao"
+        }
+      ]
     },
     {
       "id": "leshy-falar-com-parentes",
@@ -14934,16 +15529,34 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página72 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Acesso a todas as armas incomuns com o traço orc. Familiaridade com as armas desse traço e com bracamante, machado longo. Para proficiência, trate as armas marciais abrangidas como simples e as avançadas como marciais. A partir do nível 5, aplique o efeito de especialização de crítico ao obter acerto crítico com essas armas.",
+      "resumo": [
+        "Libera as armas tradicionais, facilita sua proficiência e concede especialização de crítico no nível 5."
+      ],
       "fonte": "player-core",
       "pagina": 72,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-73"
       ],
-      "ancestralidade": "orc"
+      "ancestralidade": "orc",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "familiaridadeArmas": {
+        "tracos": [
+          "orc"
+        ],
+        "ids": [
+          "bracamante",
+          "machado-longo"
+        ],
+        "marciaisComo": "simples",
+        "avancadasComo": "marciais",
+        "especializacaoCriticoNivel": 5
+      }
     },
     {
       "id": "orc-ferocidade-orquica",
@@ -14970,16 +15583,91 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página72 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Escolhe um emblema: Cadáver Profanado treina Religião e +1 de estado contra magia divina; Face da Morte treina Sobrevivência e +1 contra primal; Mão Vazia treina Intimidação e +1 contra ocultista; Sol Ardente treina Diplomacia e +1 contra arcana. A marca ou tatuagem representa o símbolo escolhido.",
+      "resumo": [
+        "Escolhe uma perícia treinada e +1 contra uma tradição mágica ligada ao emblema."
+      ],
       "fonte": "player-core",
       "pagina": 72,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-73"
       ],
-      "ancestralidade": "orc"
+      "ancestralidade": "orc",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "escolhasExtras": [
+        {
+          "id": "marca-dominio",
+          "nome": "Marca do domínio",
+          "nivel": 1,
+          "opcoes": [
+            {
+              "id": "cadaver-profanado",
+              "nome": "Cadáver Profanado",
+              "periciasFixas": [
+                "religiao"
+              ],
+              "efeitosCondicionais": [
+                {
+                  "alvo": "salvaguarda",
+                  "tipo": "estado",
+                  "valor": 1,
+                  "condicao": "magia-divina"
+                }
+              ]
+            },
+            {
+              "id": "face-da-morte",
+              "nome": "Face da Morte",
+              "periciasFixas": [
+                "sobrevivencia"
+              ],
+              "efeitosCondicionais": [
+                {
+                  "alvo": "salvaguarda",
+                  "tipo": "estado",
+                  "valor": 1,
+                  "condicao": "magia-primal"
+                }
+              ]
+            },
+            {
+              "id": "mao-vazia",
+              "nome": "Mão Vazia",
+              "periciasFixas": [
+                "intimidacao"
+              ],
+              "efeitosCondicionais": [
+                {
+                  "alvo": "salvaguarda",
+                  "tipo": "estado",
+                  "valor": 1,
+                  "condicao": "magia-ocultista"
+                }
+              ]
+            },
+            {
+              "id": "sol-ardente",
+              "nome": "Sol Ardente",
+              "periciasFixas": [
+                "diplomacia"
+              ],
+              "efeitosCondicionais": [
+                {
+                  "alvo": "salvaguarda",
+                  "tipo": "estado",
+                  "valor": 1,
+                  "condicao": "magia-arcana"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "orc-presas",
@@ -14987,16 +15675,37 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página72 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe ataque desarmado de presas: 1d 6 perfurante, grupo pugilato, traços acuidade e desarmado. Só pode escolher no nível 1; não pode retreinar para adquirir depois. Perder por retreinamento exige medidas drásticas, como remover ou desgastar as presas.",
+      "resumo": [
+        "Ataque desarmado d 6 perfurante; precisa escolher na criação."
+      ],
       "fonte": "player-core",
       "pagina": 72,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-73"
       ],
-      "ancestralidade": "orc"
+      "ancestralidade": "orc",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "somenteNivelEscolha": 1,
+      "naoRetreinavelParaAdquirir": true,
+      "ataquesDesarmados": [
+        {
+          "id": "presas",
+          "nome": "Presas",
+          "dano": "1d6",
+          "tipoDano": "perfurante",
+          "grupo": "pugilato",
+          "tracos": [
+            "acuidade",
+            "desarmado"
+          ]
+        }
+      ]
     },
     {
       "id": "orc-punhos-de-ferro",
@@ -15023,16 +15732,31 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página72 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em atletismo, sobrevivencia. Se a biografia, classe ou outra fonte já conceder automaticamente uma dessas perícias, substitua aquele treinamento por outra perícia à sua escolha. Recebe Saber Adicional para Saber (Orcs), com a progressão de proficiência própria desse talento.",
+      "resumo": [
+        "Duas perícias treinadas e Saber sobre seu povo; treinos duplicados podem ser substituídos."
+      ],
       "fonte": "player-core",
       "pagina": 72,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-73"
       ],
-      "ancestralidade": "orc"
+      "ancestralidade": "orc",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "atletismo",
+        "sobrevivencia"
+      ],
+      "talentosConcedidos": [
+        "saber-adicional"
+      ],
+      "saberConcedido": "Orcs",
+      "substituirTreinoDuplicado": true
     },
     {
       "id": "orc-supersticao-orquica",
@@ -15059,16 +15783,48 @@
       "nivel": 1,
       "tipo": "ancestralidade",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página72 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Torna-se treinado em Natureza e escolhe um talento bônus: Mascote ou Treinar Animal. A escolha não concede ambos os talentos.",
+      "resumo": [
+        "Treina Natureza e escolhe Mascote ou Treinar Animal."
+      ],
       "fonte": "player-core",
       "pagina": 72,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-73"
       ],
-      "ancestralidade": "orc"
+      "ancestralidade": "orc",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "periciasFixas": [
+        "natureza"
+      ],
+      "escolhasExtras": [
+        {
+          "id": "treinador-feras",
+          "nome": "Talento de treinador de feras",
+          "nivel": 1,
+          "opcoes": [
+            {
+              "id": "mascote",
+              "nome": "Mascote",
+              "talentosConcedidos": [
+                "mascote"
+              ]
+            },
+            {
+              "id": "treinar-animal",
+              "nome": "Treinar Animal",
+              "talentosConcedidos": [
+                "treinar-animal"
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "orc-desafiar-a-morte",
@@ -15977,16 +16733,54 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página101 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +1 de circunstância em salvamentos contra efeitos auditivos, ilusórios, linguísticos, sônicos ou visuais. Um efeito com mais de um desses traços continua concedendo apenas +1.",
+      "resumo": [
+        "+1 contra efeitos de som, linguagem, ilusão ou visão."
+      ],
       "fonte": "player-core",
       "pagina": 101,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-102"
       ],
-      "classe": "bardo"
+      "classe": "bardo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "efeitosCondicionais": [
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "traco-auditivo"
+        },
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "traco-ilusao"
+        },
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "traco-linguistico"
+        },
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "traco-sonico"
+        },
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 1,
+          "condicao": "traco-visual"
+        }
+      ]
     },
     {
       "id": "bardo-composicao-prolongada",
@@ -16024,16 +16818,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página101 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], concentração e moldamagia. Se a próxima ação for Conjurar uma Magia que tenha distância, aumenta essa distância em 9 m. Distância de toque passa a 9 m. Qualquer outra ação entre a moldamagia e a conjuração desperdiça o benefício.",
+      "resumo": [
+        "Uma ação extra amplia a distância da próxima magia em 9 m, inclusive magias de toque."
+      ],
       "fonte": "player-core",
       "pagina": 101,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-102"
       ],
-      "classe": "bardo"
+      "classe": "bardo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "distanciaExtraMetros": 9,
+        "toqueMetros": 9,
+        "exigeProximaAcaoConjurar": true
+      }
     },
     {
       "id": "bardo-hino-de-cura",
@@ -17216,16 +18022,31 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página116 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], moldamagia. A próxima ação precisa ser Conjurar uma Magia sem duração, de explosão, cone ou linha. Explosão com raio de pelo menos 3 m ganha 1,5 m; explosão menor não muda. Cone ou linha de até 4,5 m ganha 1,5 m; maior ganha 3 m. Qualquer outra ação antes de conjurar desperdiça o benefício.",
+      "resumo": [
+        "Aumenta a área da próxima magia instantânea; explosões pequenas não mudam."
+      ],
       "fonte": "player-core",
       "pagina": 116,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-117"
       ],
-      "classe": "bruxo"
+      "classe": "bruxo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "exigeSemDuracao": true,
+        "explosaoRaioMinimoMetros": 3,
+        "explosaoExtraMetros": 1.5,
+        "coneLinhaLimiteMetros": 4.5,
+        "coneLinhaExtraCurtoMetros": 1.5,
+        "coneLinhaExtraLongoMetros": 3
+      }
     },
     {
       "id": "bruxo-armamentos-de-bruxo",
@@ -17284,16 +18105,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página116 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Reação]. Quando uma criatura Conjurar uma Magia que você tem preparada e você puder ver as manifestações, gasta sua preparação daquela mesma magia e tenta neutralizar a conjuração inimiga. O espaço é perdido como se tivesse conjurado. O talento tem a tradição da sua conjuração (mago: arcana).",
+      "resumo": [
+        "Gasta a mesma magia preparada para tentar neutralizar a conjuração inimiga; não é sucesso automático."
+      ],
       "fonte": "player-core",
       "pagina": 116,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-117"
       ],
-      "classe": "bruxo"
+      "classe": "bruxo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "reacao",
+      "neutralizacao": {
+        "exigeMesmaMagiaPreparada": true,
+        "consomePreparacao": true,
+        "exigeManifestacoesVisiveis": true
+      }
     },
     {
       "id": "bruxo-estender-magia",
@@ -17301,16 +18134,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página116 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], concentração e moldamagia. Se a próxima ação for Conjurar uma Magia que tenha distância, aumenta essa distância em 9 m. Distância de toque passa a 9 m. Qualquer outra ação entre a moldamagia e a conjuração desperdiça o benefício.",
+      "resumo": [
+        "Uma ação extra amplia a distância da próxima magia em 9 m, inclusive magias de toque."
+      ],
       "fonte": "player-core",
       "pagina": 116,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-117"
       ],
-      "classe": "bruxo"
+      "classe": "bruxo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "distanciaExtraMetros": 9,
+        "toqueMetros": 9,
+        "exigeProximaAcaoConjurar": true
+      }
     },
     {
       "id": "bruxo-expansao-de-truque-magico",
@@ -17920,16 +18765,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página127 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], concentração e moldamagia. Se a próxima ação for Conjurar uma Magia que tenha distância, aumenta essa distância em 9 m. Distância de toque passa a 9 m. Qualquer outra ação entre a moldamagia e a conjuração desperdiça o benefício.",
+      "resumo": [
+        "Uma ação extra amplia a distância da próxima magia em 9 m, inclusive magias de toque."
+      ],
       "fonte": "player-core",
       "pagina": 127,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-128"
       ],
-      "classe": "clerigo"
+      "classe": "clerigo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "distanciaExtraMetros": 9,
+        "toqueMetros": 9,
+        "exigeProximaAcaoConjurar": true
+      }
     },
     {
       "id": "clerigo-iniciado-no-dominio",
@@ -17969,34 +18826,64 @@
       "nome": "Mãos Agressoras",
       "nivel": 1,
       "tipo": "classe",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página128 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Fonte de ferimento",
+      "descricao": "Exige fonte de ferimento. Ao conjurar Ferir, troca os d 8 da magia por d 10. Quantidade de dados e demais efeitos não mudam.",
+      "resumo": [
+        "Ferir usa d 10 em vez de d 8."
+      ],
       "fonte": "player-core",
       "pagina": 128,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-129"
       ],
-      "classe": "clerigo"
+      "classe": "clerigo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "modificacoesMagias": [
+        {
+          "id": "ferir",
+          "trocarFace": {
+            "de": 8,
+            "para": 10
+          }
+        }
+      ]
     },
     {
       "id": "clerigo-maos-curandeiras",
       "nome": "Mãos Curandeiras",
       "nivel": 1,
       "tipo": "classe",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página128 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Fonte de cura",
+      "descricao": "Exige fonte de cura. Ao conjurar Curar, troca os d 8 da magia por d 10. Quantidade de dados e bônus fixos de cura não mudam.",
+      "resumo": [
+        "Curar usa d 10 em vez de d 8."
+      ],
       "fonte": "player-core",
       "pagina": 128,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-129"
       ],
-      "classe": "clerigo"
+      "classe": "clerigo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "modificacoesMagias": [
+        {
+          "id": "curar",
+          "trocarFace": {
+            "de": 8,
+            "para": 10
+          }
+        }
+      ]
     },
     {
       "id": "clerigo-premonicao-de-salvacao",
@@ -18004,16 +18891,31 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página128 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Reação], divino e predição. Ao estar prestes a fazer um salvamento contra perigo, recebe +2 de circunstância naquele salvamento. Deve usar antes de rolar.",
+      "resumo": [
+        "Reação antes de um salvamento contra perigo concede +2."
+      ],
       "fonte": "player-core",
       "pagina": 128,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-129"
       ],
-      "classe": "clerigo"
+      "classe": "clerigo",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "reacao",
+      "efeitosCondicionais": [
+        {
+          "alvo": "salvaguarda",
+          "tipo": "circunstancia",
+          "valor": 2,
+          "condicao": "perigo-reacao-premonicao"
+        }
+      ]
     },
     {
       "id": "clerigo-simplicidade-mortal",
@@ -19116,16 +20018,31 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página141 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], moldamagia. A próxima ação precisa ser Conjurar uma Magia sem duração, de explosão, cone ou linha. Explosão com raio de pelo menos 3 m ganha 1,5 m; explosão menor não muda. Cone ou linha de até 4,5 m ganha 1,5 m; maior ganha 3 m. Qualquer outra ação antes de conjurar desperdiça o benefício.",
+      "resumo": [
+        "Aumenta a área da próxima magia instantânea; explosões pequenas não mudam."
+      ],
       "fonte": "player-core",
       "pagina": 141,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-142"
       ],
-      "classe": "druida"
+      "classe": "druida",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "exigeSemDuracao": true,
+        "explosaoRaioMinimoMetros": 3,
+        "explosaoExtraMetros": 1.5,
+        "coneLinhaLimiteMetros": 4.5,
+        "coneLinhaExtraCurtoMetros": 1.5,
+        "coneLinhaExtraLongoMetros": 3
+      }
     },
     {
       "id": "druida-arma-verdejante",
@@ -19181,16 +20098,25 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página142 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Pode fazer perguntas, receber respostas e usar Diplomacia com animais por comunicação rudimentar. Animais selvagens geralmente ao menos escutam; não ficam automaticamente amistosos.",
+      "resumo": [
+        "Conversa de modo rudimentar e usa Diplomacia com animais."
+      ],
       "fonte": "player-core",
       "pagina": 142,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-143"
       ],
-      "classe": "druida"
+      "classe": "druida",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "comunicacao": [
+        "animais"
+      ]
     },
     {
       "id": "druida-empatia-com-plantas",
@@ -19198,16 +20124,26 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página142 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Pode fazer perguntas, receber respostas e usar Diplomacia com plantas e fungos por comunicação rudimentar. Não concede controle sobre eles.",
+      "resumo": [
+        "Usa comunicação rudimentar e Diplomacia com plantas e fungos."
+      ],
       "fonte": "player-core",
       "pagina": 142,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-143"
       ],
-      "classe": "druida"
+      "classe": "druida",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "comunicacao": [
+        "plantas",
+        "fungos"
+      ]
     },
     {
       "id": "druida-estender-magia",
@@ -19215,16 +20151,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página142 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], concentração e moldamagia. Se a próxima ação for Conjurar uma Magia que tenha distância, aumenta essa distância em 9 m. Distância de toque passa a 9 m. Qualquer outra ação entre a moldamagia e a conjuração desperdiça o benefício.",
+      "resumo": [
+        "Uma ação extra amplia a distância da próxima magia em 9 m, inclusive magias de toque."
+      ],
       "fonte": "player-core",
       "pagina": 142,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-143"
       ],
-      "classe": "druida"
+      "classe": "druida",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "moldamagia": {
+        "distanciaExtraMetros": 9,
+        "toqueMetros": 9,
+        "exigeProximaAcaoConjurar": true
+      }
     },
     {
       "id": "druida-familiar-leshy",
@@ -19365,17 +20313,31 @@
       "nome": "Familiar Melhorado",
       "nivel": 2,
       "tipo": "classe",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página143 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Um familiar",
+      "descricao": "Exige um familiar. Pode escolher quatro habilidades de familiar ou mestre por dia, em vez de duas. Habilidades adicionais da classe ou da tese continuam somadas a essa base.",
+      "resumo": [
+        "A base diária do familiar aumenta de duas para quatro habilidades."
+      ],
       "fonte": "player-core",
       "pagina": 143,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-144"
       ],
-      "classe": "druida"
+      "classe": "druida",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "requisitosEstruturados": {
+        "capacidades": [
+          "familiar"
+        ]
+      },
+      "familiar": {
+        "habilidadesBase": 4
+      }
     },
     {
       "id": "druida-resistencia-a-veneno",
@@ -21852,16 +22814,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página171 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Após obter sucesso em Atravessar Acrobaticamente, o adversário cujo espaço atravessou fica desprevenido contra o próximo ataque que você fizer antes do fim do turno. Não afeta seus demais ataques nem outros adversários.",
+      "resumo": [
+        "Atravessa o inimigo com sucesso e o deixa desprevenido para seu próximo ataque do turno."
+      ],
       "fonte": "player-core",
       "pagina": 171,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-172"
       ],
-      "classe": "ladino"
+      "classe": "ladino",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "condicaoAposAcao": {
+        "acao": "atravessar-acrobaticamente",
+        "resultadoMinimo": "sucesso",
+        "condicao": "desprevenido",
+        "duracao": "proximo-ataque-antes-fim-turno"
+      }
     },
     {
       "id": "ladino-descobridor-de-armadilhas",
@@ -21869,16 +22843,30 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página171 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe +1 de circunstância na Percepção para encontrar armadilhas, na CA contra ataques delas e em salvamentos contra seus efeitos. Pode tentar encontrá-las mesmo sem Procurar, respeitando outros requisitos. Pode desativar armadilhas que exigem mestre em Ladroagem. Quando for mestre em Ladroagem, pode desativar as que exigem lendário e os bônus sobem para +2.",
+      "resumo": [
+        "Encontra e enfrenta armadilhas com bônus; permite desativar armadilhas acima da proficiência habitual."
+      ],
       "fonte": "player-core",
       "pagina": 171,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-172"
       ],
-      "classe": "ladino"
+      "classe": "ladino",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "bonusContraArmadilhas": {
+        "valor": 1,
+        "mestreLadroagemValor": 2
+      },
+      "desativarArmadilha": {
+        "grauExigidoMaximo": 3,
+        "seMestreGrauExigidoMaximo": 4
+      }
     },
     {
       "id": "ladino-esquiva-agil",
@@ -23225,16 +24213,28 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página189 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[Reação]. Quando uma criatura Conjurar uma Magia que você tem preparada e você puder ver as manifestações, gasta sua preparação daquela mesma magia e tenta neutralizar a conjuração inimiga. O espaço é perdido como se tivesse conjurado. O talento tem a tradição da sua conjuração (mago: arcana).",
+      "resumo": [
+        "Gasta a mesma magia preparada para tentar neutralizar a conjuração inimiga; não é sucesso automático."
+      ],
       "fonte": "player-core",
       "pagina": 189,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-190"
       ],
-      "classe": "mago"
+      "classe": "mago",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": "reacao",
+      "neutralizacao": {
+        "exigeMesmaMagiaPreparada": true,
+        "consomePreparacao": true,
+        "exigeManifestacoesVisiveis": true
+      }
     },
     {
       "id": "mago-estender-magia",
@@ -23338,17 +24338,31 @@
       "nome": "Familiar Melhorado",
       "nivel": 2,
       "tipo": "classe",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página189 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Um familiar",
+      "descricao": "Exige um familiar. Pode escolher quatro habilidades de familiar ou mestre por dia, em vez de duas. Habilidades adicionais da classe ou da tese continuam somadas a essa base.",
+      "resumo": [
+        "A base diária do familiar aumenta de duas para quatro habilidades."
+      ],
       "fonte": "player-core",
       "pagina": 189,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-190"
       ],
-      "classe": "mago"
+      "classe": "mago",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "requisitosEstruturados": {
+        "capacidades": [
+          "familiar"
+        ]
+      },
+      "familiar": {
+        "habilidadesBase": 4
+      }
     },
     {
       "id": "mago-magia-nao-letal",
@@ -23991,16 +25005,32 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página199 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação]. Exige empunhar besta de recarga 1 ou mais. Cria uma Distração ou Obtém Cobertura e depois Interage para recarregar. Ainda precisa satisfazer os requerimentos normais de Obter Cobertura.",
+      "resumo": [
+        "Recarrega a besta junto com distração ou cobertura em uma ação."
+      ],
       "fonte": "player-core",
       "pagina": 199,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-200"
       ],
-      "classe": "patrulheiro"
+      "classe": "patrulheiro",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "atividadeComposta": {
+        "armaGrupo": "besta",
+        "recargaMinima": 1,
+        "escolhaAcao": [
+          "criar-distracao",
+          "obter-cobertura"
+        ],
+        "depois": "recarregar"
+      }
     },
     {
       "id": "patrulheiro-cacador-de-monstros",
@@ -24027,16 +25057,31 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página199 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "Recebe companheiro animal jovem que viaja com você e obedece a comandos simples. Ao Caçar Presa, seu companheiro recebe os benefícios dessa ação e de sua excelência de caçador, se houver.",
+      "resumo": [
+        "Recebe companheiro jovem que compartilha os benefícios de sua caçada."
+      ],
       "fonte": "player-core",
       "pagina": 199,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-200"
       ],
-      "classe": "patrulheiro"
+      "classe": "patrulheiro",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "capacidades": [
+        "companheiro-animal"
+      ],
+      "companheiroAnimal": {
+        "estagio": "jovem",
+        "compartilhaCacarPresa": true,
+        "compartilhaExcelenciaCacador": true,
+        "pagina": 206
+      }
     },
     {
       "id": "patrulheiro-protetor-iniciado",
@@ -24061,16 +25106,35 @@
       "nivel": 1,
       "tipo": "classe",
       "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página200 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "descricao": "[1 ação], floreio. Exige arma à distância com recarga 0. Faça dois Golpes contra sua presa com essa arma. Aplique normalmente a penalidade por ataques múltiplos a cada Golpe. Se ambos acertarem a mesma criatura, combine os danos antes de resistências e fraquezas.",
+      "resumo": [
+        "Dois tiros contra a presa por uma ação, com penalidade normal e dano combinado se ambos acertarem."
+      ],
       "fonte": "player-core",
       "pagina": 200,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-201"
       ],
-      "classe": "patrulheiro"
+      "classe": "patrulheiro",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "acoes": 1,
+      "tracos": [
+        "floreio",
+        "patrulheiro"
+      ],
+      "atividadeAtaque": {
+        "quantidade": 2,
+        "exigePresa": true,
+        "recarga": 0,
+        "distancia": true,
+        "penalidadeNormalCadaGolpe": true,
+        "combinarDanosAmbosAcertam": true
+      }
     },
     {
       "id": "patrulheiro-empatia-com-animais",
@@ -24115,17 +25179,29 @@
       "nome": "Rechaçar Monstros",
       "nivel": 2,
       "tipo": "classe",
-      "requisitos": "",
-      "descricao": "Entrada de referência. Consulte a página200 no grimório: o texto integral da página está preservado, mas esta entrada individual ainda aguarda revisão.",
-      "resumo": [],
+      "requisitos": "Caçador de Monstros",
+      "descricao": "Exige Caçador de Monstros. Ao conceder seu bônus de Caçador de Monstros, você e os aliados beneficiados também recebem +2 de circunstância no próximo salvamento contra efeito daquela criatura ou na CA contra o próximo ataque dela, o que ocorrer primeiro para cada beneficiado.",
+      "resumo": [
+        "Caçador de Monstros passa a oferecer +2 na próxima defesa contra a presa."
+      ],
       "fonte": "player-core",
       "pagina": 200,
-      "revisao": "material-indexado",
+      "revisao": "revisado",
       "somenteConsulta": true,
       "secoes": [
         "pc1-pdf-201"
       ],
-      "classe": "patrulheiro"
+      "classe": "patrulheiro",
+      "automacao": {
+        "estado": "pendente",
+        "motivo": "Regra individual revisada; execução situacional ou escolhas específicas ainda não implementadas."
+      },
+      "requisitosEstruturados": {
+        "talentos": [
+          "patrulheiro-cacador-de-monstros"
+        ]
+      },
+      "bonusDefesaCacadorMonstros": 2
     },
     {
       "id": "patrulheiro-saque-rapido",
@@ -47722,7 +48798,7 @@
     "herancas": 45,
     "biografias": 40,
     "paginasNativas": 470,
-    "talentosRevisados": 84,
+    "talentosRevisados": 149,
     "magiasRevisadas": 130,
     "talentosIndexados": 884,
     "magiasIndexadas": 491,

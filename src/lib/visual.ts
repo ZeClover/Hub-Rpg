@@ -61,6 +61,7 @@ export function visualSistema(chave: string): VisualSistema {
   return VISUAIS[chave] ?? VISUAIS["campanha-livre"];
 }
 export function capaSistema(chave: string) {
+  if (chave === "pathfinder-2e-remaster") return "/imagens/capas/pathfinder-remaster.webp";
   return `/imagens/sistemas/${visualSistema(chave).imagem}.webp`;
 }
 export type ImagemPronta = {
@@ -127,8 +128,9 @@ export const ROTULOS_PAPEL: Record<string, string> = {
   JOGADOR: "Jogador",
 };
 
-export const CAPAS_VERTICAIS = new Set(["fabula-ultima", "dnd-5e", "sao"]);
+export const CAPAS_VERTICAIS = new Set(["fabula-ultima", "dnd-5e", "sao", "pathfinder-2e-remaster"]);
 export const CAPAS_ORIGINAIS: Record<string, string> = {
+  "pathfinder-2e-remaster": "/imagens/capas/pathfinder-remaster.webp",
   sao: "/imagens/capas/sao.webp",
   "hogwarts-rpg": "/imagens/capas/hogwarts.webp",
   "fabula-ultima": "/imagens/capas/fabula-ultima.webp",

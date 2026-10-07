@@ -32,3 +32,7 @@ Cópia de segurança incremental fora do checkout: `/workspace/artifacts/hub-pat
 414/414 cenários de criação/evolução inicial passaram com as opções de classe e deidade da bateria (níveis 1 e 2), após conferir ganhos obrigatórios. Esse percentual não equivale à tradução ou automação integral dos livros, nem cobre todos os níveis/combinações de talentos. Acesso a preparação concedido por divindade não cria magia conhecida ou espaço extra; referências pendentes continuam impedidas de executar efeitos.
 
 Login da Vercel renovado pelo usuário, projeto existente `zezin2/hub-rpg` confirmado e vinculado. Publicação só é considerada concluída após verificação do deployment e domínio.
+
+## Ampliação seguinte
+
+Player Core recebeu 65 textos individuais de talentos de ancestralidade para consulta. Player Core 2 recebeu 37 talentos de classe e suas descrições individuais; efeitos sem executor permanecem somenteConsulta. Monster Core possui agora 52 blocos revisados. GM Core possui 39 guias e 19 tabelas, com as três runas de sombra executáveis no motor. Propriedades de armadura respeitam categoria, investimento, capacidade por potência e incompatibilidade entre versões. Não corresponde à conclusão dos livros.

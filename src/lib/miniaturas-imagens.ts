@@ -120,6 +120,11 @@ export const MINIATURAS: Record<string, Record<number, string>> = {
     "320": "/imagens/miniaturas/kaizoku-no-sho-320-d34b31dc3e8c.webp",
     "640": "/imagens/miniaturas/kaizoku-no-sho-640-9300693a2f20.webp"
   },
+  "/imagens/capas/pathfinder-remaster.webp": {
+    "160": "/imagens/miniaturas/pathfinder-remaster-160-c43eef70fdd9.webp",
+    "320": "/imagens/miniaturas/pathfinder-remaster-320-05ddadac9bf0.webp",
+    "640": "/imagens/miniaturas/pathfinder-remaster-640-c05a365ade64.webp"
+  },
   "/imagens/capas/sao.webp": {
     "160": "/imagens/miniaturas/sao-160-8d95557c8c5c.webp",
     "320": "/imagens/miniaturas/sao-320-550d52d72cbf.webp",
