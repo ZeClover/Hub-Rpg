@@ -363,9 +363,11 @@
     $('#resumo').innerHTML=[ficha.nome||'Novo personagem',registro('ancestralidades',ficha.ancestralidadeId)?.nome,classe(ficha)?.nome,'Nível '+ficha.nivel,'CA '+calculo.ca,`${ficha.vida?.atual??0}/${calculo.pvMaximos} PV`].filter(Boolean).map(texto=>'<span class="selo">'+escapar(texto)+'</span>').join('');
   }
   function botoesRascunho() {
-    const existe=podeEditar&&!!ler(chave('guia'));
+    const pausado=podeEditar?ler(chave('guia')):null, existe=!!pausado;
     $('#exportar-guia-pausado').hidden=!existe;
     $('#descartar-guia-pausado').hidden=!existe;
+    if(pausado?.tipo==='criacao') $('#criar').textContent='Retomar criação guiada';
+    if(pausado?.tipo==='evolucao') $('#evoluir').textContent='Retomar evolução guiada';
   }
   function renderizar() {
     if(!ficha) return;
@@ -654,7 +656,16 @@
     if(!podeEditar||!await salvarAgora()) return;
     if(tipo==='evolucao'&&progressaoPermitida&&ficha.nivel>=progressaoPermitida.nivelMaximo) { avisar('A evolução aguarda XP suficiente ou autorização do mestre.'); return; }
     const pausado=ler(chave('guia'));
-    if(pausado?.tipo===tipo&&pausado.base===versao&&pausado.baseSerial===serialBase()) guia={...pausado,dados:{...copiar(ficha),...pausado.dados}};
+    if(pausado?.tipo===tipo) {
+      const mesmaBase=pausado.base===versao&&pausado.baseSerial===serialBase();
+      guia={
+        ...pausado,
+        base:versao,
+        baseSerial:serialBase(),
+        dados:R.normalizar({...copiar(ficha),...pausado.dados},catalogo),
+      };
+      if(!mesmaBase) avisar('Guia retomado sobre a versão atual da ficha. Suas escolhas foram preservadas; revise antes de confirmar.');
+    }
     else {
       if(pausado) { avisar('Existe um guia pausado de outro modo ou versão. Exporte ou descarte esse guia pelos botões da ficha; suas escolhas foram preservadas.'); return; }
       const novosDados=tipo==='evolucao'?R.evoluir(copiar(ficha),Math.min(20,ficha.nivel+1),catalogo):copiar(ficha);
