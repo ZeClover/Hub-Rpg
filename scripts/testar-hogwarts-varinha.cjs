@@ -2,19 +2,22 @@
 const {chromium}=require(process.env.PLAYWRIGHT_CORE||'playwright-core');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 const raiz=path.resolve(__dirname,'../public'),fichaId='11111111-1111-4111-8111-111111111111';
+const familia={id:'33333333-3333-4333-8333-333333333333',chave:'scamander',nome:'Scamander',tipo:'Canônica',condicaoFinanceira:'Confortável',tags:['Naturalista'],conteudoFamiliar:'Olho de Criador',acessoFamiliar:'Rede de Criadores',herancas:['Legado dos Criadores','Confiança Conquistada','Guardião de Criaturas'],segredos:[]};
 const base={perfil:{nome:'Eiris',sobrenome:'Scamander',casa:'Lufa-Lufa',tradicao:'Mãos Cuidadosas',statusSangue:'Mestiço',familiaId:'scamander',origemId:''},nivel:1,atributos:{Arcano:3,Engenho:2,Pulso:2,Presença:1,Fibra:0},pericias:{Feitiços:1,Herbologia:1,Voo:1},conteudosConhecidos:{},academico:{criacaoVersao:1,criacaoFinalizada:true,formacaoInicialConcluida:true},varinha:{madeira:'',nucleo:'',comprimento:'',flexibilidade:'',sintonia:1,entregue:false,revelados:[]},vida:{atual:5,maxima:5},tensao:0,galeoes:0};
 
 (async()=>{
   const browser=await chromium.launch({executablePath:process.env.CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
-  const estado={dados:structuredClone(base),acoes:[]};
+  const estado={dados:structuredClone(base),acoes:[],herancaNivel:0};
   async function abrir({mestre,viewport}){
     const context=await browser.newContext({viewport}),page=await context.newPage(),erros=[],falhas=[];
     page.on('pageerror',e=>erros.push(e.message));page.on('requestfailed',r=>falhas.push(`${r.method()} ${r.url()}: ${r.failure()?.errorText||'falhou'}`));
     await page.route('https://hogwarts.local/**',async route=>{
       const url=new URL(route.request().url()),req=route.request();
-      if(url.pathname===`/api/personagens/${fichaId}`)return route.fulfill({contentType:'application/json',body:JSON.stringify({personagem:{id:fichaId,nome:'Eiris Scamander',dados:mestre?estado.dados:{...estado.dados,_mestre:undefined},podeEditar:true,ehDono:!mestre,ehMestre:mestre,campanhaId:'22222222-2222-4222-8222-222222222222'}})});
+      if(url.pathname===`/api/personagens/${fichaId}`){if(req.method()==='PATCH')estado.dados=req.postDataJSON().dados;return route.fulfill({contentType:'application/json',body:JSON.stringify({personagem:{id:fichaId,nome:'Eiris Scamander',dados:mestre?estado.dados:{...estado.dados,_mestre:undefined},podeEditar:true,ehDono:!mestre,ehMestre:mestre,campanhaId:'22222222-2222-4222-8222-222222222222'}})});}
       if(url.pathname===`/api/personagens/${fichaId}/hogwarts-conteudos`)return route.fulfill({contentType:'application/json',body:JSON.stringify({conteudos:[],selecaoInicialPendente:false,selecionadosIniciais:[]})});
       if(url.pathname===`/api/personagens/${fichaId}/hogwarts-descobertas`)return route.fulfill({contentType:'application/json',body:JSON.stringify({eventos:[],revisao:null})});
+      if(url.pathname===`/api/personagens/${fichaId}/hogwarts-familia`&&req.method()==='GET')return route.fulfill({contentType:'application/json',body:JSON.stringify({familias:[familia],familia,herancaNivel:estado.herancaNivel,ehMestre:mestre})});
+      if(url.pathname===`/api/personagens/${fichaId}/hogwarts-familia`&&req.method()==='POST'){const corpo=req.postDataJSON();if(corpo.acao==='avancar-heranca')estado.herancaNivel++;return route.fulfill({contentType:'application/json',body:'{"ok":true}'});}
       if(url.pathname===`/api/personagens/${fichaId}/hogwarts-varinha`&&req.method()==='POST'){
         const corpo=req.postDataJSON();estado.acoes.push(corpo);
         if(corpo.acao==='entregar'){estado.dados.varinha={...corpo.varinha,sintonia:1,entregue:true,revelados:[]};estado.dados._mestre={varinha:{tendencia:corpo.varinha.tendencia,propriedade:corpo.varinha.propriedade,peculiaridade:corpo.varinha.peculiaridade,lealdade:corpo.varinha.lealdade}};}
@@ -36,10 +39,14 @@ const base={perfil:{nome:'Eiris',sobrenome:'Scamander',casa:'Lufa-Lufa',tradicao
     await mestre.page.locator('[data-varinha-sintonia]').click();await mestre.page.waitForFunction(()=>document.querySelector('#varinhaSintonia')?.value==='2');await mestre.page.locator('[data-varinha-revelar="tendencia"]').click();await mestre.page.waitForFunction(()=>document.querySelector('[data-varinha-revelar="tendencia"]')?.disabled===true);
     assert.deepEqual(estado.acoes.map(a=>a.acao),['entregar','avancar-sintonia','revelar']);assert.equal(estado.dados._mestre?.varinha?.tendencia,'Protetora',JSON.stringify(estado.acoes[0]));assert.equal(estado.dados.varinha.tendencia,'Protetora');assert.deepEqual(mestre.erros,[]);
     await mestre.page.locator('#btAparencia').click();await mestre.page.locator('#pa-tema').selectOption('floresta');assert.equal(await mestre.page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--fundo').trim()),'#07100b');
-    await fs.mkdir(path.resolve(__dirname,'../artifacts/hogwarts-revisao'),{recursive:true});await mestre.page.screenshot({path:path.resolve(__dirname,'../artifacts/hogwarts-revisao/varinha-mestre-desktop.png'),fullPage:true});await mestre.context.close();
+    await mestre.page.waitForFunction(()=>document.querySelector('#statusSalvo')?.textContent?.includes('Salvo')||(!debounceHub&&!salvandoHub));
+    await mestre.page.getByRole('button',{name:'Casa & Família'}).click();assert.ok((await mestre.page.locator('#app').textContent()).includes('Olho de Criador'));await mestre.page.locator('[data-avancar-heranca]').click();await mestre.page.waitForFunction(()=>document.querySelector('#app')?.textContent?.includes('✓ 1'));
+    assert.equal(await mestre.page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--fundo').trim()),'#07100b','Estilo deve sobreviver à atualização familiar.');
+    await fs.mkdir(path.resolve(__dirname,'../artifacts/hogwarts-revisao'),{recursive:true});await mestre.page.screenshot({path:path.resolve(__dirname,'../artifacts/hogwarts-revisao/familia-mestre-desktop.png'),fullPage:true});await mestre.context.close();
     const jogador=await abrir({mestre:false,viewport:{width:390,height:844}});assert.equal(await jogador.page.locator('[data-varinha-entregar]').count(),0);assert.equal(await jogador.page.locator('#varinhaMadeira').getAttribute('readonly'),'');
     const textoJogador=await jogador.page.locator('#app').textContent();
     assert.ok(textoJogador.includes('Protetora'),`Revelação ausente: ${textoJogador.replace(/\s+/g,' ').slice(-500)}`);assert.ok(!textoJogador.includes('Propriedade Desperta: Luz firme'));assert.deepEqual(jogador.erros,[]);await jogador.page.screenshot({path:path.resolve(__dirname,'../artifacts/hogwarts-revisao/varinha-jogador-celular.png'),fullPage:true});await jogador.context.close();
-    console.log('PASS 2 cenários Hogwarts Varinha: Mestre entrega/avança/revela; jogador consulta somente o campo revelado.');
+    const jogadorFamilia=await abrir({mestre:false,viewport:{width:390,height:844}});await jogadorFamilia.page.getByRole('button',{name:'Casa & Família'}).click();assert.equal(await jogadorFamilia.page.locator('[data-avancar-heranca]').count(),0);assert.equal(await jogadorFamilia.page.locator('[data-familia-compartilhada]').isDisabled(),true);assert.ok((await jogadorFamilia.page.locator('#app').textContent()).includes('Olho de Criador'));await jogadorFamilia.page.screenshot({path:path.resolve(__dirname,'../artifacts/hogwarts-revisao/familia-jogador-celular.png'),fullPage:true});assert.deepEqual(jogadorFamilia.erros,[]);await jogadorFamilia.context.close();
+    console.log('PASS 3 cenários Hogwarts: varinha entregue e revelada; família compartilhada e Herança; estilo preservado e jogador sem controles de mestre.');
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -180,6 +180,7 @@ model Campanha {
   curriculoHogwarts        CurriculoHogwarts[]
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
   pontosCasaHogwarts       HogwartsCasaPontoEvento[]
+  familiasHogwarts         HogwartsFamilia[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -323,14 +324,16 @@ model Personagem {
 
   grupoMembros             GrupoMembro[]
   /// Fichas das quais esta ficha é dona (companheiros/pets dela).
-  companheirosOndeDono     Companheiro[]             @relation("DonoDoCompanheiro")
+  companheirosOndeDono     Companheiro[]              @relation("DonoDoCompanheiro")
   /// Fichas para as quais esta ficha É o companheiro/pet.
-  companheiroDe            Companheiro[]             @relation("FichaComoCompanheiro")
+  companheiroDe            Companheiro[]              @relation("FichaComoCompanheiro")
   itens                    Item[]
   veiculos                 Veiculo[]
   comprasLoja              LojaCompra[]
   ofertasTroca             TrocaCarta[]
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
+  familiaHogwartsMembro    HogwartsFamiliaMembro?
+  herancaHogwarts          HogwartsHerancaPersonagem?
 
   @@index([donoId])
   @@index([sistemaId])
@@ -396,6 +399,71 @@ model HogwartsCasaPontoEvento {
 
   @@index([campanhaId, casa, criadoEm])
   @@map("hogwarts_casa_pontos_eventos")
+}
+
+model HogwartsFamilia {
+  id                 String   @id @default(uuid()) @db.Uuid
+  campanhaId         String   @db.Uuid
+  chave              String
+  nome               String
+  tipo               String
+  condicaoFinanceira String
+  tags               String[] @default([])
+  conteudoFamiliar   String
+  acessoFamiliar     String
+  herancas           Json     @default("[]")
+  criadoEm           DateTime @default(now())
+  atualizadoEm       DateTime @updatedAt
+
+  campanha  Campanha                    @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  membros   HogwartsFamiliaMembro[]
+  segredos  HogwartsFamiliaSegredo[]
+  herdeiros HogwartsHerancaPersonagem[]
+
+  @@unique([campanhaId, chave])
+  @@index([campanhaId, nome])
+  @@map("hogwarts_familias")
+}
+
+model HogwartsFamiliaMembro {
+  familiaId    String   @db.Uuid
+  personagemId String   @unique @db.Uuid
+  ligadoEm     DateTime @default(now())
+
+  familia    HogwartsFamilia @relation(fields: [familiaId], references: [id], onDelete: Cascade)
+  personagem Personagem      @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+
+  @@id([familiaId, personagemId])
+  @@index([familiaId])
+  @@map("hogwarts_familias_membros")
+}
+
+model HogwartsFamiliaSegredo {
+  id         String    @id @default(uuid()) @db.Uuid
+  familiaId  String    @db.Uuid
+  nome       String
+  descricao  String
+  reveladoEm DateTime?
+  criadoEm   DateTime  @default(now())
+
+  familia HogwartsFamilia @relation(fields: [familiaId], references: [id], onDelete: Cascade)
+
+  @@index([familiaId, reveladoEm])
+  @@map("hogwarts_familias_segredos")
+}
+
+model HogwartsHerancaPersonagem {
+  id           String   @id @default(uuid()) @db.Uuid
+  personagemId String   @unique @db.Uuid
+  familiaId    String   @db.Uuid
+  nivel        Int      @default(0)
+  atualizadoEm DateTime @updatedAt
+
+  personagem Personagem      @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+  familia    HogwartsFamilia @relation(fields: [familiaId], references: [id], onDelete: Cascade)
+
+  @@index([familiaId, nivel])
+  @@map("hogwarts_herancas_personagens")
 }
 
 /// Um encontro jogado (marcado ou já rolado). Antes da decisão #135 este

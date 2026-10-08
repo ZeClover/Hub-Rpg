@@ -11,6 +11,7 @@
     id,
     resposta: fetch(`/api/personagens/${encodeURIComponent(id)}`).catch(() => null),
     conteudos: fetch(`/api/personagens/${encodeURIComponent(id)}/hogwarts-conteudos`).catch(() => null),
+    familia: fetch(`/api/personagens/${encodeURIComponent(id)}/hogwarts-familia`).catch(() => null),
   };
 }
 </script>
@@ -716,11 +717,14 @@ function statusSalvoOk(){
 }
 
 let debounceHub = null;
+let salvandoHub = false;
 function salvarNoHub(){
   clearTimeout(debounceHub);
   mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
+    debounceHub = null;
     const p = atual(); if(!p) return;
+    salvandoHub = true;
     // Resumo genérico de vida pro Painel de Vida da Mesa ao Vivo (decisão #46).
     p.resumoVida = {atual: Math.max(0, Math.min(p.vida.maxima, p.vida.atual)), maxima: p.vida.maxima, rotulo: 'Vida'};
     try{
@@ -734,7 +738,7 @@ function salvarNoHub(){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar=true; render(); }
       mostrarStatusSalvo('Erro ao salvar', 'erro');
-    }
+    }finally{salvandoHub=false;}
   }, 500);
 }
 
@@ -768,6 +772,7 @@ const estado = {
   evolucaoAberta:false, escolhasEvolucao:{conteudos:[],unicos:[]}, erroEvolucao:'',
   descobertas:[], revisaoDescobertas:null, sincronizandoDescobertas:false, erroDescobertas:'',
   statusVarinha:'', erroVarinha:'', enviandoVarinha:false,
+  familiasCompartilhadas:[], familiaAtual:null, herancaNivel:0, erroFamilia:'', salvandoFamilia:false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -851,6 +856,10 @@ async function iniciarModoHub(){
       const erroConteudos = await respConteudos.json().catch(()=>({}));
       estado.erroConteudos = erroConteudos.erro || 'Não foi possível carregar o catálogo.';
     }
+    const respFamilia = (inicial?.id === MODO_HUB ? await inicial.familia : null)
+      ?? await fetch(`/api/personagens/${MODO_HUB}/hogwarts-familia`);
+    if(respFamilia.ok){const corpoFamilia=await respFamilia.json();estado.familiasCompartilhadas=corpoFamilia.familias||[];estado.familiaAtual=corpoFamilia.familia||null;estado.herancaNivel=Number(corpoFamilia.herancaNivel||0);estado.erroFamilia='';}
+    else{const erroFamilia=await respFamilia.json().catch(()=>({}));estado.erroFamilia=erroFamilia.erro||'Não foi possível carregar as famílias da campanha.';}
     atualizarFavicon();
   }catch(e){
     console.error('Falha ao carregar do Hub', e);
@@ -1193,15 +1202,17 @@ function abaPerfil(p){
 }
 
 function abaFamilia(p){
-  const familia = todasFamilias(p).find(f => f.id === p.perfil.familiaId);
+  const familia = MODO_HUB ? estado.familiaAtual : todasFamilias(p).find(f => f.id === p.perfil.familiaId);
   const origem = todasOrigens(p).find(o => o.id === p.perfil.origemId);
   return `<div class="cartao">
     <h3 style="margin-bottom:6px">Família</h3>
     <p class="mini" style="margin-bottom:10px">Concede 1 Conteúdo Familiar, 1 Acesso Familiar, Tags e Condição Financeira. Nunca concede Atributo — família famosa não é personagem mais forte.</p>
-    <select data-campo="perfil.familiaId" style="margin-bottom:10px">
+    <select ${MODO_HUB?'data-familia-compartilhada':'data-campo="perfil.familiaId"'} style="margin-bottom:10px" ${estado.salvandoFamilia||(MODO_HUB&&!estado.ehMestre&&!(p.academico?.criacaoVersao===1&&!p.academico?.criacaoFinalizada))?'disabled':''}>
       <option value="">— nenhuma escolhida —</option>
-      ${todasFamilias(p).map(f => `<option value="${esc(f.id)}" ${p.perfil.familiaId===f.id?'selected':''}>${esc(f.nome)}</option>`).join('')}
+      ${(MODO_HUB?estado.familiasCompartilhadas:todasFamilias(p)).map(f => `<option value="${esc(f.id)}" ${(MODO_HUB?familia?.id===f.id:p.perfil.familiaId===f.id)?'selected':''}>${esc(f.nome)}</option>`).join('')}
     </select>
+    ${MODO_HUB&&!estado.ehMestre&&p.academico?.criacaoFinalizada?'<p class="mini">Família definida. Após a criação, alterações são feitas pelo Mestre.</p>':''}
+    ${estado.erroFamilia?`<div class="aviso">${esc(estado.erroFamilia)}</div>`:''}
     ${familia ? `
       <div class="grade2" style="margin-bottom:8px">
         <div class="pill">${esc(familia.tipo)}</div>
@@ -1213,7 +1224,7 @@ function abaFamilia(p){
     ` : '<p class="mini">Escolha uma família do catálogo, ou crie uma própria abaixo.</p>'}
   </div>
 
-  ${estado.ehMestre ? (() => { const segredos = garantirMestre(p).segredosFamiliares; return `
+  ${MODO_HUB ? `<div class="cartao"><h3 style="margin-bottom:10px">Herança Familiar</h3>${familia&&Array.isArray(familia.herancas)&&familia.herancas.length?`<div>${familia.herancas.map((nome,i)=>`<p class="mini"><span class="pill ${estado.herancaNivel>i?'on':''}">${estado.herancaNivel>i?'✓':'○'} ${i+1}</span> ${esc(nome)}</p>`).join('')}</div>${estado.ehMestre?`<button data-avancar-heranca ${estado.salvandoFamilia||estado.herancaNivel>=familia.herancas.length?'disabled':''}>Avançar Herança</button>`:''}`:'<p class="mini">Esta família ainda não possui uma trilha de Herança definida.</p>'}</div><div class="cartao"><h3 style="margin-bottom:10px">Segredos Familiares</h3>${familia?.segredos?.length?familia.segredos.map(s=>`<div class="item-conteudo"><b>${esc(s.nome)}</b><p class="mini">${esc(s.descricao)}</p>${!s.reveladoEm&&estado.ehMestre?'<span class="pill">oculto</span>':''}</div>`).join(''):'<p class="mini">Nenhum detalhe familiar foi revelado para este personagem.</p>'}</div>` : estado.ehMestre ? (() => { const segredos = garantirMestre(p).segredosFamiliares; return `
   <div class="cartao">
     <h3 style="margin-bottom:10px">Segredos Familiares <span class="pill">só você vê</span></h3>
     <p class="mini" style="margin-bottom:10px">Agora com trava de verdade (decisão #159): o servidor nem manda isto pro navegador de quem não é mestre. "Contado" é só sua lembrança de mesa, não revela nada sozinho.</p>
@@ -1232,7 +1243,7 @@ function abaFamilia(p){
     <p class="mini">Só o Mestre vê essa lista — nem existência nem conteúdo chegam aqui.</p>
   </div>`}
 
-  <div class="cartao">
+  ${MODO_HUB ? '<div class="cartao"><h3>Famílias compartilhadas</h3><p class="mini">Famílias próprias agora são criadas uma vez na campanha e podem ser usadas por irmãos sem duplicar dados.</p></div>' : `<div class="cartao">
     <h3 style="margin-bottom:10px">+ Família própria</h3>
     <div class="grade">
       <div><label>Nome</label><input id="novaFamiliaNome" placeholder="Sobrenome"></div>
@@ -1250,9 +1261,10 @@ function abaFamilia(p){
     ${p.familiasCustom.length ? p.familiasCustom.map(f => `
       <div class="linha" style="margin-top:8px"><span class="mini" style="flex:1">${esc(f.nome)} — ${esc(f.tipo)}</span><button data-remover-familia-custom="${f.id}" class="perigo" style="padding:3px 8px">✕</button></div>
     `).join('') : ''}
-  </div>
+  </div>`}
 
   <div class="cartao">
+    ${MODO_HUB&&estado.ehMestre&&(p._mestre?.segredosFamiliares||[]).length?`<details class="cartao"><summary>Registros familiares anteriores — reservados ao Mestre</summary>${p._mestre.segredosFamiliares.map(s=>`<div class="item-conteudo"><b>${esc(s.nome)}</b><p class="mini">${esc(s.descricao)}</p></div>`).join('')}</details>`:''}
     <h3 style="margin-bottom:6px">Origem</h3>
     <p class="mini" style="margin-bottom:10px">Como o personagem cresceu — pequena, sem árvore própria, só um benefício.</p>
     <select data-campo="perfil.origemId" style="margin-bottom:10px">
@@ -1995,6 +2007,7 @@ function ligarEventos(){
 
   async function acaoVarinha(acao,extra={}){
     if(!MODO_HUB||estado.enviandoVarinha)return;
+    if(debounceHub||salvandoHub||falhouAoSalvar){estado.erroVarinha='Aguarde a ficha ser salva antes de atualizar a varinha.';render();return;}
     estado.enviandoVarinha=true;estado.erroVarinha='';estado.statusVarinha='Salvando…';render();
     try{
       const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-varinha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acao,...extra})});
@@ -2007,6 +2020,15 @@ function ligarEventos(){
   if(entregarVarinha)entregarVarinha.onclick=()=>acaoVarinha('entregar',{varinha:{madeira:document.getElementById('varinhaMadeira').value,nucleo:document.getElementById('varinhaNucleo').value,comprimento:document.getElementById('varinhaComprimento').value,flexibilidade:document.getElementById('varinhaFlexibilidade').value,tendencia:document.getElementById('varinhaTendencia').value,propriedade:document.getElementById('varinhaPropriedade').value,peculiaridade:document.getElementById('varinhaPeculiaridade').value,lealdade:document.getElementById('varinhaLealdade').value}});
   const avancarVarinha=app.querySelector('[data-varinha-sintonia]');if(avancarVarinha)avancarVarinha.onclick=()=>acaoVarinha('avancar-sintonia');
   app.querySelectorAll('[data-varinha-revelar]').forEach(botao=>botao.onclick=()=>acaoVarinha('revelar',{campo:botao.dataset.varinhaRevelar}));
+
+  async function acaoFamilia(acao,extra={}){
+    if(debounceHub||salvandoHub||falhouAoSalvar){estado.erroFamilia='Aguarde a ficha ser salva antes de atualizar a família.';render();return;}
+    if(!MODO_HUB||estado.salvandoFamilia)return;estado.salvandoFamilia=true;estado.erroFamilia='';render();
+    try{const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-familia`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acao,...extra})});const corpo=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(corpo.erro||'Não foi possível atualizar a família.');await iniciarModoHub();}
+    catch(e){estado.erroFamilia=e.message||'Não foi possível atualizar a família.';}finally{estado.salvandoFamilia=false;render();}
+  }
+  const familiaCompartilhada=app.querySelector('[data-familia-compartilhada]');if(familiaCompartilhada)familiaCompartilhada.onchange=()=>acaoFamilia('escolher',{familiaId:familiaCompartilhada.value});
+  const avancarHeranca=app.querySelector('[data-avancar-heranca]');if(avancarHeranca)avancarHeranca.onclick=()=>acaoFamilia('avancar-heranca');
 
   app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
   app.querySelectorAll('[data-criacao-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.criacaoAba; render(); });
