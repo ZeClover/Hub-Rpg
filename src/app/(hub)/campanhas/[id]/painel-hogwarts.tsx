@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PontosCasasHogwarts } from "./pontos-casas-hogwarts";
 
 type Atalho = { rotulo: string; descricao: string; href: string; externo?: boolean };
 
@@ -77,6 +78,7 @@ export function PainelHogwarts({
           </Link>
         ))}
       </nav>
+      <PontosCasasHogwarts campanhaId={campanhaId} ehMestre={ehMestre} />
     </section>
   );
 }

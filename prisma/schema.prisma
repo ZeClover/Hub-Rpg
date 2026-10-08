@@ -102,6 +102,7 @@ model Usuario {
   itens                    Item[]
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[] @relation("AtorEventoHogwarts")
   leiturasEventosHogwarts  LeituraEventoHogwarts[]
+  pontosCasaHogwarts       HogwartsCasaPontoEvento[] @relation("AtorPontoCasaHogwarts")
 
   @@map("usuarios")
 }
@@ -178,6 +179,7 @@ model Campanha {
   trocasCartas             TrocaCarta[]
   curriculoHogwarts        CurriculoHogwarts[]
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
+  pontosCasaHogwarts       HogwartsCasaPontoEvento[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -374,6 +376,26 @@ model LeituraEventoHogwarts {
   @@id([eventoId, usuarioId])
   @@index([usuarioId, lidoEm])
   @@map("leituras_eventos_hogwarts")
+}
+
+/// Ledger imutável dos Pontos das Casas. O total sempre é a soma dos eventos;
+/// correções criam um evento oposto em vez de alterar o histórico.
+model HogwartsCasaPontoEvento {
+  id           String   @id @default(uuid()) @db.Uuid
+  campanhaId   String   @db.Uuid
+  atorId       String?  @db.Uuid
+  casa         String
+  delta        Int
+  motivo       String
+  sessao       String?
+  reversaoDeId String?  @unique @db.Uuid
+  criadoEm     DateTime @default(now())
+
+  campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  ator     Usuario? @relation("AtorPontoCasaHogwarts", fields: [atorId], references: [id], onDelete: SetNull)
+
+  @@index([campanhaId, casa, criadoEm])
+  @@map("hogwarts_casa_pontos_eventos")
 }
 
 /// Um encontro jogado (marcado ou já rolado). Antes da decisão #135 este
