@@ -250,12 +250,50 @@
       return '<article class="item"><strong>'+escapar(item?.nome||escolha.nome||escolha.id||escolha)+'</strong>'+campo(modelo,'Quantidade','equipamentos.'+i+'.quantidade','number',{min:0})+(item?.mecanica?.acao==='curar'&&quantidadeItem(modelo.equipamentos[i])>0?botao('Consumir e aplicar cura automática','consumir-item',i):'')+'</article>';
     }).join('');
   }
+  function avaliarTalento(dados,item,selecionado,calculo) {
+    if(selecionado) return {disponivel:true,motivos:[]};
+    const motivos=[], nivel=Number(item.nivel||1), requisitos=item.requisitosEstruturados||{};
+    if(item.somenteConsulta) motivos.push('O conteúdo ainda está disponível somente para consulta.');
+    if(nivel>Number(dados.nivel||1)) motivos.push(`Exige nível ${nivel}; seu personagem está no nível ${dados.nivel||1}.`);
+    if(item.classe&&item.classe!==dados.classeId) motivos.push('Pertence a outra classe.');
+    if(item.ancestralidade&&item.ancestralidade!==dados.ancestralidadeId) motivos.push('Pertence a outra ancestralidade.');
+    for(const [atributo,minimo] of Object.entries(requisitos.atributos||{})) if(Number(calculo.atributos?.[atributo]??-1)<Number(minimo)) motivos.push(`${nomesAtributos[atributo]||atributo} precisa ser ${Number(minimo)>=0?'+':''}${minimo} ou maior.`);
+    for(const [pericia,grau] of Object.entries(requisitos.pericias||{})) if(Number(calculo.grausPericias?.[pericia]||0)<Number(grau)) motivos.push(`${nomesPericias[pericia]||pericia} precisa estar em grau ${nomesGraus[Number(grau)]||grau}.`);
+    const talentosAtuais=new Set((dados.talentos||[]).map(t=>typeof t==='string'?t:t.id));
+    for(const requerido of requisitos.talentos||[]) if(!talentosAtuais.has(requerido)) motivos.push(`Exige o talento ${registro('talentos',requerido)?.nome||requerido}.`);
+    const magiasAtuais=new Set((dados.magias||[]).map(m=>typeof m==='string'?m:m.id));
+    for(const requerida of requisitos.magias||[]) if(!magiasAtuais.has(requerida)) motivos.push(`Exige a magia ${registro('magias',requerida)?.nome||requerida}.`);
+    if((requisitos.opcoesClasse||[]).length&&!requisitos.opcoesClasse.includes(dados.opcaoClasseId)) motivos.push('Exige outra especialização ou opção de classe.');
+    const ancestral=registro('ancestralidades',dados.ancestralidadeId), heranca=[...(ancestral?.herancas||[]),...(catalogo.herancasVersateis||[])].find(item=>item.id===dados.herancaId);
+    const fontes=[classe(dados),opcao(dados),ancestral,heranca,registro('biografias',dados.biografiaId),...(dados.talentos||[]).map(t=>registro('talentos',typeof t==='string'?t:t.id))].filter(Boolean);
+    const capacidades=new Set(fontes.flatMap(fonte=>fonte.capacidades||[]));
+    for(const capacidade of requisitos.capacidades||[]) if(!capacidades.has(capacidade)) motivos.push(`Exige a capacidade ${String(capacidade).replaceAll('-',' ')}.`);
+    if(item.requisitos&&!Object.keys(requisitos).length) motivos.push('Os pré-requisitos ainda precisam de conferência com o mestre.');
+    if(!motivos.length) {
+      const aquisicao=escolherAquisicao(dados,item), tipo=aquisicao.tipo||item.tipo;
+      const slot=escolhasTalentoDisponiveis(dados).find(escolha=>escolha.tipo===tipo&&escolha.nivel===aquisicao.nivel&&(escolha.origem||null)===(aquisicao.origem||null));
+      const usados=(dados.talentos||[]).filter(t=>(t.tipo||registro('talentos',t.id)?.tipo)===tipo&&Number(t.nivel)===Number(aquisicao.nivel)&&(t.origem||null)===(aquisicao.origem||null)).length;
+      if(!slot||usados>=Number(slot.quantidade||1)) motivos.push(`Não há uma escolha livre de talento de ${tipo||'categoria compatível'} neste nível.`);
+    }
+    return {disponivel:motivos.length===0,motivos};
+  }
+  function cartaoCatalogo(dados,tipo,item,selecionados,estado) {
+    const selecionado=selecionados.has(item.id), bloqueado=!selecionado&&(item.somenteConsulta||estado?.disponivel===false||(tipo==='magias'&&(dados.magias||[]).some(m=>m.id===item.id&&m.concedidaAutomaticamente)));
+    const motivos=estado?.motivos||[];
+    return `<article class="item" data-filtro="${escapar((item.nome+' '+resumo(item)+' '+fonte(item)+' '+motivos.join(' ')).toLocaleLowerCase('pt-BR'))}"><label class="check"><input type="checkbox" data-escolha="${tipo}" value="${escapar(item.id)}" ${selecionado?'checked':''} ${bloqueado?'disabled':''}>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</label><p class="mini">${escapar(resumo(item))}</p>${motivos.length?'<p class="mini perigo"><strong>Ainda indisponível:</strong> '+escapar(motivos.join(' '))+'</p>':item.somenteConsulta?'<p class="mini">Somente consulta · seleção mecânica ainda indisponível.</p>':textoRevisao(item)?'<p class="mini">Texto da fonte em revisão.</p>':''}${botao('Ver efeito e requisitos','detalhe',tipo+':'+item.id)}</article>`;
+  }
   function catalogoOpcoes(dados,tipo,titulo) {
     const selecionados=new Set((dados[tipo]||[]).map(item=>typeof item==='string'?item:item.id));
     let itens=(catalogo[tipo]||[]).filter(item=>ehMestre||item.somenteMestre!==true);
     const carga=tipo==='equipamentos'?R.calcular(dados,catalogo).carga:null;
-    if(tipo==='talentos') itens=itens.filter(item=>(item.nivel||1)<=dados.nivel&&(!item.classe||item.classe===dados.classeId)&&(!item.ancestralidade||item.ancestralidade===dados.ancestralidadeId));
-    return `<section class="card"><h2>${titulo}</h2>${carga?'<p>Volume total: <strong>'+carga.volume+'</strong> · sobrecarga a partir de '+carga.limiteSobrecarga+' · máximo '+carga.limiteMaximo+'.</p>'+(carga.sobrecarregado?'<p class="aviso">Sobrecarregado: Desajeitado1 e redução de deslocamento aplicados automaticamente.</p>':'')+(carga.pendentes?.length?'<p class="aviso">Volume ainda pendente para: '+carga.pendentes.map(id=>registro('equipamentos',id)?.nome||id).map(escapar).join(', ')+'.</p>':''):''}${tipo==='talentos'?talentosSelecionados(dados):tipo==='magias'?magiasSelecionadas(dados):tipo==='equipamentos'?equipamentosSelecionados(dados):''}<label>Buscar ${titulo.toLowerCase()}<input type="search" data-busca="${tipo}" placeholder="Nome, efeito ou origem"></label><p class="mini">Confira os requisitos e as opções permitidas na mesa. Referências indexadas ainda em revisão não são apresentadas como conteúdo integral revisado.</p><div class="catalogo">${itens.map(item=>`<article class="item" data-filtro="${escapar((item.nome+' '+resumo(item)+' '+fonte(item)).toLocaleLowerCase('pt-BR'))}"><label class="check"><input type="checkbox" data-escolha="${tipo}" value="${escapar(item.id)}" ${selecionados.has(item.id)?'checked':''} ${item.somenteConsulta||(tipo==='magias'&&(dados.magias||[]).some(m=>m.id===item.id&&m.concedidaAutomaticamente))?'disabled':''}>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</label><p class="mini">${escapar(resumo(item))}</p>${item.somenteConsulta?'<p class="mini">Somente consulta · seleção mecânica ainda indisponível.</p>':textoRevisao(item)?'<p class="mini">Texto da fonte em revisão.</p>':''}${botao('Ver efeito e requisitos','detalhe',tipo+':'+item.id)}</article>`).join('')||'<p>Esta categoria ainda não tem opções revisadas. A ficha não presume escolhas ausentes.</p>'}</div></section>`;
+    let grupos;
+    if(tipo==='talentos') {
+      itens=itens.filter(item=>(!item.classe||item.classe===dados.classeId)&&(!item.ancestralidade||item.ancestralidade===dados.ancestralidadeId));
+      const calculo=R.calcular(dados,catalogo), avaliados=itens.map(item=>({item,estado:avaliarTalento(dados,item,selecionados.has(item.id),calculo)}));
+      const disponiveis=avaliados.filter(({estado})=>estado.disponivel), indisponiveis=avaliados.filter(({estado})=>!estado.disponivel);
+      grupos=`<h3>Disponíveis agora · ${disponiveis.length}</h3><div class="catalogo">${disponiveis.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')||'<p>Nenhuma escolha disponível agora.</p>'}</div><details><summary>Ainda indisponíveis · ${indisponiveis.length}</summary><p class="mini">Continue visível para você planejar níveis futuros. Cada opção informa o que falta.</p><div class="catalogo">${indisponiveis.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div></details>`;
+    } else grupos=`<div class="catalogo">${itens.map(item=>cartaoCatalogo(dados,tipo,item,selecionados)).join('')||'<p>Esta categoria ainda não tem opções revisadas. A ficha não presume escolhas ausentes.</p>'}</div>`;
+    return `<section class="card"><h2>${titulo}</h2>${carga?'<p>Volume total: <strong>'+carga.volume+'</strong> · sobrecarga a partir de '+carga.limiteSobrecarga+' · máximo '+carga.limiteMaximo+'.</p>'+(carga.sobrecarregado?'<p class="aviso">Sobrecarregado: Desajeitado1 e redução de deslocamento aplicados automaticamente.</p>':'')+(carga.pendentes?.length?'<p class="aviso">Volume ainda pendente para: '+carga.pendentes.map(id=>registro('equipamentos',id)?.nome||id).map(escapar).join(', ')+'.</p>':''):''}${tipo==='talentos'?talentosSelecionados(dados):tipo==='magias'?magiasSelecionadas(dados):tipo==='equipamentos'?equipamentosSelecionados(dados):''}<label>Buscar ${titulo.toLowerCase()}<input type="search" data-busca="${tipo}" placeholder="Nome, efeito ou origem"></label><p class="mini">As opções são separadas pelo que esta ficha pode escolher agora. Conteúdo bloqueado continua visível para planejamento.</p>${grupos}</section>`;
   }
   function magiasEmUso(dados) {
     return (dados.magias||[]).map(escolha=>{

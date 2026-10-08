@@ -577,16 +577,16 @@
     p.talentos.forEach(function (t) {
       var r = encontrar(catalogo, 'talentos', t.id);
       if (!r) { avisos.push('Talento personalizado ou ainda não catalogado: ' + t.id + '. Confira com o mestre.'); if (!t.aprovadoPeloMestre) return; r = { id: t.id, nome: t.nome || t.id, nivel: 1, tipo: t.tipo }; }
-      if (r.somenteConsulta === true) erros.push(r.nome + ' está disponível apenas para consulta; não pode ser selecionado.');
       if (talentosVistos[t.id] && !r.repetivel) erros.push('Talento não repetível selecionado mais de uma vez: ' + r.nome + '.'); talentosVistos[t.id] = true;
+      if (t.origem === 'biografia' && bio && (bio.talento === t.id || obj(bio.talentoEscolha)[obj(p.escolhasBiografia).pericia] === t.id)) return;
+      if (t.concedidoAutomaticamente && fontesSelecionadas(p, catalogo).some(function (fonte) { return fonte.origem === t.origem && talentosConcedidosFonte(p, catalogo, fonte.registro).some(function (item) { return (typeof item === 'string' ? item : item.id) === t.id; }); })) return;
+      if (r.somenteConsulta === true) erros.push(r.nome + ' está disponível apenas para consulta; não pode ser selecionado.');
       var adquirido = Number(t.nivel), tipo = t.tipo || r.tipo;
       if (!Number.isInteger(adquirido) || adquirido < r.nivel || adquirido > n) erros.push('Nível de aquisição inválido: ' + r.nome + '.');
       if (r.classe && r.classe !== p.classeId && tipo !== 'arquetipo') erros.push(r.nome + ' pertence a outra classe.');
       if (r.ancestralidade && r.ancestralidade !== p.ancestralidadeId) erros.push(r.nome + ' pertence a outra ancestralidade.');
       if (r.melhoraArmaFavorecidaSimples && !armaFavorecidaSimples(p, catalogo)) erros.push(r.nome + ': sua divindade precisa favorecer uma arma simples ou ataque desarmado.');
       if (r.tipo && r.tipo !== tipo && !(tipo === 'geral' && r.tipo === 'pericia') && tipo !== 'arquetipo') erros.push('Categoria de talento inválida: ' + r.nome + '.');
-      if (t.origem === 'biografia' && bio && (bio.talento === t.id || obj(bio.talentoEscolha)[obj(p.escolhasBiografia).pericia] === t.id)) return;
-      if (t.concedidoAutomaticamente && fontesSelecionadas(p, catalogo).some(function (fonte) { return fonte.origem === t.origem && talentosConcedidosFonte(p, catalogo, fonte.registro).some(function (item) { return (typeof item === 'string' ? item : item.id) === t.id; }); })) return;
       var slot = slots.find(function (s) { return s.tipo === tipo && s.nivel === adquirido && s.origem === (t.origem || null); });
       if (!slot && !t.aprovadoPeloMestre) erros.push('Não há uma escolha de talento de ' + tipo + ' no nível ' + adquirido + ' com essa origem.');
       if (slot && Number.isInteger(slot.nivelMaximoTalento) && numero(r.nivel, 1) > slot.nivelMaximoTalento) erros.push(r.nome + ' excede o nível máximo permitido por esta escolha adicional.');

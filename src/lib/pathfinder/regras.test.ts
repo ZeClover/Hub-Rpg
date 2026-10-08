@@ -149,9 +149,10 @@ test('truque de ranque 1 é contado como truque; foco não exige espaços ou tru
   Object.assign(cat.classes[0], { conjuracao: { tradicao: 'divina', atributo: 'car', tipo: 'foco' }, opcoes: [] }); p.magias = [{ id: 'devocao', nivel: 1 }]; p.opcaoClasseId = ''; v = regras.validar(p, cat); assert.doesNotMatch(v.pendencias.join(' '), /truques|1ª ordem/);
 });
 test('referências não revisadas continuam consultáveis mas não podem integrar a ficha', () => {
-  const cat = structuredClone(catalogo); Object.assign(cat.talentos[1], { somenteConsulta: true }); cat.magias = [{ id: 'referencia', nome: 'Referência', nivel: 1, somenteConsulta: true }];
+  const cat = structuredClone(catalogo); Object.assign(cat.talentos[1], { somenteConsulta: true }); Object.assign(cat.talentos[2], { somenteConsulta: true }); cat.magias = [{ id: 'referencia', nome: 'Referência', nivel: 1, somenteConsulta: true }];
   const p = ficha(); p.magias = [{ id: 'referencia' }]; const e = regras.validar(p, cat).erros.join(' ');
   assert.match(e, /Talento de classe.*apenas para consulta/); assert.match(e, /Referência.*apenas para consulta/);
+  assert.doesNotMatch(e, /Talento da biografia.*apenas para consulta/);
 });
 test('Ambição Natural concede talento extra só com origem referenciada e feat realmente escolhido', () => {
   const cat = structuredClone(catalogo); cat.talentos[0] = { id: 'humano-ambicao-natural', nome: 'Ambição Natural', nivel: 1, tipo: 'ancestralidade', ancestralidade: 'humano', bonusTalentos: [{ tipo: 'classe', nivel: 1, quantidade: 1 }] };
