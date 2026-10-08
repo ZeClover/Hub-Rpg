@@ -134,6 +134,9 @@
   }
   function limparTexto(texto) {
     return String(texto||'')
+      .replace(/([;:!?])(?=[A-Za-zÀ-ÿ])/g,'$1 ')
+      .replace(/([A-Za-zÀ-ÿ])([+-]?\d+)/g,(trecho,letra,numero)=>letra.toLocaleLowerCase('pt-BR')==='d'&&!numero.startsWith('+')?trecho:`${letra} ${numero}`)
+      .replace(/(\d+)(po|pp|pc|pe|pa|pés|minutos?|metros?|rodadas?)\b/gi,'$1 $2')
       .replace(/([A-Za-zÀ-ÿ])(\d+d\d+)/g,'$1 $2')
       .replace(/\bcom(\d+)\s*(pés|minutos?|metros?)\b/gi,'com $1 $2')
       .replace(/\bmínimo(\d+)\b/gi,'mínimo $1')
@@ -182,11 +185,22 @@
   function camposIdentidade(dados) {
     const ancestral=registro('ancestralidades',dados.ancestralidadeId), atualClasse=classe(dados);
     const herancas=[...(ancestral?.herancas||[]),...(catalogo.herancasVersateis||[])];
-    return `<section class="card identidade"><h2>Identidade</h2><div class="grade">${campo(dados,'Nome do personagem','nome')}${ehMestre||!id?campo(dados,'Experiência (XP)','xp','number',{min:0}):'<div class="xp-resumo"><span class="mini">Experiência</span><strong>'+escapar(dados.xp||0)+' XP</strong><small>Controlada pelo mestre</small></div>'}${ehMestre?campo(dados,'Nível autorizado pelo mestre','_mestre.pathfinder.nivelAutorizado','number',{min:dados.nivel,max:20}):''}${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${campoHeranca(dados,ancestral)}${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse?.opcoes)})}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}</div><div class="opcoes-escolhidas">${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${descricaoOpcao(opcao(dados))}${ajuda('ancestralidades',dados.ancestralidadeId)}${ajuda('biografias',dados.biografiaId)}${ajuda('classes',dados.classeId)}</div><div class="grade escolhas-dependentes">${escolhasHeranca(dados)}${escolhasBiografia(dados)}</div><p class="mini rodape-contexto">O botão Evoluir altera o nível. Trocar classe ou ancestralidade exige revisar as escolhas dependentes.</p></section>`;
+    const especializacao=atualClasse?.opcoes?.length?campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse.opcoes)}):atualClasse?`<div class="xp-resumo"><span class="mini">Especialização</span><strong>Não se aplica</strong><small>${atualClasse.id==='monge'?'O Monge se diferencia por talentos, posturas e magias de qi.':'Esta classe não exige uma subclasse nesta etapa.'}</small></div>`:'';
+    return `<section class="card identidade"><h2>Identidade</h2><div class="grade">${campo(dados,'Nome do personagem','nome')}${ehMestre||!id?campo(dados,'Experiência (XP)','xp','number',{min:0}):'<div class="xp-resumo"><span class="mini">Experiência</span><strong>'+escapar(dados.xp||0)+' XP</strong><small>Controlada pelo mestre</small></div>'}${ehMestre?campo(dados,'Nível autorizado pelo mestre','_mestre.pathfinder.nivelAutorizado','number',{min:dados.nivel,max:20}):''}${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${campoHeranca(dados,ancestral)}${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${especializacao}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}</div><div class="opcoes-escolhidas">${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${descricaoOpcao(opcao(dados))}${ajuda('ancestralidades',dados.ancestralidadeId)}${ajuda('biografias',dados.biografiaId)}${ajuda('classes',dados.classeId)}</div><div class="grade escolhas-dependentes">${escolhasHeranca(dados)}${escolhasBiografia(dados)}</div><p class="mini rodape-contexto">O botão Evoluir altera o nível. Trocar classe ou ancestralidade exige revisar as escolhas dependentes.</p></section>`;
+  }
+  function limiteIncrementos(dados,lote) {
+    if(lote==='ancestralidade') {
+      const ancestral=registro('ancestralidades',dados.ancestralidadeId);
+      return dados.ancestralidadeAlternativa||!ancestral?2:(ancestral.incrementos||[]).length+Number(ancestral.livres||0);
+    }
+    if(lote==='biografia') return 2;
+    if(lote==='classe') return 1;
+    return 4;
   }
   function incrementos(dados,lote,titulo,permitidos=Object.keys(nomesAtributos)) {
     const escolhidos=valor(dados,'incrementos.'+lote)||[];
-    return `<section class="item"><h3>${escapar(titulo)}</h3><div class="grade">${permitidos.map(nome=>`<label class="check"><input type="checkbox" data-incremento="${lote}" value="${nome}" ${escolhidos.includes(nome)?'checked':''}>${nomesAtributos[nome]}</label>`).join('')}</div></section>`;
+    const limite=limiteIncrementos(dados,lote), excedentes=Math.max(0,escolhidos.length-limite), faltam=Math.max(0,limite-escolhidos.length);
+    return `<section class="item"><h3>${escapar(titulo)}</h3><p class="mini">${excedentes?`Há ${excedentes} escolha${excedentes===1?'':'s'} a mais. Desmarque até restarem ${limite}.`:faltam?`Escolha mais ${faltam} atributo${faltam===1?'':'s'}.`:`${limite} de ${limite} escolhidos.`}</p><div class="grade">${permitidos.map(nome=>`<label class="check"><input type="checkbox" data-incremento="${lote}" data-limite="${limite}" value="${nome}" ${escolhidos.includes(nome)?'checked':''} ${escolhidos.length>=limite&&!escolhidos.includes(nome)?'disabled':''}>${nomesAtributos[nome]}</label>`).join('')}</div></section>`;
   }
   function camposAtributos(dados) {
     const calculo=R.calcular(dados,catalogo), ancestral=registro('ancestralidades',dados.ancestralidadeId), bio=registro('biografias',dados.biografiaId);
@@ -439,7 +453,11 @@
     if(elemento.dataset.incremento) {
       const caminho='incrementos.'+elemento.dataset.incremento;
       const valores=(valor(dados,caminho)||[]).filter(item=>item!==elemento.value);
-      if(elemento.checked) valores.push(elemento.value);
+      const limite=Number(elemento.dataset.limite||limiteIncrementos(dados,elemento.dataset.incremento));
+      if(elemento.checked&&valores.length>=limite) {
+        elemento.checked=false;
+        avisar(`Este grupo permite exatamente ${limite} escolha${limite===1?'':'s'}. Desmarque uma antes de trocar.`);
+      } else if(elemento.checked) valores.push(elemento.value);
       definir(dados,caminho,valores);
     }
     if(elemento.dataset.escolha) {
@@ -689,7 +707,7 @@
     if(guia.passo===0) return `<section class="card"><h2>Quem é seu personagem?</h2>${campo(dados,'Nome','nome')}${campo(dados,'Conceito, objetivo ou história','historia','textarea')}<p class="mini">Retomar preserva a mesma ficha, o mesmo ID e suas escolhas atuais.</p></section>`;
     if(guia.passo===1) return `<section class="card"><h2>Ancestralidade e herança</h2>${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${ajuda('ancestralidades',dados.ancestralidadeId)}${campoHeranca(dados,ancestral)}${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${escolhasHeranca(dados)}</section>`;
     if(guia.passo===2) return `<section class="card"><h2>Biografia</h2>${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${ajuda('biografias',dados.biografiaId)}${escolhasBiografia(dados)}</section>`;
-    if(guia.passo===3) return `<section class="card"><h2>Classe e especialização</h2>${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${ajuda('classes',dados.classeId)}${campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse?.opcoes)})}${descricaoOpcao(opcao(dados))}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}${campo(dados,'Escolhas particulares da classe','escolhasClasseNotas','textarea')}</section>${escolhasClasse(dados)}`;
+    if(guia.passo===3) return `<section class="card"><h2>Classe e especialização</h2>${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${ajuda('classes',dados.classeId)}${atualClasse?.opcoes?.length?campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse.opcoes)}):atualClasse?`<p class="aviso"><strong>${escapar(atualClasse.nome)} não escolhe especialização nesta etapa.</strong> ${atualClasse.id==='monge'?'A identidade mecânica vem de talentos, posturas e possíveis magias de qi.':'As escolhas próprias aparecem nas próximas etapas do guia.'}</p>`:''}${descricaoOpcao(opcao(dados))}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}${campo(dados,'Escolhas particulares da classe','escolhasClasseNotas','textarea')}</section>${escolhasClasse(dados)}`;
     if(guia.passo===4) return camposAtributos(dados);
     if(guia.passo===5) return camposPericias(dados);
     if(guia.passo===6) return camposOpcoes(dados);
