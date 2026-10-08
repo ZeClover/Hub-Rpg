@@ -127,16 +127,26 @@
   }
   const botao=(texto,acao,identificador='',tipo='')=>`<button type="button" class="${tipo}" data-acao="${acao}" data-valor="${escapar(identificador)}">${escapar(texto)}</button>`;
   const opcoesLista=lista=>[['','Escolha uma opção'],...(lista||[]).map(item=>[item.id,item.nome])];
-  function resumo(item) { return Array.isArray(item?.resumo)?item.resumo.join(' '):item?.resumo||''; }
+  function limparTexto(texto) {
+    return String(texto||'')
+      .replace(/([A-Za-zÀ-ÿ])(\d+d\d+)/g,'$1 $2')
+      .replace(/\bcom(\d+)\s*(pés|minutos?|metros?)\b/gi,'com $1 $2')
+      .replace(/\bmínimo(\d+)\b/gi,'mínimo $1')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function resumo(item) { return limparTexto(Array.isArray(item?.resumo)?item.resumo.join(' '):item?.resumo||''); }
   function fonte(item) { return `${item.fonte?.nome||item.fonte||''}${item.pagina?' · p. '+item.pagina:''}`; }
   function textoRevisao(item) { return item.revisao==='texto-original-pt-indexado'||item.revisao==='indexado'?'Trecho indexado da fonte em português, ainda em revisão. Pode incluir blocos vizinhos; confira a página indicada.':''; }
   function descricaoOpcao(item) {
     if(!item) return '';
-    return `<details><summary>${escapar(item.nome)} · ver efeito</summary>${textoRevisao(item)?'<p class="aviso">'+escapar(textoRevisao(item))+'</p>':''}<p>${escapar(resumo(item))}</p><div class="texto-integral">${escapar(item.descricao||item.texto||'Texto desta referência ainda em revisão.')}</div></details>`;
+    const curto=resumo(item), completo=limparTexto(item.descricao||item.texto||'Texto desta referência ainda em revisão.');
+    const repetir=curto&&curto.toLocaleLowerCase('pt-BR')===completo.toLocaleLowerCase('pt-BR');
+    return `<details class="opcao-detalhe"><summary><span>${escapar(item.nome)}</span><small>Ver benefícios</small></summary>${textoRevisao(item)?'<p class="aviso">'+escapar(textoRevisao(item))+'</p>':''}${curto?'<p class="opcao-resumo">'+escapar(curto)+'</p>':''}${!repetir?'<div class="texto-integral">'+escapar(completo)+'</div>':''}</details>`;
   }
   function ajuda(tipo,identificador) {
     const item=registro(tipo,identificador);
-    return item?`<p class="mini">${escapar(resumo(item))}</p>${botao('Ver o que '+item.nome+' faz','detalhe',tipo+':'+identificador)}`:'';
+    return item?`<article class="selecao-resumo"><div><span class="mini">${tipo==='ancestralidades'?'Ancestralidade':tipo==='biografias'?'Biografia':'Classe'}</span><h3>${escapar(item.nome)}</h3><p>${escapar(resumo(item))}</p></div>${botao('Ver detalhes','detalhe',tipo+':'+identificador)}</article>`:'';
   }
   function escolhasHeranca(dados) {
     const ancestral=registro('ancestralidades',dados.ancestralidadeId),h=[...(ancestral?.herancas||[]),...(catalogo.herancasVersateis||[])].find(item=>item.id===dados.herancaId);
@@ -167,7 +177,7 @@
   function camposIdentidade(dados) {
     const ancestral=registro('ancestralidades',dados.ancestralidadeId), atualClasse=classe(dados);
     const herancas=[...(ancestral?.herancas||[]),...(catalogo.herancasVersateis||[])];
-    return `<section class="card"><h2>Identidade</h2><div class="grade">${campo(dados,'Nome do personagem','nome')}${ehMestre||!id?campo(dados,'Experiência (XP)','xp','number',{min:0}):'<div><h3>Experiência</h3><p>'+escapar(dados.xp||0)+' XP · controlada pelo mestre.</p></div>'}${ehMestre?campo(dados,'Nível autorizado pelo mestre','_mestre.pathfinder.nivelAutorizado','number',{min:dados.nivel,max:20}):''}${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${campo(dados,'Herança','herancaId','select',{valores:opcoesLista(herancas)})}${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse?.opcoes)})}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}</div>${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${escolhasHeranca(dados)}${descricaoOpcao(opcao(dados))}${ajuda('ancestralidades',dados.ancestralidadeId)}${ajuda('biografias',dados.biografiaId)}${escolhasBiografia(dados)}${ajuda('classes',dados.classeId)}<p class="mini">O botão Evoluir altera o nível. Trocar classe ou ancestralidade exige revisar as escolhas dependentes.</p></section>`;
+    return `<section class="card identidade"><h2>Identidade</h2><div class="grade">${campo(dados,'Nome do personagem','nome')}${ehMestre||!id?campo(dados,'Experiência (XP)','xp','number',{min:0}):'<div class="xp-resumo"><span class="mini">Experiência</span><strong>'+escapar(dados.xp||0)+' XP</strong><small>Controlada pelo mestre</small></div>'}${ehMestre?campo(dados,'Nível autorizado pelo mestre','_mestre.pathfinder.nivelAutorizado','number',{min:dados.nivel,max:20}):''}${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${campo(dados,'Herança','herancaId','select',{valores:opcoesLista(herancas)})}${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse?.opcoes)})}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}</div><div class="opcoes-escolhidas">${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${descricaoOpcao(opcao(dados))}${ajuda('ancestralidades',dados.ancestralidadeId)}${ajuda('biografias',dados.biografiaId)}${ajuda('classes',dados.classeId)}</div><div class="grade escolhas-dependentes">${escolhasHeranca(dados)}${escolhasBiografia(dados)}</div><p class="mini rodape-contexto">O botão Evoluir altera o nível. Trocar classe ou ancestralidade exige revisar as escolhas dependentes.</p></section>`;
   }
   function incrementos(dados,lote,titulo,permitidos=Object.keys(nomesAtributos)) {
     const escolhidos=valor(dados,'incrementos.'+lote)||[];
