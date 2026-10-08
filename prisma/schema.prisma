@@ -101,6 +101,7 @@ model Usuario {
   notificacoes             Notificacao[]
   itens                    Item[]
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[] @relation("AtorEventoHogwarts")
+  leiturasEventosHogwarts  LeituraEventoHogwarts[]
 
   @@map("usuarios")
 }
@@ -203,7 +204,7 @@ model ConteudoSistema {
   secreto          Boolean  @default(false)
   atualizadoEm     DateTime @updatedAt
 
-  sistema Sistema @relation(fields: [sistemaId], references: [id], onDelete: Cascade)
+  sistema         Sistema                  @relation(fields: [sistemaId], references: [id], onDelete: Cascade)
   detalheHogwarts HogwartsConteudoDetalhe?
 
   @@unique([sistemaId, slug])
@@ -214,21 +215,21 @@ model ConteudoSistema {
 /// Mecânica estruturada de um Conteúdo Hogwarts. Fica separada do catálogo
 /// genérico para não impor alcance, dano ou duração aos demais sistemas.
 model HogwartsConteudoDetalhe {
-  id                 String  @id @default(uuid()) @db.Uuid
-  conteudoId         String  @unique @db.Uuid
-  faseCurricular     String  @default("NORMAL")
-  permitidoCriacao   Boolean @default(true)
-  acao               String?
-  alcance            String?
-  area               String?
-  duracao             String?
-  concentracao        Boolean?
-  dano                Int?
-  natureza            String?
-  sucesso             String?
-  elevado             String?
-  excepcional         String?
-  termino              String?
+  id               String   @id @default(uuid()) @db.Uuid
+  conteudoId       String   @unique @db.Uuid
+  faseCurricular   String   @default("NORMAL")
+  permitidoCriacao Boolean  @default(true)
+  acao             String?
+  alcance          String?
+  area             String?
+  duracao          String?
+  concentracao     Boolean?
+  dano             Int?
+  natureza         String?
+  sucesso          String?
+  elevado          String?
+  excepcional      String?
+  termino          String?
 
   conteudo ConteudoSistema @relation(fields: [conteudoId], references: [id], onDelete: Cascade)
 
@@ -349,13 +350,30 @@ model EventoAuditoriaHogwarts {
   detalhes     Json?
   criadoEm     DateTime @default(now())
 
-  campanha   Campanha    @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
-  personagem Personagem? @relation(fields: [personagemId], references: [id], onDelete: SetNull)
-  ator       Usuario?    @relation("AtorEventoHogwarts", fields: [atorId], references: [id], onDelete: SetNull)
+  campanha   Campanha                @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  personagem Personagem?             @relation(fields: [personagemId], references: [id], onDelete: SetNull)
+  ator       Usuario?                @relation("AtorEventoHogwarts", fields: [atorId], references: [id], onDelete: SetNull)
+  leituras   LeituraEventoHogwarts[]
 
   @@index([campanhaId, criadoEm])
   @@index([personagemId, criadoEm])
   @@map("eventos_auditoria_hogwarts")
+}
+
+/// Confirma que uma descoberta pública já foi vista por uma pessoa. O
+/// conteúdo continua no evento de auditoria; esta tabela guarda apenas o
+/// estado de leitura e funciona entre aparelhos.
+model LeituraEventoHogwarts {
+  eventoId  String   @db.Uuid
+  usuarioId String   @db.Uuid
+  lidoEm    DateTime @default(now())
+
+  evento  EventoAuditoriaHogwarts @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  usuario Usuario                 @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@id([eventoId, usuarioId])
+  @@index([usuarioId, lidoEm])
+  @@map("leituras_eventos_hogwarts")
 }
 
 /// Um encontro jogado (marcado ou já rolado). Antes da decisão #135 este

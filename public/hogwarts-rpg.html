@@ -82,6 +82,10 @@ main{max-width:980px; margin:0 auto; padding:16px}
 .grid-atributo{text-align:center; border:1px solid var(--borda); border-radius:10px; padding:10px}
 .grid-atributo .valor{font-size:26px; font-family:var(--fonte-titulo)}
 .busca{margin-bottom:10px}
+.caixa-descobertas{border-color:rgba(var(--roxo-rgb),.55);background:linear-gradient(135deg,rgba(var(--roxo-rgb),.12),var(--superficie) 58%)}
+.caixa-descobertas .cabecalho{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.caixa-descobertas .cabecalho h2{flex:1}
+.descoberta{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(var(--roxo-rgb),.18)}
+.descoberta:first-of-type{margin-top:10px}.descoberta .icone{font-size:20px}.descoberta.nao-lida b{color:var(--roxo-forte)}
 </style>
 </head>
 <body>
@@ -733,9 +737,49 @@ const estado = {
   trocas: [], statusTroca: '',
   errosCriacao: [], statusCriacao: '',
   evolucaoAberta:false, escolhasEvolucao:{conteudos:[],unicos:[]}, erroEvolucao:'',
+  descobertas:[], revisaoDescobertas:null, sincronizandoDescobertas:false, erroDescobertas:'',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
+
+function painelDescobertas(){
+  if(!MODO_HUB || (!estado.descobertas.length && !estado.erroDescobertas)) return '';
+  const novas=estado.descobertas.filter(e=>!e.lido).length;
+  const icones={progressao:'✨',criacao:'🎓',conteudo:'📜',bestiario:'🐾',varinha:'🪄',familia:'🏰',academico:'📚'};
+  return `<section class="cartao caixa-descobertas">
+    <div class="cabecalho"><h2>🔔 Caixa de Descobertas</h2>${novas?`<span class="pill on">${novas} nova${novas===1?'':'s'}</span><button data-ler-descobertas>Marcar como vistas</button>`:'<span class="mini">Tudo visto</span>'}</div>
+    ${estado.erroDescobertas?`<p class="mini">${esc(estado.erroDescobertas)}</p>`:''}
+    ${estado.descobertas.slice(0,5).map(e=>`<div class="descoberta ${e.lido?'':'nao-lida'}"><span class="icone">${icones[e.modulo]||'✦'}</span><div><b>${esc(e.resumo)}</b><div class="mini">${new Date(e.criadoEm).toLocaleString('pt-BR')}</div></div></div>`).join('')}
+  </section>`;
+}
+
+async function carregarDescobertas(ressincronizar=true){
+  if(!MODO_HUB || estado.sincronizandoDescobertas || document.hidden) return;
+  estado.sincronizandoDescobertas=true;
+  try{
+    const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-descobertas`,{cache:'no-store'});
+    if(!resposta.ok) throw new Error('Não foi possível atualizar as descobertas.');
+    const corpo=await resposta.json(), revisaoAnterior=estado.revisaoDescobertas;
+    estado.descobertas=Array.isArray(corpo.eventos)?corpo.eventos:[];
+    estado.revisaoDescobertas=corpo.revisao||null; estado.erroDescobertas='';
+    if(ressincronizar && revisaoAnterior && corpo.revisao && corpo.revisao!==revisaoAnterior) await iniciarModoHub();
+    else render();
+  }catch(e){ estado.erroDescobertas=e.message||'Atualização temporariamente indisponível.'; render(); }
+  finally{ estado.sincronizandoDescobertas=false; }
+}
+
+async function marcarDescobertasLidas(){
+  const ids=estado.descobertas.filter(e=>!e.lido).map(e=>e.id); if(!ids.length) return;
+  const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-descobertas`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
+  if(resposta.ok){estado.descobertas.forEach(e=>{if(ids.includes(e.id))e.lido=true;});render();}
+}
+
+function iniciarDescobertasAoVivo(){
+  carregarDescobertas(false);
+  setInterval(()=>carregarDescobertas(true),5000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)carregarDescobertas(true);});
+  window.addEventListener('focus',()=>carregarDescobertas(true));
+}
 
 async function iniciarModoHub(){
   try{
@@ -1863,7 +1907,7 @@ function render(){
     ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
     : falhouAoSalvar ? `<div class="aviso"><strong>Não consegui salvar${MODO_HUB?' no Hub':''}.</strong> Confira sua conexão.</div>` : '';
 
-  app.innerHTML = alerta + painelCriacaoGuiada(p)
+  app.innerHTML = alerta + painelDescobertas() + painelCriacaoGuiada(p)
     + `<div class="abas">` + ABAS.filter(a => a.id!=='loja' || estado.campanhaId).map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
     + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial, loja:abaLoja}[estado.aba])(p);
 
@@ -1916,6 +1960,8 @@ function ligarEventos(){
   app.querySelectorAll('[data-criacao-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.criacaoAba; render(); });
   const finalizarCriacao = app.querySelector('[data-finalizar-criacao]');
   if(finalizarCriacao) finalizarCriacao.onclick = finalizarCriacaoGuiada;
+  const lerDescobertas = app.querySelector('[data-ler-descobertas]');
+  if(lerDescobertas) lerDescobertas.onclick = marcarDescobertasLidas;
 
   // Evolução guiada — as escolhas ficam apenas na interface até o servidor
   // validar e gravar o avanço completo de forma atômica.
@@ -2398,7 +2444,7 @@ document.getElementById('btExcluir').onclick = () => {
 document.getElementById('chkCompartilhar').onchange = e => alternarCompartilhado(e.target.checked);
 
 render();
-if(MODO_HUB) iniciarModoHub();
+if(MODO_HUB) iniciarModoHub().then(iniciarDescobertasAoVivo);
 </script>
 </body>
 </html>
