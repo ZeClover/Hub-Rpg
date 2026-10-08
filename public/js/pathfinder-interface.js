@@ -775,7 +775,8 @@
         if(!resposta.ok) throw new Error(resposta.status===401?'Entre na sua conta para abrir esta ficha.':'Não foi possível abrir esta ficha ('+resposta.status+').');
         const corpo=await resposta.json(), personagem=corpo.personagem;
         if(!personagem) throw new Error('Resposta de ficha inválida.');
-        if(personagem.sistema&&personagem.sistema!=='pathfinder-2e-remaster') throw new Error('Esta ficha pertence a outro sistema. Abra pelo Hub para preservar seus dados.');
+        const chaveSistema=typeof personagem.sistema==='string'?personagem.sistema:personagem.sistema?.chave;
+        if(chaveSistema&&chaveSistema!=='pathfinder-2e-remaster') throw new Error('Esta ficha pertence a outro sistema. Abra pelo Hub para preservar seus dados.');
         podeEditar=personagem.podeEditar===true; ehMestre=personagem.ehMestre===true;
         versao=personagem.atualizadoEm; progressaoPermitida=corpo.progressaoPermitida||personagem.progressaoPermitida||null;
         ficha=R.normalizar({...personagem.dados,nome:personagem.dados?.nome||personagem.nome},catalogo); if(!ehMestre)delete ficha._mestre;

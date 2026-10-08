@@ -1,4 +1,5 @@
 import { prepararFichaPathfinder, progressaoPermitidaPathfinder } from "@/lib/pathfinder/validar-ficha";
+import { preservarEstadoAutoritativoHogwarts, type DadosCriacaoHogwarts } from "@/lib/hogwarts/criacao";
 import { imagemHubValida } from "@/lib/imagem-hub";
 import { randomUUID } from "node:crypto";
 
@@ -257,6 +258,12 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
             : {}),
         },
       };
+      if (!ehMestre) {
+        dadosParaSalvar = preservarEstadoAutoritativoHogwarts(
+          dadosExistentes as DadosCriacaoHogwarts,
+          dadosParaSalvar as DadosCriacaoHogwarts,
+        );
+      }
     }
   }
 

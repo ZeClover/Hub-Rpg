@@ -149,14 +149,11 @@ const CASAS = [
   {nome:'Lufa-Lufa', foco:'Preparação, cooperação, perseverança, criaturas e plantas.'},
 ];
 
-// Toda Casa concede 1 Tradição gratuita (não é bônus numérico — Casa não é
-// classe). Fixo 1:1 com a Casa, por isso não é um catálogo administrável
-// separado; só aparece automaticamente quando a Casa é escolhida no Perfil.
 const TRADICOES = {
-  'Grifinória': 'Tradição da Bravura — quando o personagem age primeiro e sob risco real pra proteger alguém, o Mestre pode conceder Vantagem no teste (não empilha com outra fonte de Vantagem).',
-  'Sonserina': 'Tradição da Ambição — o personagem sabe reconhecer quando uma situação social esconde uma vantagem a se tomar; o Mestre pode revelar uma pista extra em cenas de negociação/intriga.',
-  'Corvinal': 'Tradição do Estudo — depois de observar ou pesquisar algo por alguns minutos antes de agir, o Mestre pode conceder Vantagem no teste relacionado.',
-  'Lufa-Lufa': 'Tradição da Perseverança — ao Ajudar um aliado (regra geral de Ajudar), o efeito pode durar até o fim da cena em vez de só até o fim do próximo turno, quando fizer sentido.',
+  'Grifinória': ['Sangue Frio','Entrar na Frente','Primeiro a Agir'],
+  'Sonserina': ['Sempre um Passo à Frente','Sangue Frio Social','Recursos'],
+  'Corvinal': ['Perspectiva Incomum','Curiosidade Arcana','Memória Acadêmica'],
+  'Lufa-Lufa': ['Persistência','Mãos Cuidadosas','Juntos Somos Melhores'],
 };
 
 const STATUS_SANGUE = ['Puro-sangue','Mestiço','Nascido-trouxa','Desconhecido'];
@@ -464,7 +461,7 @@ function novoPersonagem(){
     id: uid(), criadoEm: t, atualizadoEm: t,
     perfil: {
       nome:'Novo Bruxo', sobrenome:'', imagem:'',
-      anoEscolar:1, casa:'', statusSangue:'', familiaId:'', origemId:'',
+      anoEscolar:1, casa:'', tradicao:'', statusSangue:'', familiaId:'', origemId:'',
       ambicao:'', medo:'', vinculo:'', descricao:'',
     },
     nivel: 1,
@@ -493,7 +490,7 @@ function novoPersonagem(){
     pocoesEstoque: [],
     pocoesCustom: [],
     cultivos: [],
-    academico: {materias: {}, notas: []},
+    academico: {materias: {}, notas: [], criacaoVersao:1, criacaoFinalizada:false},
     itens: [],
     // reliquias[] é público (nome/propriedades conhecidas/estado/vínculo);
     // a propriedade oculta de cada uma mora em `_mestre.reliquiasOcultas`.
@@ -527,6 +524,7 @@ function novoPersonagem(){
 function garantirCamposNovos(p){
   if(!p.perfil || typeof p.perfil !== 'object') p.perfil = {};
   if(typeof p.perfil.nome !== 'string') p.perfil.nome = 'Novo Bruxo';
+  if(typeof p.perfil.tradicao !== 'string') p.perfil.tradicao = '';
   if(typeof p.nivel !== 'number') p.nivel = 1;
   if(!p.atributos || typeof p.atributos !== 'object') p.atributos = {Arcano:0, Engenho:0, Pulso:0, Presença:0, Fibra:0};
   if(!p.pericias || typeof p.pericias !== 'object'){ p.pericias = {}; PERICIAS.forEach(nome => p.pericias[nome] = 0); }
@@ -601,6 +599,9 @@ function garantirMestre(p){
 
 function anoEscolar(nivel){ return Math.max(1, Math.min(7, Math.ceil(nivel/5))); }
 function limitePericia(ano){ return ano<=2?2 : ano<=4?3 : ano===5?4 : 5; }
+// Fichas anteriores ao novo assistente já eram personagens válidos. Somente
+// uma ficha criada na versão 1 e ainda não concluída permanece em criação.
+function criacaoConcluida(p){ return p.academico?.criacaoVersao !== 1 || p.academico?.criacaoFinalizada === true; }
 
 function todosConteudos(p){
   // No Hub, o catálogo curricular vem do servidor e já chega filtrado por
@@ -730,6 +731,8 @@ const estado = {
   catalogoHogwarts: [], erroConteudos:'',
   selecaoInicialPendente:false, selecaoInicial:[],
   trocas: [], statusTroca: '',
+  errosCriacao: [], statusCriacao: '',
+  evolucaoAberta:false, escolhasEvolucao:{conteudos:[],unicos:[]}, erroEvolucao:'',
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -810,6 +813,75 @@ async function confirmarConteudosIniciais(){
   });
   const corpo = await resposta.json().catch(()=>({}));
   if(!resposta.ok){ alert(corpo.erro || 'Não foi possível escolher este conteúdo.'); return; }
+  await iniciarModoHub();
+}
+
+function painelCriacaoGuiada(p){
+  if(!MODO_HUB || p.academico?.criacaoVersao !== 1 || p.academico?.criacaoFinalizada) return '';
+  const atributosOk = ATRIBUTOS.map(a => Number(p.atributos[a]||0)).sort((a,b)=>a-b).join(',') === '0,1,2,2,3';
+  const treinos = Object.values(p.pericias||{}).reduce((s,v)=>s+Number(v||0),0);
+  const tradicaoOk = !!p.perfil.casa && (TRADICOES[p.perfil.casa]||[]).includes(p.perfil.tradicao);
+  const conteudos = Object.values(p.conteudosConhecidos||{}).filter(e=>e==='formacao-inicial').length;
+  const passos = [
+    ['perfil','Identidade',!!p.perfil.nome?.trim(),'Informe o nome do aluno'],
+    ['atributos','Atributos',atributosOk,'Distribua 3 / 2 / 2 / 1 / 0'],
+    ['pericias','Perícias',treinos===3,`${treinos}/3 treinamentos usados`],
+    ['perfil','Casa e Tradição',tradicaoOk,tradicaoOk?p.perfil.tradicao:'Escolha uma das três Tradições'],
+    ['conteudos','Conteúdos iniciais',conteudos===4,`${conteudos}/4 selecionados`],
+  ];
+  const completos = passos.filter(x=>x[2]).length;
+  return `<div class="cartao" style="border-color:rgba(210,165,75,.7);margin-bottom:14px">
+    <p class="mini" style="letter-spacing:.16em;text-transform:uppercase">Criação guiada · ${completos}/${passos.length}</p>
+    <h2 style="margin:6px 0">Criar aluno de Hogwarts</h2>
+    <p class="mini">O sistema confere todas as regras. Sua ficha só é concluída quando os cinco passos estiverem válidos.</p>
+    <div class="grade2" style="margin-top:12px">${passos.map(([aba,nome,ok,detalhe])=>`<button data-criacao-aba="${aba}" style="text-align:left;border-color:${ok?'rgba(77,179,126,.65)':'rgba(210,165,75,.45)'}"><b>${ok?'✓':'○'} ${nome}</b><span class="mini" style="display:block;margin-top:3px">${esc(detalhe)}</span></button>`).join('')}</div>
+    ${estado.errosCriacao.length?`<div class="aviso" style="margin-top:12px"><b>Revise antes de concluir:</b><ul>${estado.errosCriacao.map(e=>`<li>${esc(e)}</li>`).join('')}</ul></div>`:''}
+    ${estado.statusCriacao?`<p class="mini" style="margin-top:10px">${esc(estado.statusCriacao)}</p>`:''}
+    <button data-finalizar-criacao class="destaque" style="margin-top:12px" ${completos===passos.length?'':'disabled'}>Concluir criação</button>
+  </div>`;
+}
+
+async function finalizarCriacaoGuiada(){
+  const p=atual(); if(!p || !MODO_HUB) return;
+  estado.statusCriacao='Validando no servidor…'; estado.errosCriacao=[]; render();
+  const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-criacao`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({dados:{perfil:p.perfil,atributos:p.atributos,pericias:p.pericias}}),
+  });
+  const corpo=await resposta.json().catch(()=>({}));
+  if(!resposta.ok){
+    estado.errosCriacao=Array.isArray(corpo.erros)?corpo.erros:[corpo.erro||'Não foi possível concluir.'];
+    estado.statusCriacao=''; render(); return;
+  }
+  Object.assign(p,garantirCamposNovos(corpo.dados));
+  estado.statusCriacao='Criação concluída. ✓'; estado.errosCriacao=[]; render();
+}
+
+function guiaEvolucao(p){
+  if(!estado.evolucaoAberta) return '';
+  const proximo=p.nivel+1, marco=MARCOS_EXTRAORDINARIOS.includes(proximo), e=estado.escolhasEvolucao;
+  const disponiveis=(estado.catalogoHogwarts||[]).filter(c=>c.estado==='disponivel');
+  return `<div class="cartao" style="margin-top:12px;border-color:rgba(210,165,75,.65)">
+    <h3>Avançar para o nível ${proximo}</h3>
+    <p class="mini" style="margin:6px 0 12px">${marco?'Marco Extraordinário: +1 Atributo e 2 pontos de Conteúdos Únicos.':'Você recebe +1 Treinamento de Perícia e aprende exatamente 2 Conteúdos disponíveis.'}</p>
+    ${marco?`<label>Atributo (+1, máximo 5)</label><select data-evolucao-atributo><option value="">— escolher —</option>${ATRIBUTOS.filter(a=>(p.atributos[a]||0)<5).map(a=>`<option value="${a}" ${e.atributo===a?'selected':''}>${a}: ${p.atributos[a]} → ${p.atributos[a]+1}</option>`).join('')}</select>
+      <p class="mini" style="margin-top:12px">Conteúdos Únicos — use exatamente 2 pontos</p>${UNICOS_SEED.filter(u=>!p.unicosAdquiridos[u.id]).map(u=>`<label class="linha" style="margin-top:6px"><input type="checkbox" data-evolucao-unico="${u.id}" ${e.unicos.includes(u.id)?'checked':''}> <span><b>${esc(u.nome)}</b> · custo ${u.custo}</span></label>`).join('')}`
+      :`<label>Perícia (+1)</label><select data-evolucao-pericia><option value="">— escolher —</option>${PERICIAS.filter(nome=>(p.pericias[nome]||0)<limitePericia(anoEscolar(proximo))).map(nome=>`<option value="${esc(nome)}" ${e.pericia===nome?'selected':''}>${esc(nome)}: ${p.pericias[nome]||0} → ${(p.pericias[nome]||0)+1}</option>`).join('')}</select>
+      <p class="mini" style="margin-top:12px">Conteúdos disponíveis — escolha 2</p>${disponiveis.length?disponiveis.map(c=>`<label class="linha" style="margin-top:6px"><input type="checkbox" data-evolucao-conteudo="${c.id}" ${e.conteudos.includes(c.id)?'checked':''}> <span><b>${esc(c.nome)}</b> · ${esc(c.pericia)} ${c.requisito_pericia}</span></label>`).join(''):'<div class="aviso">O Mestre ainda precisa liberar pelo menos dois Conteúdos no currículo.</div>'}`}
+    ${estado.erroEvolucao?`<div class="aviso" style="margin-top:12px">${esc(estado.erroEvolucao)}</div>`:''}
+    <div class="linha" style="margin-top:14px"><button data-cancelar-evolucao>Cancelar</button><button class="destaque" data-confirmar-evolucao>Confirmar avanço</button></div>
+  </div>`;
+}
+
+async function confirmarEvolucao(){
+  const p=atual(); if(!p) return;
+  const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-progressao`,{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({escolhas:estado.escolhasEvolucao}),
+  });
+  const corpo=await resposta.json().catch(()=>({}));
+  if(!resposta.ok){estado.erroEvolucao=corpo.erro||'Não foi possível evoluir.';render();return;}
+  Object.assign(p,garantirCamposNovos(corpo.dados));
+  estado.evolucaoAberta=false;estado.escolhasEvolucao={conteudos:[],unicos:[]};estado.erroEvolucao='';
   await iniciarModoHub();
 }
 
@@ -962,12 +1034,16 @@ function abaPerfil(p){
         <option value="">— nenhuma ainda —</option>
         ${CASAS.map(c => `<option value="${esc(c.nome)}" ${p.perfil.casa===c.nome?'selected':''}>${esc(c.nome)}</option>`).join('')}
       </select></div>
+      <div><label>Tradição da Casa</label><select data-campo="perfil.tradicao" ${p.perfil.casa?'':'disabled'}>
+        <option value="">— escolha uma tradição —</option>
+        ${(TRADICOES[p.perfil.casa] || []).map(t => `<option value="${esc(t)}" ${p.perfil.tradicao===t?'selected':''}>${esc(t)}</option>`).join('')}
+      </select></div>
       <div><label>Status de Sangue</label><select data-campo="perfil.statusSangue">
         <option value="">—</option>
         ${STATUS_SANGUE.map(s => `<option value="${esc(s)}" ${p.perfil.statusSangue===s?'selected':''}>${esc(s)}</option>`).join('')}
       </select></div>
     </div>
-    ${p.perfil.casa ? `<p class="mini" style="margin-top:10px">${esc(CASAS.find(c=>c.nome===p.perfil.casa)?.foco || '')}<br>${esc(TRADICOES[p.perfil.casa] || '')}</p>` : '<p class="mini" style="margin-top:10px">Sem Casa ainda: sem Tradição gratuita. Família e Origem estão na aba "Casa & Família".</p>'}
+    ${p.perfil.casa ? `<p class="mini" style="margin-top:10px">${esc(CASAS.find(c=>c.nome===p.perfil.casa)?.foco || '')}<br>Escolha uma das três Tradições oficiais da Casa.</p>` : '<p class="mini" style="margin-top:10px">Sem Casa ainda: sem Tradição gratuita. Família e Origem estão na aba "Casa & Família".</p>'}
   </div>
 
   <div class="cartao">
@@ -1123,6 +1199,7 @@ function abaFamilia(p){
 
 function abaAtributos(p){
   const soma = ATRIBUTOS.reduce((s,a) => s + (p.atributos[a]||0), 0);
+  const podeAjustar = !MODO_HUB || estado.ehMestre || !criacaoConcluida(p);
   return `<div class="cartao">
     <h3 style="margin-bottom:6px">Atributos</h3>
     <p class="mini" style="margin-bottom:14px">Criação: distribua 3 / 2 / 2 / 1 / 0 entre os cinco. Máximo normal: 5. Soma atual: <b>${soma}</b> (esperado 8, mas o Mestre pode liberar mais em Marcos Extraordinários).</p>
@@ -1130,10 +1207,10 @@ function abaAtributos(p){
       ${ATRIBUTOS.map(a => `<div class="grid-atributo">
         <div class="mini">${esc(a)}</div>
         <div class="valor">${p.atributos[a]}</div>
-        <div class="linha" style="justify-content:center;margin-top:6px">
+        ${podeAjustar ? `<div class="linha" style="justify-content:center;margin-top:6px">
           <button data-atr-dec="${a}" style="padding:4px 10px">−</button>
           <button data-atr-inc="${a}" style="padding:4px 10px">+</button>
-        </div>
+        </div>` : '<div class="mini" style="margin-top:6px">Evolução guiada</div>'}
       </div>`).join('')}
     </div>
   </div>`;
@@ -1142,10 +1219,11 @@ function abaAtributos(p){
 function abaPericias(p){
   const ano = anoEscolar(p.nivel);
   const limite = limitePericia(ano);
+  const podeAjustar = !MODO_HUB || estado.ehMestre || !criacaoConcluida(p);
   return `<div class="cartao">
     <h3 style="margin-bottom:6px">Perícias</h3>
     <p class="mini" style="margin-bottom:6px">Ano escolar atual: <b>${ano}º ano</b> (do nível ${p.nivel}) — limite normal por perícia: <b>${limite}</b>.</p>
-    <label class="linha" style="width:auto;margin-bottom:14px"><input type="checkbox" style="width:auto" data-override-pericia ${p.periciasOverride?'checked':''}> <span style="text-transform:none;letter-spacing:normal;font-size:13px">Mestre libera ultrapassar o limite do ano</span></label>
+    ${estado.ehMestre || !MODO_HUB ? `<label class="linha" style="width:auto;margin-bottom:14px"><input type="checkbox" style="width:auto" data-override-pericia ${p.periciasOverride?'checked':''}> <span style="text-transform:none;letter-spacing:normal;font-size:13px">Mestre libera ultrapassar o limite do ano</span></label>` : ''}
     <div class="grade">
       ${PERICIAS.map(nome => {
         const v = p.pericias[nome] || 0;
@@ -1153,10 +1231,10 @@ function abaPericias(p){
         return `<div class="grid-atributo" style="${acimaDoLimite && !p.periciasOverride ? 'border-color:rgba(196,80,107,.6)' : ''}">
           <div class="mini">${esc(nome)}</div>
           <div class="valor">${v}</div>
-          <div class="linha" style="justify-content:center;margin-top:6px">
+          ${podeAjustar ? `<div class="linha" style="justify-content:center;margin-top:6px">
             <button data-per-dec="${nome}" style="padding:4px 10px">−</button>
             <button data-per-inc="${nome}" style="padding:4px 10px">+</button>
-          </div>
+          </div>` : '<div class="mini" style="margin-top:6px">Evolução guiada</div>'}
         </div>`;
       }).join('')}
     </div>
@@ -1165,9 +1243,12 @@ function abaPericias(p){
   <div class="cartao">
     <h3 style="margin-bottom:10px">Nível e progressão</h3>
     <div class="grade2">
-      <div><label>Nível (1–35)</label><input type="number" min="1" max="35" data-campo-num="nivel" value="${p.nivel}"></div>
+      <div><label>Nível atual</label><div class="valor" style="padding-top:5px">${p.nivel}</div></div>
       <div><label>Marco Extraordinário</label><div class="mini" style="padding-top:8px">${[5,10,15,20,25,30,35].includes(p.nivel) ? '✨ Sim — +1 Atributo e +2 escolhas Únicas neste nível.' : 'Não — +1 Treinamento de Perícia e +2 escolhas de Conteúdo neste nível.'}</div></div>
     </div>
+    ${MODO_HUB && estado.ehDono && criacaoConcluida(p) && p.nivel < 35 && !estado.evolucaoAberta ? '<button class="destaque" data-abrir-evolucao style="margin-top:14px">Evoluir personagem</button>' : ''}
+    ${!MODO_HUB ? '<p class="mini" style="margin-top:12px">No arquivo local, a progressão é somente para consulta. No Hub, o botão de evolução aplica e salva as regras automaticamente.</p>' : ''}
+    ${guiaEvolucao(p)}
   </div>`;
 }
 
@@ -1782,7 +1863,7 @@ function render(){
     ? `<div class="ok">Modo leitura — você está vendo a ficha de <strong>${esc(p.perfil.nome)}</strong>. Só quem é dono edita.</div>`
     : falhouAoSalvar ? `<div class="aviso"><strong>Não consegui salvar${MODO_HUB?' no Hub':''}.</strong> Confira sua conexão.</div>` : '';
 
-  app.innerHTML = alerta
+  app.innerHTML = alerta + painelCriacaoGuiada(p)
     + `<div class="abas">` + ABAS.filter(a => a.id!=='loja' || estado.campanhaId).map(a => `<button data-aba="${a.id}" aria-current="${a.id===estado.aba}">${a.nome}</button>`).join('') + `</div>`
     + ({perfil:abaPerfil, familia:abaFamilia, atributos:abaAtributos, pericias:abaPericias, combate:abaCombate, condicoes:abaCondicoes, conteudos:abaConteudos, criaturas:abaCriaturas, pocoes:abaPocoes, academico:abaAcademico, inventario:abaInventario, colecao:abaColecao, unicos:abaUnicos, social:abaSocial, loja:abaLoja}[estado.aba])(p);
 
@@ -1832,6 +1913,47 @@ function ligarEventos(){
   const app = document.getElementById('app');
 
   app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
+  app.querySelectorAll('[data-criacao-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.criacaoAba; render(); });
+  const finalizarCriacao = app.querySelector('[data-finalizar-criacao]');
+  if(finalizarCriacao) finalizarCriacao.onclick = finalizarCriacaoGuiada;
+
+  // Evolução guiada — as escolhas ficam apenas na interface até o servidor
+  // validar e gravar o avanço completo de forma atômica.
+  const abrirEvolucao = app.querySelector('[data-abrir-evolucao]');
+  if(abrirEvolucao) abrirEvolucao.onclick = () => {
+    estado.evolucaoAberta = true;
+    estado.escolhasEvolucao = {pericia:'', atributo:'', conteudos:[], unicos:[]};
+    estado.erroEvolucao = '';
+    render();
+  };
+  const cancelarEvolucao = app.querySelector('[data-cancelar-evolucao]');
+  if(cancelarEvolucao) cancelarEvolucao.onclick = () => {
+    estado.evolucaoAberta = false;
+    estado.erroEvolucao = '';
+    render();
+  };
+  const periciaEvolucao = app.querySelector('[data-evolucao-pericia]');
+  if(periciaEvolucao) periciaEvolucao.onchange = () => { estado.escolhasEvolucao.pericia = periciaEvolucao.value; estado.erroEvolucao=''; render(); };
+  const atributoEvolucao = app.querySelector('[data-evolucao-atributo]');
+  if(atributoEvolucao) atributoEvolucao.onchange = () => { estado.escolhasEvolucao.atributo = atributoEvolucao.value; estado.erroEvolucao=''; render(); };
+  app.querySelectorAll('[data-evolucao-conteudo]').forEach(el => el.onchange = () => {
+    const id=el.dataset.evolucaoConteudo, itens=estado.escolhasEvolucao.conteudos;
+    if(el.checked && !itens.includes(id) && itens.length<2) itens.push(id);
+    if(!el.checked) estado.escolhasEvolucao.conteudos=itens.filter(x=>x!==id);
+    estado.erroEvolucao=''; render();
+  });
+  app.querySelectorAll('[data-evolucao-unico]').forEach(el => el.onchange = () => {
+    const id=el.dataset.evolucaoUnico, itens=estado.escolhasEvolucao.unicos;
+    if(el.checked && !itens.includes(id)) {
+      const custoAtual=itens.reduce((s,x)=>s+(UNICOS_SEED.find(u=>u.id===x)?.custo||0),0);
+      const custoNovo=UNICOS_SEED.find(u=>u.id===id)?.custo||0;
+      if(custoAtual+custoNovo<=2) itens.push(id);
+    }
+    if(!el.checked) estado.escolhasEvolucao.unicos=itens.filter(x=>x!==id);
+    estado.erroEvolucao=''; render();
+  });
+  const confirmarAvanco = app.querySelector('[data-confirmar-evolucao]');
+  if(confirmarAvanco) confirmarAvanco.onclick = confirmarEvolucao;
 
   // Campos de texto genéricos: data-campo="perfil.nome" / "varinha.madeira" etc.
   app.querySelectorAll('[data-campo]').forEach(el => {
@@ -1840,7 +1962,10 @@ function ligarEventos(){
       const [grupo, chave] = el.dataset.campo.split('.');
       // Select tem UI condicional (Casa, Família...) que depende do valor
       // escolhido, então precisa de redesenho completo pra aparecer na hora.
-      (ehSelect ? mudar : mudarSemRedesenhar)(p => { p[grupo][chave] = el.value; });
+      (ehSelect ? mudar : mudarSemRedesenhar)(p => {
+        p[grupo][chave] = el.value;
+        if(grupo==='perfil' && chave==='casa' && !(TRADICOES[el.value]||[]).includes(p.perfil.tradicao)) p.perfil.tradicao='';
+      });
     });
   });
   // Campos dentro de `_mestre`: data-campo-mestre="notasPersonagem" (direto)
