@@ -70,15 +70,30 @@ export async function POST(req: NextRequest, { params }: Contexto) {
     Object.entries(dados.conteudosConhecidos ?? {}).filter(([, estado]) => estado !== "formacao-inicial"),
   );
   for (const slug of slugs) atuais[slug] = "formacao-inicial";
-  await banco.personagem.update({
-    where: { id },
-    data: {
-      dados: {
-        ...dados,
-        conteudosConhecidos: atuais,
-        academico: { ...(dados.academico ?? {}), formacaoInicialConcluida: true },
+  await banco.$transaction(async (tx) => {
+    await tx.personagem.update({
+      where: { id },
+      data: {
+        dados: {
+          ...dados,
+          conteudosConhecidos: atuais,
+          academico: { ...(dados.academico ?? {}), formacaoInicialConcluida: true },
+        },
       },
-    },
+    });
+    if (p.campanhaId) {
+      await tx.eventoAuditoriaHogwarts.create({
+        data: {
+          campanhaId: p.campanhaId,
+          personagemId: p.id,
+          atorId: usuario.id,
+          modulo: "criacao",
+          acao: "formacao.confirmada",
+          resumo: `${p.nome} concluiu a Formação Inicial`,
+          detalhes: { conteudos: slugs },
+        },
+      });
+    }
   });
   return NextResponse.json({ ok: true, estado: "formacao-inicial" });
 }

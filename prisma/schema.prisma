@@ -91,15 +91,16 @@ model Usuario {
   /// mesma pessoa abre o Hub de mais de um aparelho.
   sistemasFavoritos String[] @default([])
 
-  participacoes   Participacao[]
-  personagens     Personagem[]
-  sessaoPresencas SessaoPresenca[]
-  mensagensChat   MensagemChat[]
-  avisos          Aviso[]
-  enquetes        Enquete[]
-  enqueteVotos    EnqueteVoto[]
-  notificacoes    Notificacao[]
-  itens           Item[]
+  participacoes            Participacao[]
+  personagens              Personagem[]
+  sessaoPresencas          SessaoPresenca[]
+  mensagensChat            MensagemChat[]
+  avisos                   Aviso[]
+  enquetes                 Enquete[]
+  enqueteVotos             EnqueteVoto[]
+  notificacoes             Notificacao[]
+  itens                    Item[]
+  eventosAuditoriaHogwarts EventoAuditoriaHogwarts[] @relation("AtorEventoHogwarts")
 
   @@map("usuarios")
 }
@@ -120,7 +121,7 @@ model Sistema {
 
   campanhas   Campanha[]
   personagens Personagem[]
-  conteudos    ConteudoSistema[]
+  conteudos   ConteudoSistema[]
 
   @@map("sistemas")
 }
@@ -159,22 +160,23 @@ model Campanha {
   /// null enquanto o mestre nunca abriu a Mesa ao Vivo desta campanha.
   iniciativaAtual Json?
 
-  sistema              Sistema              @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
-  participacoes        Participacao[]
-  personagens          Personagem[]
-  sessoes              Sessao[]
-  mensagensChat        MensagemChat[]
-  avisos               Aviso[]
-  enquetes             Enquete[]
-  notificacoes         Notificacao[]
-  camposPersonalizados CampoPersonalizado[]
-  conquistas           Conquista[]
-  grupos               Grupo[]
-  itens                Item[]
-  veiculos             Veiculo[]
-  lojas                Loja[]
-  trocasCartas         TrocaCarta[]
-  curriculoHogwarts    CurriculoHogwarts[]
+  sistema                  Sistema                   @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
+  participacoes            Participacao[]
+  personagens              Personagem[]
+  sessoes                  Sessao[]
+  mensagensChat            MensagemChat[]
+  avisos                   Aviso[]
+  enquetes                 Enquete[]
+  notificacoes             Notificacao[]
+  camposPersonalizados     CampoPersonalizado[]
+  conquistas               Conquista[]
+  grupos                   Grupo[]
+  itens                    Item[]
+  veiculos                 Veiculo[]
+  lojas                    Loja[]
+  trocasCartas             TrocaCarta[]
+  curriculoHogwarts        CurriculoHogwarts[]
+  eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -183,39 +185,64 @@ model Campanha {
 /// Catálogo-base de conteúdo de um sistema. O slug é estável e torna a
 /// sincronização idempotente; estados individuais continuam no JSON da ficha.
 model ConteudoSistema {
-  id                String   @id @default(uuid()) @db.Uuid
-  sistemaId         String   @db.Uuid
-  slug              String
-  nome              String
-  categoria         String
-  pericia           String
-  atributoPadrao    String
-  requisitoPericia  Int
-  custo             Int
-  anoNormal         Int
-  descricao         String
-  efeito            String
-  tags              String[] @default([])
-  fonte             String
-  restrito          Boolean  @default(false)
-  secreto           Boolean  @default(false)
-  atualizadoEm      DateTime @updatedAt
+  id               String   @id @default(uuid()) @db.Uuid
+  sistemaId        String   @db.Uuid
+  slug             String
+  nome             String
+  categoria        String
+  pericia          String
+  atributoPadrao   String
+  requisitoPericia Int
+  custo            Int
+  anoNormal        Int
+  descricao        String
+  efeito           String
+  tags             String[] @default([])
+  fonte            String
+  restrito         Boolean  @default(false)
+  secreto          Boolean  @default(false)
+  atualizadoEm     DateTime @updatedAt
 
   sistema Sistema @relation(fields: [sistemaId], references: [id], onDelete: Cascade)
+  detalheHogwarts HogwartsConteudoDetalhe?
 
   @@unique([sistemaId, slug])
   @@index([sistemaId, anoNormal])
   @@map("conteudos_sistema")
 }
 
+/// Mecânica estruturada de um Conteúdo Hogwarts. Fica separada do catálogo
+/// genérico para não impor alcance, dano ou duração aos demais sistemas.
+model HogwartsConteudoDetalhe {
+  id                 String  @id @default(uuid()) @db.Uuid
+  conteudoId         String  @unique @db.Uuid
+  faseCurricular     String  @default("NORMAL")
+  permitidoCriacao   Boolean @default(true)
+  acao               String?
+  alcance            String?
+  area               String?
+  duracao             String?
+  concentracao        Boolean?
+  dano                Int?
+  natureza            String?
+  sucesso             String?
+  elevado             String?
+  excepcional         String?
+  termino              String?
+
+  conteudo ConteudoSistema @relation(fields: [conteudoId], references: [id], onDelete: Cascade)
+
+  @@map("hogwarts_conteudos_detalhes")
+}
+
 /// Estado curricular por campanha. Ausência de linha equivale a PREVISTO;
 /// customização fica isolada da base e nunca é sobrescrita pelo seed.
 model CurriculoHogwarts {
-  id          String   @id @default(uuid()) @db.Uuid
-  campanhaId  String   @db.Uuid
-  slug        String
-  estado      String   @default("PREVISTO")
-  override    Json?
+  id           String   @id @default(uuid()) @db.Uuid
+  campanhaId   String   @db.Uuid
+  slug         String
+  estado       String   @default("PREVISTO")
+  override     Json?
   atualizadoEm DateTime @updatedAt
 
   campanha Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
@@ -291,20 +318,44 @@ model Personagem {
   dono     Usuario   @relation(fields: [donoId], references: [id], onDelete: Cascade)
   campanha Campanha? @relation(fields: [campanhaId], references: [id], onDelete: SetNull)
 
-  grupoMembros         GrupoMembro[]
+  grupoMembros             GrupoMembro[]
   /// Fichas das quais esta ficha é dona (companheiros/pets dela).
-  companheirosOndeDono Companheiro[] @relation("DonoDoCompanheiro")
+  companheirosOndeDono     Companheiro[]             @relation("DonoDoCompanheiro")
   /// Fichas para as quais esta ficha É o companheiro/pet.
-  companheiroDe        Companheiro[] @relation("FichaComoCompanheiro")
-  itens                Item[]
-  veiculos             Veiculo[]
-  comprasLoja          LojaCompra[]
-  ofertasTroca         TrocaCarta[]
+  companheiroDe            Companheiro[]             @relation("FichaComoCompanheiro")
+  itens                    Item[]
+  veiculos                 Veiculo[]
+  comprasLoja              LojaCompra[]
+  ofertasTroca             TrocaCarta[]
+  eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
 
   @@index([donoId])
   @@index([sistemaId])
   @@index([campanhaId])
   @@map("personagens")
+}
+
+/// Registro imutável das mudanças autoritativas do módulo Hogwarts.
+/// `detalhes` nunca deve receber segredos de Mestre; guarda apenas dados
+/// suficientes para auditoria, diagnóstico e uma futura operação de undo.
+model EventoAuditoriaHogwarts {
+  id           String   @id @default(uuid()) @db.Uuid
+  campanhaId   String   @db.Uuid
+  personagemId String?  @db.Uuid
+  atorId       String?  @db.Uuid
+  modulo       String
+  acao         String
+  resumo       String
+  detalhes     Json?
+  criadoEm     DateTime @default(now())
+
+  campanha   Campanha    @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  personagem Personagem? @relation(fields: [personagemId], references: [id], onDelete: SetNull)
+  ator       Usuario?    @relation("AtorEventoHogwarts", fields: [atorId], references: [id], onDelete: SetNull)
+
+  @@index([campanhaId, criadoEm])
+  @@index([personagemId, criadoEm])
+  @@map("eventos_auditoria_hogwarts")
 }
 
 /// Um encontro jogado (marcado ou já rolado). Antes da decisão #135 este

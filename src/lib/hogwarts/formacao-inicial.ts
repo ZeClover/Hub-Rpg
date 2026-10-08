@@ -15,7 +15,7 @@ export function formacaoInicialConcluida(dados: DadosFormacaoInicial) {
 
 export function catalogoDaFormacaoInicial(dados: DadosFormacaoInicial) {
   const atuais = dados.conteudosConhecidos ?? {};
-  return CONTEUDOS_HOGWARTS_1_ANO.map((conteudo) => {
+  return CONTEUDOS_HOGWARTS_1_ANO.filter((conteudo) => conteudo.permitido_criacao).map((conteudo) => {
     const salvo = atuais[conteudo.slug];
     const cumpre = Number(dados.pericias?.[conteudo.pericia] ?? 0) >= conteudo.requisito_pericia;
     return {
@@ -31,6 +31,7 @@ export function erroNaSelecaoInicial(slugs: string[], pericias: Record<string, n
   }
   for (const slug of slugs) {
     const conteudo = CONTEUDOS_HOGWARTS_1_ANO.find((item) => item.slug === slug)!;
+    if (!conteudo.permitido_criacao) return `${conteudo.nome} não faz parte da Formação Inicial`;
     if (Number(pericias[conteudo.pericia] ?? 0) < conteudo.requisito_pericia) {
       return `requisito não atendido: ${conteudo.nome}`;
     }

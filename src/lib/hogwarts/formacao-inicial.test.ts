@@ -2,13 +2,15 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogoDaFormacaoInicial, erroNaSelecaoInicial, formacaoInicialConcluida } from "./formacao-inicial.ts";
 
-test("antes da confirmação mostra os 59 conteúdos", () => {
-  assert.equal(catalogoDaFormacaoInicial({ pericias: {} }).length, 59);
+test("antes da confirmação esconde conteúdos de fim de ano", () => {
+  const catalogo = catalogoDaFormacaoInicial({ pericias: {} });
+  assert.equal(catalogo.length, 58);
+  assert.equal(catalogo.some((c) => c.slug === "incendio" || c.slug === "expelliarmus"), false);
 });
 
 test("requisitos bloqueiam a escolha sem esconder o conteúdo", () => {
   const catalogo = catalogoDaFormacaoInicial({ pericias: { "Defesa Contra as Artes das Trevas": 1 } });
-  assert.equal(catalogo.find((c) => c.slug === "expelliarmus")?.estado, "bloqueado");
+  assert.equal(catalogo.find((c) => c.slug === "expelliarmus"), undefined);
   assert.equal(catalogo.find((c) => c.slug === "rictusempra")?.estado, "disponivel");
 });
 

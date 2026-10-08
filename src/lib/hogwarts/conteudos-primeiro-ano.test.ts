@@ -2,21 +2,30 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CONTEUDOS_HOGWARTS_1_ANO, MATERIAS_HOGWARTS_1_ANO } from "./conteudos-primeiro-ano.ts";
 
-test("catálogo do 1º ano contém 59 slugs únicos", () => {
-  assert.equal(CONTEUDOS_HOGWARTS_1_ANO.length, 59);
-  assert.equal(new Set(CONTEUDOS_HOGWARTS_1_ANO.map((c) => c.slug)).size, 59);
+test("catálogo do 1º ano contém 60 slugs únicos", () => {
+  assert.equal(CONTEUDOS_HOGWARTS_1_ANO.length, 60);
+  assert.equal(new Set(CONTEUDOS_HOGWARTS_1_ANO.map((c) => c.slug)).size, 60);
 });
 
 test("distribuição acadêmica e geral corresponde ao documento", () => {
   const esperado: Record<string, number> = {
-    "Feitiços": 9, "Transfiguração": 6, "Poções": 6, "Herbologia": 7,
+    "Feitiços": 10, "Transfiguração": 6, "Poções": 6, "Herbologia": 7,
     "Defesa Contra as Artes das Trevas": 7, "História da Magia": 6,
     "Astronomia": 6, "Voo": 6, "Investigação": 2, "Furtividade": 2, "Influência": 2,
   };
   for (const [pericia, total] of Object.entries(esperado)) {
     assert.equal(CONTEUDOS_HOGWARTS_1_ANO.filter((c) => c.pericia === pericia).length, total, pericia);
   }
-  assert.equal(CONTEUDOS_HOGWARTS_1_ANO.filter((c) => MATERIAS_HOGWARTS_1_ANO.includes(c.pericia as never)).length, 53);
+  assert.equal(CONTEUDOS_HOGWARTS_1_ANO.filter((c) => MATERIAS_HOGWARTS_1_ANO.includes(c.pericia as never)).length, 54);
+});
+
+test("Incendio é ofensivo, estruturado e fica fora da Formação Inicial", () => {
+  const incendio = CONTEUDOS_HOGWARTS_1_ANO.find((c) => c.slug === "incendio");
+  assert.ok(incendio);
+  assert.equal(incendio.permitido_criacao, false);
+  assert.equal(incendio.fase_curricular, "FIM");
+  assert.equal(incendio.mecanica?.dano, 1);
+  assert.equal(incendio.mecanica?.alcance, "6 m");
 });
 
 test("itens pedidos no aceite existem e todo item tem campos mínimos", () => {

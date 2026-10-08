@@ -22,13 +22,29 @@ export type ConteudoHogwarts = {
   fonte: "Currículo de Hogwarts — 1º Ano";
   restrito: false;
   secreto: false;
+  fase_curricular: "NORMAL" | "FIM";
+  permitido_criacao: boolean;
+  mecanica?: {
+    acao: string;
+    alcance: string;
+    area: string;
+    duracao: string;
+    concentracao: boolean;
+    dano: number;
+    natureza: string;
+    sucesso: string;
+    elevado: string;
+    excepcional: string;
+    termino?: string;
+  };
 };
 
-const BASE = { custo: 1, ano_normal: 1 as const, fonte: "Currículo de Hogwarts — 1º Ano" as const, restrito: false as const, secreto: false as const };
+const BASE = { custo: 1, ano_normal: 1 as const, fonte: "Currículo de Hogwarts — 1º Ano" as const, restrito: false as const, secreto: false as const, fase_curricular: "NORMAL" as const, permitido_criacao: true };
 const item = (
   slug: string, nome: string, categoria: ConteudoHogwarts["categoria"], pericia: string,
   atributo_padrao: string, requisito_pericia: number, efeito: string, tags: string[] = [],
-): ConteudoHogwarts => ({ ...BASE, slug, nome, categoria, pericia, atributo_padrao, requisito_pericia, descricao: efeito, efeito, tags });
+  opcoes: Partial<Pick<ConteudoHogwarts, "fase_curricular" | "permitido_criacao" | "mecanica">> = {},
+): ConteudoHogwarts => ({ ...BASE, slug, nome, categoria, pericia, atributo_padrao, requisito_pericia, descricao: efeito, efeito, tags, ...opcoes });
 
 /** Catálogo canônico do pacote do 1º ano. Slug é a identidade estável do upsert. */
 export const CONTEUDOS_HOGWARTS_1_ANO: readonly ConteudoHogwarts[] = [
@@ -41,6 +57,16 @@ export const CONTEUDOS_HOGWARTS_1_ANO: readonly ConteudoHogwarts[] = [
   item("colloportus", "Colloportus", "Feitiço", "Feitiços", "Arcano", 1, "Sela magicamente porta, janela ou mecanismo apropriado em alcance de 6 m.", ["Porta", "Controle", "Utilidade"]),
   item("conjuracao-sob-distracao", "Conjuração sob Distração", "Técnica", "Feitiços", "Fibra", 1, "Uma vez por cena, ignora uma Desvantagem causada apenas por barulho ou ambiente agitado ao lançar Feitiço Básico.", ["Concentração", "Básico", "Técnica"]),
   item("controle-de-intensidade", "Controle de Intensidade", "Técnica", "Feitiços", "Arcano", 1, "Permite produzir deliberadamente uma versão mais fraca de um Feitiço Básico de utilidade.", ["Controle", "Utilidade", "Técnica"]),
+  item("incendio", "Incendio", "Feitiço", "Feitiços", "Arcano", 1, "Dispara fogo contra um alvo a até 6 m. Causa 1 dano; sucesso elevado também causa Em Chamas; sucesso excepcional causa 2 de dano e Em Chamas.", ["Fogo", "Perigosa", "Fim de Ano", "Opcional"], {
+    fase_curricular: "FIM",
+    permitido_criacao: false,
+    mecanica: {
+      acao: "1 Ação", alcance: "6 m", area: "Alvo único", duracao: "Instantânea",
+      concentracao: false, dano: 1, natureza: "Fogo / Perigosa", sucesso: "1 dano.",
+      elevado: "1 dano + Em Chamas.", excepcional: "2 dano + Em Chamas.",
+      termino: "Em Chamas causa 1 dano no começo do próximo turno; fogo superficial comum então termina.",
+    },
+  }),
 
   item("transformacao-simples", "Transformação Simples", "Técnica", "Transfiguração", "Arcano", 0, "Transforma pequenos objetos simples em outros de tamanho e complexidade semelhantes por até 1 hora."),
   item("reversao-simples", "Reversão Simples", "Técnica", "Transfiguração", "Arcano", 0, "Desfaz com segurança uma Transformação Simples conhecida."),
@@ -70,7 +96,7 @@ export const CONTEUDOS_HOGWARTS_1_ANO: readonly ConteudoHogwarts[] = [
   item("reconhecer-ameaca-magica", "Reconhecer Ameaça Mágica", "Conhecimento Especial", "Defesa Contra as Artes das Trevas", "Engenho", 0, "Reconhece sem teste o perigo básico de uma ameaça mágica estudada; detalhes exigem teste."),
   item("resistencia-ao-medo", "Resistência ao Medo", "Técnica", "Defesa Contra as Artes das Trevas", "Fibra", 1, "Uma vez por cena, reduz em um grau a consequência de uma falha de Fibra contra medo de criatura ou magia."),
   item("retirada-defensiva", "Retirada Defensiva", "Técnica", "Defesa Contra as Artes das Trevas", "Pulso", 1, "Uma vez por cena, após defesa bem-sucedida, move até 3 m para longe da ameaça se houver espaço."),
-  item("expelliarmus", "Expelliarmus", "Feitiço", "Defesa Contra as Artes das Trevas", "Arcano", 2, "Alcance 15 m, não letal: Desarmado; elevado move o objeto até 6 m; excepcional também Desequilibrado ou destino favorável.", ["Fim de Ano", "Opcional"]),
+  item("expelliarmus", "Expelliarmus", "Feitiço", "Defesa Contra as Artes das Trevas", "Arcano", 2, "Alcance 15 m, não letal: Desarmado; elevado move o objeto até 6 m; excepcional também Desequilibrado ou destino favorável.", ["Fim de Ano", "Opcional"], { fase_curricular: "FIM", permitido_criacao: false }),
 
   item("pesquisa-arquivistica", "Pesquisa Arquivística", "Técnica", "História da Magia", "Engenho", 1, "Após 10 minutos em arquivo adequado, Falha comum ainda encontra fonte relevante, com atraso ou complicação."),
   item("leitura-de-fonte-primaria", "Leitura de Fonte Primária", "Técnica", "História da Magia", "Engenho", 1, "Determina autoria provável, época, contexto e se o relato é direto ou posterior."),

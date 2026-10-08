@@ -34,6 +34,7 @@ import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
 import { MestreAuxiliar } from "./mestre-auxiliar";
+import { PainelHogwarts } from "./painel-hogwarts";
 import { QrCode } from "../../qr-code";
 import { RemoverJogador } from "./remover-jogador";
 import { SairDaCampanha } from "./sair-da-campanha";
@@ -376,12 +377,24 @@ export default async function PaginaCampanha({
       </div>
 
       {minhaParticipacao && (
-        <Link
-          href={`/campanhas/${campanha.id}/mesa`}
-          className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
-        >
-          {souMestre ? "Abrir Mesa ao vivo →" : "Acompanhar Mesa ao vivo →"}
-        </Link>
+        campanha.sistema.chave === "hogwarts-rpg" ? (
+          <PainelHogwarts
+            campanhaId={campanha.id}
+            ehMestre={souMestre}
+            ficha={ficha}
+            fichaId={personagensDaCampanha.find((p) => p.donoId === usuario.id && !p.ehMonstro)?.id ?? null}
+            grimorio={grimorio}
+            escudoMestre={escudoMestre}
+            modoSessao={modoSessao}
+          />
+        ) : (
+          <Link
+            href={`/campanhas/${campanha.id}/mesa`}
+            className="mt-4 inline-block rounded border border-ambar/40 bg-ambar/10 px-4 py-2 text-sm text-ambar-forte transition hover:bg-ambar/20"
+          >
+            {souMestre ? "Abrir Mesa ao vivo →" : "Acompanhar Mesa ao vivo →"}
+          </Link>
+        )
       )}
 
       {souMestre ? (

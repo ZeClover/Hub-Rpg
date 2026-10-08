@@ -41,7 +41,8 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
 
 export async function PATCH(req: NextRequest, { params }: Contexto) {
   const { id } = await params;
-  if (!await mestreDaCampanha(id)) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  const mestre = await mestreDaCampanha(id);
+  if (!mestre) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   const corpo = await req.json().catch(() => null);
   const slug = typeof corpo?.slug === "string" ? corpo.slug : "";
   const acao = typeof corpo?.acao === "string" ? corpo.acao : "";
@@ -49,44 +50,64 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
   const base = CONTEUDOS_HOGWARTS_1_ANO.find((c) => c.slug === slug)!;
 
   if (acao === "ensinar" || acao === "ocultar") {
-    await banco.curriculoHogwarts.upsert({
-      where: { campanhaId_slug: { campanhaId: id, slug } },
-      create: { campanhaId: id, slug, estado: acao === "ensinar" ? "LIBERADO" : "OCULTO" },
-      update: { estado: acao === "ensinar" ? "LIBERADO" : "OCULTO" },
-    });
-    if (acao === "ensinar") {
-      const personagens = await banco.personagem.findMany({ where: { campanhaId: id, ehMonstro: false } });
-      await banco.$transaction(personagens.map((p) => {
+    await banco.$transaction(async (tx) => {
+      await tx.curriculoHogwarts.upsert({
+        where: { campanhaId_slug: { campanhaId: id, slug } },
+        create: { campanhaId: id, slug, estado: acao === "ensinar" ? "LIBERADO" : "OCULTO" },
+        update: { estado: acao === "ensinar" ? "LIBERADO" : "OCULTO" },
+      });
+      if (acao === "ensinar") {
+        const personagens = await tx.personagem.findMany({ where: { campanhaId: id, ehMonstro: false } });
+        await Promise.all(personagens.map((p) => {
         const dados = p.dados as DadosFicha;
         const atuais = { ...(dados.conteudosConhecidos ?? {}) };
         if (!atuais[slug] || ["oculto", "descoberto", "bloqueado"].includes(atuais[slug])) {
           atuais[slug] = Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia ? "disponivel" : "bloqueado";
         }
-        return banco.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
-      }));
-    }
+          return tx.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+        }));
+      }
+      await tx.eventoAuditoriaHogwarts.create({ data: {
+        campanhaId: id, atorId: mestre.id, modulo: "conteudos", acao: `curriculo.${acao}`,
+        resumo: `${base.nome} foi ${acao === "ensinar" ? "ensinado à turma" : "ocultado do currículo"}`,
+        detalhes: { slug },
+      } });
+    });
     return NextResponse.json({ ok: true });
   }
 
   if (["liberar", "conceder", "promover"].includes(acao)) {
     const ids = Array.isArray(corpo?.personagemIds) ? corpo.personagemIds.filter((x: unknown): x is string => typeof x === "string") : [];
     const personagens = await banco.personagem.findMany({ where: { id: { in: ids }, campanhaId: id, ehMonstro: false } });
-    await banco.$transaction(personagens.map((p) => {
-      const dados = p.dados as DadosFicha;
-      const atuais = { ...(dados.conteudosConhecidos ?? {}) };
-      const cumpre = Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia;
-      atuais[slug] = acao === "liberar" ? (corpo?.override || cumpre ? "disponivel" : "bloqueado") : "conhecido";
-      return banco.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
-    }));
+    await banco.$transaction(async (tx) => {
+      await Promise.all(personagens.map((p) => {
+        const dados = p.dados as DadosFicha;
+        const atuais = { ...(dados.conteudosConhecidos ?? {}) };
+        const cumpre = Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia;
+        atuais[slug] = acao === "liberar" ? (corpo?.override || cumpre ? "disponivel" : "bloqueado") : "conhecido";
+        return tx.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+      }));
+      await tx.eventoAuditoriaHogwarts.create({ data: {
+        campanhaId: id, atorId: mestre.id, modulo: "conteudos", acao: `personagem.${acao}`,
+        resumo: `${base.nome}: ${acao} aplicado a ${personagens.length} personagem(ns)`,
+        detalhes: { slug, personagemIds: personagens.map((p) => p.id) },
+      } });
+    });
     return NextResponse.json({ ok: true, alterados: personagens.length });
   }
 
   if (acao === "editar" && corpo?.override && typeof corpo.override === "object") {
     const permitido = Object.fromEntries(["nome", "descricao", "efeito", "tags"].filter((k) => k in corpo.override).map((k) => [k, corpo.override[k]]));
-    await banco.curriculoHogwarts.upsert({
-      where: { campanhaId_slug: { campanhaId: id, slug } },
-      create: { campanhaId: id, slug, override: permitido }, update: { override: permitido },
-    });
+    await banco.$transaction([
+      banco.curriculoHogwarts.upsert({
+        where: { campanhaId_slug: { campanhaId: id, slug } },
+        create: { campanhaId: id, slug, override: permitido }, update: { override: permitido },
+      }),
+      banco.eventoAuditoriaHogwarts.create({ data: {
+        campanhaId: id, atorId: mestre.id, modulo: "conteudos", acao: "curriculo.editar",
+        resumo: `${base.nome} teve sua apresentação personalizada`, detalhes: { slug, campos: Object.keys(permitido) },
+      } }),
+    ]);
     return NextResponse.json({ ok: true });
   }
   return NextResponse.json({ erro: "ação inválida" }, { status: 400 });
