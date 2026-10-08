@@ -227,7 +227,9 @@
   function iniciarTurno(personagem, opcoes, rng) {
     var f = copia(obj(personagem)), o = obj(opcoes), recuperacao = null, morrer = condicao(f, 'morrendo');
     if (morrer > 0 && !f.morto) {
-      recuperacao = testeSimples(10 + morrer, rng);
+      var ajusteCD = o.cdRecuperacaoAjuste === undefined ? 0 : o.cdRecuperacaoAjuste;
+      if (!inteiro(ajusteCD) || ajusteCD < -20 || ajusteCD > 20) return falha('Ajuste da CD de recuperação inválido.', { ficha: f });
+      recuperacao = testeSimples(Math.max(1, 10 + morrer + ajusteCD), rng);
       var ajustes = { 'sucesso-critico': -2, sucesso: -1, falha: 1, 'falha-critica': 2 }, depois = Math.max(0, morrer + ajustes[recuperacao.grau]);
       if (depois >= (inteiroValido(o.limiteMorrendo, 1, 20) ? o.limiteMorrendo : 4) - condicao(f, 'condenado')) { f.morto = true; definirCondicao(f, 'morrendo', 0); definirCondicao(f, 'condenado', 0); }
       else { definirCondicao(f, 'morrendo', depois); if (depois === 0) definirCondicao(f, 'ferido', condicao(f, 'ferido') + 1); }

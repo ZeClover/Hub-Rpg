@@ -158,6 +158,10 @@
         }
       });
     }
+    fontesSelecionadas(p, catalogo).filter(function (fonte) { return fonte.origem.indexOf('escolha:') === 0; }).forEach(function (fonte) {
+      mesclarProficiencias(prof, fonte.registro.proficiencias, true);
+      lista(fonte.registro.progressao).filter(function (r) { return r.nivel <= nivel(p); }).sort(function (a, b) { return a.nivel - b.nivel; }).forEach(function (r) { mesclarProficiencias(prof, r.proficiencias, true); });
+    });
     p.talentos.forEach(function (t) {
       var r = encontrar(catalogo, 'talentos', t.id);
       if (!talentoAtivo(p, t, r)) return;
@@ -314,15 +318,18 @@
     var o = opcao(p, classe), h = heranca(p, anc, catalogo), prof = proficienciasClasse(p, classe, catalogo), c = condicoes(p), resolvido = resolverEquipamento(p, catalogo);
     var divindade = divindadeSelecionada(p, catalogo);
     var arm = obj(resolvido.equipamento.armadura), arma = obj(resolvido.equipamento.arma), escudo = resolvido.equipamento.escudo;
-    var carga = cargaSelecionada(p, catalogo, resolvido.equipamento, at.for); if (carga.sobrecarregado) c.desajeitado = Math.max(c.desajeitado || 0, 1);
     var grauArma = arma.grau || 'simples'; if (['desarmado', 'desarmados', 'desarmadas'].indexOf(grauArma) !== -1) grauArma = prof.armas.desarmados === undefined ? 'desarmado' : 'desarmados';
     var graduacaoArma = grau(prof.armas[grauArma]);
     if (divindade && arma.id === (divindade.armaFavorecidaId || divindade.armaFavorecida)) graduacaoArma = Math.max(graduacaoArma, grau(prof.armas.simples));
     lista(classe && classe.proficienciasGruposArma).filter(function (r) { return r.nivel <= n && obj(p.escolhasClasse)[r.escolha] === arma.grupo; }).sort(function (a, b) { return a.nivel - b.nivel; }).forEach(function (r) { graduacaoArma = Math.max(graduacaoArma, grau(r[grauArma])); });
     var efeitos = efeitosAtivos(p, catalogo, h, resolvido.equipamento, graduacaoArma);
     ['arma', 'armadura'].forEach(function (tipo) { Object.keys(resolvido.runas[tipo]).forEach(function (slot) { if (/^propriedade[123]$/.test(slot)) efeitos = efeitos.concat(lista(obj(resolvido.runas[tipo][slot].mecanica).efeitos)); }); });
+    var carga = cargaSelecionada(p, catalogo, resolvido.equipamento, at.for);
+    carga.limiteSobrecarga += ajuste(p, 'limite-sobrecarga', efeitos); carga.limiteMaximo += ajuste(p, 'limite-carga-maxima', efeitos);
+    carga.sobrecarregado = carga.volume > carga.limiteSobrecarga; carga.acimaMaximo = carga.volume > carga.limiteMaximo;
+    if (carga.sobrecarregado) c.desajeitado = Math.max(c.desajeitado || 0, 1);
     var extrasTreino = ajuste(p, 'treinamentos', efeitos);
-    function total(alvo, atributo, g, extras) { return at[atributo] + proficiencia(g, n) + ajuste(p, alvo, [penalidadeEstado(c, atributo, alvo)].concat(efeitos, extras || [])); }
+    function total(alvo, atributo, g, extras, bonusProficiencia) { return at[atributo] + (bonusProficiencia === undefined ? proficiencia(g, n) : bonusProficiencia) + ajuste(p, alvo, [penalidadeEstado(c, atributo, alvo)].concat(efeitos, extras || [])); }
     var potenciaArmadura = numero(obj(obj(resolvido.runas.armadura.potencia).mecanica).valor, 0);
     var def = [{ alvo: 'ca', tipo: 'item', valor: numero(arm.ca, 0) + potenciaArmadura }, penalidadeEstado(c, 'des', 'ca')].concat(efeitos);
     if (c.desprevenido || c.inconsciente || c.prostrado) def.push({ alvo: 'ca', tipo: 'circunstancia', valor: -2 });
@@ -351,7 +358,9 @@
       var extra = [], fisica = s.atributo === 'for' || s.atributo === 'des';
       var flexivel = lista(arm.tracos).indexOf('flexivel') !== -1 && (s.id === 'acrobacia' || s.id === 'atletismo');
       if ((fisica && !suficienteForca && !flexivel && !(barulhenta && s.id === 'furtividade')) || (barulhenta && s.id === 'furtividade')) extra.push({ alvo: 'pericia:' + s.id, tipo: 'sem-tipo', valor: -Math.abs(numero(arm.penalidade, 0)) });
-      skills[s.id] = total('pericia:' + s.id, s.atributo, grausPericias[s.id], extra);
+      var bonusDestreinado;
+      if (grau(grausPericias[s.id]) === 0) fontesSelecionadas(p, catalogo).forEach(function (fonte) { var faixas = lista(fonte.registro.improvisacaoDestreinadaPorNivel).filter(function (r) { return r.nivel <= n; }).sort(function (a, b) { return a.nivel - b.nivel; }); if (faixas.length) bonusDestreinado = Math.max(bonusDestreinado || 0, Math.max(0, n + numero(faixas[faixas.length - 1].ajusteNivel, 0))); });
+      skills[s.id] = total('pericia:' + s.id, s.atributo, grausPericias[s.id], extra, bonusDestreinado);
     });
     Object.keys(grausPericias).filter(function (s) { return s.indexOf('saber:') === 0; }).forEach(function (s) { skills[s] = total('pericia:' + s, 'int', grausPericias[s]); });
     var distancia = p.armaModo === 'arremesso' || p.armaModo === 'distancia' || arma.distancia;
@@ -427,6 +436,7 @@
     precisao(classe && classe.ataqueFurtivo, obj(p.estados).alvoDesprevenido === true && (distancia || agilOuAcuidade), 'Ataque Furtivo');
     precisao(classe && classe.ataqueEstrategico, estratagemaAtivo, 'Ataque Estratégico');
     return { atributos: at, incrementosParciais: a.parciais, pvMaximos: Math.max(0, pvBase - (c.drenado || 0) * n + ajuste(p, 'pv', efeitos)), ca: ca,
+      limiteMorrendo: Math.max(1, 4 + ajuste(p, 'limite-morrendo', efeitos)), cdRecuperacaoAjuste: ajuste(p, 'cd-recuperacao', efeitos),
       percepcao: total('percepcao', 'sab', prof.percepcao), salvaguardas: salv, pericias: skills, grausPericias: grausPericias, proficiencias: prof,
       cdClasse: 10 + total('cdClasse', chave, prof.cdClasse), cdMagia: conj ? 10 + total('cdMagia', conj.atributo || chave, prof.conjuracao) : null,
       ataqueMagia: conj ? total('ataqueMagia', conj.atributo || chave, prof.conjuracao) : null, deslocamento: Math.max(1.5, velocidade - reducao + ajuste(p, 'deslocamento', efeitos)),
@@ -434,7 +444,7 @@
       equipamento: resolvido.equipamento, escudoCalculado: resolvido.equipamento.escudo, bloqueioEscudo: !!resolvido.equipamento.escudo && fontesSelecionadas(p, catalogo).some(function (fonte) { return fonte.registro.somenteConsulta !== true && (fonte.registro.bloqueioEscudo === true || lista(fonte.registro.capacidades).indexOf('bloqueio-com-escudo') !== -1); }), armaSelecionada: resolvido.equipamento.arma, graduacaoArma: graduacaoArma, dadosArma: dados, facesDanoArma: faces, facesDanoArmaPorMaos: facesPorMaos, bonusDanoArma: bonusDano,
       caSemEscudo: caSemEscudo, caComEscudo: caComEscudo, conjuracao: conj, defesas: defesasSelecionadas(p, catalogo), recursosCalculados: recursosSelecionados(p, catalogo, at), atletismoAtaque: total('pericia:atletismo', 'for', grausPericias.atletismo),
       natacao: h && h.natacao !== undefined ? Math.max(1.5, numero(h.natacao, 0) - reducao) : null,
-      map: map, ganhos: ganhos(p, classe), treinamentosExtras: extrasTreino, carga: carga, danosExtras: danosExtras, atributoAtaqueArma: atributoAtaque,
+      map: map, ganhos: ganhos(p, classe), treinamentosExtras: extrasTreino, carga: carga, danosExtras: danosExtras, atributoAtaqueArma: atributoAtaque, bonusIniciativa: ajuste(p, 'iniciativa', efeitos),
       periciasTreinadasEscolhidas: Math.max(0, numero(classe && classe.periciasTreinadas, 0) + at.int) + extrasTreino };
   }
   function grauSucesso(d20, total, cd) {
@@ -463,7 +473,12 @@
     var p = normalizar(personagem), classe = encontrar(catalogo, 'classes', p.classeId), slots = [];
     if (classe) ['ancestralidade', 'classe', 'pericia', 'geral'].forEach(function (tipo) { slotsTalento(classe, tipo).filter(function (l) { return l <= nivel(p); }).forEach(function (l) { slots.push({ tipo: tipo, nivel: l, origem: null, quantidade: 1 }); }); });
     fontesSelecionadas(p, catalogo).forEach(function (fonte) { lista(fonte.registro.bonusTalentos).forEach(function (b) {
-      if (fonte.registro.somenteConsulta !== true && Number(b.nivel) >= numero(fonte.nivelConcessao, 1) && Number(b.nivel) <= nivel(p) && ['ancestralidade', 'classe', 'pericia', 'geral'].indexOf(b.tipo) !== -1) slots.push({ tipo: b.tipo, nivel: Number(b.nivel), origem: fonte.origem, quantidade: Math.max(1, Math.trunc(numero(b.quantidade, 1))) });
+      var aquisicao = b.nivel === 'aquisicao' ? numero(fonte.nivelConcessao, 1) : Number(b.nivel);
+      if (fonte.registro.somenteConsulta !== true && aquisicao >= numero(fonte.nivelConcessao, 1) && aquisicao <= nivel(p) && ['ancestralidade', 'classe', 'pericia', 'geral'].indexOf(b.tipo) !== -1) {
+        var slot = { tipo: b.tipo, nivel: aquisicao, origem: fonte.origem, quantidade: Math.max(1, Math.trunc(numero(b.quantidade, 1))) };
+        if (Number.isInteger(b.nivelMaximoTalento)) slot.nivelMaximoTalento = b.nivelMaximoTalento;
+        slots.push(slot);
+      }
     }); });
     return slots;
   }
@@ -574,6 +589,7 @@
       if (t.concedidoAutomaticamente && fontesSelecionadas(p, catalogo).some(function (fonte) { return fonte.origem === t.origem && talentosConcedidosFonte(p, catalogo, fonte.registro).some(function (item) { return (typeof item === 'string' ? item : item.id) === t.id; }); })) return;
       var slot = slots.find(function (s) { return s.tipo === tipo && s.nivel === adquirido && s.origem === (t.origem || null); });
       if (!slot && !t.aprovadoPeloMestre) erros.push('Não há uma escolha de talento de ' + tipo + ' no nível ' + adquirido + ' com essa origem.');
+      if (slot && Number.isInteger(slot.nivelMaximoTalento) && numero(r.nivel, 1) > slot.nivelMaximoTalento) erros.push(r.nome + ' excede o nível máximo permitido por esta escolha adicional.');
       var chave = chaveSlot(tipo, adquirido, t.origem); usados[chave] = (usados[chave] || 0) + 1;
       if (slot && usados[chave] > slot.quantidade) erros.push('Mais de um talento ocupa a escolha de ' + tipo + ' do nível ' + adquirido + '.');
       var requisitos = obj(r.requisitosEstruturados), naAquisicao = normalizar(p); naAquisicao.nivel = adquirido;

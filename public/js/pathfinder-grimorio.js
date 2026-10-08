@@ -52,7 +52,8 @@ Object.assign(titulos,{id:'Identificador',grau:'Graduação',cd:'CD',nivel:'Nív
 function entradasTabelas(valor,prefixo){
  if(Array.isArray(valor))return valor;
  if(!valor||typeof valor!=='object')return [];
- return Object.entries(valor).filter(([,linhas])=>Array.isArray(linhas)).map(([chave,linhas])=>({id:`${prefixo}-tabela-${chave}`,nome:nomesTabelas[chave]||chave.replace(/([a-z])([A-Z])/g,'$1 $2'),linhas,colunas:[...new Set(linhas.flatMap(l=>l&&typeof l==='object'&&!Array.isArray(l)?Object.keys(l):[]))].map(k=>({chave:k,nome:titulos[k]||k})),observacaoEditorial:valor[chave+'Nota']||'',fonte:dados.fonte?.id}));
+ const rotulos=dados.tabelasRotulos||{}, nomes=rotulos.nomes||{}, colunas=rotulos.colunas||{};
+ return Object.entries(valor).filter(([,linhas])=>Array.isArray(linhas)).map(([chave,linhas])=>({id:`${prefixo}-tabela-${chave}`,nome:nomes[chave]||nomesTabelas[chave]||chave.replace(/([a-z])([A-Z])/g,'$1 $2'),linhas,colunas:[...new Set(linhas.flatMap(l=>l&&typeof l==='object'&&!Array.isArray(l)?Object.keys(l):[]))].map(k=>({chave:k,nome:colunas[k]||titulos[k]||k})),observacaoEditorial:valor[chave+'Nota']||'',fonte:dados.fonte?.id}));
 }
 function tabela(e){
  const rows=lista(e.linhas);if(!rows.length)return texto('Esta tabela não contém linhas.');
@@ -83,16 +84,16 @@ function beneficiosReligiosos(e){
  return html;
 }
 function render(){const e=visiveis.find(x=>x.id===$('referencia').value)||visiveis[0];if(!e){$('conteudo').innerHTML='<p>Nenhuma referência encontrada.</p>';return}history.replaceState(null,'','#'+encodeURIComponent(e.id));let html=`<h2>${escape(e.nome)}</h2><p class="origem">${escape(dados.fonte?.nome||'Guia do Hub')}${e.pagina?' · página '+escape(e.pagina):''}${Number.isFinite(e.nivel)?' · nível '+e.nivel:''}</p>`;
- if(e.somenteConsulta||e.estadoTraducao==='referencia')html+='<p class="aviso">Referência ainda sem revisão completa. Não concede benefícios automaticamente. Consulte a origem indicada.</p>';
+ if(e.somenteConsulta||e.estadoTraducao==='referencia')html+='<p class="aviso">'+(e.revisao==='revisado'?'Texto revisado em português; esta habilidade ainda não tem execução automática.':'Referência ainda sem revisão completa. Consulte a origem indicada.')+' Não concede benefícios automaticamente.</p>';
  html+=bullets(e.resumo);
  if(e.preco!==undefined&&e.preco!==null&&e.preco!=='')html+=texto('Preço: '+humano(e.preco));else if(e.precoPo!==undefined)html+=texto('Preço: '+humano(e.precoPo)+' po');if(e.raridade)html+=texto('Raridade: '+e.raridade);if(e.categoria)html+=texto('Categoria: '+e.categoria);
- if(!e.somenteConsulta){html+=texto(e.descricao||e.texto)+beneficiosReligiosos(e);if(e.progressao?.length)html+='<details><summary>Ganhos por nível</summary>'+e.progressao.map(g=>`<h3>Nível ${escape(g.nivel)} · ${escape(g.nome)}</h3>${texto(g.descricao)}`).join('')+'</details>';
+ {html+=texto(e.descricao||e.texto)+beneficiosReligiosos(e);if(e.progressao?.length)html+='<details><summary>Ganhos por nível</summary>'+e.progressao.map(g=>`<h3>Nível ${escape(g.nivel)} · ${escape(g.nome)}</h3>${texto(g.descricao)}`).join('')+'</details>';
  for(const [campo,rotulo]of [['opcoes','Opções'],['herancas','Heranças']])if(e[campo]?.length)html+='<details><summary>'+rotulo+'</summary>'+e[campo].map(bloco).join('')+'</details>';
  if(e.requisitos)html+=texto('Pré-requisitos: '+(Array.isArray(e.requisitos)?e.requisitos.join('; '):e.requisitos));
  if(e.tamanho)html+=texto('Tamanho: '+e.tamanho);if(frases(e.tracos).length)html+=texto('Traços: '+frases(e.tracos).join(', '));
  if(e.ca!==undefined)html+=texto(`CA ${e.ca} · PV ${e.pv} · Percepção ${sinal(e.percepcao)}`);
  if(e.atributos)html+=texto('Atributos: '+pares(e.atributos,true));if(e.salvaguardas)html+=texto('Salvaguardas: '+pares(e.salvaguardas,true));if(e.pericias)html+=texto('Perícias: '+pares(e.pericias,true));if(e.deslocamento)html+=texto('Deslocamento: '+deslocamento(e.deslocamento,e.unidadeDeslocamento));
- for(const [k,n]of [['sentidos','Sentidos'],['idiomas','Idiomas'],['imunidades','Imunidades'],['resistencias','Resistências'],['fraquezas','Fraquezas'],['cura','Cura'],['excecoesDefesas','Defesas especiais'],['excecoesPericias','Perícias especiais'],['variantes','Variantes'],['equipamentos','Equipamentos']])html+=secao(n,e[k]);
+ for(const [k,n]of [['sentidos','Sentidos'],['idiomas','Idiomas'],['imunidades','Imunidades'],['resistencias','Resistências'],['fraquezas','Fraquezas'],['cura','Cura'],['excecoesDefesas','Defesas especiais'],['excecoesPericias','Perícias especiais'],['variantes','Variantes'],['equipamentos','Equipamentos'],['equipamento','Equipamento'],['itens','Itens'],['magias','Magias'],['conjuracao','Conjuração'],['excecoesSalvaguardas','Salvaguardas especiais'],['excecoesDeslocamento','Deslocamento especial']])html+=secao(n,e[k]);
  for(const a of [...lista(e.ataques),...lista(e.acoes)])html+=bloco(a);
  if(e.uso)html+=texto('Uso: '+e.uso);if(e.ativacao)html+=texto('Ativação: '+(typeof e.ativacao==='string'?e.ativacao:pares(e.ativacao)));
  if(e.linhas)html+=tabela(e);}

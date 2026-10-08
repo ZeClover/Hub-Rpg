@@ -12,7 +12,7 @@ declare namespace regras {
   }
   interface Ganho extends Record<string, unknown> { nivel: number; nome: string; descricao: string; automatico: boolean }
   interface Calculo {
-    atributos: Record<string, number>; incrementosParciais: Record<string, boolean>; pvMaximos: number; ca: number; percepcao: number;
+    limiteMorrendo: number; cdRecuperacaoAjuste: number; atributos: Record<string, number>; incrementosParciais: Record<string, boolean>; pvMaximos: number; ca: number; percepcao: number;
     salvaguardas: { fortitude: number; reflexos: number; vontade: number }; pericias: Record<string, number>; grausPericias: Record<string, number>;
     proficiencias: Record<string, unknown>; cdClasse: number; cdMagia: number | null; ataqueMagia: number | null;
     deslocamento: number; ataque: number; atletismoAtaque: number; natacao: number | null; map: number[];
@@ -27,10 +27,10 @@ declare namespace regras {
     defesas: { imunidades: string[]; resistencias: Array<{ tipo: string; valor: number }>; fraquezas: Array<{ tipo: string; valor: number }>; curaPeloVazio: boolean };
     recursosCalculados: Array<{ id: string; nome?: string; maximo: number; ativo: boolean; recuperacao: Record<string, unknown>; [chave: string]: unknown }>;
     carga: { volume: number; leves: number; limiteSobrecarga: number; limiteMaximo: number; sobrecarregado: boolean; acimaMaximo: boolean; pendentes: string[] };
-    danosExtras: Array<{ nome: string; expressao: string; tipo: string }>; atributoAtaqueArma: string;
+    danosExtras: Array<{ nome: string; expressao: string; tipo: string }>; atributoAtaqueArma: string; bonusIniciativa: number;
   }
   interface Validacao { valido: boolean; erros: string[]; avisos: string[]; pendencias: string[] }
-  interface EscolhaTalento { tipo: string; nivel: number; origem: string | null; quantidade: number }
+  interface EscolhaTalento { tipo: string; nivel: number; origem: string | null; quantidade: number; nivelMaximoTalento?: number }
   function criar(catalogo?: unknown): Ficha;
   function normalizar(personagem: unknown, catalogo?: unknown): Ficha;
   function calcular(personagem: unknown, catalogo?: unknown): Calculo;

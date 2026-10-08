@@ -1,0 +1,762 @@
+{
+  "magias": [
+    {
+      "id": "defesa-ancestral",
+      "nome": "Defesa Ancestral",
+      "nomeOriginal": "ancestral defense",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": "reacao",
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "fortuna",
+        "manuseio",
+        "mental"
+      ],
+      "descricao": "Gatilho: você está prestes a fazer uma salvaguarda de Vontade. Seu ancestral o protege contra quem tentaria dobrar sua vontade. Role a salvaguarda que acionou a reação duas vezes e use o melhor resultado.",
+      "resumo": [
+        "Reação de fortuna: role uma salvaguarda de Vontade duas vezes e use o melhor resultado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "fortuna": "vontade",
+        "rolagens": 2,
+        "usar": "melhor"
+      }
+    },
+    {
+      "id": "forma-ancestral",
+      "nome": "Forma Ancestral",
+      "nomeOriginal": "ancestral form",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Duração: sustentada até 1 minuto. Você assume a forma de seus espíritos ancestrais, tornando-se invisível e quase corpóreo. Recebe resistência 10 a todo dano, exceto força, espiritual e dano de Golpes com a runa de propriedade toque fantasma. Essa resistência dobra contra dano não mágico ou Golpes que incluam dano de precisão. Recebe Deslocamento de voo igual ao terrestre; subir ao Voar não conta como terreno difícil. Não pode atravessar objetos sólidos, mas pode flutuar por fendas minúsculas. Não pode Conjurar Magias, embora possa Sustentá-las, ativar itens ou usar ações com ataque ou manuseio. Elevada (+2): a resistência aumenta em 5.",
+      "resumo": [
+        "Forma invisível sustentada: voo e resistência ampla, dobrada contra dano não mágico ou Golpes com precisão. Impede conjuração, ativação, ataques e manuseio."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "resistencia": 10,
+        "elevacaoResistencia": {
+          "intervalo": 2,
+          "valor": 5
+        },
+        "exceto": [
+          "forca",
+          "espiritual",
+          "toque-fantasma"
+        ],
+        "resistenciaDuplaContra": [
+          "nao-magico",
+          "golpe-com-precisao"
+        ],
+        "invisivel": true,
+        "voo": "deslocamento-terrestre",
+        "sustentada": true
+      }
+    },
+    {
+      "id": "persistencia-no-campo-de-batalha",
+      "nome": "Persistência no Campo de Batalha",
+      "nomeOriginal": "battlefield persistence",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": "reacao",
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao"
+      ],
+      "descricao": "Gatilho: você está prestes a fazer uma salvaguarda, mas ainda não rolou. Você é difícil de deter em batalha. Recebe +2 de estado na salvaguarda que acionou a reação. Se ela for contra um efeito de incapacitação, esse efeito trata você como se tivesse 2 níveis a mais.",
+      "resumo": [
+        "Reação antes de rolar: +2 estado em uma salvaguarda e trata seu nível como 2 maior contra incapacitação."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "bonusSalvaguarda": {
+          "tipo": "estado",
+          "valor": 2
+        },
+        "nivelExtraContraIncapacitacao": 2
+      }
+    },
+    {
+      "id": "deleite-na-retribuicao",
+      "nome": "Deleite na Retribuição",
+      "nomeOriginal": "revel in retribution",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "manuseio",
+        "mental"
+      ],
+      "descricao": "Duração: 1 minuto. O tempo parece desacelerar, permitindo atingir oponentes no meio do movimento. Recebe a habilidade Golpe Reativo e imediatamente ganha uma segunda reação, que só pode usar para Golpe Reativo. No início de cada turno subsequente, quando recuperar suas ações, ganha uma reação adicional que também só pode usar para Golpe Reativo. Acertar um Golpe Reativo concede 5 PV temporários, que duram pelo restante da magia. Elevada (+1): os PV temporários recebidos por um Golpe Reativo bem-sucedido aumentam em 1.",
+      "resumo": [
+        "Por 1 minuto, concede Golpe Reativo e uma reação extra por turno exclusivamente para ele; acertar concede 5 PV temporários, com elevação."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "reacaoExtra": "golpe-reativo",
+        "pvTemporariosAoAcertar": 5,
+        "elevacaoPvTemporarios": 1,
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "armadura-de-ossos",
+      "nome": "Armadura de Ossos",
+      "nomeOriginal": "armor of bones",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "manuseio"
+      ],
+      "descricao": "Duração: 1 minuto. Você ossifica sua forma física, imitando a resistência dos ossos. Recebe resistência 3 a frio, eletricidade, fogo, perfurante e cortante. Elevada (+1): a resistência aumenta em 1.",
+      "resumo": [
+        "Por 1 minuto, resistência 3 a frio, eletricidade, fogo, perfurante e cortante; mais 1 por graduação extra."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "resistencia": 3,
+        "tipos": [
+          "frio",
+          "eletricidade",
+          "fogo",
+          "perfurante",
+          "cortante"
+        ],
+        "elevacao": 1,
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "reivindicar-morto-vivo",
+      "nome": "Reivindicar Morto-vivo",
+      "nomeOriginal": "claim undead",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "incapacitacao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura morta-viva. Defesa: Vontade. Duração: 10 minutos. Você tenta tomar o controle do morto-vivo ou obrigá-lo a reconhecê-lo como mestre. Se outra criatura já o controla, ela faz Vontade para conservar o controle; caso contrário, o alvo faz a salvaguarda. Sucesso crítico: o alvo não é afetado. Sucesso: atordoado 1 e confuso por 1 rodada, resistindo a suas ordens. Falha: fica controlado por você e segue suas ordens. Ele, ou o controlador anterior, pode tentar Vontade ao fim de cada turno do alvo; um sucesso encerra a magia e deixa o morto-vivo atordoado 1 e confuso por 1 rodada. Se der uma ordem obviamente autodestrutiva, o alvo não age até receber nova ordem. Falha crítica: como falha, mas uma nova salvaguarda só ocorre ao dar uma nova ordem contrária à natureza do alvo.",
+      "resumo": [
+        "Controla um morto-vivo por até 10 minutos; Vontade do alvo ou controlador decide. Ordens autodestrutivas interrompem suas ações."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 260,
+      "paginaPdf": 260,
+      "paginaImpressa": 259,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "vontade",
+      "mecanica": {
+        "duracaoRodadas": 100,
+        "salvaguardaControladorSeExistente": true,
+        "ordemAutodestrutiva": "aguarda-nova-ordem"
+      }
+    },
+    {
+      "id": "vazio-interestelar",
+      "nome": "Vazio Interestelar",
+      "nomeOriginal": "interstellar void",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "frio",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura. Defesa: Fortitude. Duração: sustentada até 1 minuto. Você invoca as profundezas geladas do espaço para trazer frio terrível ao inimigo. O vazio congelante envolve o alvo e causa 3d6 de frio imediatamente e na primeira vez a cada rodada que Sustentar a magia em turnos futuros, com Fortitude básica. O alvo fica fatigado enquanto o efeito persistir. Elevada (+1): o dano de frio aumenta em 1d6.",
+      "resumo": [
+        "Sustentada por até 1 minuto: causa 3d6 de frio agora e no primeiro Sustentar de cada rodada, com Fortitude básica; mantém o alvo fatigado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "dano": "3d6",
+        "tipo": "frio",
+        "elevacao": "1d6",
+        "sustentada": true,
+        "fatigadoDuranteEfeito": true
+      }
+    },
+    {
+      "id": "ponte-de-luar",
+      "nome": "Ponte de Luar",
+      "nomeOriginal": "moonlight bridge",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "luz",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Duração: 10 minutos. Você invoca uma ponte de luar radiante e cintilante, com 3 m de largura. Ela deve começar no chão em um ponto no alcance e se estende como um plano horizontal, em linha reta ou inclinado até 45 graus para cima ou para baixo, por até 36 m. Tem CA 10, Dureza 30 e 60 PV, e é imune a todo dano exceto força, espiritual e dano de Golpes com toque fantasma. Você e seus aliados podem atravessá-la normalmente; outras criaturas passam através dela ao tentar atravessá-la. A ponte bloqueia ataques físicos, etéreos e incorpóreos que cruzariam sua superfície, de cima ou de baixo. Pode Dispensar a magia. Elevada (+1): comprimento aumenta em 6 m, PV em 20 e você pode aumentar a largura em até mais 1,5 m.",
+      "resumo": [
+        "Ponte seletiva de até 36 m por 10 minutos; aliados passam sobre ela, outros atravessam. Bloqueia ataques e tem Dureza 30, com elevação de tamanho e PV."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "largura": 3,
+        "comprimento": 36,
+        "ca": 10,
+        "dureza": 30,
+        "pv": 60,
+        "elevacao": {
+          "comprimento": 6,
+          "pv": 20,
+          "larguraMaxima": 1.5
+        }
+      }
+    },
+    {
+      "id": "chamas-giratorias",
+      "nome": "Chamas Giratórias",
+      "nomeOriginal": "whirling flames",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "fogo",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Área: até duas explosões de 1,5 m que não se sobreponham. Defesa: Reflexos básico. Você invoca uma tempestade de chamas giratórias que envolve todas as criaturas na área, causando 5d6 de fogo com Reflexos básico. Elevada (+2): o dano aumenta em 3d6 e pode acrescentar outra explosão de 1,5 m, sem sobreposição.",
+      "resumo": [
+        "Duas pequenas explosões sem sobreposição causam 5d6 de fogo com Reflexos básico. A cada duas graduações extras, mais dano e outra explosão."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "dano": "5d6",
+        "tipo": "fogo",
+        "explosoes": 2,
+        "raio": 1.5,
+        "elevacao": {
+          "intervalo": 2,
+          "dano": "3d6",
+          "explosoes": 1
+        }
+      }
+    },
+    {
+      "id": "fuzilaria-flamejante",
+      "nome": "Fuzilaria Flamejante",
+      "nomeOriginal": "flaming fusillade",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "fogo",
+        "manuseio"
+      ],
+      "descricao": "Duração: 1 minuto. Você invoca uma barragem interminável de chamas, com explosões como pequenos sóis ao redor. Conjura Ignição como parte de conjurar Fuzilaria Flamejante. Durante sua duração, o tempo de conjuração de Ignição é reduzido de duas ações para uma. Elevada (9ª): durante a duração, também recebe bônus de estado no dano causado por Ignição igual à graduação de Fuzilaria Flamejante.",
+      "resumo": [
+        "Conjura Ignição imediatamente e, por 1 minuto, reduz sua conjuração a uma ação; na 9ª graduação acrescenta bônus de estado ao dano."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 261,
+      "paginaPdf": 261,
+      "paginaImpressa": 260,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "magiaDelegada": "ignicao",
+        "acoesIgnição": 1,
+        "duracaoRodadas": 10,
+        "bonusDanoRanque9": "ranque"
+      }
+    },
+    {
+      "id": "adiar-aflicao",
+      "nome": "Adiar Aflição",
+      "nomeOriginal": "delay affliction",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "cura",
+        "manuseio",
+        "vitalidade"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura. Uma descarga de energia curativa retarda uma aflição do alvo e restaura 3d8 PV. Você tenta neutralizar uma aflição que sabe que o alvo possui: um sucesso suspende seus efeitos por 1 hora em vez de removê-la. Depois, o alvo fica temporariamente imune a Adiar Aflição por 1 dia. Não precisa conhecer o nome específico da aflição, mas precisa estar ciente dela; por exemplo, não pode adiar um veneno ingerido durante sua latência sem saber do veneno. Elevada (+1): a cura aumenta em 1d8 e pode tentar suspender uma aflição adicional.",
+      "resumo": [
+        "Cura 3d8 e tenta suspender uma aflição conhecida por 1 hora; o alvo fica imune por 1 dia. Elevação acrescenta cura e outra aflição."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "cura": "3d8",
+        "elevacaoCura": "1d8",
+        "aflicoes": 1,
+        "elevacaoAflicoes": 1,
+        "suspensaoHoras": 1,
+        "imunidadeHoras": 24
+      }
+    },
+    {
+      "id": "forma-doadora-de-vida",
+      "nome": "Forma Doadora de Vida",
+      "nomeOriginal": "life-giving form",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "cura",
+        "luz",
+        "manuseio",
+        "vitalidade"
+      ],
+      "descricao": "Duração: 1 minuto. Você transcende sua forma física e vira um farol de energia curativa. O corpo emite luz intensa como uma tocha. Recebe resistência 5 a precisão e fraqueza 5 a vazio; seus Golpes desarmados causam mais 1d4 de vitalidade. Pode tocar uma criatura viva com Interagir para restaurar 6d8 PV. Quando uma criatura tocar você com Interagir, pode permitir que receba a mesma cura. Em qualquer caso, fica temporariamente imune à cura de Forma Doadora de Vida por 1 minuto. A cura é de vitalidade e não pode curar você mesmo. Uma criatura ferida por vitalidade, como um morto-vivo, que toque você ou o fira com ataque desarmado ou arma corpo a corpo sem alcance sofre 3d4 de vitalidade, sem ganhar imunidade temporária. Pode Dispensar a magia. Elevada (+1): a cura de Interagir aumenta em 1d8, o dano de vitalidade aumenta em 1 e a resistência e fraqueza aumentam em 1.",
+      "resumo": [
+        "Por 1 minuto, toques voluntários curam 6d8 com imunidade de 1 minuto; mortos-vivos que o tocam sofrem vitalidade. Recebe resistência a precisão e fraqueza a vazio."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "cura": "6d8",
+        "elevacaoCura": "1d8",
+        "danoContatoVulneravelVitalidade": "3d4",
+        "danoGolpeExtra": "1d4",
+        "resistenciaPrecisao": 5,
+        "fraquezaVazio": 5,
+        "imunidadeCuraRodadas": 10,
+        "naoCuraConjurador": true
+      }
+    },
+    {
+      "id": "acessar-saber",
+      "nome": "Acessar Saber",
+      "nomeOriginal": "access lore",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "fortuna",
+        "manuseio"
+      ],
+      "descricao": "Duração: 1 minuto. Você vasculha o conhecimento divino do multiverso por informações sobre um assunto. Escolha uma perícia Saber. Temporariamente recebe nessa perícia o mesmo grau de proficiência que tem na conjuração de Oráculo.",
+      "resumo": [
+        "Por 1 minuto, recebe em um Saber escolhido o grau de proficiência da conjuração de Oráculo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "periciaEscolha": "saber",
+        "grau": "conjuracao-oraculo",
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "segredo-terrivel",
+      "nome": "Segredo Terrível",
+      "nomeOriginal": "dread secret",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "emocao",
+        "medo",
+        "manuseio",
+        "mental"
+      ],
+      "descricao": "Alcance: 18 m. Alvos: até 6 criaturas. Defesa: Vontade. Duração: até o início de seu próximo turno. Você pronuncia um segredo poderoso contrário à natureza fundamental das criaturas. Escolha uma resistência ou fraqueza específica com valor numérico que acredita que ao menos um alvo possua, por Recordar Conhecimento ou experiência prévia; por exemplo resistência a fogo ou fraqueza a prata. Se a informação estiver incorreta para um alvo, a magia não o afeta. Os alvos afetados fazem Vontade. Sucesso crítico: não é afetado. Sucesso: sofre 1 de dano que corresponde ao tipo ou traço da fraqueza escolhida, acionando-a; ou perde a resistência escolhida até o fim de seu próximo turno. Falha: como sucesso e assustado 1. Falha crítica: como falha, mas assustado 3.",
+      "resumo": [
+        "Contra até 6 alvos com resistência ou fraqueza conhecida, aciona a fraqueza ou remove a resistência temporariamente; Vontade também determina medo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "vontade",
+      "mecanica": {
+        "alvosMaximos": 6,
+        "exigeResistenciaFraquezaNumericaReal": true,
+        "danoParaAcionarFraqueza": 1,
+        "assustadoFalha": 1,
+        "assustadoFalhaCritica": 3
+      }
+    },
+    {
+      "id": "explosao-trovejante",
+      "nome": "Explosão Trovejante",
+      "nomeOriginal": "thunderburst",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "ar",
+        "concentracao",
+        "manuseio",
+        "sonico"
+      ],
+      "descricao": "Alcance: 30 m. Área: explosão de 6 m. Defesa: Fortitude. Você cria uma forte explosão de ar e um estrondo de trovão, causando 2d6 contundente e 2d6 sônico. Cada criatura na área faz Fortitude. Sucesso crítico: não é afetada. Sucesso: metade do dano. Falha: dano completo e surda por 1 minuto. Falha crítica: dano dobrado e surda por 1 hora. Elevada (+2): cada tipo de dano aumenta em 2d6 e o raio da área aumenta em 1,5 m.",
+      "resumo": [
+        "Explosão causa 2d6 contundente e 2d6 sônico; Fortitude reduz dano, e falhas causam surdez. A cada duas graduações cresce o dano e a área."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 262,
+      "paginaPdf": 262,
+      "paginaImpressa": 261,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "danos": [
+          {
+            "tipo": "contundente",
+            "formula": "2d6"
+          },
+          {
+            "tipo": "sonico",
+            "formula": "2d6"
+          }
+        ],
+        "raio": 6,
+        "elevacao": {
+          "intervalo": 2,
+          "danoPorTipo": "2d6",
+          "raio": 1.5
+        },
+        "surdezFalhaRodadas": 10,
+        "surdezFalhaCriticaRodadas": 600
+      }
+    },
+    {
+      "id": "forma-da-tempestade",
+      "nome": "Forma da Tempestade",
+      "nomeOriginal": "tempest form",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "oraculo",
+        "concentracao",
+        "manuseio",
+        "polimorfia"
+      ],
+      "descricao": "Duração: sustentada até 1 minuto. Seu corpo se torna fluido: escolha ar, água ou névoa. A magia recebe ar se escolher ar ou névoa e água se escolher água ou névoa. Você e sua armadura ficam amorfos. Perde bônus de item na CA e usa a proficiência de defesa sem armadura para calculá-la. Recebe resistência 10 a dano físico e imunidade a precisão. Pode passar por fendas minúsculas e não precisa respirar. Não pode conjurar, ativar itens nem usar ações com ataque ou manuseio, exceto as concedidas pela magia. Ar: voo de 6 m e invisibilidade enquanto no ar; pode produzir os efeitos de Lufada de Vento de seu espaço com uma atividade de duas ações e manuseio. Névoa: voo de 6 m; qualquer criatura de um lado de seu espaço fica ocultada para quem a alveja do lado oposto. Água: natação de 6 m e invisibilidade enquanto na água. Pode eletrificar-se com uma ação de manuseio: deixa de ficar invisível na água, pois a eletricidade revela sua localização, mas quem fizer um ataque corpo a corpo contra você sofre 1d6 elétrico. Elevada (+2): a resistência aumenta em 5 e o dano elétrico da forma de água carregada aumenta em 1.",
+      "resumo": [
+        "Forma sustentada de ar, água ou névoa: resistência física, imunidade a precisão e deslocamento especial. Limita ações; cada forma oferece invisibilidade ou cobertura e poderes próprios."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 263,
+      "paginaPdf": 263,
+      "paginaImpressa": 262,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual da entrada do PDF fornecido; página física indicada. Sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "formas": [
+          "ar",
+          "agua",
+          "nevoa"
+        ],
+        "resistenciaFisica": 10,
+        "imunePrecisao": true,
+        "perdeBonusItemCa": true,
+        "usaDefesaSemArmadura": true,
+        "movimento": 6,
+        "retaliacaoAguaEletrificada": "1d6",
+        "elevacaoResistencia": 5,
+        "elevacaoDanoEletricoFixo": 1
+      }
+    }
+  ],
+  "lacunas": [
+    {
+      "categoria": "automacao-revelacoes-avancadas",
+      "descricao": "Revelações avançadas traduzidas permanecem de consulta até terem executores específicos de fortuna, reação, formas e resistências condicionais."
+    }
+  ]
+}

@@ -54,6 +54,12 @@ if __name__=='__main__':
  links=[(int(re.search(r'ID=(\d+)',u).group(1)),html.unescape(re.sub('<[^>]+>','',n))) for u,n in links]
  assert len(links)==411 and len(set(i for i,n in links))==411,'A fonte mudou; revisar cobertura'
  nomes=json.loads((DOC/'nomes.json').read_text());rev=json.loads((DOC/'revisados.json').read_text()) if (DOC/'revisados.json').exists() else {}
+ for overlay in sorted(DOC.glob('revisados-lote-*.json')):
+  lote=json.loads(overlay.read_text())
+  duplicados=set(lote)&set(rev)
+  if duplicados:raise ValueError(f'Blocos duplicados em {overlay.name}: {sorted(duplicados)}')
+  if not set(lote)<=set(nomes):raise ValueError(f'ID fora do Monster Core em {overlay.name}')
+  rev.update(lote)
  assert set(nomes)=={str(i) for i,n in links},'Mapa de nomes incompleto'
  records=[];falhas=[]
  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:

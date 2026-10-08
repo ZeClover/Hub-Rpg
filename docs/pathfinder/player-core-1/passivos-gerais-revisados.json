@@ -1,0 +1,440 @@
+{
+  "fonte": "Player Core PT, páginas impressas 256, 257, 260, 261, 263, 265; PDF=página+1",
+  "talentos": [
+    {
+      "id": "treinamento-em-pericia",
+      "tipo": "pericia",
+      "descricao": "Geral e perícia. Exige Inteligência +1. Torna-se treinado em uma perícia à escolha. Pode escolher este talento novamente, sempre recebendo treino em uma perícia diferente.",
+      "resumo": [
+        "Escolha uma perícia nova para treinar. Exige Inteligência +1; outras seleções precisam treinar perícias diferentes."
+      ],
+      "requisitos": "Inteligência +1",
+      "requisitosEstruturados": {
+        "atributos": {
+          "int": 1
+        }
+      },
+      "repetivel": true,
+      "efeitos": [
+        {
+          "alvo": "treinamentos",
+          "tipo": "sem-tipo",
+          "valor": 1
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "carregador-robusto",
+      "tipo": "pericia",
+      "descricao": "Exige treinamento em Atletismo. Aumenta em 2 tanto o Volume que pode carregar sem ficar sobrecarregado quanto seu limite máximo de Volume.",
+      "resumo": [
+        "+2 no limite para ficar sobrecarregado e +2 no Volume máximo. Exige treinamento em Atletismo."
+      ],
+      "requisitos": "Treinado em Atletismo",
+      "requisitosEstruturados": {
+        "pericias": {
+          "atletismo": 1
+        }
+      },
+      "efeitos": [
+        {
+          "alvo": "limite-sobrecarga",
+          "tipo": "sem-tipo",
+          "valor": 2
+        },
+        {
+          "alvo": "limite-carga-maxima",
+          "tipo": "sem-tipo",
+          "valor": 2
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "duro-de-matar",
+      "descricao": "Você morre quando a condição morrendo alcançar 5, em vez de 4.",
+      "resumo": [
+        "Aumenta de 4 para 5 o limite de morrendo que causa sua morte."
+      ],
+      "efeitos": [
+        {
+          "alvo": "limite-morrendo",
+          "tipo": "sem-tipo",
+          "valor": 1
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "vitalidade",
+      "descricao": "Seus PV máximos aumentam em seu nível. A CD de seus testes de recuperação diminui em 1.",
+      "resumo": [
+        "+1 PV máximo por nível e −1 na CD dos testes de recuperação."
+      ],
+      "efeitos": [
+        {
+          "alvo": "pv",
+          "tipo": "sem-tipo",
+          "valor": 1,
+          "porNivel": true
+        },
+        {
+          "alvo": "cd-recuperacao",
+          "tipo": "sem-tipo",
+          "valor": -1
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "veloz",
+      "descricao": "Sua Velocidade aumenta em 1,5 metro.",
+      "resumo": [
+        "+1,5 metro de Velocidade."
+      ],
+      "efeitos": [
+        {
+          "alvo": "deslocamento",
+          "tipo": "sem-tipo",
+          "valor": 1.5
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "iniciativa-incrivel",
+      "descricao": "Você recebe +2 de bônus de circunstância em jogadas de iniciativa. Esse bônus não aumenta todos os testes de Percepção ou de perícia: aplica-se apenas quando forem usados para iniciativa.",
+      "resumo": [
+        "+2 de circunstância apenas nas jogadas de iniciativa."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true,
+      "efeitos": [
+        {
+          "alvo": "iniciativa",
+          "tipo": "circunstancia",
+          "valor": 2
+        }
+      ]
+    },
+    {
+      "id": "improvisacao-destreinada",
+      "descricao": "Nas perícias destreinadas, seu bônus de proficiência é seu nível menos 2. No nível 5, passa a ser seu nível menos 1; no nível 7, passa a ser seu nível inteiro. Continua destreinado: isso não permite ações exclusivas de quem é treinado.",
+      "resumo": [
+        "Perícias destreinadas recebem proficiência de nível −2; nível −1 a partir do 5º; nível inteiro a partir do 7º. Ações treinadas continuam indisponíveis."
+      ],
+      "improvisacaoDestreinadaPorNivel": [
+        {
+          "nivel": 1,
+          "ajusteNivel": -2
+        },
+        {
+          "nivel": 5,
+          "ajusteNivel": -1
+        },
+        {
+          "nivel": 7,
+          "ajusteNivel": 0
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "recuperacao-rapida",
+      "descricao": "Exige Constituição +2. Recupera o dobro de PV ao descansar. Em veneno ou doença contínua, um sucesso em Fortitude reduz o estágio em 2 (em 1 se for virulento); um sucesso crítico reduz em 3 (em 2 se for virulento). Ao descansar uma noite, reduz drenado em 2, em vez de 1.",
+      "resumo": [
+        "Descanso cura o dobro e reduz drenado em 2. Contra doenças/venenos contínuos, sucessos reduzem 2 estágios e críticos 3; em aflições virulentas, reduzem 1 e 2. Exige Constituição +2."
+      ],
+      "requisitos": "Constituição +2",
+      "requisitosEstruturados": {
+        "atributos": {
+          "con": 2
+        }
+      },
+      "recuperacao": {
+        "curaDescansoMultiplicador": 2,
+        "drenadoDescanso": 2,
+        "aflicaoEstagiosSucesso": 2,
+        "aflicaoEstagiosSucessoCritico": 3,
+        "aflicaoVirulentaEstagiosSucesso": 1,
+        "aflicaoVirulentaEstagiosSucessoCritico": 2
+      },
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "investidura-incrivel",
+      "descricao": "Exige Carisma +3. Aumenta de 10 para 12 o limite de itens mágicos em que você pode investir.",
+      "resumo": [
+        "+2 no limite de itens investidos. Exige Carisma +3."
+      ],
+      "requisitos": "Carisma +3",
+      "requisitosEstruturados": {
+        "atributos": {
+          "car": 3
+        }
+      },
+      "efeitos": [
+        {
+          "alvo": "limite-itens-investidos",
+          "tipo": "sem-tipo",
+          "valor": 2
+        }
+      ],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "passo-aprumado",
+      "descricao": "Exige Destreza +2. Você pode Dar um Passo em terreno difícil.",
+      "resumo": [
+        "Permite Dar um Passo em terreno difícil. Exige Destreza +2."
+      ],
+      "requisitos": "Destreza +2",
+      "requisitosEstruturados": {
+        "atributos": {
+          "des": 2
+        }
+      },
+      "capacidades": [
+        "passo-em-terreno-dificil"
+      ],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "procurar-rapido",
+      "descricao": "Exige Percepção mestre. Você leva metade do tempo normal para Procurar uma área; em exploração, pode garantir a busca ao mover-se até metade da Velocidade. Com Percepção lendária, procura quatro vezes mais rápido.",
+      "resumo": [
+        "Procura duas vezes mais rápido; com Percepção lendária, quatro vezes mais rápido."
+      ],
+      "requisitos": "Mestre em Percepção",
+      "requisitosEstruturados": {
+        "percepcao": 3
+      },
+      "multiplicadorVelocidadeBuscaPorGraduacao": [
+        {
+          "graduacao": 3,
+          "valor": 2
+        },
+        {
+          "graduacao": 4,
+          "valor": 4
+        }
+      ],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "sobrevivente-lendario",
+      "tipo": "pericia",
+      "descricao": "Exige Sobrevivência lendária. Você sobrevive indefinidamente sem alimento ou água e não sofre dano de frio ou calor intenso, extremo ou incrível.",
+      "resumo": [
+        "Dispensa alimento e água e evita dano ambiental de frio ou calor até incrível."
+      ],
+      "requisitos": "Lendário em Sobrevivência",
+      "requisitosEstruturados": {
+        "pericias": {
+          "sobrevivencia": 4
+        }
+      },
+      "capacidades": [
+        "dispensa-alimento-e-agua",
+        "imune-dano-ambiental-frio-ate-incrivel",
+        "imune-dano-ambiental-calor-ate-incrivel"
+      ],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "epitome-da-ancestralidade",
+      "descricao": "Recebe um talento de ancestralidade de nível 1, por uma ligação mais profunda com sua ancestralidade. A escolha adicional acontece no nível em que adquirir Epítome; não permite selecionar um talento de ancestralidade acima do nível 1.",
+      "resumo": [
+        "Escolha mais um talento de ancestralidade de nível 1."
+      ],
+      "bonusTalentos": [
+        {
+          "tipo": "ancestralidade",
+          "nivel": "aquisicao",
+          "nivelMaximoTalento": 1,
+          "quantidade": 1
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    },
+    {
+      "id": "perspicacia-astuta",
+      "descricao": "Escolha Fortitude, Reflexos, Vontade ou Percepção. Torna-se especialista na opção escolhida; no nível 17, torna-se mestre nessa opção. O talento não melhora as outras três defesas e não diminui uma graduação que já seja maior.",
+      "resumo": [
+        "Uma defesa à escolha torna-se especialista; no nível 17, mestre. Não altera as outras defesas."
+      ],
+      "escolhasExtras": [
+        {
+          "id": "defesa-perspicacia",
+          "nome": "Defesa de Perspicácia Astuta",
+          "nivel": 1,
+          "opcoes": [
+            {
+              "id": "fortitude",
+              "nome": "Fortitude",
+              "proficiencias": {
+                "salvaguardas": {
+                  "fortitude": 2
+                }
+              },
+              "progressao": [
+                {
+                  "nivel": 17,
+                  "proficiencias": {
+                    "salvaguardas": {
+                      "fortitude": 3
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "reflexos",
+              "nome": "Reflexos",
+              "proficiencias": {
+                "salvaguardas": {
+                  "reflexos": 2
+                }
+              },
+              "progressao": [
+                {
+                  "nivel": 17,
+                  "proficiencias": {
+                    "salvaguardas": {
+                      "reflexos": 3
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "vontade",
+              "nome": "Vontade",
+              "proficiencias": {
+                "salvaguardas": {
+                  "vontade": 2
+                }
+              },
+              "progressao": [
+                {
+                  "nivel": 17,
+                  "proficiencias": {
+                    "salvaguardas": {
+                      "vontade": 3
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "percepcao",
+              "nome": "Percepção",
+              "proficiencias": {
+                "percepcao": 2
+              },
+              "progressao": [
+                {
+                  "nivel": 17,
+                  "proficiencias": {
+                    "percepcao": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": false,
+      "textoNativoCompleto": true
+    }
+  ],
+  "pendenciasMotor": [
+    {
+      "id": "iniciativa-incrivel",
+      "pagina": 257,
+      "regra": "Somar +2 de circunstância ao total independentemente da perícia usada para iniciativa; não modificar Percepção ou a perícia fora dessa rolagem."
+    },
+    {
+      "id": "improvisacao-destreinada",
+      "pagina": 257,
+      "regra": "Usar nível−2, nível−1 a partir do 5º e nível completo a partir do 7º nas perícias destreinadas, sem liberar ações treinadas."
+    },
+    {
+      "id": "recuperacao-rapida",
+      "pagina": 263,
+      "regra": "Aplicar multiplicador de cura no descanso, redução de drenado e redução diferenciada de estágios para aflições comuns e virulentas."
+    },
+    {
+      "id": "epitome-da-ancestralidade",
+      "pagina": 256,
+      "regra": "Recebe talento de ancestralidade de nível 1 ao adquirir Epítome (nível 3). Slot precisa manter nível de aquisição separado do nível máximo do talento bônus."
+    },
+    {
+      "id": "perspicacia-astuta",
+      "pagina": 260,
+      "regra": "Escolha Fortitude, Reflexos, Vontade ou Percepção: especialista na opção, mestre no nível 17. Escolha pertence à seleção desse talento."
+    },
+    {
+      "id": "proficiencia-em-armaduras",
+      "pagina": 261,
+      "regra": "Treina próximo tipo de armadura em sequência leve/média/pesada; especialista no tipo escolhido a partir do nível 13. Repetível para próximo tipo."
+    },
+    {
+      "id": "proficiencia-com-armas",
+      "pagina": 261,
+      "regra": "Treina todas marciais; se já treinado, uma arma avançada à escolha. No nível 11, especialista nessas armas. Repetível para avançadas diferentes."
+    },
+    {
+      "id": "saber-adicional",
+      "pagina": 263,
+      "regra": "Treina uma subcategoria nova de Saber; incrementos adicionais exclusivos para ela nos níveis 3, 7 e 15. Repetível para subcategorias diferentes."
+    },
+    {
+      "id": "investidura-incrivel",
+      "pagina": 257,
+      "regra": "Somar 2 ao limite de itens investidos e validar Carisma +3."
+    },
+    {
+      "id": "passo-aprumado",
+      "pagina": 260,
+      "regra": "Permitir a ação Dar um Passo em terreno difícil e validar Destreza +2."
+    },
+    {
+      "id": "procurar-rapido",
+      "pagina": 261,
+      "regra": "Velocidade de busca 2× com Percepção mestre e 4× com Percepção lendária."
+    },
+    {
+      "id": "sobrevivente-lendario",
+      "pagina": 264,
+      "regra": "Dispensar alimento e água e bloquear dano ambiental de frio/calor intenso, extremo e incrível; não concede imunidade geral a dano de frio ou fogo."
+    }
+  ]
+}

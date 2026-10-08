@@ -1,0 +1,3657 @@
+{
+  "talentos": [
+    {
+      "id": "dedicacao-de-ritualista",
+      "nome": "Dedicação de Ritualista",
+      "nomeOriginal": "Ritualist Dedication",
+      "nivel": 2,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "especialista em Arcanismo, Natureza, Ocultismo ou Religião",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "incomum",
+        "dedicação"
+      ],
+      "descricao": "Você recebe +2 de circunstância em todas as verificações para realizar um ritual e aprende dois rituais incomuns de 2ª graduação ou menor. Deve cumprir todos os pré-requisitos para ser o conjurador primário do ritual escolhido e não pode ensiná-lo nem permitir que outra pessoa seja o conjurador primário, a menos que ela também conheça o ritual. No 8º nível e a cada 4 níveis seguintes, aprende mais dois rituais sob as mesmas restrições, de graduação máxima igual à metade de seu nível.",
+      "resumo": [
+        "Bônus em rituais e dois rituais novos a cada quatro níveis desde o 8º."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ritualista-flexivel",
+      "nome": "Ritualista Flexível",
+      "nomeOriginal": "Flexible Ritualist",
+      "nivel": 4,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "Dedicação de Ritualista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao conjurar um ritual, pode reduzir em 1 o número de conjuradores secundários. Deve cumprir os requisitos daquele conjurador e faz a verificação secundária normalmente exigida dele. Não pode substituir um conjurador secundário que seja alvo da magia, como no ritual Expiação.",
+      "resumo": [
+        "Substitui um conjurador secundário, mas assume seus requisitos e sua verificação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ritualista-engenhoso",
+      "nome": "Ritualista Engenhoso",
+      "nomeOriginal": "Resourceful Ritualist",
+      "nivel": 6,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "Dedicação de Ritualista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Pode tentar verificações de rituais que exijam proficiência especialista sendo treinado, proficiência mestre sendo especialista, ou proficiência lendária sendo mestre.",
+      "resumo": [
+        "Executa rituais que exigem um grau de proficiência acima do seu."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "rituais-eficientes",
+      "nome": "Rituais Eficientes",
+      "nomeOriginal": "Efficient Rituals",
+      "nivel": 6,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "Dedicação de Ritualista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Se um ritual normalmente exigir 1 dia, pode realizá-lo em 4 horas. Se exigir mais de 1 dia, leva metade dos dias, arredondada para cima. No 14º nível, um ritual com tempo medido em dias passa a exigir o mesmo número de horas; se resultar em mais de 8 horas, divida-o entre vários dias como de costume.",
+      "resumo": [
+        "Reduz drasticamente o tempo necessário para realizar rituais."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ritualista-seguro",
+      "nome": "Ritualista Seguro",
+      "nomeOriginal": "Assured Ritualist",
+      "nivel": 10,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "Ritualista Flexível",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Sendo o conjurador primário, depois de todas as verificações secundárias serem roladas, escolha uma que tenha resultado em falha ou falha crítica e melhore o resultado em um grau de sucesso.",
+      "resumo": [
+        "Melhora em um grau uma verificação secundária malsucedida."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ritualista-empreendedor",
+      "nome": "Ritualista Empreendedor",
+      "nomeOriginal": "Enterprising Ritualist",
+      "nivel": 14,
+      "pagina": 212,
+      "paginaPdf": 212,
+      "paginaImpressa": 211,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Ritualista",
+      "preRequisitos": "Dedicação de Ritualista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Quando o Custo de um ritual tiver valor em po, reduza em 10% o valor gasto. Se obtiver sucesso crítico na verificação primária, reduza o valor consumido novamente na mesma quantia. Por exemplo, Ressuscitar uma criatura de 14º nível custaria 945 po em vez de 1.050 po, ou 840 po com sucesso crítico.",
+      "resumo": [
+        "Reduz em 10% o custo monetário de rituais, novamente em um sucesso crítico."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-batedor",
+      "nome": "Dedicação de Batedor",
+      "nomeOriginal": "Scout Dedication",
+      "nivel": 2,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "treinado em Furtividade e Sobrevivência",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Pode realizar simultaneamente as atividades de exploração Batedor e Evitar Ser Notado. O bônus de iniciativa concedido por Batedor passa de +1 para +2.",
+      "resumo": [
+        "Combina exploração furtiva e reconhecimento e melhora o bônus de iniciativa."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "investida-do-batedor",
+      "nome": "Investida do Batedor",
+      "nomeOriginal": "Scout's Charge",
+      "nivel": 4,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "Dedicação de Batedor",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Escolha um inimigo. Ande, use Fintar contra ele e faça um Golpe contra ele. Para Fintar, pode usar Furtividade no lugar de Enganação, aproveitando o terreno para surpreendê-lo.",
+      "resumo": [
+        "Anda, Finta com Enganação ou Furtividade e então Golpeia."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "batedor-de-terreno",
+      "nome": "Batedor de Terreno",
+      "nomeOriginal": "Terrain Scout",
+      "nivel": 4,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "Dedicação de Batedor",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe duas vezes o talento de perícia Espreitador de Terreno, escolhendo terreno diferente em cada vez. Ao Evitar Ser Notado durante exploração, se aliados usarem Seguir o Especialista para acompanhá-lo, escolha um deles para receber o benefício de um de seus talentos Espreitador de Terreno.",
+      "resumo": [
+        "Recebe dois terrenos e compartilha um deles com um aliado que o segue."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "sombra-fugaz",
+      "nome": "Sombra Fugaz",
+      "nomeOriginal": "Fleeting Shadow",
+      "nivel": 6,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "Dedicação de Batedor",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Você se Esconde e então Esgueira duas vezes.",
+      "resumo": [
+        "Esconde-se e Esgueira duas vezes."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "velocidade-do-batedor",
+      "nome": "Velocidade do Batedor",
+      "nomeOriginal": "Scout's Speed",
+      "nivel": 6,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "Dedicação de Batedor",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe +3 m de estado no Deslocamento. Para calcular sua velocidade de viagem, esse bônus aumenta para +6 m.",
+      "resumo": [
+        "Aumenta o Deslocamento em combate e ainda mais durante viagens."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "bote-do-batedor",
+      "nome": "Bote do Batedor",
+      "nomeOriginal": "Scout's Pounce",
+      "nivel": 10,
+      "pagina": 213,
+      "paginaPdf": 213,
+      "paginaImpressa": 212,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Batedor",
+      "preRequisitos": "Dedicação de Batedor",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "escondido ou despercebido por todos os oponentes e a mais de 3 m de qualquer inimigo",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Ande até seu Deslocamento e então faça dois Golpes. Se estava escondido ou despercebido pelo alvo, ele fica desprevenido contra ambos. A penalidade por ataques múltiplos se aplica normalmente a cada ataque.",
+      "resumo": [
+        "Sai das sombras, move-se e desfere dois Golpes."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-trapaceiro-de-pergaminhos",
+      "nome": "Dedicação de Trapaceiro de Pergaminhos",
+      "nomeOriginal": "Scroll Trickster Dedication",
+      "nivel": 2,
+      "pagina": 214,
+      "paginaPdf": 214,
+      "paginaImpressa": 213,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Trapaceiro de Pergaminhos",
+      "preRequisitos": "treinado em Arcanismo, Natureza, Ocultismo ou Religião",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe o talento Enganar Item Mágico e +2 de circunstância nas verificações para Enganar pergaminhos. Uma falha crítica ao Enganar Item Mágico com um pergaminho se torna falha.",
+      "resumo": [
+        "Aprende a ativar pergaminhos com mais segurança."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "reserva-basica-de-pergaminhos",
+      "nome": "Reserva Básica de Pergaminhos",
+      "nomeOriginal": "Basic Scroll Cache",
+      "nivel": 6,
+      "pagina": 214,
+      "paginaPdf": 214,
+      "paginaImpressa": 213,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Trapaceiro de Pergaminhos",
+      "preRequisitos": "Dedicação de Trapaceiro de Pergaminhos",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Durante preparações diárias, cria um pergaminho temporário com magia de 1ª graduação. A magia deve ser comum, acessível ou conjurável por você, e você deve ser treinado na perícia de ao menos uma tradição dela. Pode usar Aprender uma Magia para ampliar as opções mesmo sem ser conjurador. O pergaminho desaparece nas próximas preparações e não serve para Aprender a Magia. No 8º nível, cria também um segundo pergaminho, de 2ª graduação.",
+      "resumo": [
+        "Prepara diariamente pergaminhos temporários de 1ª e depois 2ª graduação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "leitura-dinamica-de-pergaminho",
+      "nome": "Leitura Dinâmica de Pergaminho",
+      "nomeOriginal": "Skim Scroll",
+      "nivel": 8,
+      "pagina": 214,
+      "paginaPdf": 214,
+      "paginaImpressa": 213,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Trapaceiro de Pergaminhos",
+      "preRequisitos": "Dedicação de Trapaceiro de Pergaminhos",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Interaja para sacar um pergaminho e então use Enganar Item Mágico nele.",
+      "resumo": [
+        "Saca e tenta ativar um pergaminho em duas ações."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "reserva-especialista-de-pergaminhos",
+      "nome": "Reserva Especialista de Pergaminhos",
+      "nomeOriginal": "Expert Scroll Cache",
+      "nivel": 12,
+      "pagina": 214,
+      "paginaPdf": 214,
+      "paginaImpressa": 213,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Trapaceiro de Pergaminhos",
+      "preRequisitos": "Reserva Básica de Pergaminhos",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Além dos pergaminhos da Reserva Básica, cria diariamente um pergaminho de 3ª graduação. No 14º nível, adiciona um de 4ª; no 16º, um de 5ª.",
+      "resumo": [
+        "Amplia a reserva diária com pergaminhos de 3ª a 5ª graduação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "reserva-mestre-de-pergaminhos",
+      "nome": "Reserva Mestre de Pergaminhos",
+      "nomeOriginal": "Master Scroll Cache",
+      "nivel": 18,
+      "pagina": 214,
+      "paginaPdf": 214,
+      "paginaImpressa": 213,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Trapaceiro de Pergaminhos",
+      "preRequisitos": "Reserva Especialista de Pergaminhos",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Além das Reservas Básica e Especialista, cria diariamente um pergaminho de 6ª graduação. No 20º nível, adiciona um de 7ª.",
+      "resumo": [
+        "Amplia a reserva diária com pergaminhos de 6ª e 7ª graduação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-sucateiro",
+      "nome": "Dedicação de Sucateiro",
+      "nomeOriginal": "Scrounger Dedication",
+      "nivel": 2,
+      "pagina": 215,
+      "paginaPdf": 215,
+      "paginaImpressa": 214,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sucateiro",
+      "preRequisitos": "treinado em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "incomum",
+        "dedicação"
+      ],
+      "descricao": "Pode Criar sem ferramentas ou oficina apropriadas e memoriza todas as fórmulas, pagando normalmente para aprendê-las. Recebe Remendar com Sucata: em 10 minutos, Cria com materiais disponíveis um item temporário que tenha memorizado ou cuja fórmula conheça; deve ser comum, não mágico, de até metade de seu nível, e ser arma, armadura ou equipamento de aventura não consumível; alternativamente, cria 10 munições. Não cria informação nem magia. O item é malfeito, mas pode designar uma criatura sem a penalidade de usá-lo, e dura 1d4 horas, roladas secretamente pelo MJ.",
+      "resumo": [
+        "Cria rapidamente equipamento mundano temporário usando sucata."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "engenharia-reversa",
+      "nome": "Engenharia Reversa",
+      "nomeOriginal": "Reverse Engineering",
+      "nivel": 4,
+      "pagina": 215,
+      "paginaPdf": 215,
+      "paginaImpressa": 214,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sucateiro",
+      "preRequisitos": "Dedicação de Sucateiro; especialista em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Recebe +2 de circunstância em Ofício para obter uma fórmula por engenharia reversa e precisa de apenas 1 dia de preparação, em vez de 2. Com sucesso crítico, pode criar a fórmula e remontar o item original, em vez de receber a fórmula e matéria-prima de metade do valor.",
+      "resumo": [
+        "Obtém fórmulas mais rápido e pode preservar o objeto em sucesso crítico."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "sucateiro-magico",
+      "nome": "Sucateiro Mágico",
+      "nomeOriginal": "Magical Scrounger",
+      "nivel": 6,
+      "pagina": 215,
+      "paginaPdf": 215,
+      "paginaImpressa": 214,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sucateiro",
+      "preRequisitos": "Dedicação de Sucateiro; Criação Mágica",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "uma vez por dia",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Uma vez por dia, pode Remendar com Sucata um item mágico temporário. Ele deve ser comum, mágico, de até metade de seu nível e poder ser segurado, empunhado ou vestido. Requisitos de Criação continuam obrigatórios. Não pode ser consumível, runa nem item com runas; se precisar ser vestido ou afixado, removê-lo depois destrói o item.",
+      "resumo": [
+        "Cria uma vez por dia um item mágico temporário limitado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "desmontagem-especialista",
+      "nome": "Desmontagem Especialista",
+      "nomeOriginal": "Expert Disassembly",
+      "nivel": 7,
+      "pagina": 215,
+      "paginaPdf": 215,
+      "paginaImpressa": 214,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sucateiro",
+      "preRequisitos": "Dedicação de Sucateiro; mestre em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Pode usar Ofício no lugar de Ladroagem para Desabilitar um Dispositivo ou Abrir uma Fechadura.",
+      "resumo": [
+        "Substitui Ladroagem por Ofício em dispositivos e fechaduras."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-sentinela",
+      "nome": "Dedicação de Sentinela",
+      "nomeOriginal": "Sentinel Dedication",
+      "nivel": 2,
+      "pagina": 216,
+      "paginaPdf": 216,
+      "paginaImpressa": 215,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sentinela",
+      "preRequisitos": "",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Torna-se treinado em armaduras leves e médias; se já era, torna-se treinado em pesadas. Sempre que uma característica de classe conceder especialista ou maior em qualquer armadura, recebe a mesma proficiência nos tipos concedidos por este talento. Se uma característica conceder especialista em defesa sem armadura e você tiver 13º nível ou mais, também se torna especialista nesses tipos.",
+      "resumo": [
+        "Concede e faz progredir proficiência com armaduras."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "pele-de-aco",
+      "nome": "Pele de Aço",
+      "nomeOriginal": "Steel Skin",
+      "nivel": 4,
+      "pagina": 216,
+      "paginaPdf": 216,
+      "paginaImpressa": 215,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sentinela",
+      "preRequisitos": "Dedicação de Sentinela; treinado em Sobrevivência",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Você não fica fatigado por dormir vestindo armadura.",
+      "resumo": [
+        "Pode dormir de armadura sem sofrer fadiga."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "especialista-em-armadura",
+      "nome": "Especialista em Armadura",
+      "nomeOriginal": "Armor Specialist",
+      "nivel": 6,
+      "pagina": 216,
+      "paginaPdf": 216,
+      "paginaImpressa": 215,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sentinela",
+      "preRequisitos": "Dedicação de Sentinela",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe os efeitos de especialização de todas as armaduras em que é proficiente.",
+      "resumo": [
+        "Ativa os efeitos de especialização de suas armaduras."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "repulsa-blindada",
+      "nome": "Repulsa Blindada",
+      "nomeOriginal": "Armored Rebuff",
+      "nivel": 8,
+      "pagina": 216,
+      "paginaPdf": 216,
+      "paginaImpressa": 215,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sentinela",
+      "preRequisitos": "Dedicação de Sentinela",
+      "acoes": "reação",
+      "gatilho": "inimigo adjacente obtém falha crítica em Golpe corpo a corpo contra você",
+      "requisitos": "vestindo armadura média ou pesada",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Tente Atletismo para Empurrar o inimigo que acionou a reação, mesmo sem uma mão livre. Em caso de sucesso, não pode Andar para segui-lo, pois o golpe rebatido é que o empurra.",
+      "resumo": [
+        "Rebate uma falha crítica inimiga e tenta Empurrar sem mão livre."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "baluarte-poderoso",
+      "nome": "Baluarte Poderoso",
+      "nomeOriginal": "Mighty Bulwark",
+      "nivel": 10,
+      "pagina": 216,
+      "paginaPdf": 216,
+      "paginaImpressa": 215,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Sentinela",
+      "preRequisitos": "Dedicação de Sentinela",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "O bônus do traço baluarte aumenta de +3 para +4 e se aplica a todas as salvaguardas de Reflexos, não apenas às que causam dano.",
+      "resumo": [
+        "Melhora baluarte para +4 e o aplica a todo Reflexos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-armadilheiro",
+      "nome": "Dedicação de Armadilheiro",
+      "nomeOriginal": "Snarecrafter Dedication",
+      "nivel": 2,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "treinado em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe Criação de Laços. Ao instalar um laço, a CD de salvaguarda usa a maior entre sua CD de classe e a do laço. Um laço que exigiria 1 minuto pode ser Criado com 3 ações Interagir. Nas preparações diárias, prepara gratuitamente quatro laços de seu livro para uso rápido; seis se mestre em Ofício e oito se lendário. Ao elevar Ofício a especialista, mestre ou lendário, adiciona três fórmulas de laço de seu nível ou menor. Patrulheiros podem usar Sobrevivência no lugar de Ofício em pré-requisitos e funções deste arquétipo.",
+      "resumo": [
+        "Prepara laços gratuitos e os instala rapidamente usando sua melhor CD."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "laco-surpresa",
+      "nome": "Laço Surpresa",
+      "nomeOriginal": "Surprise Snare",
+      "nivel": 4,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "Dedicação de Armadilheiro",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "manuseio"
+      ],
+      "descricao": "Instale um laço preparado para uso rápido no espaço ocupado por um inimigo. Deve ser um laço cujo tempo normal de Criação seja 1 minuto ou menos; ele é acionado automaticamente.",
+      "resumo": [
+        "Instala e dispara um laço diretamente sob um inimigo."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "gatilho-remoto",
+      "nome": "Gatilho Remoto",
+      "nomeOriginal": "Remote Trigger",
+      "nivel": 6,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "Dedicação de Armadilheiro",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Pode Golpear um laço para acioná-lo prematuramente. Se você o criou, acerta automaticamente; se outra pessoa o criou, faça Golpe à distância contra a CD de Ofício dela e só aciona em caso de acerto.",
+      "resumo": [
+        "Dispara um laço à distância, automaticamente se for seu."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "laco-gigante",
+      "nome": "Laço Gigante",
+      "nomeOriginal": "Giant Snare",
+      "nivel": 10,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "Dedicação de Armadilheiro",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao preparar laços para uso rápido, pode preparar alguns como gigantes. Cada um ocupa área de 3 m por 3 m e consome duas preparações; pode ser acionado por quem entre em qualquer parte e seus efeitos abrangem toda a área.",
+      "resumo": [
+        "Troca duas preparações por um laço de área 3 m por 3 m."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "lacos-relampago",
+      "nome": "Laços Relâmpago",
+      "nomeOriginal": "Lightning Snares",
+      "nivel": 12,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "Dedicação de Armadilheiro; mestre em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Um laço que normalmente exige 1 minuto para Criar pode ser Criado usando uma única ação Interagir.",
+      "resumo": [
+        "Cria com uma ação laços cujo tempo seria 1 minuto."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "lacos-abundantes",
+      "nome": "Laços Abundantes",
+      "nomeOriginal": "Plentiful Snares",
+      "nivel": 12,
+      "pagina": 217,
+      "paginaPdf": 217,
+      "paginaImpressa": 216,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Armadilheiro",
+      "preRequisitos": "Dedicação de Armadilheiro",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Dobre a quantidade de laços preparados concedida por Dedicação de Armadilheiro.",
+      "resumo": [
+        "Dobra seus laços gratuitos preparados diariamente."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-diletante-de-talismas",
+      "nome": "Dedicação de Diletante de Talismãs",
+      "nomeOriginal": "Talisman Dabbler Dedication",
+      "nivel": 2,
+      "pagina": 218,
+      "paginaPdf": 218,
+      "paginaImpressa": 217,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Diletante de Talismãs",
+      "preRequisitos": "",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Pode Criar talismãs, conhece de memória as fórmulas de todos os talismãs comuns de seu nível ou menor e não precisa de livro para elas. Nas preparações, cria dois talismãs temporários de nível de item até metade do seu, cujas fórmulas conheça; desaparecem nas próximas preparações. A CD deles usa a maior entre sua CD de classe, CD de magia e CD do talismã. Ao Afixar um Talismã durante 10 minutos, pode afixar ou remover até quatro em qualquer combinação.",
+      "resumo": [
+        "Conhece fórmulas comuns e prepara dois talismãs temporários por dia."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "afixacao-rapida",
+      "nome": "Afixação Rápida",
+      "nomeOriginal": "Quick Fix",
+      "nivel": 4,
+      "pagina": 218,
+      "paginaPdf": 218,
+      "paginaImpressa": 217,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Diletante de Talismãs",
+      "preRequisitos": "Dedicação de Diletante de Talismãs",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe Afixação Rápida mesmo sem cumprir os pré-requisitos. Com ela, pode afixar ou remover até quatro talismãs em 1 minuto. No 12º nível, pode Afixar um Talismã como atividade de 3 ações independentemente de sua proficiência em Ofício.",
+      "resumo": [
+        "Afixa ou remove quatro talismãs rapidamente."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "diletante-aprofundado",
+      "nome": "Diletante Aprofundado",
+      "nomeOriginal": "Deeper Dabbler",
+      "nivel": 8,
+      "pagina": 218,
+      "paginaPdf": 218,
+      "paginaImpressa": 217,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Diletante de Talismãs",
+      "preRequisitos": "Dedicação de Diletante de Talismãs",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Cria dois talismãs adicionais durante as preparações diárias. Pode selecionar este talento uma segunda vez no 14º nível ou acima.",
+      "resumo": [
+        "Acrescenta dois talismãs temporários diários e pode ser repetido no 14º."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "sabio-talismanico",
+      "nome": "Sábio Talismânico",
+      "nomeOriginal": "Talismanic Sage",
+      "nivel": 14,
+      "pagina": 218,
+      "paginaPdf": 218,
+      "paginaImpressa": 217,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Diletante de Talismãs",
+      "preRequisitos": "Dedicação de Diletante de Talismãs",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao Afixar um Talismã, pode tratar especialmente um item para permitir que tenha dois talismãs ativos ao mesmo tempo. O tratamento termina quando usar esta habilidade para tratar outro item.",
+      "resumo": [
+        "Permite dois talismãs ativos simultaneamente em um item tratado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-vigilante",
+      "nome": "Dedicação de Vigilante",
+      "nomeOriginal": "Vigilante Dedication",
+      "nivel": 2,
+      "pagina": 219,
+      "paginaPdf": 219,
+      "paginaImpressa": 218,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "treinado em Enganação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "incomum",
+        "dedicação"
+      ],
+      "descricao": "Você possui identidade social e identidade vigilante, ambas reais. Para descobrir a outra, alguém deve Buscar e testar Percepção contra sua CD de Enganação, que é 20 + seu modificador de proficiência. Trocar exige 1 minuto, fora da vista, e efeitos de aparência não reduzem o tempo. Recordar Conhecimento e detecção tratam as identidades separadamente. Talentos de classe e vigilante pertencem à identidade vigilante e usá-los na social pode expô-lo. Se exposto publicamente, perde os benefícios de disfarce, mas pode gastar 1 semana de recesso criando nova identidade social.",
+      "resumo": [
+        "Mantém duas identidades mecanicamente separadas e protegidas por Enganação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "magia-oculta",
+      "nome": "Magia Oculta",
+      "nomeOriginal": "Hidden Magic",
+      "nivel": 4,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante; especialista em Arcanismo, Natureza, Ocultismo ou Religião",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Nas preparações diárias, ajusta quaisquer itens mágicos para parecerem não mágicos até as próximas preparações. Para enxergar a magia com Detectar Magia ou Ler Aura, o conjurador precisa passar em Percepção contra sua CD de Enganação.",
+      "resumo": [
+        "Esconde diariamente as auras mágicas de seus equipamentos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "disfarce-de-lacaio",
+      "nome": "Disfarce de Lacaio",
+      "nomeOriginal": "Minion Guise",
+      "nivel": 4,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante; companheiro animal ou familiar; especialista em Enganação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Na identidade social, concede identidade social a companheiro animal, familiar, mascote ou outro lacaio de classe ou talento. Ao trocar, muda sua aparência para criatura socialmente aceitável do mesmo tipo. Ordenar habilidades mágicas ou de combate incomuns pode expor sua identidade.",
+      "resumo": [
+        "Disfarça um lacaio junto com sua identidade social."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "refugio-seguro",
+      "nome": "Refúgio Seguro",
+      "nomeOriginal": "Safe House",
+      "nivel": 4,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Estabelece esconderijo de dois cubos de 3 m em local acessível. Protege pessoas e objetos como Véu de Privacidade, usando Enganação na CD de neutralização e metade de seu nível, arredondada para cima, na graduação. Montar ou mover exige uma semana. O tamanho aumenta para 4 cubos com especialista, 8 com mestre e 16 com lendário em Enganação.",
+      "resumo": [
+        "Cria um refúgio protegido de detecção mágica e ampliado por proficiência."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ambito-social",
+      "nome": "Âmbito Social",
+      "nomeOriginal": "Social Purview",
+      "nivel": 4,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Escolha um arquétipo cujos pré-requisitos cumpra. Recebe sua dedicação e pode escolher seus talentos sem ter obtido talentos vigilantes suficientes para outra dedicação. Eles pertencem à identidade social: usá-los nela não ameaça o segredo, mas usá-los como vigilante pode expô-lo.",
+      "resumo": [
+        "Vincula outro arquétipo à sua identidade social."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "aparicao-surpreendente",
+      "nome": "Aparição Surpreendente",
+      "nomeOriginal": "Startling Appearance",
+      "nivel": 6,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "não notado pela criatura-alvo",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça um Golpe contra a criatura que não o notou; ela está desprevenida contra ele. Se acertar, permanece desprevenida pelo restante do seu turno e fica assustada 1, ou assustada 2 em acerto crítico.",
+      "resumo": [
+        "Ataca de surpresa e mantém o alvo desprevenido e assustado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "troca-rapida",
+      "nome": "Troca Rápida",
+      "nomeOriginal": "Quick Change",
+      "nivel": 7,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante; mestre em Enganação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Troca de identidade com atividade de 3 ações em vez de 1 minuto. Se for lendário em Enganação, faz a troca com uma ação.",
+      "resumo": [
+        "Troca de identidade em três ações, ou uma se lendário."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "verdade-subjetiva",
+      "nome": "Verdade Subjetiva",
+      "nomeOriginal": "Subjective Truth",
+      "nivel": 7,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante; mestre em Enganação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Desde que sua afirmação seja verdadeira do ponto de vista da identidade atual, pode enganar efeitos que revelam mentiras, como Anel da Verdade.",
+      "resumo": [
+        "Engana magia detectora de mentiras com verdades da identidade atual."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "muitos-disfarces",
+      "nome": "Muitos Disfarces",
+      "nomeOriginal": "Many Guises",
+      "nivel": 8,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Dedicação de Vigilante",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao trocar identidade, pode assumir uma pessoa mundana genérica de sua ancestralidade, qualquer gênero e profissão comum. Magias e habilidades o detectam como essa identidade, salvo neutralização contra a mesma CD de Enganação da dedicação. Usar habilidades de classe ou dedicação encerra o disfarce.",
+      "resumo": [
+        "Assume identidades mundanas genéricas resistentes a detecção."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "aparicao-aterrorizante",
+      "nome": "Aparição Aterrorizante",
+      "nomeOriginal": "Frightening Appearance",
+      "nivel": 12,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "especialista em Intimidação; Aparição Surpreendente",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao usar Aparição Surpreendente, pode tentar Desmoralizar cada inimigo em emanação de 3 m que não o notava antes do Golpe.",
+      "resumo": [
+        "Desmoraliza todos os inimigos próximos surpreendidos por sua aparição."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "aparicao-atordoante",
+      "nome": "Aparição Atordoante",
+      "nomeOriginal": "Stunning Appearance",
+      "nivel": 16,
+      "pagina": 220,
+      "paginaPdf": 220,
+      "paginaImpressa": 219,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Vigilante",
+      "preRequisitos": "Aparição Surpreendente",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao usar Aparição Surpreendente e acertar inimigo de seu nível ou menor, ele fica atordoado 1, ou atordoado 2 em acerto crítico.",
+      "resumo": [
+        "A aparição atordoa inimigos de nível não superior ao seu."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-viking",
+      "nome": "Dedicação de Viking",
+      "nomeOriginal": "Viking Dedication",
+      "nivel": 2,
+      "pagina": 221,
+      "paginaPdf": 221,
+      "paginaImpressa": 220,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Viking",
+      "preRequisitos": "treinado em Atletismo",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe Conhecimento Adicional para Conhecimento de Navegação e de Guerra. Ao usar Deslocamento terrestre, ignora terreno difícil de água rasa, como pântanos ou praias. Um sucesso em Atletismo para Nadar se torna sucesso crítico.",
+      "resumo": [
+        "Concede conhecimentos, mobilidade em água rasa e melhora Nadar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "investida-de-arremesso",
+      "nome": "Investida de Arremesso",
+      "nomeOriginal": "Hurling Charge",
+      "nivel": 4,
+      "pagina": 221,
+      "paginaPdf": 221,
+      "paginaImpressa": 220,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Viking",
+      "preRequisitos": "Dedicação de Viking",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "empunhando arma arremessável",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça um Golpe à distância com a arma arremessável, Ande e Interaja para sacar outra arma; Interagir não aciona reações. Se estiver em fúria e terminar adjacente a inimigo, ele fica desprevenido contra seu próximo Golpe com a arma sacada até o fim do próximo turno.",
+      "resumo": [
+        "Arremessa, avança e saca outra arma sem provocar reações."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiaridade-com-armas-vikings",
+      "nome": "Familiaridade com Armas Vikings",
+      "nomeOriginal": "Viking Weapon Familiarity",
+      "nivel": 4,
+      "pagina": 221,
+      "paginaPdf": 221,
+      "paginaImpressa": 220,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Viking",
+      "preRequisitos": "Dedicação de Viking",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe Bloqueio com Escudo. Para proficiência, trata machado de batalha, machadinha, espada longa, broquel de escudo, cravos de escudo e espada curta como armas simples. No 5º nível, acertos críticos com elas recebem o efeito de especialização crítica.",
+      "resumo": [
+        "Concede Bloqueio com Escudo e familiaridade com armas vikings."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "segundo-escudo",
+      "nome": "Segundo Escudo",
+      "nomeOriginal": "Second Shield",
+      "nivel": 6,
+      "pagina": 221,
+      "paginaPdf": 221,
+      "paginaImpressa": 220,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Viking",
+      "preRequisitos": "Dedicação de Viking",
+      "acoes": "reação",
+      "gatilho": "seu Bloqueio com Escudo quebra ou destrói seu escudo",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Interaja para sacar um escudo que carrega ou um escudo sem dono ao alcance. Pode sacar objeto que o MJ aceite como escudo improvisado, como mesa ou cadeira. O novo escudo não fica erguido até usar Erguer Escudo.",
+      "resumo": [
+        "Saca imediatamente um escudo substituto ou improvisado quando o atual quebra."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "no-meio-da-peleja",
+      "nome": "No Meio da Peleja",
+      "nomeOriginal": "Into the Fray",
+      "nivel": 8,
+      "pagina": 221,
+      "paginaPdf": 221,
+      "paginaImpressa": 220,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Viking",
+      "preRequisitos": "Dedicação de Viking",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "arma corpo a corpo de uma mão e escudo em mãos diferentes",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Salte, Ande ou Nade. Durante o movimento, faça dois Golpes corpo a corpo em pontos quaisquer: um com a arma de uma mão e outro com escudo ou arma anexada a ele. Devem atingir inimigos diferentes. Ambos contam para a penalidade por ataques múltiplos, mas ela só aumenta depois dos dois.",
+      "resumo": [
+        "Move-se e ataca dois inimigos diferentes com arma e escudo."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-improvisador-de-armas",
+      "nome": "Dedicação de Improvisador de Armas",
+      "nomeOriginal": "Weapon Improviser Dedication",
+      "nivel": 2,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "treinado em armas marciais",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Não sofre a penalidade normal de –2 em ataques com armas improvisadas. O dado mínimo de dano delas é 1d6, ou 1d4 se forem ágeis.",
+      "resumo": [
+        "Remove a penalidade e estabelece dano mínimo de armas improvisadas."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "pancada-improvisada",
+      "nome": "Pancada Improvisada",
+      "nomeOriginal": "Improvised Pummel",
+      "nivel": 4,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "Dedicação de Improvisador de Armas",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao Golpear com arma improvisada empunhada, recebe +1 de item no ataque e pode causar dois dados de dano de arma. Em acerto crítico, a arma quebra após os efeitos; se Dureza maior que seu nível, artefato, amaldiçoada ou difícil de destruir, não quebra, mas o crítico vira acerto normal. Pode recusar os benefícios. No 12º nível o bônus vira +2; no 16º causa três dados. Com bandagens de golpes poderosos, use o maior bônus e pode usar seus dados; runas de propriedade se aplicam ao usar esses dados, se compatíveis segundo o MJ.",
+      "resumo": [
+        "Fortalece um Golpe improvisado, arriscando quebrar a arma no crítico."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-surpresa",
+      "nome": "Golpe Surpresa",
+      "nomeOriginal": "Surprise Strike",
+      "nivel": 6,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "Dedicação de Improvisador de Armas",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao Golpear com arma improvisada uma criatura que não o viu Golpear com uma delas ou desconheça sua habilidade, ela fica desprevenida contra esse Golpe.",
+      "resumo": [
+        "O primeiro uso inesperado de arma improvisada deixa o alvo desprevenido."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "critico-improvisado",
+      "nome": "Crítico Improvisado",
+      "nomeOriginal": "Improvised Critical",
+      "nivel": 8,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "Dedicação de Improvisador de Armas",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Pode aplicar especialização crítica a armas improvisadas. Para cada objeto, o MJ define o efeito mais apropriado conforme seu tipo.",
+      "resumo": [
+        "Concede especialização crítica determinada pelo formato do objeto."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-de-ocasiao",
+      "nome": "Golpe de Ocasião",
+      "nomeOriginal": "Makeshift Strike",
+      "nivel": 8,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "Dedicação de Improvisador de Armas",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Interaja para pegar objeto sem dono ao alcance que possa servir como arma improvisada e então Golpeie com ele.",
+      "resumo": [
+        "Apanha um objeto e Golpeia com ele em duas ações."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-estilhacante",
+      "nome": "Golpe Estilhaçante",
+      "nomeOriginal": "Shattering Strike",
+      "nivel": 10,
+      "pagina": 222,
+      "paginaPdf": 222,
+      "paginaImpressa": 221,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Improvisador de Armas",
+      "preRequisitos": "Pancada Improvisada",
+      "acoes": "reação",
+      "gatilho": "arma improvisada empunhada fica quebrada por sucesso crítico em Pancada Improvisada",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "A arma improvisada se despedaça e é destruída, causando 3d6 perfurante adicional à criatura atingida. Esse dano extra aplicado no crítico não é dobrado.",
+      "resumo": [
+        "Destrói a arma quebrada para acrescentar 3d6 perfurante não dobrado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-lutador",
+      "nome": "Dedicação de Lutador",
+      "nomeOriginal": "Wrestler Dedication",
+      "nivel": 2,
+      "pagina": 223,
+      "paginaPdf": 223,
+      "paginaImpressa": 222,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Lutador",
+      "preRequisitos": "treinado em Atletismo",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Torna-se especialista em Atletismo e recebe Lutador Titânico. Não sofre –2 de circunstância por fazer ataque letal com ataques desarmados não letais. Recebe +2 de circunstância na CD de Fortitude contra tentativas de Agarrá-lo ou Engoli-lo Inteiro.",
+      "resumo": [
+        "Especializa Atletismo e melhora combate desarmado e resistência a agarrões."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "torcao-de-desengajamento",
+      "nome": "Torção de Desengajamento",
+      "nomeOriginal": "Disengaging Twist",
+      "nivel": 4,
+      "pagina": 223,
+      "paginaPdf": 223,
+      "paginaImpressa": 222,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Lutador",
+      "preRequisitos": "Dedicação de Lutador",
+      "acoes": "reação",
+      "gatilho": "uma criatura lhe dá a condição agarrado ou restringido",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Tente Atletismo para Escapar da condição acionadora, com +2 de circunstância na verificação.",
+      "resumo": [
+        "Reage a um agarrão tentando Escapar com +2."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "quebra-cotovelo",
+      "nome": "Quebra-Cotovelo",
+      "nomeOriginal": "Elbow Breaker",
+      "nivel": 4,
+      "pagina": 223,
+      "paginaPdf": 223,
+      "paginaImpressa": 222,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Lutador",
+      "preRequisitos": "Dedicação de Lutador",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "ter uma criatura agarrada ou restringida",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça Golpe corpo a corpo desarmado contra a criatura agarrada ou restringida. Em sucesso crítico, derrube um item segurado por ela no espaço dela. Em sucesso, tentativas posteriores de Desarmar esse item recebem +2 de circunstância e o alvo sofre –2 de circunstância em ataques com ele ou verificações que exijam pegada firme. A criatura encerra o efeito ao Interagir para ajustar a pegada; caso contrário, dura enquanto segurar o item.",
+      "resumo": [
+        "Golpeia um alvo agarrado para soltar ou enfraquecer sua pegada."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "disparo-encantador",
+      "nome": "Disparo Encantador",
+      "nomeOriginal": "Enchanting Shot",
+      "nivel": 8,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "emoção",
+        "mágico",
+        "mental"
+      ],
+      "descricao": "Faça um Golpe com arco ou besta. No acerto, causa 2d6 mental adicional; no crítico, também deixa atordoado 1. O dano vira 3d6 com runa impactante maior ou 4d6 com impactante superior.",
+      "resumo": [
+        "Golpe causa dano mental adicional e pode atordoar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "municao-magica",
+      "nome": "Munição Mágica",
+      "nomeOriginal": "Magic Ammunition",
+      "nivel": 8,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "Transformar Munição: uma vez por rodada",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Escolha três munições mágicas comuns de até 4º nível do GM Core ou deste livro; o MJ pode permitir outras apropriadas. Recebe Transformar Munição: uma ação, mágico, uma vez por rodada; transforma flecha ou virote não mágico em um tipo escolhido, que deve ser disparado até o fim do turno. Ativações ainda custam ações e o tipo pode ser normalmente incompatível com o projétil. Pode selecionar este talento várias vezes, escolhendo mais três tipos a cada vez.",
+      "resumo": [
+        "Transforma projéteis em três tipos escolhidos de munição mágica."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "municao-preciosa",
+      "nome": "Munição Preciosa",
+      "nomeOriginal": "Precious Ammunition",
+      "nivel": 8,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Encante uma munição em sua posse: escolha ferro frio ou prata; se dispará-la até o fim do turno, conta como esse material. No 14º nível, pode escolher adamantina.",
+      "resumo": [
+        "Converte temporariamente a munição em material precioso."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "recarga-mistica",
+      "nome": "Recarga Mística",
+      "nomeOriginal": "Eldritch Reload",
+      "nivel": 10,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "última ação foi Disparo Místico, Conjurar de espaço ou ativar munição mágica",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Interaja para recarregar uma arma empunhada.",
+      "resumo": [
+        "Recarrega depois de usar magia ou munição mágica."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "ocr-ambiguo",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente. Ambiguidade: nível deslocado no OCR; reconstruído pela ordem editorial"
+    },
+    {
+      "id": "disparo-teleguiado",
+      "nome": "Disparo Teleguiado",
+      "nomeOriginal": "Homing Shot",
+      "nivel": 10,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "mágico"
+      ],
+      "descricao": "Faça Golpe com arco ou besta contra inimigo visível. A munição contorna esquinas; ignore ocultado e toda cobertura.",
+      "resumo": [
+        "Disparo contorna obstáculos e ignora cobertura e ocultação."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "conjuracao-especialista-de-arqueiro-mistico",
+      "nome": "Conjuração Especialista de Arqueiro Místico",
+      "nomeOriginal": "Expert Eldritch Archer Spellcasting",
+      "nivel": 12,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Conjuração Básica de Arqueiro Místico",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe os benefícios de conjuração especialista da página 173.",
+      "resumo": [
+        "Avança a conjuração de arqueiro místico para especialista."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "disparo-incorporeo",
+      "nome": "Disparo Incorpóreo",
+      "nomeOriginal": "Incorporeal Shot",
+      "nivel": 16,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "uma vez por dia",
+      "tracos": [
+        "arquétipo",
+        "mágico"
+      ],
+      "descricao": "Faça Golpe com arco ou besta contra inimigo observado ou escondido, mas não indetectado. O projétil segue reto através de barreiras não mágicas; barreiras mágicas o detêm. Ignora cobertura, ocultado, escondido e bônus de CA de escudos; recebe +4 de estado contra criaturas de armadura. Escudo não mágico não pode reduzir o dano com Bloqueio.",
+      "resumo": [
+        "Projétil atravessa matéria comum e ignora quase todas as defesas de cobertura."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "disparo-fatal",
+      "nome": "Disparo Fatal",
+      "nomeOriginal": "Fatal Shot",
+      "nivel": 18,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Dedicação de Arqueiro Místico",
+      "acoes": 3,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "uma vez por dia",
+      "tracos": [
+        "arquétipo",
+        "mágico"
+      ],
+      "descricao": "Faça Golpe com arco ou besta; no acerto, causa 10d10 de precisão adicional. No crítico, o alvo faz Fortitude contra a maior CD de classe ou magia e morre em falha; a salvaguarda tem Morte e Incapacitação.",
+      "resumo": [
+        "Disparo diário causa 10d10 adicional e pode matar no crítico."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "conjuracao-mestre-de-arqueiro-mistico",
+      "nome": "Conjuração Mestre de Arqueiro Místico",
+      "nomeOriginal": "Master Eldritch Archer Spellcasting",
+      "nivel": 18,
+      "pagina": 200,
+      "paginaPdf": 200,
+      "paginaImpressa": 199,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Arqueiro Místico",
+      "preRequisitos": "Conjuração Especialista de Arqueiro Místico",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe os benefícios de conjuração mestre da página 173.",
+      "resumo": [
+        "Avança a conjuração de arqueiro místico para mestre."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-mestre-de-familiar",
+      "nome": "Dedicação de Mestre de Familiar",
+      "nomeOriginal": "Familiar Master Dedication",
+      "nivel": 2,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe um familiar. Se já possuir um, recebe Familiar Aprimorado.",
+      "resumo": [
+        "Concede um familiar ou aprimora o existente."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiar-mascote",
+      "nome": "Familiar Mascote",
+      "nomeOriginal": "Familiar Mascot",
+      "nivel": 4,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "Dedicação de Mestre de Familiar",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao selecionar habilidades de mestre, pode escolher um aliado para receber uma habilidade específica. Cada habilidade beneficia apenas um personagem e só pode ser selecionada uma vez, salvo indicação contrária.",
+      "resumo": [
+        "Compartilha habilidades de mestre com aliados."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiar-condutor",
+      "nome": "Familiar Condutor",
+      "nomeOriginal": "Familiar Conduit",
+      "nivel": 4,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "Dedicação de Mestre de Familiar; capacidade de conjurar magias",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "linha de efeito até o familiar",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "concentração",
+        "metamágico"
+      ],
+      "descricao": "Se sua próxima ação for Conjurar uma Magia com alcance, use o familiar como ponto de origem.",
+      "resumo": [
+        "Canaliza uma magia a partir da posição do familiar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiar-aprimorado",
+      "nome": "Familiar Aprimorado",
+      "nomeOriginal": "Improved Familiar",
+      "nivel": 6,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "Dedicação de Mestre de Familiar",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Reduza em 2 o número de habilidades exigido para transformar seu familiar em um familiar específico.",
+      "resumo": [
+        "Facilita obter familiares específicos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiar-mutavel",
+      "nome": "Familiar Mutável",
+      "nomeOriginal": "Mutable Familiar",
+      "nivel": 8,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "Dedicação de Mestre de Familiar",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Em atividade de exploração de 10 minutos, troque habilidades entre anfíbio, escavador, escalador, visão no escuro, movimento rápido, destreza manual, resistência e faro. Só pode trocar escolhas diárias, não habilidades obrigatórias nem pré-requisitos de outras.",
+      "resumo": [
+        "Reconfigura habilidades físicas do familiar em dez minutos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "familiar-incrivel",
+      "nome": "Familiar Incrível",
+      "nomeOriginal": "Incredible Familiar",
+      "nivel": 10,
+      "pagina": 201,
+      "paginaPdf": 201,
+      "paginaImpressa": 200,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Mestre de Familiar",
+      "preRequisitos": "Familiar Aprimorado",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Pode selecionar seis habilidades de familiar ou mestre por dia, em vez de quatro.",
+      "resumo": [
+        "Aumenta para seis as habilidades diárias."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-gladiador",
+      "nome": "Dedicação de Gladiador",
+      "nomeOriginal": "Gladiator Dedication",
+      "nivel": 2,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Performance Impressionante",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe Conhecimento Adicional de Gladiadores ou outro Conhecimento se já treinado. No início de combate com espectadores, ganha PV temporários iguais ao nível por 1 minuto e pode usar Performance na iniciativa. Espectadores são criaturas sapientes que observam sem participar; o MJ decide.",
+      "resumo": [
+        "Transforma combate com plateia em PV temporários e iniciativa de Performance."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "movimentos-extravagantes",
+      "nome": "Movimentos Extravagantes",
+      "nomeOriginal": "Fancy Moves",
+      "nivel": 4,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Dedicação de Gladiador; especialista em Performance",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Pode usar Performance para Desmoralizar.",
+      "resumo": [
+        "Substitui Intimidação por Performance para Desmoralizar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "jogar-para-a-plateia",
+      "nome": "Jogar para a Plateia",
+      "nomeOriginal": "Play to the Crowd",
+      "nivel": 4,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Dedicação de Gladiador",
+      "acoes": "reação",
+      "gatilho": "reduz um inimigo a 0 PV em combate com espectadores",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "concentração"
+      ],
+      "descricao": "Faça Performance contra a maior entre a CD padrão de seu nível e a CD para Impressionar espectadores. Em sucesso, escolha um benefício; em crítico, dois: PV temporários iguais ao nível por 1 minuto; +1 circunstancial na CA até o fim do próximo turno; ou +1 circunstancial no próximo ataque antes do fim do próximo turno.",
+      "resumo": [
+        "Ao derrubar inimigo, conquista um ou dois benefícios da plateia."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "combate-cenico",
+      "nome": "Combate Cênico",
+      "nomeOriginal": "Stage Fighting",
+      "nivel": 4,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Dedicação de Gladiador",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Não sofre –2 circunstancial ao fazer ataque não letal com arma ou ataque desarmado sem o traço não letal.",
+      "resumo": [
+        "Remove a penalidade de ataques não letais improvisados."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "treinamento-com-armas-performaticas",
+      "nome": "Treinamento com Armas Performáticas",
+      "nomeOriginal": "Performative Weapons Training",
+      "nivel": 6,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Dedicação de Gladiador",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Para proficiência, trata bastão bo, capa de duelo, corrente com cravos, bengala-espada, tridente, mangual de guerra e chicote como simples; o MJ pode adicionar outras. Acertos críticos recebem especialização crítica.",
+      "resumo": [
+        "Concede familiaridade e especialização com armas vistosas."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "anunciar-seu-golpe",
+      "nome": "Anunciar Seu Golpe",
+      "nomeOriginal": "Call Your Shot",
+      "nivel": 8,
+      "pagina": 202,
+      "paginaPdf": 202,
+      "paginaImpressa": 201,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Gladiador",
+      "preRequisitos": "Jogar para a Plateia",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao ter sucesso em Jogar para a Plateia, pode escolher também deixar uma criatura visível a até 9 m assustada 2; o efeito é Emoção, Medo, Mental e Visual.",
+      "resumo": [
+        "Adiciona assustado 2 às recompensas de Jogar para a Plateia."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-herbalista",
+      "nome": "Dedicação de Herbalista",
+      "nomeOriginal": "Herbalist Dedication",
+      "nivel": 2,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "treinado em Natureza; Medicina Natural",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe alquimia avançada para criar quatro consumíveis alquímicos com Cura; reduz para dois se não se preparou em ambiente selvagem. Memoriza as fórmulas desses itens herbais.",
+      "resumo": [
+        "Prepara diariamente consumíveis de cura herbais."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "herbalismo-avancado",
+      "nome": "Herbalismo Avançado",
+      "nomeOriginal": "Advanced Herbalism",
+      "nivel": 2,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Torna-se especialista em Natureza e pode usar Natureza em vez de Ofício para criar consumíveis alquímicos com Cura, usando ferramentas de curandeiro no lugar de alquimista e sem exigir treinamento em Ofício.",
+      "resumo": [
+        "Usa Natureza e ferramentas de curandeiro para criar itens de cura."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "ocr-ambiguo",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente. Ambiguidade: cabeçalho perdeu traços e pré-requisitos no OCR"
+    },
+    {
+      "id": "ingredientes-frescos",
+      "nome": "Ingredientes Frescos",
+      "nomeOriginal": "Fresh Ingredients",
+      "nivel": 4,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "Dedicação de Herbalista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Ao usar Medicina Natural para Tratar Ferimentos, recebe +2 circunstancial por ingredientes frescos mesmo fora da natureza, ou +4 em ambiente selvagem.",
+      "resumo": [
+        "Melhora Tratar Ferimentos com ingredientes frescos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "preparacao-de-cataplasma",
+      "nome": "Preparação de Cataplasma",
+      "nomeOriginal": "Poultice Preparation",
+      "nivel": 4,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "Dedicação de Herbalista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ao criar elixir herbal, pode torná-lo cataplasma: recebe Óleo, permanece alquímico e perde Elixir; aplique com Interagir de uma mão. Além do efeito normal, o recipiente testa imediatamente recuperação de dano persistente de ácido, sangramento ou fogo com a redução de CD por assistência.",
+      "resumo": [
+        "Transforma elixires em óleos que também ajudam contra dano persistente."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "herbalismo-avancado-aprimorado",
+      "nome": "Herbalismo Avançado Aprimorado",
+      "nomeOriginal": "Advanced Herbalism II",
+      "nivel": 6,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "Dedicação de Herbalista; especialista em Natureza",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Pode criar até seis itens herbais diários. No 10º nível, pode selecionar novamente para elevar a oito.",
+      "resumo": [
+        "Aumenta itens herbais diários para seis ou oito."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "ocr-ambiguo",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente. Ambiguidade: OCR deslocou o cabeçalho; progressão identificada como segunda seleção de Herbalismo Avançado"
+    },
+    {
+      "id": "ervas-endemicas",
+      "nome": "Ervas Endêmicas",
+      "nomeOriginal": "Endemic Herbs",
+      "nivel": 6,
+      "pagina": 203,
+      "paginaPdf": 203,
+      "paginaImpressa": 202,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Herbalista",
+      "preRequisitos": "Dedicação de Herbalista; treinado em Sobrevivência",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "aditivo"
+      ],
+      "descricao": "Ao consumir item herbal, recebe por 1 minuto o benefício de onde foi criado: aquático +1 Fortitude; ártico ou deserto reduz em um grau frio ou calor ambiental por 1 hora; floresta +2 contra doenças e venenos; montanha +1 Reflexos; planícies +1 Vontade; pântano remove uma fonte de sangramento persistente; subterrâneo +1 Percepção.",
+      "resumo": [
+        "Itens herbais concedem benefício conforme o ambiente de coleta."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-linguista",
+      "nome": "Dedicação de Linguista",
+      "nomeOriginal": "Linguist Dedication",
+      "nivel": 2,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "falar pelo menos três idiomas",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Torna-se treinado em Sociedade, ou especialista se já treinado, e recebe Multilíngue duas vezes.",
+      "resumo": [
+        "Melhora Sociedade e concede dois idiomas adicionais."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "cifra-multilingue",
+      "nome": "Cifra Multilíngue",
+      "nomeOriginal": "Multilingual Cipher",
+      "nivel": 4,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista; especialista em Sociedade",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Recebe +1 circunstancial para Decifrar Escrita. Quem decifra texto seu sofre –2, salvo se falar todos os idiomas usados na cifra.",
+      "resumo": [
+        "Melhora suas cifras e a leitura de textos cifrados."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "treinamento-fonetico",
+      "nome": "Treinamento Fonético",
+      "nomeOriginal": "Phonetic Training",
+      "nivel": 4,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista; especialista em Sociedade",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Repete e transcreve foneticamente palavras com precisão sem entender o significado, inclusive sons impronunciáveis, para leitura posterior por alguém com este talento. Memorizar sequências longas continua difícil.",
+      "resumo": [
+        "Registra fielmente qualquer fala sem precisar compreendê-la."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "traducao-imediata",
+      "nome": "Tradução Imediata",
+      "nomeOriginal": "Spot Translate",
+      "nivel": 4,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista",
+      "acoes": "reação",
+      "gatilho": "criatura a até 18 m usa efeito linguístico em idioma compreendido",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "auditivo",
+        "linguístico"
+      ],
+      "descricao": "Repita em outro idioma uma mensagem linguística ouvida. O efeito passa a contar como ambos os idiomas e pode afetar mais criaturas. Fala normal pode ser traduzida sem reação; esta reação inclui magias e ações como comando ou Desmoralizar.",
+      "resumo": [
+        "Traduz instantaneamente efeitos linguísticos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "analisar-idioleto",
+      "nome": "Analisar Idioleto",
+      "nomeOriginal": "Analyze Idiolect",
+      "nivel": 6,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista; especialista em Enganação e Sociedade",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Depois de 10 minutos interagindo, memoriza maneirismos e recebe +4 circunstancial em testes e CDs de Enganação para Personificar a pessoa. Analisar outra substitui a anterior.",
+      "resumo": [
+        "Estuda uma pessoa para imitá-la com +4."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "ocr-ambiguo",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente. Ambiguidade: traços corrompidos no OCR"
+    },
+    {
+      "id": "ler-xiboletes",
+      "nome": "Ler Xibóletes",
+      "nomeOriginal": "Read Shibboleths",
+      "nivel": 7,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista; mestre em Sociedade",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "linguístico",
+        "perícia"
+      ],
+      "descricao": "Após 10 minutos de interação, descobre fato menor do ambiente social da pessoa. Se ela mentir, faz secretamente Enganação, Sociedade ou Conhecimento contra sua CD de Sociedade e fornece fato falso em sucesso. Após fato verdadeiro, recebe +1 circunstancial em Diplomacia e Enganação com ela.",
+      "resumo": [
+        "Deduz origem social pela fala e usa os maneirismos para interagir."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "comunicacao-rudimentar",
+      "nome": "Comunicação Rudimentar",
+      "nomeOriginal": "Crude Communication",
+      "nivel": 8,
+      "pagina": 204,
+      "paginaPdf": 204,
+      "paginaImpressa": 203,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Linguista",
+      "preRequisitos": "Dedicação de Linguista",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Após 10 minutos com criatura que fale idioma, o MJ testa Sociedade secretamente contra raridade do idioma. Em sucesso, entende a ideia e comunica conceitos básicos; em falha, interpreta ou transmite incorretamente. Lendário comunica instantaneamente sem teste e intui o meio de comunicação.",
+      "resumo": [
+        "Estabelece comunicação básica sem idioma compartilhado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-marechal",
+      "nome": "Dedicação de Marechal",
+      "nomeOriginal": "Marshal Dedication",
+      "nivel": 2,
+      "pagina": 205,
+      "paginaPdf": 205,
+      "paginaImpressa": 204,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "treinado em armas marciais e em Diplomacia ou Intimidação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Escolha Diplomacia ou Intimidação e torne-se treinado, ou especialista se já treinado. Consciente, emite aura de 4,5 m, Emoção, Mental e Visual, que concede a você e aliados +1 de estado contra medo.",
+      "resumo": [
+        "Cria aura que protege aliados contra medo."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "postura-do-marechal-aterrador",
+      "nome": "Postura do Marechal Aterrador",
+      "nomeOriginal": "Dread Marshal Stance",
+      "nivel": 4,
+      "pagina": 205,
+      "paginaPdf": 205,
+      "paginaImpressa": 204,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal; treinado em Intimidação",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Teste Intimidação contra CD normalmente fácil do nível. Em sucesso, aura concede +1 de estado no dano e críticos de seus integrantes assustam 1; com arma de vários dados, bônus pode igualar os dados. Falha não entra; falha crítica impede nova tentativa por 1 minuto.",
+      "resumo": [
+        "Aura melhora dano e faz críticos assustarem."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "postura-do-marechal-inspirador",
+      "nome": "Postura do Marechal Inspirador",
+      "nomeOriginal": "Inspiring Marshal Stance",
+      "nivel": 4,
+      "pagina": 205,
+      "paginaPdf": 205,
+      "paginaImpressa": 204,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal; treinado em Diplomacia",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Teste Diplomacia contra CD normalmente fácil do nível. Em sucesso, aura concede +1 de estado em ataques e salvaguardas contra mental. Falha não entra; falha crítica impede nova tentativa por 1 minuto.",
+      "resumo": [
+        "Aura melhora ataques e defesa mental."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "reaja",
+      "nome": "Reaja!",
+      "nomeOriginal": "Snap Out of It!",
+      "nivel": 4,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "auditivo",
+        "emoção",
+        "mental"
+      ],
+      "descricao": "Aliado na aura afetado por efeito mental de Vontade e até 1 minuto repete a salvaguarda com +1 circunstancial e encerra seu efeito em sucesso. Depois fica imune por 10 minutos.",
+      "resumo": [
+        "Permite a aliado repetir salvaguarda contra efeito mental."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "prepare-se",
+      "nome": "Prepare-se!",
+      "nomeOriginal": "Steel Yourself!",
+      "nivel": 4,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "auditivo",
+        "emoção",
+        "mental"
+      ],
+      "descricao": "Aliado na aura recebe PV temporários iguais ao seu Carisma e +2 circunstancial em Fortitude até o início de seu próximo turno.",
+      "resumo": [
+        "Fortalece um aliado por uma rodada."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "chamado-cadenciado",
+      "nome": "Chamado Cadenciado",
+      "nomeOriginal": "Cadence Call",
+      "nivel": 6,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "uma vez por minuto",
+      "tracos": [
+        "arquétipo",
+        "auditivo",
+        "floreio"
+      ],
+      "descricao": "Aliados dispostos na aura ficam acelerados até o fim do próximo turno e usam a ação apenas para Andar. Quem a usar fica lento 1 até o fim do turno seguinte.",
+      "resumo": [
+        "Acelera aliados por uma rodada com custo posterior."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "investida-revigorante",
+      "nome": "Investida Revigorante",
+      "nomeOriginal": "Rallying Charge",
+      "nivel": 6,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "visual"
+      ],
+      "descricao": "Ande até o Deslocamento e faça Golpe corpo a corpo. Se acertar e causar dano, aliados a até 18 m que viram recebem PV temporários iguais ao seu Carisma até o início do próximo turno.",
+      "resumo": [
+        "Avança e inspira aliados com PV temporários."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "costas-com-costas",
+      "nome": "Costas com Costas",
+      "nomeOriginal": "Back to Back",
+      "nivel": 8,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Aliado adjacente só fica desprevenido por flanqueamento se você também estiver; você, adjacente a aliado, só fica se ao menos um deles também estiver.",
+      "resumo": [
+        "Aliados adjacentes protegem-se mutuamente de flanqueamento."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "a-batalha",
+      "nome": "À Batalha!",
+      "nomeOriginal": "To Battle!",
+      "nivel": 8,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": "1 ou 2",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "auditivo",
+        "floreio"
+      ],
+      "descricao": "Aliado na aura com reação disponível usa-a imediatamente: com uma ação sua, para Andar; com duas, para Golpear.",
+      "resumo": [
+        "Concede movimento ou ataque imediato a um aliado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "derrubar-adversario",
+      "nome": "Derrubar Adversário",
+      "nomeOriginal": "Topple Foe",
+      "nivel": 10,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal; treinado em Atletismo",
+      "acoes": "reação",
+      "gatilho": "aliado acerta Golpe corpo a corpo em inimigo adjacente a ambos",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça Atletismo para Derrubar o alvo do ataque aliado.",
+      "resumo": [
+        "Aproveita o acerto aliado para tentar Derrubar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "investida-coordenada",
+      "nome": "Investida Coordenada",
+      "nomeOriginal": "Coordinated Charge",
+      "nivel": 12,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ande até seu Deslocamento e Golpeie corpo a corpo. Se acertar e causar dano, aliados a até 18 m que viram podem reagir para Andar, terminando mais perto do alvo.",
+      "resumo": [
+        "Seu acerto permite que aliados avancem."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "cadencia-tatica",
+      "nome": "Cadência Tática",
+      "nomeOriginal": "Tactical Cadence",
+      "nivel": 14,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Chamado Cadenciado",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Aliados acelerados por Chamado Cadenciado podem usar a ação para Andar ou Golpear e não ficam lento depois.",
+      "resumo": [
+        "Remove o custo e amplia o uso do Chamado Cadenciado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "alvo-de-oportunidade",
+      "nome": "Alvo de Oportunidade",
+      "nomeOriginal": "Target of Opportunity",
+      "nivel": 14,
+      "pagina": 206,
+      "paginaPdf": 206,
+      "paginaImpressa": 205,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Marechal",
+      "preRequisitos": "Dedicação de Marechal",
+      "acoes": "reação",
+      "gatilho": "aliado acerta Golpe à distância no primeiro incremento",
+      "requisitos": "arma à distância ou arremessável em mãos",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça Golpe à distância com –2 contra o mesmo alvo. Não conta nem sofre penalidade por ataques múltiplos. Se acertar, combine seu dano com o do aliado para resistências e fraquezas.",
+      "resumo": [
+        "Responde ao tiro aliado com disparo combinado."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-artista-marcial",
+      "nome": "Dedicação de Artista Marcial",
+      "nomeOriginal": "Martial Artist Dedication",
+      "nivel": 2,
+      "pagina": 207,
+      "paginaPdf": 207,
+      "paginaImpressa": 206,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Artista Marcial",
+      "preRequisitos": "",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "O dado de dano do punho aumenta de 1d4 para 1d6 e você não sofre –2 por causar dano letal com ataque desarmado não letal.",
+      "resumo": [
+        "Melhora punhos e remove penalidade letal."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-de-continuacao",
+      "nome": "Golpe de Continuação",
+      "nomeOriginal": "Follow-Up Strike",
+      "nivel": 6,
+      "pagina": 207,
+      "paginaPdf": 207,
+      "paginaImpressa": 206,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Artista Marcial",
+      "preRequisitos": "Dedicação de Artista Marcial",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "última ação foi Golpe desarmado corpo a corpo que errou",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Faça outro Golpe desarmado corpo a corpo usando a mesma penalidade por ataques múltiplos do Golpe anterior que errou.",
+      "resumo": [
+        "Repete rapidamente um ataque desarmado perdido."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-doloroso",
+      "nome": "Golpe Doloroso",
+      "nomeOriginal": "Grievous Blow",
+      "nivel": 8,
+      "pagina": 207,
+      "paginaPdf": 207,
+      "paginaImpressa": 206,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Artista Marcial",
+      "preRequisitos": "Dedicação de Artista Marcial",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Faça Golpe desarmado corpo a corpo. No acerto, causa dois dados adicionais e ignora resistência física igual ao nível. Conta como dois ataques. No 18º nível, causa três dados adicionais.",
+      "resumo": [
+        "Golpe poderoso ignora resistência e acrescenta dados."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "caminho-de-ferro",
+      "nome": "Caminho de Ferro",
+      "nomeOriginal": "Path of Iron",
+      "nivel": 14,
+      "pagina": 207,
+      "paginaPdf": 207,
+      "paginaImpressa": 206,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Artista Marcial",
+      "preRequisitos": "Dedicação de Artista Marcial",
+      "acoes": 3,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "uma vez por minuto",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Ande sem provocar reações e faça durante o movimento até três Golpes corpo a corpo, cada um contra inimigo diferente. Todos contam, mas a penalidade só aumenta depois.",
+      "resumo": [
+        "Move-se sem reações atacando até três inimigos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-demolidor",
+      "nome": "Dedicação de Demolidor",
+      "nomeOriginal": "Mauler Dedication",
+      "nivel": 2,
+      "pagina": 208,
+      "paginaPdf": 208,
+      "paginaImpressa": 207,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Demolidor",
+      "preRequisitos": "Força 14",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Para proficiência, trata armas marciais corpo a corpo de duas mãos ou Duas Mãos como simples, e avançadas como marciais. Se ao menos especialista, recebe especialização crítica.",
+      "resumo": [
+        "Concede familiaridade com armas grandes e seus críticos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "abrir-caminho",
+      "nome": "Abrir Caminho",
+      "nomeOriginal": "Clear the Way",
+      "nivel": 6,
+      "pagina": 208,
+      "paginaPdf": 208,
+      "paginaImpressa": 207,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Demolidor",
+      "preRequisitos": "Dedicação de Demolidor",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "arma corpo a corpo empunhada com duas mãos",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Tente Empurrar até cinco criaturas adjacentes com testes separados, sem mão livre. Depois Ande metade do Deslocamento sem provocar reações das empurradas. Todos contam para penalidade, que só aumenta ao final.",
+      "resumo": [
+        "Empurra vários inimigos e avança pelo espaço aberto."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "varredura-impulsora",
+      "nome": "Varredura Impulsora",
+      "nomeOriginal": "Shoving Sweep",
+      "nivel": 8,
+      "pagina": 208,
+      "paginaPdf": 208,
+      "paginaImpressa": 207,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Demolidor",
+      "preRequisitos": "Dedicação de Demolidor; especialista em Atletismo",
+      "acoes": "reação",
+      "gatilho": "inimigo ao alcance deixa espaço em ação de movimento",
+      "requisitos": "arma corpo a corpo empunhada com duas mãos",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Tente Empurrar sem mão livre. Salvo sucesso crítico, o inimigo continua seu movimento depois.",
+      "resumo": [
+        "Reage ao movimento inimigo tentando empurrá-lo."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "terremoto-de-martelo",
+      "nome": "Terremoto de Martelo",
+      "nomeOriginal": "Hammer Quake",
+      "nivel": 14,
+      "pagina": 208,
+      "paginaPdf": 208,
+      "paginaImpressa": 207,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Demolidor",
+      "preRequisitos": "Dedicação de Demolidor",
+      "acoes": 2,
+      "gatilho": "",
+      "requisitos": "arma corpo a corpo sem acuidade empunhada com duas mãos",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Escolha espaço ao alcance, inclusive o seu; pode Golpear inimigo nele. Tente Derrubar todos os inimigos nesse e nos espaços adjacentes sem mão livre. Conta como três ataques e a penalidade só aumenta no fim.",
+      "resumo": [
+        "Golpeia e derruba uma área ao redor do impacto."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "golpe-de-avalanche",
+      "nome": "Golpe de Avalanche",
+      "nomeOriginal": "Avalanche Strike",
+      "nivel": 16,
+      "pagina": 208,
+      "paginaPdf": 208,
+      "paginaImpressa": 207,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Demolidor",
+      "preRequisitos": "",
+      "acoes": 3,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Faça um Golpe corpo a corpo com arma de duas mãos contra cada inimigo ao alcance. Todos contam para a penalidade, mas ela só aumenta depois.",
+      "resumo": [
+        "Ataca todos os inimigos ao alcance."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "ocr-ambiguo",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente. Ambiguidade: nome omitido no OCR e identificado pela descrição e posição editorial"
+    },
+    {
+      "id": "dedicacao-de-medico",
+      "nome": "Dedicação de Médico",
+      "nomeOriginal": "Medic Dedication",
+      "nivel": 2,
+      "pagina": 209,
+      "paginaPdf": 209,
+      "paginaImpressa": 208,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Médico",
+      "preRequisitos": "treinado em Medicina; Medicina de Batalha",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Torna-se especialista em Medicina. Sucesso em Medicina de Batalha ou Tratar Ferimentos cura +5 na CD 20, +10 na 30 ou +15 na 40. Uma vez por dia, pode ignorar imunidade temporária à Medicina de Batalha; se mestre, uma vez por hora.",
+      "resumo": [
+        "Especializa Medicina, aumenta cura e permite novo tratamento."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "visita-medica",
+      "nome": "Visita Médica",
+      "nomeOriginal": "Doctor's Visitation",
+      "nivel": 4,
+      "pagina": 209,
+      "paginaPdf": 209,
+      "paginaImpressa": 208,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Médico",
+      "preRequisitos": "Dedicação de Médico",
+      "acoes": "1 ou 2",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "floreio"
+      ],
+      "descricao": "Ande e use Medicina de Batalha ou Tratar Veneno. Com duas ações, Ande e use Primeiros Socorros ou Tratar Condição, se possuir.",
+      "resumo": [
+        "Move-se até o paciente e o trata."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "tratar-condicao",
+      "nome": "Tratar Condição",
+      "nomeOriginal": "Treat Condition",
+      "nivel": 4,
+      "pagina": 209,
+      "paginaPdf": 209,
+      "paginaImpressa": 208,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Médico",
+      "preRequisitos": "Dedicação de Médico",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "ferramentas de curandeiro em mãos ou vestidas e mão livre",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "cura",
+        "manuseio",
+        "perícia"
+      ],
+      "descricao": "Escolha desajeitado, enfraquecido ou enjoado em criatura adjacente. Neutralize com Medicina contra a fonte. Artefato ou fonte acima do 20º exige Médico Lendário e CD +10; condição reaplicada continuamente retorna. Crítico reduz 2, sucesso reduz 1, falha crítica aumenta 1.",
+      "resumo": [
+        "Reduz condições físicas com Medicina."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "cuidado-holistico",
+      "nome": "Cuidado Holístico",
+      "nomeOriginal": "Holistic Care",
+      "nivel": 6,
+      "pagina": 209,
+      "paginaPdf": 209,
+      "paginaImpressa": 208,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Médico",
+      "preRequisitos": "treinado em Diplomacia; Tratar Condição",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Adiciona amedrontado, estupefato e atordoado às condições tratáveis. Atordoado com duração, em vez de valor, não pode ser reduzido.",
+      "resumo": [
+        "Permite tratar condições mentais adicionais."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "ressuscitar",
+      "nome": "Ressuscitar",
+      "nomeOriginal": "Resuscitate",
+      "nivel": 16,
+      "pagina": 209,
+      "paginaPdf": 209,
+      "paginaImpressa": 208,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Médico",
+      "preRequisitos": "Dedicação de Médico; lendário em Medicina",
+      "acoes": 3,
+      "gatilho": "",
+      "requisitos": "ferramentas de curandeiro em mãos ou vestidas e mão livre",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "cura",
+        "manuseio"
+      ],
+      "descricao": "Faça Medicina CD 40 em criatura morta há até 3 rodadas e corpo quase intacto. Sucesso a revive como Reviver os Mortos, mantendo ferido anterior +1 ou ferido 1. Com sucesso ou falha, fica imune por 1 dia.",
+      "resumo": [
+        "Tenta reviver alguém recém-morto."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-pirata",
+      "nome": "Dedicação de Pirata",
+      "nomeOriginal": "Pirate Dedication",
+      "nivel": 2,
+      "pagina": 210,
+      "paginaPdf": 210,
+      "paginaImpressa": 209,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Pirata",
+      "preRequisitos": "treinado em Intimidação",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe Conhecimento Adicional de Navegação ou cidade costeira. Ignora terreno difícil ou irregular de solo instável. Recebe Ataque de Abordagem: duas ações, floreio; Ande duas vezes ou faça Acrobacia CD 20 para balançar até o dobro do Deslocamento e Golpeie; se embarcou ou desembarcou, causa um dado adicional.",
+      "resumo": [
+        "Domina terreno naval e recebe uma investida de abordagem."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "treinamento-de-combate-pirata",
+      "nome": "Treinamento de Combate Pirata",
+      "nomeOriginal": "Pirate Combat Training",
+      "nivel": 4,
+      "pagina": 210,
+      "paginaPdf": 210,
+      "paginaImpressa": 209,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Pirata",
+      "preRequisitos": "Dedicação de Pirata",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe Escalador de Combate ou Saqueador Subaquático. Trata machadinha, florete, cimitarra e chicote como simples; o MJ pode adicionar outras. No 5º nível, críticos recebem especialização crítica.",
+      "resumo": [
+        "Concede um talento e familiaridade com armas piratas."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "corredor-de-cordas",
+      "nome": "Corredor de Cordas",
+      "nomeOriginal": "Rope Runner",
+      "nivel": 4,
+      "pagina": 210,
+      "paginaPdf": 210,
+      "paginaImpressa": 209,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Pirata",
+      "preRequisitos": "Dedicação de Pirata; treinado em Acrobacia e Atletismo",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "perícia"
+      ],
+      "descricao": "Recebe escalada de 4,5 m apenas em cordas e similares. Sucesso para Escalar ou Equilibrar-se nelas vira crítico e não fica desprevenido ao fazê-lo.",
+      "resumo": [
+        "Move-se com segurança e rapidez por cordas."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "andar-na-prancha",
+      "nome": "Andar na Prancha",
+      "nomeOriginal": "Walk the Plank",
+      "nivel": 8,
+      "pagina": 210,
+      "paginaPdf": 210,
+      "paginaImpressa": 209,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Pirata",
+      "preRequisitos": "Dedicação de Pirata",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Tente Desmoralizar. Em sucesso, além do normal, pode obrigar o alvo a Andar até seu Deslocamento pelo caminho escolhido, sem reações. Só pode forçar espaço nocivo em crítico. O alvo fica imune por 10 minutos.",
+      "resumo": [
+        "Intimida e força o alvo a caminhar."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "dedicacao-de-envenenador",
+      "nome": "Dedicação de Envenenador",
+      "nomeOriginal": "Poisoner Dedication",
+      "nivel": 2,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "treinado em Ofício",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "dedicação"
+      ],
+      "descricao": "Recebe alquimia avançada para criar quatro venenos alquímicos consumíveis por dia e memoriza suas fórmulas.",
+      "resumo": [
+        "Prepara quatro venenos por dia."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "torcao-do-envenenador",
+      "nome": "Torção do Envenenador",
+      "nomeOriginal": "Poisoner's Twist",
+      "nivel": 4,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "Dedicação de Envenenador; treinado em Medicina",
+      "acoes": 1,
+      "gatilho": "",
+      "requisitos": "última ação foi Golpe corpo a corpo que feriu alvo envenenado; conhecer o veneno",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Causa 1d6 do tipo do Golpe anterior e 1d6 de veneno ao alvo. No 18º nível, causa 2d6 de cada.",
+      "resumo": [
+        "Explora o ferimento envenenado para causar dano adicional."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "oficio-de-venenos-avancado",
+      "nome": "Ofício de Venenos Avançado",
+      "nomeOriginal": "Advanced Poisoncraft",
+      "nivel": 6,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "Dedicação de Envenenador",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Aumenta para seis os venenos diários; no 10º nível, pode selecionar novamente para elevar a oito.",
+      "resumo": [
+        "Aumenta sua produção diária de venenos."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "revestimento-venenoso",
+      "nome": "Revestimento Venenoso",
+      "nomeOriginal": "Poison Coat",
+      "nivel": 6,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "Dedicação de Envenenador",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Gaste veneno de contato ou ferimento e 10 minutos para aplicá-lo à roupa; apenas um por vez. Recebe Uma Vez Mordido, reação quando criatura adjacente o acerta desarmada: ela é exposta e o veneno fica inerte.",
+      "resumo": [
+        "Prepara roupa envenenada que contamina quem o ataca."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "tolerancia-adquirida",
+      "nome": "Tolerância Adquirida",
+      "nomeOriginal": "Acquired Tolerance",
+      "nivel": 8,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "Dedicação de Envenenador",
+      "acoes": "reação",
+      "gatilho": "falha em salvaguarda contra veneno",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo",
+        "fortuna"
+      ],
+      "descricao": "Repita a salvaguarda contra veneno e use o segundo resultado. Depois, pode usar novamente contra o mesmo tipo naquele dia, mas não contra outro até as preparações.",
+      "resumo": [
+        "Repete salvaguarda e cria tolerância ao mesmo veneno."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    },
+    {
+      "id": "contagio-quimico",
+      "nome": "Contágio Químico",
+      "nomeOriginal": "Chemical Contagion",
+      "nivel": 18,
+      "pagina": 211,
+      "paginaPdf": 211,
+      "paginaImpressa": 210,
+      "tipo": "talento-arquetipo",
+      "arquetipo": "Envenenador",
+      "preRequisitos": "Dedicação de Envenenador",
+      "acoes": "",
+      "gatilho": "",
+      "requisitos": "",
+      "frequencia": "",
+      "tracos": [
+        "arquétipo"
+      ],
+      "descricao": "Recebe a descoberta de campo maior do alquimista toxicologista da página 62, permitindo que venenos de ferimento espirrem sobre criaturas.",
+      "resumo": [
+        "Faz venenos de ferimento contagiarem outras criaturas."
+      ],
+      "fonte": "player-core-2",
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do OCR local do PDF fornecido; efeito preservado integralmente."
+    }
+  ],
+  "total": 132,
+  "paginasCobertas": [
+    200,
+    223
+  ],
+  "ambiguidades": [
+    "recarga-mistica",
+    "herbalismo-avancado",
+    "herbalismo-avancado-aprimorado",
+    "analisar-idioleto",
+    "golpe-de-avalanche"
+  ]
+}

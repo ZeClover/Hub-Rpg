@@ -94,6 +94,16 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+@page{size:A4; margin:14mm 12mm 16mm}
+@media print{
+  :root{--fundo:#fff;--superficie:#f6f3ee;--superficie-alta:#eee9e1;--borda:#cfc7ba;--texto:#191612;--suave:#5d554a;--roxo:#563ea3;--roxo-forte:#3d287f;--verde:#376b45}
+  html{color-scheme:light;scroll-behavior:auto} body{font-size:10.5pt;line-height:1.45;background:#fff}
+  .barra,.top{display:none!important} main{max-width:none;margin:0;padding:0}
+  .hero h1{font-size:27pt}.hero{break-after:page}.toc{break-after:page}
+  nav.toc ol{columns:1} section{break-before:page;margin:0}
+  h2,h3,h4{break-after:avoid} table,.cartao,.dica,.aviso,.exemplo,ul,ol{break-inside:avoid}
+  tr{break-inside:avoid} a{color:inherit;text-decoration:none}
+}
 </style>
 </head>
 <body>
@@ -218,6 +228,10 @@ li{margin-bottom:5px}
     <p><strong>Movimento:</strong> <strong>12</strong> pra Combatente e Guerreiro Mágico, <strong>9</strong>
     pro resto (Suporte e Mestre das Armas) — soma metade da Destreza (arredondado pra baixo) mais qualquer
     bônus avulso que a mesa conceder.</p>
+    <h3>Pontos para distribuir</h3>
+    <p>O personagem começa com <strong>6 pontos de Atributo</strong> no Nível 1 e recebe +2 pontos a cada
+    dois níveis, até o máximo de 40 pontos disponíveis: <strong>6 + 2×⌈(Nível−1)÷2⌉</strong>, limitado a
+    40. Os bônus de Arquétipo da Primeira Ascensão ficam fora desse orçamento e fora do teto normal.</p>
   </section>
 
   <section id="pericias">
@@ -495,8 +509,11 @@ li{margin-bottom:5px}
       <tr><td>2</td><td>10</td><td>3×CON + 20</td><td>1d8</td><td>+2d6 ou +6</td><td>2/6</td></tr>
       <tr><td>3</td><td>14</td><td>4×CON + 40</td><td>2d8</td><td>+3d6 ou +9</td><td>3/9</td></tr>
       <tr><td>4</td><td>18</td><td>5×CON + 80</td><td>3d8</td><td>+4d6 ou +12</td><td>4/12</td></tr>
+      <tr><td>5</td><td>22</td><td>6×CON + 200</td><td>4d8</td><td>+6d6 ou +18</td><td>5/15</td></tr>
+      <tr><td>6</td><td>26</td><td>7×CON + 200</td><td>6d8</td><td>+7d6 ou +21</td><td>6/18</td></tr>
+      <tr><td>7</td><td>30</td><td>8×CON + 200</td><td>7d8</td><td>+10d6 ou +30</td><td>7/21</td></tr>
     </table>
-    <p class="mini">A tabela continua subindo até o Nível 7, seguindo a mesma progressão.</p>
+    <p class="mini">O bônus de Perícia da invocação é +5 nos níveis 1–2 e +8 nos níveis 3–7.</p>
     <p>Múltiplas invocações do mesmo Nível ativas ao mesmo tempo formam um <strong>Enxame</strong>: soma a
     rolagem de todas, mas custa bem mais PE pra invocar. Um Enxame resiste a ataques de alvo único (perde só
     uma cópia), mas é vulnerável a ataques em área (um único acerto em área pode atingir o Enxame inteiro).
@@ -588,10 +605,14 @@ li{margin-bottom:5px}
     uma vez só (o bônus fixo de Habilidade/item/traço), sem precisar recalcular a mão:</p>
     <table>
       <tr><th>Dificuldade</th><th>Multiplicador</th></tr>
-      <tr><td>Fácil</td><td>×0,5</td></tr>
-      <tr><td>Inimigo</td><td>×1 (ficha comum, sem ajuste)</td></tr>
-      <tr><td>Calamidade</td><td>×10 — Movimento também dobra, e ganha +1 Ação Comum e +1 Ação Bônus na base.</td></tr>
+      <tr><td>Capanga</td><td>×0,5 — Movimento −3 e nenhuma Passiva.</td></tr>
+      <tr><td>Inimigo</td><td>×1 — ficha comum, sem ajuste.</td></tr>
+      <tr><td>Boss</td><td>×2 — Movimento +6 e +1 Ação Bônus na base.</td></tr>
+      <tr><td>Calamidade</td><td>×10 — Movimento dobra, +1 Ação Comum e +1 Ação Bônus na base.</td></tr>
     </table>
+    <p>A dificuldade multiplica dano, PV, PE, vantagens e a parte da Perícia que não vem do Atributo.
+    Sanidade máxima, quantidade de Perícias treináveis, quantidade de Habilidades e o próprio bônus de
+    Atributo da Perícia não são multiplicados.</p>
     <p class="mini">Dado que escala pela Dificuldade nunca vira rolagem simulada — a ficha só marca "×N" ao
     lado do dado (ex.: "2d6 ×10"), pra o mestre multiplicar na hora de rolar.</p>
   </section>

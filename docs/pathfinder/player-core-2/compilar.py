@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Compila o catálogo editorial manual; não traduz OCR automaticamente."""
-import json, pathlib, re, tempfile, os
+import importlib.util, json, pathlib, re, tempfile, os
 ROOT=pathlib.Path(__file__).resolve().parents[3]
 F='player-core-2'
-cat={'fonte':{'id':F,'nome':'Livro do Jogador 2 — Player Core 2','edicao':'remaster','idiomaOriginal':'en','paginas':322,'estado':'parcial','referenciaPaginas':'Índice físico global das partes 1 a 4 (100+100+100+22 páginas), não numeração impressa.','cobertura':'Oito classes com estatísticas iniciais e progressão de proficiências; oito ancestralidades e 54 heranças; seleção de talentos revisada. Tradução integral pendente.'},'classes':[],'ancestralidades':[],'biografias':[],'talentos':[],'magias':[],'equipamentos':[],'secoes':[],'lacunas':[]}
+cat={'fonte':{'id':F,'nome':'Livro do Jogador 2 — Player Core 2','edicao':'remaster','idiomaOriginal':'en','paginas':322,'estado':'parcial','referenciaPaginas':'Índice físico global das partes 1 a 4 (100+100+100+22 páginas), não numeração impressa.','cobertura':'Oito classes com progressão, oito ancestralidades e 54 heranças, 24 biografias, 43 arquétipos resumidos, 130 talentos revisados, 75 magias de foco/truques e 13 rituais traduzidos. Talentos restantes dos arquétipos e do livro, tesouros e capítulos de consulta ainda não estão completos.'},'classes':[],'ancestralidades':[],'biografias':[],'talentos':[],'magias':[],'equipamentos':[],'secoes':[],'lacunas':[]}
 def classe(id,nome,pv,keys,skills,fixed,per,saves,armors,weapons,page,description,summary,spell=None):
  c=dict(id=id,nome=nome,pv=pv,atributoChave=keys,periciasTreinadas=skills,periciasFixas=fixed,percepcao=per,salvaguardas=dict(zip(['fortitude','reflexos','vontade'],saves)),armaduras=dict(zip(['sem','leve','media','pesada'],armors)),armas=dict(zip(['simples','marciais','avancadas','desarmado'],weapons)),cdClasse=1,pagina=page,fonte=F,descricao=description,resumo=summary,opcoes=[],progressao=[],paginasRevisadas=list(range(page,page+6)))
  if spell:c['conjuracao']=spell
@@ -92,25 +92,57 @@ from talentos_evolucao import aplicar as aplicar_talentos_evolucao
 aplicar_talentos_evolucao(cat)
 from talentos_intermediarios import aplicar as aplicar_talentos_intermediarios
 aplicar_talentos_intermediarios(cat)
+complementar_path=pathlib.Path(__file__).parent/'conteudo-complementar.py'
+complementar_spec=importlib.util.spec_from_file_location('pc2_conteudo_complementar', complementar_path)
+complementar_mod=importlib.util.module_from_spec(complementar_spec)
+complementar_spec.loader.exec_module(complementar_mod)
+complementar_mod.aplicar(cat)
+ancestrias_path=pathlib.Path(__file__).parent/'ancestralidades-completo.py'
+ancestrias_spec=importlib.util.spec_from_file_location('pc2_ancestralidades_completo', ancestrias_path)
+ancestrias_mod=importlib.util.module_from_spec(ancestrias_spec)
+ancestrias_spec.loader.exec_module(ancestrias_mod)
+ancestrias_mod.aplicar(cat)
+def mesclar_talentos_revisados(entradas):
+ existentes={x['id']:i for i,x in enumerate(cat['talentos'])}
+ for bruto in entradas:
+  x=dict(bruto);x.setdefault('tipo','arquetipo');x.setdefault('fonte',F);x.setdefault('somenteConsulta',True);x.setdefault('revisao','revisado')
+  if x['id'] in existentes:cat['talentos'][existentes[x['id']]]=x
+  else:existentes[x['id']]=len(cat['talentos']);cat['talentos'].append(x)
+for arquivo,campo in [('arquetipos-talentos-a-qa.json','entradas'),('arquetipos-talentos-b-qa.json','talentos')]:
+ dados_arquetipos=json.loads((pathlib.Path(__file__).parent/arquivo).read_text())
+ mesclar_talentos_revisados(dados_arquetipos[campo])
+gerais=json.loads((pathlib.Path(__file__).parent/'talentos-gerais-completo-qa.json').read_text())
+cat['talentos'].extend(gerais['talentos'])
+cat['lacunas'].append({'categoria':'automacao-talentos-gerais','descricao':gerais['cobertura']})
 focos=json.loads((ROOT/'docs/pathfinder/player-core-1/focos-pc2-fixtures.json').read_text())
 for m in focos['magias']:
  m['paginaImpressa']=m['pagina'];m['pagina']=m['paginaPdf'];m['secoes']=['magia-'+m['id']]
  cat['magias'].append(m)
 cat['lacunas'].extend(focos.get('lacunas',[]))
-for overlay in ['focos-linhagens-qa.json','focos-oraculo-qa.json','focos-qi-qa.json']:
+for overlay in ['focos-linhagens-qa.json','focos-oraculo-qa.json','focos-qi-qa.json','focos-avancados-qa.json','focos-devocao-qi-qa.json','focos-oraculo-avancados-qa.json']:
  dados=json.loads((pathlib.Path(__file__).parent/overlay).read_text())
  for m in dados['magias']:
   assert m['pagina']==m['paginaPdf'], 'A referência do catálogo deve ser a página física do PDF.'
   m['secoes']=['magia-'+m['id']]
   cat['magias'].append(m)
  cat['lacunas'].extend(dados.get('lacunas',[]))
+rituais=json.loads((pathlib.Path(__file__).parent/'rituais-qa.json').read_text())
+for ritual in rituais['rituais']:
+ ritual['secoes']=['magia-'+ritual['id']]
+ cat['magias'].append(ritual)
+cat['lacunas'].append({
+ 'categoria':'rituais',
+ 'descricao':rituais['cobertura'],
+})
 cat['secoes']=[dict(id='classe-'+x['id'],nome=x['nome'],pagina=x['pagina'],texto=x['descricao']+'\n\n'+'\n\n'.join(f"Nível {g['nivel']} — {g['nome']}\n{g['descricao']}" for g in x['progressao']),resumo=x['resumo']) for x in cat['classes']]
 cat['secoes'] += [dict(id='ancestralidade-'+x['id'],nome=x['nome'],pagina=x['pagina'],texto=x['descricao']+'\n\n'+'\n\n'.join(f"{h['nome']}\n{h['descricao']}" for h in x['herancas']),resumo=x['resumo']) for x in cat['ancestralidades']]
+cat['secoes'] += [dict(id='biografia-'+x['id'],nome=x['nome'],pagina=x['pagina'],texto=x['descricao'],resumo=x['resumo']) for x in cat['biografias']]
+cat['secoes'] += [dict(id='arquetipo-'+x['id'],nome=x['nome'],pagina=x['pagina'],texto=x['descricao'],resumo=x['resumo'],somenteConsulta=True) for x in cat['arquetipos']]
 for c in cat['classes']:
  for o in c['opcoes']:cat['secoes'].append(dict(id=c['id']+'-'+o['id'],nome=c['nome']+' — '+o['nome'],pagina=o['pagina'],texto=o['descricao'],resumo=o['resumo']))
 cat['secoes'] += [dict(id='talento-'+t['id'],nome=t['nome'],pagina=t['pagina'],texto=t['descricao'],resumo=t['resumo']) for t in cat['talentos']]
 cat['secoes'] += [dict(id='magia-'+m['id'],nome=m['nome'],pagina=m['pagina'],texto=m['descricao'],resumo=m['resumo']) for m in cat['magias']]
-for name in ['classes','ancestralidades','talentos','magias','secoes']:
+for name in ['classes','ancestralidades','biografias','arquetipos','talentos','magias','secoes']:
  ids=[x['id'] for x in cat[name]];assert len(ids)==len(set(ids));assert all(re.fullmatch('[a-z0-9-]+',s) for s in ids)
 path=ROOT/'public/pathfinder/player-core-2.json';path.parent.mkdir(parents=True,exist_ok=True)
 with tempfile.NamedTemporaryFile(mode='w',dir=path.parent,prefix='.player-core-2-',suffix='.tmp',encoding='utf-8',delete=False) as tmp:

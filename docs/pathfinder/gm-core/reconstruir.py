@@ -225,12 +225,25 @@ for entrada in E:
         entrada['automacao'] = 'estruturada'
         entrada['mecanica'] = {'versao':1,'tipo':'consumivel','estado':'dados-revisados','categoria':'pocao','acao':'curar','aplicacao':'ao-usar','acoes':1,'consomeQuantidade':1,'exigeAlvo':True,'alvo':'usuario-ou-criatura-disposta-ou-indefesa-ao-alcance','cura':{'expressao':entrada['cura'],'quantidadeDados':int(dados[1]),'facesDados':int(dados[2]),'fixo':int(dados[3] or 0)},'tracos':['manuseio','consumivel','cura','magico','pocao','vitalidade']}
 
+import runpy
+runpy.run_path(str(pathlib.Path(__file__).with_name('ampliacao-consulta.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('reliquias-dons.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('inteligentes-apice.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('veiculos.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('regras-completas.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('catalogo-alquimia.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('catalogo-magia-momentanea.py')))['ampliar'](d)
+runpy.run_path(str(pathlib.Path(__file__).with_name('catalogo-talismas.py')))['ampliar'](d)
+d['tabelasRotulos']=json.loads(pathlib.Path(__file__).with_name('tabelas-rotulos.json').read_text())
+d['tabelasRotulos']['nomes'].setdefault('xpPerigosNota','Observação sobre XP de perigos')
+_tabelas_lista={k for k,v in d['tabelas'].items() if isinstance(v,list)}
+assert _tabelas_lista <= set(d['tabelasRotulos']['nomes']), sorted(_tabelas_lista-set(d['tabelasRotulos']['nomes']))
 d['fonte']['entradasEquipamentoRevisadas']=len(E)
 d['fonte']['paginasConsultaRevisadas']=sorted({x['pagina'] for x in d['secoes']})
 d['fonte']['creditos']='Pathfinder GM Core © 2023 Paizo Inc. Projeto de Logan Bonner e Mark Seifter. Adaptação de consulta em português a partir do PDF enviado, sem afirmar tradução oficial.'
 d['fonte']['licenca']={'nome':'ORC','avisoOriginal':'docs/pathfinder/gm-core/ORC-aviso-original.txt','resumoPt':'O livro licencia seu Material Licenciado sob ORC e reserva marcas, nomes próprios, ilustrações, personagens e narrativa. O aviso original é preservado; tradução não altera titularidade.'}
-assert len(d['secoes'])==43,len(d['secoes'])
-assert len(E)==120,len(E)
+assert len(d['secoes'])==97,len(d['secoes'])
+assert len(E)==342,len(E)
 assert len({a['id'] for a in E})==len(E)
 assert all(re.fullmatch('[a-z0-9-]+',x['id']) for x in E+d['secoes'])
 assert all(x['resumo'] and not any('…' in t or '...' in t for t in x['resumo']) for x in E+d['secoes'])

@@ -1,0 +1,1026 @@
+{
+  "magias": [
+    {
+      "id": "sussurros-aberrantes",
+      "nome": "Sussurros Aberrantes",
+      "nomeOriginal": "aberrant whispers",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": [
+        1,
+        2,
+        3
+      ],
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "auditivo",
+        "concentracao",
+        "mental"
+      ],
+      "descricao": "Área: emanação de 1,5 m ou maior. Alvos: cada inimigo na área. Defesa: Vontade. Duração: 1 rodada. Você pronuncia frases em uma língua desconhecida, agredindo a mente de quem está por perto. Cada alvo faz uma salvaguarda de Vontade. Independentemente do resultado, torna-se temporariamente imune a esta magia por 1 minuto. Cada ação adicional usada para Conjurar Magia amplia o raio da emanação em 1,5 m. Sucesso: o alvo não é afetado. Falha: estupefato 2. Falha crítica: confuso. Elevada (+3): o raio inicial aumenta em 1,5 m.",
+      "resumo": [
+        "Uma a três ações; Vontade evita estupefato 2 ou confusão por 1 rodada. Ações extras ampliam a área; cada alvo fica imune por 1 minuto."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 263,
+      "paginaPdf": 263,
+      "paginaImpressa": 262,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "emanacao",
+        "raio": 1.5
+      },
+      "salvaguarda": "vontade",
+      "duracaoRodadas": 1
+    },
+    {
+      "id": "anatomia-incomum",
+      "nome": "Anatomia Incomum",
+      "nomeOriginal": "unusual anatomy",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio",
+        "polimorfia"
+      ],
+      "descricao": "Duração: 1 minuto. Você transforma carne e órgãos em uma amálgama bizarra de pele reluzente, escamas ásperas, tufos de pelos e protuberâncias tumorais. Recebe resistência 10 a dano de precisão e resistência 10 ao dano adicional de acertos críticos. Se a resistência superar o dano adicional, ela reduz esse adicional a zero, mas não reduz o dano normal do ataque. Recebe visão no escuro. Ácido exsuda de sua pele: toda criatura que o acerta com ataque desarmado ou arma corpo a corpo sem alcance sofre 2d6 de ácido. Elevada (+2): as resistências aumentam em 5 e o dano de ácido aumenta em 1d6.",
+      "resumo": [
+        "Por 1 minuto, visão no escuro e resistência a precisão e dano extra de críticos; acertá-lo de perto causa ácido ao agressor."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 263,
+      "paginaPdf": 263,
+      "paginaImpressa": 262,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "resistenciaPrecisao": 10,
+        "resistenciaDanoExtraCritico": 10,
+        "retaliacaoAcido": "2d6",
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "asas-angelicais",
+      "nome": "Asas Angelicais",
+      "nomeOriginal": "angelic wings",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "luz",
+        "manuseio"
+      ],
+      "descricao": "Duração: 3 rodadas. Asas de pura luz se estendem de suas costas, concedendo Deslocamento de voo igual ao seu Deslocamento. As asas emitem luz intensa em um raio de 9 m. Se ainda estiver voando quando a duração terminar, flutua até o chão como em Pouso Suave. Elevada (5ª): a duração aumenta para 1 minuto.",
+      "resumo": [
+        "Voo igual ao seu Deslocamento e luz intensa por 3 rodadas; na 5ª graduação dura 1 minuto. Ao terminar, pousa suavemente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 263,
+      "paginaPdf": 263,
+      "paginaImpressa": 262,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "voo": "deslocamento",
+        "luzIntensaRaio": 9,
+        "duracaoRodadas": 3,
+        "elevacaoDuracao": {
+          "ranque": 5,
+          "rodadas": 10
+        }
+      }
+    },
+    {
+      "id": "marca-celestial",
+      "nome": "Marca Celestial",
+      "nomeOriginal": "celestial brand",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "maldicao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura profana. Duração: 1 rodada. Um símbolo flamejante aparece no alvo, amaldiçoando-o a enfrentar a justiça divina. Você e seus aliados recebem +1 de estado em jogadas de ataque e testes de perícia contra ele. Sempre que uma criatura sagrada lhe causar dano, causa mais 1d4 de dano espiritual. Depois, o alvo fica temporariamente imune por 1 minuto. Elevada (+2): o dano espiritual aumenta em 1.",
+      "resumo": [
+        "Marca um alvo profano por 1 rodada: +1 em ataques e perícias contra ele; dano de criaturas sagradas recebe mais 1d4 espiritual."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 263,
+      "paginaPdf": 263,
+      "paginaImpressa": 262,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "bonusAtaquePericia": {
+          "tipo": "estado",
+          "valor": 1
+        },
+        "danoEspiritualExtra": "1d4",
+        "elevacaoDanoFixo": {
+          "intervalo": 2,
+          "valor": 1
+        },
+        "duracaoRodadas": 1
+      }
+    },
+    {
+      "id": "pantano-da-preguica",
+      "nome": "Pântano da Preguiça",
+      "nomeOriginal": "swamp of sloth",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": [
+        1,
+        2,
+        3
+      ],
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio",
+        "olfativo"
+      ],
+      "descricao": "Alcance: 36 m. Área: explosão de 1,5 m ou maior. Defesa: Fortitude básica. Duração: 1 minuto. O chão vira um pântano fétido e terreno difícil. A lama se anima em minúsculas bestas de lodo de aparência demoníaca. Não funcionam como criaturas normais, mas enxameiam sobre quem está no pântano e exalam um fedor nocivo. O pântano causa 1d6 de veneno às criaturas que terminarem seu turno na área, com salvaguarda básica de Fortitude. Cada ação adicional usada na conjuração aumenta o raio da explosão em 1,5 m. Elevada (+2): o dano aumenta em 1d6 e o raio inicial aumenta em 1,5 m.",
+      "resumo": [
+        "Terreno difícil por 1 minuto; quem termina o turno nele sofre 1d6 de veneno com Fortitude básica. Ações extras ampliam a área."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 264,
+      "paginaPdf": 264,
+      "paginaImpressa": 263,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "explosao",
+        "raio": 1.5
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "dano": "1d6",
+        "tipo": "veneno",
+        "elevacao": {
+          "intervalo": 2,
+          "dados": 1
+        },
+        "gatilho": "fim-do-turno-na-area"
+      }
+    },
+    {
+      "id": "ira-ctonica",
+      "nome": "Ira Ctônica",
+      "nomeOriginal": "chthonian wrath",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Área: cone de 18 m. Defesa: Reflexos básico. Você evoca a energia de uma região das Fendas Exteriores. Role 1d4 para determinar um tipo de energia e um tipo físico: 1, Céus, relâmpagos e detritos voadores, contundente e eletricidade; 2, Profundezas, ácido e conchas demoníacas, ácido e cortante; 3, Congelada, ar gelado e gelo, contundente e frio; 4, Vulcânica, rochas vulcânicas pontiagudas e magma, fogo e perfurante. Cada criatura no cone sofre 4d6 de cada um dos dois tipos, totalizando 8d6, com Reflexos básico. Elevada (+1): o dano de cada tipo aumenta em 1d6.",
+      "resumo": [
+        "Cone de 18 m causa 8d6 em dois tipos escolhidos por 1d4; Reflexos básico. Cada graduação extra acrescenta 1d6 de cada tipo."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 264,
+      "paginaPdf": 264,
+      "paginaImpressa": 263,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "cone",
+        "comprimento": 18
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "tabelaTipos": [
+          [
+            "contundente",
+            "eletricidade"
+          ],
+          [
+            "acido",
+            "cortante"
+          ],
+          [
+            "contundente",
+            "frio"
+          ],
+          [
+            "fogo",
+            "perfurante"
+          ]
+        ],
+        "dadosPorTipo": "4d6",
+        "elevacaoPorTipo": "1d6"
+      }
+    },
+    {
+      "id": "abracar-o-abismo",
+      "nome": "Abraçar o Abismo",
+      "nomeOriginal": "embrace the pit",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "morfo"
+      ],
+      "descricao": "Duração: 1 minuto. Chifres de diabo brotam de seu crânio e a pele adquire características do diabo responsável por sua linhagem diabólica. Você recebe resistência 5 a fogo e veneno e resistência 1 a dano físico, exceto prata. Elevada (+2): a resistência a fogo e veneno aumenta em 5 e a resistência a dano físico, exceto prata, aumenta em 2.",
+      "resumo": [
+        "Por 1 minuto, resistência 5 a fogo e veneno e resistência 1 a dano físico, atravessada por prata."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 264,
+      "paginaPdf": 264,
+      "paginaImpressa": 263,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "resistencias": [
+          {
+            "tipo": "fogo",
+            "valor": 5
+          },
+          {
+            "tipo": "veneno",
+            "valor": 5
+          },
+          {
+            "tipo": "fisico",
+            "valor": 1,
+            "exceto": [
+              "prata"
+            ]
+          }
+        ],
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "coluna-de-fogo-infernal",
+      "nome": "Coluna de Fogo Infernal",
+      "nomeOriginal": "hellfire plume",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "fogo",
+        "manuseio",
+        "espirito"
+      ],
+      "descricao": "Alcance: 18 m. Área: cilindro de 3 m de raio e 18 m de altura. Defesa: Reflexos básico. Você invoca uma coluna de fogo infernal que irrompe de baixo, causando 4d6 de fogo e 4d6 espiritual. Elevada (+1): tanto o dano de fogo quanto o espiritual aumentam em 1d6.",
+      "resumo": [
+        "Cilindro de 3 m de raio causa 4d6 de fogo e 4d6 espiritual, com Reflexos básico; cada graduação extra aumenta ambos em 1d6."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 264,
+      "paginaPdf": 264,
+      "paginaImpressa": 263,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "cilindro",
+        "raio": 3,
+        "altura": 18
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "danos": [
+          {
+            "tipo": "fogo",
+            "formula": "4d6"
+          },
+          {
+            "tipo": "espiritual",
+            "formula": "4d6"
+          }
+        ],
+        "elevacaoPorTipo": "1d6"
+      }
+    },
+    {
+      "id": "sopro-de-dragao",
+      "nome": "Sopro de Dragão",
+      "nomeOriginal": "dragon breath",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Área: cone de 9 m. Defesa: Reflexos básico. Você expele energia pela boca, causando 5d6 de dano com salvaguarda básica de Reflexos. O tipo depende da tradição do dragão que influenciou sua linhagem: arcana, força; divina, espiritual; ocultista, mental; primal, fogo. Elevada (+1): o dano aumenta em 2d6.",
+      "resumo": [
+        "Cone de 9 m causa 5d6 com Reflexos básico; o tipo vem da tradição da linhagem. Cada graduação extra acrescenta 2d6."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 264,
+      "paginaPdf": 264,
+      "paginaImpressa": 263,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "cone",
+        "comprimento": 9
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "dano": "5d6",
+        "elevacao": "2d6",
+        "tiposPorTradicao": {
+          "arcana": "forca",
+          "divina": "espiritual",
+          "ocultista": "mental",
+          "primal": "fogo"
+        }
+      }
+    },
+    {
+      "id": "asas-de-dragao",
+      "nome": "Asas de Dragão",
+      "nomeOriginal": "dragon wings",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana",
+        "divina",
+        "ocultista",
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio",
+        "morfo"
+      ],
+      "descricao": "Duração: 1 minuto. Asas coriáceas brotam de suas costas, concedendo Deslocamento de voo de 18 m ou igual ao seu Deslocamento, o que for maior. Se ainda estiver voando quando a magia terminar, flutua até o chão com os efeitos de Pouso Suave. Elevada (8ª): a duração aumenta para 10 minutos.",
+      "resumo": [
+        "Voo de pelo menos 18 m por 1 minuto; na 8ª graduação dura 10 minutos. Ao terminar, pousa suavemente."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "vooMinimo": 18,
+        "voo": "maximo-entre-18-e-deslocamento",
+        "duracaoRodadas": 10,
+        "elevacaoDuracao": {
+          "ranque": 8,
+          "rodadas": 100
+        }
+      }
+    },
+    {
+      "id": "movimento-elemental",
+      "nome": "Movimento Elemental",
+      "nomeOriginal": "elemental motion",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Duração: 1 minuto. Você usa seu elemento para se impulsionar; a magia recebe o traço desse elemento. Ar: voo igual ao seu Deslocamento. Terra: escavação de 3 m. Fogo: voo igual ao seu Deslocamento. Metal: escavação de 3 m. Água: natação igual ao seu Deslocamento e pode respirar debaixo d’água. Madeira: escalada igual ao seu Deslocamento. Elevada (6ª): também recebe +3 m de estado em seus Deslocamentos. Elevada (9ª): esse bônus de estado aumenta para +6 m.",
+      "resumo": [
+        "Por 1 minuto, seu elemento concede voo, escavação, natação ou escalada. Na 6ª e 9ª graduações, recebe bônus de velocidade."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "movimentosPorElemento": {
+          "ar": "voo",
+          "terra": "escavacao",
+          "fogo": "voo",
+          "metal": "escavacao",
+          "agua": "natacao",
+          "madeira": "escalada"
+        },
+        "escavacao": 3,
+        "bonusEstadoPorRanque": {
+          "6": 3,
+          "9": 6
+        }
+      }
+    },
+    {
+      "id": "explosao-elemental",
+      "nome": "Explosão Elemental",
+      "nomeOriginal": "elemental blast",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m, somente para explosão. Área: explosão de 3 m de raio, cone de 9 m ou linha de 18 m. Defesa: Reflexos básico. Você reúne energia elemental e a libera em uma das três formas à escolha, causando 8d6 de dano. O tipo do dano corresponde à influência elemental de sua linhagem, por exemplo cortante para ar e fogo para fogo. A magia recebe o traço do elemento. Elevada (+1): o dano aumenta em 2d6.",
+      "resumo": [
+        "Escolha explosão, cone ou linha; causa 8d6 do elemento da linhagem com Reflexos básico e mais 2d6 por graduação extra."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "dano": "8d6",
+        "elevacao": "2d6",
+        "formas": [
+          {
+            "tipo": "explosao",
+            "raio": 3,
+            "alcance": 9
+          },
+          {
+            "tipo": "cone",
+            "comprimento": 9
+          },
+          {
+            "tipo": "linha",
+            "comprimento": 18
+          }
+        ]
+      }
+    },
+    {
+      "id": "desaparecimento-feerico",
+      "nome": "Desaparecimento Feérico",
+      "nomeOriginal": "fey disappearance",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio"
+      ],
+      "descricao": "Duração: até o fim do seu próximo turno. Você fica invisível e ignora terreno difícil natural, como vegetação rasteira. Qualquer ação hostil que realizar encerra essa invisibilidade, mas continua ignorando terreno difícil natural. Elevada (5ª): realizar uma ação hostil não encerra a invisibilidade.",
+      "resumo": [
+        "Invisibilidade e ignora terreno difícil natural até o fim do próximo turno. Ações hostis encerram a invisibilidade, salvo na 5ª graduação."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "invisivel": true,
+        "ignoraTerrenoDificilNatural": true,
+        "invisibilidadeMantidaComHostilidadeRanque": 5
+      }
+    },
+    {
+      "id": "encanto-feerico",
+      "nome": "Encanto Feérico",
+      "nomeOriginal": "fey glamour",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "primal"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "ilusao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 9 m. Área: explosão de 9 m ou alvos: até 10 criaturas voluntárias. Duração: 10 minutos. Você invoca encantos feéricos para revestir a área ou os alvos com ilusões. Escolha o efeito de Cena Ilusória na área ou Disfarce Ilusório nas criaturas. Use o efeito da magia escolhida elevada a uma graduação uma unidade inferior à de Encanto Feérico, mas empregue o alcance e a duração de Encanto Feérico.",
+      "resumo": [
+        "Por 10 minutos, cria uma Cena Ilusória em uma área ou Disfarce Ilusório em até 10 voluntários, com graduação uma abaixo desta magia."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "magiasDelegadas": [
+          "cena-ilusoria",
+          "disfarce-ilusorio"
+        ],
+        "ranqueDelegado": "ranque-1",
+        "duracaoRodadas": 100
+      }
+    },
+    {
+      "id": "semblante-horrendo",
+      "nome": "Semblante Horrendo",
+      "nomeOriginal": "horrific visage",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "emocao",
+        "medo",
+        "ilusao",
+        "manuseio",
+        "mental",
+        "visual"
+      ],
+      "descricao": "Área: emanação de 9 m de raio. Defesa: Vontade. Você transforma brevemente suas feições no rosto horrendo de uma bruxa monstruosa, assustando os inimigos. Cada inimigo na área faz uma salvaguarda de Vontade. Sucesso: não é afetado. Falha: assustado 1. Falha crítica: assustado 2. Elevada (5ª): sucesso impõe assustado 1; falha, assustado 2; falha crítica, assustado 3 e fugindo por 1 rodada. Sucesso crítico continua sem efeito.",
+      "resumo": [
+        "Vontade evita assustado 1 ou 2; na 5ª graduação, até um sucesso causa medo e a falha crítica também faz fugir."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 265,
+      "paginaPdf": 265,
+      "paginaImpressa": 264,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "emanacao",
+        "raio": 9
+      },
+      "salvaguarda": "vontade",
+      "mecanica": {
+        "resultados": {
+          "sucesso": {},
+          "falha": {
+            "assustado": 1
+          },
+          "falhaCritica": {
+            "assustado": 2
+          }
+        },
+        "elevacao5": {
+          "sucesso": {
+            "assustado": 1
+          },
+          "falha": {
+            "assustado": 2
+          },
+          "falhaCritica": {
+            "assustado": 3,
+            "fugindoRodadas": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "voce-e-meu",
+      "nome": "Você É Meu",
+      "nomeOriginal": "you're mine",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "emocao",
+        "incapacitacao",
+        "manuseio",
+        "mental"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura. Defesa: Vontade. Duração: 1 rodada. Você manipula as emoções do alvo, podendo controlá-lo por um breve instante. Sucesso crítico: não é afetado. Sucesso: atordoado 1. Falha: no próximo turno do alvo, ele fica atordoado 1 e você o controla parcialmente, obrigando-o a realizar uma única ação à sua escolha; se ainda tiver ações disponíveis, age normalmente. Falha crítica: controlado por 1 rodada. Elevada (7ª): em falha, fica controlado por 1 rodada; em falha crítica, fica controlado por até 1 minuto, com nova salvaguarda de Vontade ao fim de cada turno. Um sucesso encerra a magia.",
+      "resumo": [
+        "Vontade determina atordoamento, uma ação imposta ou controle por 1 rodada. Na 7ª graduação, a falha crítica permite controle por até 1 minuto."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 266,
+      "paginaPdf": 266,
+      "paginaImpressa": 265,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "vontade",
+      "mecanica": {
+        "resultados": {
+          "sucesso": {
+            "atordoado": 1
+          },
+          "falha": {
+            "atordoado": 1,
+            "acaoImposta": 1
+          },
+          "falhaCritica": {
+            "controladoRodadas": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "estender-magia-sanguinea",
+      "nome": "Estender Magia Sanguínea",
+      "nomeOriginal": "extend blood magic",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "modificador-de-magia"
+      ],
+      "descricao": "Você usa a energia arcana de seu sangue para estender a magia que ela concede. Se sua próxima ação for Conjurar Magia que conceda um efeito de magia sanguínea com duração de pelo menos 1 rodada, você ou um alvo recebe esse efeito por uma rodada adicional. Só pode manter um efeito de magia sanguínea estendido de cada vez.",
+      "resumo": [
+        "Se a próxima ação conjurar uma magia que ativa magia sanguínea, estende um efeito com duração de pelo menos 1 rodada em mais 1 rodada."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 266,
+      "paginaPdf": 266,
+      "paginaImpressa": 265,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "duracaoExtraRodadas": 1,
+        "limiteEfeitosEstendidos": 1,
+        "exigeProximaAcaoConjurar": true
+      }
+    },
+    {
+      "id": "contramedida-arcana",
+      "nome": "Contramedida Arcana",
+      "nomeOriginal": "arcane countermeasure",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "arcana"
+      ],
+      "acoes": "reacao",
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio"
+      ],
+      "descricao": "Gatilho: uma criatura visível no alcance Conjura Magia. Alcance: 36 m. Alvo: a magia conjurada pela criatura que acionou a reação. Você enfraquece essa magia, tornando mais fácil defender-se dela. Reduza sua graduação em 1; os alvos recebem +2 de estado em salvaguardas, testes de perícia, CA ou CDs contra ela. Não pode reduzir a graduação abaixo da mínima da magia: uma Nevasca Uivante de 5ª graduação permanece na 5ª, mas uma Bola de Fogo de 5ª vira de 4ª. Os alvos recebem os demais benefícios mesmo quando a graduação não pode ser reduzida.",
+      "resumo": [
+        "Reação a uma conjuração visível a até 36 m: reduz a graduação em 1, respeitando o mínimo, e concede +2 nas defesas dos alvos."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 266,
+      "paginaPdf": 266,
+      "paginaImpressa": 265,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "reducaoRanque": 1,
+        "respeitaRanqueMinimo": true,
+        "bonusDefesas": {
+          "tipo": "estado",
+          "valor": 2
+        }
+      }
+    },
+    {
+      "id": "drenar-vida",
+      "nome": "Drenar Vida",
+      "nomeOriginal": "drain life",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "manuseio",
+        "vazio"
+      ],
+      "descricao": "Alcance: 9 m. Alvo: 1 criatura viva. Defesa: Fortitude básica. Você fecha a mão e puxa a energia vital de outra criatura para si. Causa 3d4 de vazio, com salvaguarda básica de Fortitude. Recebe PV temporários iguais ao dano que o alvo sofre, depois da salvaguarda e de qualquer efeito de magia sanguínea aplicável. Se o alvo tinha menos PV que o dano causado, recebe somente seus PV restantes como PV temporários. Eles duram 1 minuto. Elevada (+1): o dano aumenta em 1d4.",
+      "resumo": [
+        "Causa 3d4 de vazio com Fortitude básica; ganha PV temporários iguais ao dano efetivo, limitados pelos PV que o alvo tinha."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 266,
+      "paginaPdf": 266,
+      "paginaImpressa": 265,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "dano": "3d4",
+        "tipo": "vazio",
+        "elevacao": "1d4",
+        "pvTemporarios": "minimo-entre-dano-final-e-pv-anteriores-alvo",
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "sepultura-agarradora",
+      "nome": "Sepultura Agarradora",
+      "nomeOriginal": "grasping grave",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "feiticeiro",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Alcance: 18 m. Área: raio de 6 m no chão. Defesa: Reflexos. Centenas de braços esqueléticos irrompem do chão, arranhando as criaturas e tentando prendê-las. Os braços causam 6d6 de cortante. Cada criatura na área faz uma salvaguarda de Reflexos. Sucesso crítico: não é afetada. Sucesso: metade do dano. Falha: dano completo e −3 m de circunstância em seus Deslocamentos por 1 rodada. Falha crítica: dano dobrado e imobilizada por 1 rodada ou até Escapar. Elevada (+1): o dano aumenta em 2d6.",
+      "resumo": [
+        "Área no chão causa 6d6 cortante; Reflexos reduz o dano. Falha diminui velocidade e falha crítica imobiliza por 1 rodada ou até Escapar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 266,
+      "paginaPdf": 266,
+      "paginaImpressa": 265,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual integral da entrada e de suas elevações no PDF fornecido; páginas físicas 263–266. Combate ainda sem executor para esta entrada.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "area": {
+        "tipo": "explosao-no-chao",
+        "raio": 6
+      },
+      "salvaguarda": "reflexos",
+      "mecanica": {
+        "dano": "6d6",
+        "tipo": "cortante",
+        "elevacao": "2d6",
+        "falha": {
+          "penalidadeMovimento": {
+            "tipo": "circunstancia",
+            "valor": -3
+          }
+        },
+        "falhaCritica": {
+          "imobilizadoRodadas": 1,
+          "terminaAoEscapar": true
+        }
+      }
+    }
+  ],
+  "lacunas": [
+    {
+      "categoria": "automacao-focos-avancados",
+      "descricao": "Os vinte focos avançados das linhagens têm texto português revisado e metadados; permanecem somente para consulta até receberem executores de combate e testes independentes."
+    }
+  ]
+}

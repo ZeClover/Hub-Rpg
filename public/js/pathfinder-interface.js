@@ -409,7 +409,7 @@
     return ['ancestralidade','classe','pericia','geral'].flatMap(tipo=>niveisTalento(dados,tipo).filter(nivel=>nivel<=dados.nivel).map(nivel=>({tipo,nivel,origem:null,quantidade:1})));
   }
   function escolherAquisicao(dados,item) {
-    const disponiveis=escolhasTalentoDisponiveis(dados).filter(escolha=>escolha.tipo===item.tipo&&escolha.nivel>=(item.nivel||1)&&escolha.nivel<=dados.nivel).sort((a,b)=>b.nivel-a.nivel);
+    const disponiveis=escolhasTalentoDisponiveis(dados).filter(escolha=>escolha.tipo===item.tipo&&escolha.nivel>=(item.nivel||1)&&escolha.nivel<=dados.nivel&&(escolha.nivelMaximoTalento===undefined||(item.nivel||1)<=escolha.nivelMaximoTalento)).sort((a,b)=>b.nivel-a.nivel);
     const livre=disponiveis.find(escolha=>(dados.talentos||[]).filter(t=>t.tipo===escolha.tipo&&t.nivel===escolha.nivel&&(t.origem||null)===(escolha.origem||null)).length<(escolha.quantidade||1));
     return livre?{nivel:livre.nivel,...(livre.origem?{origem:livre.origem}:{})}:{nivel:nivelAquisicao(dados,item)};
   }
@@ -547,7 +547,7 @@
     if(!Combate()){avisar('Não foi possível carregar o módulo de combate. Recarregue antes de alterar os PV.');return;}
     const atual=copiar(ficha);atual.vida={...atual.vida,maxima:calculo.pvMaximos};
     const critico=$('#dano-critico')?.checked===true,final=$('#dano-ja-final')?.checked===true,valor=critico&&!final?Combate().rolar(String(quantidade)+'*2').total:quantidade;
-    const partes=[{tipo:$('#dano-tipo')?.value||'sem-tipo',valor,valorSemDobra:quantidade}],opcoes={danoFinal:final,defesas:calculo.defesas,critico,naoLetal:$('#dano-nao-letal')?.checked===true};
+    const partes=[{tipo:$('#dano-tipo')?.value||'sem-tipo',valor,valorSemDobra:quantidade}],opcoes={danoFinal:final,defesas:calculo.defesas,limiteMorrendo:calculo.limiteMorrendo,critico,naoLetal:$('#dano-nao-letal')?.checked===true};
     if(bloquear&&typeof Combate().bloqueioEscudo!=='function'){avisar('Não foi possível carregar o cálculo de Bloqueio com Escudo. Recarregue a ficha.');return;}
     const resultado=cura?Combate().curar(atual,quantidade):bloquear?Combate().bloqueioEscudo(atual,calculo,partes,{...opcoes,ataque:$('#dano-ataque')?.checked===true}):Combate().aplicarDano(atual,partes,opcoes);
     if(!resultado.suportado){avisar(resultado.motivo||'Este efeito não pôde ser aplicado.');return;}
@@ -562,7 +562,7 @@
     if(!inicio&&(!ficha.turno||ficha.turno.encerrado)){avisar('Inicie seu turno antes de finalizar.');return;}
     const calculo=R.calcular(ficha,catalogo),antes=semSegredos(ficha);delete antes._ultimoTurnoSnapshot;
     const atual=copiar(ficha);atual.vida={...atual.vida,maxima:calculo.pvMaximos};
-    const resultado=inicio?Combate().iniciarTurno(atual):Combate().finalizarTurno(atual,{defesas:calculo.defesas});
+    const resultado=inicio?Combate().iniciarTurno(atual,{limiteMorrendo:calculo.limiteMorrendo,cdRecuperacaoAjuste:calculo.cdRecuperacaoAjuste}):Combate().finalizarTurno(atual,{defesas:calculo.defesas});
     if(!resultado.suportado){avisar(resultado.motivo||'Não foi possível resolver os efeitos do turno.');return;}
     ficha=resultado.ficha;ficha._ultimoTurnoSnapshot=antes;salvar();renderizar();
     avisar(inicio?'Turno iniciado.'+(resultado.recuperacao?' Recuperação: '+resultado.recuperacao.total+' contra CD '+resultado.recuperacao.cd+' · '+resultado.recuperacao.grau+'.':''):'Turno finalizado.'+(resultado.danosPersistentes?.length?' '+resultado.danosPersistentes.map(p=>tiposDano[p.tipo]+': '+p.valor+' de dano, teste '+p.recuperacao.total+' contra CD '+p.recuperacao.cd+(p.recuperacao.sucesso?' · removido.':' · continua.')).join(' '):''));
@@ -584,7 +584,7 @@
   async function declararIniciativa() {
     if(!podeEditar||guia||enviando||iniciativaEnviando)return;
     const dadoCampo=$('#iniciativa-dado');if(!dadoCampo.reportValidity())return;
-    const nome=$('#iniciativa-base').value,dado=dadoCampo.value===''?d20():Number(dadoCampo.value),calculo=R.calcular(ficha,catalogo),bonus=nome==='percepcao'?calculo.percepcao:calculo.pericias[nome],resultado=dado+bonus;
+    const nome=$('#iniciativa-base').value,dado=dadoCampo.value===''?d20():Number(dadoCampo.value),calculo=R.calcular(ficha,catalogo),bonus=(nome==='percepcao'?calculo.percepcao:calculo.pericias[nome])+Number(calculo.bonusIniciativa||0),resultado=dado+bonus;
     if(!Number.isInteger(dado)||dado<1||dado>20||!Number.isInteger(resultado))return;
     if(!id){avisar('Iniciativa: d20 '+dado+' '+(bonus>=0?'+':'')+bonus+' = '+resultado+'. Salve a ficha no Hub para declarar à mesa.');return;}
     iniciativaEnviando=true;

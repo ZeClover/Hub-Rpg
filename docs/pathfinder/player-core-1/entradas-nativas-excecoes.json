@@ -1,0 +1,37 @@
+{
+  "talentos": [
+    {
+      "id": "patrulheiro-riposta-dupla-aprimorada",
+      "descricao": "PATRULHEIRO. Pré-requisitos: Riposta Dupla. No início de cada um dos seus turnos, recebe uma reação adicional que só pode ser usada para Riposta Dupla. Pode usar essa reação extra mesmo sem estar se beneficiando de Aparagem Dupla.",
+      "resumo": ["Recebe uma reação adicional por turno, exclusiva para Riposta Dupla, mesmo sem Aparagem Dupla."],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true,
+      "paginasTexto": [204],
+      "secoes": ["pc1-pdf-205"]
+    },
+    {
+      "id": "artista-virtuoso",
+      "descricao": "GERAL, PERÍCIA. Pré-requisitos: treinado em Performance. Escolha uma especialidade: atuação (drama, pantomima, marionetes), canto (balada, cântico, melodia, rima), comédia (paródias, piadas, limeriques), cordas (violino, harpa, alaúde, viola), dança (balé, huara, jig, macru), oratória (épico, ode, poesia, narrativa), percussão (carrilhão, tambor, gongo, xilofone), sopro (gaita de fole, flauta, flauta doce, trompete) ou teclados (cravo, órgão, piano). Recebe +1 de circunstância nos testes de Performance desse tipo; com Performance mestre, o bônus passa a +2. Se a aplicação de uma especialidade for duvidosa, o Mestre decide.",
+      "resumo": ["Escolha um tipo de performance: +1 de circunstância nos testes desse tipo, ou +2 com Performance mestre. O Mestre resolve aplicações duvidosas."],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true,
+      "paginasTexto": [252],
+      "secoes": ["pc1-pdf-253"]
+    }
+  ],
+  "magias": [
+    {
+      "id": "reviver-os-mortos",
+      "descricao": "INCOMUM, CONCENTRAÇÃO, CURA, MANUSEIO. Tradição divina. Execução: 10 minutos. Custo: gemas no valor de 200 po × nível do alvo (mínimo 1). Distância: 3 metros. Alvo: uma criatura morta de nível 13 ou menor, falecida há no máximo três dias, cujo corpo esteja presente e relativamente intacto. Evoca sua alma: se Pharasma decidir que seu tempo acabou (a critério do Mestre), ou se ela recusar retornar, a magia falha sem consumir o custo. Se funcionar, retorna com 1 PV, sem magias preparadas, espaços, pontos de reservas ou recursos diários, mantendo debilitações duradouras do antigo corpo. Fica desajeitado 2, drenado 2 e enfraquecido 2 por uma semana; nenhuma dessas condições pode ser removida ou reduzida antes de passar essa semana. O tempo no pós-vida também deixa uma alteração permanente, como uma mudança de personalidade, mecha branca ou marca de nascença. Elevada ao 7º ranque: nível máximo 15 e custo de 400 po × nível (mínimo 1). Ao 8º: nível máximo 17 e 800 po × nível. Ao 9º: nível máximo 19 e 1.600 po × nível. Ao 10º: nível máximo 21 e 3.200 po × nível.",
+      "resumo": ["Tenta trazer de volta quem morreu há até três dias: exige corpo relativamente intacto, vontade da alma e permissão de Pharasma. Retorna com 1 PV, recursos vazios e três condições de valor 2 por uma semana; o ranque aumenta os limites de nível e o custo."],
+      "revisao": "texto-nativo-conferido",
+      "somenteConsulta": true,
+      "textoNativoCompleto": true,
+      "tradicoes": ["divina"],
+      "paginasTexto": [361],
+      "secoes": ["pc1-pdf-362"]
+    }
+  ]
+}

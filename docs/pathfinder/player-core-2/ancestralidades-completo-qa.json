@@ -1,0 +1,26 @@
+{
+  "fonte": "Player Core 2",
+  "paginasFisicas": "8–49",
+  "idioma": "pt-BR",
+  "escopo": [
+    "cultura das oito ancestralidades",
+    "dhampir",
+    "sangue dracônico",
+    "andarilho crepuscular",
+    "índice nominal de talentos ancestrais e de herança"
+  ],
+  "politicaEditorial": "Nenhuma lacuna de OCR foi completada por adivinhação. Entradas com colunas fundidas estão marcadas como ocr-ambiguo, somenteConsulta e automação bloqueada.",
+  "origemOCR": "/workspace/artifacts/pathfinder-fontes/ocr-player-core-2/pdf-8.txt até pdf-49.txt",
+  "estado": "revisao-parcial-segura",
+  "contagensIsoladas": {
+    "secoesCulturais": 11,
+    "talentosIndexados": 149,
+    "talentosComTextoRevisado": 53,
+    "talentosComOcrAmbiguo": 96
+  },
+  "observacoes": [
+    "Os registros revisados contêm texto funcional em português.",
+    "Os registros ocr-ambiguo preservam nome, nível, fonte e página, mas exigem cotejo visual antes de receber descrição mecânica integral.",
+    "Nenhuma entrada deste módulo altera automaticamente a ficha."
+  ]
+}

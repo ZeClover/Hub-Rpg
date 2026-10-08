@@ -3,11 +3,11 @@
   "sha256Pdf": "e4350a99f3295d80ecfcb15810a8a8687807ce5eb65314ee354436916c87d468",
   "paginasPdf": 338,
   "estado": "parcial",
-  "secoes": 36,
-  "equipamentos": 120,
+  "secoes": 93,
+  "equipamentos": 286,
   "artefatos": 5,
-  "tabelasReais": 13,
-  "notaTabelas": "O objeto contém 13 arrays de tabelas e xpPerigosNota como observação textual. Não contar essa observação como tabela.",
+  "tabelasReais": 41,
+  "notaTabelas": "O objeto contém 41 arrays de tabelas e xpPerigosNota como observação textual. tabelasRotulos fornece nomes e colunas em português sem exigir hardcode na interface.",
   "divergenciasFonte": [
     {
       "pagina": 99,
@@ -49,12 +49,15 @@
     }
   ],
   "verificacoes": [
-    "IDs ASCII únicos nas 120 entradas e 36 seções.",
+    "IDs ASCII únicos nas 286 entradas e 93 seções.",
     "Resumos definidos por entrada/família sem reticências ou corte de texto.",
-    "Tabelas de CDs 0–25, círculos 1–10 e tesouro/riqueza 1–20 completas.",
+    "Tabelas de CDs 0–25, círculos 1–10, tesouro/riqueza 1–20, construção −1–24, subsistemas e materiais completas no recorte declarado.",
     "Custos de criaturas separados de perigos.",
     "Artefatos sem preço de mercado, identificados para mestre.",
-    "Sem alteração automática de ficha ou regras de variante."
+    "Sem alteração automática de ficha ou regras de variante.",
+    "Validador isolado reconstrói 93 seções, 286 equipamentos e 41 tabelas sem escrever em public/.",
+    "Catálogo alquímico individual das páginas 244–251: 4 bombas, 12 elixires, 19 venenos e 5 ferramentas em português, sem executor aproximado.",
+    "Rótulos cobrem todas as tabelas e todas as 101 chaves de coluna presentes."
   ],
   "conferenciaVisualAnterior": [
     "53",
@@ -64,10 +67,11 @@
   ],
   "notaVisual": "Tabelas conferidas visualmente no ambiente anterior. Snapshot foi reconstruído e as mesmas tabelas foram confrontadas novamente com o texto extraído deste PDF, cujo hash é preservado.",
   "mecanicasEstruturadas": {
-    "entradasComDadosRevisados": 22,
+    "entradasComDadosRevisados": 25,
     "fundamentaisArmaArmadura": 12,
     "reforcadoras": 5,
     "pocoesCura": 5,
+    "runasSombra": 3,
     "bloqueadasPorErrata": [
       "runa-reforcadora-maior"
     ],
@@ -83,9 +87,6 @@
       "runa-vestimenta",
       "runa-prontidao",
       "runa-prontidao-maior",
-      "runa-sombra",
-      "runa-sombra-maior",
-      "runa-sombra-superior",
       "runa-escorregadia",
       "runa-escorregadia-maior",
       "runa-escorregadia-superior",
@@ -171,6 +172,6 @@
       "serithtial",
       "projetil-primeiro-cofre"
     ],
-    "nota": "Estruturas do catálogo ainda dependem da integração e testes do motor. Não equivale a automação de todas as 120 entradas."
+    "nota": "As 25 entradas automatizáveis possuem estruturas revisadas; as demais continuam como consulta ou dados sem executor completo. Não equivale a automação de todas as 286 entradas."
   }
 }

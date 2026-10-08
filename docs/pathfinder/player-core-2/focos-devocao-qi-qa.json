@@ -1,0 +1,693 @@
+{
+  "magias": [
+    {
+      "id": "sacrificio-do-campeao",
+      "nome": "Sacrifício do Campeão",
+      "nomeOriginal": "champion's sacrifice",
+      "ranque": 6,
+      "nivel": 6,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": "reacao",
+      "tracos": [
+        "incomum",
+        "foco",
+        "campeao",
+        "manuseio"
+      ],
+      "descricao": "Gatilho: um aliado é atingido por um Golpe ou falha em uma salvaguarda contra um efeito que não afeta você. Alcance: 9 m. Alvo: o aliado que acionou a reação. Você cria um vínculo com o aliado para sofrer em seu lugar. Todos os efeitos do acerto ou da salvaguarda falha se aplicam a você em vez de ao alvo. Por exemplo, se o alvo falhar criticamente contra uma Bola de Fogo, você recebe dano dobrado. Esses efeitos ignoram quaisquer resistências, imunidades ou outras habilidades suas que poderiam mitigá-los; porém as do alvo se aplicam antes de você receber o efeito.",
+      "resumo": [
+        "Reação: assume todos os efeitos de um Golpe ou salvaguarda falha de um aliado a até 9 m. A defesa do aliado vale antes da transferência; a sua não reduz o efeito."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcance": 9,
+        "transferenciaEfeito": true,
+        "defesasAplicadas": "alvo-original-apenas"
+      }
+    },
+    {
+      "id": "desafio-do-heroi",
+      "nome": "Desafio do Herói",
+      "nomeOriginal": "hero's defiance",
+      "ranque": 10,
+      "nivel": 10,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": "livre",
+      "tracos": [
+        "incomum",
+        "foco",
+        "campeao",
+        "concentracao",
+        "cura",
+        "vitalidade"
+      ],
+      "descricao": "Gatilho: um ataque reduziria seus PV a 0. Você brada em desafio e recebe uma explosão de cura. Imediatamente antes de aplicar o dano do ataque, recupera 6d8+20 PV. Se isso impedir que o ataque reduza seus PV a 0, não fica inconsciente nem morrendo. Independentemente do resultado, só pode usar Desafio do Herói outra vez depois de Refocar ou realizar suas preparações diárias. Não pode usar esta magia contra efeitos com o traço morte nem efeitos que não deixariam restos, como Desintegrar.",
+      "resumo": [
+        "Ação livre antes do dano que o derrubaria: cura 6d8+20 PV. Recarrega ao Refocar ou preparar-se; não evita efeitos de morte nem desintegração."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "cura": "6d8+20",
+        "recarga": [
+          "refocar",
+          "preparacoes-diarias"
+        ],
+        "gatilho": "ataque-reduziria-pv-a-zero",
+        "naoFuncionaContra": [
+          "morte",
+          "sem-restos"
+        ]
+      }
+    },
+    {
+      "id": "avanco-espectral",
+      "nome": "Avanço Espectral",
+      "nomeOriginal": "spectral advance",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina"
+      ],
+      "acoes": [
+        1,
+        2
+      ],
+      "tracos": [
+        "incomum",
+        "foco",
+        "campeao",
+        "concentracao",
+        "polimorfia",
+        "espirito"
+      ],
+      "descricao": "Assumindo uma forma espiritual, você atravessa o campo de batalha para enfrentar um inimigo. Anda até um espaço adjacente a um inimigo. Com duas ações de conjuração, pode Andar duas vezes em vez de uma. Se tiver Deslocamento de voo, pode Voar em vez de Andar. Se estiver montado, pode fazer a montaria mover-se em seu lugar. Esse movimento não aciona reações e ignora terreno difícil e terreno difícil maior. Durante o movimento, você ou sua montaria recebe resistência a todo dano igual ao seu nível.",
+      "resumo": [
+        "Uma ou duas ações permitem um ou dois movimentos até um inimigo, sem reações nem terreno difícil; durante o percurso, resistência a todo dano igual ao nível."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "movimentosPorAcoes": {
+          "1": 1,
+          "2": 2
+        },
+        "naoAcionaReacoes": true,
+        "ignoraTerrenoDificilMaior": true,
+        "resistenciaDuranteMovimento": "nivel"
+      }
+    },
+    {
+      "id": "explosao-de-qi",
+      "nome": "Explosão de Qi",
+      "nomeOriginal": "qi blast",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": [
+        1,
+        2,
+        3
+      ],
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "forca",
+        "manuseio"
+      ],
+      "descricao": "Área: cone de 4,5 m ou maior. Defesa: Fortitude. Você libera qi em uma explosão que causa 2d6 de força. Com duas ações, o cone aumenta para 9 m e o dano para 3d6. Com três ações, o cone aumenta para 18 m e o dano para 4d6. Cada criatura na área faz uma salvaguarda de Fortitude. Sucesso crítico: não é afetada. Sucesso: metade do dano. Falha: dano completo e empurrada 1,5 m. Falha crítica: dano dobrado e empurrada 3 m. Elevada (+1): o dano aumenta em 1d6 se usada uma ação, ou 2d6 se usadas duas ou três ações.",
+      "resumo": [
+        "Uma a três ações determinam cone e dano de força; Fortitude reduz o dano e falhas empurram. Elevação depende das ações gastas."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "porAcoes": {
+          "1": {
+            "cone": 4.5,
+            "dano": "2d6",
+            "elevacao": "1d6"
+          },
+          "2": {
+            "cone": 9,
+            "dano": "3d6",
+            "elevacao": "2d6"
+          },
+          "3": {
+            "cone": 18,
+            "dano": "4d6",
+            "elevacao": "2d6"
+          }
+        },
+        "empurraoFalha": 1.5,
+        "empurraoFalhaCritica": 3
+      }
+    },
+    {
+      "id": "encurtar-a-distancia",
+      "nome": "Encurtar a Distância",
+      "nomeOriginal": "shrink the span",
+      "ranque": 3,
+      "nivel": 3,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "manuseio",
+        "teleporte"
+      ],
+      "descricao": "Alcance: veja o texto. O mundo parece encolher diante de seus passos. Você se teleporta até uma distância igual ao seu Deslocamento, dentro de sua linha de visão.",
+      "resumo": [
+        "Uma ação: teleporta-se até seu Deslocamento, para um local na linha de visão."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "alcance": "deslocamento",
+        "exigeLinhaDeVisao": true
+      }
+    },
+    {
+      "id": "ira-da-medusa",
+      "nome": "Ira da Medusa",
+      "nomeOriginal": "medusa's wrath",
+      "ranque": 8,
+      "nivel": 8,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 3,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Você desfere um ataque infundido de poder petrificante. Faça um Golpe desarmado com os efeitos adicionais abaixo. Sucesso crítico: o alvo fica lento 2 e faz uma salvaguarda de Fortitude ao fim de cada turno. Essa salvaguarda contínua tem o traço incapacitação. Uma falha aumenta lento em 1; falha crítica aumenta em 2. Um sucesso reduz lento em 1. Quando a criatura ficar incapaz de agir por causa de lento imposto por Ira da Medusa, fica petrificada permanentemente. A magia termina se a criatura ficar petrificada ou se a condição lento for removida. Sucesso: como sucesso crítico, mas o alvo começa lento 1.",
+      "resumo": [
+        "Golpe desarmado impõe lento 1 ou 2; Fortitude ao fim dos turnos reduz ou aumenta a condição. Se lento impedir todas as ações, o alvo fica petrificado."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "golpeDesarmado": true,
+        "lentoSucesso": 1,
+        "lentoCritico": 2,
+        "salvaguardaPosterior": "fortitude",
+        "incapacitacaoApenasSalvaguardaPosterior": true
+      }
+    },
+    {
+      "id": "toque-da-morte",
+      "nome": "Toque da Morte",
+      "nomeOriginal": "touch of death",
+      "ranque": 8,
+      "nivel": 8,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "incapacitacao",
+        "manuseio"
+      ],
+      "descricao": "Defesa: Fortitude. Duração: 1 mês. Faça um Golpe desarmado corpo a corpo. Se acertar e o alvo permanecer vivo, a qualquer momento durante a duração pode gastar uma ação, com os traços auditivo e concentração, para pronunciar uma palavra de morte que pode matá-lo instantaneamente. O alvo faz uma salvaguarda de Fortitude. Sucesso crítico: sobrevive, a magia termina e fica temporariamente imune por 24 horas. Sucesso: fica atordoado 1 e sofre 40 de dano; a magia termina e fica imune por 24 horas. Falha: fica atordoado 3 e sofre 80 de dano; a magia continua, mas ele fica imune por 24 horas a ser morto por Toque da Morte. Falha crítica: morre. Conjurar Toque da Morte novamente encerra os efeitos de qualquer conjuração anterior sua. Elevada (+1): o dano aumenta em 10 na falha e em 5 no sucesso.",
+      "resumo": [
+        "Golpe implanta uma ameaça por 1 mês; uma ação posterior exige Fortitude, causando atordoamento e dano ou morte. Só uma conjuração sua pode permanecer ativa."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 258,
+      "paginaPdf": 258,
+      "paginaImpressa": 257,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "golpeDesarmadoInicial": true,
+        "acaoPosterior": 1,
+        "danoSucesso": 40,
+        "danoFalha": 80,
+        "elevacaoSucesso": 5,
+        "elevacaoFalha": 10,
+        "falhaCriticaMorte": true,
+        "limiteEfeitos": 1
+      }
+    },
+    {
+      "id": "abracar-o-nada",
+      "nome": "Abraçar o Nada",
+      "nomeOriginal": "embrace nothingness",
+      "ranque": 9,
+      "nivel": 9,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Duração: 1 minuto. Você esvazia o corpo de substância e se torna uno com o nada. Recebe resistência a dano físico igual ao seu nível. Move-se à metade de sua velocidade normal, mas pode mover-se em qualquer direção, inclusive para cima e para baixo. Enquanto se move, fica ocultado. Fora de seu turno, e durante seu turno até realizar uma ação com o traço movimento, fica invisível. Pode atravessar objetos sólidos inanimados desde que não tenham mais de 60 cm de espessura.",
+      "resumo": [
+        "Por 1 minuto, resistência física igual ao nível, movimento à metade em qualquer direção, invisibilidade enquanto imóvel e passagem por objetos de até 60 cm."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "resistenciaFisica": "nivel",
+        "fatorDeslocamento": 0.5,
+        "espessuraMaximaObjeto": 0.6,
+        "duracaoRodadas": 10
+      }
+    },
+    {
+      "id": "forma-de-qi",
+      "nome": "Forma de Qi",
+      "nomeOriginal": "qi form",
+      "ranque": 9,
+      "nivel": 9,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "polimorfia"
+      ],
+      "descricao": "Duração: 1 minuto. Você assume uma forma especial de qi: cabelo, penas, pele ou escamas mudam de cor e brilham. Recebe Deslocamento de voo igual ao terrestre. Escolha força, espiritual, vitalidade ou vazio: todos os seus Golpes causam mais 1d6 do tipo escolhido. Uma coroa brilhante da mesma cor de seu qi envolve o corpo, como efeito de luz. Essa coroa é uma aura em emanação de 1,5 m e causa 2d6 do tipo escolhido a criaturas que começarem seu turno nela. Se sobrepuser um efeito de escuridão, o brilho tenta neutralizá-lo; independentemente do resultado, não pode tentar neutralizar aquele mesmo efeito novamente por 1 dia. Pode Sustentar para ampliar a emanação a 9 m ou fazê-la voltar a 1,5 m. Suas armas e ataques desarmados perdem o traço não letal. Sofre −2 de estado em salvaguardas contra emoção, mas recebe +2 de estado contra todos os demais efeitos mentais.",
+      "resumo": [
+        "Por 1 minuto, voo, mais 1d6 nos Golpes e aura de 2d6; Sustentar alterna o raio entre 1,5 e 9 m. Muda defesas mentais e elimina ataques não letais."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "voo": "deslocamento-terrestre",
+        "tiposEscolha": [
+          "forca",
+          "espiritual",
+          "vitalidade",
+          "vazio"
+        ],
+        "danoGolpeExtra": "1d6",
+        "danoAura": "2d6",
+        "raiosAura": [
+          1.5,
+          9
+        ],
+        "bonusSalvaguardaMentalNaoEmocao": 2,
+        "penalidadeSalvaguardaEmocao": -2
+      }
+    },
+    {
+      "id": "postura-das-sombras-aderentes",
+      "nome": "Postura das Sombras Aderentes",
+      "nomeOriginal": "clinging shadows stance",
+      "ranque": 4,
+      "nivel": 4,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "manuseio",
+        "sombra",
+        "postura"
+      ],
+      "descricao": "Duração: até sair da postura. Você assume a postura das sombras aderentes. Pode fazer Golpes de abraço sombrio que causam 1d4 de vazio, pertencem ao grupo pugilato e têm os traços ágil, agarrar, alcance e desarmado. Nessa postura, recebe +2 de circunstância em Atletismo para Agarrar e na CD para criaturas Escaparem de você.",
+      "resumo": [
+        "Postura concede ataque desarmado ágil de vazio com alcance e agarrar; +2 circunstância para Agarrar e impedir que escapem."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "ataque": {
+          "nome": "Abraço Sombrio",
+          "dano": "1d4",
+          "tipo": "vazio",
+          "grupo": "pugilato",
+          "tracos": [
+            "agil",
+            "agarrar",
+            "alcance",
+            "desarmado"
+          ]
+        },
+        "bonusAgarrarEscape": {
+          "tipo": "circunstancia",
+          "valor": 2
+        }
+      }
+    },
+    {
+      "id": "postura-dos-ventos-selvagens",
+      "nome": "Postura dos Ventos Selvagens",
+      "nomeOriginal": "wild winds stance",
+      "ranque": 4,
+      "nivel": 4,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "ar",
+        "manuseio",
+        "postura"
+      ],
+      "descricao": "Duração: até sair da postura. Você assume uma postura de ventos fluentes e envia ondas de energia à distância. Pode fazer Golpes desarmados de impacto de vento como ataques à distância contra alvos a até 9 m. Causam 1d6 contundente, pertencem ao grupo pugilato e têm os traços ágil, não letal, propulsivo e desarmado. Ignoram ocultação e todas as coberturas. Nessa postura, recebe +2 de circunstância na CA contra ataques à distância.",
+      "resumo": [
+        "Postura permite Golpes desarmados à distância de 1d6 que ignoram cobertura e ocultação; +2 circunstância na CA contra ataques à distância."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "ataque": {
+          "nome": "Impacto de Vento",
+          "dano": "1d6",
+          "tipo": "contundente",
+          "grupo": "pugilato",
+          "alcance": 9,
+          "tracos": [
+            "agil",
+            "nao-letal",
+            "propulsivo",
+            "desarmado"
+          ],
+          "ignora": [
+            "ocultacao",
+            "cobertura"
+          ]
+        },
+        "bonusCaContraDistancia": {
+          "tipo": "circunstancia",
+          "valor": 2
+        }
+      }
+    },
+    {
+      "id": "teia-das-sombras",
+      "nome": "Teia das Sombras",
+      "nomeOriginal": "shadow's web",
+      "ranque": 7,
+      "nivel": 7,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 2,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "manuseio"
+      ],
+      "descricao": "Requisito: estar na Postura das Sombras Aderentes. Área: emanação de 9 m. Defesa: Fortitude. Escuridão agarradora irrompe de você e causa 14d4 de vazio. Cada criatura na área faz Fortitude. Sucesso crítico: não é afetada. Sucesso: metade do dano e enfraquecido 1 por 1 rodada. Falha: dano completo e enfraquecido 2 por 1 rodada. Falha crítica: dano dobrado, atordoado 1, enfraquecido 2 por 1 rodada e imobilizado por 1 rodada ou até Escapar, o que ocorrer primeiro. Elevada (+1): o dano de vazio aumenta em 2d4.",
+      "resumo": [
+        "Na postura de sombras, emanação causa 14d4 de vazio; Fortitude controla dano e enfraquecimento. Falha crítica também atordoa e imobiliza."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "salvaguarda": "fortitude",
+      "mecanica": {
+        "requerPostura": "postura-das-sombras-aderentes",
+        "dano": "14d4",
+        "tipo": "vazio",
+        "elevacao": "2d4",
+        "raio": 9
+      }
+    },
+    {
+      "id": "harmonizar-se",
+      "nome": "Harmonizar-se",
+      "nomeOriginal": "harmonize self",
+      "ranque": 2,
+      "nivel": 2,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "concentracao",
+        "cura",
+        "vitalidade"
+      ],
+      "descricao": "Você se cura de uma das maneiras abaixo, escolhida ao conjurar: recupera 8 PV; ou tenta curar um veneno ou doença que o aflige, fazendo uma tentativa de neutralizar a aflição. Elevada (+1): se escolheu recuperar PV, a cura aumenta em 8.",
+      "resumo": [
+        "Uma ação: cura 8 PV, mais 8 por graduação extra, ou tenta neutralizar um veneno ou doença que o aflige."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "cura": 8,
+        "elevacaoCura": 8,
+        "alternativa": "neutralizar-veneno-ou-doenca"
+      }
+    },
+    {
+      "id": "salto-do-vento",
+      "nome": "Salto do Vento",
+      "nomeOriginal": "wind jump",
+      "ranque": 5,
+      "nivel": 5,
+      "tipo": "foco",
+      "truque": false,
+      "foco": true,
+      "tradicoes": [
+        "divina",
+        "ocultista"
+      ],
+      "acoes": 1,
+      "tracos": [
+        "incomum",
+        "foco",
+        "monge",
+        "ar",
+        "concentracao"
+      ],
+      "descricao": "Duração: 1 minuto. Recebe Deslocamento de voo igual ao seu Deslocamento. Deve encerrar seu turno em chão sólido, ou cai. Elevada (6ª): ao fim do turno, pode tentar Acrobacia CD 30 para encontrar apoio no ar; se obtiver sucesso, não cai.",
+      "resumo": [
+        "Voo por 1 minuto, exigindo pousar ao fim de cada turno. Na 6ª graduação, Acrobacia CD 30 permite manter-se no ar."
+      ],
+      "fonte": "player-core-2",
+      "pagina": 259,
+      "paginaPdf": 259,
+      "paginaImpressa": 258,
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "revisaoFonte": "Tradução manual do texto e elevações do PDF fornecido, páginas físicas 258–259; sem executor de combate presumido.",
+      "automatizacaoCombate": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "mecanica": {
+        "voo": "deslocamento",
+        "exigePousoFimTurno": true,
+        "elevacao6": {
+          "pericia": "acrobacia",
+          "cd": 30
+        }
+      }
+    }
+  ],
+  "lacunas": [
+    {
+      "categoria": "automacao-focos-devocao-qi",
+      "descricao": "Quatorze focos adicionais de devoção e qi possuem texto traduzido; transferência de dano, movimentos compostos, reação à derrota e petrificação precisam de executores específicos."
+    }
+  ]
+}

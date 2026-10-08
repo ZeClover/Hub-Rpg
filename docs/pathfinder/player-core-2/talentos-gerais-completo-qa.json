@@ -1,0 +1,1558 @@
+{
+  "talentos": [
+    {
+      "id": "pc2-um-lar-em-cada-porto",
+      "nome": "Um Lar em Cada Porto",
+      "nomeOriginal": "A Home in Every Port",
+      "nivel": 11,
+      "pagina": 227,
+      "paginaPdf": 227,
+      "paginaImpressa": 226,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "recesso"
+      ],
+      "prerequisitos": "Carisma +3",
+      "descricao": "Em uma cidade ou vila, durante o recesso, você pode gastar 8 horas para encontrar um morador disposto a hospedar gratuitamente você e até seis aliados por até 24 horas. A hospedagem tem padrão de vida confortável e fornece refeições adequadas sem custo. Depois de 24 horas, é preciso pagar os preços normais ou usar novamente este talento para encontrar outro anfitrião.",
+      "resumo": [
+        "Em uma cidade ou vila, durante o recesso, você pode gastar 8 horas para encontrar um morador disposto a hospedar gratuitamente você e até seis aliados por até 24 horas."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-artista-acrobatico",
+      "nome": "Artista Acrobático",
+      "nomeOriginal": "Acrobatic Performer",
+      "nivel": 1,
+      "pagina": 227,
+      "paginaPdf": 227,
+      "paginaImpressa": 226,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Acrobacia",
+      "descricao": "Ao usar Apresentar-se, você pode fazer um teste de Acrobacia no lugar de Performance. Se for treinado nas duas perícias, recebe +1 de circunstância nos testes de Acrobacia realizados para Apresentar-se.",
+      "resumo": [
+        "Ao usar Apresentar-se, você pode fazer um teste de Acrobacia no lugar de Performance."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-maestria-aerobatica",
+      "nome": "Maestria Aerobática",
+      "nomeOriginal": "Aerobatics Mastery",
+      "nivel": 7,
+      "pagina": 227,
+      "paginaPdf": 227,
+      "paginaImpressa": 226,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Acrobacia",
+      "descricao": "Recebe +2 de circunstância em Acrobacia para Manobrar em Voo. Pode combinar duas manobras em uma ação; a CD é a da manobra mais difícil +5. Se lendário, pode combinar três, com CD da mais difícil +10. A combinação normalmente não permite percorrer além do seu Deslocamento de voo.",
+      "resumo": [
+        "Recebe +2 de circunstância em Acrobacia para Manobrar em Voo."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-auxilio-com-armadura",
+      "nome": "Auxílio com Armadura",
+      "nomeOriginal": "Armor Assist",
+      "nivel": 1,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Atletismo ou Saber de Guerra",
+      "descricao": "Faça Atletismo ou Saber de Guerra contra CD definida pelo mestre — normalmente 15 para armadura comum, 20 para incomum e 25 para rara — para reduzir pela metade o tempo de vestir sua armadura. Pode auxiliar um aliado da mesma maneira, trabalhando junto dele e obtendo sucesso contra a mesma CD.",
+      "resumo": [
+        "Faça Atletismo ou Saber de Guerra contra CD definida pelo mestre — normalmente 15 para armadura comum, 20 para incomum e 25 para rara — para reduzir pela metade o tempo de vestir sua armadura."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-furtividade-com-armadura",
+      "nome": "Furtividade com Armadura",
+      "nomeOriginal": "Armored Stealth",
+      "nivel": 2,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Furtividade",
+      "descricao": "Com armadura sem o traço ruidoso na qual seja treinado, reduz a penalidade de Furtividade em 1, mínimo 0; em 2 se mestre e em 3 se lendário. Se a armadura for ruidosa, em vez disso ignora o efeito do traço ruidoso, permitindo remover a penalidade com Força suficiente normalmente.",
+      "resumo": [
+        "Com armadura sem o traço ruidoso na qual seja treinado, reduz a penalidade de Furtividade em 1, mínimo 0; em 2 se mestre e em 3 se lendário."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-identificacao-garantida",
+      "nome": "Identificação Garantida",
+      "nomeOriginal": "Assured Identification",
+      "nivel": 2,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Arcanismo, Natureza, Ocultismo ou Religião",
+      "descricao": "Ao Identificar Magia com Arcanismo, Natureza, Ocultismo ou Religião, uma falha crítica vira falha. Se um sucesso que não seja crítico faria você identificar incorretamente um item amaldiçoado, você apenas não consegue identificá-lo.",
+      "resumo": [
+        "Ao Identificar Magia com Arcanismo, Natureza, Ocultismo ou Religião, uma falha crítica vira falha."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-disfarce-reserva",
+      "nome": "Disfarce Reserva",
+      "nomeOriginal": "Backup Disguise",
+      "nivel": 2,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Dissimulação",
+      "descricao": "Mantém um disfarce específico sob a roupa externa. Pode vesti-lo para Personificar como atividade de 3 ações; 2 ações se mestre e 1 ação se lendário. Preparar outro exige o tempo normal de Personificar e só pode manter um. Isso não acelera remover armadura ou roupas complexas, e uma busca minuciosa pode revelar partes ocultas do disfarce.",
+      "resumo": [
+        "Mantém um disfarce específico sob a roupa externa."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-planejador-de-batalha",
+      "nome": "Planejador de Batalha",
+      "nomeOriginal": "Battle Planner",
+      "nivel": 2,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Saber de Guerra",
+      "descricao": "Depois de reconhecer a posição inimiga ou receber relatório detalhado que indique número, posição e identidade dos possíveis adversários, gaste 1 minuto para planejar e role Saber de Guerra. Se as informações continuarem corretas quando rolar iniciativa contra esses inimigos, pode usar o resultado previamente obtido como iniciativa; isso é fortuna.",
+      "resumo": [
+        "Depois de reconhecer a posição inimiga ou receber relatório detalhado que indique número, posição e identidade dos possíveis adversários, gaste 1 minuto para planejar e role Saber de Guerra."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-olhar-biografico",
+      "nome": "Olhar Biográfico",
+      "nomeOriginal": "Biographical Eye",
+      "nivel": 7,
+      "pagina": 228,
+      "paginaPdf": 228,
+      "paginaImpressa": 227,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia",
+        "secreto"
+      ],
+      "prerequisitos": "Mestre em Sociedade",
+      "descricao": "Passe 1 minuto na presença de alguém que não conhecia desde antes de obter o talento e faça Sociedade CD 30; conversar concede +1 de circunstância. Se a criatura sustenta identidade falsa, descobre a biografia falsa salvo se superar a CD de Vontade. Sucesso crítico revela profissão, especialidade, grande realização ou controvérsia, país, assentamento e distrito onde vive e onde cresceu. Sucesso revela profissão, especialidade e local onde vive. Falha revela profissão e região de origem. Falha crítica fornece informação errada.",
+      "resumo": [
+        "Passe 1 minuto na presença de alguém que não conhecia desde antes de obter o talento e faça Sociedade CD 30; conversar concede +1 de circunstância."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-tirado-sagaz",
+      "nome": "Tirado Sagaz",
+      "nomeOriginal": "Bon Mot",
+      "nivel": 1,
+      "pagina": 229,
+      "paginaPdf": 229,
+      "paginaImpressa": 228,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "auditivo",
+        "concentracao",
+        "emocao",
+        "geral",
+        "linguistico",
+        "mental",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Diplomacia",
+      "descricao": "Escolha inimigo a até 9 m e teste Diplomacia contra a CD de Vontade. Sucesso crítico: −3 de estado em Percepção e Vontade por 1 minuto; sucesso: −2. O alvo pode encerrar com uma resposta usando uma ação de concentração ou ação de perícia adequada. Em falha crítica, você sofre a penalidade que imporia com sucesso até 1 minuto ou até obter sucesso em outro Tirado Sagaz.",
+      "resumo": [
+        "Escolha inimigo a até 9 m e teste Diplomacia contra a CD de Vontade."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 1
+    },
+    {
+      "id": "pc2-lider-de-caravana",
+      "nome": "Líder de Caravana",
+      "nomeOriginal": "Caravan Leader",
+      "nivel": 11,
+      "pagina": 229,
+      "paginaPdf": 229,
+      "paginaImpressa": 228,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Acelerar o Passo",
+      "descricao": "Ao viajar em grupo, o grupo pode Marchar Apressado por 20 minutos além do tempo permitido ao integrante que conseguiria fazê-lo por mais tempo.",
+      "resumo": [
+        "Ao viajar em grupo, o grupo pode Marchar Apressado por 20 minutos além do tempo permitido ao integrante que conseguiria fazê-lo por mais tempo.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-prestidigitacao-ocultadora",
+      "nome": "Prestidigitação Ocultadora",
+      "nomeOriginal": "Concealing Legerdemain",
+      "nivel": 1,
+      "pagina": 229,
+      "paginaPdf": 229,
+      "paginaImpressa": 228,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Ladroagem",
+      "descricao": "Ao Ocultar Objeto de volume leve ou desprezível, pode usar Ladroagem em vez de Furtividade tanto no seu teste quanto na CD contra a busca ativa de alguém. Role uma única vez, mas continue usando ações para Ocultar Objeto durante todo o processo.",
+      "resumo": [
+        "Ao Ocultar Objeto de volume leve ou desprezível, pode usar Ladroagem em vez de Furtividade tanto no seu teste quanto na CD contra a busca ativa de alguém."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-consultar-os-espiritos",
+      "nome": "Consultar os Espíritos",
+      "nomeOriginal": "Consult the Spirits",
+      "nivel": 7,
+      "pagina": 229,
+      "paginaPdf": 229,
+      "paginaImpressa": 228,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Natureza, Ocultismo ou Religião",
+      "descricao": "Escolha uma das perícias ao adquirir o talento. Uma vez por dia, passe 10 minutos e faça Recordar Conhecimento com ela contra CD normalmente muito difícil do maior nível provável na área. Sucesso crítico: espíritos prestativos respondem três perguntas simples sobre o ambiente a até 30 m, dentro do domínio escolhido; sucesso: espíritos indiferentes respondem uma. Falha não contata. Falha crítica contata espíritos hostis que dão até três respostas prejudiciais. Se lendário, pode usar uma vez por hora, mas não novamente em área sobreposta. Pode adquirir novamente para outra perícia.",
+      "resumo": [
+        "Escolha uma das perícias ao adquirir o talento."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "frequencia": "uma vez por dia"
+    },
+    {
+      "id": "pc2-avaliacao-do-artesao",
+      "nome": "Avaliação do Artesão",
+      "nomeOriginal": "Crafter's Appraisal",
+      "nivel": 1,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Manufatura",
+      "descricao": "Pode usar Manufatura em vez da perícia ligada a uma tradição mágica para Identificar Magia em itens mágicos, mas não em outras formas de magia.",
+      "resumo": [
+        "Pode usar Manufatura em vez da perícia ligada a uma tradição mágica para Identificar Magia em itens mágicos, mas não em outras formas de magia.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-adoracao-enganosa",
+      "nome": "Adoração Enganosa",
+      "nomeOriginal": "Deceptive Worship",
+      "nivel": 1,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Ocultismo",
+      "descricao": "Pode usar Ocultismo no lugar de Dissimulação para Personificar um adorador típico de outra religião ou Mentir especificamente que pertence à fé personificada. Ainda usa Dissimulação para personificar pessoa específica ou outras mentiras.",
+      "resumo": [
+        "Pode usar Ocultismo no lugar de Dissimulação para Personificar um adorador típico de outra religião ou Mentir especificamente que pertence à fé personificada."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-truque-sujo",
+      "nome": "Truque Sujo",
+      "nomeOriginal": "Dirty Trick",
+      "nivel": 1,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "ataque",
+        "geral",
+        "manuseio",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Ladroagem; mão livre; inimigo ao alcance corpo a corpo",
+      "descricao": "Faça Ladroagem contra a CD de Reflexos do alvo. Sucesso crítico deixa desajeitado 1 até ele usar Interagir para encerrar o impedimento. Sucesso deixa desajeitado 1 por 1 rodada. Falha crítica faz você cair prostrado.",
+      "resumo": [
+        "Faça Ladroagem contra a CD de Reflexos do alvo."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 1
+    },
+    {
+      "id": "pc2-investigacao-discreta",
+      "nome": "Investigação Discreta",
+      "nomeOriginal": "Discreet Inquiry",
+      "nivel": 2,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Dissimulação ou Diplomacia",
+      "descricao": "Ao Obter Informação, pode esconder o verdadeiro tema entre assuntos irrelevantes sem aumentar a CD nem o tempo. Quem tentar descobrir que alguém investigava o tema precisa superar sua CD de Dissimulação ou a CD normal para Obter Informação sobre suas perguntas, a que for maior.",
+      "resumo": [
+        "Ao Obter Informação, pode esconder o verdadeiro tema entre assuntos irrelevantes sem aumentar a CD nem o tempo."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-performance-distrativa",
+      "nome": "Performance Distrativa",
+      "nomeOriginal": "Distracting Performance",
+      "nivel": 2,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Performance",
+      "descricao": "Cria uma Distração usando Performance no lugar de Dissimulação, e os benefícios do sucesso se aplicam a um aliado escolhido em vez de você. Duram até o fim do turno do aliado e podem terminar antes conforme as ações dele. Não precisa vê-lo nem saber a posição, apenas saber que está presente.",
+      "resumo": [
+        "Cria uma Distração usando Performance no lugar de Dissimulação, e os benefícios do sucesso se aplicam a um aliado escolhido em vez de você."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 1
+    },
+    {
+      "id": "pc2-conhecimento-perturbador",
+      "nome": "Conhecimento Perturbador",
+      "nomeOriginal": "Disturbing Knowledge",
+      "nivel": 7,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "emocao",
+        "medo",
+        "geral",
+        "mental",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Ocultismo",
+      "descricao": "Com duas ações, faça Ocultismo contra a CD de Vontade de um inimigo a até 9 m; se lendário, compare contra qualquer quantidade de inimigos nesse alcance. Eles ficam imunes por 24 horas. Sucesso crítico: confuso por 1 rodada e assustado 1. Sucesso: assustado 1. Falha: sem efeito. Falha crítica: você fica assustado 1.",
+      "resumo": [
+        "Com duas ações, faça Ocultismo contra a CD de Vontade de um inimigo a até 9 m; se lendário, compare contra qualquer quantidade de inimigos nesse alcance."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 2
+    },
+    {
+      "id": "pc2-duplo-sentido",
+      "nome": "Duplo Sentido",
+      "nomeOriginal": "Doublespeak",
+      "nivel": 7,
+      "pagina": 230,
+      "paginaPdf": 230,
+      "paginaImpressa": 229,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Dissimulação",
+      "descricao": "Disfarça uma mensagem verdadeira por trás de outras palavras. Aliados que viajaram com você por ao menos uma semana entendem automaticamente. Outros precisam superar sua CD de Dissimulação com Percepção para notar a mensagem e obter sucesso crítico para compreendê-la.",
+      "resumo": [
+        "Disfarça uma mensagem verdadeira por trás de outras palavras."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-guia-ambiental",
+      "nome": "Guia Ambiental",
+      "nomeOriginal": "Environmental Guide",
+      "nivel": 7,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Sobrevivência",
+      "descricao": "Depois de 1 hora no ambiente, você e até cinco aliados tratam a temperatura natural como um grau menos severa. Isso se acumula com equipamento e magia. Se lendário, protege você e até cinco aliados e reduz a severidade em dois graus.",
+      "resumo": [
+        "Depois de 1 hora no ambiente, você e até cinco aliados tratam a temperatura natural como um grau menos severa."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-evangelizar",
+      "nome": "Evangelizar",
+      "nomeOriginal": "Evangelize",
+      "nivel": 7,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Diplomacia; seguidor de religião ou filosofia específica",
+      "descricao": "Com uma ação, teste Diplomacia contra a CD de Vontade de alvo que possa ouvir e compreender seu idioma. Ele fica imune a este uso ligado à sua fé por 1 dia. Quem já concorda não é afetado. Sucesso crítico: estupefato 2 por 1 rodada. Sucesso: estupefato 1 por 1 rodada. Falha: sem efeito.",
+      "resumo": [
+        "Com uma ação, teste Diplomacia contra a CD de Vontade de alvo que possa ouvir e compreender seu idioma."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 1
+    },
+    {
+      "id": "pc2-exortar-os-fieis",
+      "nome": "Exortar os Fiéis",
+      "nomeOriginal": "Exhort the Faithful",
+      "nivel": 2,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Religião; seguidor de religião específica",
+      "descricao": "Ao Pedir ou Coagir membros da própria fé, pode testar Religião em vez de Diplomacia ou Intimidação e recebe +2 de circunstância. Numa falha crítica ao Pedir, a atitude do alvo não piora.",
+      "resumo": [
+        "Ao Pedir ou Coagir membros da própria fé, pode testar Religião em vez de Diplomacia ou Intimidação e recebe +2 de circunstância."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-cavaleiro-expresso",
+      "nome": "Cavaleiro Expresso",
+      "nomeOriginal": "Express Rider",
+      "nivel": 1,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Natureza",
+      "descricao": "Ao calcular a velocidade de viagem diária montado, teste Natureza para Comandar um Animal contra CD definida pelo mestre, normalmente pelo nível da montaria ou dificuldade ambiental. Sucesso aumenta em metade a velocidade de viagem da montaria. Afeta até seis aliados montados ou quadrúpedes com Deslocamento de ao menos 9 m; não altera movimento em encontros.",
+      "resumo": [
+        "Ao calcular a velocidade de viagem diária montado, teste Natureza para Comandar um Animal contra CD definida pelo mestre, normalmente pelo nível da montaria ou dificuldade ambiental."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-olho-para-numeros",
+      "nome": "Olho para Números",
+      "nomeOriginal": "Eye for Numbers",
+      "nivel": 1,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Sociedade",
+      "descricao": "Ao olhar um grupo de objetos visualmente semelhantes, aprende de imediato a quantidade aproximada, arredondada ao primeiro algarismo; não distingue tipos nem conta coisas normalmente incontáveis. Se contar posses de inimigo, recebe +1 de circunstância no próximo Fintar ou Criar uma Distração contra ele em 1 minuto e pode usar Sociedade em vez de Dissimulação. Ao Decifrar Escrita numérica ou matemática, recebe +2 de circunstância.",
+      "resumo": [
+        "Ao olhar um grupo de objetos visualmente semelhantes, aprende de imediato a quantidade aproximada, arredondada ao primeiro algarismo; não distingue tipos nem conta coisas normalmente incontáveis."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-olhos-da-cidade",
+      "nome": "Olhos da Cidade",
+      "nomeOriginal": "Eyes of the City",
+      "nivel": 2,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Diplomacia ou Sociedade",
+      "descricao": "Pode usar Diplomacia ou Sociedade, aquela em que for treinado, para Rastrear criaturas em assentamentos conversando com moradores. O mestre pode determinar que não há pessoas suficientes para continuar a trilha.",
+      "resumo": [
+        "Pode usar Diplomacia ou Sociedade, aquela em que for treinado, para Rastrear criaturas em assentamentos conversando com moradores."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-perspicacia-forense",
+      "nome": "Perspicácia Forense",
+      "nomeOriginal": "Forensic Acumen",
+      "nivel": 1,
+      "pagina": 231,
+      "paginaPdf": 231,
+      "paginaImpressa": 230,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Medicina",
+      "descricao": "Faz exame forense de cadáver em metade do tempo, mínimo 5 minutos. Em sucesso, pode Recordar Conhecimento imediatamente sobre uma descoberta ou o tipo da criatura com +2 de circunstância, aumentando para +3 se mestre em Medicina e +4 se lendário.",
+      "resumo": [
+        "Faz exame forense de cadáver em metade do tempo, mínimo 5 minutos."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-deduzir-conteudo",
+      "nome": "Deduzir Conteúdo",
+      "nomeOriginal": "Glean Contents",
+      "nivel": 1,
+      "pagina": 232,
+      "paginaPdf": 232,
+      "paginaImpressa": 231,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Sociedade",
+      "descricao": "Pode Decifrar Escrita parcialmente vista, invertida ou de cabeça para baixo e recebe +1 de circunstância. Também pode decifrar cartas seladas sem romper o selo, acrescentando manuseio. Isso não oculta seu esforço; em falha crítica o destinatário percebe a tentativa.",
+      "resumo": [
+        "Pode Decifrar Escrita parcialmente vista, invertida ou de cabeça para baixo e recebe +1 de circunstância."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-improvisar-ferramenta",
+      "nome": "Improvisar Ferramenta",
+      "nomeOriginal": "Improvise Tool",
+      "nivel": 1,
+      "pagina": 232,
+      "paginaPdf": 232,
+      "paginaImpressa": 231,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Manufatura",
+      "descricao": "Pode Reparar itens sem kit de reparo. Com matérias-primas, pode Fabricar como se conhecesse as fórmulas: estrepes básicos, vela, bússola, pé de cabra, equipamento de pesca, pederneira, martelo, escada, píton, corda, vara de 3 m, gazuas de reposição, ferramenta longa ou curta e tocha.",
+      "resumo": [
+        "Pode Reparar itens sem kit de reparo."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-reparo-improvisado",
+      "nome": "Reparo Improvisado",
+      "nomeOriginal": "Improvised Repair",
+      "nivel": 3,
+      "pagina": 232,
+      "paginaPdf": 232,
+      "paginaImpressa": 231,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Nenhum",
+      "descricao": "Com três ações, remenda item quebrado seu ou de criatura voluntária adjacente. Até receber dano outra vez, funciona como item ordinário de seu tipo. Item mágico não pode ser ativado, mas mantém funções normais. Não recupera PV e continua fácil de destruir. Ao ser Reparado normalmente e deixar de estar quebrado, deixa de ser ordinário.",
+      "resumo": [
+        "Com três ações, remenda item quebrado seu ou de criatura voluntária adjacente."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 3
+    },
+    {
+      "id": "pc2-batedor-incrivel",
+      "nome": "Batedor Incrível",
+      "nomeOriginal": "Incredible Scout",
+      "nivel": 1,
+      "pagina": 232,
+      "paginaPdf": 232,
+      "paginaImpressa": 231,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Mestre em Percepção",
+      "descricao": "Ao usar a atividade de exploração Batedor, concede aos aliados +2 de circunstância na iniciativa em vez de +1.",
+      "resumo": [
+        "Ao usar a atividade de exploração Batedor, concede aos aliados +2 de circunstância na iniciativa em vez de +1.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-influenciar-a-natureza",
+      "nome": "Influenciar a Natureza",
+      "nomeOriginal": "Influence Nature",
+      "nivel": 7,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Natureza",
+      "descricao": "Com chamados de animais e trilhas, influencia o comportamento de certo tipo de animal na região. Mestre define CD e tempo, normalmente um ou dois dias de recesso. Não controla diretamente, mas pode buscar caça facilitada ou aves silenciosas quando há perigo. Se lendário, produz os mesmos ajustes em 10 minutos.",
+      "resumo": [
+        "Com chamados de animais e trilhas, influencia o comportamento de certo tipo de animal na região."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-inoculacao",
+      "nome": "Inoculação",
+      "nomeOriginal": "Inoculation",
+      "nivel": 1,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Medicina",
+      "descricao": "Quando trata uma doença com sucesso e o paciente se recupera por completo, ele recebe +2 de circunstância nas salvaguardas contra a mesma doença por 1 semana.",
+      "resumo": [
+        "Quando trata uma doença com sucesso e o paciente se recupera por completo, ele recebe +2 de circunstância nas salvaguardas contra a mesma doença por 1 semana.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-seguidor-perspicaz",
+      "nome": "Seguidor Perspicaz",
+      "nomeOriginal": "Keen Follower",
+      "nivel": 3,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Nenhum",
+      "descricao": "Ao Seguir o Especialista, recebe +3 de circunstância se o aliado for especialista e +4 se mestre. Se o aliado tiver Aliados Silenciosos ou outro talento que faça o grupo rolar uma única vez usando o pior modificador, ele pode usar o seu modificador mesmo que não seja o pior.",
+      "resumo": [
+        "Ao Seguir o Especialista, recebe +3 de circunstância se o aliado for especialista e +4 se mestre."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-escalador-lider",
+      "nome": "Escalador Líder",
+      "nomeOriginal": "Lead Climber",
+      "nivel": 2,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Atletismo",
+      "descricao": "Ao preparar rota de escalada para aliados que Seguem o Especialista, se algum falhar criticamente em Escalar, teste Atletismo contra a mesma CD. Em sucesso, a falha crítica vira falha. Se também falhar criticamente, ambos sofrem as consequências.",
+      "resumo": [
+        "Ao preparar rota de escalada para aliados que Seguem o Especialista, se algum falhar criticamente em Escalar, teste Atletismo contra a mesma CD."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-guia-lendario",
+      "nome": "Guia Lendário",
+      "nomeOriginal": "Legendary Guide",
+      "nivel": 15,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Lendário em Sobrevivência",
+      "descricao": "Ao guiar o grupo por terreno selvagem, concede +3 m de circunstância ao Deslocamento usado para calcular viagem; terreno difícil não reduz a velocidade e terreno difícil maior reduz à metade em vez de um terço. Não altera deslocamento nem terreno durante encontros.",
+      "resumo": [
+        "Ao guiar o grupo por terreno selvagem, concede +3 m de circunstância ao Deslocamento usado para calcular viagem; terreno difícil não reduz a velocidade e terreno difícil maior reduz à metade em vez de um terço."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-usar-conexoes",
+      "nome": "Usar Conexões",
+      "nomeOriginal": "Leverage Connections",
+      "nivel": 2,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "incomum",
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Sociedade e Graças da Corte ou Experiência das Ruas",
+      "descricao": "Uma vez por semana, em área com nobres/mercadores influentes ou rede criminosa apropriada, pode usar Sociedade para Pedir favor como se fossem amistosos. O pedido deve condizer com o círculo. Sucesso crítico ainda fornece conselho ou segredo que concede +2 de circunstância ao primeiro teste do grupo para agir sobre o favor. Falha crítica pode exigir serviço para recuperar a boa vontade.",
+      "resumo": [
+        "Uma vez por semana, em área com nobres/mercadores influentes ou rede criminosa apropriada, pode usar Sociedade para Pedir favor como se fossem amistosos."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "frequencia": "uma vez por semana"
+    },
+    {
+      "id": "pc2-insensivel-a-morte",
+      "nome": "Insensível à Morte",
+      "nomeOriginal": "Numb to Death",
+      "nivel": 7,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Duro de Matar; ter morrido ao menos uma vez",
+      "descricao": "Na primeira vez a cada dia que recupera PV enquanto está morrendo, recebe PV adicionais iguais ao nível e não ganha ferido nem aumenta essa condição.",
+      "resumo": [
+        "Na primeira vez a cada dia que recupera PV enquanto está morrendo, recebe PV adicionais iguais ao nível e não ganha ferido nem aumenta essa condição.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "frequencia": "uma vez por dia"
+    },
+    {
+      "id": "pc2-acelerar-o-passo",
+      "nome": "Acelerar o Passo",
+      "nomeOriginal": "Pick Up the Pace",
+      "nivel": 3,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Constituição +2",
+      "descricao": "Ao Marchar Apressado em grupo na exploração, o grupo pode fazê-lo pelo tempo do integrante que conseguiria fazê-lo por mais tempo.",
+      "resumo": [
+        "Ao Marchar Apressado em grupo na exploração, o grupo pode fazê-lo pelo tempo do integrante que conseguiria fazê-lo por mais tempo.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-simbolo-do-peregrino",
+      "nome": "Símbolo do Peregrino",
+      "nomeOriginal": "Pilgrim's Token",
+      "nivel": 1,
+      "pagina": 233,
+      "paginaPdf": 233,
+      "paginaImpressa": 232,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Religião; seguidor de religião específica",
+      "descricao": "Recebe gratuitamente um símbolo religioso de madeira. Enquanto o possuir, vence empates de iniciativa contra adversários. Substituir normalmente custa ao menos 1 pp e requer 10 minutos de oração para sintonizar; sintonizar outro encerra o benefício do anterior.",
+      "resumo": [
+        "Recebe gratuitamente um símbolo religioso de madeira."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-fixacao-rapida",
+      "nome": "Fixação Rápida",
+      "nomeOriginal": "Rapid Affixture",
+      "nivel": 7,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Manufatura",
+      "descricao": "Leva apenas 1 minuto para Fixar um Talismã. Se lendário em Manufatura, pode Fixar um Talismã como atividade de 3 ações.",
+      "resumo": [
+        "Leva apenas 1 minuto para Fixar um Talismã."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-cirurgia-arriscada",
+      "nome": "Cirurgia Arriscada",
+      "nomeOriginal": "Risky Surgery",
+      "nivel": 1,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Medicina",
+      "descricao": "Ao Tratar Ferimentos, pode causar 1d8 cortante no paciente imediatamente antes do efeito. Se fizer isso, recebe +2 de circunstância no teste de Medicina e transforma sucesso em sucesso crítico.",
+      "resumo": [
+        "Ao Tratar Ferimentos, pode causar 1d8 cortante no paciente imediatamente antes do efeito."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-saude-robusta",
+      "nome": "Saúde Robusta",
+      "nomeOriginal": "Robust Health",
+      "nivel": 3,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Nenhum",
+      "descricao": "Quando uma tentativa bem-sucedida de Tratar seus Ferimentos ou Medicina de Batalha recuperar seus PV, recebe PV adicionais iguais ao nível. Depois de Medicina de Batalha, sua imunidade temporária a ela dura apenas 1 hora em vez de 1 dia.",
+      "resumo": [
+        "Quando uma tentativa bem-sucedida de Tratar seus Ferimentos ou Medicina de Batalha recuperar seus PV, recebe PV adicionais iguais ao nível."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-aterrissagem-rolante",
+      "nome": "Aterrissagem Rolante",
+      "nomeOriginal": "Rolling Landing",
+      "nivel": 2,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Queda Felina",
+      "descricao": "Quando cai sem sofrer dano, pode usar reação para dar um Passo ao aterrissar. Se especialista em Acrobacia, pode dar Passo ou Andar até metade do Deslocamento; se mestre, até o Deslocamento total; se lendário, Andar assim não aciona reações de movimento.",
+      "resumo": [
+        "Quando cai sem sofrer dano, pode usar reação para dar um Passo ao aterrissar."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": "reacao"
+    },
+    {
+      "id": "pc2-magia-de-raiz",
+      "nome": "Magia de Raiz",
+      "nomeOriginal": "Root Magic",
+      "nivel": 1,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Ocultismo",
+      "descricao": "Nas preparações diárias, monta uma bolsa ritual e a entrega a um aliado que não seja você. Na primeira salvaguarda dele contra magia ou assombração naquele dia, recebe +1 de circunstância; +2 se você for especialista em Ocultismo e +3 se lendário.",
+      "resumo": [
+        "Nas preparações diárias, monta uma bolsa ritual e a entrega a um aliado que não seja você."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-santificar-agua",
+      "nome": "Santificar Água",
+      "nomeOriginal": "Sanctify Water",
+      "nivel": 2,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Religião; adorar divindade que permita santificação sagrada ou profana",
+      "descricao": "Escolha recipiente de água de volume leve seu ou de aliado ao alcance. Até o fim do próximo turno, torna-se água benta ou profana permitida pela divindade. Não ganha valor nem serve como custo. Se mestre, santifica dois recipientes; se lendário, três.",
+      "resumo": [
+        "Escolha recipiente de água de volume leve seu ou de aliado ao alcance."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": 1
+    },
+    {
+      "id": "pc2-marca-sombria",
+      "nome": "Marca Sombria",
+      "nomeOriginal": "Shadow Mark",
+      "nivel": 2,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Furtividade",
+      "descricao": "Ao Evitar ser Percebido seguindo alvo específico, ele sofre −2 de circunstância na CD de Percepção; −3 se você for mestre e −4 se lendário. Se começar encontro enquanto o segue, a penalidade também se aplica à iniciativa e à CD para notar você ao Esgueirar-se.",
+      "resumo": [
+        "Ao Evitar ser Percebido seguindo alvo específico, ele sofre −2 de circunstância na CD de Percepção; −3 se você for mestre e −4 se lendário."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-manufatura-assinada",
+      "nome": "Manufatura Assinada",
+      "nomeOriginal": "Signature Crafting",
+      "nivel": 7,
+      "pagina": 234,
+      "paginaPdf": 234,
+      "paginaImpressa": 233,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Manufatura Mágica",
+      "descricao": "Ao concluir com sucesso um item mágico permanente, faça teste simples CD 9. Sucesso crítico: escolha uma peculiaridade e detalhes; sucesso: recebe peculiaridade aleatória definida pelo mestre. Peculiaridades: dançante, limpo, ambiental, imundo, flutuante, cintilante, invisível, leal, coloração de humor ou habilidoso. Benefícios só se aplicam enquanto vestido ou empunhado.",
+      "resumo": [
+        "Ao concluir com sucesso um item mágico permanente, faça teste simples CD 9."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-presa-escorregadia",
+      "nome": "Presa Escorregadia",
+      "nomeOriginal": "Slippery Prey",
+      "nivel": 2,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Acrobacia ou Atletismo",
+      "descricao": "Ao Escapar com Acrobacia ou Atletismo, a penalidade por ataques múltiplos é −4/−8 se treinado, −3/−6 se mestre e nenhuma penalidade se lendário. Escapar ainda tem ataque e interage com outras ações de ataque normalmente.",
+      "resumo": [
+        "Ao Escapar com Acrobacia ou Atletismo, a penalidade por ataques múltiplos é −4/−8 se treinado, −3/−6 se mestre e nenhuma penalidade se lendário."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-manufatura-de-armadilhas",
+      "nome": "Manufatura de Armadilhas",
+      "nomeOriginal": "Snare Crafting",
+      "nivel": 1,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Treinado em Manufatura",
+      "descricao": "Pode usar Fabricar para criar armadilhas. Ao adquirir, acrescenta imediatamente ao livro de fórmulas as fórmulas de quatro armadilhas comuns de 1º nível.",
+      "resumo": [
+        "Pode usar Fabricar para criar armadilhas."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-semear-rumor",
+      "nome": "Semear Rumor",
+      "nomeOriginal": "Sow Rumor",
+      "nivel": 2,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "incomum",
+        "geral",
+        "secreto",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Dissimulação",
+      "descricao": "Gaste o tempo normal de Obter Informação, geralmente 2 horas, para espalhar rumor; o mestre faz Dissimulação secreta com CD pela plausibilidade e rumores concorrentes. Sucesso crítico: preferência ao Obter Informação, dura 1 mês e concede +2 de circunstância em Dissimulação, Diplomacia e Intimidação ao invocá-lo. Sucesso: entra entre rumores possíveis, dura 1 semana e concede +1. Falha: desaparece. Falha crítica: −4 para repetir na região por 1 semana e surge rumor sobre alguém espalhando falsidades.",
+      "resumo": [
+        "Gaste o tempo normal de Obter Informação, geralmente 2 horas, para espalhar rumor; o mestre faz Dissimulação secreta com CD pela plausibilidade e rumores concorrentes."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-superpaladar",
+      "nome": "Superpaladar",
+      "nomeOriginal": "Supertaster",
+      "nivel": 7,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Percepção",
+      "descricao": "Ao comer ou beber, tenta identificar ingredientes automaticamente; mestre faz Percepção secreta contra CD pelo nível do veneno. Em sucesso detecta veneno, mas não qual, e pode cuspir a tempo de evitar essa exposição. Quando provar algo ajuda em Investigar ou Recordar Conhecimento, recebe +2 de circunstância.",
+      "resumo": [
+        "Ao comer ou beber, tenta identificar ingredientes automaticamente; mestre faz Percepção secreta contra CD pelo nível do veneno."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-resistencia-aterrorizante",
+      "nome": "Resistência Aterrorizante",
+      "nomeOriginal": "Terrifying Resistance",
+      "nivel": 2,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Intimidação",
+      "descricao": "Depois de Desmoralizar uma criatura com sucesso, por 24 horas recebe +1 de circunstância em salvaguardas contra as magias dela.",
+      "resumo": [
+        "Depois de Desmoralizar uma criatura com sucesso, por 24 horas recebe +1 de circunstância em salvaguardas contra as magias dela.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-busca-minuciosa",
+      "nome": "Busca Minuciosa",
+      "nomeOriginal": "Thorough Search",
+      "nivel": 3,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral"
+      ],
+      "prerequisitos": "Especialista em Percepção",
+      "descricao": "Pode gastar o dobro do tempo ao Buscar, normalmente até um quarto do Deslocamento e máximo de 45 m por minuto, ou 22,5 m se verificar tudo antes de entrar. Recebe +2 de circunstância nos testes secretos de Percepção para Procurar e transforma sucesso em sucesso crítico.",
+      "resumo": [
+        "Pode gastar o dobro do tempo ao Buscar, normalmente até um quarto do Deslocamento e máximo de 45 m por minuto, ou 22,5 m se verificar tudo antes de entrar."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-percepcao-verdadeira",
+      "nome": "Percepção Verdadeira",
+      "nomeOriginal": "True Perception",
+      "nivel": 19,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "revelacao"
+      ],
+      "prerequisitos": "Lendário em Percepção",
+      "descricao": "Fica constantemente sob os efeitos de Visão Verdadeira de 6ª graduação, usando seu modificador de Percepção no teste de neutralização.",
+      "resumo": [
+        "Fica constantemente sob os efeitos de Visão Verdadeira de 6ª graduação, usando seu modificador de Percepção no teste de neutralização.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-trabalho-em-equipe-acrobatico",
+      "nome": "Trabalho em Equipe Acrobático",
+      "nomeOriginal": "Tumbling Teamwork",
+      "nivel": 2,
+      "pagina": 235,
+      "paginaPdf": 235,
+      "paginaImpressa": 234,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Acrobacia",
+      "descricao": "Quando Atravessa Acrobaticamente o espaço de um inimigo com sucesso, aliado adjacente a ele pode dar um Passo como reação, mas deve continuar adjacente.",
+      "resumo": [
+        "Quando Atravessa Acrobaticamente o espaço de um inimigo com sucesso, aliado adjacente a ele pode dar um Passo como reação, mas deve continuar adjacente.."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-furto-acrobatico",
+      "nome": "Furto Acrobático",
+      "nomeOriginal": "Tumbling Theft",
+      "nivel": 7,
+      "pagina": 236,
+      "paginaPdf": 236,
+      "paginaImpressa": 235,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Acrobacia e Ladroagem",
+      "descricao": "Ao obter sucesso crítico em Atravessar Acrobaticamente o espaço inimigo, pode tentar Roubar como reação com +1 de circunstância. Só pode pegar item imediatamente acessível de volume leve ou desprezível na pessoa, não dentro de recipiente nem empunhado; mestre decide o que é acessível.",
+      "resumo": [
+        "Ao obter sucesso crítico em Atravessar Acrobaticamente o espaço inimigo, pode tentar Roubar como reação com +1 de circunstância."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      },
+      "acoes": "reacao"
+    },
+    {
+      "id": "pc2-rede-subterranea",
+      "nome": "Rede Subterrânea",
+      "nomeOriginal": "Underground Network",
+      "nivel": 2,
+      "pagina": 236,
+      "paginaPdf": 236,
+      "paginaImpressa": 235,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Especialista em Sociedade; Experiência das Ruas",
+      "descricao": "Em área onde tenha rede, normalmente assentamento em que passou uma semana ou um dia de recesso construindo-a, pode usar Sociedade para Obter Informação diretamente em cerca de 1 hora e com menos atenção. Depois de consultar com sucesso, recebe +1 de circunstância no próximo Recordar Conhecimento sobre o assunto, ou +2 com Saber do Submundo; mestre pode trocar o Saber conforme a rede.",
+      "resumo": [
+        "Em área onde tenha rede, normalmente assentamento em que passou uma semana ou um dia de recesso construindo-a, pode usar Sociedade para Obter Informação diretamente em cerca de 1 hora e com menos atenção."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    },
+    {
+      "id": "pc2-corrida-sobre-a-agua",
+      "nome": "Corrida sobre a Água",
+      "nomeOriginal": "Water Sprint",
+      "nivel": 7,
+      "pagina": 236,
+      "paginaPdf": 236,
+      "paginaImpressa": 235,
+      "fonte": "player-core-2",
+      "tipo": "geral",
+      "tracos": [
+        "geral",
+        "pericia"
+      ],
+      "prerequisitos": "Mestre em Atletismo",
+      "descricao": "Ao Andar em linha reta e percorrer ao menos metade do Deslocamento em solo, pode percorrer o restante sobre superfície de água nivelada; se não terminar em solo, cai na água. Se lendário, desde que comece em solo, qualquer parte do movimento pode cruzar água e não precisa ser reta, mas ainda cai se não terminar em solo.",
+      "resumo": [
+        "Ao Andar em linha reta e percorrer ao menos metade do Deslocamento em solo, pode percorrer o restante sobre superfície de água nivelada; se não terminar em solo, cai na água."
+      ],
+      "revisao": "revisado",
+      "somenteConsulta": true,
+      "automatizacao": {
+        "estado": "executor-pendente",
+        "semCalculoManual": true
+      }
+    }
+  ],
+  "cobertura": "59 talentos gerais e de perícia das páginas físicas 227–236, traduzidos manualmente e mantidos somente para consulta até executores próprios."
+}

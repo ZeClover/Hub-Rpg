@@ -218,8 +218,8 @@ review_feat('orc-supersticao-orquica','[reação], concentração. Antes de rola
 # Talentos gerais e de perícia: requisitos graduados para validação no nível de aquisição.
 def skill_feat(id,skill,desc,summary):
  review_feat(id,desc,summary,'Treinado em '+skill_labels[skill],tipo='pericia',requisitosEstruturados={'pericias':{skill:1}})
-review_feat('duro-de-matar','Você morre quando a condição morrendo alcançar5, em vez de4.','Aumenta de4 para5 o limite de morrendo que causa morte.')
-review_feat('vitalidade','Seus PV máximos aumentam em seu nível. A CD dos seus testes de recuperação diminui em1.','Mais1PV por nível e recuperação contra a morte um pouco mais fácil.',efeitos=[{'alvo':'pv','tipo':'sem-tipo','valor':1,'porNivel':True}])
+review_feat('duro-de-matar','Você morre quando a condição morrendo alcançar5, em vez de4.','Aumenta de4 para5 o limite de morrendo que causa morte.',efeitos=[{'alvo':'limite-morrendo','tipo':'sem-tipo','valor':1}])
+review_feat('vitalidade','Seus PV máximos aumentam em seu nível. A CD dos seus testes de recuperação diminui em1.','Mais1PV por nível e recuperação contra a morte um pouco mais fácil.',efeitos=[{'alvo':'pv','tipo':'sem-tipo','valor':1,'porNivel':True},{'alvo':'cd-recuperacao','tipo':'sem-tipo','valor':-1}])
 review_feat('veloz','Sua Velocidade aumenta em1,5m.','Mais1,5m de Velocidade.',efeitos=[{'alvo':'deslocamento','tipo':'sem-tipo','valor':1.5}])
 review_feat('cavalgar','Ao Comandar um Animal que esteja montando para ele se mover, obtém sucesso automático. Esse animal age no seu turno como lacaio. Ao montar em encontro um animal que normalmente teria seu próprio turno, ele pula o próximo turno e passa a agir em seu próximo turno.','Movimento da montaria não exige teste para Comandar; ela passa a agir no seu turno.')
 skill_feat('olhar-intimidante','intimidacao','Ao Desmoralizar, pode substituir auditivo por visual. Não sofre a penalidade por não compartilhar um idioma com o alvo.','Desmoraliza pela aparência, sem penalidade de idioma.')
@@ -231,6 +231,7 @@ skill_feat('queda-do-gato','acrobacia','Para dano de queda, trate a distância c
 skill_feat('equilibrio-estavel','acrobacia','Ao Equilibrar-se, sucesso torna-se sucesso crítico. Não fica desprevenido por Equilibrar-se em superfície estreita ou solo irregular.','Mais segurança ao Equilibrar-se: sucesso vira crítico e o terreno não o deixa desprevenido.')
 skill_feat('escalador-de-combate','atletismo','Não fica desprevenido ao Escalar. Pode Escalar com uma mão ocupada, mas ainda precisa de uma mão livre e das duas pernas.','Escala sem ficar desprevenido e pode manter uma mão ocupada.')
 skill_feat('carregador-robusto','atletismo','Aumenta em2 tanto o Volume que pode carregar sem ficar sobrecarregado quanto seu Volume máximo.','Carrega2Volumes adicionais antes de ficar sobrecarregado e no limite máximo.')
+next(t for t in j['talentos'] if t['id']=='carregador-robusto')['efeitos']=[{'alvo':'limite-sobrecarga','tipo':'sem-tipo','valor':2},{'alvo':'limite-carga-maxima','tipo':'sem-tipo','valor':2}]
 skill_feat('medicina-de-combate','medicina','[1 ação], cura/manuseio. Precisa de ferramentas de curandeiro empunhadas ou vestidas. Faça teste de Medicina contra a CD de Tratar Ferimentos; pode escolher CD maior se tiver graduação suficiente. Recupera PV como Tratar Ferimentos, mas não remove ferido. Depois, o alvo fica imune à SUA Medicina de Combate por1dia. A imunidade é independente de Tratar Ferimentos.','Cura rapidamente com Medicina; exige ferramentas, não remove ferido e só funciona uma vez por dia por alvo para você.')
 skill_feat('medicina-natural','natureza','Pode usar Natureza em vez de Medicina para Tratar Ferimentos e para alcançar CDs maiores dessa atividade. Isso não substitui Medicina em outras atividades ou pré-requisitos. Em ambiente natural, materiais frescos podem conceder+2 de circunstância nesse teste, a critério do Mestre.','Trata Ferimentos com Natureza; não substitui outros usos ou pré-requisitos de Medicina.')
 skill_feat('estudante-do-canone','religiao','Ao Decifrar Escrita religiosa ou Recordar Conhecimento sobre princípios de uma religião, falha crítica vira falha. Ao Recordar Conhecimento sobre a própria religião, falha vira sucesso e sucesso vira crítico.','Melhora resultados sobre doutrina religiosa, especialmente sobre sua própria fé.')
@@ -569,6 +570,27 @@ por_id = {t['id']:t for t in j['talentos']}
 for entrada in editorial['talentos']:
  if entrada['id'] not in por_id:raise ValueError('Talento editorial desconhecido: '+entrada['id'])
  por_id[entrada['id']].update(entrada)
+
+# Corpo PT individual, separado da revisão mecânica/automação.
+# Entradas não implementadas permanecem somente consulta; nunca substitui revisados.
+native_path=ROOT/'docs/pathfinder/player-core-1/entradas-nativas-pt.json'
+if native_path.exists():
+ native=json.loads(native_path.read_text())
+ for category in ['talentos','magias']:
+  lookup={r['id']:r for r in j[category]}
+  for r in native[category]:
+   old=lookup.get(r['id'])
+   if old is None:raise ValueError('Entrada nativa desconhecida: '+r['id'])
+   if old.get('revisao')!='revisado':old.update(r)
+ j['coberturaTextoIndividual']={category:sum(r.get('revisao')=='revisado' or r.get('textoNativoCompleto',False) for r in j[category]) for category in ['talentos','magias']}
+ j['pendenciasTextoIndividual']=native.get('pendencias',[])
+
+# Passivos gerais conferidos manualmente: só libera o que o motor implementa.
+passives=ROOT/'docs/pathfinder/player-core-1/passivos-gerais-revisados.json'
+if passives.exists():
+ for r in json.loads(passives.read_text())['talentos']:
+  old=next(t for t in j['talentos'] if t['id']==r['id'])
+  old.update(r)
 
 # Cobertura declarada sem apresentar índices como dados revisados.
 j['cobertura']={'classes':8,'ancestralidades':8,'herancas':45,'biografias':40,'paginasNativas':470,'talentosRevisados':sum(t.get('revisao')=='revisado' for t in j['talentos']),'magiasRevisadas':sum(m.get('revisao')=='revisado' for m in j['magias']),'talentosIndexados':len(j['talentos']),'magiasIndexadas':len(j['magias']),'equipamentosRevisados':len(j['equipamentos'])}
