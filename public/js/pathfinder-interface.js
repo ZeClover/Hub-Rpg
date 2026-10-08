@@ -4,7 +4,6 @@
   'use strict';
   const R = window.HubPF2Regras;
   const Combate=()=>window.HubPF2Combate;
-  let testeAtual=null;
   const $ = seletor => document.querySelector(seletor);
   const parametros = new URLSearchParams(location.search);
   const id = parametros.get('id');
@@ -209,7 +208,7 @@
   function camposPericias(dados) {
     const calculo=R.calcular(dados,catalogo),restricoes=classe(dados)?.restricoesIncrementosExtra||{},estilo=opcao(dados)?.periciasFixas?.[0];
     const extras=Object.entries(restricoes).filter(([nivel])=>Number(nivel)<=dados.nivel).map(([nivel,opcoes])=>campo(dados,'Melhoria extra de estilo · nível '+nivel,'incrementosPericiaExtras.'+nivel,'select',{valores:[['','Escolha'],...opcoes.map(id=>id==='pericia-do-estilo'?estilo:id).filter(Boolean).map(id=>[id,nomesPericias[id]||id])]})).join('');
-    return `<section class="card"><h2>Perícias e proficiência</h2>${extras}<p class="mini">A ficha aplica os treinamentos concedidos e confere quantas escolhas e melhorias restam. Destreinado não acrescenta o nível.</p><ul>${[...validacao(dados).pendencias,...validacao(dados).erros].filter(texto=>/treinamento|incrementos de perícia|graduações de perícia/i.test(texto)).map(texto=>'<li>'+escapar(texto)+'</li>').join('')||'<li>Distribuição de perícias conferida.</li>'}</ul><div class="grade">${Object.entries(nomesPericias).map(([nome,rotulo])=>`<article class="item">${campo(dados,rotulo+' · '+(calculo.pericias[nome]>=0?'+':'')+calculo.pericias[nome],'pericias.'+nome,'select',{valores:nomesGraus.map((grau,i)=>[i,grau])})}${calculo.grausPericias?.[nome]>Number(dados.pericias?.[nome]||0)?'<p class="mini">Treinamento concedido automaticamente pela classe, ancestralidade ou biografia.</p>':''}${botao('Testar '+rotulo,'teste',nome)}</article>`).join('')}</div><div class="grade">${Object.entries(calculo.pericias||{}).filter(([id])=>id.startsWith('saber:')).map(([id,bonus])=>'<article class="item"><h3>Saber: '+escapar(id.slice(6))+'</h3><span class="numero">'+(bonus>=0?'+':'')+bonus+'</span>'+botao('Testar Saber','teste',id)+'</article>').join('')}</div>${campo(dados,'Anotações de Saberes e substituições','saberes','textarea')}</section>`;
+    return `<section class="card"><h2>Perícias e proficiência</h2>${extras}<p class="mini">A ficha calcula os bônus, mas nenhuma rolagem acontece no Hub. Role fora e use o valor exibido.</p><ul>${[...validacao(dados).pendencias,...validacao(dados).erros].filter(texto=>/treinamento|incrementos de perícia|graduações de perícia/i.test(texto)).map(texto=>'<li>'+escapar(texto)+'</li>').join('')||'<li>Distribuição de perícias conferida.</li>'}</ul><div class="grade">${Object.entries(nomesPericias).map(([nome,rotulo])=>`<article class="item">${campo(dados,rotulo+' · bônus '+(calculo.pericias[nome]>=0?'+':'')+calculo.pericias[nome],'pericias.'+nome,'select',{valores:nomesGraus.map((grau,i)=>[i,grau])})}${calculo.grausPericias?.[nome]>Number(dados.pericias?.[nome]||0)?'<p class="mini">Treinamento concedido automaticamente pela classe, ancestralidade ou biografia.</p>':''}</article>`).join('')}</div><div class="grade">${Object.entries(calculo.pericias||{}).filter(([id])=>id.startsWith('saber:')).map(([id,bonus])=>'<article class="item"><h3>Saber: '+escapar(id.slice(6))+'</h3><span class="numero">'+(bonus>=0?'+':'')+bonus+'</span></article>').join('')}</div>${campo(dados,'Anotações de Saberes e substituições','saberes','textarea')}</section>`;
   }
   function niveisTalento(dados,tipo) {
     const atual=classe(dados), personalizados=atual?.niveisTalentos?.[tipo];
@@ -229,10 +228,11 @@
     return [['','Escolha regular'],...origens.map(origem=>{const identificador=origem.split(':').slice(1).join(':');const fonte=registro('talentos',identificador)||(catalogo.ancestralidades||[]).flatMap(item=>item.herancas||[]).find(item=>item.id===identificador);return [origem,'Escolha extra: '+(fonte?.nome||identificador)];})];
   }
   function talentosSelecionados(dados) {
-    return (dados.talentos||[]).map((talento,i)=>({talento,i})).filter(({talento})=>!talento.concedidoAutomaticamente&&talento.origem!=='biografia').map(({talento,i})=>{
+    const selecionados=(dados.talentos||[]).map((talento,i)=>({talento,i})).filter(({talento})=>!talento.concedidoAutomaticamente&&talento.origem!=='biografia').map(({talento,i})=>{
       const item=registro('talentos',talento.id);
       return '<article class="item"><strong>'+escapar(item?.nome||talento.nome||talento.id)+'</strong>'+(talento.origem==='biografia'?'<p class="mini">Concedido pela biografia; não ocupa a escolha regular de talento.</p>':'<div class="grade">'+campo(dados,'Nível de aquisição','talentos.'+i+'.nivel','number',{min:item?.nivel||1,max:dados.nivel})+campo(dados,'Escolha usada','talentos.'+i+'.tipo','select',{valores:[['ancestralidade','Ancestralidade'],['classe','Classe'],['pericia','Perícia'],['geral','Geral'],['arquetipo','Arquétipo']]})+campo(dados,'Origem da escolha','talentos.'+i+'.origem','select',{valores:origensTalento(dados,talento)})+'</div>')+'</article>';
     }).join('');
+    return selecionados?'<details><summary>Gerenciar escolhas registradas</summary><p class="mini">Use apenas para corrigir o nível ou a origem de uma escolha antiga.</p>'+selecionados+'</details>':'';
   }
   function magiasSelecionadas(dados) {
     const conj=R.calcular(dados,catalogo).conjuracao;
@@ -247,7 +247,7 @@
   function equipamentosSelecionados(dados) {
     return (dados.equipamentos||[]).map((escolha,i)=>{
       const item=registro('equipamentos',typeof escolha==='string'?escolha:escolha.id),modelo=copiar(dados);modelo.equipamentos[i]=typeof escolha==='string'?{id:escolha,quantidade:1}:{...escolha,quantidade:quantidadeItem(escolha)};
-      return '<article class="item"><strong>'+escapar(item?.nome||escolha.nome||escolha.id||escolha)+'</strong>'+campo(modelo,'Quantidade','equipamentos.'+i+'.quantidade','number',{min:0})+(item?.mecanica?.acao==='curar'&&quantidadeItem(modelo.equipamentos[i])>0?botao('Consumir e aplicar cura automática','consumir-item',i):'')+'</article>';
+      return '<article class="item"><strong>'+escapar(item?.nome||escolha.nome||escolha.id||escolha)+'</strong>'+campo(modelo,'Quantidade','equipamentos.'+i+'.quantidade','number',{min:0})+(item?.mecanica?.acao==='curar'?'<p class="mini">Cura: '+escapar(item.mecanica.cura?.expressao||'consulte o efeito')+'. Role fora do Hub e registre a cura nos PV.</p>':'')+'</article>';
     }).join('');
   }
   function avaliarTalento(dados,item,selecionado,calculo) {
@@ -275,28 +275,35 @@
       const usados=(dados.talentos||[]).filter(t=>!t.concedidoAutomaticamente&&t.origem!=='biografia'&&(t.tipo||registro('talentos',t.id)?.tipo)===tipo&&Number(t.nivel)===Number(aquisicao.nivel)&&(t.origem||null)===(aquisicao.origem||null)).length;
       if(!slot||usados>=Number(slot.quantidade||1)) motivos.push(`Não há uma escolha livre de talento de ${tipo||'categoria compatível'} neste nível.`);
     }
-    return {disponivel:motivos.length===0,motivos};
+    const somenteLimite=motivos.length===1&&motivos[0].startsWith('Não há uma escolha livre de talento');
+    return {disponivel:motivos.length===0,motivos,somenteLimite};
   }
   function cartaoCatalogo(dados,tipo,item,selecionados,estado) {
     const escolha=(dados[tipo]||[]).find(registroEscolhido=>(typeof registroEscolhido==='string'?registroEscolhido:registroEscolhido.id)===item.id);
-    const automatico=tipo==='talentos'&&typeof escolha==='object'&&(escolha.concedidoAutomaticamente||escolha.origem==='biografia');
+    const automatico=typeof escolha==='object'&&(tipo==='talentos'&&(escolha.concedidoAutomaticamente||escolha.origem==='biografia')||tipo==='magias'&&escolha.concedidaAutomaticamente);
     const selecionado=selecionados.has(item.id), bloqueado=!selecionado&&(item.somenteConsulta||estado?.disponivel===false||(tipo==='magias'&&(dados.magias||[]).some(m=>m.id===item.id&&m.concedidaAutomaticamente)));
     const motivos=estado?.motivos||[];
-    const origem=automatico?(escolha.origem==='biografia'?'Biografia':String(escolha.origem||'regra da ficha').split(':')[0].replace('heranca','Herança').replace('ancestralidade','Ancestralidade').replace('classe','Classe').replace('especializacao','Especialização')):'';
-    return `<article class="item" data-filtro="${escapar((item.nome+' '+resumo(item)+' '+fonte(item)+' '+motivos.join(' ')).toLocaleLowerCase('pt-BR'))}">${automatico?`<strong>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</strong><p class="mini">Concedido automaticamente por ${escapar(origem)} · não consome uma escolha.</p>`:`<label class="check"><input type="checkbox" data-escolha="${tipo}" value="${escapar(item.id)}" ${selecionado?'checked':''} ${bloqueado?'disabled':''}>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</label>`}<p class="mini">${escapar(resumo(item))}</p>${!automatico&&motivos.length?'<p class="mini perigo"><strong>Ainda indisponível:</strong> '+escapar(motivos.join(' '))+'</p>':!automatico&&item.somenteConsulta?'<p class="mini">Somente consulta · seleção mecânica ainda indisponível.</p>':textoRevisao(item)?'<p class="mini">Texto da fonte em revisão.</p>':''}${botao('Ver efeito e requisitos','detalhe',tipo+':'+item.id)}</article>`;
+    const origem=automatico?(escolha.origem==='biografia'?'Biografia':String(escolha.origem||escolha.fonte||'regra da ficha').split(':')[0].replace('heranca','Herança').replace('ancestralidade','Ancestralidade').replace('classe','Classe').replace('especializacao','Especialização')):'';
+    return `<article class="item" data-filtro="${escapar((item.nome+' '+resumo(item)+' '+fonte(item)+' '+motivos.join(' ')).toLocaleLowerCase('pt-BR'))}">${automatico?`<strong>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</strong><p class="mini">Concedido automaticamente por ${escapar(origem)} · não consome uma escolha.</p>`:`<label class="check"><input type="checkbox" data-escolha="${tipo}" value="${escapar(item.id)}" ${selecionado?'checked':''} ${bloqueado?'disabled':''}>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</label>`}<p class="mini">${escapar(resumo(item))}</p>${!automatico&&estado?.somenteLimite?'<p class="mini"><strong>Limite atingido:</strong> desmarque outra escolha desta categoria para trocar.</p>':!automatico&&motivos.length?'<p class="mini perigo"><strong>Ainda indisponível:</strong> '+escapar(motivos.join(' '))+'</p>':!automatico&&item.somenteConsulta?'<p class="mini">Somente consulta · seleção mecânica ainda indisponível.</p>':textoRevisao(item)?'<p class="mini">Texto da fonte em revisão.</p>':''}${botao('Ver efeito e requisitos','detalhe',tipo+':'+item.id)}</article>`;
   }
   function catalogoOpcoes(dados,tipo,titulo) {
     const selecionados=new Set((dados[tipo]||[]).map(item=>typeof item==='string'?item:item.id));
     let itens=(catalogo[tipo]||[]).filter(item=>ehMestre||item.somenteMestre!==true);
-    const carga=tipo==='equipamentos'?R.calcular(dados,catalogo).carga:null;
+    const calculoAtual=R.calcular(dados,catalogo), carga=tipo==='equipamentos'?calculoAtual.carga:null;
+    if(tipo==='magias'&&!calculoAtual.conjuracao) return '<section class="card"><h2>Magias</h2><p>Esta ficha não possui conjuração nem magias de foco disponíveis.</p><p class="mini">Magias não podem ser escolhidas aqui. Use o Grimório apenas para consultar o catálogo; se uma classe ou talento conceder conjuração, esta área será liberada automaticamente.</p></section>';
     let grupos;
     if(tipo==='talentos') {
       itens=itens.filter(item=>(!item.classe||item.classe===dados.classeId)&&(!item.ancestralidade||item.ancestralidade===dados.ancestralidadeId));
       const calculo=R.calcular(dados,catalogo), avaliados=itens.map(item=>{const escolha=(dados.talentos||[]).find(t=>(typeof t==='string'?t:t.id)===item.id),automatico=typeof escolha==='object'&&(escolha.concedidoAutomaticamente||escolha.origem==='biografia');return {item,automatico,estado:avaliarTalento(dados,item,selecionados.has(item.id),calculo)};});
-      const concedidos=avaliados.filter(({automatico})=>automatico), disponiveis=avaliados.filter(({automatico,estado})=>!automatico&&estado.disponivel);
-      const bloqueados=avaliados.filter(({automatico,estado,item})=>!automatico&&!estado.disponivel&&Number(item.nivel||1)<=Number(dados.nivel||1));
+      const concedidos=avaliados.filter(({automatico})=>automatico), disponiveis=avaliados.filter(({automatico,estado,item})=>!automatico&&(estado.disponivel||estado.somenteLimite)&&Number(item.nivel||1)<=Number(dados.nivel||1));
+      const bloqueados=avaliados.filter(({automatico,estado,item})=>!automatico&&!estado.disponivel&&!estado.somenteLimite&&Number(item.nivel||1)<=Number(dados.nivel||1));
       const futuros=avaliados.filter(({automatico,item})=>!automatico&&Number(item.nivel||1)>Number(dados.nivel||1));
-      grupos=`${concedidos.length?`<h3>Concedidos automaticamente · ${concedidos.length}</h3><div class="catalogo">${concedidos.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div>`:''}<h3>Você pode escolher agora · ${disponiveis.length}</h3><div class="catalogo">${disponiveis.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')||'<p>Nenhuma escolha disponível agora.</p>'}</div>${bloqueados.length?`<details><summary>Bloqueados neste nível · ${bloqueados.length}</summary><p class="mini">São do seu nível atual, mas ainda falta cumprir algum requisito.</p><div class="catalogo">${bloqueados.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div></details>`:''}${futuros.length?`<details><summary>Planejar níveis futuros · ${futuros.length}</summary><p class="mini">Talentos acima do seu nível ficam apenas para consulta e não aparecem entre as escolhas atuais.</p><div class="catalogo">${futuros.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div></details>`:''}`;
+      grupos=`${concedidos.length?`<h3>Concedidos automaticamente · ${concedidos.length}</h3><div class="catalogo">${concedidos.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div>`:''}<h3>Opções compatíveis neste nível · ${disponiveis.length}</h3><p class="mini">Ao atingir o limite, as outras opções continuam visíveis. Desmarque uma escolhida para fazer a troca.</p><div class="catalogo">${disponiveis.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')||'<p>Nenhuma escolha disponível agora.</p>'}</div>${bloqueados.length?`<details><summary>Bloqueados neste nível · ${bloqueados.length}</summary><p class="mini">São do seu nível atual, mas ainda falta cumprir algum requisito.</p><div class="catalogo">${bloqueados.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div></details>`:''}${futuros.length?`<details><summary>Planejar níveis futuros · ${futuros.length}</summary><p class="mini">Talentos acima do seu nível ficam apenas para consulta e não aparecem entre as escolhas atuais.</p><div class="catalogo">${futuros.map(({item,estado})=>cartaoCatalogo(dados,tipo,item,selecionados,estado)).join('')}</div></details>`:''}`;
+    } else if(tipo==='magias') {
+      const maximo=Math.max(1,Math.ceil(Number(dados.nivel||1)/2));
+      const avaliadas=itens.map(item=>{const escolha=(dados.magias||[]).find(m=>(typeof m==='string'?m:m.id)===item.id),automatico=typeof escolha==='object'&&escolha.concedidaAutomaticamente,ranque=Number(item.ranque??item.nivel??1),motivos=[];if(item.somenteConsulta)motivos.push('Conteúdo disponível somente para consulta.');if(ranque>maximo&&item.tipo!=='truque')motivos.push(`Exige acesso ao ranque ${ranque}; seu máximo atual é ${maximo}.`);if(typeof R.magiaElegivel==='function'&&!R.magiaElegivel(dados,item.id,catalogo))motivos.push(item.tipo==='foco'?'Esta magia de foco precisa ser concedida por uma fonte da ficha.':'Não pertence à tradição ou às opções desta ficha.');return {item,automatico,ranque,estado:{disponivel:automatico||motivos.length===0,motivos}};});
+      const concedidas=avaliadas.filter(r=>r.automatico), disponiveis=avaliadas.filter(r=>!r.automatico&&r.estado.disponivel), bloqueadas=avaliadas.filter(r=>!r.automatico&&!r.estado.disponivel&&r.ranque<=maximo), futuras=avaliadas.filter(r=>!r.automatico&&r.ranque>maximo);
+      grupos=`${concedidas.length?`<h3>Concedidas automaticamente · ${concedidas.length}</h3><div class="catalogo">${concedidas.map(r=>cartaoCatalogo(dados,tipo,r.item,selecionados,r.estado)).join('')}</div>`:''}<h3>Você pode escolher agora · ${disponiveis.length}</h3><div class="catalogo">${disponiveis.map(r=>cartaoCatalogo(dados,tipo,r.item,selecionados,r.estado)).join('')||'<p>Nenhuma magia pode ser escolhida agora.</p>'}</div>${bloqueadas.length?`<details><summary>Bloqueadas para esta ficha · ${bloqueadas.length}</summary><div class="catalogo">${bloqueadas.map(r=>cartaoCatalogo(dados,tipo,r.item,selecionados,r.estado)).join('')}</div></details>`:''}${futuras.length?`<details><summary>Planejar ranques futuros · ${futuras.length}</summary><div class="catalogo">${futuras.map(r=>cartaoCatalogo(dados,tipo,r.item,selecionados,r.estado)).join('')}</div></details>`:''}`;
     } else grupos=`<div class="catalogo">${itens.map(item=>cartaoCatalogo(dados,tipo,item,selecionados)).join('')||'<p>Esta categoria ainda não tem opções revisadas. A ficha não presume escolhas ausentes.</p>'}</div>`;
     return `<section class="card"><h2>${titulo}</h2>${carga?'<p>Volume total: <strong>'+carga.volume+'</strong> · sobrecarga a partir de '+carga.limiteSobrecarga+' · máximo '+carga.limiteMaximo+'.</p>'+(carga.sobrecarregado?'<p class="aviso">Sobrecarregado: Desajeitado1 e redução de deslocamento aplicados automaticamente.</p>':'')+(carga.pendentes?.length?'<p class="aviso">Volume ainda pendente para: '+carga.pendentes.map(id=>registro('equipamentos',id)?.nome||id).map(escapar).join(', ')+'.</p>':''):''}${tipo==='talentos'?talentosSelecionados(dados):tipo==='magias'?magiasSelecionadas(dados):tipo==='equipamentos'?equipamentosSelecionados(dados):''}<label>Buscar ${titulo.toLowerCase()}<input type="search" data-busca="${tipo}" placeholder="Nome, efeito ou origem"></label><p class="mini">As opções são separadas pelo que esta ficha pode escolher agora. Conteúdo bloqueado continua visível para planejamento.</p>${grupos}</section>`;
   }
@@ -304,7 +311,7 @@
     return (dados.magias||[]).map(escolha=>{
       const item=registro('magias',typeof escolha==='string'?escolha:escolha.id),concedida=typeof escolha==='object'&&escolha.concedidaAutomaticamente;
       if(!item)return '<article class="item"><h3>'+escapar(escolha.nome||escolha.id||escolha)+'</h3><p class="mini">'+(concedida?'Concedida automaticamente pela classe ou especialização. ':'')+'A referência integral desta magia ainda está em revisão; sua escolha foi preservada.</p></article>';
-      return '<article class="item"><h3>'+escapar(item.nome)+'</h3>'+(escolha.apenasAcessoPreparacao?'<p class="mini">Disponível para preparação por divindade; não concede espaços extras.</p>':concedida?'<p class="mini">Concedida automaticamente.</p>':'')+'<p class="mini">'+escapar(resumo(item))+'</p>'+botao('Ver efeito','detalhe','magias:'+item.id)+(item.efeitoCombate&&!item.somenteConsulta?botao('Conjurar · efeito automático','conjurar',item.id):'<p class="mini">O efeito desta magia ainda não está disponível para execução automática.</p>')+'</article>';
+      return '<article class="item"><h3>'+escapar(item.nome)+'</h3>'+(escolha.apenasAcessoPreparacao?'<p class="mini">Disponível para preparação por divindade; não concede espaços extras.</p>':concedida?'<p class="mini">Concedida automaticamente.</p>':'')+'<p class="mini">'+escapar(resumo(item))+'</p>'+botao('Ver efeito','detalhe','magias:'+item.id)+'<p class="mini">Role qualquer dado fora do Hub; registre aqui apenas espaços e recursos gastos.</p></article>';
     }).join('');
   }
   function conjuradorPreparado(conj) {return conj?.tipo==='preparada'||conj?.preparacao==='preparada';}
@@ -326,7 +333,7 @@
     for(const [grupo,limites] of [['padrao',conj.espacos||{}],['curriculo',conj.extraCurriculo||{}]])for(const [ranque,maximo] of Object.entries(limites)) {
       const permitidas=grupo==='curriculo'?magiasCurriculo(dados,ranque):null,opcoes=conhecidas.filter(item=>!item.truque&&item.tipo!=='truque'&&item.tipo!=='foco'&&Number(item.ranque||item.nivel||1)<=Number(ranque)&&(!permitidas||permitidas.includes(item.id)));
       html+='<h3>Ranque '+ranque+' · '+(grupo==='curriculo'?'currículo':'padrão')+'</h3>'+(grupo==='curriculo'&&!permitidas.length?'<p class="aviso">A lista de magias deste currículo ainda está em revisão; estes espaços ficam bloqueados até a fonte ser revisada.</p>':'')+'<div class="grade">';
-      for(let i=0;i<Number(maximo);i++)html+='<article class="item">'+campo(dados,'Espaço '+(i+1),'magiasPreparadas.'+grupo+'.'+ranque+'.'+i,'select',{valores:[['','Escolha uma magia'],...opcoes.map(item=>[item.id,item.nome])]})+((dados.preparacaoGasta?.[grupo]?.[ranque]||[]).includes(i)?'<p class="mini">Espaço já consumido.</p>':dados.magiasPreparadas?.[grupo]?.[ranque]?.[i]?botao('Conjurar espaço preparado','conjurar',dados.magiasPreparadas[grupo][ranque][i]):'')+'</article>';
+      for(let i=0;i<Number(maximo);i++)html+='<article class="item">'+campo(dados,'Espaço '+(i+1),'magiasPreparadas.'+grupo+'.'+ranque+'.'+i,'select',{valores:[['','Escolha uma magia'],...opcoes.map(item=>[item.id,item.nome])]})+((dados.preparacaoGasta?.[grupo]?.[ranque]||[]).includes(i)?'<p class="mini">Espaço já consumido.</p>':'')+'</article>';
       html+='</div>';
     }
     return html+'</section>';
@@ -335,7 +342,7 @@
     const calculo=R.calcular(dados,catalogo),conj=calculo.conjuracao;
     if(!conj)return '';
     const espacos=conj.espacos||{},extras=conj.extraCurriculo||{},fonteDivina=conj.fonteDivina;
-    return preparacaoMagias(dados,conj)+'<section class="card"><h2>Conjuração automática</h2><div class="grade"><div><h3>CD de magia</h3><span class="numero">'+calculo.cdMagia+'</span></div><div><h3>Ataque de magia</h3><span class="numero">'+(calculo.ataqueMagia>=0?'+':'')+calculo.ataqueMagia+'</span>'+botao('Atacar com magia','teste','ataqueMagia')+'</div><div><h3>Tradição</h3><p>'+escapar(conj.tradicao||'Escolha a especialização')+'</p></div></div><p>Truques disponíveis: <strong>'+escapar(conj.truques??0)+'</strong>.</p><div class="grade">'+Object.entries(espacos).map(([ranque,maximo])=>{const usado=Math.min(Number(maximo),Math.max(0,Number(dados.espacosGastos?.[ranque]||0)));return '<article class="item"><h3>Ranque '+ranque+'</h3><span class="numero">'+(Number(maximo)-usado)+' / '+maximo+'</span>'+(conjuradorPreparado(conj)?'':botao('Gastar espaço','gastar-espaco',ranque))+(extras[ranque]?'<p>'+Math.max(0,Number(extras[ranque])-Number(dados.espacosCurriculoGastos?.[ranque]||0))+' / '+extras[ranque]+' espaço(s) de currículo.</p>'+(conjuradorPreparado(conj)?'':botao('Gastar espaço de currículo','gastar-curriculo',ranque)):'')+'</article>';}).join('')+'</div>'+(fonteDivina?.quantidade?'<p>Fonte divina: '+Math.max(0,Number(fonteDivina.quantidade)-Number(dados.fonteDivinaGastos||0))+' / '+fonteDivina.quantidade+' espaço(s) de '+escapar(fonteDivina.magia||'cura/ferimento')+' no ranque '+(fonteDivina.ranque||'máximo')+'.</p>'+(registro('magias',fonteDivina.magia)?botao('Conjurar Fonte divina','conjurar',fonteDivina.magia):'<p class="mini">Escolha Curar ou Ferir nas escolhas da classe.</p>'):'')+(conj.foco>0?'<h3>Pontos de foco</h3><p>'+Math.max(0,conj.foco-Number(dados.focoGasto||0))+' / '+conj.foco+'</p>'+botao('Gastar foco','gastar-foco')+botao('Refocar · 10 minutos','refocar'):'')+botao('Preparação diária · recuperar espaços','recuperar-espacos')+'<h3>Magias escolhidas</h3>'+magiasEmUso(dados)+'<p class="mini">Os limites vêm da classe, nível e especialização. Você escolhe o que conjurar; a ficha controla os espaços gastos.</p></section>';
+    return preparacaoMagias(dados,conj)+'<section class="card"><h2>Conjuração e recursos</h2><div class="grade"><div><h3>CD de magia</h3><span class="numero">'+calculo.cdMagia+'</span></div><div><h3>Ataque de magia</h3><span class="numero">'+(calculo.ataqueMagia>=0?'+':'')+calculo.ataqueMagia+'</span></div><div><h3>Tradição</h3><p>'+escapar(conj.tradicao||'Escolha a especialização')+'</p></div></div><p class="aviso">O Hub não rola dados. Role fora, use os bônus acima e registre somente os recursos gastos.</p><p>Truques disponíveis: <strong>'+escapar(conj.truques??0)+'</strong>.</p><div class="grade">'+Object.entries(espacos).map(([ranque,maximo])=>{const usado=Math.min(Number(maximo),Math.max(0,Number(dados.espacosGastos?.[ranque]||0)));return '<article class="item"><h3>Ranque '+ranque+'</h3><span class="numero">'+(Number(maximo)-usado)+' / '+maximo+'</span>'+(conjuradorPreparado(conj)?'':botao('Registrar espaço gasto','gastar-espaco',ranque))+(extras[ranque]?'<p>'+Math.max(0,Number(extras[ranque])-Number(dados.espacosCurriculoGastos?.[ranque]||0))+' / '+extras[ranque]+' espaço(s) de currículo.</p>'+(conjuradorPreparado(conj)?'':botao('Registrar espaço de currículo gasto','gastar-curriculo',ranque)):'')+'</article>';}).join('')+'</div>'+(fonteDivina?.quantidade?'<p>Fonte divina: '+Math.max(0,Number(fonteDivina.quantidade)-Number(dados.fonteDivinaGastos||0))+' / '+fonteDivina.quantidade+' espaço(s) de '+escapar(fonteDivina.magia||'cura/ferimento')+' no ranque '+(fonteDivina.ranque||'máximo')+'.</p>':'')+(conj.foco>0?'<h3>Pontos de foco</h3><p>'+Math.max(0,conj.foco-Number(dados.focoGasto||0))+' / '+conj.foco+'</p>'+botao('Registrar foco gasto','gastar-foco')+botao('Refocar · 10 minutos','refocar'):'')+botao('Preparação diária · recuperar espaços','recuperar-espacos')+'<h3>Magias escolhidas</h3>'+magiasEmUso(dados)+'<p class="mini">Os limites vêm da classe, nível e especialização. A ficha controla apenas espaços e recursos; nunca produz resultados de dados.</p></section>';
   }
   function camposOpcoes(dados) {
     return escolhasClasse(dados)+painelMagia(dados)+catalogoOpcoes(dados,'talentos','Talentos')+catalogoOpcoes(dados,'magias','Magias')+`${camposDefesa(dados)}<section class="card"><h2>Equipamento e preparação</h2><p class="mini">O inventário desta ficha mantém as quantidades de cada item. Registre aqui equipamento mecânico, preparação e recursos; uma seleção cadastra um exemplar e preserva os itens anteriores.</p>${campo(dados,'Equipamento inicial e moedas','equipamentoInicial','textarea')}${dados.recursosMagicos?'<details><summary>Anotações antigas de conjuração · preservadas</summary><p class="texto-integral">'+escapar(dados.recursosMagicos)+'</p></details>':''}${campo(dados,'Escolhas específicas e efeitos de classe','escolhasClasseNotas','textarea')}</section>`+catalogoOpcoes(dados,'equipamentos','Inventário desta ficha');
@@ -366,12 +373,12 @@
     const dano=calculo.danoArma?.formula||calculo.danoArma||calculo.danoFormula||'';
     const turno=dados.turno,sequencia=turno&&!turno.encerrado?[Math.min(2,Number(turno.ataquesRealizados||0))]:[0,1,2];
     const estados=(dados.classeId==='ladino'?campo(dados,'Alvo desprevenido · aplicar precisão quando elegível','estados.alvoDesprevenido','checkbox'):'')+(dados.classeId==='investigador'?campo(dados,'Usar Estratagema no golpe · INT e precisão quando elegíveis','estados.estratagema','checkbox'):'')+(dados.classeId==='espadachim'?campo(dados,'Panache ativo','estados.panache','checkbox'):'');
-    return estados+'<h3>'+escapar(arma?.nome||'Ataque desarmado')+'</h3><div class="acoes">'+sequencia.map(i=>botao('Golpear · ataque '+(i+1)+' · '+(calculo.ataque+map[i]>=0?'+':'')+(calculo.ataque+map[i]),'ataque',i)).join('')+'</div>'+(dano?'<p><strong>Dano automático:</strong> '+escapar(dano)+'</p>':'')+'<p class="mini">A arma selecionada define proficiência, atributo, dado de dano e penalidade por ataques múltiplos.</p>';
+    return estados+'<h3>'+escapar(arma?.nome||'Ataque desarmado')+'</h3><div class="acoes">'+sequencia.map(i=>'<span class="selo">Ataque '+(i+1)+' · '+(calculo.ataque+map[i]>=0?'+':'')+(calculo.ataque+map[i])+'</span>').join('')+'</div>'+(dano?'<p><strong>Fórmula de dano:</strong> '+escapar(dano)+'</p>':'')+'<p class="mini">Role fora do Hub. A ficha apenas apresenta os bônus e a fórmula calculada.</p>';
   }
   const tiposDano={contundente:'Contundente',perfurante:'Perfurante',cortante:'Cortante',acido:'Ácido',fogo:'Fogo',frio:'Frio',eletricidade:'Eletricidade',sonico:'Sônico',vitalidade:'Vitalidade',vazio:'Vazio',forca:'Força',espiritual:'Espiritual',mental:'Mental',veneno:'Veneno',sangramento:'Sangramento'};
   function painelTurno(dados) {
     const turno=dados.turno;
-    return '<section class="card"><h2>Meu turno · ações e efeitos automáticos</h2>'+(turno?'<div class="grade"><div><h3>Ações gerais</h3><span class="numero">'+turno.acoesGerais+'</span></div><div><h3>Ação acelerada</h3><span class="numero">'+turno.acaoAcelerada+'</span><p class="mini">'+escapar((turno.restricoesAcelerada||[]).join(', ')||'Sem ação acelerada disponível.')+'</p></div><div><h3>Reações</h3><span class="numero">'+turno.reacoes+'</span></div></div><p>'+(turno.podeAgir?'Você pode agir.':'Condições impedem ações neste momento.')+'</p>'+(turno.precisaDefinirRestricoes?'<p class="aviso">A ação acelerada exige a restrição da fonte; ela fica bloqueada até os metadados serem definidos.</p>':''):'<p>Inicie seu turno para calcular ações, reação e recuperação de morrendo.</p>')+'<div class="acoes">'+botao('Iniciar meu turno','iniciar-turno')+botao('Finalizar meu turno','finalizar-turno')+(turno&&!turno.encerrado?botao('Gastar uma ação geral','gastar-acao')+botao('Gastar reação','gastar-reacao'):'')+'</div><h3>Danos persistentes</h3>'+(dados.danosPersistentes||[]).map((item,i)=>'<article class="item"><div class="grade">'+campo(dados,'Tipo de dano','danosPersistentes.'+i+'.tipo','select',{valores:[['','Escolha'],...Object.entries(tiposDano)]})+campo(dados,'Fórmula base da fonte · exemplo: 1d6','danosPersistentes.'+i+'.formula')+campo(dados,'A fonte prevê persistente duplicado por crítico','danosPersistentes.'+i+'.critico','checkbox')+campo(dados,'CD do teste simples · padrão 15','danosPersistentes.'+i+'.cdRecuperacao','number',{min:1,max:100})+'</div>'+botao('Remover efeito','remover-persistente',i)+'</article>').join('')+botao('Registrar dano persistente','adicionar-persistente')+'<p class="mini">O fim do turno rola cada fórmula, aplica defesas e PV, testa a recuperação e reduz Assustado. O começo resolve a recuperação de Morrendo e as perdas de ações. Informe a fórmula base da fonte e marque o crítico quando a regra permitir; a ficha calcula a multiplicação.</p>'+(dados._ultimoTurnoSnapshot?botao('Exportar estado antes do último turno','exportar-turno-anterior'):'')+'</section>';
+    return '<section class="card"><h2>Turno e efeitos</h2>'+(turno?'<div class="grade"><div><h3>Ações gerais registradas</h3><span class="numero">'+turno.acoesGerais+'</span></div><div><h3>Reações registradas</h3><span class="numero">'+turno.reacoes+'</span></div></div>':'')+'<h3>Danos persistentes</h3>'+(dados.danosPersistentes||[]).map((item,i)=>'<article class="item"><div class="grade">'+campo(dados,'Tipo de dano','danosPersistentes.'+i+'.tipo','select',{valores:[['','Escolha'],...Object.entries(tiposDano)]})+campo(dados,'Fórmula da fonte · referência','danosPersistentes.'+i+'.formula')+campo(dados,'CD de recuperação · referência','danosPersistentes.'+i+'.cdRecuperacao','number',{min:1,max:100})+'</div>'+botao('Remover efeito','remover-persistente',i)+'</article>').join('')+botao('Registrar dano persistente','adicionar-persistente')+'<p class="mini">Role dano persistente, recuperação e testes de Morrendo fora do Hub. Registre aqui somente os estados e valores finais.</p></section>';
   }
   function painelRecursos(dados) {
     const recursos=R.calcular(dados,catalogo).recursosCalculados||[];
@@ -383,11 +390,11 @@
     }).join('')+'</div><p class="mini">A classe, nível, atributo e especialização calculam os limites. A recuperação exige cumprir o intervalo ou descanso descrito na fonte.</p></section>';
   }
   function painelIniciativa() {
-    return '<section class="card"><h2>Declarar iniciativa</h2><p class="mini">Escolha Percepção ou a perícia autorizada pelo mestre. A ficha soma o bônus automaticamente e envia somente o resultado; o nome é confirmado pelo servidor.</p><div class="grade"><label>Teste de iniciativa<select id="iniciativa-base"><option value="percepcao">Percepção</option>'+Object.entries(nomesPericias).map(([id,nome])=>'<option value="'+id+'">'+escapar(nome)+'</option>').join('')+'</select></label><label>d20 já rolado · opcional<input id="iniciativa-dado" type="number" min="1" max="20" placeholder="Em branco: rolar automaticamente"></label></div>'+botao(id?'Rolar ou usar dado e declarar':'Rolar ou usar dado','declarar-iniciativa')+'</section>';
+    return '<section class="card"><h2>Declarar iniciativa</h2><p class="mini">Role fora do Hub. Informe o resultado natural; a ficha soma o bônus e envia somente o total e o nome do personagem.</p><div class="grade"><label>Teste de iniciativa<select id="iniciativa-base"><option value="percepcao">Percepção</option>'+Object.entries(nomesPericias).map(([id,nome])=>'<option value="'+id+'">'+escapar(nome)+'</option>').join('')+'</select></label><label>Resultado natural do d20 · obrigatório<input id="iniciativa-dado" type="number" min="1" max="20" required placeholder="1 a 20"></label></div>'+botao(id?'Declarar resultado':'Calcular resultado','declarar-iniciativa')+'</section>';
   }
   function camposSessao(dados) {
     const calculo=R.calcular(dados,catalogo);
-    return `<section class="card"><h2>Durante a sessão</h2><p class="mini">Três ações e uma reação por rodada. A mesa aplica ações extras, perda de ações e restrições de condições.</p><div class="grade">${[['Classe de Armadura',calculo.ca],['Percepção',calculo.percepcao],['CD da classe',calculo.cdClasse],['Deslocamento',calculo.deslocamento]].map(([nome,valor])=>`<div><h3>${nome}</h3><span class="numero">${valor}</span></div>`).join('')}</div><div class="grade">${campo(dados,'PV atuais','vida.atual','number',{min:0})}${campo(dados,'PV temporários','vida.temporaria','number',{min:0})}<div><h3>PV máximos calculados</h3><span class="numero">${calculo.pvMaximos}</span></div></div><div class="acoes"><label>Dano-base recebido ou cura<input id="quantidade-vida" type="number" min="0" value="0"></label><label>Tipo do dano<select id="dano-tipo">${Object.entries(tiposDano).map(([id,nome])=>'<option value="'+id+'">'+nome+'</option>').join('')}</select></label><label class="check"><input id="dano-critico" type="checkbox">Acerto crítico ou falha crítica · duplicar dano-base</label><label class="check"><input id="dano-ja-final" type="checkbox">Mestre informou dano final já calculado · não duplicar nem reduzir novamente</label><label class="check"><input id="dano-nao-letal" type="checkbox">Dano não letal</label>${botao('Aplicar dano','dano')}${botao('Curar','curar')}${botao('Testar Percepção','teste','percepcao')}</div></section><section class="card"><h2>Salvaguardas e ataques</h2><div class="grade">${Object.entries(calculo.salvaguardas||{}).map(([nome,valor])=>`<div><h3>${nomesSalvaguardas[nome]||nome}</h3><span class="numero">${valor>=0?'+':''}${valor}</span>${botao('Testar','teste',nome)}</div>`).join('')}</div><p>Penalidade por ataques múltiplos: <strong>0 / −5 / −10</strong>; arma ágil: <strong>0 / −4 / −8</strong>. Ataques fora do seu turno normalmente não contam.</p>${painelAtaques(dados,calculo)}</section><section class="card"><h2>Condições e recursos</h2>${dados.morto?'<p class="aviso">Morte registrada pelas regras de dano. Cura comum não restaura o personagem.</p>':''}${camposCondicoes(dados)}${campo(dados,'Condições, duração e efeitos em vigor','condicoesNotas','textarea')}${campo(dados,'Pontos heroicos','pontosHeroicos','number',{min:0,max:3})}${campo(dados,'Recursos consumidos e reações','recursosSessao','textarea')}</section>${painelEscudo(dados,calculo)}${painelMagia(dados)}${painelRecursos(dados)}${painelTurno(dados)}${painelIniciativa()}`;
+    return `<section class="card"><h2>Durante a sessão</h2><p class="aviso">O Hub não rola dados. Use os bônus calculados abaixo e informe apenas resultados e alterações finais.</p><div class="grade">${[['Classe de Armadura',calculo.ca],['Percepção',calculo.percepcao],['CD da classe',calculo.cdClasse],['Deslocamento',calculo.deslocamento]].map(([nome,valor])=>`<div><h3>${nome}</h3><span class="numero">${valor}</span></div>`).join('')}</div><div class="grade">${campo(dados,'PV atuais','vida.atual','number',{min:0})}${campo(dados,'PV temporários','vida.temporaria','number',{min:0})}<div><h3>PV máximos calculados</h3><span class="numero">${calculo.pvMaximos}</span></div></div><div class="acoes"><label>Dano final recebido ou cura rolada fora do Hub<input id="quantidade-vida" type="number" min="0" value="0"></label><label>Tipo do dano<select id="dano-tipo">${Object.entries(tiposDano).map(([id,nome])=>'<option value="'+id+'">'+nome+'</option>').join('')}</select></label><label class="check"><input id="dano-critico" type="checkbox">O resultado informado veio de um acerto crítico</label><label class="check"><input id="dano-ja-final" type="checkbox" checked>Dano final já calculado · não multiplicar novamente</label><label class="check"><input id="dano-nao-letal" type="checkbox">Dano não letal</label>${botao('Aplicar dano informado','dano')}${botao('Aplicar cura informada','curar')}</div></section><section class="card"><h2>Salvaguardas e ataques</h2><div class="grade">${Object.entries(calculo.salvaguardas||{}).map(([nome,valor])=>`<div><h3>${nomesSalvaguardas[nome]||nome}</h3><span class="numero">${valor>=0?'+':''}${valor}</span></div>`).join('')}</div><p>Penalidade por ataques múltiplos: <strong>0 / −5 / −10</strong>; arma ágil: <strong>0 / −4 / −8</strong>. Role fora do Hub.</p>${painelAtaques(dados,calculo)}</section><section class="card"><h2>Condições e recursos</h2>${dados.morto?'<p class="aviso">Morte registrada pelas regras de dano. Cura comum não restaura o personagem.</p>':''}${camposCondicoes(dados)}${campo(dados,'Condições, duração e efeitos em vigor','condicoesNotas','textarea')}${campo(dados,'Pontos heroicos','pontosHeroicos','number',{min:0,max:3})}${campo(dados,'Recursos consumidos e reações','recursosSessao','textarea')}</section>${painelEscudo(dados,calculo)}${painelMagia(dados)}${painelRecursos(dados)}${painelTurno(dados)}${painelIniciativa()}`;
   }
   function painelEscudo(dados,calculo) {
     const escudo=calculo.equipamento?.escudo;if(!escudo)return '';
@@ -416,19 +423,20 @@
     const calculo=R.calcular(dados,catalogo);
     return `<section class="card"><h2>Equipamento em uso · valores automáticos</h2><div class="grade">${campo(dados,'Armadura','armaduraId','select',{valores:[['','Sem armadura'],...equipamentosDoTipo('armadura').map(item=>[item.id,item.nome])]})}${campo(dados,'Arma','armaId','select',{valores:[['','Punho · desarmado'],...equipamentosDoTipo('arma').map(item=>[item.id,item.nome])]})}${campo(dados,'Escudo','escudoId','select',{valores:[['','Sem escudo'],...equipamentosDoTipo('escudo').map(item=>[item.id,item.nome])]})}${selecaoRuna(dados,'arma','potencia','Runa de potência da arma')}${selecaoRuna(dados,'arma','impactante','Runa impactante da arma')}${selecaoRuna(dados,'armadura','potencia','Runa de potência da armadura')}${selecaoRuna(dados,'armadura','resiliente','Runa resiliente da armadura')}${[1,2,3].map(n=>selecaoRuna(dados,'armadura','propriedade'+n,'Propriedade da armadura '+n)).join('')}${selecaoRuna(dados,'escudo','reforco','Runa de reforço do escudo')}${campo(dados,'Uso da arma','armaModo','select',{valores:modosArma(dados)})}${campo(dados,'Mãos na arma','armaMaos','select',{valores:maosArma(dados)})}</div>${campo(dados,'Armadura investida · ativa runas','armaduraInvestida','checkbox')}${campo(dados,'Cobertura do escudo de corpo','escudoCobertura','checkbox')}${campo(dados,'Escudo erguido','escudoErguido','checkbox')}<div class="grade"><div><h3>CA calculada</h3><span class="numero">${calculo.ca}</span></div><div><h3>Ataque calculado</h3><span class="numero">${calculo.ataque>=0?'+':''}${calculo.ataque}</span></div><div><h3>Deslocamento calculado</h3><span class="numero">${calculo.deslocamento} m</span></div></div><p class="mini">Escolha o equipamento; a ficha aplica a categoria, proficiência, limite de Destreza, Força exigida, penalidades e runas suportadas. Selecionar cadastra um exemplar nesta ficha se ele ainda não estiver no inventário. Trocar o equipamento não remove os itens anteriores.</p>${ajuda('equipamentos',dados.armaduraId)}${ajuda('equipamentos',dados.armaId)}${ajuda('equipamentos',dados.escudoId)}</section>`;
   }
-  const temasFicha={verde:{nome:'Floresta',fundo:'#0c1915',superficie:'#142a22',texto:'#eef4e9',acento:'#c4dc88',borda:'#8daf91',muted:'#c5d7c6'},azul:{nome:'Safira',fundo:'#0d1525',superficie:'#17283f',texto:'#edf4ff',acento:'#8fcaff',borda:'#86adc7',muted:'#bed3e8'},roxo:{nome:'Crepúsculo',fundo:'#1d1327',superficie:'#30223f',texto:'#f7efff',acento:'#deb2f5',borda:'#b397c5',muted:'#decae8'},dourado:{nome:'Sol antigo',fundo:'#201a12',superficie:'#342a1e',texto:'#fff6e6',acento:'#f4d18a',borda:'#bba679',muted:'#dfd0b0'},papel:{nome:'Pergaminho claro',fundo:'#f6efdf',superficie:'#fffaf0',texto:'#242c20',acento:'#33613f',borda:'#687a5b',muted:'#495744'}};
+  const temasFicha={verde:{nome:'Floresta',fundo:'#0c1915',superficie:'#142a22',texto:'#eef4e9',acento:'#c4dc88',borda:'#8daf91',muted:'#c5d7c6'},azul:{nome:'Safira',fundo:'#0d1525',superficie:'#17283f',texto:'#edf4ff',acento:'#8fcaff',borda:'#86adc7',muted:'#bed3e8'},roxo:{nome:'Crepúsculo',fundo:'#1d1327',superficie:'#30223f',texto:'#f7efff',acento:'#deb2f5',borda:'#b397c5',muted:'#decae8'},dourado:{nome:'Sol antigo',fundo:'#201a12',superficie:'#342a1e',texto:'#fff6e6',acento:'#f4d18a',borda:'#bba679',muted:'#dfd0b0'},rubro:{nome:'Rubi',fundo:'#1d1012',superficie:'#35191d',texto:'#fff1ef',acento:'#ff9d91',borda:'#c67b73',muted:'#e4c0bc'},cinza:{nome:'Aço',fundo:'#121619',superficie:'#20282d',texto:'#f1f5f6',acento:'#9bd7d9',borda:'#829ba2',muted:'#c4d1d4'},papel:{nome:'Pergaminho claro',fundo:'#f6efdf',superficie:'#fffaf0',texto:'#242c20',acento:'#33613f',borda:'#687a5b',muted:'#495744'}};
   function aplicarAparencia() {
     const aparencia=ficha?._aparencia||{},tema=temasFicha[aparencia.tema]||temasFicha.verde;
     for(const nome of ['fundo','superficie','texto','acento','borda','muted'])document.documentElement.style.setProperty('--'+nome,/^#[0-9a-f]{6}$/i.test(aparencia[nome]||'')?aparencia[nome]:tema[nome]);
-    const fontes={padrao:'system-ui, sans-serif',serif:'Georgia, serif',mono:'ui-monospace, monospace'};
+    const fontes={padrao:'system-ui, sans-serif',serif:'Georgia, serif',fantasia:'Palatino Linotype, Book Antiqua, Palatino, serif',mono:'ui-monospace, monospace'};
     let familia=fontes[aparencia.fonte]||fontes.padrao,estilo=$('#fonte-ficha');
     if(!estilo){estilo=document.createElement('style');estilo.id='fonte-ficha';document.head.append(estilo);}estilo.textContent='';
     if(aparencia.fonteURL){try{const endereco=new URL(aparencia.fonteURL,location.href);if(['https:','http:'].includes(endereco.protocol)){estilo.textContent='@font-face{font-family:PFPersonagem;src:url('+JSON.stringify(endereco.href)+');font-display:swap}';familia='PFPersonagem, '+familia;}}catch{/* Uma URL inválida não altera a fonte. */}}
-    document.documentElement.style.setProperty('--pf-fonte',familia);document.documentElement.style.setProperty('--pf-fonte-titulo',aparencia.fonte==='padrao'&&!aparencia.fonteURL?'Georgia,serif':familia);document.documentElement.style.colorScheme=aparencia.tema==='papel'?'light':'dark';
+    const titulo=aparencia.fonteTitulo?(fontes[aparencia.fonteTitulo]||familia):(aparencia.fonte==='padrao'&&!aparencia.fonteURL?'Georgia,serif':familia);
+    document.documentElement.style.setProperty('--pf-fonte',familia);document.documentElement.style.setProperty('--pf-fonte-titulo',titulo);document.documentElement.style.setProperty('--pf-escala',String(Math.min(1.25,Math.max(.85,Number(aparencia.escala||1)))));document.documentElement.style.colorScheme=aparencia.tema==='papel'?'light':'dark';
   }
   function camposAparencia(dados) {
     const atual=dados._aparencia||{},tema=temasFicha[atual.tema]||temasFicha.verde,modelo={...dados,_aparencia:{tema:'verde',fonte:'padrao',...tema,...atual}};
-    return '<section class="card"><h2>Aparência deste personagem</h2><p class="mini">As cores e a fonte ficam salvas somente nesta ficha. Outro personagem pode usar um estilo diferente.</p><div class="grade">'+campo(modelo,'Tema','_aparencia.tema','select',{valores:Object.entries(temasFicha).map(([id,t])=>[id,t.nome])})+campo(modelo,'Fonte','_aparencia.fonte','select',{valores:[['padrao','Padrão'],['serif','Serifada'],['mono','Monoespaçada']]})+Object.entries({fundo:'Fundo',superficie:'Painéis',texto:'Texto',acento:'Destaques',borda:'Bordas'}).map(([nome,label])=>campo(modelo,label,'_aparencia.'+nome,'color')).join('')+'</div>'+campo(modelo,'Fonte própria · URL de arquivo WOFF2, WOFF, TTF ou OTF','_aparencia.fonteURL','url')+'<p class="mini">Use um link HTTPS acessível ao navegador. Se a fonte não carregar, a fonte escolhida acima continua disponível.</p></section>';
+    return '<section class="card"><h2>Aparência deste personagem</h2><p>Este estilo pertence somente a esta ficha e é salvo junto com o personagem.</p><p class="mini">Escolha um tema pronto ou altere cada cor. As bordas têm controle próprio para continuarem visíveis.</p><div class="grade">'+campo(modelo,'Tema base','_aparencia.tema','select',{valores:Object.entries(temasFicha).map(([id,t])=>[id,t.nome])})+campo(modelo,'Fonte do texto','_aparencia.fonte','select',{valores:[['padrao','Padrão'],['serif','Serifada'],['fantasia','Fantasia clássica'],['mono','Monoespaçada']]})+campo(modelo,'Fonte dos títulos','_aparencia.fonteTitulo','select',{valores:[['','Automática'],['padrao','Padrão'],['serif','Serifada'],['fantasia','Fantasia clássica'],['mono','Monoespaçada']]})+campo(modelo,'Tamanho do texto','_aparencia.escala','select',{valores:[['0.85','Compacto'],['1','Normal'],['1.1','Grande'],['1.25','Muito grande']]})+Object.entries({fundo:'Fundo',superficie:'Painéis',texto:'Texto',muted:'Texto secundário',acento:'Destaques e foco',borda:'Bordas e campos'}).map(([nome,label])=>campo(modelo,label,'_aparencia.'+nome,'color')).join('')+'</div>'+campo(modelo,'Fonte própria · URL de arquivo WOFF2, WOFF, TTF ou OTF','_aparencia.fonteURL','url')+'<div class="acoes">'+botao('Restaurar o tema escolhido','restaurar-aparencia')+'</div><p class="mini">A fonte deve usar um link HTTPS acessível ao navegador. Se ela falhar, a fonte de reserva continua legível.</p></section>';
   }
   function atualizarResumo() {
     if(!ficha) return;
@@ -449,9 +457,9 @@
     $('#criar').textContent=ficha._guiado?.concluido?'Revisar criação · guiado':'Criar · modo guiado';
     $('#evoluir').disabled=ficha.nivel>=20||!!(progressaoPermitida&&ficha.nivel>=progressaoPermitida.nivelMaximo);
     $('#evoluir').title=progressaoPermitida&&ficha.nivel>=progressaoPermitida.nivelMaximo?'A evolução aguarda XP ou autorização do mestre.':'';
-    $('#abas').innerHTML=Object.entries({sessao:'Sessão',personagem:'Personagem',atributos:'Atributos',pericias:'Perícias',opcoes:'Talentos e magias',notas:'Jornada'}).map(([id,nome])=>`<button data-aba="${id}" aria-current="${aba===id}">${nome}</button>`).join('');
-    escreverHTML($('#ficha'),aba==='sessao'?camposSessao(ficha):aba==='personagem'?camposIdentidade(ficha)+camposDefesa(ficha)+camposAparencia(ficha)+camposRevisao(ficha):aba==='atributos'?camposAtributos(ficha):aba==='pericias'?camposPericias(ficha):aba==='opcoes'?camposOpcoes(ficha):`<section class="card"><h2>Jornada</h2>${campo(ficha,'História, personalidade e objetivos','historia','textarea')}${campo(ficha,'Anotações e acordos','notas','textarea')}</section>`);
-    if(!podeEditar||guia) for(const elemento of $('#ficha').querySelectorAll('input,select,textarea,button[data-acao]:not([data-acao="detalhe"]):not([data-acao="teste"]):not([data-acao="ataque"])')) elemento.disabled=true;
+    $('#abas').innerHTML=Object.entries({sessao:'Sessão',personagem:'Personagem',atributos:'Atributos',pericias:'Perícias',opcoes:'Talentos e magias',aparencia:'Aparência',notas:'Jornada'}).map(([id,nome])=>`<button data-aba="${id}" aria-current="${aba===id}">${nome}</button>`).join('');
+    escreverHTML($('#ficha'),aba==='sessao'?camposSessao(ficha):aba==='personagem'?camposIdentidade(ficha)+camposDefesa(ficha)+camposRevisao(ficha):aba==='atributos'?camposAtributos(ficha):aba==='pericias'?camposPericias(ficha):aba==='opcoes'?camposOpcoes(ficha):aba==='aparencia'?camposAparencia(ficha):`<section class="card"><h2>Jornada</h2>${campo(ficha,'História, personalidade e objetivos','historia','textarea')}${campo(ficha,'Anotações e acordos','notas','textarea')}</section>`);
+    if(!podeEditar||guia) for(const elemento of $('#ficha').querySelectorAll('input,select,textarea,button[data-acao]:not([data-acao="detalhe"])')) elemento.disabled=true;
     atualizarResumo(); botoesRascunho();
   }
   function concederTalentoBiografia(dados) {
@@ -531,103 +539,6 @@
     $('#detalhes-conteudo').innerHTML='<p class="mini">'+escapar(fonte(item))+'</p>'+(textoRevisao(item)?'<p class="aviso">'+escapar(textoRevisao(item))+'</p>':'')+'<p>'+escapar(resumo(item))+'</p>'+(item.requisitos?'<p><strong>Requisitos:</strong> '+escapar(typeof item.requisitos==='string'?item.requisitos:JSON.stringify(item.requisitos))+'</p>':'')+'<div class="texto-integral">'+escapar(item.descricao||item.texto||'Texto integral desta referência ainda em revisão.')+'</div>'+(item.progressao?'<h3>Progressão</h3><ul>'+item.progressao.map(ganho=>'<li><strong>Nível '+ganho.nivel+' · '+escapar(ganho.nome)+'</strong><p>'+escapar(ganho.descricao||'')+'</p></li>').join('')+'</ul>':'')+`<a href="/pathfinder-grimorio.html?fonte=${encodeURIComponent(fonteId)}${id?'&ficha='+encodeURIComponent(id):''}#${encodeURIComponent(item.id)}" target="_blank" rel="noopener">Abrir no grimório</a>`;
     $('#detalhes').showModal();
   }
-  function d20() {
-    const bytes=new Uint32Array(1);let numero;do{crypto.getRandomValues(bytes);numero=bytes[0];}while(numero>=4294967280);return numero%20+1;
-  }
-  function abrirTeste(nome,indice=null) {
-    const calculo=R.calcular(ficha,catalogo);
-    const bonus=nome==='ataque'?calculo.ataque+(calculo.map||[0,-5,-10])[indice||0]:calculo.pericias?.[nome]??calculo.salvaguardas?.[nome]??(nome==='ataqueMagia'?calculo.ataqueMagia:calculo.percepcao);
-    testeAtual={nome,indice,calculo,bonus};
-    $('#rolagem-titulo').textContent=nome==='ataque'?'Ataque '+((indice||0)+1):nome==='ataqueMagia'?'Ataque de magia':nomesPericias[nome]||nomesSalvaguardas[nome]||'Percepção';
-    $('#rolagem-contexto').textContent='Bônus automático: '+(bonus>=0?'+':'')+bonus+'. Condições e equipamento da ficha já foram aplicados.';
-    $('#rolagem-resultado').textContent='';$('#rolagem-dano').hidden=true;$('#rolagem').showModal();
-  }
-  function pagarAcoes(custo,acao,aplicar=false) {
-    const turno=ficha.turno;if(!turno||turno.encerrado)return true;
-    if(!turno.podeAgir)return false;
-    const extra=custo===1&&Number(turno.acaoAcelerada||0)>0&&!turno.precisaDefinirRestricoes&&(turno.restricoesAcelerada||[]).includes(acao);
-    if(!extra&&Number(turno.acoesGerais||0)<custo)return false;
-    if(aplicar){if(extra)turno.acaoAcelerada--;else turno.acoesGerais-=custo;}return true;
-  }
-  function rolarTeste() {
-    if(!testeAtual)return;
-    if(testeAtual.nome==='ataque'&&podeEditar&&!pagarAcoes(1,'golpear')){$('#rolagem-resultado').textContent='Não há ação disponível para Golpear, ou uma condição impede agir.';return;}
-    const dado=d20(),total=dado+testeAtual.bonus,cdCampo=$('#rolagem-cd');
-    if(cdCampo.value!==''&&!cdCampo.reportValidity())return;
-    const grau=cdCampo.value!==''?R.grauSucesso(dado,total,Number(cdCampo.value)):null;
-    testeAtual.resultado={d20:dado,total,grau};
-    if(testeAtual.nome==='ataque'&&podeEditar&&ficha.turno&&!ficha.turno.encerrado){pagarAcoes(1,'golpear',true);ficha.turno.ataquesRealizados=Number(ficha.turno.ataquesRealizados||0)+1;salvar();renderizar();}
-    const nomes={'sucesso-critico':'Sucesso crítico',sucesso:'Sucesso',falha:'Falha','falha-critica':'Falha crítica'};
-    $('#rolagem-resultado').textContent='d20 '+dado+' '+(testeAtual.bonus>=0?'+':'')+testeAtual.bonus+' = '+total+(grau?' · '+nomes[grau]:'. Informe a CD para resolver também o grau de sucesso.');
-    $('#rolagem-dano').hidden=testeAtual.nome!=='ataque'||['falha','falha-critica'].includes(grau);
-  }
-  function rolarDano() {
-    if(!testeAtual?.resultado)return;if(!Combate()){$('#rolagem-resultado').textContent='Não foi possível carregar o módulo de combate. Recarregue antes de executar o dano.';return;}
-    const calculo=testeAtual.calculo,arma=calculo.equipamento?.arma||registro('equipamentos',ficha.armaId)||{nome:'Punho',dano:'1d4',tipo:'arma',tipoDano:'contundente',tracos:['agil','acuidade','nao-letal']};
-    const plano=Combate().danoArma(arma,calculo,{critico:testeAtual.resultado.grau==='sucesso-critico',modo:ficha.armaModo||undefined,maos:ficha.armaMaos});
-    if(!plano.suportado){$('#rolagem-resultado').textContent=plano.motivo||'O efeito desta arma ainda não está disponível para execução automática.';return;}
-    const resultado=Combate().rolarDano(plano);
-    if(!resultado.suportado){$('#rolagem-resultado').textContent=resultado.motivo;return;}
-    const linha=document.createElement('p');linha.textContent='Dano automático: '+resultado.total+' · '+(resultado.formula||plano.formula)+'. O mestre aplica ao alvo; a rolagem não altera outra ficha.';$('#rolagem-resultado').append(linha);
-  }
-  let magiaAtual=null,magiaResultado=null,magiaOpcoes=[];
-  function opcoesConjuracao(identificador,calculo) {
-    const item=registro('magias',identificador),conj=calculo.conjuracao;if(!item||!conj||typeof R.magiaElegivel==='function'&&!R.magiaElegivel(ficha,identificador,catalogo))return [];
-    const escolha=(ficha.magias||[]).find(m=>(typeof m==='string'?m:m.id)===identificador),truque=item.truque||item.tipo==='truque',foco=item.tipo==='foco',minimo=Number(item.ranque||item.nivel||1),rankAuto=Math.ceil(ficha.nivel/2),opcoes=[];
-    if(truque&&escolha&&(!conjuradorPreparado(conj)||(ficha.magiasPreparadas?.truques||[]).includes(identificador)))opcoes.push({fonte:'truque',ranque:rankAuto});
-    else if(foco&&escolha&&Number(ficha.focoGasto||0)<Number(conj.foco||0))opcoes.push({fonte:'foco',ranque:rankAuto});
-    else if(!truque&&!foco&&escolha) {
-      if(conjuradorPreparado(conj))for(const [grupo,limites] of [['padrao',conj.espacos||{}],['curriculo',conj.extraCurriculo||{}]])for(const [ranque,maximo] of Object.entries(limites)) {
-        const usadas=ficha.preparacaoGasta?.[grupo]?.[ranque]||[],lista=ficha.magiasPreparadas?.[grupo]?.[ranque]||[];
-        for(let i=0;i<Number(maximo);i++)if(lista[i]===identificador&&!usadas.includes(i)&&Number(ranque)>=minimo&&(grupo!=='curriculo'||magiasCurriculo(ficha,ranque).includes(identificador)))opcoes.push({fonte:grupo,ranque:Number(ranque),indice:i});
-      }
-      else for(const [ranque,maximo] of Object.entries(conj.espacos||{}))if(Number(ranque)>=minimo&&(escolha.assinatura||Number(ranque)===Number(escolha.ranque||minimo))&&Number(ficha.espacosGastos?.[ranque]||0)<Number(maximo))opcoes.push({fonte:'padrao',ranque:Number(ranque)});
-    }
-    const fd=conj.fonteDivina;if(fd?.magia===identificador&&Number(ficha.fonteDivinaGastos||0)<Number(fd.quantidade||0))opcoes.push({fonte:'fonteDivina',ranque:Number(fd.ranque)});
-    return opcoes.map(op=>({...op,chave:[op.fonte,op.ranque,op.indice??'livre'].join(':')}));
-  }
-  function abrirConjuracao(identificador) {
-    if(!podeEditar||guia||enviando)return;
-    magiaAtual=registro('magias',identificador);if(!magiaAtual?.efeitoCombate||magiaAtual.somenteConsulta||!Combate())return;
-    const calculo=R.calcular(ficha,catalogo);magiaOpcoes=opcoesConjuracao(identificador,calculo);magiaResultado=null;$('#conjurar-aplicar').hidden=true;
-    const nomes={padrao:'padrão',curriculo:'currículo',fonteDivina:'Fonte divina',foco:'foco',truque:'truque'},variantes=magiaAtual.efeitoCombate.variantes;
-    $('#conjurar-titulo').textContent=magiaAtual.nome;
-    $('#conjurar-escolhas').innerHTML='<p>'+escapar(resumo(magiaAtual))+'</p><label>Espaço ou recurso de conjuração<select id="conjurar-ranque" '+(magiaOpcoes.length===1?'disabled':'')+'>'+magiaOpcoes.map(op=>'<option value="'+op.chave+'">Ranque '+op.ranque+' · '+nomes[op.fonte]+(op.indice!==undefined?' · espaço '+(op.indice+1):'')+'</option>').join('')+'</select></label>'+(variantes?'<label>Ações<select id="conjurar-acoes">'+Object.keys(variantes).map(acoes=>'<option value="'+acoes+'">'+acoes+' ação(ões)</option>').join('')+'</select></label>':'')+((magiaAtual.efeitoCombate.exigeAtaque||(magiaAtual.tracos||[]).includes('ataque'))?'<label>CA do alvo informada pelo mestre<input id="conjurar-ataque-cd" type="number" required min="0" max="999"></label>':'')+(magiaAtual.efeitoCombate.salvamentoBasico?'<label>Resultado do salvamento do alvo<select id="conjurar-salvamento"><option value="falha">Falha · efeito integral</option><option value="sucesso">Sucesso · metade</option><option value="falha-critica">Falha crítica · dobro</option><option value="sucesso-critico">Sucesso crítico · sem dano</option></select></label>':'')+'<p class="mini">A ficha calcula ampliação e consome somente o recurso escolhido. A rolagem não altera outra ficha; o mestre aplica ao alvo.</p>';
-    $('#conjurar-resultado').textContent=magiaOpcoes.length?'':'Não há espaço preparado ou recurso disponível para esta magia.';$('#conjurar-executar').disabled=!magiaOpcoes.length;$('#conjurar').showModal();
-  }
-  function executarConjuracao() {
-    if(!podeEditar||guia||enviando||!magiaAtual||!Combate())return;
-    const selecionada=$('#conjurar-ranque').value,calculo=R.calcular(ficha,catalogo),op=opcoesConjuracao(magiaAtual.id,calculo).find(item=>item.chave===selecionada);
-    if(!op){$('#conjurar-resultado').textContent='Este espaço ou recurso não está mais disponível. Nenhum recurso foi alterado.';return;}
-    const plano=Combate().magiaEstruturada(magiaAtual,op.ranque,{acoes:Number($('#conjurar-acoes')?.value||0)});
-    if(!plano.suportado){$('#conjurar-resultado').textContent=plano.motivo;return;}
-    const custo=Number($('#conjurar-acoes')?.value||magiaAtual.acoes||magiaAtual.efeitoCombate.acoes||0);
-    if(ficha.turno&&!ficha.turno.encerrado&&(!Number.isInteger(custo)||custo<1||custo>3)){$('#conjurar-resultado').textContent='O custo de ações desta magia ainda não está estruturado na fonte. Nenhum recurso foi alterado.';return;}
-    if(!pagarAcoes(custo,'conjurar')){$('#conjurar-resultado').textContent='Não há ações suficientes para conjurar, ou uma condição impede agir.';return;}
-    const campoCD=$('#conjurar-ataque-cd');if(plano.exigeAtaque&&(!campoCD||!campoCD.reportValidity()))return;
-    const verificacao=Combate().verificarConjuracao(ficha);let ataque=null;
-    if(plano.exigeAtaque&&!verificacao.interrompida){const natural=d20(),bonus=calculo.ataqueMagia+(ficha.turno&&!ficha.turno.encerrado?[0,-5,-10][Math.min(2,Number(ficha.turno.ataquesRealizados||0))]:0);ataque={natural,total:natural+bonus,...Combate().grauTeste(natural+bonus,natural,Number(campoCD.value))};}
-    const falhouAtaque=ataque&&['falha','falha-critica'].includes(ataque.grau),resultado=verificacao.interrompida||falhouAtaque?{suportado:true,total:0,cura:0,formula:plano.formula}:Combate().rolarMagia(plano,{grauSalvamento:$('#conjurar-salvamento')?.value,critico:ataque?.grau==='sucesso-critico'});
-    if(!resultado.suportado){$('#conjurar-resultado').textContent=resultado.motivo;return;}
-    magiaResultado=resultado;$('#conjurar-aplicar').hidden=plano.tipoEfeito!=='cura'||verificacao.interrompida;$('#conjurar-aplicar').disabled=false;
-    if(op.fonte==='foco')ficha.focoGasto=Number(ficha.focoGasto||0)+1;
-    else if(op.fonte==='fonteDivina')ficha.fonteDivinaGastos=Number(ficha.fonteDivinaGastos||0)+1;
-    else if(op.fonte!=='truque') {
-      if(op.indice!==undefined){ficha.preparacaoGasta??={padrao:{},curriculo:{}};ficha.preparacaoGasta[op.fonte]??={};const usadas=ficha.preparacaoGasta[op.fonte][op.ranque]||[];ficha.preparacaoGasta[op.fonte][op.ranque]=[...usadas,op.indice];}
-      const campoGasto=op.fonte==='curriculo'?'espacosCurriculoGastos':'espacosGastos';ficha[campoGasto]={...ficha[campoGasto],[op.ranque]:Number(ficha[campoGasto]?.[op.ranque]||0)+1};
-    }
-    if(ficha.turno&&!ficha.turno.encerrado){pagarAcoes(custo,'conjurar',true);if(ataque)ficha.turno.ataquesRealizados=Number(ficha.turno.ataquesRealizados||0)+1;}
-    if(op.fonte!=='truque'||ficha.turno&&!ficha.turno.encerrado){salvar();renderizar();}
-    $('#conjurar-resultado').textContent=(verificacao.interrompida?'Estupefato interrompeu a magia: teste '+verificacao.teste.total+' contra CD '+verificacao.teste.cd+'. ':ataque?'Ataque: d20 '+ataque.natural+', total '+ataque.total+' · '+ataque.grau+'. ':'')+(plano.tipoEfeito==='cura'?'Cura automática':'Dano automático')+': '+resultado.total+' · '+resultado.formula+'.'+(op.fonte==='truque'?' Nenhum espaço gasto.':' O recurso escolhido foi consumido.');$('#conjurar-executar').disabled=true;
-  }
-  function aplicarCuraConjurada() {
-    if(!podeEditar||guia||enviando||!magiaResultado||!Combate())return;
-    const atual=copiar(ficha);atual.vida={...atual.vida,maxima:R.calcular(ficha,catalogo).pvMaximos};
-    const cura=Combate().curar(atual,magiaResultado.cura,{tipoCura:magiaResultado.tipoCura});
-    if(!cura.suportado){$('#conjurar-resultado').textContent=cura.motivo;return;}
-    ficha=cura.ficha;magiaResultado=null;$('#conjurar-aplicar').disabled=true;salvar();renderizar();
-    $('#conjurar-resultado').textContent+=' '+cura.recuperadoPV+' PV recuperado(s) nesta ficha.';
-  }
   function aplicarVida(cura,bloquear=false) {
     const campoQuantidade=$('#quantidade-vida'); if(!campoQuantidade||!campoQuantidade.reportValidity()) return;
     const quantidade=Number(campoQuantidade.value), calculo=R.calcular(ficha,catalogo);
@@ -635,7 +546,7 @@
     if(!cura&&$('#dano-critico')?.checked&&!$('#dano-ja-final')?.checked&&quantidade>500000){avisar('O dano-base crítico ultrapassa o limite de execução.');return;}
     if(!Combate()){avisar('Não foi possível carregar o módulo de combate. Recarregue antes de alterar os PV.');return;}
     const atual=copiar(ficha);atual.vida={...atual.vida,maxima:calculo.pvMaximos};
-    const critico=$('#dano-critico')?.checked===true,final=$('#dano-ja-final')?.checked===true,valor=critico&&!final?Combate().rolar(String(quantidade)+'*2').total:quantidade;
+    const critico=$('#dano-critico')?.checked===true,final=$('#dano-ja-final')?.checked===true,valor=critico&&!final?quantidade*2:quantidade;
     const partes=[{tipo:$('#dano-tipo')?.value||'sem-tipo',valor,valorSemDobra:quantidade}],opcoes={danoFinal:final,defesas:calculo.defesas,limiteMorrendo:calculo.limiteMorrendo,critico,naoLetal:$('#dano-nao-letal')?.checked===true};
     if(bloquear&&typeof Combate().bloqueioEscudo!=='function'){avisar('Não foi possível carregar o cálculo de Bloqueio com Escudo. Recarregue a ficha.');return;}
     const resultado=cura?Combate().curar(atual,quantidade):bloquear?Combate().bloqueioEscudo(atual,calculo,partes,{...opcoes,ataque:$('#dano-ataque')?.checked===true}):Combate().aplicarDano(atual,partes,opcoes);
@@ -645,35 +556,12 @@
     if(resultado.avisos?.length)avisar(resultado.avisos.join(' '));
     salvar(); renderizar();
   }
-  function resolverTurno(inicio) {
-    if(!podeEditar||guia||enviando||!Combate())return;
-    if(inicio&&ficha.turno&&!ficha.turno.encerrado){avisar('Finalize o turno atual antes de iniciar outro.');return;}
-    if(!inicio&&(!ficha.turno||ficha.turno.encerrado)){avisar('Inicie seu turno antes de finalizar.');return;}
-    const calculo=R.calcular(ficha,catalogo),antes=semSegredos(ficha);delete antes._ultimoTurnoSnapshot;
-    const atual=copiar(ficha);atual.vida={...atual.vida,maxima:calculo.pvMaximos};
-    const resultado=inicio?Combate().iniciarTurno(atual,{limiteMorrendo:calculo.limiteMorrendo,cdRecuperacaoAjuste:calculo.cdRecuperacaoAjuste}):Combate().finalizarTurno(atual,{defesas:calculo.defesas});
-    if(!resultado.suportado){avisar(resultado.motivo||'Não foi possível resolver os efeitos do turno.');return;}
-    ficha=resultado.ficha;ficha._ultimoTurnoSnapshot=antes;salvar();renderizar();
-    avisar(inicio?'Turno iniciado.'+(resultado.recuperacao?' Recuperação: '+resultado.recuperacao.total+' contra CD '+resultado.recuperacao.cd+' · '+resultado.recuperacao.grau+'.':''):'Turno finalizado.'+(resultado.danosPersistentes?.length?' '+resultado.danosPersistentes.map(p=>tiposDano[p.tipo]+': '+p.valor+' de dano, teste '+p.recuperacao.total+' contra CD '+p.recuperacao.cd+(p.recuperacao.sucesso?' · removido.':' · continua.')).join(' '):''));
-  }
-  function consumirItem(indice) {
-    if(!podeEditar||guia||enviando||!Combate())return;
-    const escolha=ficha.equipamentos?.[indice],item=registro('equipamentos',typeof escolha==='string'?escolha:escolha?.id),mecanica=item?.mecanica;
-    if(!escolha||!mecanica||mecanica.acao!=='curar'||item.somenteConsulta||item.automatizavel===false||quantidadeItem(escolha)<Number(mecanica.consomeQuantidade||1))return;
-    const ingestao=Combate().podeIngerir(ficha);if(!ingestao.permitido){avisar(ingestao.motivo);return;}
-    try {
-      const rolagem=Combate().rolar(mecanica.cura.expressao),atual=copiar(ficha);atual.vida={...atual.vida,maxima:R.calcular(ficha,catalogo).pvMaximos};
-      const cura=Combate().curar(atual,rolagem.total,{tipoCura:mecanica.tipoCura});
-      if(!cura.suportado){avisar(cura.motivo);return;}
-      ficha=cura.ficha;ficha.equipamentos[indice]=typeof escolha==='string'?{id:escolha,quantidade:0}:{...escolha,quantidade:quantidadeItem(escolha)-Number(mecanica.consomeQuantidade||1)};
-      salvar();renderizar();avisar(item.nome+': '+rolagem.total+' de cura rolada; '+cura.recuperadoPV+' PV recuperados. Um exemplar foi consumido.');
-    }catch{avisar('A fórmula desta poção não pôde ser executada. Nenhum item foi consumido.');}
-  }
   let iniciativaEnviando=false;
   async function declararIniciativa() {
     if(!podeEditar||guia||enviando||iniciativaEnviando)return;
     const dadoCampo=$('#iniciativa-dado');if(!dadoCampo.reportValidity())return;
-    const nome=$('#iniciativa-base').value,dado=dadoCampo.value===''?d20():Number(dadoCampo.value),calculo=R.calcular(ficha,catalogo),bonus=(nome==='percepcao'?calculo.percepcao:calculo.pericias[nome])+Number(calculo.bonusIniciativa||0),resultado=dado+bonus;
+    if(dadoCampo.value===''){avisar('Role o d20 fora do Hub e informe o resultado natural.');return;}
+    const nome=$('#iniciativa-base').value,dado=Number(dadoCampo.value),calculo=R.calcular(ficha,catalogo),bonus=(nome==='percepcao'?calculo.percepcao:calculo.pericias[nome])+Number(calculo.bonusIniciativa||0),resultado=dado+bonus;
     if(!Number.isInteger(dado)||dado<1||dado>20||!Number.isInteger(resultado))return;
     if(!id){avisar('Iniciativa: d20 '+dado+' '+(bonus>=0?'+':'')+bonus+' = '+resultado+'. Salve a ficha no Hub para declarar à mesa.');return;}
     iniciativaEnviando=true;
@@ -691,13 +579,9 @@
     if(acao==='ir-passo'&&guia) mudarPasso(Number(elemento.dataset.valor));
     else if(acao==='detalhe') { const [tipo,...resto]=elemento.dataset.valor.split(':'); detalhe(tipo,resto.join(':')); }
     else if(acao==='exportar-turno-anterior'&&ficha._ultimoTurnoSnapshot)exportar(ficha._ultimoTurnoSnapshot,'antes-do-turno');
-    else if(acao==='consumir-item') consumirItem(Number(elemento.dataset.valor));
     else if(acao==='declarar-iniciativa') declararIniciativa();
-    else if(acao==='teste') abrirTeste(elemento.dataset.valor);
-    else if(acao==='conjurar') abrirConjuracao(elemento.dataset.valor);
-    else if(acao==='ataque') abrirTeste('ataque',Number(elemento.dataset.valor));
     else if(podeEditar&&!guia&&!enviando) {
-      if(acao==='iniciar-turno'||acao==='finalizar-turno')resolverTurno(acao==='iniciar-turno');
+      if(acao==='restaurar-aparencia'){const tema=temasFicha[ficha._aparencia?.tema]||temasFicha.verde;ficha._aparencia={tema:ficha._aparencia?.tema||'verde',fonte:'padrao',fonteTitulo:'',escala:1,...tema};salvar();renderizar();}
       else if(acao==='gastar-acao'||acao==='gastar-reacao'){if(ficha.turno&&!ficha.turno.encerrado&&ficha.turno.podeAgir){const campo=acao==='gastar-acao'?'acoesGerais':'reacoes';ficha.turno[campo]=Math.max(0,Number(ficha.turno[campo]||0)-1);salvar();renderizar();}}
       else if(acao==='adicionar-persistente'){ficha.danosPersistentes??=[];ficha.danosPersistentes.push({id:crypto.randomUUID(),tipo:'',formula:'',cdRecuperacao:15});salvar();renderizar();}
       else if(acao==='remover-persistente'){ficha.danosPersistentes.splice(Number(elemento.dataset.valor),1);salvar();renderizar();}
@@ -841,9 +725,6 @@
   $('#guia-confirmar').onclick=confirmarGuia; $('#guia-exportar').onclick=()=>{if(guia) exportar(guia.dados,'rascunho');};
   $('#criar').onclick=()=>abrirGuia('criacao'); $('#evoluir').onclick=()=>{if(ficha.nivel<20) abrirGuia('evolucao');};
   $('#salvar').onclick=salvarAgora; $('#imprimir').onclick=imprimir; $('#detalhes-fechar').onclick=()=>$('#detalhes').close();
-  $('#conjurar-aplicar').onclick=aplicarCuraConjurada;
-  $('#conjurar-fechar').onclick=()=>$('#conjurar').close();$('#conjurar-executar').onclick=executarConjuracao;
-  $('#rolagem-fechar').onclick=()=>$('#rolagem').close();$('#rolagem-rolar').onclick=rolarTeste;$('#rolagem-dano').onclick=rolarDano;
   $('#exportar').onclick=()=>{if(ficha) exportar(guia?.dados||ficha);};
   $('#exportar-guia-pausado').onclick=()=>{const pausado=ler(chave('guia'));if(pausado) exportar(pausado.dados,'guia-pausado');};
   $('#descartar-guia-pausado').onclick=()=>{if(guia||enviando)return;remover(chave('guia'));botoesRascunho();avisar('Guia pausado descartado. Sua ficha permanece intacta.');};
