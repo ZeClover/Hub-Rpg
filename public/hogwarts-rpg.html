@@ -26,7 +26,7 @@
   --roxo:#c9a227; --roxo-forte:#e3bf49; --roxo-rgb:201,162,39;
   --alerta:#c4506b;
   --verde:#4c8c5b; --laranja:#c97a2e; --vermelho:#8c3b3b;
-  --fonte-titulo:Georgia,'Times New Roman',serif;
+  --fonte-titulo:Georgia,'Times New Roman',serif; --fonte-texto:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
 }
 @media print{
   :root{
@@ -38,7 +38,7 @@
 }
 *{box-sizing:border-box}
 html{color-scheme:dark}
-body{margin:0; background:var(--fundo); color:var(--texto); font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{margin:0; background:var(--fundo); color:var(--texto); font:15px/1.5 var(--fonte-texto)}
 h1,h2,h3{font-family:var(--fonte-titulo); font-weight:600; margin:0}
 a{color:var(--roxo-forte)}
 .barra{position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 16px; background:var(--superficie); border-bottom:1px solid var(--borda)}
@@ -102,6 +102,7 @@ main{max-width:980px; margin:0 auto; padding:16px}
   <span class="cresce"></span>
   <span id="statusSalvo" class="status-salvo"></span>
   <button id="btToken" hidden title="Imagem do token — aparece no ícone desta aba do navegador">🖼️ Token</button>
+  <button id="btAparencia" hidden title="Cores e fontes salvas somente nesta ficha">🎨 Aparência</button>
   <button id="btExcluir" class="perigo">Excluir</button>
 </div>
 <div id="painelToken" class="painel-aparencia" hidden>
@@ -113,6 +114,16 @@ main{max-width:980px; margin:0 auto; padding:16px}
       <p class="mini" style="margin-top:6px">Um link de imagem (o Hub não guarda arquivo). Aparece no ícone desta aba do navegador.</p>
     </div>
   </div>
+</div>
+<div id="painelAparencia" class="painel-aparencia" hidden>
+  <div class="linha">
+    <div><label>Tema inicial</label><select id="pa-tema"><option value="hogwarts">Hogwarts clássico</option><option value="floresta">Floresta proibida</option><option value="corvinal">Noite de Corvinal</option><option value="pergaminho">Pergaminho escuro</option></select></div>
+    <div><label>Fundo</label><input id="pa-fundo" type="color"></div><div><label>Cartões</label><input id="pa-superficie" type="color"></div><div><label>Bordas</label><input id="pa-borda" type="color"></div><div><label>Destaque</label><input id="pa-destaque" type="color"></div><div><label>Texto</label><input id="pa-texto" type="color"></div>
+    <div><label>Fonte do texto</label><select id="pa-fonte-texto"><option value="system-ui,-apple-system,Segoe UI,Roboto,sans-serif">Moderna</option><option value="Georgia,serif">Clássica</option><option value="Verdana,sans-serif">Legível</option><option value="'Trebuchet MS',sans-serif">Aventureira</option></select></div>
+    <div><label>Fonte dos títulos</label><select id="pa-fonte-titulo"><option value="Georgia,'Times New Roman',serif">Clássica</option><option value="system-ui,sans-serif">Moderna</option><option value="'Trebuchet MS',sans-serif">Aventureira</option></select></div>
+  </div>
+  <div class="grade2" style="margin-top:10px"><div><label>URL opcional da fonte</label><input id="pa-fonte-url" type="url" placeholder="https://fonts.googleapis.com/..."></div><div><label>Nome da família dessa fonte</label><input id="pa-fonte-familia" placeholder="Ex.: Cinzel"></div></div>
+  <p class="mini" style="margin-top:8px">A aparência fica salva apenas neste personagem. Sem personalização, o tema padrão continua bonito e leve.</p>
 </div>
 <main id="app"></main>
 <script>
@@ -133,6 +144,18 @@ main{max-width:980px; margin:0 auto; padding:16px}
 =========================================================================== */
 
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const TEMAS_APARENCIA={
+  hogwarts:{fundo:'#0c0a08',superficie:'#161009',borda:'#6b5028',destaque:'#c9a227',texto:'#f2ead9'},
+  floresta:{fundo:'#07100b',superficie:'#102018',borda:'#55785d',destaque:'#9fc46b',texto:'#edf4e7'},
+  corvinal:{fundo:'#080d18',superficie:'#111b2d',borda:'#607da8',destaque:'#b8cbea',texto:'#f0f4fb'},
+  pergaminho:{fundo:'#17120d',superficie:'#271d13',borda:'#98744b',destaque:'#e0b979',texto:'#fff1d6'},
+};
+function corRgb(hex){const n=parseInt(String(hex||'').replace('#',''),16);return Number.isFinite(n)?`${(n>>16)&255},${(n>>8)&255},${n&255}`:'201,162,39';}
+function aplicarAparencia(p){
+  const a={...TEMAS_APARENCIA.hogwarts,...(p?.aparencia||{})},raiz=document.documentElement;
+  raiz.style.setProperty('--fundo',a.fundo);raiz.style.setProperty('--superficie',a.superficie);raiz.style.setProperty('--superficie-alta',a.superficieAlta||a.superficie);raiz.style.setProperty('--borda',a.borda);raiz.style.setProperty('--roxo',a.destaque);raiz.style.setProperty('--roxo-forte',a.destaque);raiz.style.setProperty('--roxo-rgb',corRgb(a.destaque));raiz.style.setProperty('--texto',a.texto);raiz.style.setProperty('--fonte-texto',a.fonteFamilia?`'${String(a.fonteFamilia).replace(/'/g,'')}',${a.fonteTexto||'sans-serif'}`:(a.fonteTexto||TEMAS_APARENCIA.hogwarts.fonteTexto||'system-ui,sans-serif'));raiz.style.setProperty('--fonte-titulo',a.fonteFamilia?`'${String(a.fonteFamilia).replace(/'/g,'')}',${a.fonteTitulo||'serif'}`:(a.fonteTitulo||"Georgia,'Times New Roman',serif"));
+  let link=document.getElementById('fonte-personagem');if(a.fonteUrl){if(!link){link=document.createElement('link');link.id='fonte-personagem';link.rel='stylesheet';document.head.appendChild(link);}link.href=a.fonteUrl;}else if(link)link.remove();
+}
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 
 /* --- Dados fixos do sistema (mecânica, não texto do livro) --------------- */
@@ -192,6 +215,9 @@ const FAMILIAS_SEED = [
   {id:'burke', nome:'Burke', tipo:'Canônica', condicaoFinanceira:'Confortável', tags:['Comerciante','Obscura','Conhecedora de Artefatos'],
     conteudoFamiliar:'Avaliação de Artefatos — reconhece sinais gerais de procedência, falsificação, risco e valor em objetos mágicos.',
     acessoFamiliar:'Comerciantes, colecionadores, avaliadores e objetos incomuns.'},
+  {id:'scamander', nome:'Scamander', tipo:'Canônica', condicaoFinanceira:'Confortável', tags:['Respeitável','Prática','Criadores','Naturalista'],
+    conteudoFamiliar:'Olho de Criador — após observar uma criatura, reconhece sinais básicos de medo, agitação, dor evidente, territorialidade, corte, fome e fuga. Casos difíceis usam Engenho + Trato das Criaturas Mágicas.',
+    acessoFamiliar:'Rede de Criadores — contatos entre criadores, tratadores, fornecedores, estábulos, curadores, compradores, transportadores e contatos ministeriais.'},
 ];
 
 // Origem: pequena, sem árvore própria — só um benefício. Também catálogo
@@ -541,7 +567,10 @@ function garantirCamposNovos(p){
   if(!Array.isArray(p.conteudosCustom)) p.conteudosCustom = [];
   if(!Array.isArray(p.favoritos)) p.favoritos = [];
   if(!p.varinha || typeof p.varinha !== 'object') p.varinha = {madeira:'', nucleo:'', comprimento:'', flexibilidade:'', sintonia:1};
+  if(!Array.isArray(p.varinha.revelados)) p.varinha.revelados=[];
+  if(typeof p.varinha.entregue!=='boolean') p.varinha.entregue=!!(p.varinha.madeira&&p.varinha.nucleo);
   if(typeof p.galeoes !== 'number') p.galeoes = 0;
+  if(!p.aparencia || typeof p.aparencia !== 'object') p.aparencia = {tema:'hogwarts',...TEMAS_APARENCIA.hogwarts,fonteTexto:'system-ui,-apple-system,Segoe UI,Roboto,sans-serif',fonteTitulo:"Georgia,'Times New Roman',serif",fonteUrl:'',fonteFamilia:''};
   if(typeof p.mostrarRestritos !== 'boolean') p.mostrarRestritos = false;
   if(!Array.isArray(p.familiasCustom)) p.familiasCustom = [];
   if(!Array.isArray(p.origensCustom)) p.origensCustom = [];
@@ -577,10 +606,10 @@ function garantirCamposNovos(p){
   // mesmo dia, não existe ficha real de mesa com esse conteúdo ainda —
   // só remove o campo velho, sem tentar preservar.
   if(p.perfil.notasMestre !== undefined) delete p.perfil.notasMestre;
-  if(p.varinha.tendencia !== undefined) delete p.varinha.tendencia;
-  if(p.varinha.propriedade !== undefined) delete p.varinha.propriedade;
-  if(p.varinha.peculiaridade !== undefined) delete p.varinha.peculiaridade;
-  if(p.varinha.lealdade !== undefined) delete p.varinha.lealdade;
+  const camposVarinhaRevelados = new Set(p.varinha.revelados);
+  ['tendencia','propriedade','peculiaridade','lealdade'].forEach(campo => {
+    if(!camposVarinhaRevelados.has(campo) && p.varinha[campo] !== undefined) delete p.varinha[campo];
+  });
   if(p.segredosFamiliares !== undefined) delete p.segredosFamiliares;
   if(Array.isArray(p.reliquias)) p.reliquias.forEach(r => { if(r.propriedadesOcultas !== undefined) delete r.propriedadesOcultas; });
   if(Array.isArray(p.donsLatentes)) p.donsLatentes.forEach(d => { delete d.nomeReal; delete d.condicaoDespertar; delete d.visivelParaJogador; });
@@ -738,6 +767,7 @@ const estado = {
   errosCriacao: [], statusCriacao: '',
   evolucaoAberta:false, escolhasEvolucao:{conteudos:[],unicos:[]}, erroEvolucao:'',
   descobertas:[], revisaoDescobertas:null, sincronizandoDescobertas:false, erroDescobertas:'',
+  statusVarinha:'', erroVarinha:'', enviandoVarinha:false,
 };
 if(!MODO_HUB && estado.fichas.length) estado.atualId = estado.fichas[0].id;
 const atual = () => estado.fichas.find(f => f.id === estado.atualId) || null;
@@ -1101,13 +1131,14 @@ function abaPerfil(p){
 
   <div class="cartao">
     <h3 style="margin-bottom:12px">Varinha</h3>
-    <p class="mini" style="margin-bottom:10px">Escolhida pelo Mestre fora do Hub (decisão do sistema: não existe questionário/algoritmo aqui) — só registrada.</p>
+    <p class="mini" style="margin-bottom:10px">Escolhida fora do Hub e entregue pelo Mestre. O jogador consulta; Sintonia e revelações não são editáveis na ficha.</p>
+    ${estado.erroVarinha?`<div class="aviso">${esc(estado.erroVarinha)}</div>`:estado.statusVarinha?`<div class="ok">${esc(estado.statusVarinha)}</div>`:''}
     <div class="grade">
-      <div><label>Madeira</label><input data-campo="varinha.madeira" value="${esc(p.varinha.madeira)}"></div>
-      <div><label>Núcleo</label><input data-campo="varinha.nucleo" value="${esc(p.varinha.nucleo)}"></div>
-      <div><label>Comprimento</label><input data-campo="varinha.comprimento" value="${esc(p.varinha.comprimento)}" placeholder='ex.: 11¾"'></div>
-      <div><label>Flexibilidade</label><input data-campo="varinha.flexibilidade" value="${esc(p.varinha.flexibilidade)}"></div>
-      <div><label>Sintonia</label><select data-campo="varinha.sintonia">
+      <div><label>Madeira</label><input id="varinhaMadeira" value="${esc(p.varinha.madeira)}" ${estado.ehMestre?'':'readonly'}></div>
+      <div><label>Núcleo</label><input id="varinhaNucleo" value="${esc(p.varinha.nucleo)}" ${estado.ehMestre?'':'readonly'}></div>
+      <div><label>Comprimento</label><input id="varinhaComprimento" value="${esc(p.varinha.comprimento)}" placeholder='ex.: 11¾"' ${estado.ehMestre?'':'readonly'}></div>
+      <div><label>Flexibilidade</label><input id="varinhaFlexibilidade" value="${esc(p.varinha.flexibilidade)}" ${estado.ehMestre?'':'readonly'}></div>
+      <div><label>Sintonia</label><select id="varinhaSintonia" disabled>
         <option value="1" ${p.varinha.sintonia==1?'selected':''}>I — Escolhida</option>
         <option value="2" ${p.varinha.sintonia==2?'selected':''}>II — Familiaridade</option>
         <option value="3" ${p.varinha.sintonia==3?'selected':''}>III — Domínio</option>
@@ -1117,16 +1148,19 @@ function abaPerfil(p){
     ${estado.ehMestre ? (() => { const vm = garantirMestre(p).varinha; return `
     <details style="margin-top:12px" open><summary class="mini" style="cursor:pointer">Informações do Mestre <span class="pill">só você vê — de verdade, o servidor nem manda isso pro jogador</span></summary>
       <div class="grade" style="margin-top:10px">
-        <div><label>Tendência</label><input data-campo-mestre="varinha.tendencia" value="${esc(vm.tendencia)}"></div>
-        <div><label>Propriedade Desperta</label><input data-campo-mestre="varinha.propriedade" value="${esc(vm.propriedade)}"></div>
-        <div><label>Peculiaridade</label><input data-campo-mestre="varinha.peculiaridade" value="${esc(vm.peculiaridade)}"></div>
-        <div><label>Lealdade</label><select data-campo-mestre="varinha.lealdade">
+        <div><label>Tendência</label><input id="varinhaTendencia" value="${esc(vm.tendencia)}"></div>
+        <div><label>Propriedade Desperta</label><input id="varinhaPropriedade" value="${esc(vm.propriedade)}"></div>
+        <div><label>Peculiaridade</label><input id="varinhaPeculiaridade" value="${esc(vm.peculiaridade)}"></div>
+        <div><label>Lealdade</label><select id="varinhaLealdade">
           <option ${vm.lealdade==='Leal'?'selected':''}>Leal</option>
           <option ${vm.lealdade==='Incerta'?'selected':''}>Incerta</option>
           <option ${vm.lealdade==='Conquistada por Outro'?'selected':''}>Conquistada por Outro</option>
         </select></div>
       </div>
+      <div class="linha" style="margin-top:10px"><button data-varinha-entregar class="destaque">${p.varinha.entregue?'Atualizar entrega':'Entregar varinha'}</button><button data-varinha-sintonia ${p.varinha.entregue&&p.varinha.sintonia<4?'':'disabled'}>Avançar Sintonia</button></div>
+      <div class="linha" style="margin-top:8px">${['tendencia','propriedade','peculiaridade','lealdade'].map(c=>`<button data-varinha-revelar="${c}" ${(p.varinha.revelados||[]).includes(c)?'disabled':''}>${(p.varinha.revelados||[]).includes(c)?'✓ Revelado':'Revelar '+({tendencia:'Tendência',propriedade:'Propriedade',peculiaridade:'Peculiaridade',lealdade:'Lealdade'}[c])}</button>`).join('')}</div>
     </details>`; })() : '<p class="mini" style="margin-top:8px">Tendência, Propriedade Desperta, Peculiaridade e Lealdade são só do Mestre — nem aparecem aqui pra você.</p>'}
+    ${!estado.ehMestre && (p.varinha.revelados||[]).length?`<div style="margin-top:10px">${(p.varinha.revelados||[]).map(c=>`<p class="mini"><b>${esc(({tendencia:'Tendência',propriedade:'Propriedade Desperta',peculiaridade:'Peculiaridade',lealdade:'Lealdade'}[c]||c))}:</b> ${esc(p.varinha[c]||'')}</p>`).join('')}</div>`:''}
   </div>
 
   <div class="cartao">
@@ -1895,6 +1929,7 @@ function render(){
     return;
   }
   const p = atual();
+  aplicarAparencia(p);
   // Aba do navegador mostra o nome do personagem, não só "Ficha —
   // Hogwarts RPG" (decisão #168) — atualiza a cada render.
   document.title = (p && p.perfil && p.perfil.nome) ? `${p.perfil.nome} — Hogwarts RPG` : 'Ficha — Hogwarts RPG';
@@ -1927,10 +1962,12 @@ function desenharBarra(){
     label.style.display = estado.ehDono ? 'flex' : 'none';
     document.getElementById('chkCompartilhar').checked = estado.compartilhado;
     document.getElementById('btToken').hidden = !estado.podeEditar;
+    document.getElementById('btAparencia').hidden = !estado.podeEditar;
     document.getElementById('pa-token-url').value = estado.avatarUrl || '';
     document.getElementById('pa-token-preview').src = estado.avatarUrl || '';
     return;
   }
+  document.getElementById('btAparencia').hidden = false;
   const sel = document.getElementById('seletor');
   sel.innerHTML = estado.fichas.map(f => `<option value="${f.id}" ${f.id===estado.atualId?'selected':''}>${esc(f.perfil.nome)}</option>`).join('');
 }
@@ -1955,6 +1992,21 @@ function ligarEventos(){
   });
 
   const app = document.getElementById('app');
+
+  async function acaoVarinha(acao,extra={}){
+    if(!MODO_HUB||estado.enviandoVarinha)return;
+    estado.enviandoVarinha=true;estado.erroVarinha='';estado.statusVarinha='Salvando…';render();
+    try{
+      const resposta=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-varinha`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acao,...extra})});
+      const corpo=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(corpo.erro||'Não foi possível atualizar a varinha.');
+      estado.statusVarinha='Varinha atualizada e descoberta enviada ao jogador.';await iniciarModoHub();
+    }catch(e){estado.erroVarinha=e.message||'Não foi possível atualizar a varinha.';estado.statusVarinha='';render();}
+    finally{estado.enviandoVarinha=false;}
+  }
+  const entregarVarinha=app.querySelector('[data-varinha-entregar]');
+  if(entregarVarinha)entregarVarinha.onclick=()=>acaoVarinha('entregar',{varinha:{madeira:document.getElementById('varinhaMadeira').value,nucleo:document.getElementById('varinhaNucleo').value,comprimento:document.getElementById('varinhaComprimento').value,flexibilidade:document.getElementById('varinhaFlexibilidade').value,tendencia:document.getElementById('varinhaTendencia').value,propriedade:document.getElementById('varinhaPropriedade').value,peculiaridade:document.getElementById('varinhaPeculiaridade').value,lealdade:document.getElementById('varinhaLealdade').value}});
+  const avancarVarinha=app.querySelector('[data-varinha-sintonia]');if(avancarVarinha)avancarVarinha.onclick=()=>acaoVarinha('avancar-sintonia');
+  app.querySelectorAll('[data-varinha-revelar]').forEach(botao=>botao.onclick=()=>acaoVarinha('revelar',{campo:botao.dataset.varinhaRevelar}));
 
   app.querySelectorAll('[data-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.aba; render(); });
   app.querySelectorAll('[data-criacao-aba]').forEach(b => b.onclick = () => { estado.aba = b.dataset.criacaoAba; render(); });
@@ -2433,6 +2485,12 @@ document.getElementById('btNovo').onclick = () => {
 document.getElementById('btToken').onclick = () => {
   document.getElementById('painelToken').hidden = !document.getElementById('painelToken').hidden;
 };
+document.getElementById('btAparencia').onclick = () => {
+  const painel=document.getElementById('painelAparencia');painel.hidden=!painel.hidden;if(!painel.hidden) sincronizarPainelAparencia();
+};
+function sincronizarPainelAparencia(){const a=atual()?.aparencia;if(!a)return;[['tema','tema'],['fundo','fundo'],['superficie','superficie'],['borda','borda'],['destaque','destaque'],['texto','texto'],['fonte-texto','fonteTexto'],['fonte-titulo','fonteTitulo'],['fonte-url','fonteUrl'],['fonte-familia','fonteFamilia']].forEach(([id,campo])=>{const el=document.getElementById('pa-'+id);if(el)el.value=a[campo]||'';});}
+document.getElementById('pa-tema').onchange=e=>mudar(p=>{p.aparencia={...p.aparencia,tema:e.target.value,...TEMAS_APARENCIA[e.target.value]};setTimeout(sincronizarPainelAparencia);});
+[['fundo','fundo'],['superficie','superficie'],['borda','borda'],['destaque','destaque'],['texto','texto'],['fonte-texto','fonteTexto'],['fonte-titulo','fonteTitulo'],['fonte-url','fonteUrl'],['fonte-familia','fonteFamilia']].forEach(([id,campo])=>{document.getElementById('pa-'+id).onchange=e=>mudar(p=>{p.aparencia[campo]=e.target.value;p.aparencia.tema='personalizado';});});
 document.getElementById('pa-token-url').onchange = (e) => salvarAvatarUrl(e.target.value.trim());
 document.getElementById('btExcluir').onclick = () => {
   const p = atual(); if(!p) return;
