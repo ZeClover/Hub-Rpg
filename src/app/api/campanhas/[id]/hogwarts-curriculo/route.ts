@@ -3,6 +3,7 @@ import { banco } from "@/lib/banco";
 import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 import { CONTEUDOS_HOGWARTS_1_ANO, SLUGS_CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
+import { garantirFundacaoHogwarts } from "@/lib/hogwarts/auditoria";
 
 type Contexto = { params: Promise<{ id: string }> };
 type DadosFicha = Record<string, unknown> & { conteudosConhecidos?: Record<string, string>; pericias?: Record<string, number> };
@@ -48,6 +49,7 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
   const acao = typeof corpo?.acao === "string" ? corpo.acao : "";
   if (!SLUGS_CONTEUDOS_HOGWARTS_1_ANO.has(slug)) return NextResponse.json({ erro: "conteúdo inválido" }, { status: 400 });
   const base = CONTEUDOS_HOGWARTS_1_ANO.find((c) => c.slug === slug)!;
+  await garantirFundacaoHogwarts();
 
   if (acao === "ensinar" || acao === "ocultar") {
     await banco.$transaction(async (tx) => {

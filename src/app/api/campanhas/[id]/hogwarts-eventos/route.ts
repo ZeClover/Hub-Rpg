@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { banco } from "@/lib/banco";
 import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
+import { garantirFundacaoHogwarts } from "@/lib/hogwarts/auditoria";
 
 type Contexto = { params: Promise<{ id: string }> };
 
@@ -20,6 +21,7 @@ export async function GET(req: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "campanha não é Hogwarts RPG" }, { status: 400 });
   }
 
+  await garantirFundacaoHogwarts();
   const limitePedido = Number(req.nextUrl.searchParams.get("limite") ?? 50);
   const limite = Number.isFinite(limitePedido) ? Math.min(100, Math.max(1, Math.trunc(limitePedido))) : 50;
   const eventos = await banco.eventoAuditoriaHogwarts.findMany({

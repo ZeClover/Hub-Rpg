@@ -3,6 +3,7 @@ import { banco } from "@/lib/banco";
 import { usuarioAtual } from "@/lib/usuario";
 import { CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
 import { catalogoDaFormacaoInicial, erroNaSelecaoInicial, formacaoInicialConcluida } from "@/lib/hogwarts/formacao-inicial";
+import { garantirFundacaoHogwarts } from "@/lib/hogwarts/auditoria";
 
 type Contexto = { params: Promise<{ id: string }> };
 type Dados = Record<string, unknown> & {
@@ -70,6 +71,7 @@ export async function POST(req: NextRequest, { params }: Contexto) {
     Object.entries(dados.conteudosConhecidos ?? {}).filter(([, estado]) => estado !== "formacao-inicial"),
   );
   for (const slug of slugs) atuais[slug] = "formacao-inicial";
+  if (p.campanhaId) await garantirFundacaoHogwarts();
   await banco.$transaction(async (tx) => {
     await tx.personagem.update({
       where: { id },
