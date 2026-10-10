@@ -1591,6 +1591,9 @@ async function iniciarModoHub(){
       return;
     }
     const {personagem} = await resposta.json();
+    window.hubIniciativaContexto = {id: MODO_HUB, ehDono: !!personagem.ehDono, campanhaId: personagem.campanhaId, ehMonstro: !!personagem.ehMonstro};
+    window.hubIniciativaSalvamentoPendente = () => !!(debounceHub || salvamentoHubEmCurso || falhouAoSalvar || salvamentoHubPendente);
+    window.dispatchEvent(new Event('hub-iniciativa-contexto'));
     const dados = personagem.dados;
     const p = (dados && dados.perfil) ? dados : novoPersonagem();
     p.id = MODO_HUB;
@@ -4285,5 +4288,6 @@ montarPainelAparencia();
 render();
 if(MODO_HUB) iniciarModoHub();
 </script>
+<script src="/js/iniciativa-ficha.js"></script>
 </body>
 </html>

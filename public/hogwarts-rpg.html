@@ -833,6 +833,9 @@ async function iniciarModoHub(){
       ?? await fetch(`/api/personagens/${MODO_HUB}`);
     if(!resposta.ok){ estado.erroHub='nao-encontrado'; return; }
     const {personagem} = await resposta.json();
+    window.hubIniciativaContexto = {id: MODO_HUB, ehDono: !!personagem.ehDono, campanhaId: personagem.campanhaId, ehMonstro: !!personagem.ehMonstro};
+    window.hubIniciativaSalvamentoPendente = () => !!(debounceHub || salvandoHub || falhouAoSalvar);
+    window.dispatchEvent(new Event('hub-iniciativa-contexto'));
     const dados = personagem.dados;
     const p = garantirCamposNovos((dados && dados.perfil) ? dados : novoPersonagem());
     p.id = MODO_HUB;
@@ -2545,5 +2548,6 @@ document.getElementById('chkCompartilhar').onchange = e => alternarCompartilhado
 render();
 if(MODO_HUB) iniciarModoHub().then(iniciarDescobertasAoVivo);
 </script>
+<script src="/js/iniciativa-ficha.js"></script>
 </body>
 </html>

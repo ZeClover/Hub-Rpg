@@ -18,7 +18,9 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
   if (!Number.isInteger(corpo?.resultado) || Math.abs(corpo.resultado) > 1000) return NextResponse.json({ erro: 'Resultado de iniciativa inválido.' }, { status: 400 });
   // Nome vem da própria ficha, não de campanha/NPC nem de um corpo forjado.
   const dados = p.dados && typeof p.dados === 'object' && !Array.isArray(p.dados) ? p.dados as Record<string, unknown> : {};
-  const nome = typeof dados.nome === 'string' && dados.nome.trim() ? dados.nome.trim().slice(0, 200) : p.nome;
+  const perfil = dados.perfil && typeof dados.perfil === 'object' && !Array.isArray(dados.perfil) ? dados.perfil as Record<string, unknown> : {};
+  const nomeSalvo = perfil.nome ?? dados.nome;
+  const nome = typeof nomeSalvo === 'string' && nomeSalvo.trim() ? nomeSalvo.trim().slice(0, 200) : p.nome;
   const declaracao = { id: randomUUID(), personagemId: p.id, nome, resultado: corpo.resultado };
   const ok = await atualizarIniciativaAtomica(p.campanhaId, atual => adicionarDeclaracao(atual, declaracao));
   if (!ok) return NextResponse.json({ erro: 'A iniciativa mudou durante o envio. Tente novamente.' }, { status: 409 });

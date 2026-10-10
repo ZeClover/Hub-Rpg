@@ -50,6 +50,7 @@ import {
 } from "@/lib/campanha-livre/tipos.ts";
 
 import { ImportarDoChat } from "./importar-do-chat";
+import { DeclararIniciativa } from "./declarar-iniciativa";
 
 /** Filtro de busca usado em cada aba — case-insensitive, ignora campos vazios. */
 function corresponde(busca: string, ...campos: (string | undefined)[]): boolean {
@@ -97,6 +98,8 @@ type Carregamento =
       compartilhado: boolean;
       ehDono: boolean;
       podeEditar: boolean;
+      campanhaId: string | null;
+      ehMonstro: boolean;
     };
 
 export function FichaCampanhaLivre() {
@@ -105,6 +108,7 @@ export function FichaCampanhaLivre() {
   const [estado, setEstado] = useState<Carregamento>({ status: "carregando" });
   const [falhouSalvar, setFalhouSalvar] = useState(false);
   const salvando = useRef(false);
+  const nomePendente = useRef(false);
   const salvamentoPendente = useRef<{ id: string; dados: PersonagemLivre } | null>(null);
 
   useEffect(() => {
@@ -125,6 +129,8 @@ export function FichaCampanhaLivre() {
           compartilhado: !!personagem.compartilhado,
           ehDono: !!personagem.ehDono,
           podeEditar: !!personagem.podeEditar,
+          campanhaId: personagem.campanhaId ?? null,
+          ehMonstro: !!personagem.ehMonstro,
         });
       })
       .catch(() => {
@@ -228,7 +234,11 @@ export function FichaCampanhaLivre() {
 
       <Agora dados={dados} />
 
-      <Cabecalho key={estado.id} dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Cabecalho key={estado.id} dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} onNomePendente={valor => { nomePendente.current = valor; }} />
+
+      {!estado.ehMonstro && <DeclararIniciativa id={estado.id}
+        permitido={estado.ehDono && !!estado.campanhaId}
+        pendente={() => nomePendente.current || salvando.current || !!salvamentoPendente.current || falhouSalvar} />}
 
       {!somenteLeitura && (
         <ImportarDoChat
@@ -376,10 +386,12 @@ function Cabecalho({
   dados,
   somenteLeitura,
   onSalvar,
+  onNomePendente,
 }: {
   dados: PersonagemLivre;
   somenteLeitura: boolean;
   onSalvar: (novosDados: PersonagemLivre) => void;
+  onNomePendente: (valor: boolean) => void;
 }) {
   const [nome, setNome] = useState(dados.perfil.nome);
   const debounceNome = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -392,10 +404,12 @@ function Cabecalho({
   }, []);
 
   function aoDigitarNome(valor: string) {
+    onNomePendente(true);
     setNome(valor);
     if (debounceNome.current) clearTimeout(debounceNome.current);
     debounceNome.current = setTimeout(() => {
       onSalvar({ ...dadosAtuais.current, perfil: { nome: valor } });
+      onNomePendente(false);
     }, 600);
   }
 

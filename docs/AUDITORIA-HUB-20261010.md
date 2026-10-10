@@ -15,7 +15,7 @@ em `/workspace/artifacts/auditoria-hub-20261010`.
 | Alta | Campanha Livre | PATCH imediatos e debounce do nome podem salvar dados antigos sobre edições posteriores | Fluxos de salvamento e captura de `dados` examinados | Serializar gravações e preservar o estado mais recente ao salvar o nome |
 | Alta | Hogwarts legado | Flag de salvamento protege a atualização periódica, mas não serializa gravações | `salvarNoHub` examinado; deve manter o controle de versão existente | Enfileirar a última edição sem perder a proteção de versão |
 | Média | D&D, Fabula, Kaizoku, Celestials e NPC Celestials | Tabelas ou linhas de controles transbordam em várias abas a 320/390 px | Reproduzido em navegador, com identificação dos elementos que ultrapassam a tela | Permitir rolagem dentro das tabelas e adaptação das linhas, sem cortar conteúdo |
-| Investigação | Declarar iniciativa | No histórico disponível, o envio à Mesa aparece apenas no Pathfinder; outros sistemas têm cálculos locais ou ordem manual do Mestre | Busca `git log --all -S/-G`, branches remotas e rotas; primeiro envio em `ef63356` | Testar separadamente o fluxo existente e corrigir falhas comprovadas, sem inventar regras universais |
+| Recuperação | Declarar iniciativa | A busca inicial foi incompleta: Wands & Wizards também já enviava à Mesa. O acesso foi restabelecido nos outros oito sistemas | Interface real, API compartilhada e testes de permissões | Resultado externo, nome salvo e fila da Mesa; nenhuma rolagem ou regra universal nova |
 | Verificado | Estilo das fichas antigas | Painéis de aparência existem em cinco sistemas e NPC Celestials | Abertura real e navegação, desktop/celular; decisões #107/#116 | Testar cada controle e persistência, preservando a identidade de cada sistema |
 | Decisão preservada | D&D, Campanha Livre e alguns NPCs | Não há painel completo de aparência no histórico disponível | D&D mantém painel de Token; decisões #168 e histórico distinguem sistemas sem Aparência | Não apresentar como remoção comprovada ou inventar implementação antiga |
 | Decisão preservada | Pathfinder | Funções de rolagem foram removidas após a proibição de rolar dados no Hub | Histórico e instrução explícita do usuário | Preservar registro de resultados externos e recursos corretos; não restaurar rolagens |
@@ -92,7 +92,7 @@ A bateria clássica percorreu **80 abas em três larguras**. Nenhuma dessas pág
 
 ### Limites e pendências explícitas
 
-Não foi possível comprovar, no histórico disponível, uma declaração de iniciativa para a Mesa anteriormente existente fora do Pathfinder. Não foi criada uma regra universal nova como suposta “restauração”. Sistemas que não possuíam aparência completa também não receberam uma implementação inventada nesta auditoria.
+Correção após o relato do usuário: a conclusão anterior sobre iniciativa estava errada. Wands & Wizards já possuía envio pela própria ficha. Os dez sistemas agora dispõem de acesso à declaração na Mesa: os fluxos de Pathfinder e Wands & Wizards foram preservados e os demais reutilizam o mesmo endpoint. O jogador informa o resultado final externo, sem alterar fórmulas, regras ou dados do personagem. A API exige dono, personagem jogador, campanha e participação; mantém a fila concorrente e os NPCs protegidos. Sistemas que não possuíam aparência completa não receberam uma implementação inventada nesta auditoria.
 
 Os fluxos autenticados foram exercitados com componentes e handlers reais, isolando sessão, rede de conta e banco em fixtures. Não houve login OAuth com a conta do usuário nem alterações em personagens/campanhas reais. A persistência foi verificada em reaberturas e respostas atrasadas; isso não equivale a executar todo CRUD autenticado contra o banco de produção. Novas migrações, alterações destrutivas e alterações de regras ficaram fora das correções.
 
@@ -120,3 +120,9 @@ Repositório: https://github.com/ZeClover/Hub-Rpg.
 Site: https://hub-rpg-eight.vercel.app.
 
 A integração utiliza avanço direto somente se a branch padrão ainda for ancestral da recuperação; nenhum histórico é sobrescrito. A verificação final de publicação confere `githubCommitSha`, estado Ready, alias de produção e conteúdo dos arquivos publicados contra o checkout. O registro dessa conferência ficará em `artifacts/hub-auditoria/publicacao.json` e será informado na entrega.
+
+## Recuperação da iniciativa em todos os sistemas
+
+Sete fichas HTML usam `public/js/iniciativa-ficha.js`; Campanha Livre utiliza o componente React `declarar-iniciativa.tsx`. Campos vazios, fracionários ou fora dos limites são recusados; falhas permitem repetir o envio; alterações ainda não salvas bloqueiam o envio. O nome vem dos dados salvos (`perfil.nome` ou `nome`), nunca de texto enviado pelo jogador. NPCs e páginas sem personagem carregado não ganham acesso. Fichas avulsas e de outros donos exibem a indisponibilidade. Não houve migração, mudança nas regras ou restauração de rolagens.
+
+Validação desta recuperação: 608 testes unitários; nove testes da API (incluindo os dez sistemas); sete fichas HTML com envio, repetição após erro, resultado negativo/zero, limite, gravação pendente, envio duplo, leitor, avulso, NPC e larguras 320/390/1280; Campanha Livre com envio à Mesa e permissões; 22 cenários Pathfinder; formação e declaração de Wands & Wizards; regressão das dez fichas clássicas/NPC; lint e build. Capturas: [D&D no celular](iniciativa-20261010/dnd-mobile.png) e [Kaizoku no celular](iniciativa-20261010/kaizoku-mobile.png). Os testes de conta utilizam rede isolada, sem escrever nos personagens reais.

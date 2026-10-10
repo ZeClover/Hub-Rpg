@@ -4340,6 +4340,9 @@ async function iniciarModoHub(){
       ?? await fetch(`/api/personagens/${MODO_HUB}`);
     if(!resposta.ok){ state.erroHub = 'nao-encontrado'; return; }
     const {personagem} = await resposta.json();
+    window.hubIniciativaContexto = {id: MODO_HUB, ehDono: !!personagem.ehDono, campanhaId: personagem.campanhaId, ehMonstro: !!personagem.ehMonstro};
+    window.hubIniciativaSalvamentoPendente = () => !!(debounceHub || salvamentoHubEmCurso || falhouAoSalvarHub || salvamentoHubPendente);
+    window.dispatchEvent(new Event('hub-iniciativa-contexto'));
     const dados = personagem.dados;
     const p = (dados && dados.perfil) ? migrarPersonagem(dados) : novoPersonagem('Novo Personagem');
     p.id = MODO_HUB;
@@ -8199,5 +8202,6 @@ if(MODO_HUB){
   protegerArmazenamento();
 }
 </script>
+<script src="/js/iniciativa-ficha.js"></script>
 </body>
 </html>
