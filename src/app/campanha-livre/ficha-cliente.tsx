@@ -96,6 +96,7 @@ type Carregamento =
       dados: PersonagemLivre;
       compartilhado: boolean;
       ehDono: boolean;
+      podeEditar: boolean;
     };
 
 export function FichaCampanhaLivre() {
@@ -103,6 +104,8 @@ export function FichaCampanhaLivre() {
   const id = parametros.get("id");
   const [estado, setEstado] = useState<Carregamento>({ status: "carregando" });
   const [falhouSalvar, setFalhouSalvar] = useState(false);
+  const salvando = useRef(false);
+  const salvamentoPendente = useRef<{ id: string; dados: PersonagemLivre } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -121,6 +124,7 @@ export function FichaCampanhaLivre() {
           dados: normalizarPersonagemLivre(personagem.dados),
           compartilhado: !!personagem.compartilhado,
           ehDono: !!personagem.ehDono,
+          podeEditar: !!personagem.podeEditar,
         });
       })
       .catch(() => {
@@ -132,17 +136,28 @@ export function FichaCampanhaLivre() {
   }, [id]);
 
   async function salvar(novosDados: PersonagemLivre) {
-    if (estado.status !== "pronto") return;
+    if (estado.status !== "pronto" || !estado.podeEditar) return;
     setEstado({ ...estado, dados: novosDados });
+    salvamentoPendente.current = { id: estado.id, dados: novosDados };
+    if (salvando.current) return;
+    salvando.current = true;
     try {
-      const resposta = await fetch(`/api/personagens/${estado.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dados: novosDados }),
-      });
-      setFalhouSalvar(!resposta.ok);
-    } catch {
-      setFalhouSalvar(true);
+      while (salvamentoPendente.current) {
+        const pendente = salvamentoPendente.current;
+        salvamentoPendente.current = null;
+        try {
+          const resposta = await fetch(`/api/personagens/${pendente.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dados: pendente.dados }),
+          });
+          setFalhouSalvar(!resposta.ok);
+        } catch {
+          setFalhouSalvar(true);
+        }
+      }
+    } finally {
+      salvando.current = false;
     }
   }
 
@@ -177,7 +192,7 @@ export function FichaCampanhaLivre() {
     );
   }
 
-  const somenteLeitura = !estado.ehDono;
+  const somenteLeitura = !estado.podeEditar;
   const { dados } = estado;
 
   return (
@@ -206,14 +221,14 @@ export function FichaCampanhaLivre() {
       )}
       {somenteLeitura && (
         <div className="mt-4 rounded border border-borda bg-superficie p-3 text-sm text-texto-suave">
-          Modo leitura — você está vendo a ficha de <strong className="text-texto">{dados.perfil.nome}</strong>. Só quem é
-          dono edita ou importa do chat.
+          Modo leitura — você está vendo a ficha de <strong className="text-texto">{dados.perfil.nome}</strong>.
+          Apenas pessoas autorizadas podem editar ou importar do chat.
         </div>
       )}
 
       <Agora dados={dados} />
 
-      <Cabecalho dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
+      <Cabecalho key={estado.id} dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} />
 
       {!somenteLeitura && (
         <ImportarDoChat
@@ -368,12 +383,19 @@ function Cabecalho({
 }) {
   const [nome, setNome] = useState(dados.perfil.nome);
   const debounceNome = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dadosAtuais = useRef(dados);
+  useEffect(() => {
+    dadosAtuais.current = dados;
+  }, [dados]);
+  useEffect(() => () => {
+    if (debounceNome.current) clearTimeout(debounceNome.current);
+  }, []);
 
   function aoDigitarNome(valor: string) {
     setNome(valor);
     if (debounceNome.current) clearTimeout(debounceNome.current);
     debounceNome.current = setTimeout(() => {
-      onSalvar({ ...dados, perfil: { nome: valor } });
+      onSalvar({ ...dadosAtuais.current, perfil: { nome: valor } });
     }, 600);
   }
 
@@ -397,7 +419,7 @@ function Cabecalho({
         disabled={somenteLeitura}
         className="mt-1 w-full rounded border border-borda bg-fundo px-3 py-2 font-titulo text-2xl text-texto focus:border-ambar/60 focus:outline-none disabled:opacity-60"
       />
-      <div className="mt-4 flex gap-6">
+      <div className="mt-4 flex flex-wrap gap-6">
         <div>
           <label className="block text-xs uppercase tracking-wide text-texto-suave">XP</label>
           <input
@@ -805,7 +827,7 @@ function Atributos({
         ))}
       </div>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNovo}
@@ -885,7 +907,7 @@ function Moedas({
         ))}
       </div>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNovo}
@@ -1055,13 +1077,13 @@ function Condicoes({
         </ul>
         {!somenteLeitura && (
           <div className="mt-2 space-y-2 rounded border border-borda bg-fundo p-3">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <input
                 type="text"
                 value={nomeCondicao}
                 onChange={(e) => setNomeCondicao(e.target.value)}
                 placeholder="nome da condição"
-                className="flex-1 rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
+                className="min-w-0 flex-1 rounded border border-borda bg-superficie px-2 py-1 text-xs text-texto placeholder:text-texto-suave"
               />
               <button type="button" onClick={adicionarCondicao} className="rounded border border-ambar/40 bg-ambar/10 px-3 py-1 text-xs text-ambar-forte hover:bg-ambar/20">
                 + Condição
@@ -1227,13 +1249,13 @@ function Inventario({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             placeholder="nome do item"
-            className="flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
+            className="min-w-0 flex-1 rounded border border-borda bg-fundo px-3 py-2 text-sm text-texto placeholder:text-texto-suave"
           />
           <input
             type="number"
@@ -1953,7 +1975,7 @@ function Oportunidades({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={descricaoNova}
@@ -2115,7 +2137,7 @@ function Missoes({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNova}
@@ -2139,7 +2161,7 @@ function Missoes({
 function ObjetivoNovo({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
   const [texto, setTexto] = useState("");
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="mt-2 flex flex-wrap gap-2">
       <input
         type="text"
         value={texto}
@@ -2338,7 +2360,7 @@ function Npcs({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNovo}
@@ -2362,7 +2384,7 @@ function Npcs({
 function ConhecimentoNovo({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
   const [texto, setTexto] = useState("");
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="mt-2 flex flex-wrap gap-2">
       <input
         type="text"
         value={texto}
@@ -2388,7 +2410,7 @@ function ConhecimentoNovo({ onAdicionar }: { onAdicionar: (texto: string) => voi
 function ConexaoNova({ onAdicionar }: { onAdicionar: (texto: string) => void }) {
   const [texto, setTexto] = useState("");
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="mt-2 flex flex-wrap gap-2">
       <input
         type="text"
         value={texto}
@@ -2414,7 +2436,7 @@ function ConexaoNova({ onAdicionar }: { onAdicionar: (texto: string) => void }) 
 function RelacaoNova({ onAdicionar }: { onAdicionar: (stat: string) => void }) {
   const [stat, setStat] = useState("");
   return (
-    <div className="mt-2 flex gap-2">
+    <div className="mt-2 flex flex-wrap gap-2">
       <input
         type="text"
         value={stat}
@@ -2522,7 +2544,7 @@ function Descobertas({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={tituloNovo}
@@ -2636,7 +2658,7 @@ function Locais({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNovo}
@@ -2716,7 +2738,7 @@ function Bestiario({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNovo}
@@ -3073,7 +3095,7 @@ function Magias({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNova}
@@ -3180,7 +3202,7 @@ function Pesquisas({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={tituloNovo}
@@ -3243,7 +3265,7 @@ function Conquistas({
         ))}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={nomeNova}
@@ -3317,7 +3339,7 @@ function Reputacao({
         ))}
       </div>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={alvoNovo}
@@ -3519,7 +3541,7 @@ function Escola({
         })}
       </ul>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={materiaNova}
@@ -3580,7 +3602,7 @@ function Snapshots({
         Uma cópia da ficha inteira num momento — útil antes de uma importação grande. Restaurar sempre pede confirmação.
       </p>
       {!somenteLeitura && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <input
             type="text"
             value={titulo}
@@ -3620,7 +3642,7 @@ function Snapshots({
                   {s.estado.inventario.length} item(ns) no inventário. A ficha atual antes de restaurar também vira um snapshot
                   automático, pra não perder nada.
                 </p>
-                <div className="mt-2 flex gap-2">
+                <div className="mt-2 flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => confirmarRestaurar(s.id)}
@@ -3755,7 +3777,7 @@ function Historico({
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => confirmarDesfazerImportacao(h.id)}

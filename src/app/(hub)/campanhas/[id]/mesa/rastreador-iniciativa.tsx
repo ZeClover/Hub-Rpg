@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { consultarEnquantoVisivel } from "@/lib/consulta-visivel";
-import { incorporarDeclaracoes, type CombatenteDeclarado } from "@/lib/iniciativa-declarada";
+import { incorporarDeclaracoes, normalizarEstadoIniciativa, type CombatenteDeclarado } from "@/lib/iniciativa-declarada";
 
 import { useAtalhoTeclado } from "@/lib/use-atalho-teclado";
 
@@ -36,13 +36,7 @@ function lerEstadoSalvo(campanhaId: string, sandbox: boolean): EstadoIniciativa 
   try {
     const salvo = localStorage.getItem(chaveArmazenamento(campanhaId, sandbox));
     if (!salvo) return ESTADO_VAZIO;
-    const estado = JSON.parse(salvo);
-    return {
-      combatentes: estado.combatentes ?? [],
-      vezDe: estado.vezDe ?? 0,
-      rodada: estado.rodada ?? 1,
-      declaracoesProcessadas: estado.declaracoesProcessadas ?? [],
-    };
+    return normalizarEstadoIniciativa(JSON.parse(salvo));
   } catch {
     return ESTADO_VAZIO;
   }

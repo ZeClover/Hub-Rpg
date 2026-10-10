@@ -52,7 +52,8 @@ function corpoValido(corpo: unknown): corpo is {
   if (typeof corpo !== "object" || corpo === null) return false;
   const { combatentes, vezDe, rodada } = corpo as Record<string, unknown>;
   if (!Array.isArray(combatentes)) return false;
-  if (typeof vezDe !== "number" || typeof rodada !== "number") return false;
+  if (!Number.isInteger(vezDe) || Number(vezDe) < 0 || !Number.isInteger(rodada) || Number(rodada) < 1) return false;
+  if (combatentes.length ? Number(vezDe) >= combatentes.length : vezDe !== 0) return false;
   return combatentes.every(
     (c) =>
       typeof c === "object" &&

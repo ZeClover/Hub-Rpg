@@ -1,6 +1,15 @@
 export type CombatenteDeclarado = { id: string; nome: string; condicao: string; resultado?: number; personagemId?: string; declaracaoId?: string };
 export type DeclaracaoIniciativa = { id: string; personagemId: string; nome: string; resultado: number };
 export type EstadoComDeclaracoes = { combatentes: CombatenteDeclarado[]; vezDe: number; rodada: number; declaracoesProcessadas?: string[]; declaracoes?: DeclaracaoIniciativa[] };
+// Preferências antigas ou corrompidas não podem derrubar a Mesa ao Vivo.
+export function normalizarEstadoIniciativa(valor: unknown): EstadoComDeclaracoes {
+  const estado = valor && typeof valor === 'object' && !Array.isArray(valor) ? valor as Record<string, unknown> : {};
+  const combatentes = Array.isArray(estado.combatentes) ? estado.combatentes.filter((c): c is CombatenteDeclarado =>
+    !!c && typeof c === 'object' && typeof c.id === 'string' && typeof c.nome === 'string' && typeof c.condicao === 'string') : [];
+  const vezDe = Number.isInteger(estado.vezDe) && Number(estado.vezDe) >= 0 && Number(estado.vezDe) < combatentes.length ? Number(estado.vezDe) : 0;
+  const rodada = Number.isInteger(estado.rodada) && Number(estado.rodada) >= 1 ? Number(estado.rodada) : 1;
+  return { combatentes, vezDe, rodada, declaracoesProcessadas: Array.isArray(estado.declaracoesProcessadas) ? estado.declaracoesProcessadas.filter((id): id is string => typeof id === 'string').slice(-100) : [] };
+}
 export function declaracoesValidas(valor: unknown): DeclaracaoIniciativa[] {
   if (!Array.isArray(valor)) return [];
   return valor.filter((d): d is DeclaracaoIniciativa => !!d && typeof d === 'object' && typeof d.id === 'string' && typeof d.personagemId === 'string' && typeof d.nome === 'string' && Number.isFinite(d.resultado)).slice(-100);
