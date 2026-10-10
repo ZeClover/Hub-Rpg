@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Teste Node em CommonJS, com dependências isoladas. */
 /* Carrega os handlers reais, com sessão e banco isolados; nenhum dado real é alterado. */
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
 const {NextRequest}=require('next/server');

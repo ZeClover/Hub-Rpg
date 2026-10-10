@@ -1,0 +1,472 @@
+[
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/avisos/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/avisos/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/avisos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/campos/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/campos/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/campos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/chat",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/chat",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/colecionaveis/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/colecionaveis/conceder",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/colecionaveis/retirar",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/colecionaveis",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/colecionaveis",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/conquistas/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/conquistas/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/conquistas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/enquetes/00000000-0000-4000-8000-000000000001/encerrar",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/enquetes/00000000-0000-4000-8000-000000000001/votar",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/enquetes",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/entrar",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/grupos/00000000-0000-4000-8000-000000000001/membros/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/grupos/00000000-0000-4000-8000-000000000001/membros",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/grupos/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/grupos/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/grupos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-curriculo",
+    "metodo": "GET",
+    "status": 404
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-curriculo",
+    "metodo": "PATCH",
+    "status": 404
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-eventos",
+    "metodo": "GET",
+    "status": 404
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-familias",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-familias",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-pontos",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/hogwarts-pontos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/iniciativa",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/iniciativa",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/inimigos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/jogadores/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/jogadores/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/lojas",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/lojas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/manual-mestre",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/personagens/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/personagens",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/personagens",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/sessoes/00000000-0000-4000-8000-000000000001/presenca",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/sessoes/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/sessoes/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/sessoes",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/trocas",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/trocas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/veiculos/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/veiculos/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/veiculos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/vida/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/00000000-0000-4000-8000-000000000001/vida",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas/codigo",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/campanhas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/itens/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/itens/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/itens",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001/comprar",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001/itens/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001/itens/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001/itens",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/lojas/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/notificacoes/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/notificacoes/marcar-todas-lidas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/notificacoes",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/colecionaveis/00000000-0000-4000-8000-000000000001/silhueta",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/colecionaveis/revelacoes",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/colecionaveis",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/companheiros/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/companheiros",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/copiar",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-academico",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-conteudos",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-conteudos",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-criacao",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-descobertas",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-descobertas",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-familia",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-familia",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-progressao",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/hogwarts-varinha",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001/iniciativa",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens/00000000-0000-4000-8000-000000000001",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "/api/personagens",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/trocas/00000000-0000-4000-8000-000000000001/aceitar",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "/api/trocas/00000000-0000-4000-8000-000000000001",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "/api/usuario/favoritos",
+    "metodo": "PATCH",
+    "status": 401
+  }
+]

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Teste Node em CommonJS, com dependências isoladas. */
 const {PGlite}=require('@electric-sql/pglite'),fs=require('node:fs/promises'),assert=require('node:assert/strict'),os=require('node:os'),path=require('node:path');
 (async()=>{const dir=await fs.mkdtemp(path.join(os.tmpdir(),'criaturas-pg-'));let db=new PGlite(dir);let n=0;try{
  await db.exec('CREATE TABLE campanhas(id UUID PRIMARY KEY);CREATE TABLE personagens(id UUID PRIMARY KEY);CREATE ROLE anon;CREATE ROLE authenticated;');

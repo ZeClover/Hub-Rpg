@@ -1,0 +1,10 @@
+{
+  "resultados": [
+    "Campanha Livre: nome/XP, recursos, fila, recarga, Mestre, leitor, desktop/celular",
+    "Mesa: declarações, condições, rodada/atalho, sandbox, preferências inválidas",
+    "Espectador: ordem em leitura sem controles de alteração",
+    "Painel de Vida: consulta de PJ/NPC e restauração do inimigo",
+    "Campanhas: teclado e apenas uma aba montada"
+  ],
+  "erros": []
+}

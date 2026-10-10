@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Teste Node em CommonJS, com dependências isoladas. */
 const {chromium}=require('/opt/codex/runtimes/cua/lib/node_modules/playwright-core');
 const assert=require('node:assert/strict');
 const fs=require('node:fs/promises');

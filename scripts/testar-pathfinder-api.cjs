@@ -11,6 +11,7 @@ const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.Common
 function reset(){usuario={id:'dono'};updates=0;concorrencia=false;const dados=R.criar(catalogo);Object.assign(dados,{nome:'Herói',classeId:'guerreiro',ancestralidadeId:'humano',xp:0,vida:{atual:7,maxima:18,temporaria:0},_mestre:{segredo:'oculto',pathfinder:{nivelAutorizado:1}}});registro={id:'p',donoId:'dono',campanhaId:'campanha',sistemaId:'s',sistema:{chave:'pathfinder-2e-remaster'},ehMonstro:false,nome:'Herói',dados,atualizadoEm:new Date('2026-10-06T00:00:00Z'),compartilhado:false};}
 const ctx={params:Promise.resolve({id:'p'})};function req(corpo){return {json:async()=>corpo};}
 (async()=>{validar=await import('../src/lib/pathfinder/validar-ficha.ts');
+Object.assign(aliases,{'../../../../../public/wands-wizards/ficha-regras.mjs':await import('../public/wands-wizards/ficha-regras.mjs'),'@/lib/hogwarts/criacao':await import('../src/lib/hogwarts/criacao.ts')});
 // Recompile with the now-loaded real validator, not a substitute.
 const mod={exports:{}};new Function('require','module','exports',js)(n=>n==='@/lib/pathfinder/validar-ficha'?validar:aliases[n]||require(n),mod,mod.exports);const api=mod.exports;
 await test('GET proprietário recebe versão/progressão, nunca notas do mestre',async()=>{reset();const r=await api.GET(req(),ctx),j=await r.json();assert.equal(r.status,200);assert.equal(j.personagem.atualizadoEm,'2026-10-06T00:00:00.000Z');assert.equal(j.personagem.dados._mestre,undefined);assert.equal(j.personagem.progressaoPermitida.nivelMaximo,1);});

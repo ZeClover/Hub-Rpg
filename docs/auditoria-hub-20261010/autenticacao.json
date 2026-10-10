@@ -1,0 +1,472 @@
+[
+  {
+    "rota": "src/app/api/campanhas/[id]/avisos/[avisoId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/avisos/[avisoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/avisos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/campos/[campoId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/campos/[campoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/campos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/chat/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/chat/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/colecionaveis/[colecionavelId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/colecionaveis/conceder/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/colecionaveis/retirar/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/colecionaveis/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/colecionaveis/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/conquistas/[conquistaId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/conquistas/[conquistaId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/conquistas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/enquetes/[enqueteId]/encerrar/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/enquetes/[enqueteId]/votar/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/enquetes/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/entrar/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/grupos/[grupoId]/membros/[personagemId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/grupos/[grupoId]/membros/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/grupos/[grupoId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/grupos/[grupoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/grupos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-curriculo/route.ts",
+    "metodo": "GET",
+    "status": 404
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-curriculo/route.ts",
+    "metodo": "PATCH",
+    "status": 404
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-eventos/route.ts",
+    "metodo": "GET",
+    "status": 404
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-familias/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-familias/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-pontos/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/hogwarts-pontos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/iniciativa/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/iniciativa/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/inimigos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/jogadores/[usuarioId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/jogadores/[usuarioId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/lojas/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/lojas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/manual-mestre/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/personagens/[personagemId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/personagens/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/personagens/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/sessoes/[sessaoId]/presenca/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/sessoes/[sessaoId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/sessoes/[sessaoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/sessoes/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/trocas/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/trocas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/veiculos/[veiculoId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/veiculos/[veiculoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/veiculos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/vida/[personagemId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/[id]/vida/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/codigo/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/campanhas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/itens/[itemId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/itens/[itemId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/itens/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/comprar/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/itens/[itemId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/itens/[itemId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/itens/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/lojas/[id]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/notificacoes/[notificacaoId]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/notificacoes/marcar-todas-lidas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/notificacoes/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/colecionaveis/[colecionavelId]/silhueta/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/colecionaveis/revelacoes/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/colecionaveis/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/companheiros/[companheiroId]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/companheiros/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/copiar/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-academico/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-conteudos/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-conteudos/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-criacao/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-descobertas/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-descobertas/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-familia/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-familia/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-progressao/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/hogwarts-varinha/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/iniciativa/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/[id]/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/route.ts",
+    "metodo": "GET",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/personagens/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/trocas/[id]/aceitar/route.ts",
+    "metodo": "POST",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/trocas/[id]/route.ts",
+    "metodo": "DELETE",
+    "status": 401
+  },
+  {
+    "rota": "src/app/api/usuario/favoritos/route.ts",
+    "metodo": "PATCH",
+    "status": 401
+  }
+]
