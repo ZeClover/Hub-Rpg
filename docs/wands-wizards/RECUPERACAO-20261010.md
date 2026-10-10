@@ -35,6 +35,10 @@ tema atual. Não houve rollback visual nem reconstrução dos componentes.
 - `.gitignore`: exclui capturas, vídeos de testes e caches Python dos próximos
   commits. Os assets públicos efetivamente usados pela ficha permanecem
   rastreados. Não foram incluídos segredos nem arquivos `.env`.
+- `scripts/testar-wands-wizards-grimorio.cjs`: o transporte HTTPS da suíte
+  pública preserva respostas HTTP de erro, como o 401 das APIs sem login, em
+  vez de interromper o navegador de teste. A autorização do produto permanece
+  intacta; os assets continuam vindo do site real, com validação TLS.
 
 O checkpoint também preserva o trabalho anterior em Pathfinder e no Hogwarts
 legado. As alterações de autorização acadêmica, versões de salvamento e cadastro
@@ -84,15 +88,23 @@ exigiu substituir o visual da ficha.
 - A revelação é reservada atomicamente antes de abrir: evita repetição entre
   dispositivos, mas uma interrupção abrupta após a reserva pode impedir a
   apresentação naquela concessão.
-- Publicação e comparação dos arquivos publicados serão registradas no
-  relatório de validação da publicação junto aos artefatos da recuperação.
+- O relatório com SHA-256 dos arquivos publicados e respostas das APIs está
+  em `validacao-publicacao.json`, junto aos artefatos externos da recuperação.
 
 ## Procedimento de integração
 
-Publicar primeiro a branch de recuperação. Atualizar a branch padrão somente
-por avanço direto após nova consulta ao remoto; nunca usar force-push, reset
-destrutivo ou apagar outras branches. Publicar a versão commitada no projeto
-Vercel existente e comparar os arquivos servidos com os arquivos Git.
-Executar novamente os testes do grimório e da transição de Casas usando os
-assets realmente publicados, e verificar a recusa de acesso anônimo às APIs
-protegidas. Registrar o SHA final, deployment e os resultados.
+A branch de recuperação foi publicada e a branch padrão atualizada por avanço
+direto, após nova consulta ao remoto. Não houve force-push, reset destrutivo ou
+exclusão de branches. O Vercel confirmou o commit GitHub no deployment e
+concluiu o build, incluindo a preparação aditiva do Acervo.
+
+Os 62 arquivos visuais verificados no endereço público corresponderam aos
+arquivos commitados. As quatro rotas verificadas do Acervo responderam 401
+sem login. A suíte pública de Casas passou usando os assets baixados do site,
+incluindo a sincronização da linha, das cores e dos brasões no celular e no
+desktop. A suíte pública do grimório usa uma ficha de teste e os assets reais:
+isso verifica a publicação sem acessar personagens reais.
+
+O SHA final e a publicação validados são entregues na resposta da recuperação;
+o relatório de validação externo registra o commit exato sem criar a necessidade
+de um novo commit apenas para registrar o próprio identificador.

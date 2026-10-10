@@ -26,7 +26,7 @@ const {execFileSync}=require('node:child_process');
         return r.fulfill({json:{personagem:{dados:saved,atualizadoEm:version,sistema:{chave:'wands-wizards'},podeEditar:!readonly,ehDono:!readonly}}});
       }
       if(publico){
-        const raw=execFileSync('python',['-c','import urllib.request,sys,json,base64\nr=urllib.request.urlopen(sys.argv[1]);print(json.dumps({"status":r.status,"contentType":r.headers.get("Content-Type","application/octet-stream"),"body":base64.b64encode(r.read()).decode()}))',req.url()],{maxBuffer:8*1024*1024});
+        const raw=execFileSync('python',['-c','import urllib.request,urllib.error,sys,json,base64\ntry: r=urllib.request.urlopen(sys.argv[1])\nexcept urllib.error.HTTPError as e: r=e\nprint(json.dumps({"status":r.status,"contentType":r.headers.get("Content-Type","application/octet-stream"),"body":base64.b64encode(r.read()).decode()}))',req.url()],{maxBuffer:8*1024*1024});
         const response=JSON.parse(raw);return r.fulfill({status:response.status,contentType:response.contentType,body:Buffer.from(response.body,'base64')});
       }
       try{await r.fulfill({body:await fs.readFile(path.join(root,u.pathname)),contentType:({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.webp':'image/webp','.png':'image/png'})[path.extname(u.pathname)]||'application/octet-stream'});}catch{await r.fulfill({status:404});}
