@@ -729,15 +729,17 @@ function salvarNoHub(){
     p.resumoVida = {atual: Math.max(0, Math.min(p.vida.maxima, p.vida.atual)), maxima: p.vida.maxima, rotulo: 'Vida'};
     try{
       const resposta = await fetch(`/api/personagens/${MODO_HUB}`, {
-        method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p}),
+        method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p,atualizadoEmBase:estado.versaoFicha||undefined}),
       });
-      if(!resposta.ok) throw new Error('resposta ' + resposta.status);
+      const retorno=await resposta.json().catch(()=>({}));
+      if(!resposta.ok) throw new Error(retorno.erro||'resposta ' + resposta.status);
+      estado.versaoFicha=retorno.personagem?.atualizadoEm||estado.versaoFicha;
       if(falhouAoSalvar){ falhouAoSalvar=false; render(); }
       statusSalvoOk();
     }catch(e){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar=true; render(); }
-      mostrarStatusSalvo('Erro ao salvar', 'erro');
+      mostrarStatusSalvo(e.message||'Erro ao salvar', 'erro');
     }finally{salvandoHub=false;}
   }, 500);
 }
@@ -797,8 +799,10 @@ async function carregarDescobertas(ressincronizar=true){
     const corpo=await resposta.json(), revisaoAnterior=estado.revisaoDescobertas;
     estado.descobertas=Array.isArray(corpo.eventos)?corpo.eventos:[];
     estado.revisaoDescobertas=corpo.revisao||null; estado.erroDescobertas='';
-    if(ressincronizar && revisaoAnterior && corpo.revisao && corpo.revisao!==revisaoAnterior) await iniciarModoHub();
-    else render();
+    if(ressincronizar && corpo.revisao && corpo.revisao!==revisaoAnterior)estado.ressincronizacaoPendente=true;
+    const editando=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
+    if(estado.ressincronizacaoPendente&&!debounceHub&&!salvandoHub&&!falhouAoSalvar&&!editando){estado.ressincronizacaoPendente=false;await iniciarModoHub();}
+    else if(!ressincronizar&&!editando)render();
   }catch(e){ estado.erroDescobertas=e.message||'Atualização temporariamente indisponível.'; render(); }
   finally{ estado.sincronizandoDescobertas=false; }
 }
@@ -837,6 +841,7 @@ async function iniciarModoHub(){
     // fosse segredo de verdade (o PATCH do servidor reescreve `_mestre`
     // de qualquer forma pra quem não é mestre).
     estado.ehMestre = !!personagem.ehMestre;
+    estado.versaoFicha=personagem.atualizadoEm||null;
     estado.campanhaId = personagem.campanhaId || null;
     estado.avatarUrl = personagem.avatarUrl || '';
     const respConteudos = (inicial?.id === MODO_HUB ? await inicial.conteudos : null)
@@ -1626,28 +1631,32 @@ function abaPocoes(p){
 
 function abaAcademico(p){
   const ano = anoEscolar(p.nivel);
+  const podeGerenciar = !MODO_HUB || estado.ehMestre;
   const linhaMateria = (nome) => {
     const m = estadoMateria(p, nome);
     const conteudos = todosConteudos(p).filter(c => c.pericia === nome);
     const porEstado = (nomes) => conteudos.filter(c => nomes.includes(c.estado || p.conteudosConhecidos[c.id] || 'oculto')).length;
     return `<div class="linha-cond" style="align-items:flex-start;flex-wrap:wrap">
-      <label style="width:auto;font-size:13px;text-transform:none;flex:1"><input type="checkbox" style="width:auto" data-mat-cursando="${esc(nome)}" ${m.cursando?'checked':''}> ${esc(nome)}</label>
+      <label style="width:auto;font-size:13px;text-transform:none;flex:1"><input type="checkbox" style="width:auto" data-mat-cursando="${esc(nome)}" ${!podeGerenciar?'disabled':''} ${m.cursando?'checked':''}> ${esc(nome)}</label>
       <span class="mini">Progresso:</span>
-      <button data-mat-prog-dec="${esc(nome)}" style="padding:4px 10px">−</button>
+      <button ${!podeGerenciar?'disabled':''} data-mat-prog-dec="${esc(nome)}" style="padding:4px 10px">−</button>
       <span class="mini" style="width:20px;text-align:center">${m.progresso}</span>
-      <button data-mat-prog-inc="${esc(nome)}" style="padding:4px 10px">+</button>
+      <button ${!podeGerenciar?'disabled':''} data-mat-prog-inc="${esc(nome)}" style="padding:4px 10px">+</button>
       ${m.progresso>=2 ? '<span class="pill on">Pronto: Conteúdo Extra Acadêmico</span>' : ''}
       <span class="mini" style="flex-basis:100%;padding-left:24px">Perícia ${p.pericias[nome]||0} · Conhecidos ${porEstado(['conhecido','dominado','assinatura'])} · Formação ${porEstado(['formacao-inicial'])} · Disponíveis ${porEstado(['disponivel'])} · Bloqueados ${porEstado(['bloqueado'])}</span>
+      ${MODO_HUB&&podeGerenciar&&m.progresso>=2?`<div class="linha" style="flex-basis:100%"><select data-extra-materia="${esc(nome)}" aria-label="Conteúdo extra de ${esc(nome)}"><option value="">Escolha conteúdo extra</option>${conteudos.filter(c=>c.estado==='disponivel').map(c=>`<option value="${esc(c.id||c.slug)}">${esc(c.nome)}</option>`).join('')}</select><button data-extra-academico="${esc(nome)}">Conceder extra</button></div>`:''}
     </div>`;
   };
   return `<div class="cartao">
     <h3 style="margin-bottom:6px">Currículo</h3>
+    ${estado.erroAcademico?`<div class="aviso" role="alert">${esc(estado.erroAcademico)}</div>`:''}
+    <p class="mini">${podeGerenciar?'Registre os avanços obtidos nas aulas.':'Notas, matrícula e progresso são registrados pelo Mestre.'}</p>
     <p class="mini" style="margin-bottom:10px">Ano atual: <b>${ano}º ano</b>. Não cursar uma matéria não torna o conhecimento magicamente impossível — só exige outra fonte (Conteúdo Familiar, Origem, pesquisa própria).</p>
     <h4 style="font-size:13px;margin-bottom:8px">Matérias obrigatórias</h4>
     ${MATERIAS_OBRIGATORIAS.map(linhaMateria).join('')}
     <h4 style="font-size:13px;margin:14px 0 8px">Eletivas ${ano<3 ? '(a partir do 3º ano)' : ''}</h4>
     ${ano<3 ? '<p class="mini">Ainda não chegou a hora de escolher eletivas.</p>' : ELETIVAS.map(linhaMateria).join('')}
-    <p class="mini" style="margin-top:10px">2 Progressos na mesma matéria podem virar 1 Conteúdo Extra Acadêmico (máx. 2 por ano por personagem) — o Mestre concede manualmente, o Hub só sinaliza.</p>
+    <p class="mini" style="margin-top:10px">2 progressos na mesma matéria concedem 1 Conteúdo Extra Acadêmico. O Hub consome os progressos e confere o limite: ${Number(p.academico.extrasPorAno?.[ano]||0)} / 2 extras usados neste ano.</p>
   </div>
 
   <div class="cartao">
@@ -1659,7 +1668,7 @@ function abaAcademico(p){
 
   <div class="cartao">
     <h3 style="margin-bottom:10px">Notas</h3>
-    <div class="grade">
+    ${podeGerenciar?`<div class="grade">
       <div><label>Matéria</label><select id="novaNotaMateria">
         ${[...MATERIAS_OBRIGATORIAS, ...(ano>=3?ELETIVAS:[])].map(m => `<option>${esc(m)}</option>`).join('')}
       </select></div>
@@ -1667,11 +1676,11 @@ function abaAcademico(p){
       <div><label>Nota</label><select id="novaNotaValor">${NOTAS_ESCALA.map(n => `<option>${n}</option>`).join('')}</select></div>
       <div><label>Comentário</label><input id="novaNotaComentario"></div>
     </div>
-    <button data-add-nota style="margin-top:10px">+ Lançar nota</button>
+    <button data-add-nota style="margin-top:10px">+ Lançar nota</button>`:''}
     ${p.academico.notas.length===0 ? '<p class="mini" style="margin-top:10px">Nenhuma nota lançada ainda.</p>' : `<div style="margin-top:12px">` + p.academico.notas.slice().reverse().map(n => `
       <div class="linha" style="margin-bottom:6px">
         <span class="mini" style="flex:1"><b>${esc(n.materia)}</b> — ${esc(n.tipo)}: ${esc(n.nota)}${n.comentario?' — '+esc(n.comentario):''}</span>
-        <button data-remover-nota="${n.id}" class="perigo" style="padding:3px 8px">✕</button>
+        ${podeGerenciar?`<button data-remover-nota="${esc(n.id)}" class="perigo" style="padding:3px 8px">✕</button>`:''}
       </div>`).join('') + `</div>`}
   </div>`;
 }
@@ -2340,20 +2349,25 @@ function ligarEventos(){
     el.addEventListener('input', () => mudarSemRedesenhar(p => { const c = p.cultivos.find(x=>x.id===id); if(c) c[campo] = Math.max(1, Number(el.value)||1); }));
   });
 
-  // Acadêmico
-  app.querySelectorAll('[data-mat-cursando]').forEach(el => el.onchange = () => mudar(p => { garantirMateria(p, el.dataset.matCursando).cursando = el.checked; }));
-  app.querySelectorAll('[data-mat-prog-inc]').forEach(b => b.onclick = () => mudar(p => { garantirMateria(p, b.dataset.matProgInc).progresso++; }));
-  app.querySelectorAll('[data-mat-prog-dec]').forEach(b => b.onclick = () => mudar(p => { const m = garantirMateria(p, b.dataset.matProgDec); m.progresso = Math.max(0, m.progresso - 1); }));
-  const btAddNota = app.querySelector('[data-add-nota]');
-  if(btAddNota) btAddNota.onclick = () => mudar(p => p.academico.notas.push({
-    id: uid(),
-    materia: document.getElementById('novaNotaMateria').value,
-    tipo: document.getElementById('novaNotaTipo').value,
-    nota: document.getElementById('novaNotaValor').value,
-    comentario: document.getElementById('novaNotaComentario').value.trim(),
-    data: Date.now(),
-  }));
-  app.querySelectorAll('[data-remover-nota]').forEach(b => b.onclick = () => mudar(p => { p.academico.notas = p.academico.notas.filter(n => n.id !== b.dataset.removerNota); }));
+  // Acadêmico: ações de campanha passam pelo servidor e não pelo PATCH livre.
+  async function acaoAcademica(corpo){
+    if(estado.salvandoAcademico)return;
+    if(debounceHub||salvandoHub||falhouAoSalvar){estado.erroAcademico='Aguarde a ficha ser salva antes de atualizar o acadêmico.';render();return;}
+    estado.salvandoAcademico=true;estado.erroAcademico='';
+    try{const r=await fetch(`/api/personagens/${MODO_HUB}/hogwarts-academico`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});const c=await r.json();if(!r.ok)throw new Error(c.erro||'Não foi possível atualizar.');await iniciarModoHub();}
+    catch(e){estado.erroAcademico=e.message;}finally{estado.salvandoAcademico=false;render();}
+  }
+  app.querySelectorAll('[data-mat-cursando]').forEach(el=>el.onchange=()=>MODO_HUB?acaoAcademica({acao:'matricula',materia:el.dataset.matCursando,cursando:el.checked}):mudar(p=>{garantirMateria(p,el.dataset.matCursando).cursando=el.checked;}));
+  app.querySelectorAll('[data-mat-prog-inc]').forEach(b=>b.onclick=()=>MODO_HUB?acaoAcademica({acao:'progresso',materia:b.dataset.matProgInc,delta:1}):mudar(p=>{garantirMateria(p,b.dataset.matProgInc).progresso++;}));
+  app.querySelectorAll('[data-mat-prog-dec]').forEach(b=>b.onclick=()=>MODO_HUB?acaoAcademica({acao:'progresso',materia:b.dataset.matProgDec,delta:-1}):mudar(p=>{const m=garantirMateria(p,b.dataset.matProgDec);m.progresso=Math.max(0,m.progresso-1);}));
+  app.querySelectorAll('[data-extra-academico]').forEach(b=>b.onclick=()=>{const materia=b.dataset.extraAcademico;const el=[...app.querySelectorAll('[data-extra-materia]')].find(e=>e.dataset.extraMateria===materia);acaoAcademica({acao:'extra',materia,slug:el?.value||''});});
+  const btAddNota=app.querySelector('[data-add-nota]');
+  if(btAddNota)btAddNota.onclick=()=>{
+    const nota={materia:document.getElementById('novaNotaMateria').value,tipo:document.getElementById('novaNotaTipo').value,nota:document.getElementById('novaNotaValor').value,comentario:document.getElementById('novaNotaComentario').value.trim()};
+    if(MODO_HUB)return acaoAcademica({acao:'nota',...nota});
+    mudar(p=>p.academico.notas.push({id:uid(),...nota,data:Date.now()}));
+  };
+  app.querySelectorAll('[data-remover-nota]').forEach(b=>b.onclick=()=>MODO_HUB?acaoAcademica({acao:'remover-nota',notaId:b.dataset.removerNota}):mudar(p=>{p.academico.notas=p.academico.notas.filter(n=>n.id!==b.dataset.removerNota);}));
 
   // Inventário — Galeões
   app.querySelectorAll('[data-galeoes-delta]').forEach(b => b.onclick = () => mudar(p => { p.galeoes = Math.max(0, p.galeoes + Number(b.dataset.galeoesDelta)); }));

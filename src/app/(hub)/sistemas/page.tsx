@@ -1,5 +1,5 @@
 import { banco } from "@/lib/banco";
-import { SISTEMAS } from "@/lib/sistemas";
+import { SISTEMAS_CATALOGO } from "@/lib/sistemas";
 import { usuarioAtual } from "@/lib/usuario";
 import { visualSistema } from "@/lib/visual";
 import { Colecao } from "@/components/hub/colecao";
@@ -13,7 +13,7 @@ export default async function Sistemas() {
     select: { sistemasFavoritos: true },
   });
   const favoritos = new Set(dados?.sistemasFavoritos ?? []);
-  const sistemas = [...SISTEMAS].sort(
+  const sistemas = [...SISTEMAS_CATALOGO].sort(
     (a, b) => Number(favoritos.has(b.chave)) - Number(favoritos.has(a.chave)),
   );
   return (
@@ -23,12 +23,12 @@ export default async function Sistemas() {
           <p className="hub-eyebrow">Encontre sua próxima aventura</p>
           <h1>Sistemas</h1>
           <p>
-            Oito mundos para explorar. Conheça as fichas, encontre referências e
+            Mundos para explorar. Conheça as fichas, encontre referências e
             escolha por onde começar.
           </p>
         </div>
       </header>
-      <VitrineSistemas sistemas={SISTEMAS} />
+      <VitrineSistemas sistemas={SISTEMAS_CATALOGO} />
       <h2 className="mt-10 mb-5 font-titulo text-xl">Todos os sistemas</h2>
       <Colecao
         classe="hub-grid-sistemas"

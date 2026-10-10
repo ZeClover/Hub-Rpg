@@ -1,0 +1,53 @@
+{
+  "mapas": [
+    {
+      "id": "east-wing",
+      "nome": "Ala leste",
+      "arquivo": "/wands-wizards/mapas/east-wing.png",
+      "origem": "https://drive.google.com/file/d/1cn-WM-J6nD31PLvmI59VdGWM-8toCt0O/view",
+      "sha256": "fc09ec23fcac08e90e33658f539243afd1f851ef198962c472ce8f9839c0b870"
+    },
+    {
+      "id": "entrance",
+      "nome": "Entrada",
+      "arquivo": "/wands-wizards/mapas/entrance.png",
+      "origem": "https://drive.google.com/file/d/1y0sHTGhcI-FS-Q3KlDFgezb416JTtu6h/view",
+      "sha256": "658fe7afaffc1a6653f65b6010f5c85c9117727896d402cfc5d6a4fcf374fc2d"
+    },
+    {
+      "id": "grand-staircase",
+      "nome": "Grande escadaria",
+      "arquivo": "/wands-wizards/mapas/grand-staircase.png",
+      "origem": "https://drive.google.com/file/d/1q3eRqlQf_tol54QNJ1lnJd49SCJ8ClbD/view",
+      "sha256": "5d19223d755640de5e0261330455d536453bf40d69a91dc34a1708bbd14a9df9"
+    },
+    {
+      "id": "middle-courtyard",
+      "nome": "Pátio central",
+      "arquivo": "/wands-wizards/mapas/middle-courtyard.png",
+      "origem": "https://drive.google.com/file/d/13ejQBhJUMWPGR5i05rQHGWdM9Thd1jrp/view",
+      "sha256": "6cbcaf84d44d28e312038ed293eb3453d8ae75e617032006eb3a6ca3969741db"
+    },
+    {
+      "id": "north-wing",
+      "nome": "Ala norte",
+      "arquivo": "/wands-wizards/mapas/north-wing.png",
+      "origem": "https://drive.google.com/file/d/1Q9mAyN6xnq-AvCfNLp2BxN_3CbHE9-CV/view",
+      "sha256": "1d867151a95f873464feb67c5135c23491c96f752112df210862e5fe30dd3f45"
+    },
+    {
+      "id": "the-quad",
+      "nome": "Quadrilátero",
+      "arquivo": "/wands-wizards/mapas/the-quad.png",
+      "origem": "https://drive.google.com/file/d/1Rzf9U5AkPGXfy47QrYY66mKuDqLgsGL_/view",
+      "sha256": "48f0af0e0841cc3fcfc049105cdcb993e7c2090d527ee7b1086b3893a4767de4"
+    },
+    {
+      "id": "west-wing",
+      "nome": "Ala oeste",
+      "arquivo": "/wands-wizards/mapas/west-wing.png",
+      "origem": "https://drive.google.com/file/d/1woo6XCyR49FsZecRwO3pFimoZ_Cxlfat/view",
+      "sha256": "643b32c162e9c0ba22307b01af4640dc1fe282e0b0d1e8a596affd00859bacda"
+    }
+  ]
+}

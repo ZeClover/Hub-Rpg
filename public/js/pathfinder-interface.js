@@ -11,7 +11,7 @@
   const nomesPericias = { acrobacia:'Acrobatismo', arcanismo:'Arcanismo', atletismo:'Atletismo', enganacao:'Dissimulação', diplomacia:'Diplomacia', intimidacao:'Intimidação', manufatura:'Manufatura', medicina:'Medicina', natureza:'Natureza', ocultismo:'Ocultismo', performance:'Performance', religiao:'Religião', sociedade:'Sociedade', furtividade:'Furtividade', sobrevivencia:'Sobrevivência', ladroagem:'Ladroagem' };
   const nomesGraus = ['Destreinado','Treinado','Especialista','Mestre','Lendário'];
   const nomesSalvaguardas = { fortitude:'Fortitude', reflexos:'Reflexos', vontade:'Vontade' };
-  const etapas = ['Identidade','Ancestralidade','Biografia','Classe','Incrementos','Perícias','Opções e equipamento','Revisão'];
+  const etapas = ['Identidade','Ancestralidade','Biografia','Classe','Incrementos','Perícias','Talentos','Revisão'];
   let ficha, catalogo, versao, localId, progressaoPermitida, guia;
   let podeEditar=false, ehMestre=false, aba='sessao', pendente=false, enviando=false, conflito=false, renderizando=false, timer, salvamento;
   const copiar = valor => structuredClone(valor);
@@ -163,22 +163,23 @@
     const bio=registro('biografias',dados.biografiaId);
     return bio?.periciasEscolha?.length?campo(dados,'Perícia da biografia','escolhasBiografia.pericia','select',{valores:[['','Escolha'],...bio.periciasEscolha.map(nome=>[nome,nomesPericias[nome]||nome])]}):'';
   }
-  function escolhasClasse(dados) {
+  function escolhasClasse(dados,{pendentes=false}={}) {
+    const campoEscolha=(...args)=>pendentes&&valor(ficha,args[2])!==undefined&&valor(ficha,args[2])!==null&&valor(ficha,args[2])!==''?'':campo(...args);
     let html=''; const classeAtual=classe(dados), especializacao=opcao(dados);
-    if(classeAtual?.periciasEscolha?.length) html+=campo(dados,'Perícia inicial da classe','escolhasClasse.periciaInicial','select',{valores:[['','Escolha'],...classeAtual.periciasEscolha.map(nome=>[nome,nomesPericias[nome]||nome])]});
-    if(especializacao?.periciasEscolha?.length) html+=campo(dados,'Perícia da especialização','escolhasClasse.periciaEspecializacao','select',{valores:[['','Escolha'],...especializacao.periciasEscolha.map(nome=>[nome,nomesPericias[nome]||nome])]});
+    if(classeAtual?.periciasEscolha?.length) html+=campoEscolha(dados,'Perícia inicial da classe','escolhasClasse.periciaInicial','select',{valores:[['','Escolha'],...classeAtual.periciasEscolha.map(nome=>[nome,nomesPericias[nome]||nome])]});
+    if(especializacao?.periciasEscolha?.length) html+=campoEscolha(dados,'Perícia da especialização','escolhasClasse.periciaEspecializacao','select',{valores:[['','Escolha'],...especializacao.periciasEscolha.map(nome=>[nome,nomesPericias[nome]||nome])]});
     for(const ganho of classeAtual?.progressao||[]) {
       const escolha=ganho.escolhaProficiencia;
-      if(escolha&&ganho.nivel<=dados.nivel) html+=campo(dados,ganho.nome+' · nível '+ganho.nivel,'escolhasClasse.'+escolha.id,'select',{valores:[['','Escolha'],...escolha.opcoes.map(nome=>[nome,nomesSalvaguardas[nome]||nomesPericias[nome]||nome])]});
+      if(escolha&&ganho.nivel<=dados.nivel) html+=campoEscolha(dados,ganho.nome+' · nível '+ganho.nivel,'escolhasClasse.'+escolha.id,'select',{valores:[['','Escolha'],...escolha.opcoes.map(nome=>[nome,nomesSalvaguardas[nome]||nomesPericias[nome]||nome])]});
     }
-    if(especializacao?.periciaSaberEscolha)html+=campo(dados,'Saber concedido pela especialização · nome','escolhasClasse.periciaSaber');
-    if((dados.talentos||[]).some(t=>t.id==='monge-magias-qi'))html+=campo(dados,'Tradição das magias de qi','escolhasClasse.tradicaoQi','select',{valores:[['','Escolha'],['divina','Divina'],['ocultista','Ocultista']]});
-    const fonteDivina=classeAtual?.conjuracao?.fonteDivina;if(fonteDivina?.opcoes?.length)html+=campo(dados,'Fonte divina','escolhasClasse.fonteDivina','select',{valores:[['','Escolha'],...fonteDivina.opcoes.map(nome=>[nome,nome==='curar'?'Curar':'Ferir'])]});
+    if(especializacao?.periciaSaberEscolha)html+=campoEscolha(dados,'Saber concedido pela especialização · nome','escolhasClasse.periciaSaber');
+    if((dados.talentos||[]).some(t=>t.id==='monge-magias-qi'))html+=campoEscolha(dados,'Tradição das magias de qi','escolhasClasse.tradicaoQi','select',{valores:[['','Escolha'],['divina','Divina'],['ocultista','Ocultista']]});
+    const fonteDivina=classeAtual?.conjuracao?.fonteDivina;if(fonteDivina?.opcoes?.length)html+=campoEscolha(dados,'Fonte divina','escolhasClasse.fonteDivina','select',{valores:[['','Escolha'],...fonteDivina.opcoes.map(nome=>[nome,nome==='curar'?'Curar':'Ferir'])]});
     const extras=typeof R.escolhasExtras==='function'?R.escolhasExtras(dados,catalogo):[...(classeAtual?.escolhasExtras||[]),...(especializacao?.escolhasExtras||[]),...(dados.talentos||[]).flatMap(t=>registro('talentos',t.id)?.escolhasExtras||[])];
-    for(const escolha of extras)if(escolha.nivel<=dados.nivel){html+=campo(dados,escolha.nome+' · nível '+escolha.nivel,'escolhasClasse.'+escolha.id,'select',{valores:[['','Escolha'],...(escolha.opcoes||[]).map(nome=>[typeof nome==='object'?nome.id:nome,typeof nome==='object'?nome.nome:nome])]});const selecionada=(escolha.opcoes||[]).find(r=>typeof r==='object'&&r.id===dados.escolhasClasse?.[escolha.id]);if(selecionada)html+=descricaoOpcao(selecionada);if(escolha.id==='divindade')html+=ajuda('divindades',dados.escolhasClasse?.divindade);}
+    for(const escolha of extras)if(escolha.nivel<=dados.nivel){html+=campoEscolha(dados,escolha.nome+' · nível '+escolha.nivel,'escolhasClasse.'+escolha.id,'select',{valores:[['','Escolha'],...(escolha.opcoes||[]).map(nome=>[typeof nome==='object'?nome.id:nome,typeof nome==='object'?nome.nome:nome])]});const selecionada=(escolha.opcoes||[]).find(r=>typeof r==='object'&&r.id===dados.escolhasClasse?.[escolha.id]);if(selecionada)html+=descricaoOpcao(selecionada);if(escolha.id==='divindade')html+=ajuda('divindades',dados.escolhasClasse?.divindade);}
     const divindade=(extras.find(e=>e.id==='divindade')?.opcoes||[]).find(e=>typeof e==='object'&&e.id===dados.escolhasClasse?.divindade);
     const concedeDominio=[classeAtual,especializacao,...(dados.talentos||[]).map(t=>registro('talentos',t.id))].some(r=>r?.concedeDominio);
-    if(concedeDominio&&divindade?.dominios?.length&&!extras.some(e=>e.id==='dominio'))html+=campo(dados,'Domínio concedido pela divindade','escolhasClasse.dominio','select',{valores:[['','Escolha'],...divindade.dominios.map(id=>[id,registro('dominios',id)?.nome||id])]});
+    if(concedeDominio&&divindade?.dominios?.length&&!extras.some(e=>e.id==='dominio'))html+=campoEscolha(dados,'Domínio concedido pela divindade','escolhasClasse.dominio','select',{valores:[['','Escolha'],...divindade.dominios.map(id=>[id,registro('dominios',id)?.nome||id])]});
     return html?'<section class="card"><h2>Escolhas de classe e talentos</h2><div class="grade">'+html+'</div></section>':'';
   }
   function camposIdentidade(dados) {
@@ -205,10 +206,10 @@
     const calculo=R.calcular(dados,catalogo), ancestral=registro('ancestralidades',dados.ancestralidadeId), bio=registro('biografias',dados.biografiaId);
     return `<section class="card"><h2>Atributos · modificadores</h2><div class="grade seis">${Object.entries(nomesAtributos).map(([nome,rotulo])=>`<div><h3>${rotulo}</h3><span class="numero">${calculo.atributos[nome]>=0?'+':''}${calculo.atributos[nome]}</span>${calculo.incrementosParciais?.[nome]?'<p class="mini">Meio incremento registrado.</p>':''}</div>`).join('')}</div><p class="mini">Um incremento por atributo em cada lote. A partir de +4, são necessários dois incrementos em níveis distintos para aumentar +1.</p>${campo(dados,'Dois incrementos livres da ancestralidade','ancestralidadeAlternativa','checkbox')}${incrementos(dados,'ancestralidade',dados.ancestralidadeAlternativa?'Ancestralidade · dois livres':'Ancestralidade · incrementos de '+(ancestral?.nome||'sua escolha'))}${!dados.ancestralidadeAlternativa&&ancestral?'<p class="mini">Fixos: '+(ancestral.incrementos||[]).map(nome=>nomesAtributos[nome]||nome).join(', ')+' · livres: '+(ancestral.livres||0)+(ancestral.defeito?' · defeito: '+nomesAtributos[ancestral.defeito]:'')+'</p>':''}${incrementos(dados,'biografia','Biografia · dois distintos; um entre '+(bio?.atributos||[]).map(nome=>nomesAtributos[nome]).join(' ou '))}${incrementos(dados,'classe','Classe · um no atributo-chave',atributosChave(dados))}${incrementos(dados,'livres','Criação · quatro livres')}${[5,10,15,20].filter(nivel=>nivel<=dados.nivel).map(nivel=>incrementos(dados,'nivel.'+nivel,'Nível '+nivel+' · quatro livres')).join('')}</section>`;
   }
-  function camposPericias(dados) {
+  function camposPericias(dados,{evolucao=false}={}) {
     const calculo=R.calcular(dados,catalogo),restricoes=classe(dados)?.restricoesIncrementosExtra||{},estilo=opcao(dados)?.periciasFixas?.[0];
     const extras=Object.entries(restricoes).filter(([nivel])=>Number(nivel)<=dados.nivel).map(([nivel,opcoes])=>campo(dados,'Melhoria extra de estilo · nível '+nivel,'incrementosPericiaExtras.'+nivel,'select',{valores:[['','Escolha'],...opcoes.map(id=>id==='pericia-do-estilo'?estilo:id).filter(Boolean).map(id=>[id,nomesPericias[id]||id])]})).join('');
-    return `<section class="card"><h2>Perícias e proficiência</h2>${extras}<p class="mini">A ficha calcula os bônus, mas nenhuma rolagem acontece no Hub. Role fora e use o valor exibido.</p><ul>${[...validacao(dados).pendencias,...validacao(dados).erros].filter(texto=>/treinamento|incrementos de perícia|graduações de perícia/i.test(texto)).map(texto=>'<li>'+escapar(texto)+'</li>').join('')||'<li>Distribuição de perícias conferida.</li>'}</ul><div class="grade">${Object.entries(nomesPericias).map(([nome,rotulo])=>`<article class="item">${campo(dados,rotulo+' · bônus '+(calculo.pericias[nome]>=0?'+':'')+calculo.pericias[nome],'pericias.'+nome,'select',{valores:nomesGraus.map((grau,i)=>[i,grau])})}${calculo.grausPericias?.[nome]>Number(dados.pericias?.[nome]||0)?'<p class="mini">Treinamento concedido automaticamente pela classe, ancestralidade ou biografia.</p>':''}</article>`).join('')}</div><div class="grade">${Object.entries(calculo.pericias||{}).filter(([id])=>id.startsWith('saber:')).map(([id,bonus])=>'<article class="item"><h3>Saber: '+escapar(id.slice(6))+'</h3><span class="numero">'+(bonus>=0?'+':'')+bonus+'</span></article>').join('')}</div>${campo(dados,'Anotações de Saberes e substituições','saberes','textarea')}</section>`;
+    return `<section class="card"><h2>Perícias e proficiência</h2>${extras}<p class="mini">A ficha calcula os bônus, mas nenhuma rolagem acontece no Hub. Role fora e use o valor exibido.</p><ul>${[...validacao(dados).pendencias,...validacao(dados).erros].filter(texto=>/treinamento|incrementos de perícia|graduações de perícia/i.test(texto)).map(texto=>'<li>'+escapar(texto)+'</li>').join('')||'<li>Distribuição de perícias conferida.</li>'}</ul><div class="grade">${Object.entries(nomesPericias).map(([nome,rotulo])=>`<article class="item">${campo(dados,rotulo+' · bônus '+(calculo.pericias[nome]>=0?'+':'')+calculo.pericias[nome],'pericias.'+nome,'select',{valores:nomesGraus.map((grau,i)=>[i,grau]).filter(([i])=>!evolucao||i>=Number(ficha.pericias?.[nome]||0)&&(i<3||i===3&&dados.nivel>=7||i===4&&dados.nivel>=15))})}${calculo.grausPericias?.[nome]>Number(dados.pericias?.[nome]||0)?'<p class="mini">Treinamento concedido automaticamente pela classe, ancestralidade ou biografia.</p>':''}</article>`).join('')}</div><div class="grade">${Object.entries(calculo.pericias||{}).filter(([id])=>id.startsWith('saber:')).map(([id,bonus])=>'<article class="item"><h3>Saber: '+escapar(id.slice(6))+'</h3><span class="numero">'+(bonus>=0?'+':'')+bonus+'</span></article>').join('')}</div>${campo(dados,'Anotações de Saberes e substituições','saberes','textarea')}</section>`;
   }
   function niveisTalento(dados,tipo) {
     const atual=classe(dados), personalizados=atual?.niveisTalentos?.[tipo];
@@ -286,9 +287,9 @@
     const origem=automatico?(escolha.origem==='biografia'?'Biografia':String(escolha.origem||escolha.fonte||'regra da ficha').split(':')[0].replace('heranca','Herança').replace('ancestralidade','Ancestralidade').replace('classe','Classe').replace('especializacao','Especialização')):'';
     return `<article class="item" data-filtro="${escapar((item.nome+' '+resumo(item)+' '+fonte(item)+' '+motivos.join(' ')).toLocaleLowerCase('pt-BR'))}">${automatico?`<strong>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</strong><p class="mini">Concedido automaticamente por ${escapar(origem)} · não consome uma escolha.</p>`:`<label class="check"><input type="checkbox" data-escolha="${tipo}" value="${escapar(item.id)}" ${selecionado?'checked':''} ${bloqueado?'disabled':''}>${escapar(item.nome)}${item.nivel!==undefined?' · nível '+item.nivel:''}</label>`}<p class="mini">${escapar(resumo(item))}</p>${!automatico&&estado?.somenteLimite?'<p class="mini"><strong>Limite atingido:</strong> desmarque outra escolha desta categoria para trocar.</p>':!automatico&&motivos.length?'<p class="mini perigo"><strong>Ainda indisponível:</strong> '+escapar(motivos.join(' '))+'</p>':!automatico&&item.somenteConsulta?'<p class="mini">Somente consulta · seleção mecânica ainda indisponível.</p>':textoRevisao(item)?'<p class="mini">Texto da fonte em revisão.</p>':''}${botao('Ver efeito e requisitos','detalhe',tipo+':'+item.id)}</article>`;
   }
-  function catalogoOpcoes(dados,tipo,titulo) {
+  function catalogoOpcoes(dados,tipo,titulo,{categoria=null}={}) {
     const selecionados=new Set((dados[tipo]||[]).map(item=>typeof item==='string'?item:item.id));
-    let itens=(catalogo[tipo]||[]).filter(item=>ehMestre||item.somenteMestre!==true);
+    let itens=(catalogo[tipo]||[]).filter(item=>(ehMestre||item.somenteMestre!==true)&&(!categoria||item.tipo===categoria));
     const calculoAtual=R.calcular(dados,catalogo), carga=tipo==='equipamentos'?calculoAtual.carga:null;
     if(tipo==='magias'&&!calculoAtual.conjuracao) return '<section class="card"><h2>Magias</h2><p>Esta ficha não possui conjuração nem magias de foco disponíveis.</p><p class="mini">Magias não podem ser escolhidas aqui. Use o Grimório apenas para consultar o catálogo; se uma classe ou talento conceder conjuração, esta área será liberada automaticamente.</p></section>';
     let grupos;
@@ -351,6 +352,8 @@
   function etapaDaPendencia(texto) {
     if(/faltam? \d+ melhorias?|Quatro livres|incrementos? de atributo/i.test(texto)) return 4;
     if(/talento/i.test(texto)) return 6;
+    if(/magia|truque|espaço|prepara|repertório/i.test(texto))return 8;
+    if(/equipamento|arma|armadura|escudo|runa/i.test(texto))return 9;
     if(/perícia|treinamento|graduaç/i.test(texto)) return 5;
     if(/especialização|opção de classe|atributo-chave/i.test(texto)) return 3;
     if(/biografia/i.test(texto)) return 2;
@@ -359,7 +362,7 @@
   }
   function camposRevisao(dados,acionavel=false) {
     const resultado=validacao(dados), calculo=R.calcular(dados,catalogo);
-    const bloco=([chave,titulo])=>resultado[chave].length?'<h3>'+titulo+'</h3><ul>'+resultado[chave].map(texto=>{const passo=acionavel?etapaDaPendencia(texto):null;return '<li>'+escapar(texto)+(passo!==null?'<div>'+botao('Resolver na etapa '+(passo+1)+' · '+etapas[passo],'ir-passo',passo)+'</div>':'')+'</li>';}).join('')+'</ul>':'';
+    const bloco=([chave,titulo])=>resultado[chave].length?'<h3>'+titulo+'</h3><ul>'+resultado[chave].map(texto=>{const passo=acionavel?etapaDaPendencia(texto):null;return '<li>'+escapar(texto)+(passo!==null?'<div>'+botao('Escolher agora · '+(passosGuia().find(p=>p.id===passo)?.nome||'Talentos'),'ir-passo',passo)+'</div>':'')+'</li>';}).join('')+'</ul>':'';
     const ganhos=calculo.ganhos||[];
     return '<section class="card"><h2>Revisão da ficha</h2><p>'+(resultado.valido?'Escolhas básicas validadas.':'Há escolhas para concluir. Use os botões para ir diretamente ao lugar correto.')+'</p>'+[['erros','Corrigir'],['pendencias','Escolhas pendentes'],['avisos','Conferir com a mesa']].map(bloco).join('')+'<p>PV máximos: <strong>'+calculo.pvMaximos+'</strong> · CA: <strong>'+calculo.ca+'</strong> · CD da classe: <strong>'+calculo.cdClasse+'</strong>.</p><details><summary>O que seu nível concede · '+ganhos.length+' itens</summary><ul class="ganhos">'+ganhos.map(item=>'<li>'+escapar(typeof item==='string'?item:item.nome)+(item.descricao?'<p class="mini">'+escapar(item.descricao)+'</p>':'')+'</li>').join('')+'</ul></details></section>';
   }
@@ -576,7 +579,8 @@
   function executarAcao(evento) {
     const elemento=evento.target.closest('[data-acao]'); if(!elemento) return;
     const acao=elemento.dataset.acao;
-    if(acao==='ir-passo'&&guia) mudarPasso(Number(elemento.dataset.valor));
+    if(acao==='categoria-guia'&&guia){guia.categoriaTalento=elemento.dataset.valor;guardarGuia();renderizarGuia();}
+    else if(acao==='ir-passo'&&guia) mudarPasso(Number(elemento.dataset.valor));
     else if(acao==='detalhe') { const [tipo,...resto]=elemento.dataset.valor.split(':'); detalhe(tipo,resto.join(':')); }
     else if(acao==='exportar-turno-anterior'&&ficha._ultimoTurnoSnapshot)exportar(ficha._ultimoTurnoSnapshot,'antes-do-turno');
     else if(acao==='declarar-iniciativa') declararIniciativa();
@@ -626,19 +630,20 @@
         baseSerial:serialBase(),
         dados:R.normalizar({...copiar(ficha),...pausado.dados},catalogo),
       };
-      if(!mesmaBase) avisar('Guia retomado sobre a versão atual da ficha. Suas escolhas foram preservadas; revise antes de confirmar.');
+      if(!mesmaBase){guia=null;avisar('A ficha mudou desde este guia. Seu rascunho foi preservado: exporte antes de recarregar ou descarte para começar com a versão atual.');return;}
     }
     else {
       if(pausado) { avisar('Existe um guia pausado de outro modo ou versão. Exporte ou descarte esse guia pelos botões da ficha; suas escolhas foram preservadas.'); return; }
       const novosDados=tipo==='evolucao'?R.evoluir(copiar(ficha),Math.min(20,ficha.nivel+1),catalogo):copiar(ficha);
-      guia={tipo,base:versao,baseSerial:serialBase(),dados:novosDados,passo:tipo==='evolucao'?4:Math.max(0,Math.min(7,ficha._guiado?.passo||0)),operacao:crypto.randomUUID()};
+      guia={tipo,base:versao,baseSerial:serialBase(),dados:novosDados,passo:tipo==='evolucao'?10:Math.max(0,Math.min(7,ficha._guiado?.passo||0)),operacao:crypto.randomUUID()};
     }
-    guardarGuia(); renderizar(); renderizarGuia(); $('#guia').showModal();
+    guardarGuia(); renderizar(); renderizarGuia(); $('#guia').show();document.body.dataset.guiaAberto='';$('#guia').scrollIntoView({block:'start'});$('#guia-etapa-titulo').focus({preventScroll:true});
   }
   function compararEvolucao(dados) {
-    const antes=R.calcular(ficha,catalogo), depois=R.calcular(dados,catalogo);
-    const linhas=[['Nível',ficha.nivel,dados.nivel],['PV máximos',antes.pvMaximos,depois.pvMaximos],['CA',antes.ca,depois.ca],['Percepção',antes.percepcao,depois.percepcao],['CD da classe',antes.cdClasse,depois.cdClasse],...Object.keys(nomesAtributos).map(nome=>[nomesAtributos[nome],antes.atributos[nome],depois.atributos[nome]]),...Object.keys(nomesPericias).filter(nome=>antes.pericias[nome]!==depois.pericias[nome]).map(nome=>[nomesPericias[nome],antes.pericias[nome],depois.pericias[nome]])];
-    return '<section class="card"><h2>Antes e depois</h2><div class="grade">'+linhas.map(([nome,a,b])=>'<div><strong>'+escapar(nome)+'</strong><p>'+escapar(a)+' → '+escapar(b)+'</p></div>').join('')+'</div><h3>Ganhos deste avanço</h3><ul>'+(dados._evolucao?.ganhos||[]).map(item=>'<li>'+escapar(item.nome)+'<p class="mini">'+escapar(item.descricao||'')+'</p></li>').join('')+'</ul><p class="mini">A evolução aumenta o limite de PV; não cura ferimentos nem recupera recursos.</p></section>';
+    const antes=R.calcular(ficha,catalogo),depois=R.calcular(dados,catalogo);
+    const linhas=[['Nível',ficha.nivel,dados.nivel],['PV máximos',antes.pvMaximos,depois.pvMaximos],['CA',antes.ca,depois.ca],['Percepção',antes.percepcao,depois.percepcao],['CD da classe',antes.cdClasse,depois.cdClasse],...Object.keys(nomesAtributos).map(nome=>[nomesAtributos[nome],antes.atributos[nome],depois.atributos[nome]])].filter(([,a,b])=>a!==b);
+    const pericias=Object.keys(nomesPericias).filter(nome=>antes.pericias[nome]!==depois.pericias[nome]);
+    return '<section class="card"><h2>Antes e depois</h2><div class="grade guia-ganhos">'+linhas.map(([nome,a,b])=>'<div class="item"><strong>'+escapar(nome)+'</strong><p><span class="ganho-antes">'+escapar(a)+' → </span><span class="numero">'+escapar(b)+'</span></p></div>').join('')+'</div>'+ (pericias.length?'<details><summary>Perícias atualizadas · '+pericias.length+'</summary><div class="grade">'+pericias.map(nome=>'<p><strong>'+nomesPericias[nome]+'</strong><br>'+antes.pericias[nome]+' → '+depois.pericias[nome]+'</p>').join('')+'</div></details>':'')+'<h3>Ganhos deste avanço</h3><ul>'+(dados._evolucao?.ganhos||[]).map(item=>'<li>'+escapar(item.nome)+'<p class="mini">'+escapar(item.descricao||'')+'</p></li>').join('')+'</ul><p class="mini">A evolução aumenta o limite de PV; não cura ferimentos nem recupera recursos.</p></section>';
   }
   function conteudoGuia() {
     const dados=guia.dados, ancestral=registro('ancestralidades',dados.ancestralidadeId), atualClasse=classe(dados);
@@ -647,30 +652,52 @@
     if(guia.passo===1) return `<section class="card"><h2>Ancestralidade e herança</h2>${campo(dados,'Ancestralidade','ancestralidadeId','select',{valores:opcoesLista(catalogo.ancestralidades)})}${ajuda('ancestralidades',dados.ancestralidadeId)}${campoHeranca(dados,ancestral)}${descricaoOpcao(herancas.find(item=>item.id===dados.herancaId))}${escolhasHeranca(dados)}<p class="mini">As melhorias de atributo da ancestralidade são escolhidas na etapa 5 · Incrementos.</p></section>`;
     if(guia.passo===2) return `<section class="card"><h2>Biografia</h2>${campo(dados,'Biografia','biografiaId','select',{valores:opcoesLista(catalogo.biografias)})}${ajuda('biografias',dados.biografiaId)}${escolhasBiografia(dados)}<p class="mini">A Biografia concede dois incrementos distintos: um entre os atributos indicados e outro livre. Você fará essa escolha na etapa 5 · Incrementos.</p></section>`;
     if(guia.passo===3) return `<section class="card"><h2>Classe e especialização</h2>${campo(dados,'Classe','classeId','select',{valores:opcoesLista(catalogo.classes)})}${ajuda('classes',dados.classeId)}${atualClasse?.opcoes?.length?campo(dados,'Especialização','opcaoClasseId','select',{valores:opcoesLista(atualClasse.opcoes)}):atualClasse?`<p class="aviso"><strong>${escapar(atualClasse.nome)} não escolhe especialização nesta etapa.</strong> ${atualClasse.id==='monge'?'A identidade mecânica vem de talentos, posturas e possíveis magias de qi.':'As escolhas próprias aparecem nas próximas etapas do guia.'}</p>`:''}${descricaoOpcao(opcao(dados))}${campo(dados,'Atributo-chave','atributoChave','select',{valores:[['','Escolha'],...atributosChave(dados).map(nome=>[nome,nomesAtributos[nome]])]})}${campo(dados,'Escolhas particulares da classe','escolhasClasseNotas','textarea')}</section>${escolhasClasse(dados)}`;
+    if(guia.passo===10)return compararEvolucao(dados);
+    if(guia.passo===4&&guia.tipo==='evolucao'){const c=R.calcular(dados,catalogo);return '<section class="card"><h2>Incrementos deste avanço</h2><div class="grade seis">'+Object.entries(nomesAtributos).map(([id,nome])=>'<div><strong>'+nome+'</strong><p class="numero">'+(c.atributos[id]>=0?'+':'')+c.atributos[id]+'</p></div>').join('')+'</div>'+[5,10,15,20].filter(n=>n<=dados.nivel&&n>ficha.nivel).map(n=>incrementos(dados,'nivel.'+n,'Nível '+n+' · quatro atributos distintos')).join('')+'</section>';}
     if(guia.passo===4) return camposAtributos(dados);
-    if(guia.passo===5) return camposPericias(dados);
-    if(guia.passo===6) return camposOpcoes(dados);
+    if(guia.passo===5) return camposPericias(dados,{evolucao:guia.tipo==='evolucao'});
+    if(guia.passo===6){const slots=escolhasTalentoDisponiveis(dados),nomes={ancestralidade:'Ancestralidade',classe:'Classe',pericia:'Perícia',geral:'Geral'},contagem=slots.filter(s=>guia.tipo!=='evolucao'||s.nivel>ficha.nivel);return '<section class="card guia-cotas"><h2>Escolhas de talentos</h2><div class="grade">'+contagem.map(slot=>{const usados=(dados.talentos||[]).filter(t=>!t.concedidoAutomaticamente&&t.origem!=='biografia'&&t.tipo===slot.tipo&&t.nivel===slot.nivel&&(t.origem||null)===(slot.origem||null)).length;return '<div><strong>'+escapar(nomes[slot.tipo]||slot.tipo)+' · nível '+slot.nivel+'</strong><p>'+usados+' / '+(slot.quantidade||1)+' escolhidos</p></div>';}).join('')+'</div><div class="acoes guia-categorias">'+[['','Todas'],...Object.entries(nomes)].map(([id,nome])=>'<button type="button" data-acao="categoria-guia" data-valor="'+id+'" aria-pressed="'+((guia.categoriaTalento||'')===id)+'">'+nome+'</button>').join('')+'</div></section>'+catalogoOpcoes(dados,'talentos','Talentos',{categoria:guia.categoriaTalento})+escolhasClasse(dados,{pendentes:guia.tipo==='evolucao'});}
+    if(guia.passo===8){const conj=R.calcular(dados,catalogo).conjuracao;return catalogoOpcoes(dados,'magias','Magias')+(conj?preparacaoMagias(dados,conj):'')+escolhasClasse(dados,{pendentes:true});}
+    if(guia.passo===9)return camposDefesa(dados)+'<section class="card"><h2>Equipamento inicial</h2>'+campo(dados,'Equipamento inicial e moedas','equipamentoInicial','textarea')+'</section>'+catalogoOpcoes(dados,'equipamentos','Inventário desta ficha');
     return camposRevisao(dados,true)+(guia.tipo==='evolucao'?compararEvolucao(dados):'')+`<p>Confirmar salva o nível ${dados.nivel} e suas escolhas uma única vez sobre a versão conferida.</p>`;
   }
+  function passosGuia() {
+    const descricoes={0:'Dê um nome e um conceito ao personagem.',1:'Escolha a ancestralidade, a herança e seus benefícios.',2:'Escolha a biografia e o treinamento que ela concede.',3:'Defina a classe, as escolhas próprias e o atributo-chave.',4:'Cada lote usa atributos distintos. Os valores finais são calculados automaticamente.',5:'Distribua os treinamentos e aumentos disponíveis. As concessões automáticas já aparecem na ficha.',6:'Escolha os talentos de cada categoria. Opções bloqueadas e futuras continuam disponíveis para consulta.',8:'Escolha as magias permitidas e prepare os espaços, quando sua classe exigir.',9:'Registre o inventário e escolha o equipamento usado na defesa.',10:'Veja os números que mudam e os benefícios recebidos neste nível.',7:'Confira as escolhas. Os atalhos levam diretamente ao campo que falta preencher.'};
+    const nomes={...Object.fromEntries(etapas.map((n,i)=>[i,n])),8:'Magias e preparação',9:'Equipamento',10:'Ganhos do nível'};
+    let ids;
+    if(guia.tipo==='criacao')ids=[0,1,2,3,4,5,6,...(R.calcular(guia.dados,catalogo).conjuracao?[8]:[]),9,7];
+    else {
+      const extras=classe(guia.dados)?.restricoesIncrementosExtra||{},pendencias=validacao(R.evoluir(copiar(ficha),guia.dados.nivel,catalogo)).pendencias;
+      ids=[10,...([5,10,15,20].some(n=>n>ficha.nivel&&n<=guia.dados.nivel)?[4]:[]),...((pendencias.some(t=>/perícia|treinamento|proficiência/i.test(t))||Object.keys(extras).some(n=>Number(n)>ficha.nivel&&Number(n)<=guia.dados.nivel))?[5]:[]),6,...(R.calcular(guia.dados,catalogo).conjuracao?[8]:[]),7];
+    }
+    return ids.map(id=>({id,nome:nomes[id],instrucao:descricoes[id]}));
+  }
   function renderizarGuia() {
-    if(!guia) return;
-    $('#guia-titulo').textContent=guia.tipo==='evolucao'?`Evoluir · nível ${ficha.nivel} → ${guia.dados.nivel}`:'Criar e revisar personagem';
-    $('#guia-contexto').textContent='Rascunho independente. Pausar guarda as escolhas; descartar mantém a ficha atual intacta.';
-    $('#guia-passos').innerHTML=etapas.map((nome,i)=>`<button type="button" data-passo="${i}" aria-current="${guia.passo===i?'step':'false'}" ${guia.tipo==='evolucao'&&i<4?'disabled':''}>${i+1}. ${nome}</button>`).join('');
-    escreverHTML($('#guia-conteudo'),conteudoGuia()); $('#guia-aviso').textContent='';
-    $('#guia-voltar').disabled=guia.passo<=(guia.tipo==='evolucao'?4:0)||enviando;
-    $('#guia-proximo').hidden=guia.passo===7; $('#guia-confirmar').hidden=guia.passo!==7; $('#guia-confirmar').disabled=enviando;
+    if(!guia)return;
+    const passos=passosGuia();let indice=passos.findIndex(p=>p.id===guia.passo);
+    if(indice<0){indice=0;guia.passo=passos[0].id;}
+    const etapa=passos[indice];
+    $('#guia-titulo').textContent=guia.tipo==='evolucao'?`Evoluir · nível ${ficha.nivel} → ${guia.dados.nivel}`:'Criar personagem';
+    $('#guia-contexto').textContent='Uma etapa por vez. Pausar guarda suas escolhas; descartar recupera a ficha anterior.';
+    $('#guia-progresso').textContent=`Passo ${indice+1} de ${passos.length}`;
+    $('#guia-etapa-titulo').textContent=etapa.nome;$('#guia-instrucao').textContent=etapa.instrucao;
+    $('#guia-passos').innerHTML=passos.map((p,i)=>`<button type="button" data-passo="${p.id}" aria-current="${guia.passo===p.id?'step':'false'}" class="${i<indice?'visitado':''}"><span>${i+1}</span><span>${p.nome}</span></button>`).join('');
+    escreverHTML($('#guia-conteudo'),conteudoGuia());$('#guia-aviso').textContent='';
+    $('#guia-voltar').disabled=indice===0||enviando;$('#guia-proximo').hidden=indice===passos.length-1;
+    $('#guia-proximo').textContent=indice===passos.length-2?'Revisar escolhas →':'Próxima →';
+    $('#guia-confirmar').hidden=guia.passo!==7;$('#guia-confirmar').disabled=enviando;
+    $('#guia-confirmar').textContent=guia.tipo==='evolucao'?'Confirmar evolução e salvar':'Concluir — ver ficha completa';
   }
   function mudarPasso(numero) {
-    if(!guia||enviando) return;
-    guia.passo=Math.max(guia.tipo==='evolucao'?4:0,Math.min(7,numero));
-    guia.dados._guiado={...guia.dados._guiado,passo:guia.passo};
-    guardarGuia(); renderizarGuia(); $('#guia').scrollTop=0;
+    if(!guia||enviando)return;
+    const passos=passosGuia();if(!passos.some(p=>p.id===numero)){const destino=guia.tipo==='evolucao'?6:0;numero=destino;}
+    guia.passo=numero;guia.dados._guiado={...guia.dados._guiado,passo:guia.passo};guardarGuia();renderizarGuia();$('#guia').scrollIntoView({block:'start'});$('#guia-etapa-titulo').focus({preventScroll:true});
   }
+  function navegarGuia(direcao){const passos=passosGuia(),i=passos.findIndex(p=>p.id===guia?.passo);if(i>=0&&passos[i+direcao])mudarPasso(passos[i+direcao].id);}
   function fecharGuia(descartar=false) {
     if(enviando) return;
     if(descartar) remover(chave('guia')); else guardarGuia();
-    guia=null; $('#guia').close(); renderizar();
+    guia=null;delete document.body.dataset.guiaAberto; $('#guia').close(); renderizar();
   }
   async function confirmarGuia() {
     if(!guia||enviando||!podeEditar) return;
@@ -690,7 +717,7 @@
     try {
       ficha=await persistir(novosDados,guia.base,guia.operacao);
       pendente=false; remover(chave('guia')); remover(chave('recuperacao')); guia=null;
-      $('#guia').close(); $('#status').textContent='Guia concluído · salvo ✓'; avisar('Escolhas aplicadas à mesma ficha.'); renderizar();
+      delete document.body.dataset.guiaAberto;$('#guia').close(); $('#status').textContent='Guia concluído · salvo ✓'; avisar('Escolhas aplicadas à mesma ficha.'); renderizar();
     } catch(erro) { $('#guia-aviso').textContent=erro.message; guardarGuia(); }
     finally { enviando=false; $('#guia-confirmar').disabled=conflito; }
   }
@@ -718,9 +745,10 @@
   });
   $('#guia-conteudo').addEventListener('input',filtrar); $('#guia-conteudo').addEventListener('click',executarAcao);
   $('#guia-form').onsubmit=evento=>evento.preventDefault();
-  $('#guia-passos').onclick=evento=>{if(evento.target.dataset.passo) mudarPasso(Number(evento.target.dataset.passo));};
-  $('#guia-voltar').onclick=()=>mudarPasso(guia.passo-1); $('#guia-proximo').onclick=()=>mudarPasso(guia.passo+1);
+  $('#guia-passos').onclick=evento=>{const button=evento.target.closest('[data-passo]');if(button)mudarPasso(Number(button.dataset.passo));};
+  $('#guia-voltar').onclick=()=>navegarGuia(-1); $('#guia-proximo').onclick=()=>navegarGuia(1);
   $('#guia-fechar').onclick=()=>fecharGuia(); $('#guia-cancelar').onclick=()=>fecharGuia(true);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&guia&&!$('#detalhes').open){e.preventDefault();fecharGuia();}});
   $('#guia').addEventListener('cancel',evento=>{evento.preventDefault(); fecharGuia();});
   $('#guia-confirmar').onclick=confirmarGuia; $('#guia-exportar').onclick=()=>{if(guia) exportar(guia.dados,'rascunho');};
   $('#criar').onclick=()=>abrirGuia('criacao'); $('#evoluir').onclick=()=>{if(ficha.nivel<20) abrirGuia('evolucao');};

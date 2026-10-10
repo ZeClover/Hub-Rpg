@@ -44,6 +44,10 @@ export const VISUAIS: Record<string, VisualSistema> = {
     tema: "Poderes e ascensão",
     frase: "Dê forma ao seu poder.",
   },
+  "wands-wizards": {
+    imagem: "hogwarts", icone: "magia", tema: "Escola de magia · Wands & Wizards",
+    frase: "Sua casa, sua varinha e sua forma de conjurar.",
+  },
   "hogwarts-rpg": {
     imagem: "hogwarts",
     icone: "magia",
@@ -132,6 +136,7 @@ export const CAPAS_VERTICAIS = new Set(["fabula-ultima", "dnd-5e", "sao", "pathf
 export const CAPAS_ORIGINAIS: Record<string, string> = {
   "pathfinder-2e-remaster": "/imagens/capas/pathfinder-remaster.webp",
   sao: "/imagens/capas/sao.webp",
+  "wands-wizards": "/imagens/capas/hogwarts.webp",
   "hogwarts-rpg": "/imagens/capas/hogwarts.webp",
   "fabula-ultima": "/imagens/capas/fabula-ultima.webp",
   "dnd-5e": "/imagens/capas/dnd-5e.webp",

@@ -17,15 +17,17 @@
   <p id="modo"></p><p id="aviso" class="aviso" role="status" aria-live="polite"></p><p id="cobertura" class="mini"></p>
   <div id="acoes" class="acoes" hidden><button id="criar" class="primario">Criar · modo guiado</button><button id="evoluir">Evoluir · modo guiado</button><button id="salvar">Salvar agora</button><button id="exportar-guia-pausado" hidden>Exportar guia pausado</button><button id="descartar-guia-pausado" hidden>Descartar guia pausado</button></div>
   <nav id="abas" aria-label="Seções da ficha"></nav><div id="ficha" aria-busy="true"></div><select id="seletor" aria-label="Identidade local da ficha" hidden></select>
-</main>
-<footer>Pathfinder 2e Remaster · referências por livro e página. Exceções e opções incompletas são conferidas com o mestre. O Livro Básico anterior ao Remaster não é utilizado.</footer>
+
+
 <dialog id="guia" aria-labelledby="guia-titulo">
   <div class="linha"><h2 id="guia-titulo">Criação guiada</h2><button id="guia-fechar">Pausar e fechar</button></div>
-  <p id="guia-contexto" class="mini"></p><nav id="guia-passos" aria-label="Etapas do guia"></nav>
+  <p id="guia-contexto" class="mini"></p><div class="guia-layout"><nav id="guia-passos" aria-label="Etapas do guia"></nav><div class="guia-etapa"><p id="guia-progresso" class="mini"></p><h2 id="guia-etapa-titulo" tabindex="-1"></h2><p id="guia-instrucao"></p>
   <form id="guia-form"><div id="guia-conteudo"></div><p id="guia-aviso" role="status" aria-live="polite"></p>
-    <div class="acoes"><button type="button" id="guia-voltar">← Anterior</button><button type="button" id="guia-proximo">Próxima →</button><button type="button" id="guia-confirmar" class="primario" hidden>Confirmar e salvar</button><button type="button" id="guia-exportar">Exportar rascunho</button><button type="button" id="guia-cancelar">Descartar guia</button></div>
-  </form>
+    <div class="acoes"><button type="button" id="guia-voltar">← Anterior</button><button type="button" id="guia-proximo">Próxima →</button><button type="button" id="guia-confirmar" class="primario" hidden>Confirmar e salvar</button><button type="button" class="secundario" id="guia-exportar">Exportar rascunho</button><button type="button" class="secundario" id="guia-cancelar">Descartar guia</button></div>
+  </form></div></div>
 </dialog>
+</main>
 <dialog id="detalhes" aria-labelledby="detalhes-titulo"><div class="linha"><h2 id="detalhes-titulo">O que esta opção faz</h2><button id="detalhes-fechar">Fechar</button></div><div id="detalhes-conteudo"></div></dialog>
+<footer>Pathfinder 2e Remaster · referências por livro e página. Exceções e opções incompletas são conferidas com o mestre. O Livro Básico anterior ao Remaster não é utilizado.</footer>
 <script src="/js/pathfinder-regras.js"></script><script src="/js/pathfinder-combate.js"></script><script src="/js/pathfinder-interface.js"></script>
 </body></html>

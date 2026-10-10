@@ -1,0 +1,14 @@
+ALTER TABLE "colecionaveis" ADD COLUMN IF NOT EXISTS "raridade" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "colecionaveis" ADD COLUMN IF NOT EXISTS "edicao" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "colecionaveis" ADD COLUMN IF NOT EXISTS "origemRevelada" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "colecionaveis" ADD COLUMN IF NOT EXISTS "segredoMestre" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "colecionaveis" ADD COLUMN IF NOT EXISTS "visibilidade" TEXT NOT NULL DEFAULT 'silhueta';
+ALTER TABLE "colecionaveis" DROP CONSTRAINT IF EXISTS "colecionaveis_categoria_check";
+UPDATE "colecionaveis" SET "categoria"='biblioteca' WHERE "categoria"='paginas';
+UPDATE "colecionaveis" SET "categoria"='curiosidades' WHERE "categoria"='reliquias';
+ALTER TABLE "colecionaveis" ADD CONSTRAINT "colecionaveis_categoria_check" CHECK ("categoria" IN ('sapos','criaturas','biblioteca','recordacoes','curiosidades'));
+ALTER TABLE "colecionaveis" DROP CONSTRAINT IF EXISTS "colecionaveis_visibilidade_check";
+ALTER TABLE "colecionaveis" ADD CONSTRAINT "colecionaveis_visibilidade_check" CHECK ("visibilidade" IN ('silhueta','oculto'));
+ALTER TABLE "concessoes_colecionaveis" ADD COLUMN IF NOT EXISTS "tipo" TEXT NOT NULL DEFAULT 'conceder';
+ALTER TABLE "concessoes_colecionaveis" DROP CONSTRAINT IF EXISTS "concessoes_colecionaveis_tipo_check";
+ALTER TABLE "concessoes_colecionaveis" ADD CONSTRAINT "concessoes_colecionaveis_tipo_check" CHECK ("tipo" IN ('conceder','retirar'));

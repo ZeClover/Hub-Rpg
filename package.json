@@ -10,7 +10,7 @@
     "postinstall": "prisma generate",
     "test": "node --test --experimental-strip-types \"src/**/*.test.ts\"",
     "imagens": "node scripts/preparar-miniaturas.mjs",
-    "prebuild": "npm run imagens"
+    "prebuild": "npm run imagens && node scripts/preparar-gabinete.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",

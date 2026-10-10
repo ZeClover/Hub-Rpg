@@ -1,0 +1,20 @@
+const {PGlite}=require('@electric-sql/pglite'),fs=require('node:fs/promises'),assert=require('node:assert/strict'),os=require('node:os'),path=require('node:path');
+(async()=>{const dir=await fs.mkdtemp(path.join(os.tmpdir(),'criaturas-pg-'));let db=new PGlite(dir);let n=0;try{
+ await db.exec('CREATE TABLE campanhas(id UUID PRIMARY KEY);CREATE TABLE personagens(id UUID PRIMARY KEY);CREATE ROLE anon;CREATE ROLE authenticated;');
+ const sql=await fs.readFile(path.join(__dirname,'../prisma/migrations/0033_criaturas_revelacao/migration.sql'),'utf8');
+ for(const folder of ['0031_gabinete_curiosidades','0032_acervo_magico'])await db.exec(await fs.readFile(path.join(__dirname,'../prisma/migrations/'+folder+'/migration.sql'),'utf8'));
+ const camp='22222222-2222-2222-2222-222222222222',p='11111111-1111-1111-1111-111111111111',item='33333333-3333-3333-3333-333333333333',old='44444444-4444-4444-4444-444444444444',newop='55555555-5555-5555-5555-555555555555',offline='66666666-6666-6666-6666-666666666666';
+ await db.query('INSERT INTO campanhas VALUES ($1)',[camp]);await db.query('INSERT INTO personagens VALUES ($1)',[p]);await db.query('INSERT INTO colecionaveis(id,"campanhaId",categoria,nome,descricao,repetivel) VALUES ($1,$2,$3,$4,$5,true)',[item,camp,'criaturas','Fiuum','Miniatura']);
+ const grant=async op=>db.query('INSERT INTO concessoes_colecionaveis("operacaoId","personagemId","colecionavelId","campanhaId",quantidade,"concedidoPorId") VALUES ($1,$2,$3,$4,1,$2)',[op,p,item,camp]);
+ await grant(old);await db.exec(sql);assert.ok((await db.query('SELECT "revelacaoVistaEm" FROM concessoes_colecionaveis')).rows[0].revelacaoVistaEm);n++;
+ await grant(newop);await grant(offline);await db.exec(sql);assert.equal((await db.query('SELECT "revelacaoVistaEm" FROM concessoes_colecionaveis WHERE "operacaoId"=$1',[newop])).rows[0].revelacaoVistaEm,null);n++;
+ await db.query('INSERT INTO acervos_colecionaveis("personagemId","colecionavelId","campanhaId",quantidade) VALUES ($1,$2,$3,2)',[p,item,camp]);
+ const source=await fs.readFile(path.join(__dirname,'../src/lib/colecionaveis/servico.ts'),'utf8');const template=source.match(/UPDATE "concessoes_colecionaveis" e SET[\s\S]*?RETURNING e\."operacaoId"/)[0];
+ const values={ 'c.operacaoId':newop,personagemId:p,'c.campanhaId':camp };let params=[];const query=template.replace(/\$\{([^}]+)\}/g,(_,k)=>{params.push(values[k]);return '$'+params.length;});
+ const a=await Promise.all([db.query(query,params),db.query(query,params)]);assert.deepEqual(a.map(r=>r.rows.length).sort(),[0,1]);n++;
+ assert.equal((await db.query(query,[offline,'77777777-7777-7777-7777-777777777777',camp])).rows.length,0);assert.equal((await db.query(query,[offline,p,'77777777-7777-7777-7777-777777777777'])).rows.length,0);n+=2;
+ await db.query('UPDATE colecionaveis SET "silhuetaArquivo"=$1',[new Uint8Array([137,80,78,71])]);await db.close();db=new PGlite(dir);assert.equal((await db.query('SELECT "revelacaoVistaEm" FROM concessoes_colecionaveis WHERE "operacaoId"=$1',[offline])).rows[0].revelacaoVistaEm,null);assert.equal((await db.query('SELECT "silhuetaArquivo" FROM colecionaveis')).rows[0].silhuetaArquivo.length,4);n+=2;
+ await db.query('DELETE FROM acervos_colecionaveis');assert.equal((await db.query(query,[offline,p,camp])).rows.length,0);n++;
+ await db.exec('SET ROLE authenticated');await assert.rejects(()=>db.query('SELECT "silhuetaArquivo" FROM colecionaveis'),{code:'42501'});await assert.rejects(()=>db.query('UPDATE concessoes_colecionaveis SET "revelacaoVistaEm"=NULL'),{code:'42501'});n+=2;
+ console.log(n+' verificações PostgreSQL passaram: migração repetível, concessões antigas, reserva atômica entre dispositivos, offline, revogação, bytes persistidos e RLS.');
+ }finally{await db.close();await fs.rm(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exit(1);});

@@ -1,0 +1,62 @@
+{
+  "grifinoria": {
+    "arquivo": "/wands-wizards/brasoes/legacy/gryffindor-crest.png",
+    "origem": "Arquivo fornecido pelo usuário: SortingHat.rar",
+    "nomeOriginal": "UI_T_SortingCrest_Gryffindor.png",
+    "dimensoes": [
+      1024,
+      1024
+    ],
+    "sha256": "7b2b988f031533a11903203065175e17693d339cdcf992c6ceaadbfd25b73d29",
+    "alteracoesNaImagem": "Nenhuma; cópia integral do arquivo recebido.",
+    "licenca": "Não informada pelo usuário."
+  },
+  "sonserina": {
+    "arquivo": "/wands-wizards/brasoes/legacy/slytherin-crest.png",
+    "origem": "Arquivo fornecido pelo usuário: SortingHat.rar",
+    "nomeOriginal": "UI_T_SortingCrest_Slytherin.png",
+    "dimensoes": [
+      1024,
+      1024
+    ],
+    "sha256": "0349233c751f974d5267e5906bcd7f0ea3f64fca9272b3ca8384c8a092990ea9",
+    "alteracoesNaImagem": "Nenhuma; cópia integral do arquivo recebido.",
+    "licenca": "Não informada pelo usuário."
+  },
+  "corvinal": {
+    "arquivo": "/wands-wizards/brasoes/legacy/ravenclaw-crest.png",
+    "origem": "Arquivo fornecido pelo usuário: SortingHat.rar",
+    "nomeOriginal": "UI_T_SortingCrest_Ravenclaw.png",
+    "dimensoes": [
+      1024,
+      1024
+    ],
+    "sha256": "6b570fdb1fa8c997083c9ce899644acb7b9c824518b405e816a4f3c4f11abe54",
+    "alteracoesNaImagem": "Nenhuma; cópia integral do arquivo recebido.",
+    "licenca": "Não informada pelo usuário."
+  },
+  "lufalufa": {
+    "arquivo": "/wands-wizards/brasoes/legacy/hufflepuff-crest.png",
+    "origem": "Arquivo fornecido pelo usuário: SortingHat.rar",
+    "nomeOriginal": "UI_T_SortingCrest_Hufflepuff.png",
+    "dimensoes": [
+      1024,
+      1024
+    ],
+    "sha256": "55bcc6486d20249c1ff81a3fd957cc5866f28e2ab73f3f44cea71a03a829518b",
+    "alteracoesNaImagem": "Nenhuma; cópia integral do arquivo recebido.",
+    "licenca": "Não informada pelo usuário."
+  },
+  "neutra": {
+    "arquivo": "/wands-wizards/brasoes/legacy/hogwarts-crest.png",
+    "origem": "Arquivo fornecido pelo usuário: f1ed3e89f6c3dfe0815ba18eb1ac2b8f-removebg-preview (1).rar",
+    "nomeOriginal": "f1ed3e89f6c3dfe0815ba18eb1ac2b8f-removebg-preview (1).png",
+    "dimensoes": [
+      480,
+      520
+    ],
+    "sha256": "ce855c0fbeab18e8c0a7000bcb1a0a7590b1cfe3dd5d1f38d78c15462f36a556",
+    "alteracoesNaImagem": "Nenhuma; cópia integral do arquivo recebido.",
+    "licenca": "Não informada pelo usuário."
+  }
+}

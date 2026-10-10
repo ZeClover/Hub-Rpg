@@ -2,6 +2,7 @@
 /* Somente APIs simuladas: não grava dados no Hub real.
    PLAYWRIGHT_CORE=/caminho/playwright-core node scripts/testar-pathfinder-interface.cjs */
 const {chromium}=require(process.env.PLAYWRIGHT_CORE||'playwright-core');
+const {execFileSync}=require('node:child_process');
 const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
 const raiz=path.resolve(__dirname,'../public');
 const id='11111111-1111-4111-8111-111111111111';
@@ -13,8 +14,8 @@ const catalogo={fonte:{nome:'Fonte simulada',estado:'parcial'},classes:[classe],
 const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservado',nivel:1,xp:1000,ancestralidadeId:'humano',herancaId:'versatil',biografiaId:'artesao',classeId:'guerreiro',atributoChave:'for',ancestralidadeAlternativa:true,incrementos:{ancestralidade:['for','con'],biografia:['for','int'],classe:['for'],livres:['for','des','con','sab'],nivel:{}},pericias:{acrobacia:1,arcanismo:1,diplomacia:1,furtividade:1},talentos:[{id:'a1',nivel:1,tipo:'ancestralidade'},{id:'c1',nivel:1,tipo:'classe'},{id:'bio',nivel:1,tipo:'pericia',origem:'biografia'}],magias:[],vida:{atual:7,maxima:20,temporaria:3},notas:'Campo que deve continuar',campoDesconhecido:{preservar:true},_guiado:{concluido:true,passo:7},_mestre:{segredo:'não exportar'}};
 (async()=>{
   const browser=await chromium.launch({executablePath:process.env.CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
-  let testes=0;
-  async function ambiente({readonly=false,fail=null,local=false,permitido=2,mestre=false,real=null,simulado=null,fichaId=id,viewport={width:390,height:844}}={}) {
+  let testes=0;const cachePublico=new Map();
+  async function ambiente({antes=false,readonly=false,fail=null,local=false,permitido=2,mestre=false,real=null,simulado=null,fichaId=id,viewport={width:390,height:844}}={}) {
     const context=await browser.newContext({viewport}),page=await context.newPage();
     const estado={dados:structuredClone(real?.base||simulado?.base||base),versao:'v1',patches:[],iniciativas:[],buscas:[],falha:fail};
     const validarServidor=real?await import('../src/lib/pathfinder/validar-ficha.ts'):null;
@@ -41,7 +42,8 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
         const fonte=url.pathname.includes('core-2')?real?.pc2:url.pathname.includes('gm-core')?real?.gm:real?.pc1||simulado?.catalogo||catalogo;
         return route.fulfill({contentType:'application/json',body:JSON.stringify(fonte||{...catalogo,classes:[],ancestralidades:[],biografias:[],talentos:[]})});
       }
-      try { const bytes=await fs.readFile(path.join(raiz,url.pathname));return route.fulfill({contentType:url.pathname.endsWith('.js')?'application/javascript':url.pathname.endsWith('.css')?'text/css':'text/html',body:bytes}); }
+      if(process.env.PF2_PUBLIC==='1'&&!antes){if(!cachePublico.has(url.pathname)){const raw=execFileSync('python',['-c','import urllib.request,base64,json,sys\nr=urllib.request.urlopen(sys.argv[1]);print(json.dumps({"status":r.status,"mime":r.headers.get("Content-Type","application/octet-stream"),"body":base64.b64encode(r.read()).decode()}))','https://hub-rpg-eight.vercel.app'+url.pathname],{maxBuffer:8*1024*1024});cachePublico.set(url.pathname,JSON.parse(raw));}const r=cachePublico.get(url.pathname);return route.fulfill({status:r.status,contentType:r.mime,body:Buffer.from(r.body,'base64')});}
+      const anteriores={'/pathfinder-2e.html':'/tmp/pf-guia-antes.html','/js/pathfinder-interface.js':'/tmp/pf-interface-antes.js','/css/pathfinder.css':'/tmp/pf-css-antes.css'};try { const bytes=await fs.readFile(antes&&anteriores[url.pathname]?anteriores[url.pathname]:path.join(raiz,url.pathname));return route.fulfill({contentType:url.pathname.endsWith('.js')?'application/javascript':url.pathname.endsWith('.css')?'text/css':'text/html',body:bytes}); }
       catch{return route.fulfill({status:404,body:'não encontrado'});}
     });
     const errors=[];page.on('pageerror',erro=>errors.push(erro.message));
@@ -57,6 +59,13 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
     await page.locator('#guia-passos [data-passo="7"]').click();
   }
   try {
+    for(const width of [320,390,1440]){
+      const {page,context,estado,errors}=await ambiente({viewport:{width,height:900}});await page.locator('#evoluir').click();assert.equal(await page.locator('#guia').evaluate(e=>e.matches(':modal')),false);assert.equal(await page.locator('#ficha').isVisible(),false);assert.equal(await page.locator('#guia-etapa-titulo').innerText(),'Ganhos do nível');assert.equal(await page.locator('#guia-passos [data-passo="4"]').count(),0);assert.equal(await page.locator('#guia-passos [data-passo="9"]').count(),0);await page.locator('#guia-proximo').click();assert.equal(await page.locator('#guia-etapa-titulo').innerText(),'Talentos');assert.equal(await page.locator('#guia-conteudo [data-editar="armaduraId"]').count(),0);await page.locator('[data-acao="categoria-guia"][data-valor="classe"]').click();assert.equal(await page.locator('#guia-conteudo [data-escolha="talentos"][value="p2"]').count(),0);assert.equal(await page.locator('#guia-conteudo [data-escolha="talentos"][value="c2"]').count(),1);await page.locator('[data-acao="categoria-guia"][data-valor=""]').click();await page.locator('#guia-voltar').click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);if(process.env.PF2_SCREENSHOTS){await fs.mkdir(path.join(raiz,'../artifacts/pathfinder-guiado'),{recursive:true});await page.screenshot({path:path.join(raiz,'../artifacts/pathfinder-guiado/evolucao-'+width+'.png'),fullPage:true});}await page.keyboard.press('Escape');assert.equal(await page.locator('#guia').isVisible(),false);assert.equal(estado.patches.length,0);assert.deepEqual(errors,[]);await context.close();testes++;
+    }
+    {const {page,context,estado}=await ambiente({permitido:5,simulado:{base:{...base,nivel:4},catalogo}});await page.locator('#evoluir').click();await page.locator('#guia-passos [data-passo="4"]').click();assert.equal(await page.locator('#guia-conteudo [data-incremento="ancestralidade"]').count(),0);assert.equal(await page.locator('#guia-conteudo [data-incremento="livres"]').count(),0);for(const id of ['for','des','con','int'])await page.locator('#guia-conteudo [data-incremento="nivel.5"][value="'+id+'"]').check();assert.equal(await page.locator('#guia-conteudo [data-incremento="nivel.5"][value="sab"]').isDisabled(),true);await page.locator('#guia-cancelar').click();assert.equal(estado.dados.nivel,4);assert.equal(estado.patches.length,0);await context.close();testes++;}
+    {const {page,context,estado}=await ambiente();await page.locator('#evoluir').click();await page.locator('#guia-fechar').click();const original=await page.evaluate(id=>localStorage.getItem('hub_pf2_guia_v1:'+id),id);estado.versao='v99';estado.dados.notas='Alteração feita pela mesa';await page.reload();await page.locator('#evoluir').click();assert.equal(await page.locator('#guia').isVisible(),false);assert.match(await page.locator('#aviso').innerText(),/ficha mudou/i);assert.equal(await page.evaluate(id=>localStorage.getItem('hub_pf2_guia_v1:'+id),id),original);assert.equal(estado.patches.length,0);await context.close();testes++;}
+    {const {page,context,estado}=await ambiente();await page.locator('#criar').click();await page.locator('#guia-passos [data-passo="9"]').click();assert.equal(await page.locator('#guia-conteudo [data-editar="equipamentoInicial"]').count(),1);assert.equal(await page.locator('#guia-conteudo [data-escolha="talentos"]').count(),0);await page.locator('#guia-passos [data-passo="7"]').click();const name=await page.locator('#guia-etapa-titulo').innerText();await page.locator('#guia-fechar').click();await page.reload();await page.locator('#criar').click();assert.equal(await page.locator('#guia-etapa-titulo').innerText(),name);await page.locator('#guia-cancelar').click();assert.equal(estado.patches.length,0);await context.close();testes++;}
+    if(process.env.PF2_SCREENSHOTS){for(const antes of [true,false]){const {page,context}=await ambiente({antes,viewport:{width:1440,height:900}});await page.locator('#criar').click();await page.locator('#guia-passos [data-passo="1"]').click();await page.screenshot({path:path.join(raiz,'../artifacts/pathfinder-guiado/criacao-'+(antes?'antes':'depois')+'.png'),fullPage:true});await context.close();}}
     {const {page,context,estado,errors}=await ambiente({readonly:true});assert.equal(await page.locator('#acoes').isVisible(),false);assert.equal(await page.locator('[data-editar="vida.atual"]').isDisabled(),true);await page.waitForTimeout(700);assert.equal(estado.patches.length,0);assert.ok(!estado.buscas.some(url=>url.includes('campanha')));assert.deepEqual(errors,[]);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await context.close();testes++;}
     {const {page,context,estado}=await ambiente();await page.locator('#evoluir').click();await page.locator('#guia-passos [data-passo="6"]').click();await page.locator('[data-escolha="talentos"][value="c2"]').check();await page.locator('#guia-cancelar').click();assert.equal(estado.dados.nivel,1);assert.equal(estado.dados.vida.atual,7);assert.equal(estado.patches.length,0);assert.equal(await page.evaluate(id=>localStorage.getItem('hub_pf2_guia_v1:'+id),id),null);await context.close();testes++;}
     {const {page,context,estado}=await ambiente();await page.locator('#evoluir').click();await page.locator('#guia-passos [data-passo="6"]').click();await page.locator('[data-escolha="talentos"][value="c2"]').check();await page.locator('#guia-fechar').click();await page.reload();await page.locator('#evoluir').click();assert.equal(await page.locator('[data-escolha="talentos"][value="c2"]').isChecked(),true);assert.equal(estado.dados.nivel,1);assert.equal(estado.patches.length,0);await context.close();testes++;}
@@ -131,13 +140,7 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
       await equipado.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
       valores=R.calcular(equipado.estado.dados,combinado);assert.equal(valores.dadosArma,2);
       await equipado.page.locator('[data-aba="sessao"]').click();
-      await equipado.page.evaluate(()=>{crypto.getRandomValues=bytes=>{bytes.fill(19);return bytes;};Math.random=()=>0;});
-      await equipado.page.locator('[data-acao="ataque"][data-valor="1"]').click();
-      assert.ok((await equipado.page.locator('#rolagem-contexto').textContent()).includes('+'+(valores.ataque-4)));
-      await equipado.page.locator('#rolagem-cd').fill('10');await equipado.page.locator('#rolagem-rolar').click();
-      assert.ok((await equipado.page.locator('#rolagem-resultado').textContent()).includes('Sucesso crítico'));
-      await equipado.page.locator('#rolagem-dano').click();assert.ok((await equipado.page.locator('#rolagem-resultado').textContent()).includes('(2d4+4)*2'));
-      await equipado.page.locator('#rolagem-fechar').click();assert.deepEqual(equipado.errors,[]);await equipado.context.close();testes++;
+      const ataqueTexto=await equipado.page.locator('#ficha').innerText();assert.ok(ataqueTexto.includes('Ataque 2 · '+(valores.ataque-4>=0?'+':'')+(valores.ataque-4)));assert.ok(ataqueTexto.includes('Fórmula de dano'));assert.equal(await equipado.page.locator('[data-acao="ataque"],#rolagem').count(),0);assert.deepEqual(equipado.errors,[]);await equipado.context.close();testes++;
       {
         const sombra=await ambiente({real:{pc1,pc2,gm,base:primeiraFichaReal}});
         await sombra.page.locator('[data-aba="personagem"]').click();
@@ -158,14 +161,15 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
       // Este cenário usa regras reais e API simulada; os demais cenários reais validam a API canônica.
       const fonteEscudo=JSON.parse(await fs.readFile(path.join(raiz,'pathfinder/player-core.json'),'utf8'));
       const catalogoEscudo=Object.fromEntries(Object.keys(combinado).map(tipo=>[tipo,[...(fonteEscudo[tipo]||[]),...(pc2[tipo]||[]),...(gm[tipo]||[])]]));
-      const bloqueio=await ambiente({simulado:{catalogo:catalogoEscudo,base:R.normalizar({...primeiraFichaReal,escudoId:'escudo-de-aco',escudoErguido:true,vida:{...primeiraFichaReal.vida,temporaria:0}},catalogoEscudo)}});
+      const bloqueio=await ambiente({simulado:{catalogo:catalogoEscudo,base:R.normalizar({...primeiraFichaReal,escudoId:'escudo-de-aco',escudoErguido:true,vida:{...primeiraFichaReal.vida,temporaria:0},turno:{reacoes:1,acoesGerais:3,podeAgir:true,encerrado:false}},catalogoEscudo)}});
       assert.ok(await bloqueio.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Bloqueio com Escudo deve caber na tela móvel.');
-      await bloqueio.page.locator('[data-acao="iniciar-turno"]').click();await bloqueio.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
+      assert.equal(await bloqueio.page.locator('[data-acao="iniciar-turno"]').count(),0);
       await bloqueio.page.locator('#quantidade-vida').fill('10');await bloqueio.page.locator('#dano-tipo').selectOption('cortante');await bloqueio.page.locator('#dano-ataque').check();
       await bloqueio.page.locator('[data-acao="bloquear-escudo"]').click();await bloqueio.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
       assert.equal(bloqueio.estado.dados.escudoPv,15);assert.equal(bloqueio.estado.dados.vida.atual,15);assert.equal(bloqueio.estado.dados.turno.reacoes,0);assert.equal(bloqueio.estado.dados.escudoQuebrado,false);
       const quantidadePatches=bloqueio.estado.patches.length;await bloqueio.page.locator('#dano-ataque').check();await bloqueio.page.locator('[data-acao="bloquear-escudo"]').click();await bloqueio.page.waitForTimeout(650);assert.equal(bloqueio.estado.patches.length,quantidadePatches,'Reação já gasta não deve bloquear novamente.');
-      await bloqueio.page.locator('[data-acao="finalizar-turno"]').click();await bloqueio.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');await bloqueio.page.locator('[data-acao="iniciar-turno"]').click();await bloqueio.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
+      // A mesa renovou a reação fora do Hub; o estado simulado é reaberto sem rolar dados.
+      bloqueio.estado.dados.turno.reacoes=1;await bloqueio.page.reload();await bloqueio.page.waitForSelector('[data-acao="bloquear-escudo"]');
       await bloqueio.page.locator('#quantidade-vida').fill('16');await bloqueio.page.locator('#dano-tipo').selectOption('cortante');await bloqueio.page.locator('#dano-ataque').check();await bloqueio.page.locator('[data-acao="bloquear-escudo"]').click();await bloqueio.page.waitForFunction(()=>document.querySelector('#status').textContent==='Salvo ✓');
       assert.equal(bloqueio.estado.dados.escudoPv,4);assert.equal(bloqueio.estado.dados.escudoQuebrado,true);assert.equal(bloqueio.estado.dados.vida.atual,4);
       let defesa=R.calcular(bloqueio.estado.dados,catalogoEscudo);assert.equal(defesa.ca,defesa.caSemEscudo,'Escudo quebrado não deve conceder CA.');
@@ -176,7 +180,7 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
       await clerigo.page.locator('#guia-conteudo [data-editar="escolhasClasse.divindade"]').selectOption('shelyn');
       await clerigo.page.locator('#guia-conteudo [data-editar="escolhasClasse.periciaDivindade"]').selectOption('performance');
       await clerigo.page.locator('#guia-conteudo [data-editar="escolhasClasse.dominio"]').selectOption('criacao');
-      await clerigo.page.locator('#guia-passos [data-passo="6"]').click();
+      await clerigo.page.locator('#guia-passos [data-passo="8"]').click();
       const slot=clerigo.page.locator('#guia-conteudo [data-editar="magiasPreparadas.padrao.1.0"]');
       assert.equal(await slot.locator('option[value="cores-estonteantes"]').count(),1,'Magia concedida pela divindade deve estar disponível fora da tradição.');
       await slot.selectOption('cores-estonteantes');
@@ -191,7 +195,7 @@ const base={sistema:'pathfinder-2e-remaster',versaoFicha:1,nome:'Teste preservad
         const personagem=R.normalizar({...R.criar(),nome:'Classe '+classeReal.nome,classeId:classeReal.id,atributoChave:classeReal.atributoChave[0],opcaoClasseId:classeReal.opcoes?.[0]?.id||'',ancestralidadeId:'humano',herancaId:'humano-perito',escolhasHeranca:{pericia:'sociedade'},atributos:{for:2,des:2,con:2,int:2,sab:2,car:2},vida:{atual:5,maxima:1,temporaria:0}},combinado);
         const tela=await ambiente({real:{pc1,pc2,gm,base:personagem}}),calculado=R.calcular(personagem,combinado);
         assert.ok((await tela.page.locator('#resumo').textContent()).includes('CA '+calculado.ca));
-        if(classeReal.conjuracao){const card=tela.page.locator('.card').filter({has:tela.page.locator('h2', {hasText:'Conjuração automática'})});assert.equal(await card.count(),1,classeReal.id+' deve oferecer painel de conjuração.');assert.ok((await card.textContent()).includes(String(calculado.cdMagia)));if(classeReal.conjuracao.tipo!=='foco')assert.ok(Object.keys(calculado.conjuracao.espacos).length>0,classeReal.id+' deve calcular espaços automaticamente.');}
+        if(classeReal.conjuracao){const card=tela.page.locator('.card').filter({has:tela.page.locator('h2', {hasText:'Conjuração e recursos'})});assert.equal(await card.count(),1,classeReal.id+' deve oferecer painel de conjuração.');assert.ok((await card.textContent()).includes(String(calculado.cdMagia)));if(classeReal.conjuracao.tipo!=='foco')assert.ok(Object.keys(calculado.conjuracao.espacos).length>0,classeReal.id+' deve calcular espaços automaticamente.');}
         await tela.page.locator('#evoluir').click();await tela.page.locator('#guia-passos [data-passo="7"]').click();
         const copia=await tela.page.evaluate(id=>JSON.parse(localStorage.getItem('hub_pf2_guia_v1:'+id)).dados,id);
         assert.equal(copia.nivel,2);assert.equal(copia.classeId,classeReal.id);assert.equal(tela.estado.dados.nivel,1);

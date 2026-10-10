@@ -1,3 +1,4 @@
+import { prepararFichaWandsWizards } from "../../../../../public/wands-wizards/ficha-regras.mjs";
 import { prepararFichaPathfinder, progressaoPermitidaPathfinder } from "@/lib/pathfinder/validar-ficha";
 import { preservarEstadoAutoritativoHogwarts, type DadosCriacaoHogwarts } from "@/lib/hogwarts/criacao";
 import { imagemHubValida } from "@/lib/imagem-hub";
@@ -253,6 +254,9 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
         conteudosConhecidos: dadosExistentes.conteudosConhecidos ?? {},
         academico: {
           ...academicoRecebido,
+          materias: academicoExistente.materias ?? {},
+          notas: academicoExistente.notas ?? [],
+          extrasPorAno: academicoExistente.extrasPorAno ?? {},
           ...(academicoExistente.formacaoInicialConcluida === true
             ? { formacaoInicialConcluida: true }
             : {}),
@@ -269,24 +273,31 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
 
   const sistemaDaFicha = await banco.sistema.findUnique({ where: { id: existente.sistemaId }, select: { chave: true } });
   const ehPathfinder = sistemaDaFicha?.chave === "pathfinder-2e-remaster";
-  const conferirVersao = ehPathfinder && (temDados || corpo?.atualizadoEmBase !== undefined);
+  const ehHogwarts = sistemaDaFicha?.chave === "hogwarts-rpg";
+  const ehWandsWizards = sistemaDaFicha?.chave === "wands-wizards";
+  const conferirVersao = ehWandsWizards && (temDados || corpo?.atualizadoEmBase !== undefined) || ehPathfinder && (temDados || corpo?.atualizadoEmBase !== undefined) || ehHogwarts && corpo?.atualizadoEmBase !== undefined;
   if (conferirVersao) {
     if (typeof corpo?.atualizadoEmBase !== "string") return NextResponse.json({ erro: "Reabra a ficha para obter sua versão antes de salvar." }, { status: 428 });
     const versao = Date.parse(corpo.atualizadoEmBase);
     if (!Number.isFinite(versao)) return NextResponse.json({ erro: "Versão inválida." }, { status: 400 });
     if (versao !== existente.atualizadoEm.getTime()) return NextResponse.json({ erro: "A ficha mudou. Seu rascunho foi preservado; revise a versão mais recente." }, { status: 409 });
-    if (temDados) {
+    if (temDados && ehPathfinder) {
       const preparado = prepararFichaPathfinder(existente.dados, dadosParaSalvar, { emCampanha: !!existente.campanhaId, ehMestre, ehMonstro: existente.ehMonstro });
       if (preparado.erro) return NextResponse.json({ erro: preparado.erro }, { status: 400 });
       dadosParaSalvar = preparado.dados;
     }
+  }
+  if (temDados && ehWandsWizards) {
+    const preparado = prepararFichaWandsWizards(existente.dados, dadosParaSalvar, { emCampanha: !!existente.campanhaId, ehMestre });
+    if (preparado.erro) return NextResponse.json({ erro: preparado.erro }, { status: 400 });
+    dadosParaSalvar = preparado.dados;
   }
   let personagem;
   try {
   personagem = await banco.personagem.update({
     where: { id, ...(conferirVersao ? { atualizadoEm: existente.atualizadoEm } : {}) },
     data: {
-      ...(ehPathfinder ? { atualizadoEm: new Date(Math.max(Date.now(), existente.atualizadoEm.getTime() + 1)) } : {}),
+      ...(ehPathfinder || ehWandsWizards ? { atualizadoEm: new Date(Math.max(Date.now(), existente.atualizadoEm.getTime() + 1)) } : {}),
       ...(temDados ? { dados: dadosParaSalvar, nome } : {}),
       ...(temCompartilhado ? { compartilhado: corpo.compartilhado } : {}),
       ...(temStatus ? { status: corpo.status } : {}),
@@ -307,7 +318,7 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
     },
   });
   } catch (erro) {
-    if (ehPathfinder && typeof erro === "object" && erro !== null && "code" in erro && erro.code === "P2025") return NextResponse.json({ erro: "A ficha mudou durante o salvamento. Revise seu rascunho." }, { status: 409 });
+    if (conferirVersao && typeof erro === "object" && erro !== null && "code" in erro && erro.code === "P2025") return NextResponse.json({ erro: "A ficha mudou durante o salvamento. Revise seu rascunho." }, { status: 409 });
     throw erro;
   }
   return NextResponse.json({ personagem: ehPathfinder ? {

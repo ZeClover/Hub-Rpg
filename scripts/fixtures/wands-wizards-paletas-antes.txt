@@ -1,0 +1,7 @@
+const PRESETS = [
+  {match:/ebano|ebony|nogueira.negra|black walnut/,light:'#797064',mid:'#302b29',dark:'#131619',cabo:'gravado',width:17,profile:0},
+  {match:/videira|vine|salgueiro|willow|espinheiro|hawthorn/,light:'#b6aa77',mid:'#655a3d',dark:'#282a21',cabo:'organico',width:19,profile:0},
+  {match:/mogno|mahogany|cerejeira|cherry|sequoia|redwood/,light:'#d69569',mid:'#8f4635',dark:'#38201c',cabo:'ornamental',width:18,profile:0},
+  {match:/carvalho|oak|castanheira|chestnut|teixo|yew/,light:'#d7ad72',mid:'#926637',dark:'#3d281b',cabo:'espiral',width:22,profile:0},
+  {match:/azevi|holly|freixo|ash|bordo|maple|faia|beech/,light:'#eee1b8',mid:'#b8a074',dark:'#605039',cabo:'liso',width:16,profile:0}
+];

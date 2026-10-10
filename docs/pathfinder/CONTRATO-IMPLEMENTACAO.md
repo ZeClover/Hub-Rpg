@@ -19,3 +19,9 @@ Equipamento resolve IDs revisados (`armaId`, `armaduraId`, `escudoId`, `runasEqu
 Declaração de iniciativa: POST autenticado na própria ficha aceita somente `resultado`; usa o nome persistido e confirma somente nome/resultado. Nunca retorna campanha nem NPCs. Mestre recebe uma fila de declarações com UUID, incorporada sem repetir entradas e preservada por atualização atômica contra concorrência.
 
 Automação significa que as escolhas são humanas e os cálculos são feitos pelo sistema. Fonte sem efeitos estruturados permanece explicitamente pendente; não é aceitável apresentar anotação ou soma manual como substituta da implementação.
+
+## Apresentação dos guias — 9 de outubro de 2026
+
+Criação e evolução usam a própria página, seguindo a organização dos guias de The Celestials, Fabula Ultima e Kaizoku. O dialog do guia é aberto sem modalidade; o dialog de detalhes continua modal. A criação separa identidade, ancestralidade, biografia, classe, incrementos, perícias, talentos, magias/preparação (se houver conjuração), equipamento e revisão. A evolução abre com os ganhos, mostra incrementos somente em níveis 5/10/15/20, treinamentos quando há escolhas e talentos/magias/revisão. Não repete os lotes iniciais de atributos nem o inventário.
+
+Os identificadores antigos das etapas 0–7 são preservados no rascunho; 8 identifica magias, 9 equipamento e 10 ganhos. Navegação usa a ordem das etapas visíveis, sem confundir o identificador com a posição. O mesmo armazenamento e PATCH versionado são reutilizados. Retomar uma versão diferente mantém o rascunho exportável e não o aplica automaticamente à versão nova. O resumo destaca números alterados; mudanças em perícias ficam em seção expansível. As regras e os recursos da ficha não foram alterados.

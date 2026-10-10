@@ -5,7 +5,7 @@ import { SISTEMAS } from "./sistemas";
 // Não altera fichas existentes nem depende de migração do banco.
 export async function obterSistemaCadastrado(chave: string) {
   const existente = await banco.sistema.findUnique({ where: { chave } });
-  if (existente || chave !== "pathfinder-2e-remaster") return existente;
+  if (existente || !["pathfinder-2e-remaster", "wands-wizards"].includes(chave)) return existente;
   const sistema = SISTEMAS.find((s) => s.chave === chave)!;
   return banco.sistema.upsert({
     where: { chave }, update: {},

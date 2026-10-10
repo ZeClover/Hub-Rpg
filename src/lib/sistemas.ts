@@ -7,6 +7,8 @@
 */
 export type Sistema = {
   chave: string;
+  /** Mantém acesso às fichas existentes, sem oferecer a versão no catálogo de novas aventuras. */
+  legado?: boolean;
   nome: string;
   descricao: string;
   ficha: string | null;
@@ -161,8 +163,22 @@ export const SISTEMAS: Sistema[] = [
     modoSessao: null,
   },
   {
+    chave: "wands-wizards",
+    nome: "Hogwarts · Wands & Wizards",
+    descricao: "Nova versão de Hogwarts baseada em Wands & Wizards 5e v1.4. Biblioteca com livros de jogador e mestre, criaturas, mapas e complemento Spellstaff em português. Ficha com criação e evolução guiadas, talentos, perícias, benefícios das escolas, equipamentos e recursos de sessão calculados e salvos na conta. Conteúdos da comunidade dependem da autorização do mestre.",
+    ficha: "/wands-wizards.html",
+    situacao: "em-construcao",
+    salvaNoHub: true,
+    fichaInimigo: null,
+    escudoMestre: null,
+    campoVidaInimigo: null,
+    grimorio: "/wands-wizards-biblioteca.html",
+    modoSessao: null,
+  },
+  {
     chave: "hogwarts-rpg",
-    nome: "Hogwarts RPG",
+    legado: true,
+    nome: "Hogwarts RPG · versão anterior",
     descricao:
       "Homebrew do Zé sem classes: Atributos + Perícias + Conteúdos + Casa + Família + Origem + Varinha. Chassi completo: ficha, Modo Sessão do Mestre e Loja ao vivo.",
     ficha: "/hogwarts-rpg.html",
@@ -192,7 +208,9 @@ export const SISTEMAS: Sistema[] = [
 
 // Sistemas onde dá pra criar ficha pela conta (usada em "+ Criar ficha" e na
 // criação de campanha) — precisa ter arquivo de ficha E saber salvar no Hub.
-export const SISTEMAS_COM_HUB = SISTEMAS.filter(
+export const SISTEMAS_CATALOGO = SISTEMAS.filter((sistema) => !sistema.legado);
+
+export const SISTEMAS_COM_HUB = SISTEMAS_CATALOGO.filter(
   (sistema): sistema is Sistema & { ficha: string } =>
     sistema.ficha !== null && sistema.salvaNoHub,
 );
@@ -201,7 +219,7 @@ export const SISTEMAS_COM_HUB = SISTEMAS.filter(
 // #143, ideias #64/#65/#66 — biblioteca pessoal e templates reutilizáveis) —
 // precisa ter arquivo de ficha de inimigo E saber salvar no Hub, mesma
 // exigência de `SISTEMAS_COM_HUB` só que pro bestiário.
-export const SISTEMAS_COM_BESTIARIO = SISTEMAS.filter(
+export const SISTEMAS_COM_BESTIARIO = SISTEMAS_CATALOGO.filter(
   (sistema): sistema is Sistema & { fichaInimigo: string } =>
     sistema.fichaInimigo !== null && sistema.salvaNoHub,
 );

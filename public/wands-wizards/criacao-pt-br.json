@@ -1,0 +1,1382 @@
+{
+  "pericias": {
+    "atletismo": {
+      "nome": "Atletismo",
+      "atributo": "forca"
+    },
+    "acrobacia": {
+      "nome": "Acrobacia",
+      "atributo": "destreza"
+    },
+    "furtividade": {
+      "nome": "Furtividade",
+      "atributo": "destreza"
+    },
+    "prestidigitacao": {
+      "nome": "Prestidigitação",
+      "atributo": "destreza"
+    },
+    "teoria": {
+      "nome": "Teoria Mágica",
+      "atributo": "inteligencia"
+    },
+    "investigacao": {
+      "nome": "Investigação",
+      "atributo": "inteligencia"
+    },
+    "herbologia": {
+      "nome": "Herbologia",
+      "atributo": "inteligencia"
+    },
+    "trouxas": {
+      "nome": "Estudos Trouxas",
+      "atributo": "inteligencia"
+    },
+    "criaturas": {
+      "nome": "Criaturas Mágicas",
+      "atributo": "sabedoria"
+    },
+    "pocoes": {
+      "nome": "Preparo de Poções",
+      "atributo": "sabedoria"
+    },
+    "intuicao": {
+      "nome": "Intuição",
+      "atributo": "sabedoria"
+    },
+    "medicina": {
+      "nome": "Medicina",
+      "atributo": "sabedoria"
+    },
+    "percepcao": {
+      "nome": "Percepção",
+      "atributo": "sabedoria"
+    },
+    "sobrevivencia": {
+      "nome": "Sobrevivência",
+      "atributo": "sabedoria"
+    },
+    "enganacao": {
+      "nome": "Enganação",
+      "atributo": "carisma"
+    },
+    "intimidacao": {
+      "nome": "Intimidação",
+      "atributo": "carisma"
+    },
+    "atuacao": {
+      "nome": "Atuação",
+      "atributo": "carisma"
+    },
+    "persuasao": {
+      "nome": "Persuasão",
+      "atributo": "carisma"
+    }
+  },
+  "periciasEstilo": {
+    "vontade": [
+      "atletismo",
+      "enganacao",
+      "intimidacao",
+      "teoria",
+      "persuasao",
+      "prestidigitacao",
+      "sobrevivencia"
+    ],
+    "tecnica": [
+      "acrobacia",
+      "herbologia",
+      "intuicao",
+      "percepcao",
+      "pocoes",
+      "prestidigitacao",
+      "furtividade"
+    ],
+    "intelecto": [
+      "acrobacia",
+      "herbologia",
+      "intuicao",
+      "investigacao",
+      "criaturas",
+      "teoria",
+      "medicina",
+      "trouxas",
+      "sobrevivencia"
+    ]
+  },
+  "antecedentes": {
+    "artista": {
+      "nome": "Artista",
+      "pericias": [
+        "intuicao",
+        "atuacao"
+      ],
+      "ferramentas": [],
+      "pagina": 29,
+      "caracteristica": "Aprendiz",
+      "texto": "Tem conhecimento e coordenação para iniciar um aprendizado artístico com um mentor.",
+      "equipamentos": [
+        "Ferramentas do meio artístico escolhido",
+        "Bloco de desenho e bastões de carvão"
+      ]
+    },
+    "estudioso": {
+      "nome": "Estudioso",
+      "pericias": [
+        "teoria",
+        "investigacao"
+      ],
+      "ferramentas": [],
+      "pagina": 30,
+      "caracteristica": "Favorito dos professores",
+      "texto": "Professores e autoridades tendem a interpretar suas intenções favoravelmente; sua reputação acadêmica pode ajudá-lo a obter apoio.",
+      "equipamentos": [
+        "Livro favorito",
+        "Livro que está lendo",
+        "Pena de reserva"
+      ]
+    },
+    "sonhador": {
+      "nome": "Sonhador",
+      "pericias": [
+        "intuicao",
+        "percepcao"
+      ],
+      "ferramentas": [
+        "Ferramentas de astrônomo"
+      ],
+      "pagina": 31,
+      "caracteristica": "Observador de estrelas",
+      "texto": "Possui afinidade com astronomia e a importância dos céus, aproximando-se da visão dos centauros. Fantasmas tendem a confiar mais em você e compartilhar informações.",
+      "equipamentos": [
+        "Ferramentas de astrônomo",
+        "Amuleto místico sem proteção real"
+      ]
+    },
+    "zelador": {
+      "nome": "Cuidador dos terrenos",
+      "pericias": [
+        "sobrevivencia",
+        "criaturas"
+      ],
+      "ferramentas": [
+        "Ferramentas de herbologista"
+      ],
+      "pagina": 32,
+      "caracteristica": "Valorizar toda vida",
+      "texto": "Seres mágicos e animais inteligentes tendem a tratá-lo favoravelmente ou conceder audiência. Pode ter oportunidade de superar seus preconceitos contra bruxos.",
+      "equipamentos": [
+        "Ferramentas de herbologista",
+        "Bússola"
+      ]
+    },
+    "desastrado": {
+      "nome": "Desastrado",
+      "pericias": [
+        "medicina",
+        "percepcao"
+      ],
+      "ferramentas": [],
+      "pagina": 33,
+      "caracteristica": "Desastre ambulante",
+      "texto": "Sua experiência com situações que dão errado ajuda a prever acidentes e encontrar ideias para atrapalhar algo.",
+      "equipamentos": [
+        "Amuleto da sorte",
+        "Pacote de curativos"
+      ]
+    },
+    "pocionista": {
+      "nome": "Pocionista",
+      "pericias": [
+        "herbologia",
+        "pocoes"
+      ],
+      "ferramentas": [
+        "Kit de preparo de poções"
+      ],
+      "pagina": 34,
+      "caracteristica": "Cliente habitual",
+      "texto": "Tem acesso a estoques novos e incomuns em boticas onde é cliente conhecido. Conhece uma receita de poção comum e uma incomum.",
+      "equipamentos": [
+        "Kit de preparo de poções",
+        "Caderno trouxa e caneta"
+      ]
+    },
+    "protetor": {
+      "nome": "Protetor",
+      "pericias": [
+        "atletismo",
+        "intimidacao"
+      ],
+      "ferramentas": [],
+      "pagina": 35,
+      "caracteristica": "Campeão do povo",
+      "texto": "Sua reputação tranquiliza pessoas ameaçadas. Mantendo-a, pode conquistar posições como monitor ou capitão.",
+      "equipamentos": [
+        "Bastão de batedor",
+        "Foto de um ente querido"
+      ]
+    },
+    "quadribol": {
+      "nome": "Fã de Quadribol",
+      "pericias": [
+        "acrobacia",
+        "atletismo"
+      ],
+      "ferramentas": [
+        "Veículos: vassoura"
+      ],
+      "pagina": 36,
+      "caracteristica": "Superfã",
+      "texto": "Conhece partidas, vassouras e táticas recentes e cria afinidade facilmente com outros entusiastas.",
+      "equipamentos": [
+        "Goles",
+        "Figurinha do jogador favorito de Quadribol"
+      ]
+    },
+    "socialite": {
+      "nome": "Socialite",
+      "pericias": [
+        "enganacao",
+        "persuasao"
+      ],
+      "ferramentas": [],
+      "pagina": 37,
+      "caracteristica": "Espalhar rumores",
+      "texto": "Suas conexões com pessoas informadas ajudam a descobrir segredos e rumores perigosos ou indicam onde procurá-los.",
+      "equipamentos": [
+        "Joia de família",
+        "Pena de pavão"
+      ]
+    },
+    "encrenqueiro": {
+      "nome": "Encrenqueiro",
+      "pericias": [
+        "prestidigitacao",
+        "furtividade"
+      ],
+      "ferramentas": [],
+      "pagina": 38,
+      "caracteristica": "Pensador criativo",
+      "texto": "Encontra soluções rápidas, álibis plausíveis e atalhos. Pessoas que quebram regras tendem a compartilhar segredos com você.",
+      "equipamentos": [
+        "Passe falso para os corredores",
+        "Pacote de bombas de estrondo"
+      ]
+    },
+    "performer": {
+      "nome": "Artista — intérprete",
+      "pericias": [
+        "intuicao",
+        "atuacao"
+      ],
+      "ferramentas": [],
+      "pagina": 29,
+      "caracteristica": "Entrada dramática",
+      "texto": "Pode agir de maneira especialmente chamativa, criando distrações ou reunindo uma plateia.",
+      "equipamentos": [
+        "Ferramentas do meio artístico escolhido",
+        "Bloco de desenho e bastões de carvão"
+      ]
+    },
+    "prodigio": {
+      "nome": "Estudioso — prodígio",
+      "pericias": [
+        "teoria",
+        "investigacao"
+      ],
+      "ferramentas": [],
+      "pagina": 30,
+      "caracteristica": "Favorito dos professores",
+      "texto": "Professores e autoridades tendem a interpretar suas intenções favoravelmente; sua reputação acadêmica pode ajudá-lo a obter apoio.",
+      "equipamentos": [
+        "Livro favorito",
+        "Livro que está lendo",
+        "Pena de reserva"
+      ]
+    },
+    "saco-pancadas": {
+      "nome": "Desastrado — saco de pancadas",
+      "pericias": [
+        "medicina",
+        "percepcao"
+      ],
+      "ferramentas": [],
+      "pagina": 33,
+      "caracteristica": "Saco de pancadas",
+      "texto": "Resistência ao dano de quedas, armadilhas e objetos inanimados. Desvantagem em salvaguardas contra armadilhas, testes para detectá-las e Acrobacia.",
+      "equipamentos": [
+        "Amuleto da sorte",
+        "Pacote de curativos"
+      ]
+    },
+    "valentao": {
+      "nome": "Protetor — valentão",
+      "pericias": [
+        "atletismo",
+        "intimidacao"
+      ],
+      "ferramentas": [],
+      "pagina": 36,
+      "caracteristica": "Brutamontes comum",
+      "texto": "Sua reputação atrai quem procura trabalhos sujos; pessoas tímidas podem temê-lo e ceder à intimidação.",
+      "equipamentos": [
+        "Bastão de batedor",
+        "Foto de um ente querido"
+      ]
+    },
+    "seguidor": {
+      "nome": "Socialite — seguidor",
+      "pericias": [
+        "enganacao",
+        "persuasao"
+      ],
+      "ferramentas": [],
+      "pagina": 38,
+      "caracteristica": "Rosto esquecível",
+      "texto": "Passa por pessoa sem importância, difícil de reconhecer em multidões ou culpar individualmente.",
+      "equipamentos": [
+        "Joia de família",
+        "Pena de pavão"
+      ]
+    }
+  },
+  "beneficios": {
+    "mira": {
+      "escola": "encantamentos",
+      "nome": "Mira precisa",
+      "pagina": 17,
+      "nivel": 1,
+      "texto": "Ao conjurar um encantamento, pode atingir um objeto ou parte do corpo específicos e restringir o efeito a essa parte."
+    },
+    "protecao": {
+      "escola": "encantamentos",
+      "nome": "Encantamentos protetores",
+      "pagina": 17,
+      "nivel": 1,
+      "texto": "Dobra o tamanho da área de encantamentos em cubo, linha, esfera ou cone."
+    },
+    "auror": {
+      "escola": "maldicoes",
+      "nome": "Treinamento de auror",
+      "pagina": 18,
+      "nivel": 1,
+      "texto": "Aprende uma receita de poção comum e ganha proficiência em duas entre Investigação, Preparo de Poções, Furtividade e Sobrevivência."
+    },
+    "quebrador": {
+      "escola": "maldicoes",
+      "nome": "Quebra de maldições",
+      "pagina": 18,
+      "nivel": 1,
+      "texto": "Recebe um conjunto de ferramentas de quebra de maldições e proficiência no seu uso."
+    },
+    "anatomia": {
+      "escola": "transfiguracao",
+      "nome": "Manual de anatomia",
+      "pagina": 19,
+      "nivel": 1,
+      "texto": "Quando uma transfiguração exigir círculo superior para envolver uma criatura viva, pode usar um espaço um círculo abaixo desse requisito."
+    },
+    "conversao": {
+      "escola": "transfiguracao",
+      "nome": "Conversão intuitiva",
+      "pagina": 19,
+      "nivel": 1,
+      "texto": "Vera Verto afeta alvos uma categoria de tamanho acima daquela indicada pelo espaço de magia utilizado."
+    },
+    "remedios": {
+      "escola": "cura",
+      "nome": "Remédios naturais",
+      "pagina": 22,
+      "nivel": 1,
+      "texto": "Aprende a receita do unguento de erva-estelar e ganha uma proficiência entre Herbologia, Medicina e Preparo de Poções."
+    },
+    "nervos": {
+      "escola": "cura",
+      "nome": "Nervos inabaláveis",
+      "pagina": 22,
+      "nivel": 1,
+      "texto": "Tem vantagem em salvaguardas contra ficar amedrontado."
+    },
+    "vidente": {
+      "escola": "adivinhacao",
+      "nome": "Leitura do destino",
+      "pagina": 23,
+      "nivel": 1,
+      "texto": "Recebe um kit de adivinhação e proficiência no seu uso."
+    },
+    "perigo": {
+      "escola": "adivinhacao",
+      "nome": "Sentir perigo",
+      "pagina": 23,
+      "nivel": 1,
+      "texto": "Acrescenta metade da proficiência à iniciativa, usando o arredondamento padrão para baixo. Não pode ser surpreendido enquanto estiver consciente."
+    },
+    "cuidador": {
+      "escola": "magizoologia",
+      "nome": "Cuidador de criaturas",
+      "pagina": 25,
+      "nivel": 1,
+      "texto": "Pode conjurar suas magias de cura conhecidas em animais."
+    },
+    "folio": {
+      "escola": "magizoologia",
+      "nome": "Folio Bruti",
+      "pagina": 25,
+      "nivel": 1,
+      "texto": "Ao usar sua proficiência em Criaturas Mágicas em um teste, acrescenta também seu modificador de Inteligência."
+    },
+    "mira-avancada": {
+      "escola": "encantamentos",
+      "nome": "Prática de mira",
+      "pagina": 17,
+      "nivel": 6,
+      "texto": "Ao somar seu atributo de conjuração ao ataque mágico, soma também metade do modificador de Destreza, arredondada para cima.",
+      "originalNome": "Target Practice"
+    },
+    "encantador": {
+      "escola": "encantamentos",
+      "nome": "Encantador profissional",
+      "pagina": 17,
+      "nivel": 6,
+      "texto": "Um encantamento de alvo único em um objeto, com duração superior a instantânea, pode durar permanentemente até ser dissipado por você. Concentração e dedicação continuam exigidas.",
+      "originalNome": "Professional Charmer"
+    },
+    "duelo-trouxa": {
+      "escola": "encantamentos",
+      "nome": "Duelo trouxa",
+      "pagina": 17,
+      "nivel": 10,
+      "texto": "Soma a proficiência ao dano de ataques desarmados e aos testes de Força para agarrar ou desarmar um bruxo.",
+      "originalNome": "Muggle Dueling"
+    },
+    "obliviador": {
+      "escola": "encantamentos",
+      "nome": "Obliviador",
+      "pagina": 17,
+      "nivel": 10,
+      "texto": "Obliviate pode implantar memórias falsas detalhadas. O alvo não as detecta; legilimência ou uma Penseira podem revelar a falsificação.",
+      "originalNome": "Obliviator"
+    },
+    "varinha-escudo": {
+      "escola": "encantamentos",
+      "nome": "Varinha e escudo",
+      "pagina": 17,
+      "nivel": 14,
+      "texto": "Pode manter Protego ou Protego Maxima na mão livre usando ação bônus para dedicação, deixando a varinha disponível para outra concentração ou dedicação. Testes de concentração são feitos separadamente para cada efeito.",
+      "originalNome": "Wand and Shield"
+    },
+    "dever-proteger": {
+      "escola": "encantamentos",
+      "nome": "Dever de proteger",
+      "pagina": 17,
+      "nivel": 14,
+      "texto": "Piertotum Locomotor dispensa concentração, anima o dobro de objetos e dura uma hora.",
+      "originalNome": "A Duty to Protect"
+    },
+    "varinha-veloz": {
+      "escola": "encantamentos",
+      "nome": "Varinha relâmpago",
+      "pagina": 17,
+      "nivel": 18,
+      "texto": "Recebe Magia Acelerada sem ocupar a cota. Ao usá-la, pode conjurar qualquer magia com sua ação, ignorando a restrição normal de conjuração por ação bônus.",
+      "originalNome": "Lightning-Fast Wand"
+    },
+    "fiel-segredo": {
+      "escola": "encantamentos",
+      "nome": "Fiel do segredo",
+      "pagina": 17,
+      "nivel": 18,
+      "texto": "Aprende Fidelius Mysteria Celare sem ocupar a cota de conhecidas e sem poder esquecê-la para trocar de magia.",
+      "originalNome": "Secret-Keeper"
+    },
+    "magia-forca": {
+      "escola": "maldicoes",
+      "nome": "Magia contundente",
+      "pagina": 18,
+      "nivel": 6,
+      "texto": "Ao conjurar uma magia que causa dano, acrescenta 1d6 a uma determinação de dano. Os dados são determinados na mesa.",
+      "originalNome": "Forceful Magic"
+    },
+    "adrenalina": {
+      "escola": "maldicoes",
+      "nome": "Adrenalina mágica",
+      "pagina": 18,
+      "nivel": 6,
+      "texto": "Como ação bônus, gasta um dado de vida e recupera PV iguais ao resultado determinado na mesa mais Constituição. Usos iguais à proficiência, recuperados em descanso longo.",
+      "originalNome": "Magical Adrenaline"
+    },
+    "rastros-sombrios": {
+      "escola": "maldicoes",
+      "nome": "Rastros sombrios",
+      "pagina": 18,
+      "nivel": 10,
+      "texto": "Vantagem em Investigação, Intuição e Percepção para detectar magia sombria ou um bruxo das trevas.",
+      "originalNome": "Dark Traces"
+    },
+    "rompe-protecao": {
+      "escola": "maldicoes",
+      "nome": "Quebra de proteções",
+      "pagina": 18,
+      "nivel": 10,
+      "texto": "Exige Quebra de maldições. A remoção bem-sucedida de uma maldição, encantamento ou proteção não pode ser detectada magicamente; avisos ao conjurador deixam de funcionar. Observadores ainda podem notar que a magia desapareceu.",
+      "originalNome": "Ward-Breaker",
+      "requisito": "quebrador"
+    },
+    "duelista-sombrio": {
+      "escola": "maldicoes",
+      "nome": "Duelista sombrio",
+      "pagina": 18,
+      "nivel": 14,
+      "texto": "Vantagem em salvaguardas contra magias sombrias. Suas magias sombrias são conjuradas um círculo acima do espaço gasto, até seu maior círculo disponível.",
+      "originalNome": "Dark Duelist"
+    },
+    "artes-defensivas": {
+      "escola": "maldicoes",
+      "nome": "Artes defensivas",
+      "pagina": 18,
+      "nivel": 14,
+      "texto": "Magias defensivas são conjuradas dois círculos acima do espaço gasto, até seu maior círculo disponível.",
+      "originalNome": "Defensive Arts"
+    },
+    "alerta-auror": {
+      "escola": "maldicoes",
+      "nome": "Alerta de auror",
+      "pagina": 18,
+      "nivel": 18,
+      "texto": "Pode chamar uma equipe de dois aurores para aparatar em sua localização. Recupera o uso em descanso longo.",
+      "originalNome": "Auror Alert"
+    },
+    "desfaz-magia": {
+      "escola": "maldicoes",
+      "nome": "Desvendar magia",
+      "pagina": 18,
+      "nivel": 18,
+      "texto": "Obtém sucesso automaticamente ao conjurar Finite Incantatem.",
+      "originalNome": "Unravelling Magic"
+    },
+    "alma-fraturada": {
+      "escola": "maldicoes",
+      "nome": "Alma fraturada",
+      "pagina": 18,
+      "nivel": 18,
+      "texto": "Pode criar uma Horcrux pelo ritual, cometendo assassinato e escolhendo um receptáculo. Só uma Horcrux pode existir por vez.",
+      "originalNome": "Fractured Soul"
+    },
+    "animago": {
+      "escola": "transfiguracao",
+      "nome": "Transformação animaga",
+      "pagina": 19,
+      "nivel": 6,
+      "texto": "Como ação, assume sua forma animaga. Dois usos, recuperados em descanso curto ou longo. As regras completas das formas estão nas páginas 20–21.",
+      "originalNome": "Animagus Transformation"
+    },
+    "elementalista": {
+      "escola": "transfiguracao",
+      "nome": "Elementalista",
+      "pagina": 19,
+      "nivel": 6,
+      "texto": "Magias que envolvem apenas fogo, água, terra ou ar são conjuradas um círculo acima do espaço gasto, até seu maior círculo disponível.",
+      "originalNome": "Elementalist"
+    },
+    "transfiguracao-parcial": {
+      "escola": "transfiguracao",
+      "nome": "Transfiguração parcial",
+      "pagina": 19,
+      "nivel": 10,
+      "texto": "Pode transfigurar apenas a parte desejada do alvo, mantendo os mesmos requisitos e restrições por círculo.",
+      "originalNome": "Partial Transfiguration"
+    },
+    "molda-elementos": {
+      "escola": "transfiguracao",
+      "nome": "Moldar os elementos",
+      "pagina": 19,
+      "nivel": 10,
+      "texto": "Magias apenas de fogo, água, terra ou ar podem assumir outra forma, sem exceder a área ou volume aproximados originais.",
+      "originalNome": "Molding the Elements"
+    },
+    "construtos": {
+      "escola": "transfiguracao",
+      "nome": "Construtos duráveis",
+      "pagina": 19,
+      "nivel": 14,
+      "texto": "Construtos vivos transfigurados ou conjurados ganham PV adicionais iguais ao seu nível e causam mais 1d6 de dano.",
+      "originalNome": "Durable Constructs"
+    },
+    "estruturas": {
+      "escola": "transfiguracao",
+      "nome": "Estruturas fortificadas",
+      "pagina": 19,
+      "nivel": 14,
+      "texto": "Objetos transfigurados ou conjurados têm o dobro dos PV e suportam três vezes o peso de objetos comuns equivalentes.",
+      "originalNome": "Fortified Structures"
+    },
+    "predador": {
+      "escola": "transfiguracao",
+      "nome": "Predador supremo",
+      "pagina": 19,
+      "nivel": 18,
+      "texto": "Exige Transformação animaga. Transforma-se como ação bônus e recebe duas formas adicionais, que podem ser ocultadas do Ministério e usadas como Patrono corpóreo.",
+      "originalNome": "Apex Predator",
+      "requisito": "animago"
+    },
+    "alquimista": {
+      "escola": "transfiguracao",
+      "nome": "Alquimista verdadeiro",
+      "pagina": 19,
+      "nivel": 18,
+      "texto": "Cria uma Pedra Filosofal, que transforma metal em ouro e produz Elixir da Vida. Não morre de causas naturais e envelhece um ano a cada dez. Só uma pedra pode existir por vez.",
+      "originalNome": "True Alchemist"
+    },
+    "recuperacao-acelerada": {
+      "escola": "cura",
+      "nome": "Recuperação acelerada",
+      "pagina": 22,
+      "nivel": 6,
+      "texto": "Magias de 1º círculo ou superior que restauram PV curam mais 2 + círculo da magia.",
+      "originalNome": "Accelerated Recovery"
+    },
+    "escudo-duravel": {
+      "escola": "cura",
+      "nome": "Proteção durável",
+      "pagina": 22,
+      "nivel": 6,
+      "texto": "Magias defensivas de 1º círculo ou superior que aumentam CA ou concedem PV temporários concedem mais 2 + círculo da magia em PV temporários, pela duração do efeito.",
+      "originalNome": "Durable Shielding"
+    },
+    "canto-fenix": {
+      "escola": "cura",
+      "nome": "Canto da fênix",
+      "pagina": 22,
+      "nivel": 10,
+      "texto": "Recebe proficiência em Persuasão e vantagem em testes de Carisma para aliviar dor ou ajudar alguém a manter a compostura.",
+      "originalNome": "Phoenix Song"
+    },
+    "vinculo-empatico": {
+      "escola": "cura",
+      "nome": "Vínculo empático",
+      "pagina": 22,
+      "nivel": 10,
+      "texto": "Ao curar outra criatura, ela recupera PV adicionais iguais à sua proficiência e você perde a mesma quantidade, exceto se a cura já restaurou todos os PV ou se a perda deixaria você com zero PV.",
+      "originalNome": "Empathic Bond"
+    },
+    "assistencia": {
+      "escola": "cura",
+      "nome": "Assistência estendida",
+      "pagina": 22,
+      "nivel": 14,
+      "texto": "Dobra o alcance de todas as suas magias de cura. Alcance de toque passa a 60 pés.",
+      "originalNome": "Extended Assistance"
+    },
+    "salvador": {
+      "escola": "cura",
+      "nome": "Instinto de salvar",
+      "pagina": 22,
+      "nivel": 14,
+      "texto": "Quando uma criatura visível a até 10 pés é alvo de ataque ou magia, usa reação para conjurar Protego e se colocar à frente, tornando-se o novo alvo. Se o efeito atingir ambos, recebe seus efeitos duas vezes.",
+      "originalNome": "A Saving-People Thing"
+    },
+    "lagrimas-fenix": {
+      "escola": "cura",
+      "nome": "Lágrimas de fênix",
+      "pagina": 22,
+      "nivel": 18,
+      "texto": "Após oito horas buscando uma fênix com sua magia, recebe um frasco de lágrimas que remove maldições, doenças e venenos e restaura todos os PV. Só recebe se não possuir outras lágrimas; elas perdem efeito se outra pessoa as possuir ou administrar.",
+      "originalNome": "Phoenix Tears"
+    },
+    "pulso-cura": {
+      "escola": "cura",
+      "nome": "Pulso curativo",
+      "pagina": 22,
+      "nivel": 18,
+      "texto": "Ao conjurar uma magia defensiva, cada criatura não hostil a até 30 pés, incluindo você, recupera PV iguais à metade do próprio nível.",
+      "originalNome": "Healing Pulse"
+    },
+    "pressagios": {
+      "escola": "adivinhacao",
+      "nome": "Presságios",
+      "pagina": 23,
+      "nivel": 6,
+      "texto": "Após descanso longo, registra dois resultados de d20 obtidos fora do Hub; recebe um terceiro no nível 10. Uma vez por turno, pode gastar um resultado para substituir um ataque, salvaguarda ou teste prestes a ser feito por você ou criatura visível. Resultados antigos são perdidos no descanso longo.",
+      "originalNome": "Foresight"
+    },
+    "legilimencia": {
+      "escola": "adivinhacao",
+      "nome": "Legilimência",
+      "pagina": 23,
+      "nivel": 6,
+      "texto": "Aprende Legilimens sem ocupar a cota de magias conhecidas e sem poder esquecê-la para trocar de magia.",
+      "originalNome": "Legilimency"
+    },
+    "quiromancia": {
+      "escola": "adivinhacao",
+      "nome": "Quiromancia",
+      "pagina": 23,
+      "nivel": 10,
+      "texto": "Após observar uma criatura por 30 segundos, pode usar uma ação para perceber seus PV atuais.",
+      "originalNome": "Palmistry"
+    },
+    "oclumante": {
+      "escola": "adivinhacao",
+      "nome": "Oclumante habilidoso",
+      "pagina": 23,
+      "nivel": 10,
+      "texto": "Legilimens e Veritaserum não funcionam sem sua permissão. Pode permitir Legilimens e revelar informações, emoções ou memórias falsas.",
+      "originalNome": "Skilled Occlumens"
+    },
+    "auras": {
+      "escola": "adivinhacao",
+      "nome": "Leitura de auras",
+      "pagina": 24,
+      "nivel": 14,
+      "texto": "Percebe imediatamente se um ser inteligente é hostil, amistoso ou neutro por sua aura.",
+      "originalNome": "Aura Reading"
+    },
+    "olhos-ageis": {
+      "escola": "adivinhacao",
+      "nome": "Olhos ágeis",
+      "pagina": 24,
+      "nivel": 14,
+      "texto": "Exige Legilimência. Como ação bônus, conjura Legilimens em combate para ver a próxima magia ou ação planejada por uma criatura, desde que seus olhos sejam visíveis.",
+      "originalNome": "Darting Eyes",
+      "requisito": "legilimencia"
+    },
+    "visoes": {
+      "escola": "adivinhacao",
+      "nome": "Visões vívidas",
+      "pagina": 24,
+      "nivel": 18,
+      "texto": "Como ação bônus, vê sua próxima ação e consequências imediatas, usando os resultados determinados na mesa. Se escolher essa ação, a visão se realiza com os mesmos resultados. Recupera o uso em descanso longo.",
+      "originalNome": "Vivid Visions"
+    },
+    "mestre-mentes": {
+      "escola": "adivinhacao",
+      "nome": "Mestre das mentes",
+      "pagina": 24,
+      "nivel": 18,
+      "texto": "Exige Legilimência. Pode conjurar Legilimens à vontade, verbal ou não verbalmente. Tentativas de resistir têm desvantagem.",
+      "originalNome": "Master of Minds",
+      "requisito": "legilimencia"
+    },
+    "companheiro": {
+      "escola": "magizoologia",
+      "nome": "Melhor amigo do bruxo",
+      "pagina": 25,
+      "nivel": 6,
+      "texto": "Pode ter um companheiro animal, seguindo as regras de vínculo, progressão e comandos da página 26.",
+      "originalNome": "Wizard's Best Friend"
+    },
+    "emboscada": {
+      "escola": "magizoologia",
+      "nome": "Emboscada preparada",
+      "pagina": 25,
+      "nivel": 6,
+      "texto": "Pode transformar uma magia de alvo único ou área, de 1º círculo ou superior, em armadilha com gatilho escolhido. Gasta um espaço dois círculos acima; a magia fica centrada ou direcionada à criatura que ativa o gatilho. Magias de concentração duram integralmente. Investigação contra sua CD ou Specialis Revelio pode detectar a armadilha.",
+      "originalNome": "Prepared Ambush"
+    },
+    "sobrevivente": {
+      "escola": "magizoologia",
+      "nome": "Sobrevivente",
+      "pagina": 25,
+      "nivel": 10,
+      "texto": "Recebe proficiência em Herbologia ou Sobrevivência e especialização em uma dessas perícias na qual seja proficiente. Terreno difícil não atrasa o grupo; mantendo vigília, o grupo não pode ser surpreendido ao descansar. Um resultado de dado de vida inferior à proficiência pode ser repetido uma vez na mesa, usando o maior.",
+      "originalNome": "Survivalist"
+    },
+    "cacador": {
+      "escola": "magizoologia",
+      "nome": "Caça a monstros",
+      "pagina": 25,
+      "nivel": 10,
+      "texto": "Após estudar por dez minutos rastros de um animal ou ser sombrio, descobre sua identidade, tamanho e velocidade e pode marcá-lo como Caçado. Tem vantagem para rastrear e recordar informações; a até 30 pés, percebe direção e distância enquanto o rastreia. A marca muda ao usar novamente a habilidade.",
+      "originalNome": "Monster Hunting"
+    },
+    "sussurro": {
+      "escola": "magizoologia",
+      "nome": "Sussurrador de animais",
+      "pagina": 25,
+      "nivel": 14,
+      "texto": "Como ação, usa Criaturas Mágicas para acalmar um animal hostil. Em sucesso ele fica neutro; dano ou condições causados pelo grupo nele ou em animais idênticos cancelam o efeito. Recupera o uso em descanso curto ou longo.",
+      "originalNome": "Beast Whisperer"
+    },
+    "vulnerabilidades": {
+      "escola": "magizoologia",
+      "nome": "Explorar vulnerabilidades",
+      "pagina": 25,
+      "nivel": 14,
+      "texto": "Como ação bônus, indica fraquezas de um inimigo. As magias de dano dos aliados causam mais 2d8 nele até o início de seu próximo turno. Usos iguais ao modificador de Inteligência, recuperados em descanso longo.",
+      "originalNome": "Exploited Vulnerabilities"
+    },
+    "empatia-draconica": {
+      "escola": "magizoologia",
+      "nome": "Empatia dracônica",
+      "pagina": 25,
+      "nivel": 18,
+      "texto": "Exige Melhor amigo do bruxo. Um dragão criado por você desde o ovo pode ser seu companheiro, usando os próprios PV, dados de vida, atributos e ataques naturais.",
+      "originalNome": "Draconic Empathy",
+      "requisito": "companheiro"
+    },
+    "reflexos-cacador": {
+      "escola": "magizoologia",
+      "nome": "Reflexos de caçador",
+      "pagina": 26,
+      "nivel": 18,
+      "texto": "Como reação a ataque ou conjuração de criatura visível, conjura uma magia de ação, ação bônus ou reação que a tenha como único alvo. Efeitos são aplicados antes da ação inimiga; dano impõe desvantagem ao ataque dela. Recupera o uso em descanso curto ou longo.",
+      "originalNome": "Hunter's Reflexes"
+    }
+  },
+  "magiasEscola": {
+    "encantamentos": {
+      "2": [
+        "muffliato"
+      ],
+      "4": [
+        "capacious-extremis"
+      ],
+      "5": [
+        "obliviate",
+        "piertotum-locomotor"
+      ]
+    },
+    "maldicoes": {
+      "3": [
+        "langlock"
+      ],
+      "4": [
+        "sectumsempra"
+      ],
+      "5": [
+        "nullum-effugium",
+        "omnifracto"
+      ]
+    },
+    "transfiguracao": {
+      "2": [
+        "orbis",
+        "reparifarge"
+      ],
+      "3": [
+        "ignis-laqueis"
+      ],
+      "4": [
+        "lapifors"
+      ]
+    },
+    "cura": {
+      "0": [
+        "anapneo"
+      ],
+      "3": [
+        "intus-sunt"
+      ],
+      "6": [
+        "protego-totalum",
+        "vulnera-sanentur"
+      ]
+    }
+  },
+  "talentos": {
+    "sangue-gigante": {
+      "nome": "Sangue de gigante",
+      "pagina": 53,
+      "inato": true,
+      "texto": "Força +1, até 20. Tamanho Médio; conta como uma categoria maior para capacidade de carga, empurrar, arrastar e erguer. Quando magia impuser uma condição, pode usar reação para resistir a uma condição escolhida. Um uso por descanso longo.",
+      "bonus": {
+        "forca": 1
+      }
+    },
+    "astucia-duende": {
+      "nome": "Astúcia de duende",
+      "pagina": 53,
+      "inato": true,
+      "texto": "Tamanho Pequeno. Pode atravessar o espaço de criaturas maiores. Vantagem em salvaguardas de Inteligência e Sabedoria contra magia. Fala, lê e escreve duendês."
+    },
+    "metamorfomago": {
+      "nome": "Magia metamórfica",
+      "pagina": 54,
+      "inato": true,
+      "texto": "Como ação, muda altura, peso, rosto, voz, cabelo e outras características sem mudar estatísticas, categoria de tamanho ou forma básica. Pode repetir à vontade. Como ação, adapta os dedos ao meio aquático e recebe deslocamento de natação igual ao de caminhada."
+    },
+    "ofidioglossia": {
+      "nome": "Ofidioglossia",
+      "pagina": 54,
+      "inato": true,
+      "texto": "Pode falar a língua das serpentes e comunicar-se verbalmente com serpentes e animais semelhantes, como runespoor e basilisco."
+    },
+    "encanto-veela": {
+      "nome": "Encanto de veela",
+      "pagina": 54,
+      "inato": true,
+      "texto": "Recebe proficiência em uma perícia de Carisma. Como ação, tenta encantar humanoide visível a até 30 pés que se sentiria atraído por você. Salvaguarda de Sabedoria; se hostil, com vantagem. Falha: encantado por uma hora ou até sofrer dano de você ou aliados; considera você uma pessoa amigável e quer impressioná-lo. Depois sabe que foi encantado. Um uso por descanso longo.",
+      "periciaEscolha": [
+        "enganacao",
+        "intimidacao",
+        "atuacao",
+        "persuasao"
+      ]
+    },
+    "combatente-aereo": {
+      "nome": "Combatente aéreo",
+      "pagina": 54,
+      "inato": false,
+      "texto": "Recebe proficiência em veículos: vassoura. Não sofre desvantagem em ataques por estar voando em uma vassoura.",
+      "ferramentas": [
+        "Veículos: vassoura"
+      ]
+    },
+    "detectar-rastros": {
+      "nome": "Detectar rastros",
+      "pagina": 54,
+      "inato": false,
+      "texto": "Usando concentração, sente magia a até 30 pés. Como ação, vê uma aura em criaturas ou objetos visíveis e identifica a escola da magia, se houver. Penetra barreiras, exceto um pé de pedra, uma polegada de metal comum ou três pés de madeira ou terra."
+    },
+    "licantropia": {
+      "nome": "Licantropia",
+      "pagina": 54,
+      "inato": false,
+      "texto": "Força e Constituição +1, até 20. Vantagem em Percepção baseada no olfato. Na noite de lua cheia, transforma-se do pôr ao nascer do sol, torna-se Caótico e Mau e fica sob controle do mestre. No dia da transformação e nos três seguintes: Constituição −3, dois níveis de exaustão irremovíveis e desvantagem em salvaguardas de Constituição. Pode sofrer medo e discriminação se a condição for conhecida.",
+      "bonus": {
+        "forca": 1,
+        "constituicao": 1
+      }
+    },
+    "artista-marcial": {
+      "nome": "Artista marcial",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Ataque desarmado causa d6. Após acertar no seu turno, pode tentar agarrar como ação bônus; tem vantagem em ataques contra quem agarra. Como ação, faz novo teste para imobilizar ambos até terminar o agarrão, derrubar e atacar desarmado ou desarmar um item; pode pegar o item, encerrando o agarrão."
+    },
+    "oclumencia": {
+      "nome": "Treinamento de oclumência",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Resiste ao efeito inicial de Legilimens com Sabedoria e tem vantagem nos confrontos de Inteligência. Ao falhar inicialmente, sabe que está sendo alvo. Ao vencer uma salvaguarda ou confronto, pode deixar a magia continuar e apresentar informações, emoções ou memórias falsas. Veritaserum só funciona com sua permissão."
+    },
+    "mira-notavel": {
+      "nome": "Mira notável",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Ataques mágicos à distância ignoram meia cobertura e tratam três quartos de cobertura como meia cobertura."
+    },
+    "conjurador-firme": {
+      "nome": "Conjurador firme",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Vantagem em salvaguardas de Constituição para manter concentração após sofrer dano."
+    },
+    "vampirismo": {
+      "nome": "Vampirismo",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Visão no escuro de 120 pés em tons de cinza. Não envelhece e não pode envelhecer magicamente. Recebe Persuasão. Sofre um dano ao começar turno sob luz solar direta e desvantagem em ataques e Percepção visual quando você, o alvo ou o objeto observado está sob essa luz. Não entra em residência sem convite de um ocupante. Alho repele e causa dor ao toque ou consumo. Precisa de sangue em vez de comida e água.",
+      "pericias": [
+        "persuasao"
+      ]
+    },
+    "magia-sem-varinha": {
+      "nome": "Magia sem varinha",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Se conhece Accio, Alohomora, Colovaria, Illegibilus, Incendio Glacia, Pereo ou Wingardium Leviosa, pode conjurá-las sem varinha ou componente somático. Não pode gastar espaço de círculo superior dessa maneira."
+    },
+    "ator": {
+      "nome": "Ator",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Carisma +1, até 20. Vantagem em Enganação e Atuação ao fingir ser outra pessoa. Pode imitar voz ou sons ouvidos por pelo menos um minuto; Intuição confrontada com Enganação pode identificar a imitação.",
+      "bonus": {
+        "carisma": 1
+      },
+      "fonte": "5e 2014 — Actor, listado no livro principal p. 55"
+    },
+    "atleta": {
+      "nome": "Atleta",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Força ou Destreza +1, até 20. Levantar-se custa apenas cinco pés de movimento. Escalar não custa movimento extra. Pode fazer salto em corrida após andar apenas cinco pés.",
+      "atributoEscolha": [
+        "forca",
+        "destreza"
+      ],
+      "fonte": "5e 2014 — Athlete, listado no livro principal p. 55"
+    },
+    "explorador-masmorras": {
+      "nome": "Explorador de masmorras",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Vantagem em Percepção e Investigação para encontrar portas secretas; vantagem em salvaguardas contra armadilhas e resistência ao dano delas. Viajar em ritmo rápido não impõe a penalidade normal de Percepção passiva.",
+      "fonte": "5e 2014 — Dungeon Delver, listado no livro principal p. 55"
+    },
+    "duravel": {
+      "nome": "Durável",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Constituição +1, até 20. Ao gastar um dado de vida para recuperar PV, o mínimo recuperado nesse dado é duas vezes o modificador de Constituição, no mínimo dois.",
+      "bonus": {
+        "constituicao": 1
+      },
+      "fonte": "5e 2014 — Durable, listado no livro principal p. 55"
+    },
+    "mente-aguçada": {
+      "nome": "Mente aguçada",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Inteligência +1, até 20. Sempre sabe onde fica o norte e quantas horas faltam para o próximo nascer ou pôr do sol. Recorda com precisão o que viu ou ouviu no último mês.",
+      "bonus": {
+        "inteligencia": 1
+      },
+      "fonte": "5e 2014 — Keen Mind, listado no livro principal p. 55"
+    },
+    "linguista": {
+      "nome": "Linguista",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Inteligência +1, até 20. Aprende três idiomas. Pode criar cifras escritas: sem ensino ou magia, outros precisam passar em Inteligência contra CD igual à sua Inteligência + proficiência para decifrá-las.",
+      "bonus": {
+        "inteligencia": 1
+      },
+      "idiomas": 3,
+      "fonte": "5e 2014 — Linguist, listado no livro principal p. 55"
+    },
+    "observador": {
+      "nome": "Observador",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Inteligência ou Sabedoria +1, até 20. Pode ler lábios de criatura visível falando um idioma que compreende. Recebe +5 em Percepção passiva e Investigação passiva.",
+      "atributoEscolha": [
+        "inteligencia",
+        "sabedoria"
+      ],
+      "fonte": "5e 2014 — Observant, listado no livro principal p. 55"
+    },
+    "habilidoso": {
+      "nome": "Habilidoso",
+      "pagina": 55,
+      "inato": false,
+      "texto": "Recebe proficiência em três perícias ou ferramentas à sua escolha, em qualquer combinação.",
+      "treinamentos": 3,
+      "fonte": "5e 2014 — Skilled, listado no livro principal p. 55"
+    }
+  },
+  "ferramentas": [
+    "Ferramentas de astrônomo",
+    "Ferramentas de quebra de maldições",
+    "Kit de adivinhação",
+    "Ferramentas de herbologista",
+    "Kit de preparo de poções",
+    "Veículos: vassoura"
+  ],
+  "receitas": {
+    "aging-potion": {
+      "nome": "Poção de envelhecimento",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Aging Potion"
+    },
+    "antidote-of-common-poisons": {
+      "nome": "Antídoto para venenos comuns",
+      "raridade": "comum",
+      "pagina": 43,
+      "originalNome": "Antidote of Common Poisons"
+    },
+    "antidote-of-uncommon-poisons": {
+      "nome": "Antídoto para venenos incomuns",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Antidote of Uncommon Poisons"
+    },
+    "babbling-beverage": {
+      "nome": "Bebida balbuciante",
+      "raridade": "comum",
+      "pagina": 43,
+      "originalNome": "Babbling Beverage"
+    },
+    "baneberry-poison": {
+      "nome": "Veneno de erva-de-são-cristóvão",
+      "raridade": "comum",
+      "pagina": 43,
+      "originalNome": "Baneberry Poison"
+    },
+    "baruffio-s-brain-elixir": {
+      "nome": "Elixir cerebral de Baruffio",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Baruffio's Brain Elixir"
+    },
+    "beautification-potion": {
+      "nome": "Poção embelezadora",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Beautification Potion"
+    },
+    "befuddlement-draught": {
+      "nome": "Poção da confusão",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Befuddlement Draught"
+    },
+    "beguiling-bubbles": {
+      "nome": "Bolhas encantadoras",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Beguiling Bubbles"
+    },
+    "blemish-blitzer": {
+      "nome": "Eliminador de manchas",
+      "raridade": "comum",
+      "pagina": 43,
+      "originalNome": "Blemish Blitzer"
+    },
+    "blood-replenishing-potion": {
+      "nome": "Poção repositora de sangue",
+      "raridade": "incomum",
+      "pagina": 43,
+      "originalNome": "Blood-Replenishing Potion"
+    },
+    "bloodroot-poison": {
+      "nome": "Veneno de sanguinária",
+      "raridade": "incomum",
+      "pagina": 44,
+      "originalNome": "Bloodroot Poison"
+    },
+    "confusing-concoction": {
+      "nome": "Mistura desconcertante",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Confusing Concoction"
+    },
+    "cupid-crystals": {
+      "nome": "Cristais de Cupido",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Cupid Crystals"
+    },
+    "doxycide": {
+      "nome": "Doxicida",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Doxycide"
+    },
+    "dr-ubbly-s-oblivious-unction": {
+      "nome": "Unguento do esquecimento do Dr. Ubbly",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Dr. Ubbly's Oblivious Unction"
+    },
+    "draught-of-peace": {
+      "nome": "Poção da paz",
+      "raridade": "incomum",
+      "pagina": 44,
+      "originalNome": "Draught of Peace"
+    },
+    "dreamless-sleep-potion": {
+      "nome": "Poção do sono sem sonhos",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Dreamless Sleep Potion"
+    },
+    "elixir-to-induce-euphoria": {
+      "nome": "Elixir indutor de euforia",
+      "raridade": "comum",
+      "pagina": 44,
+      "originalNome": "Elixir to Induce Euphoria"
+    },
+    "exstimulo-potion": {
+      "nome": "Poção Exstimulo",
+      "raridade": "incomum",
+      "pagina": 45,
+      "originalNome": "Exstimulo Potion"
+    },
+    "fatiguing-fusion": {
+      "nome": "Mistura fatigante",
+      "raridade": "incomum",
+      "pagina": 45,
+      "originalNome": "Fatiguing Fusion"
+    },
+    "fire-protection-potion": {
+      "nome": "Poção de proteção contra fogo",
+      "raridade": "incomum",
+      "pagina": 45,
+      "originalNome": "Fire Protection Potion"
+    },
+    "forgetfulness-potion": {
+      "nome": "Poção do esquecimento",
+      "raridade": "comum",
+      "pagina": 45,
+      "originalNome": "Forgetfulness Potion"
+    },
+    "fungiface-potion": {
+      "nome": "Poção de rosto fúngico",
+      "raridade": "comum",
+      "pagina": 45,
+      "originalNome": "Fungiface Potion"
+    },
+    "garrotting-gas": {
+      "nome": "Gás sufocante",
+      "raridade": "comum",
+      "pagina": 45,
+      "originalNome": "Garrotting Gas"
+    },
+    "gillyweed": {
+      "nome": "Guelricho",
+      "raridade": "incomum",
+      "pagina": 45,
+      "originalNome": "Gillyweed"
+    },
+    "girding-potion": {
+      "nome": "Poção de resistência",
+      "raridade": "incomum",
+      "pagina": 45,
+      "originalNome": "Girding Potion"
+    },
+    "gregory-s-unctuous-unction": {
+      "nome": "Unguento untuoso de Gregório",
+      "raridade": "incomum",
+      "pagina": 46,
+      "originalNome": "Gregory's Unctuous Unction"
+    },
+    "heartbreak-teardrops": {
+      "nome": "Lágrimas de coração partido",
+      "raridade": "comum",
+      "pagina": 46,
+      "originalNome": "Heartbreak Teardrops"
+    },
+    "herbicide-potion": {
+      "nome": "Poção herbicida",
+      "raridade": "comum",
+      "pagina": 46,
+      "originalNome": "Herbicide Potion"
+    },
+    "hiccoughing-solution": {
+      "nome": "Solução de soluços",
+      "raridade": "comum",
+      "pagina": 46,
+      "originalNome": "Hiccoughing Solution"
+    },
+    "memory-potion": {
+      "nome": "Poção da memória",
+      "raridade": "incomum",
+      "pagina": 46,
+      "originalNome": "Memory Potion"
+    },
+    "moonseed-poison": {
+      "nome": "Veneno de menispermo",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Moonseed Poison"
+    },
+    "murtlap-essence": {
+      "nome": "Essência de murtlap",
+      "raridade": "incomum",
+      "pagina": 47,
+      "originalNome": "Murtlap Essence"
+    },
+    "noxious-potion": {
+      "nome": "Poção nociva",
+      "raridade": "incomum",
+      "pagina": 47,
+      "originalNome": "Noxious Potion"
+    },
+    "oculus-potion": {
+      "nome": "Poção Oculus",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Oculus Potion"
+    },
+    "pepperup-potion": {
+      "nome": "Poção estimulante",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Pepperup Potion"
+    },
+    "pet-tonic": {
+      "nome": "Tônico para animais",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Pet Tonic"
+    },
+    "regerminating-potion": {
+      "nome": "Poção regerminadora",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Regerminating Potion"
+    },
+    "shrinking-solution": {
+      "nome": "Solução redutora",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Shrinking Solution"
+    },
+    "sleeping-draught": {
+      "nome": "Poção do sono",
+      "raridade": "incomum",
+      "pagina": 47,
+      "originalNome": "Sleeping Draught"
+    },
+    "star-grass-salve": {
+      "nome": "Unguento de erva-estelar",
+      "raridade": "comum",
+      "pagina": 47,
+      "originalNome": "Star Grass Salve"
+    },
+    "strengthening-solution": {
+      "nome": "Solução fortalecedora",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Strengthening Solution"
+    },
+    "swelling-solution": {
+      "nome": "Solução dilatadora",
+      "raridade": "comum",
+      "pagina": 48,
+      "originalNome": "Swelling Solution"
+    },
+    "twilight-moonbeams": {
+      "nome": "Raios lunares do crepúsculo",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Twilight Moonbeams"
+    },
+    "vitamix-potion": {
+      "nome": "Poção Vitamix",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Vitamix Potion"
+    },
+    "volubilis-potion": {
+      "nome": "Poção Volubilis",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Volubilis Potion"
+    },
+    "wideye-potion": {
+      "nome": "Poção desperta",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Wideye Potion"
+    },
+    "wiggenweld-potion": {
+      "nome": "Poção Wiggenweld",
+      "raridade": "incomum",
+      "pagina": 48,
+      "originalNome": "Wiggenweld Potion"
+    },
+    "wound-cleaning-potion": {
+      "nome": "Poção de limpeza de feridas",
+      "raridade": "comum",
+      "pagina": 48,
+      "originalNome": "Wound-Cleaning Potion"
+    }
+  },
+  "tracosCasas": {
+    "grifinoria": "Coração valente: vantagem nas salvaguardas contra amedrontamento, exceto quando causado por um dementador. Verdadeiro grifinório: em extrema necessidade, a espada da Grifinória pode se apresentar a você.",
+    "lufalufa": "Lealdade firme: vantagem nas salvaguardas contra efeitos que o façam atacar ou trabalhar contra um aliado. Visitas à cozinha: sabe tratar educadamente seres mágicos, graças ao convívio com os elfos de Hogwarts.",
+    "corvinal": "Conhecimento profundo: em testes de Inteligência ou Sabedoria que incluam sua proficiência, trate resultados de d20 de 5 ou menos como 6. Biblioteca de Rowena: pode pesquisar com colegas e livros exclusivos da sala comunal.",
+    "sonserina": "Informação comprometedora: em testes de Carisma que usem os segredos de alguém, recebe proficiência na perícia pertinente e usa o dobro da proficiência. Uma qualidade nobre: pode assumir uma persona importante para circular entre autoridades e bruxos prestigiosos.",
+    "beauxbatons": "Evasão ágil: enquanto usa a ação Esquivar, acrescente metade da proficiência à CA e às salvaguardas de Destreza. Estudante de intercâmbio: familiaridade com a Confederação Internacional dos Bruxos e outras associações internacionais.",
+    "durmstrang": "Eficiência fria: Bombarda é concedida automaticamente, não ocupa a cota e não pode ser esquecida para aprender outro truque. Educação sombria: vantagem para resistir a efeitos de corrupção de magia das trevas.",
+    "serpente": "Mente acadêmica: metade da proficiência em testes de Inteligência ou Sabedoria que ainda não incluam proficiência, já aplicada às perícias. Pensamento metódico: afinidade com enigmas e lógica.",
+    "wampus": "Resistência do guerreiro: ao obter 16 ou mais numa salvaguarda contra morte, recupera imediatamente 1 PV, uma vez por descanso longo. Registre o resultado obtido na mesa e o uso nos recursos. Valor contagiante: inspira outros a enfrentar seus inimigos.",
+    "trovao": "Passo do aventureiro: terreno difícil não mágico não custa movimento extra. Orientação confiável: bom senso de direção e capacidade de lembrar a disposição de regiões por marcos e geografia.",
+    "pukwudgie": "Jeito de curandeiro: ao usar Medicina para estabilizar uma criatura, acrescente metade da proficiência ao bônus normal. Toque diplomático: ajudar de modo significativo um ser hostil pode fazê-lo reconsiderar sua hostilidade."
+  }
+}

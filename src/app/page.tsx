@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Icone } from "@/components/hub/icone";
 import { ImagemHub } from "@/components/hub/imagem";
 import { capaSistema, capaCatalogo, CAPAS_VERTICAIS } from "@/lib/visual";
-import { SISTEMAS, ROTULO_SITUACAO } from "@/lib/sistemas";
+import { SISTEMAS_CATALOGO, ROTULO_SITUACAO } from "@/lib/sistemas";
 
 export default function Home() {
   return (
@@ -47,7 +47,7 @@ export default function Home() {
           </div>
         </div>
         <ul className="hub-home-grid">
-          {SISTEMAS.map((s) => (
+          {SISTEMAS_CATALOGO.map((s) => (
             <li key={s.chave}>
               <Link href={`/sistemas/${s.chave}`} className="hub-card">
                 <ImagemHub

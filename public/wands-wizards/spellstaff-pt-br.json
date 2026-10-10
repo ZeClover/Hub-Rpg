@@ -1,0 +1,598 @@
+{
+  "fonte": "spellstaff-v2",
+  "nome": "Spellstaff v2.0",
+  "autor": "Carric",
+  "comunidade": true,
+  "opcional": true,
+  "ativacao": "Somente com autorização do mestre. Biblioteca de consulta; não altera fichas existentes.",
+  "revisao": "Tradução dos verbetes abaixo revisada contra as páginas indicadas. Progressão automática bloqueada por divergências da fonte.",
+  "pendencias": [
+    "A tabela de progressão informa magia conhecida no nível 1, mas a conjuração começa no nível 2.",
+    "A tabela indica maestria no nível 15; o parágrafo introdutório indica 14, e as descrições das maestrias indicam 15.",
+    "O texto inicial usa dados dracônicos d8; o histórico de alterações menciona d6.",
+    "A tabela de magias conhecidas e espaços apresenta regressões entre níveis; precisa de errata ou decisão expressa do mestre."
+  ],
+  "entradas": [
+    {
+      "id": "atramento-caenum",
+      "nome": "Atramento Caenum",
+      "tipo": "Magia",
+      "pagina": 7,
+      "texto": "Uma criatura visível deve passar em salvaguarda de Destreza ou sofrer 1d4 de dano radiante e perder 3 m de deslocamento até o início do seu próximo turno. O dano aumenta para 2d4 no nível 5, 3d4 no nível 11 e 4d4 no nível 17.",
+      "nivel": 0,
+      "escola": "Transfiguração",
+      "tempo": "1 ação",
+      "alcance": "4,5 m",
+      "duracao": "Instantânea"
+    },
+    {
+      "id": "lumos-lamina",
+      "nome": "Lumos Lamina",
+      "tipo": "Magia",
+      "pagina": 7,
+      "texto": "Transforma o cajado que você segura em cristal sólido. Enquanto a magia durar, cada ataque com esse cajado que acertar causa 1d4 de dano radiante adicional.",
+      "nivel": 1,
+      "escola": "Transfiguração",
+      "tempo": "1 ação bônus",
+      "alcance": "Pessoal",
+      "duracao": "Concentração, até 1 minuto"
+    },
+    {
+      "id": "celeria",
+      "nome": "Celeria",
+      "tipo": "Magia",
+      "pagina": 7,
+      "texto": "Ao conjurar e, depois, como ação bônus em cada um dos seus turnos enquanto a magia durar, você pode realizar a ação Disparada.",
+      "nivel": 1,
+      "escola": "Encantamento",
+      "tempo": "1 ação bônus",
+      "alcance": "Pessoal",
+      "duracao": "Concentração, até 10 minutos"
+    },
+    {
+      "id": "gravitaria",
+      "nome": "Gravitaria",
+      "tipo": "Magia",
+      "pagina": 7,
+      "texto": "Escolha uma criatura ou objeto a até 9 m. A gravidade faz você cair em direção ao alvo. Ao alcançá-lo, você pode realizar um ataque com arma contra ele. Se acertar, causa 3d6 de dano contundente adicional. Acerte ou erre, a gravidade volta ao normal e você aterrissa de pé ao lado do alvo.",
+      "nivel": 2,
+      "escola": "Encantamento",
+      "tempo": "1 ação",
+      "alcance": "Pessoal; alvo a até 9 m",
+      "duracao": "Instantânea"
+    },
+    {
+      "id": "draco-spiritum",
+      "nome": "Draco Spiritum",
+      "tipo": "Magia",
+      "pagina": 7,
+      "texto": "Uma criatura voluntária tocada, desde que possua boca, pode usar uma ação para exalar energia radiante em um cone de 4,5 m. Cada criatura na área faz salvaguarda de Destreza: sofre 3d6 de dano radiante se falhar, ou metade se passar.",
+      "nivel": 2,
+      "escola": "Encantamento",
+      "tempo": "1 ação bônus",
+      "alcance": "Toque",
+      "duracao": "Concentração, até 1 minuto"
+    },
+    {
+      "id": "fulguria-gradus",
+      "nome": "Fulguria Gradus",
+      "tipo": "Magia",
+      "pagina": 8,
+      "texto": "Escolha uma criatura voluntária visível. Seu deslocamento dobra; ela recebe +2 na CA, vantagem em salvaguardas de Destreza e uma ação adicional por turno. Essa ação só permite Atacar (um único ataque com arma), Disparada, Desengajar, Esconder-se ou Usar um Objeto. Quando a magia termina, a criatura não pode se mover nem realizar ações até depois de seu próximo turno.",
+      "nivel": 3,
+      "escola": "Encantamento",
+      "tempo": "1 ação",
+      "alcance": "9 m",
+      "duracao": "Concentração, até 1 minuto"
+    },
+    {
+      "id": "amkha-aplexum",
+      "nome": "Ām̐khā Aplexum",
+      "tipo": "Magia",
+      "pagina": 8,
+      "texto": "Uma aura de 9 m se move com você. Cada criatura não hostil na aura, incluindo você, pode causar 1d4 de dano radiante adicional quando acertar um ataque com arma ou magia.",
+      "nivel": 3,
+      "escola": "Encantamento",
+      "tempo": "1 ação",
+      "alcance": "Pessoal; aura de 9 m",
+      "duracao": "Concentração, até 1 minuto"
+    },
+    {
+      "id": "invito-spiritus-sublimis",
+      "nome": "Invito Spiritus Sublimis",
+      "tipo": "Magia",
+      "pagina": 8,
+      "texto": "Invoca um espírito como grifo, pégaso ou hipogrifo em um espaço desocupado. Use os atributos da forma no Monster Book of Monsters. Se a Inteligência for 5 ou menos, passa a 6; a montaria entende um idioma que você fala. Você a controla em combate e pode se comunicar telepaticamente a até 1,6 km. Enquanto estiver montado, uma magia que você conjura e que tenha somente você como alvo também pode afetá-la. A montaria desaparece temporariamente com 0 PV ou se dispensada por uma ação. Conjurar novamente traz a montaria vinculada com todos os PV e sem condições. Você só pode manter uma montaria vinculada por esta magia ou Find Steed ao mesmo tempo. Uma ação pode desfazer o vínculo permanentemente. Ao desaparecer, ela deixa os objetos vestidos ou carregados.",
+      "nivel": 4,
+      "escola": "Transfiguração",
+      "tempo": "10 minutos",
+      "alcance": "9 m",
+      "duracao": "Instantânea"
+    },
+    {
+      "id": "apparitus-illisus",
+      "nome": "Apparitus Illisus",
+      "tipo": "Magia",
+      "pagina": 8,
+      "texto": "Escolha até cinco criaturas visíveis no alcance. Faça um ataque mágico corpo a corpo contra cada uma; cada acerto causa 6d8 de dano de energia. Depois você pode se teleportar para um espaço desocupado visível a até 1,5 m de um dos alvos, tenha acertado ou errado.",
+      "nivel": 5,
+      "escola": "Maldição",
+      "tempo": "1 ação",
+      "alcance": "9 m",
+      "duracao": "Instantânea"
+    },
+    {
+      "id": "manobra-brace",
+      "nome": "Preparar o golpe",
+      "tipo": "Manobra",
+      "pagina": 8,
+      "texto": "Quando uma criatura visível entra no alcance da arma corpo a corpo que você empunha, use sua reação e gaste um dado dracônico para atacá-la com essa arma. Se acertar, acrescente o resultado do dado ao dano.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-goading",
+      "nome": "Ataque provocador",
+      "tipo": "Manobra",
+      "pagina": 8,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. O alvo faz salvaguarda de Sabedoria; se falhar, tem desvantagem nos ataques contra outras criaturas até o fim do seu próximo turno.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-grappling",
+      "nome": "Golpe de agarrão",
+      "tipo": "Manobra",
+      "pagina": 8,
+      "texto": "Imediatamente após acertar um ataque corpo a corpo no seu turno, gaste um dado dracônico e tente agarrar o alvo como ação bônus. Acrescente o dado ao teste de Força (Atletismo).",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-lunging",
+      "nome": "Ataque de alcance",
+      "tipo": "Manobra",
+      "pagina": 8,
+      "texto": "Ao realizar um ataque corpo a corpo no seu turno, gaste um dado dracônico para aumentar o alcance desse ataque em 1,5 m. Se acertar, acrescente o dado ao dano.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-maneuvering",
+      "nome": "Ataque de manobra",
+      "tipo": "Manobra",
+      "pagina": 8,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. Escolha um aliado que veja ou ouça você; ele pode usar a reação para se mover até metade do seu deslocamento sem provocar ataques de oportunidade do alvo atingido.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-menacing",
+      "nome": "Ataque ameaçador",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. O alvo faz salvaguarda de Sabedoria; se falhar, fica amedrontado por você até o fim do seu próximo turno.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-parry",
+      "nome": "Aparar",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Quando outra criatura causar dano a você com um ataque corpo a corpo, use sua reação e gaste um dado dracônico. Reduza o dano pelo resultado do dado + seu modificador de Destreza.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-pushing",
+      "nome": "Ataque de empurrão",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. Se o alvo for Grande ou menor, faz salvaguarda de Força; se falhar, você o empurra até 4,5 m para longe.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-sweeping",
+      "nome": "Ataque amplo",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque corpo a corpo, gaste um dado dracônico. Escolha outra criatura a até 1,5 m do primeiro alvo e dentro do seu alcance. Se o resultado do ataque original também atingiria essa criatura, ela sofre dano igual ao resultado do dado, do mesmo tipo do dano original.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-trip",
+      "nome": "Ataque de derrubada",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. Se o alvo for Grande ou menor, faz salvaguarda de Força; se falhar, fica caído.",
+      "cajado": "Clawstaff — cajado de garra"
+    },
+    {
+      "id": "manobra-ambush",
+      "nome": "Emboscada",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Se não estiver incapacitado, ao fazer um teste de Destreza (Furtividade) ou de iniciativa, gaste um dado dracônico e acrescente-o ao resultado.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-bait",
+      "nome": "Troca de posição",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "No seu turno, estando a até 1,5 m de uma criatura voluntária e não incapacitada, gaste um dado dracônico e 1,5 m de movimento para trocar de lugar com ela. A troca não provoca ataques de oportunidade. Você ou a outra criatura, à sua escolha, recebe um bônus na CA igual ao resultado do dado até o início do seu próximo turno.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-presence",
+      "nome": "Presença dominante",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao fazer um teste de Carisma (Intimidação, Atuação ou Persuasão), gaste um dado dracônico e acrescente-o ao resultado.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-disarming",
+      "nome": "Ataque desarmante",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. O alvo faz salvaguarda de Força; se falhar, solta um objeto que segura, escolhido por você. O objeto cai aos pés dele.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-distracting",
+      "nome": "Golpe de distração",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao acertar um ataque com arma, gaste um dado dracônico e acrescente-o ao dano. O próximo ataque de outra criatura contra esse alvo tem vantagem, desde que ocorra antes do início do seu próximo turno.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-feinting",
+      "nome": "Finta",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "No seu turno, use uma ação bônus e gaste um dado dracônico. Escolha uma criatura a até 1,5 m: você tem vantagem no próximo ataque contra ela antes do fim do turno. Se acertar, acrescente o dado ao dano.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-precision",
+      "nome": "Ataque preciso",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao realizar um ataque com arma contra uma criatura, gaste um dado dracônico e acrescente-o ao resultado. Você pode decidir antes ou depois da rolagem, mas antes de aplicar os efeitos do ataque.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-rally",
+      "nome": "Incentivar",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "No seu turno, use uma ação bônus e gaste um dado dracônico. Um aliado que veja ou ouça você recebe PV temporários iguais ao resultado do dado + seu modificador de Carisma.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-riposte",
+      "nome": "Contra-ataque",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Quando uma criatura errar um ataque corpo a corpo contra você, use sua reação e gaste um dado dracônico para realizar um ataque corpo a corpo contra ela. Se acertar, acrescente o dado ao dano.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "manobra-assessment",
+      "nome": "Avaliação tática",
+      "tipo": "Manobra",
+      "pagina": 9,
+      "texto": "Ao fazer um teste de Inteligência (Investigação ou História) ou Sabedoria (Intuição), gaste um dado dracônico e acrescente-o ao resultado. História é o termo do suplemento; sua correspondência com as perícias de Wands & Wizards precisa ser definida pelo mestre.",
+      "cajado": "Scalestaff — cajado de escamas"
+    },
+    {
+      "id": "inscricoes",
+      "nome": "Inscrições do escriba",
+      "tipo": "Característica",
+      "pagina": 2,
+      "texto": "Após um descanso longo, escolha proficiência em uma perícia ou ferramenta. Ela dura até você escolher outra após um descanso longo. Tocando uma inscrição durante 1 minuto, suas runas permitem ler o texto em outro idioma.",
+      "nivel": 1
+    },
+    {
+      "id": "golpe-draconico",
+      "nome": "Golpe dracônico",
+      "tipo": "Característica",
+      "pagina": 2,
+      "texto": "Aprenda duas manobras e mais duas nos níveis 6, 11 e 15. Ao aprender novas manobras, pode substituir uma conhecida. A partir do nível 3, as manobras devem combinar com seu tipo de cajado. O texto concede três dados dracônicos d8, mais um nos níveis 6, 11 e 15, recuperados em descanso curto ou longo. CD = 8 + proficiência + Sabedoria. O histórico de alterações menciona d6: a fonte é contraditória.",
+      "nivel": 1
+    },
+    {
+      "id": "sigilos",
+      "nome": "Sigilos protetores",
+      "tipo": "Característica",
+      "pagina": 2,
+      "texto": "Se não estiver incapacitado, ao ser atingido por um ataque ou falhar em salvaguarda, use sua reação para receber +2 na CA contra esse ataque ou +2 naquela salvaguarda. Usos iguais ao modificador de Sabedoria, recuperados em descanso curto ou longo; a fonte não informa um mínimo.",
+      "nivel": 2
+    },
+    {
+      "id": "estilo",
+      "nome": "Estilo de luta",
+      "tipo": "Característica",
+      "pagina": 2,
+      "texto": "Escolha um: Combate às Cegas (percepção às cegas de 3 m); Defesa (+1 CA empunhando cajado); Combate com Arma Grande (em ataque corpo a corpo com cajado de duas mãos, repetir um dado de dano que resulte em 1 ou 2 e usar o novo valor); Proteção (reação para impor desvantagem a ataque de criatura visível contra outra pessoa a até 1,5 m de você, empunhando cajado). Rolagens são realizadas fora do Hub.",
+      "nivel": 2
+    },
+    {
+      "id": "conjuracao",
+      "nome": "Conjuração com cajado",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Sabedoria é o atributo de conjuração: CD = 8 + proficiência + Sabedoria; ataque mágico = proficiência + Sabedoria. O cajado serve como foco. Aprende Atramento Caenum e duas magias de 1º círculo da lista da classe. Recupera espaços de magia em descanso longo. Ao subir de nível, pode trocar uma magia conhecida por outra da lista para a qual tenha espaço.",
+      "nivel": 2
+    },
+    {
+      "id": "vinculo",
+      "nome": "Cajado Ā’irīkō",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Vincule um Clawstaff ou Scalestaff. Uma característica visual ilusória concede vantagem em Atuação ao entreter ou fazer floreios com ele. Uma ação e a palavra de comando invocam o cajado em uma mão livre.",
+      "nivel": 3
+    },
+    {
+      "id": "aprimoramento",
+      "nome": "Aprimoramento de atributo",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Nos níveis 4, 8, 12, 16 e 19: +2 em um atributo ou +1 em dois atributos, sem ultrapassar 20. Pode escolher um talento no lugar do aumento.",
+      "nivel": 4
+    },
+    {
+      "id": "magia-marcial",
+      "nome": "Magia marcial",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "A ação Atacar permite dois ataques. Um deles pode ser substituído por Atramento Caenum, que nesta forma causa somente 1d4 de dano radiante.",
+      "nivel": 5
+    },
+    {
+      "id": "dados-aprimorados",
+      "nome": "Dados dracônicos aprimorados",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Os dados dracônicos passam a d10 no nível 10 e d12 no nível 18.",
+      "nivel": 10
+    },
+    {
+      "id": "ascendencia",
+      "nome": "Ascendência Ā’irīkō",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Como ação livre, estenda o cajado vinculado até alcançar 4,5 m em corpo a corpo. Ao usar uma manobra de Golpe Dracônico, pode trocar o dano contundente do ataque por radiante.",
+      "nivel": 11
+    },
+    {
+      "id": "cajado-alma",
+      "nome": "Cajado ligado à alma",
+      "tipo": "Característica",
+      "pagina": 3,
+      "texto": "Sigilos Protetores passam a conceder +3 na CA contra o ataque que os acionou ou +4 na salvaguarda que os acionou. Seu cajado não pode ser quebrado. Pode invocá-lo sem palavras como ação bônus; se não tiver mão livre, ele flutua ao seu lado até ser segurado.",
+      "nivel": 14
+    },
+    {
+      "id": "maestria-alma-3",
+      "nome": "Luz vinculante",
+      "tipo": "Maestria",
+      "pagina": 4,
+      "texto": "Em luz intensa de origem mágica, ao acertar um ataque corpo a corpo com arma, reduza pela metade o deslocamento do alvo até o início do seu próximo turno. Pode conjurar Lumos Maxima uma vez sem espaço de magia; recupera em descanso longo.",
+      "nivel": 3,
+      "maestria": "Alma"
+    },
+    {
+      "id": "maestria-alma-7",
+      "nome": "União das almas",
+      "tipo": "Maestria",
+      "pagina": 4,
+      "texto": "Uma vez por descanso longo, uma ação vincula criaturas voluntárias a até 9 m, incluindo você, em quantidade igual à sua proficiência. O vínculo dura até reutilizar a característica. Quando uma vinculada está a até 9 m de outra, pode acrescentar 1d4 a um ataque, teste ou salvaguarda, no máximo uma vez por turno por criatura.",
+      "nivel": 7,
+      "maestria": "Alma"
+    },
+    {
+      "id": "maestria-alma-10",
+      "nome": "Luz contra as trevas",
+      "tipo": "Maestria",
+      "pagina": 4,
+      "texto": "Sente um arrepio a até 18 m de criatura ou local marcado, distorcido ou tocado por magia das trevas. Não revela direção nem identifica a fonte. Tocar diretamente a fonte causa outro arrepio e confirma a influência.",
+      "nivel": 10,
+      "maestria": "Alma"
+    },
+    {
+      "id": "maestria-alma-15",
+      "nome": "Força da alma",
+      "tipo": "Maestria",
+      "pagina": 4,
+      "texto": "Criaturas das trevas têm desvantagem em ataques contra você e não podem enfeitiçar, amedrontar ou possuir você.",
+      "nivel": 15,
+      "maestria": "Alma"
+    },
+    {
+      "id": "maestria-alma-20",
+      "nome": "Aspecto de Ām̐khā",
+      "tipo": "Maestria",
+      "pagina": 4,
+      "texto": "Uma ação bônus ativa por 1 minuto: voo de 18 m; luz intensa em 9 m e penumbra por mais 9 m; um inimigo que inicia o turno na luz intensa sofre 10 de dano radiante. Uma vez por descanso longo; pode gastar espaço de 5º círculo para reutilizar.",
+      "nivel": 20,
+      "maestria": "Alma"
+    },
+    {
+      "id": "maestria-corpo-3",
+      "nome": "Força do dragão",
+      "tipo": "Maestria",
+      "pagina": 5,
+      "texto": "PV máximos aumentam em 3 e em mais 1 por nível posterior nesta classe. Pode calcular CA como 13 + Destreza ou 13 + Força. Escolha um cálculo de CA; não acumule fórmulas diferentes.",
+      "nivel": 3,
+      "maestria": "Corpo"
+    },
+    {
+      "id": "maestria-corpo-7",
+      "nome": "Passo leve",
+      "tipo": "Maestria",
+      "pagina": 5,
+      "texto": "Deslocamento aumenta em 3 m. Durante seu turno, pode se mover em superfícies verticais e sobre líquidos sem cair durante o movimento.",
+      "nivel": 7,
+      "maestria": "Corpo"
+    },
+    {
+      "id": "maestria-corpo-10",
+      "nome": "Defensor errante",
+      "tipo": "Maestria",
+      "pagina": 5,
+      "texto": "Recebe especialização em Estudos Trouxas: dobro da proficiência nos testes. Pode encontrar abrigo para esconder-se, descansar ou recuperar-se entre bruxos e trouxas, salvo se tiver se mostrado perigoso para eles.",
+      "nivel": 10,
+      "maestria": "Corpo"
+    },
+    {
+      "id": "maestria-corpo-15",
+      "nome": "Onda protetora",
+      "tipo": "Maestria",
+      "pagina": 5,
+      "texto": "Quando você ou criatura visível a até 1,5 m é atingida por ataque ou magia, sua reação concede ao alvo resistência contra o dano daquele ataque ou magia. Usos iguais ao modificador de Sabedoria, mínimo um; recupera em descanso longo.",
+      "nivel": 15,
+      "maestria": "Corpo"
+    },
+    {
+      "id": "maestria-corpo-20",
+      "nome": "Fúria do dragão",
+      "tipo": "Maestria",
+      "pagina": 5,
+      "texto": "Uma ação bônus ativa por 1 minuto: uma vez em cada turno seu, pode transformar um erro em ataque com arma em acerto; vantagem em salvaguardas de Constituição, Destreza e Força; um dado de dano adicional em cada acerto com cajado. Uma vez por descanso longo; pode gastar espaço de 5º círculo para reutilizar.",
+      "nivel": 20,
+      "maestria": "Corpo"
+    },
+    {
+      "id": "maestria-mente-3",
+      "nome": "Conjurador ágil",
+      "tipo": "Maestria",
+      "pagina": 6,
+      "texto": "Aprenda dois truques da lista Wands & Wizards, usando Sabedoria. Ao subir de nível nesta classe, pode substituir um deles. Aprende outro nos níveis 9, 13 e 17. Os dados de dano de Atramento Caenum passam a d6.",
+      "nivel": 3,
+      "maestria": "Mente"
+    },
+    {
+      "id": "maestria-mente-7",
+      "nome": "Conjurar e golpear",
+      "tipo": "Maestria",
+      "pagina": 6,
+      "texto": "Ao usar sua ação para conjurar um truque, pode realizar um ataque com arma como ação bônus.",
+      "nivel": 7,
+      "maestria": "Mente"
+    },
+    {
+      "id": "maestria-mente-10",
+      "nome": "Guardião internacional dos dragões",
+      "tipo": "Maestria",
+      "pagina": 6,
+      "texto": "Em testes de Inteligência (História da Magia) ou Sabedoria (Criaturas Mágicas) relacionados a dragões, recebe proficiência e usa o dobro dela. Aprende dez idiomas não mágicos à sua escolha. O nome História da Magia precisa de correspondência definida pelo mestre com a lista de perícias principal.",
+      "nivel": 10,
+      "maestria": "Mente"
+    },
+    {
+      "id": "maestria-mente-15",
+      "nome": "Golpe do escriba",
+      "tipo": "Maestria",
+      "pagina": 6,
+      "texto": "Ao usar sua ação para conjurar uma magia, pode realizar um ataque com cajado como ação bônus. Esse ataque causa crítico em 19 ou 20. Se acertar, também pode encerrar uma magia no alvo cujo círculo seja igual ou menor ao espaço gasto; em crítico, até o dobro. Usos iguais ao modificador de Sabedoria, recuperados em descanso longo, sem mínimo indicado.",
+      "nivel": 15,
+      "maestria": "Mente"
+    },
+    {
+      "id": "maestria-mente-20",
+      "nome": "Sobrecarga de Ām̐khā",
+      "tipo": "Maestria",
+      "pagina": 6,
+      "texto": "Uma ação bônus ativa por 1 minuto. Pode maximizar o dano de magia que não seja truque, mas sofre imediatamente 1d20 de dano necrótico por círculo da magia, ignorando resistência e imunidade. Ao conjurar uma magia como ação, pode atacar com arma como ação bônus. Após acertar uma criatura com arma, ela subtrai 1d4 de sua primeira salvaguarda. Uma vez por descanso longo; pode gastar espaço de 5º círculo para reutilizar.",
+      "nivel": 20,
+      "maestria": "Mente"
+    },
+    {
+      "id": "fallband",
+      "nome": "Pulseira de queda — Fallband",
+      "tipo": "Item",
+      "pagina": 6,
+      "texto": "Item incomum. Enquanto usa a pulseira, pode conjurar Arresto Momentum à vontade, tendo somente você como alvo. Uma ação esconde magicamente suas Inscrições do Escriba."
+    },
+    {
+      "id": "clawstaff",
+      "nome": "Cajado de garra — Clawstaff",
+      "tipo": "Equipamento",
+      "pagina": 2,
+      "texto": "Arma simples. Dano contundente 1d6; versátil (1d8)."
+    },
+    {
+      "id": "scalestaff",
+      "nome": "Cajado de escamas — Scalestaff",
+      "tipo": "Equipamento",
+      "pagina": 2,
+      "texto": "Arma marcial. Dano contundente 1d6; acuidade."
+    }
+  ],
+  "magiasDeMaestria": {
+    "Alma": [
+      {
+        "nivel": 3,
+        "magia": "Lumos Lamina"
+      },
+      {
+        "nivel": 5,
+        "magia": "Incarcerous"
+      },
+      {
+        "nivel": 9,
+        "magia": "Repello Inimicum"
+      },
+      {
+        "nivel": 13,
+        "magia": "Invito Spiritus Sublimis"
+      },
+      {
+        "nivel": 17,
+        "magia": "Salvio Hexia"
+      }
+    ],
+    "Corpo": [
+      {
+        "nivel": 3,
+        "magia": "Arresto Momentum"
+      },
+      {
+        "nivel": 5,
+        "magia": "Gravitaria"
+      },
+      {
+        "nivel": 9,
+        "magia": "Ām̐khā Aplexum"
+      },
+      {
+        "nivel": 13,
+        "magia": "Repello Muggletum"
+      },
+      {
+        "nivel": 17,
+        "magia": "Obliviate"
+      }
+    ],
+    "Mente": [
+      {
+        "nivel": 3,
+        "magia": "Celeria"
+      },
+      {
+        "nivel": 5,
+        "magia": "Draco Spiritum"
+      },
+      {
+        "nivel": 9,
+        "magia": "Fulguria Gradus"
+      },
+      {
+        "nivel": 13,
+        "magia": "Confundo"
+      },
+      {
+        "nivel": 17,
+        "magia": "Apparitus Illisus"
+      }
+    ]
+  },
+  "magiasDeMaestriaRegra": "Concedidas ao atingir o nível da classe indicado; não contam no limite de magias conhecidas."
+}

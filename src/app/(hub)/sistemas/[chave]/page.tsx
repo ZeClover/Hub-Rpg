@@ -87,7 +87,7 @@ export default async function DetalheSistema({
           </a>
         ))}
       </div>
-      {sistema.salvaNoHub && (
+      {sistema.salvaNoHub && !sistema.legado && (
         <section className="mt-9">
           <h2 className="font-titulo text-2xl">Comece sua história</h2>
           <div className="hub-creation-grid">

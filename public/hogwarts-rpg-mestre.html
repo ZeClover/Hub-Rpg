@@ -114,7 +114,7 @@ function mostrarStatus(texto){ estado.status = texto; render(); setTimeout(() =>
 
 async function salvarPersonagem(p){
   const resposta = await fetch(`/api/personagens/${p.id}`, {
-    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p.dados}),
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dados:p.dados,atualizadoEmBase:p.atualizadoEm||undefined}),
   });
   if(!resposta.ok) throw new Error('falha ao salvar ' + p.nome);
 }
@@ -222,7 +222,7 @@ function render(){
     ${[...new Set(estado.curriculo.map(c=>c.pericia))].filter(p=>!estado.filtroPericia||p===estado.filtroPericia).map(pericia=>{
       const itens=estado.curriculo.filter(c=>c.pericia===pericia && (!estado.busca || (c.nome+' '+c.categoria+' '+(c.tags||[]).join(' ')).toLowerCase().includes(estado.busca.toLowerCase())));
       if(!itens.length)return '';
-      return `<h4 style="margin:14px 0 6px">${['Investigação','Furtividade','Influência'].includes(pericia)?'Conteúdos Gerais — ':''}${esc(pericia)}</h4>`+itens.map(c=>`<div class="linha-pj" style="flex-wrap:wrap"><span class="nome"><b>${esc(c.nome)}</b><span class="tag">${esc(c.categoria)}</span><br><span class="mini">${esc(c.pericia)} · requisito ${c.requisito_pericia} · ${esc(c.estadoCurricular)} · ${c.conhecidoPor.length} conhecem · ${c.disponivelPara.length} disponíveis</span></span><button data-curriculo="ensinar:${c.slug}" class="destaque">Ensinar turma</button><button data-curriculo="liberar:${c.slug}">Liberar para selecionados</button><button data-curriculo="conceder:${c.slug}">Conceder</button><button data-curriculo="ocultar:${c.slug}">Ocultar</button><button data-editar-conteudo="${c.slug}">Editar</button><button data-ver-personagens="${c.slug}">Ver personagens</button></div>`).join('');
+      return `<h4 style="margin:14px 0 6px">${['Investigação','Furtividade','Influência'].includes(pericia)?'Conteúdos Gerais — ':''}${esc(pericia)}</h4>`+itens.map(c=>`<div class="linha-pj" style="flex-wrap:wrap"><span class="nome"><b>${esc(c.nome)}</b><span class="tag">${esc(c.categoria)}</span><br><span class="mini">${esc(c.pericia)} · requisito ${c.requisito_pericia} · ${esc(c.estadoCurricular)} · ${c.conhecidoPor.length} conhecem · ${c.disponivelPara.length} disponíveis</span></span><button data-curriculo="ensinar:${c.slug}" class="destaque">Ensinar turma</button><button data-curriculo="liberar:${c.slug}">Liberar para selecionados</button><button data-curriculo="conceder:${c.slug}">Conceder</button><button data-curriculo="promover:${c.slug}">Promover</button><button data-curriculo="ocultar:${c.slug}">Ocultar</button><button data-editar-conteudo="${c.slug}">Editar</button><button data-ver-personagens="${c.slug}">Ver personagens</button></div>`).join('');
     }).join('')}
   </div>
   <div class="cartao">

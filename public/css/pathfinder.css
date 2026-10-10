@@ -13,3 +13,60 @@ body{font-size:calc(16px * var(--pf-escala,1))}
 .selecao-resumo{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}.selecao-resumo h3{margin:.1rem 0 .35rem;color:var(--acento)}.selecao-resumo p{margin:0;line-height:1.5}.selecao-resumo button{flex:0 0 auto;min-height:36px;padding:.4rem .7rem}
 .escolhas-dependentes:not(:empty){margin-top:1rem}.rodape-contexto{margin:.9rem 0 0;padding-top:.75rem;border-top:1px dashed color-mix(in srgb,var(--borda),transparent 55%)}
 @media(max-width:540px){main{width:calc(100% - 22px)}.barra{font-size:.85rem}.card{padding:.9rem}.grade.seis{grid-template-columns:repeat(2,1fr)}.numero{font-size:1.6rem}dialog{padding:.85rem}.acoes button{flex:1}h1{font-size:2.5rem}.selecao-resumo{flex-direction:column}.selecao-resumo button{width:100%}.opcao-detalhe summary small{display:none}}@media(prefers-reduced-motion:no-preference){button{transition:background .12s ease}}@media print{body{background:white;color:black}.barra,#abas,#acoes,footer,dialog,button,.botao,#aviso{display:none!important}.card,.item{background:white;box-shadow:none;break-inside:avoid;border-color:#777}.hero{padding:.3rem}.mini{color:#333}main{width:100%}.numero{color:black}}
+/* Creation and advancement replace the normal sheet while keeping its theme. */
+body[data-guia-aberto] main{width:min(1160px,calc(100% - 32px))}
+body[data-guia-aberto] main>:not(.hero):not(#guia){display:none!important}
+body[data-guia-aberto] .hero{padding:1.3rem 0;margin-bottom:1.5rem}
+body[data-guia-aberto] .hero h1{font-size:2rem}
+body[data-guia-aberto] .hero h1 span{display:none}
+body[data-guia-aberto] .hero .resumo{margin-top:.7rem}
+#guia{position:relative;inset:auto;width:100%;max-width:none;max-height:none;overflow:visible;margin:0;padding:1.5rem;background:var(--superficie);box-shadow:0 12px 40px #0002}
+#guia:not([open]){display:none}
+#guia>.linha{border-bottom:1px solid color-mix(in srgb,var(--borda),transparent 55%);padding-bottom:1rem}
+#guia>.linha h2{margin:0;font-size:1.5rem}
+#guia-contexto{margin:1rem 0 1.5rem}
+.guia-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:1.8rem;align-items:start}
+#guia-passos{display:flex;flex-direction:column;gap:7px;margin:0}
+#guia-passos button{display:flex;gap:10px;align-items:center;text-align:left;padding:10px;font-size:.86rem;background:transparent;border-color:transparent;min-height:48px}
+#guia-passos button>span:first-child{display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;border:1px solid var(--borda);border-radius:50%;font-size:.8rem}
+#guia-passos button[aria-current=step]{background:color-mix(in srgb,var(--acento) 12%,var(--fundo));border-color:var(--acento);outline:none}
+#guia-passos button[aria-current=step]>span:first-child{background:var(--acento);color:var(--fundo);border-color:var(--acento)}
+#guia-passos button.visitado{color:var(--acento)}
+.guia-etapa{min-width:0}
+#guia-progresso{margin:0 0 .4rem;letter-spacing:.05em}
+#guia-etapa-titulo{font-size:1.8rem;margin:.3rem 0;outline:none}
+#guia-instrucao{color:var(--muted);margin:.7rem 0 1.4rem;max-width:68ch}
+#guia-conteudo>.card{margin:0 0 1.2rem;padding:1.1rem;border-color:color-mix(in srgb,var(--borda),transparent 50%);background:var(--fundo);box-shadow:none}
+#guia-conteudo>.card>h2{font-size:1.12rem;color:var(--acento)}
+#guia-conteudo>.card>label{margin:1rem 0}
+#guia-conteudo .selecao-resumo{background:var(--superficie)}
+#guia-conteudo .item{min-width:0}
+#guia-form>.acoes{border-top:1px solid color-mix(in srgb,var(--borda),transparent 50%);padding-top:1.2rem;margin-top:1.4rem}
+#guia-proximo,#guia-confirmar{margin-left:auto;background:var(--acento);color:var(--fundo);font-weight:700}
+#guia-form>.acoes .secundario{font-size:.8rem;background:transparent;color:var(--muted)}
+.guia-categorias button[aria-pressed=true]{border-color:var(--acento);color:var(--acento);background:var(--superficie)}
+#guia-aviso:not(:empty){border-left:3px solid var(--acento);padding:1rem;background:var(--fundo)}
+@media(max-width:760px){
+ .guia-layout{grid-template-columns:1fr;gap:1.2rem}
+ #guia{padding:1rem}
+ #guia-passos{flex-direction:row;gap:4px}
+ #guia-passos button{flex:1;justify-content:center;padding:5px 0;min-width:0;min-height:36px;border:0}
+ #guia-passos button>span:last-child{display:none}
+ #guia-passos button>span:first-child{width:26px;height:26px;flex-basis:26px;font-size:.72rem}
+ #guia-progresso{margin-top:0}
+ #guia-etapa-titulo{font-size:1.5rem}
+ #guia-form>.acoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ #guia-form>.acoes button{margin:0;padding:.7rem .6rem}
+ #guia>.linha{align-items:flex-start}
+ #guia>.linha h2{font-size:1.2rem}
+ #guia-fechar{font-size:.8rem}
+ #guia input,#guia select{font-size:16px}
+ #guia-conteudo>.card{padding:.9rem}
+ body[data-guia-aberto] main{width:calc(100% - 22px)}
+ body[data-guia-aberto] .hero h1{font-size:1.6rem}
+ body[data-guia-aberto] .hero .eyebrow{font-size:.65rem}
+}
+
+#guia .guia-ganhos{grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:.75rem}#guia .guia-ganhos .item{margin:0;background:var(--superficie)}#guia .guia-ganhos p{margin:.45rem 0 0}#guia .ganho-antes{color:var(--muted);font-size:.9rem}@media(max-width:760px){#guia .guia-ganhos{grid-template-columns:repeat(2,minmax(0,1fr))}#guia .guia-ganhos .item{padding:.75rem}#guia .guia-ganhos strong{font-size:.85rem}}
+body[data-guia-aberto] .barra #importar-label,body[data-guia-aberto] .barra #imprimir{display:none}
+@media print{body[data-guia-aberto] main>#ficha{display:block!important}}

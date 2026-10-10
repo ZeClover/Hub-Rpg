@@ -181,6 +181,9 @@ model Campanha {
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
   pontosCasaHogwarts       HogwartsCasaPontoEvento[]
   familiasHogwarts         HogwartsFamilia[]
+  colecionaveis            Colecionavel[]
+  acervosColecionaveis      AcervoColecionavel[]
+  concessoesColecionaveis   ConcessaoColecionavel[]
 
   @@index([sistemaId])
   @@map("campanhas")
@@ -334,6 +337,8 @@ model Personagem {
   eventosAuditoriaHogwarts EventoAuditoriaHogwarts[]
   familiaHogwartsMembro    HogwartsFamiliaMembro?
   herancaHogwarts          HogwartsHerancaPersonagem?
+  acervosColecionaveis      AcervoColecionavel[]
+  concessoesColecionaveis   ConcessaoColecionavel[]
 
   @@index([donoId])
   @@index([sistemaId])
@@ -868,4 +873,62 @@ model TrocaCarta {
   @@index([campanhaId])
   @@index([personagemOfertaId])
   @@map("trocas_cartas")
+}
+
+// Gabinete da ficha Wands & Wizards: dados narrativos, sem relação com Personagem.dados.
+model Colecionavel {
+  id                 String @id @default(uuid()) @db.Uuid
+  campanhaId         String @db.Uuid
+  categoria          String
+  nome               String
+  descricao          String
+  imagemUrl          String?
+  silhuetaArquivo    Bytes?
+  retratoAnimado     Boolean @default(false)
+  repetivel          Boolean @default(false)
+  localizacaoMestre  String @default("")
+  raridade           String @default("")
+  edicao             String @default("")
+  origemRevelada     String @default("")
+  segredoMestre      String @default("")
+  visibilidade       String @default("silhueta")
+  criadoEm           DateTime @default(now())
+  atualizadoEm       DateTime @updatedAt
+  campanha           Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  acervos            AcervoColecionavel[]
+  concessoes         ConcessaoColecionavel[]
+  @@unique([id, campanhaId])
+  @@index([campanhaId, criadoEm])
+  @@map("colecionaveis")
+}
+model AcervoColecionavel {
+  id               String @id @default(uuid()) @db.Uuid
+  personagemId     String @db.Uuid
+  colecionavelId   String @db.Uuid
+  campanhaId       String @db.Uuid
+  quantidade       Int @default(1)
+  descobertoEm     DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+  personagem       Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+  campanha         Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  colecionavel     Colecionavel @relation(fields: [colecionavelId, campanhaId], references: [id, campanhaId], onDelete: Cascade)
+  @@unique([personagemId, colecionavelId])
+  @@index([campanhaId, personagemId])
+  @@map("acervos_colecionaveis")
+}
+model ConcessaoColecionavel {
+  operacaoId       String @id @db.Uuid
+  personagemId     String @db.Uuid
+  colecionavelId   String @db.Uuid
+  campanhaId       String @db.Uuid
+  tipo             String @default("conceder")
+  quantidade       Int
+  concedidoPorId   String @db.Uuid
+  revelacaoVistaEm DateTime?
+  criadoEm         DateTime @default(now())
+  personagem       Personagem @relation(fields: [personagemId], references: [id], onDelete: Cascade)
+  campanha         Campanha @relation(fields: [campanhaId], references: [id], onDelete: Cascade)
+  colecionavel     Colecionavel @relation(fields: [colecionavelId, campanhaId], references: [id, campanhaId], onDelete: Cascade)
+  @@index([campanhaId, personagemId, criadoEm])
+  @@map("concessoes_colecionaveis")
 }

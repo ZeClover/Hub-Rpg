@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { banco } from "@/lib/banco";
+import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 import { CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
 import { catalogoDaFormacaoInicial, erroNaSelecaoInicial, formacaoInicialConcluida } from "@/lib/hogwarts/formacao-inicial";
@@ -17,7 +18,8 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
   const usuario = await usuarioAtual();
   if (!usuario) return NextResponse.json({ erro: "não autenticado" }, { status: 401 });
   const p = await banco.personagem.findUnique({ where: { id }, include: { sistema: { select: { chave: true } } } });
-  if (!p || p.sistema.chave !== "hogwarts-rpg" || p.donoId !== usuario.id) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  if (!p || p.sistema.chave !== "hogwarts-rpg" || p.ehMonstro) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  if (p.donoId !== usuario.id && !(p.campanhaId && await ehMestreOuAuxiliar(p.campanhaId, usuario.id))) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   const dados = p.dados as Dados;
   const atuais = dados.conteudosConhecidos ?? {};
   const selecaoConcluida = formacaoInicialConcluida(dados);
@@ -37,14 +39,16 @@ export async function GET(_req: NextRequest, { params }: Contexto) {
 
   const curriculo = p.campanhaId ? await banco.curriculoHogwarts.findMany({ where: { campanhaId: p.campanhaId } }) : [];
   const estados = new Map(curriculo.map((c) => [c.slug, c.estado]));
+  const overrides = new Map(curriculo.map(c => [c.slug, c.override]));
   const conteudos = CONTEUDOS_HOGWARTS_1_ANO.flatMap((c) => {
     const salvo = atuais[c.slug];
     const liberado = estados.get(c.slug) === "LIBERADO";
     if (!salvo && !liberado) return [];
     const cumpre = Number(dados.pericias?.[c.pericia] ?? 0) >= c.requisito_pericia;
     const estado = salvo && !["oculto", "descoberto", "bloqueado", "disponivel"].includes(salvo)
-      ? salvo : liberado && cumpre ? "disponivel" : "bloqueado";
-    return [{ ...c, estado }];
+      ? salvo : (liberado || salvo === "disponivel" || salvo === "bloqueado") && cumpre ? "disponivel" : "bloqueado";
+    const override = overrides.get(c.slug);
+    return [{ ...c, ...(override && typeof override === "object" && !Array.isArray(override) ? override : {}), slug: c.slug, estado }];
   });
   return NextResponse.json({ conteudos, selecaoInicialPendente: false, selecionadosIniciais: [] });
 }

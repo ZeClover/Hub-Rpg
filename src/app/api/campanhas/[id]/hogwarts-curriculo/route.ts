@@ -3,6 +3,7 @@ import { banco } from "@/lib/banco";
 import { ehMestreOuAuxiliar } from "@/lib/permissao-mestre";
 import { usuarioAtual } from "@/lib/usuario";
 import { CONTEUDOS_HOGWARTS_1_ANO, SLUGS_CONTEUDOS_HOGWARTS_1_ANO } from "@/lib/hogwarts/conteudos-primeiro-ano";
+import { estadoAposAula } from "@/lib/hogwarts/curriculo";
 import { garantirFundacaoHogwarts } from "@/lib/hogwarts/auditoria";
 
 type Contexto = { params: Promise<{ id: string }> };
@@ -44,6 +45,8 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
   const { id } = await params;
   const mestre = await mestreDaCampanha(id);
   if (!mestre) return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
+  const campanha = await banco.campanha.findUnique({ where: { id }, select: { sistema: { select: { chave: true } } } });
+  if (campanha?.sistema.chave !== "hogwarts-rpg") return NextResponse.json({ erro: "campanha não é Hogwarts RPG" }, { status: 400 });
   const corpo = await req.json().catch(() => null);
   const slug = typeof corpo?.slug === "string" ? corpo.slug : "";
   const acao = typeof corpo?.acao === "string" ? corpo.acao : "";
@@ -51,6 +54,7 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
   const base = CONTEUDOS_HOGWARTS_1_ANO.find((c) => c.slug === slug)!;
   await garantirFundacaoHogwarts();
 
+  try {
   if (acao === "ensinar" || acao === "ocultar") {
     await banco.$transaction(async (tx) => {
       await tx.curriculoHogwarts.upsert({
@@ -60,13 +64,13 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
       });
       if (acao === "ensinar") {
         const personagens = await tx.personagem.findMany({ where: { campanhaId: id, ehMonstro: false } });
-        await Promise.all(personagens.map((p) => {
+        await Promise.all(personagens.map(async (p) => {
         const dados = p.dados as DadosFicha;
         const atuais = { ...(dados.conteudosConhecidos ?? {}) };
-        if (!atuais[slug] || ["oculto", "descoberto", "bloqueado"].includes(atuais[slug])) {
-          atuais[slug] = Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia ? "disponivel" : "bloqueado";
-        }
-          return tx.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+        atuais[slug] = estadoAposAula(atuais[slug], acao, Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia);
+          const salvo = await tx.personagem.updateMany({ where: { id: p.id, atualizadoEm: p.atualizadoEm }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+        if (salvo.count !== 1) throw new Error(`A ficha de ${p.nome} mudou. Recarregue antes de tentar novamente.`);
+        await tx.eventoAuditoriaHogwarts.create({ data: { campanhaId: id, personagemId: p.id, atorId: mestre.id, modulo: "conteudo", acao: `curriculo.${acao}`, resumo: `${base.nome}: currículo atualizado para ${p.nome}`, detalhes: { slug } } });
         }));
       }
       await tx.eventoAuditoriaHogwarts.create({ data: {
@@ -81,13 +85,16 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
   if (["liberar", "conceder", "promover"].includes(acao)) {
     const ids = Array.isArray(corpo?.personagemIds) ? corpo.personagemIds.filter((x: unknown): x is string => typeof x === "string") : [];
     const personagens = await banco.personagem.findMany({ where: { id: { in: ids }, campanhaId: id, ehMonstro: false } });
+    if (!personagens.length) return NextResponse.json({ erro: "Selecione ao menos um aluno desta campanha." }, { status: 400 });
     await banco.$transaction(async (tx) => {
-      await Promise.all(personagens.map((p) => {
+      await Promise.all(personagens.map(async (p) => {
         const dados = p.dados as DadosFicha;
         const atuais = { ...(dados.conteudosConhecidos ?? {}) };
         const cumpre = Number(dados.pericias?.[base.pericia] ?? 0) >= base.requisito_pericia;
-        atuais[slug] = acao === "liberar" ? (corpo?.override || cumpre ? "disponivel" : "bloqueado") : "conhecido";
-        return tx.personagem.update({ where: { id: p.id }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+        atuais[slug] = estadoAposAula(atuais[slug], acao, corpo?.override === true || cumpre);
+        const salvo = await tx.personagem.updateMany({ where: { id: p.id, atualizadoEm: p.atualizadoEm }, data: { dados: { ...dados, conteudosConhecidos: atuais } } });
+        if (salvo.count !== 1) throw new Error(`A ficha de ${p.nome} mudou. Recarregue antes de tentar novamente.`);
+        await tx.eventoAuditoriaHogwarts.create({ data: { campanhaId: id, personagemId: p.id, atorId: mestre.id, modulo: "conteudo", acao: `curriculo.${acao}`, resumo: `${base.nome}: currículo atualizado para ${p.nome}`, detalhes: { slug } } });
       }));
       await tx.eventoAuditoriaHogwarts.create({ data: {
         campanhaId: id, atorId: mestre.id, modulo: "conteudos", acao: `personagem.${acao}`,
@@ -113,4 +120,5 @@ export async function PATCH(req: NextRequest, { params }: Contexto) {
     return NextResponse.json({ ok: true });
   }
   return NextResponse.json({ erro: "ação inválida" }, { status: 400 });
+  } catch (e) { return NextResponse.json({ erro: e instanceof Error ? e.message : "Não foi possível atualizar o currículo." }, { status: 400 }); }
 }
