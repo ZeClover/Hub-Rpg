@@ -97,6 +97,7 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade2>*,.grade3>*{min-width:0}
 </style>
 </head>
 <body>
@@ -173,7 +174,7 @@ li{margin-bottom:5px}
   <section id="aprender">
     <h2>🧭 2. Como montar um personagem</h2>
     <p>A ficha tem sete abas, e a ordem delas já é a ordem recomendada pra preencher um personagem novo:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Aba</th><th>O que decidir ali</th></tr>
       <tr><td>Perfil</td><td>Nome, Identidade, Tema, Origem, aparência — o lado narrativo.</td></tr>
       <tr><td>Atributos e Classes</td><td>Escolher um Perfil de dados (seção 3), distribuir 2 ou 3 classes somando 5 níveis (seção 5), equipar arma/armadura.</td></tr>
@@ -182,7 +183,7 @@ li{margin-bottom:5px}
       <tr><td>Inventário</td><td>Acessórios comprados com Zenit (seção 12).</td></tr>
       <tr><td>Recursos</td><td>Rituais, Projetos e os subsistemas por Atlas, se a classe der acesso (seções 13, 14 e 17).</td></tr>
       <tr><td>Laços</td><td>Até 6 relações importantes do personagem (seção 16).</td></tr>
-    </table>
+    </table></div>
     <p>Os números do topo (Pontos de Vida, Mana, Defesa, Nível) recalculam sozinhos conforme a ficha é
     preenchida — não precisa somar nada à mão.</p>
   </section>
@@ -191,21 +192,21 @@ li{margin-bottom:5px}
     <h2>🎲 3. Atributos e Perfis de criação</h2>
     <p>Quatro Atributos, cada um com um <strong>dado</strong> de d6 a d12 — quanto maior o dado, melhor o
     Atributo. Não existe "Atributo 14" como número puro: é sempre um tamanho de dado.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atributo</th><th>Sobre</th></tr>
       <tr><td><strong>Destreza (DES)</strong></td><td>precisão, coordenação, finesse e reflexos</td></tr>
       <tr><td><strong>Vigor (VIG)</strong></td><td>capacidade física e robustez</td></tr>
       <tr><td><strong>Astúcia (AST)</strong></td><td>observação, compreensão e raciocínio</td></tr>
       <tr><td><strong>Vontade (VON)</strong></td><td>determinação, carisma e influência</td></tr>
-    </table>
+    </table></div>
     <p>Na criação, escolha um dos três Perfis abaixo e distribua os quatro dados dele entre os quatro
     Atributos, na ordem que quiser:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Perfil</th><th>Dados</th><th>Estilo</th></tr>
       <tr><td>Especializado</td><td class="num">d10, d10, d6, d6</td><td>ótimo em duas coisas, fraco em duas</td></tr>
       <tr><td>Mediano</td><td class="num">d10, d8, d8, d6</td><td>um destaque, o resto equilibrado</td></tr>
       <tr><td>Pau pra toda obra</td><td class="num">d8, d8, d8, d8</td><td>sem pico, sem buraco</td></tr>
-    </table>
+    </table></div>
     <div class="dica">O dado que a ficha usa pra calcular tudo é o <strong>dado atual</strong>, não o
     básico — uma Condição ativa (seção 10) baixa um Atributo um degrau na escala d6→d8→d10→d12, sem
     nunca passar de d6 pra baixo. Ele volta ao básico assim que a Condição é removida.</div>
@@ -304,12 +305,12 @@ li{margin-bottom:5px}
     <h2>❤️ 7. PV, PM, PI e Crise</h2>
     <p>Três reservas numéricas, todas recalculadas sozinhas pela ficha a partir do Nível, dos Atributos
     e das classes:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Reserva</th><th>Fórmula</th><th>Pra que serve</th></tr>
       <tr><td><strong>Pontos de Vida (PV)</strong></td><td class="num">Nível total + 5 × dado atual de Vigor + benefícios de classe</td><td>vida — zerar não mata, ver "Crise" abaixo</td></tr>
       <tr><td><strong>Pontos de Mana (PM)</strong></td><td class="num">Nível total + 5 × dado atual de Vontade + benefícios de classe</td><td>combustível de feitiços e Poderes mágicos</td></tr>
       <tr><td><strong>Pontos de Inventário (PI)</strong></td><td class="num">6 (fixo) + benefícios de classe</td><td>itens especiais carregáveis por cena</td></tr>
-    </table>
+    </table></div>
     <p><strong>Crise</strong> é a metade dos PV máximos, arredondada pra baixo — não é uma quarta reserva,
     é um <em>limiar</em>: ao entrar em Crise (PV atuais nessa marca ou abaixo), o personagem sofre
     penalidades importantes de mesa (a critério do mestre/regras de Crise do livro), então é o número que
@@ -356,7 +357,7 @@ li{margin-bottom:5px}
     <h3>Condições</h3>
     <p>Uma Condição reduz um ou dois Atributos em <strong>um degrau de dado</strong> (nunca abaixo de
     d6), e Condições diferentes acumulam:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Condição</th><th>Reduz</th></tr>
       <tr><td>Abalado</td><td>Vontade</td></tr>
       <tr><td>Atordoado</td><td>Astúcia</td></tr>
@@ -364,18 +365,18 @@ li{margin-bottom:5px}
       <tr><td>Envenenado</td><td>Vigor e Vontade</td></tr>
       <tr><td>Fraco</td><td>Vigor</td></tr>
       <tr><td>Lento</td><td>Destreza</td></tr>
-    </table>
+    </table></div>
     <h3>Afinidades</h3>
     <p>Cada criatura pode ter uma Afinidade diferente pra cada um dos nove tipos de dano (Físico, Ar,
     Fogo, Gelo, Luz, Raio, Terra, Trevas, Veneno):</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Afinidade</th><th>Efeito no dano recebido</th></tr>
       <tr><td>Normal</td><td>dano cheio</td></tr>
       <tr><td>Vulnerável</td><td>dobro do dano</td></tr>
       <tr><td>Resistente</td><td>metade do dano (arredondado pra baixo)</td></tr>
       <tr><td>Imune</td><td>zero — Imunidade sempre vence Resistência/Vulnerabilidade</td></tr>
       <tr><td>Absorve</td><td>vira <strong>cura</strong> — recupera PV em vez de perder; Absorção vence todas as outras</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo jogado — dano contra uma Afinidade</div>
       <p>Um golem <strong>Resistente</strong> a Fogo sofre 20 de dano de fogo de um feitiço da
@@ -412,13 +413,13 @@ li{margin-bottom:5px}
     dano direto, Condições, nem ganho/perda de PV/PM/PI/Pontos de Fabula — e nunca replica um Poder ou
     feitiço que já existe. Falhar no Teste distorce o efeito de forma prejudicial, então é sempre um
     risco calculado, não uma segunda opção segura de fazer a mesma coisa que um feitiço já faz.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Potência</th><th class="num">PM base</th><th class="num">Dificuldade</th></tr>
       <tr><td>Menor</td><td class="num">20</td><td class="num">7</td></tr>
       <tr><td>Média</td><td class="num">30</td><td class="num">10</td></tr>
       <tr><td>Maior</td><td class="num">40</td><td class="num">13</td></tr>
       <tr><td>Extrema</td><td class="num">50</td><td class="num">16</td></tr>
-    </table>
+    </table></div>
     <p>A Área multiplica o custo em PM: Individual ×1, Pequena ×2, Grande ×3, Enorme ×4. O Teste de
     Magia usa o par de Atributos da disciplina de ritual que o personagem tem acesso (normalmente
     Astúcia + Vontade) — só quem tem o Poder de classe certo (um por disciplina: Arcanismo, Elementalismo,
@@ -437,13 +438,13 @@ li{margin-bottom:5px}
     <p class="resumo">Em resumo: igual Rituais, mas pra <strong>criar itens</strong> — Potência × Área ×
     Uso define o custo em Zenit; qualquer personagem com nível em Inventor pode começar um Projeto, sem
     precisar de um Poder específico.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Potência</th><th class="num">Custo base</th><th>Dano possível</th><th>Proteção possível</th></tr>
       <tr><td>Menor</td><td class="num">100z</td><td>não disponível</td><td>uma Resistência</td></tr>
       <tr><td>Média</td><td class="num">200z</td><td>Menor</td><td>duas Resistências</td></tr>
       <tr><td>Maior</td><td class="num">400z</td><td>Maior</td><td>uma Imunidade ou duas Resistências</td></tr>
       <tr><td>Extrema</td><td class="num">800z</td><td>Massivo</td><td>duas Imunidades ou três Resistências</td></tr>
-    </table>
+    </table></div>
     <p>Área multiplica por ×1 (Individual) a ×4 (Enorme); Uso multiplica por ×1 (Consumível, um uso só) ou
     ×5 (Permanente). Quanto o dano/cura "Menor/Maior/Massivo" realmente vale em número sobe com o Nível
     total do Inventor — fica mais forte com o personagem, sem precisar reconstruir o Projeto do zero.</p>
@@ -463,12 +464,12 @@ li{margin-bottom:5px}
     não um número fixo. Cinco Habilidades Heroicas são abertas a qualquer classe dominada; o resto exige
     ter dominado uma classe específica (algumas também pedem um Poder daquela classe já escolhido).</p>
     <p>Três delas a ficha já soma sozinha nos totais do topo, sem precisar fazer conta:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Heroica</th><th>Efeito automático</th></tr>
       <tr><td>PV Extra</td><td>+10 PV máximos (+20 a partir do Nível total 40)</td></tr>
       <tr><td>PM Extra</td><td>+10 PM máximos (+20 a partir do Nível total 40)</td></tr>
       <tr><td>PI Extra</td><td>+4 PI máximos</td></tr>
-    </table>
+    </table></div>
     <p class="mini">As outras Habilidades Heroicas (texto específico de cada uma) ficam na aba Heroico da
     ficha, junto com o aviso de quais já estão disponíveis pras classes que o personagem já dominou.</p>
   </section>
@@ -486,13 +487,13 @@ li{margin-bottom:5px}
     <h2>🧩 17. Subsistemas por Atlas</h2>
     <p>Algumas classes trazem uma mecânica só delas, ativada assim que o personagem tem nível ali — a
     ficha mostra o painel certo automaticamente na aba Recursos:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Subsistema</th><th>Classe</th><th>Ideia central</th></tr>
       <tr><td>Alquimia, Infusões e Tecnomagia (Engenhocas)</td><td>Inventor</td><td>gasta níveis de um Poder pra distribuir entre três tipos de engenhoca — básico, avançado, superior.</td></tr>
       <tr><td>Culinária</td><td>Gourmet (Atlas Natural Fantasy)</td><td>ingredientes têm um sabor cada; combine 2 ou 3 pra descobrir o efeito da receita.</td></tr>
       <tr><td>Veículo Pessoal</td><td>Piloto (Atlas Techno Fantasy)</td><td>estrutura fixa escolhida uma vez + módulos comprados depois, cada um ativável ou não.</td></tr>
       <tr><td>Magisferas</td><td>Tecnomagia superior (Inventor)</td><td>protótipo reutilizável de um feitiço à escolha — gasta uma vaga pra replicar de graça (ainda paga PM e faz o Teste normal).</td></tr>
-    </table>
+    </table></div>
     <p class="mini">O texto completo de cada opção dentro desses subsistemas mora na própria ficha — este
     Grimório só explica a lógica de cada calculadora, não substitui o livro do Atlas correspondente.</p>
   </section>

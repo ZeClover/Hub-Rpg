@@ -90,6 +90,7 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--navy-mid); border:1px solid var(--line-strong);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--parchment-dim); text-decoration:none}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade2>*,.grade3>*{min-width:0}
 </style>
 </head>
 <body>
@@ -157,7 +158,7 @@ li{margin-bottom:5px}
   <section id="aprender">
     <h2>🧭 2. Como montar um personagem</h2>
     <p>A ficha tem 13 abas; a ordem abaixo evita ping-pong entre elas na criação:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Aba</th><th>O que decidir ali</th></tr>
       <tr><td>Perfil</td><td>Nome, Espécie, Profissão, mar de origem, tendência — o lado narrativo.</td></tr>
       <tr><td>Atributos</td><td>Distribuir os pontos de Atributo do seu NC (seção 3).</td></tr>
@@ -170,7 +171,7 @@ li{margin-bottom:5px}
       <tr><td>Poderes</td><td>Budô ou Akuma no Mi (seções 9-10), e Haki a partir de NC 10 (seção 11).</td></tr>
       <tr><td>Inventário</td><td>Armas, armaduras e outros itens (seção 13).</td></tr>
       <tr><td>Ataques</td><td>Ataques Prontos — golpes salvos com acerto/dano já calculados, pra não refazer conta toda hora na mesa.</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Companheiro e Kugutsu ainda são só um esboço (stub) na ficha — chegam numa fatia futura.</p>
   </section>
 
@@ -178,7 +179,7 @@ li{margin-bottom:5px}
     <h2>🎲 3. Atributos e Nível de Campanha</h2>
     <p>Sete Atributos, cada um comprado em pontos (sem escala de dado — é um
     número puro, de 0 pra cima):</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atributo</th><th>Abreviação</th></tr>
       <tr><td>Força</td><td class="num">FOR</td></tr>
       <tr><td>Destreza</td><td class="num">DES</td></tr>
@@ -187,12 +188,12 @@ li{margin-bottom:5px}
       <tr><td>Inteligência</td><td class="num">INT</td></tr>
       <tr><td>Vigor</td><td class="num">VIG</td></tr>
       <tr><td>Vontade</td><td class="num">VON</td></tr>
-    </table>
+    </table></div>
     <p class="resumo">Em resumo: quase tudo na ficha — pontos de Atributo, de
     Perícia, de Poder, e os tetos de cada um — é uma conta que só depende do
     <strong>NC</strong>. Suba o NC (com o botão de Level Up, seção 14) e a ficha
     recalcula tudo sozinha.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>O que</th><th>Fórmula</th></tr>
       <tr><td>Pontos de Atributo</td><td class="num">(NC − 2) × 6</td></tr>
       <tr><td>Pontos de Perícia</td><td class="num">(NC − 2) × 6</td></tr>
@@ -201,7 +202,7 @@ li{margin-bottom:5px}
       <tr><td>Limite por Perícia</td><td class="num">piso( NC / 2 )</td></tr>
       <tr><td>Limite por Atributo</td><td class="num">NC</td></tr>
       <tr><td>Limite de Nível do Poder</td><td class="num">piso( NC / 2 )</td></tr>
-    </table>
+    </table></div>
     <p>Personagem novo começa em <strong>NC 4</strong>; o teto do sistema é
     <strong>NC 20</strong> (o patamar de Yonkou/Almirante) — o botão de Level Up
     trava exatamente aí (seção 14).</p>
@@ -216,14 +217,14 @@ li{margin-bottom:5px}
     <p>Um Ataque compara <strong>2d8 + seu total de Combate</strong> (Corporal ou à
     Distância) contra a <strong>Reação de Esquiva</strong> do alvo. Se acertar, o
     valor puro dos 2d8 (o que saiu nos dados, sem somar nada) define o Grau:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>2d8 (bruto)</th><th>Grau</th><th class="num">Multiplicador de dano</th></tr>
       <tr><td>2 – 3</td><td>Falha Crítica</td><td class="num">—</td></tr>
       <tr><td>4 – 8</td><td>Grau 1</td><td class="num">×1</td></tr>
       <tr><td>9 – 11</td><td>Grau 2</td><td class="num">×2</td></tr>
       <tr><td>12 – 14</td><td>Grau 3</td><td class="num">×3</td></tr>
       <tr><td>15 – 16</td><td>Grau 4 (Crítico)</td><td class="num">×4</td></tr>
-    </table>
+    </table></div>
     <p><strong>Dano Final = Dano Base × Grau.</strong> Dano Base depende do tipo de ataque:</p>
     <ul>
       <li><strong>Corporal:</strong> metade da Força + dano da arma (ou desarmado).</li>
@@ -261,7 +262,7 @@ li{margin-bottom:5px}
 
   <section id="vitalidade">
     <h2>❤️ 6. Vitalidade, Estamina e outros derivados</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Derivado</th><th>Fórmula</th></tr>
       <tr><td>Vitalidade Máxima</td><td class="num">(modificador da Espécie × NC) + 5×Vigor + 5×NC</td></tr>
       <tr><td>Estamina Máxima</td><td class="num">teto(10 + 3×Vontade)</td></tr>
@@ -269,7 +270,7 @@ li{margin-bottom:5px}
       <tr><td>Reação de Esquiva</td><td class="num">9 + Combate Esquiva</td></tr>
       <tr><td>Deslocamento</td><td class="num">máx(10, teto(10 + Agilidade÷2) − 3×sobrecarga)</td></tr>
       <tr><td>Compartimentos (carga)</td><td class="num">3 + piso(Força÷2)</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Vitalidade zerada não é morte automática — é o ponto em que
     o Mestre decide as consequências da cena (cair, se render, etc.), igual
     qualquer sistema que separe "sem vida" de "eliminado".</p>
@@ -292,13 +293,13 @@ li{margin-bottom:5px}
     <strong>Perícia Profissional</strong>, que rende <strong>o dobro dos pontos
     investidos</strong> (sem somar o Atributo) quando usada pra exercer a
     profissão. Ela evolui sozinha conforme o nível da Perícia Profissional sobe:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Graduação</th><th class="num">Nível da Perícia</th><th>O que muda</th></tr>
       <tr><td>Amador</td><td class="num">4</td><td>benefícios básicos da Profissão</td></tr>
       <tr><td>Profissional</td><td class="num">8</td><td>Perícia inata reconhecida em testes da área</td></tr>
       <tr><td>Especialista</td><td class="num">12</td><td>trata um 2d8 de 7 ou menos como 8, em testes de Profissão</td></tr>
       <tr><td>Mestre</td><td class="num">16</td><td>1×/dia, pode trocar uma falha num Teste de Profissão por sucesso</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Quem prefere não ter Profissão vira "Vagabundo": abre mão dos
     benefícios em troca de +10 pontos de Qualidade (seção 12), mas leva −4 em
     qualquer teste que dependeria de uma Profissão.</p>
@@ -325,7 +326,7 @@ li{margin-bottom:5px}
     <p><strong>Regra do orçamento:</strong> a soma de TODOS os pontos (Tipo +
     características) precisa fechar em <strong>exatamente zero</strong>; a soma
     só das características positivas não pode passar de <strong>10</strong>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Tipo</th><th class="num">Custo</th><th>Ideia</th></tr>
       <tr><td>Paramécia</td><td class="num">0</td><td>lista de efeitos definida por "Efeitos Permitidos"</td></tr>
       <tr><td>Zoan Comum</td><td class="num">0</td><td>só efeitos exclusivos de Zoan, sem as categorias gerais</td></tr>
@@ -333,7 +334,7 @@ li{margin-bottom:5px}
       <tr><td>Zoan Ancestral</td><td class="num">1</td><td>Zoan Comum + Imprevisibilidade Histórica e Resistência Aprimorada</td></tr>
       <tr><td>Logia</td><td class="num">2</td><td>Intangibilidade + Pontos Logia + 1 benefício elemental grátis</td></tr>
       <tr><td>Zoan Mitológica</td><td class="num">2</td><td>efeitos exclusivos de Zoan + Efeitos Permitidos</td></tr>
-    </table>
+    </table></div>
     <p class="mini">As categorias de característica (Alcance, Tamanho, Dureza,
     Dano/Cura e outras) e seus custos estão na aba <strong>Poderes</strong>,
     junto com o construtor de verdade — aqui é só o mapa de como ele funciona.</p>
@@ -368,13 +369,13 @@ li{margin-bottom:5px}
     — funciona como uma "vitalidade" própria dela, que se gasta ao apanhar, e
     não some no total do personagem), o mundo de Kaizoku no Sho tem itens
     próprios:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Item</th><th>Ideia</th></tr>
       <tr><td>Kairoseki</td><td>"pedra do mar" — anula temporariamente os poderes de quem consumiu um Akuma no Mi</td></tr>
       <tr><td>Dials</td><td>conchas que armazenam um fenômeno natural (som, ar, chama...) pra liberar depois</td></tr>
       <tr><td>Meitou</td><td>espadas famosas, com categorias de qualidade (Wazamono e acima)</td></tr>
       <tr><td>Den Den Mushi</td><td>caracóis usados como rádio/telefone à distância</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="levelup">

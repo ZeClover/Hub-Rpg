@@ -222,10 +222,16 @@ function carregar(){
 }
 
 let debounceHub = null;
+// Uma gravação por vez: uma resposta antiga não pode apagar a última edição.
+let salvamentoHubEmCurso = false;
+let salvamentoHubPendente = false;
 function salvarNoHub(){
   clearTimeout(debounceHub);
   debounceHub = setTimeout(async () => {
+    debounceHub = null;
+    if(salvamentoHubEmCurso){ salvamentoHubPendente = true; return; }
     const inimigo = atual(); if(!inimigo) return;
+    salvamentoHubEmCurso = true;
     // Resumo genérico pro Hub de Mestre ler e ajustar sem saber a fórmula
     // de PV deste sistema (decisão #46) — espelhado a cada salvamento.
     inimigo.resumoVida = {atual: Math.max(0, Math.min(pvMaximo(inimigo), inimigo.atual.pv ?? pvMaximo(inimigo))), maxima: pvMaximo(inimigo), rotulo: 'PV'};
@@ -240,6 +246,9 @@ function salvarNoHub(){
     }catch(e){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }finally{
+      salvamentoHubEmCurso = false;
+      if(salvamentoHubPendente){ salvamentoHubPendente = false; salvarNoHub(); }
     }
   }, 500);
 }

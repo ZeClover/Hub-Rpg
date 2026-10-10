@@ -328,6 +328,9 @@
   ::-webkit-scrollbar{width:10px;}
   ::-webkit-scrollbar-track{background:var(--navy-deep);}
   ::-webkit-scrollbar-thumb{background:var(--navy-mid); border:2px solid var(--navy-deep);}
+.grid>*{min-width:0}.panel{min-width:0;max-width:100%}.tabela-rolavel{max-width:100%;overflow-x:auto}
+/* Tabelas continuam completas; no celular, a rolagem fica dentro da tabela. */
+@media(max-width:639px){.grid>*{min-width:0}.panel,.field{min-width:0;max-width:100%}input,select,textarea{min-width:0;max-width:100%}}
 </style>
 </head>
 <body>
@@ -3897,11 +3900,18 @@ function carregarLayout(){
 const CHAVE_ABAS = 'hub_abas_kaizoku';
 function carregarPreferenciaAbas(){
   let salvas = [];
-  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ salvas = []; }
-  const porId = new Map(salvas.map(s => [s.id, s]));
-  const lista = salvas.filter(s => TABS.some(t => t.id === s.id));
-  TABS.forEach(t => { if(!porId.has(t.id)) lista.push({id:t.id, oculta:false}); });
-  return lista.length ? lista : TABS.map(t => ({id:t.id, oculta:false}));
+  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ /* Preferência inválida: recuperar a navegação padrão. */ }
+  if(!Array.isArray(salvas)) salvas = [];
+  const vistos = new Set();
+  const lista = [];
+  for(const entrada of salvas){
+    if(!entrada || typeof entrada !== 'object' || vistos.has(entrada.id) || !TABS.some(a => a.id === entrada.id)) continue;
+    vistos.add(entrada.id);
+    lista.push({id:entrada.id, oculta:entrada.oculta === true});
+  }
+  TABS.forEach(a => { if(!vistos.has(a.id)) lista.push({id:a.id, oculta:false}); });
+  if(lista.length && lista.every(a => a.oculta)) lista[0].oculta = false;
+  return lista;
 }
 function salvarPreferenciaAbas(lista){
   try{ localStorage.setItem(CHAVE_ABAS, JSON.stringify(lista)); }catch(e){ /* aba anônima etc. */ }
@@ -4232,6 +4242,9 @@ function diasDesdeBackup(){
 const MODO_HUB = new URLSearchParams(location.search).get('id');
 
 let debounceHub = null;
+// Uma gravação por vez: uma resposta antiga não pode apagar a última edição.
+let salvamentoHubEmCurso = false;
+let salvamentoHubPendente = false;
 let falhouAoSalvarHub = false;
 
 // No Hub, cada campo salva sozinho na conta — sem lista local, sem botão de
@@ -4240,7 +4253,10 @@ function salvarNoHub(){
   clearTimeout(debounceHub);
   mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
+    debounceHub = null;
+    if(salvamentoHubEmCurso){ salvamentoHubPendente = true; return; }
     const p = personagemAtual(); if(!p) return;
+    salvamentoHubEmCurso = true;
     // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de
     // Vitalidade deste sistema (decisão #46) — espelhado a cada salvamento.
     const vitMaxAoSalvar = vitalidadeMax(p);
@@ -4258,6 +4274,9 @@ function salvarNoHub(){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvarHub){ falhouAoSalvarHub = true; renderAll(); }
       mostrarStatusSalvo('Erro ao salvar', 'erro');
+    }finally{
+      salvamentoHubEmCurso = false;
+      if(salvamentoHubPendente){ salvamentoHubPendente = false; salvarNoHub(); }
     }
   }, 500);
 }
@@ -5126,16 +5145,16 @@ function panelBonusMecanicos(p){
       <p class="panel-note">Tudo que está somando nos seus totais neste momento — já refletido nas outras abas, listado aqui só pra transparência.</p>
       ${passivos.length ? `
       <h3>Sempre ativos</h3>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Origem</th><th>Aplica em</th><th class="num">Valor</th></tr></thead>
         <tbody>${passivos.map(linha).join('')}</tbody>
-      </table>` : ''}
+      </table></div>` : ''}
       ${ligados ? `
       <h3>Situacionais ligados agora</h3>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Origem</th><th>Aplica em</th><th class="num">Valor</th></tr></thead>
         <tbody>${chaveaveis.filter(e=>e.ativo).map(linha).join('')}</tbody>
-      </table>` : ''}
+      </table></div>` : ''}
       ${!passivos.length && !ligados ? `<p class="panel-note">Nenhum bônus somando agora.</p>` : ''}
     </div>
   `;
@@ -6092,12 +6111,12 @@ function tabelaGraduacao(tabela){
   if(!tabela || !tabela.length) return '';
   const colunas = Object.keys(tabela[0]).filter(k=>k!=='graduacao');
   return `
-    <table class="data" style="margin:6px 0;">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data" style="margin:6px 0;">
       <thead><tr><th>Graduação</th>${colunas.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
       <tbody>
         ${tabela.map(linha=>`<tr><td>${escapeHtml(linha.graduacao)}</td>${colunas.map(c=>`<td>${escapeHtml(String(linha[c]))}</td>`).join('')}</tr>`).join('')}
       </tbody>
-    </table>
+    </table></div>
   `;
 }
 function panelProfissaoBaseDetalhe(p){
@@ -6374,7 +6393,7 @@ function panelAtributos(p){
     <div class="panel">
       <h2>Atributos</h2>
       <p class="panel-note">Compra por pontos: ${total} pontos totais em NC ${p.nc} — fórmula (NC-2)×6. Mínimo obrigatório por atributo: ${min}. Máximo: ${max} (= NC).</p>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Atributo</th><th class="num">Valor</th><th></th></tr></thead>
         <tbody>
           ${ATRIBUTOS_DEF.map(a => `
@@ -6391,7 +6410,7 @@ function panelAtributos(p){
             </tr>
           `).join('')}
         </tbody>
-      </table>
+      </table></div>
       <div class="limit-bar"><div class="limit-bar-fill ${restantes<0?'over':''}" style="width:${Math.min(100,(gastos/Math.max(1,total))*100)}%"></div></div>
       <div class="limit-caption"><span>${gastos} pontos gastos</span><span>de ${total}</span></div>
       ${restantes < 0 ? `<div class="warn-box">Estourou o orçamento de atributos em ${-restantes} ponto(s).</div>` : ''}
@@ -6418,7 +6437,7 @@ function panelCombate(p){
     <div class="panel">
       <h2>Habilidades de Combate</h2>
       <p class="panel-note">Total = Atributo + Valor-Base. Todo Valor-Base começa em 3 (soma 12 entre as 4 habilidades); o livro permite redistribuir alguns pontos entre eles, mantendo a soma total.</p>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Habilidade</th><th class="num">Atributo</th><th class="num">Base</th><th class="num">Outro</th><th class="num">Total</th></tr></thead>
         <tbody>
           ${COMBATE_DEF.map(c => {
@@ -6434,7 +6453,7 @@ function panelCombate(p){
             </tr>`;
           }).join('')}
         </tbody>
-      </table>
+      </table></div>
       <div class="limit-caption"><span>Soma dos Valores-Base</span><span>${somaBases} (deve ser 12)</span></div>
       ${somaBases !== 12 ? `<div class="warn-box">A soma dos Valores-Base está em ${somaBases}, deveria ser 12.</div>` : ''}
     </div>
@@ -6461,7 +6480,7 @@ function panelPericias(p){
     <div class="panel">
       <h2>Perícias</h2>
       <p class="panel-note">Nível inicial = metade do atributo regente (arredondado pra cima) + pontos comprados. Limite de pontos comprados por perícia: ${limite} (metade do NC, pra baixo). [T] = exige treino (0 pontos = não pode usar). [Arm] = penalidade de armadura.</p>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Perícia</th><th class="num">Inicial</th><th class="num">Pontos</th><th class="num">Outro</th><th>Perito</th><th class="num">Total</th></tr></thead>
         <tbody>
           ${PERICIAS_DEF.map(pe => {
@@ -6482,7 +6501,7 @@ function panelPericias(p){
             </tr>`;
           }).join('')}
         </tbody>
-      </table>
+      </table></div>
       <div class="limit-bar"><div class="limit-bar-fill ${restantes<0?'over':''}" style="width:${Math.min(100,(gastos/Math.max(1,total))*100)}%"></div></div>
       <div class="limit-caption"><span>${gastos} pontos gastos</span><span>de ${total}</span></div>
       ${restantes < 0 ? `<div class="warn-box">Estourou o orçamento de perícias em ${-restantes} ponto(s).</div>` : ''}
@@ -6647,10 +6666,10 @@ function panelDanos(p){
   const grausCC = danoPorGrau(baseCC), grausCD = danoPorGrau(baseCD), grausPoder = danoPorGrau(basePoder);
   const tabelaGrau = (label, base, graus) => `
     <h3>${label} — base ${base}</h3>
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr>${GRAU_DANO_TABELA.map(g=>`<th class="num">${g.label}<br><span style="font-weight:400;">${g.faixa}</span></th>`).join('')}</tr></thead>
       <tbody><tr>${[0,...graus].map((v,i)=>`<td class="num" style="font-family:var(--mono);">${i===0?'—':v}</td>`).join('')}</tr></tbody>
-    </table>
+    </table></div>
   `;
   return `
     <div class="panel">
@@ -6817,7 +6836,7 @@ function panelPoderes(p){
     <div class="panel">
       <h2>Budôs</h2>
       <p class="panel-note">Pode ter mais de um Budô ao mesmo tempo — cada um com suas próprias Aptidões e seu próprio Nível do Poder.</p>
-      ${budos.length ? `<table class="data">
+      ${budos.length ? `<div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Budô</th><th class="num">Aptidões</th><th class="num">Nível</th><th></th></tr></thead>
         <tbody>
           ${budos.map((b,i)=>{
@@ -6830,7 +6849,7 @@ function panelPoderes(p){
             </tr>`;
           }).join('')}
         </tbody>
-      </table>` : `<p class="panel-note">Nenhum Budô ainda.</p>`}
+      </table></div>` : `<p class="panel-note">Nenhum Budô ainda.</p>`}
       <button type="button" id="pw_addBudo" class="btn">+ Adicionar Budô</button>
 
       ${budoEntrada ? `
@@ -6850,7 +6869,7 @@ function panelPoderes(p){
     <div class="panel">
       <h2>Akuma no Mi</h2>
       <p class="panel-note">Pode ter mais de uma Akuma no Mi ao mesmo tempo — cada uma com seu próprio orçamento de criação (soma zero) e seu próprio Nível do Poder.</p>
-      ${akumas.length ? `<table class="data">
+      ${akumas.length ? `<div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Akuma no Mi</th><th class="num">Aptidões</th><th class="num">Nível</th><th></th></tr></thead>
         <tbody>
           ${akumas.map((ak,i)=>`<tr${i===akumaIdx?' style="font-weight:bold"':''}>
@@ -6860,7 +6879,7 @@ function panelPoderes(p){
             <td><button type="button" data-akumadel="${i}" class="btn danger">Remover</button></td>
           </tr>`).join('')}
         </tbody>
-      </table>` : `<p class="panel-note">Nenhuma Akuma no Mi ainda.</p>`}
+      </table></div>` : `<p class="panel-note">Nenhuma Akuma no Mi ainda.</p>`}
       <button type="button" id="pw_addAkuma" class="btn">+ Adicionar Akuma no Mi</button>
 
       ${akumaEntrada ? `
@@ -7016,7 +7035,7 @@ function panelAptidoes(p){
       <p class="panel-note">Cada Aptidão comprada (fora as gratuitas do Livro Base) custa ${CUSTO_APTIDAO_PONTOS_PODER} Ponto de Poder, igual evoluir o Nível do Poder — Budô, Akuma no Mi, Expansão e Livro Base (além das gratuitas) gastam do mesmo total, cada fonte contada separada abaixo.</p>
       <div class="limit-caption"><span>Pontos de Poder gastos (todas as fontes)</span><span style="${gasto>totalPontos?'color:#c0392b':''}">${gasto} / ${totalPontos}</span></div>
       ${gasto>totalPontos ? `<div class="warn-box">Gastou ${gasto-totalPontos} Ponto(s) de Poder acima do disponível.</div>` : ''}
-      <table class="data" style="margin-top:8px;">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data" style="margin-top:8px;">
         <thead><tr><th>Fonte</th><th class="num">Aptidões</th><th class="num">Nível investido</th></tr></thead>
         <tbody>
           <tr><td>Livro Base (compradas, além das ${limiteGratis} gratuitas)</td><td class="num">${aptidoesLivroBaseCompradas(p).length}</td><td class="num">—</td></tr>
@@ -7025,15 +7044,15 @@ function panelAptidoes(p){
           ${akumasDoPersonagem(p).map((ak,i,arr) => `<tr><td>Akuma no Mi${arr.length>1?' '+(i+1):''}${ak.tipo?': '+escapeHtml(ak.tipo):''}</td><td class="num">${(ak.aptidoesGerais||[]).length + (ak.aptidaoEspecial?1:0)}</td><td class="num">${ak.nivel.pontos||0}</td></tr>`).join('')}
           <tr><td>Trabalho Duro / avulso</td><td class="num">—</td><td class="num">${p.poder.nivel.pontos||0}</td></tr>
         </tbody>
-      </table>
+      </table></div>
 
       <h3 style="margin-top:16px;">Todas as Aptidões pegas (${pegas.length})</h3>
-      ${pegas.length ? `<table class="data">
+      ${pegas.length ? `<div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Aptidão</th><th>Origem</th><th></th></tr></thead>
         <tbody>
           ${pegas.map(a=>`<tr><td>${escapeHtml(a.nome)}</td><td>${escapeHtml(a.origem)}</td><td>${a.gratuita?'<span class="tag-imported">gratuita</span>':''}</td></tr>`).join('')}
         </tbody>
-      </table>` : `<p class="panel-note">Nenhuma Aptidão escolhida ainda.</p>`}
+      </table></div>` : `<p class="panel-note">Nenhuma Aptidão escolhida ainda.</p>`}
 
       <h3 style="margin-top:16px;">Aptidões Gratuitas (${gratuitas.length} / ${limiteGratis})</h3>
       <p class="panel-note">Mesma lista de cima, só as gratuitas — aparece duplicada de propósito: aqui é fácil ver só o que veio de graça, separado do que foi comprado com Pontos de Poder.</p>
@@ -7218,7 +7237,7 @@ function panelAkumaDetalhe(ak){
     ${tipoObj ? `<p class="panel-note">${tipoObj.efeito}</p>` : ''}
 
     <h3>Características</h3>
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th>Categoria</th><th>Opção escolhida</th><th class="num">Custo</th></tr></thead>
       <tbody>
         ${AKUMA_CRIACAO.caracteristicas.map(cat => {
@@ -7237,7 +7256,7 @@ function panelAkumaDetalhe(ak){
           </tr>`;
         }).join('')}
       </tbody>
-    </table>
+    </table></div>
     <div class="limit-caption"><span>Soma total (deve ser 0)</span><span>${soma}</span></div>
     <div class="limit-caption"><span>Soma das positivas (máx 10)</span><span>${positivos}</span></div>
     ${soma !== 0 ? `<div class="warn-box">A soma total está em ${soma}, deveria ser exatamente 0.</div>` : ''}
@@ -7316,7 +7335,7 @@ function panelZoanDetalhe(ak){
     </div>
 
     <h3>Técnicas Zoan disponíveis (Nível ≤ ${Math.max(1,nivelTotal)})</h3>
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${efeitosDisponiveis.map(e => `
@@ -7330,7 +7349,7 @@ function panelZoanDetalhe(ak){
           </tr>
         `).join('')}
       </tbody>
-    </table>
+    </table></div>
     ${efeitosBloqueados.length ? `<p class="panel-note">+ ${efeitosBloqueados.length} técnica(s) de nível mais alto, destravam conforme o Nível do Poder sobe.</p>` : ''}
   `;
 }
@@ -7340,7 +7359,7 @@ function renderAkumaEfeitosLista(termo){
   const t = (termo||'').toLowerCase();
   const filtrados = AKUMA_EFEITOS_EXCLUSIVOS.filter(e => !t || e.nome.toLowerCase().includes(t) || (e.categoria||'').toLowerCase().includes(t));
   host.innerHTML = `
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Categoria</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${filtrados.map(e => `
@@ -7355,7 +7374,7 @@ function renderAkumaEfeitosLista(termo){
           </tr>
         `).join('') || '<tr><td colspan="7" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
       </tbody>
-    </table>
+    </table></div>
   `;
   ligarBotoesSugerirAtaque();
 }
@@ -7399,7 +7418,7 @@ function panelBudoDetalhe(budo, nivelTotal){
 
     ${budo.efeitos && budo.efeitos.length ? `
     <h3>Técnicas de ${budo.poderNome} disponíveis (Nível ≤ ${Math.max(1,nivelTotal)})</h3>
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${efeitosDisponiveis.map(e => `
@@ -7413,7 +7432,7 @@ function panelBudoDetalhe(budo, nivelTotal){
           </tr>
         `).join('')}
       </tbody>
-    </table>
+    </table></div>
     ${efeitosBloqueados.length ? `<p class="panel-note">+ ${efeitosBloqueados.length} técnica(s) de nível mais alto, destravam conforme o Nível do Poder sobe.</p>` : ''}
     ${budo.notaEfeitos ? `<div class="info-box">${budo.notaEfeitos}</div>` : ''}
     ` : (budo.notaEfeitos ? `<div class="info-box">${budo.notaEfeitos}</div>` : '')}
@@ -7425,7 +7444,7 @@ function renderEfeitosGeraisLista(termo){
   const t = (termo||'').toLowerCase();
   const filtrados = EFEITOS_GERAIS.filter(e => !t || e.nome.toLowerCase().includes(t) || e.tag.toLowerCase().includes(t));
   host.innerHTML = `
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Técnica</th><th class="num">Nível</th><th>Tag</th><th>Ação</th><th>Custo</th><th>Efeito</th></tr></thead>
       <tbody>
         ${filtrados.map(e => `
@@ -7440,7 +7459,7 @@ function renderEfeitosGeraisLista(termo){
           </tr>
         `).join('') || '<tr><td colspan="7" style="padding:12px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
       </tbody>
-    </table>
+    </table></div>
   `;
   ligarBotoesSugerirAtaque();
 }
@@ -7622,12 +7641,12 @@ function panelInventario(p){
       </div>
 
       <h3>Carregando</h3>
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th>Item</th><th class="num">Qtd</th><th class="num">Compart.</th><th class="num">Custo</th><th>Detalhes</th><th></th><th></th></tr></thead>
         <tbody>
           ${p.inventario.itens.map((it, idx) => renderInventarioLinha(it, idx)).join('') || '<tr><td colspan="7" style="padding:10px; color:var(--parchment-dim);">Nada carregado ainda.</td></tr>'}
         </tbody>
-      </table>
+      </table></div>
     </div>
     <div class="panel">
       <h2>Catálogo de Armas</h2>
@@ -7638,7 +7657,7 @@ function panelInventario(p){
     <div class="panel">
       <h2>Catálogo de Armaduras</h2>
       ${typeof ARMADURAS_REGRAS!=='undefined' ? ARMADURAS_REGRAS.map(r=>`<p class="panel-note">${r}</p>`).join('') : ''}
-      <table class="data">
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
         <thead><tr><th></th><th>Armadura</th><th>Tipo</th><th class="num">Custo</th><th class="num">Absorção</th><th>Penalidade</th><th>Compart.</th></tr></thead>
         <tbody>
           ${ARMADURAS_DEF.map(a => `
@@ -7653,7 +7672,7 @@ function panelInventario(p){
             </tr>
           `).join('')}
         </tbody>
-      </table>
+      </table></div>
     </div>
     <div class="panel">
       <h2>Traços de Arma</h2>
@@ -7740,7 +7759,7 @@ function renderCatalogoGenerico(hostId, tipo, itens, colunas, termo){
     || (a.categoria||'').toLowerCase().includes(t)
     || (a.efeito||a.utilidade||'').toLowerCase().includes(t));
   host.innerHTML = `
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Item</th>${colunas.map(c=>`<th${c.num?' class="num"':''}>${escapeHtml(c.titulo)}</th>`).join('')}</tr></thead>
       <tbody>
         ${filtrados.map(a => `
@@ -7751,7 +7770,7 @@ function renderCatalogoGenerico(hostId, tipo, itens, colunas, termo){
           </tr>
         `).join('') || `<tr><td colspan="${colunas.length+2}" style="padding:10px; color:var(--parchment-dim);">Nada encontrado.</td></tr>`}
       </tbody>
-    </table>
+    </table></div>
   `;
 }
 function colCusto(a){
@@ -7795,7 +7814,7 @@ function renderArmasLista(termo){
   const t = (termo||'').toLowerCase();
   const filtradas = ARMAS_DEF.filter(a => !t || a.nome.toLowerCase().includes(t) || a.tipo.toLowerCase().includes(t));
   host.innerHTML = `
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Arma</th><th>Categoria</th><th class="num">Custo</th><th class="num">Dano</th><th class="num">Alcance</th><th class="num">Crítico</th><th class="num">Compart.</th><th>Tipo</th><th>Traços</th></tr></thead>
       <tbody>
         ${filtradas.map(a => `
@@ -7813,7 +7832,7 @@ function renderArmasLista(termo){
           </tr>
         `).join('') || '<tr><td colspan="10" style="padding:10px; color:var(--parchment-dim);">Nada encontrado.</td></tr>'}
       </tbody>
-    </table>
+    </table></div>
   `;
   religarBotoesAdd(personagemAtual());
 }

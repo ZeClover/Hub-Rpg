@@ -76,6 +76,7 @@
   .btn-link{background:none; border:none; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--parchment-dim); cursor:pointer; text-decoration:underline; padding:0;}
   .btn-link:hover{color:var(--brass-bright);}
   .estoque-val{font-family:var(--mono); font-weight:600; color:var(--brass-bright); font-size:15px;}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade2>*,.grade3>*{min-width:0}
 </style>
 </head>
 <body>
@@ -111,10 +112,10 @@
       <button type="button" class="btn primary" id="btnConsumirDias">📉 Consumir</button>
     </div>
     <div class="tabela-scroll">
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th></th><th>Suprimento</th><th>Qualidade</th><th class="num">฿/pessoa/dia</th><th class="num">Custo da compra</th><th class="num">Estoque</th><th class="num">Dá pra</th><th></th></tr></thead>
       <tbody id="tabelaSuprimentos"></tbody>
-    </table>
+    </table></div>
     </div>
     <div class="total-line"><span class="rot">Custo desta compra</span><span class="val" id="totalSuprimentos">฿ 0</span></div>
   </div>
@@ -123,10 +124,10 @@
     <h2>🧭 Itens de Navegação (avulsos)</h2>
     <p class="panel-note">Preço fechado, não por pessoa — os dois já existem no catálogo de itens da ficha, com o mesmo valor. "Comprar" soma a quantidade ao estoque; "Gastar 1" tira um do estoque quando a tripulação usa.</p>
     <div class="tabela-scroll">
-    <table class="data">
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table class="data">
       <thead><tr><th>Item</th><th>Pra que serve</th><th class="num">Preço unitário</th><th style="width:80px">Comprar quantos</th><th class="num">Custo</th><th class="num">Estoque</th><th></th></tr></thead>
       <tbody id="tabelaNavegacao"></tbody>
-    </table>
+    </table></div>
     </div>
   </div>
 

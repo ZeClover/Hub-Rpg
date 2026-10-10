@@ -55,6 +55,7 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
   border:1px solid var(--borda); border-radius:10px; padding:12px 8px}
 .derivado .rot{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--suave)}
 .derivado .val{font-family:Georgia,serif; font-size:32px; color:var(--ambar-forte); margin-top:4px}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade>*,.grade2>*,.grade3>*{min-width:0}main{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -73,14 +74,14 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
     <p><code>1d20 + Grau do Atributo + Treinamento + situação</code></p>
     <p>Treinamento: Nada +0, Treinado +5, Perito +10, Expert +15. Nível e Categoria <strong>nunca</strong> entram no d20 — eles definem potência e escala, não a chance de acertar.</p>
     <p><code>Dificuldade ou Defesa fixa = 8 + Grau esperado + Treinamento esperado</code>. Referências: comum 9, treinada 15, especializada 21, magistral 27. Depois de comparar as circunstâncias, aplique só <code>−5</code>, <code>+0</code> ou <code>+5</code> de situação.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Margem</th><th>Grau</th></tr>
       <tr><td>−10 ou menos</td><td>Falha extrema</td></tr>
       <tr><td>−9 a −1</td><td>Falha</td></tr>
       <tr><td>0 a 4</td><td>Sucesso parcial</td></tr>
       <tr><td>5 a 9</td><td>Sucesso</td></tr>
       <tr><td>10 ou mais</td><td>Sucesso extremo</td></tr>
-    </table>
+    </table></div>
     <p class="mini"><code>1</code> natural é Falha extrema; <code>20</code> natural é Sucesso extremo. Empate num teste oposto gera impasse ou consequência mútua.</p>
   </div>
 
@@ -92,32 +93,32 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
 
   <div class="cartao">
     <h2>Impacto</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><td><strong>0,5</strong></td><td>efeito pequeno, ajuda ou preparação</td></tr>
       <tr><td><strong>1</strong></td><td>ataque ou efeito básico</td></tr>
       <tr><td><strong>1,5</strong></td><td>técnica forte e custosa</td></tr>
       <tr><td><strong>2,5</strong></td><td>Ápice preparado, anunciado e respondível</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Dano, cura, defesa, controle, movimento, alcance, área, duração e número de alvos usam o mesmo orçamento — cura não é gratuita, controle não é ilimitado.</p>
   </div>
 
   <div class="cartao">
     <h2>Patamares (diferença de Categoria)</h2>
     <p>Compare Categoria do ator − Categoria do alvo:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Diferença</th><th>Multiplicador no Impacto</th></tr>
       <tr><td>−2</td><td>×0,25</td></tr>
       <tr><td>−1</td><td>×0,5</td></tr>
       <tr><td>0</td><td>×1</td></tr>
       <tr><td>+1</td><td>×1,5</td></tr>
       <tr><td>+2 ou mais</td><td>×2</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Diferença de −3 ou menor não alcança diretamente sem permissão específica. Uma Brecha, fraqueza ou objetivo pode reduzir a Categoria tratada do alvo em um grau.</p>
   </div>
 
   <div class="cartao">
     <h2>Condições</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Estado</th><th>Resumo</th><th>Saída comum</th></tr>
       <tr><td>Exposto</td><td>próximo ataque direto recebe +5, depois termina</td><td>Reação, cobertura ou quebrar Âncora</td></tr>
       <tr><td>Preso</td><td>não sai da Âncora com a Ação de Movimento</td><td>Parcial + teste, ajuda ou quebrar Âncora</td></tr>
@@ -125,7 +126,7 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
       <tr><td>Interrompido</td><td>suspende uma sustentação (postura, fórmula, Obra...)</td><td>Parcial + custo para reativar</td></tr>
       <tr><td>Atordoado</td><td>perde a Ação Principal, ou age normal mas fica Exposto+Abalado</td><td>escolha no começo do turno</td></tr>
       <tr><td>Incapacitado</td><td>sem ações significativas por uma rodada</td><td>Ápice; chefe converte em Brecha</td></tr>
-    </table>
+    </table></div>
     <p class="mini">No máximo uma condição por eixo. Reaplicar a mesma renova; mais forte substitui; mais fraca não acumula. Impacto persistente não se renova sozinho — só existe uma Sustentação relevante por vez (a partir do 4º Ano, um Vínculo Persistente preserva uma Âncora entre cenas, mas nunca Impacto, ações ou recursos).</p>
   </div>
 
@@ -138,41 +139,41 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
 
   <div class="cartao">
     <h2>Recuperação</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Pausa</th><th>Recupera</th></tr>
       <tr><td>Respiro (~1 min)</td><td>estados de cena e medidores próprios da Área — não Vida</td></tr>
       <tr><td>Intervalo (~10 min)</td><td>25% da Vida e a recuperação de pausa da Área; no máximo 2 por Descanso completo</td></tr>
       <tr><td>Repouso (~1 h)</td><td>50% da Vida, recursos renováveis e um tratamento completo</td></tr>
       <tr><td>Descanso completo (~8 h)</td><td>toda a Vida e recursos; reduz cada Consequência atendida em 1</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Primeiros Socorros: Ação Principal, uma vez por alvo/cena; estabiliza quem está Caído ou cura até 0,5 Impacto em alguém consciente.</p>
   </div>
 
   <div class="cartao">
     <h2>Cena de Desafio</h2>
     <p>Progresso necessário: curta <code>1,5 × participantes</code>, padrão <code>3 ×</code>, extensa <code>5 ×</code>. Pressão vai de 0 a 3.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Grau</th><th>Progresso</th><th>Pressão</th></tr>
       <tr><td>Falha extrema</td><td>0</td><td>+2</td></tr>
       <tr><td>Falha</td><td>0</td><td>+1</td></tr>
       <tr><td>Sucesso parcial</td><td>+1</td><td>+1</td></tr>
       <tr><td>Sucesso</td><td>+2</td><td>0</td></tr>
       <tr><td>Sucesso extremo</td><td>+3 e Vantagem</td><td>0</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Pressão 3 provoca uma Virada: consequência, perda, nova cena, recuo ou sacrifício de Vantagem. Uma pista essencial nunca some por uma única falha.</p>
   </div>
 
   <div class="cartao">
     <h2>Interação social</h2>
     <p>Painel de uma figura: <strong>Desejo</strong> (o que quer agora), <strong>Objeção</strong> (o que impede o acordo), <strong>Limite</strong> (o que não aceita sem transformação real — precisa aparecer por sinais antes de ser testado), <strong>Posição</strong> e uma ou duas resistências fixas.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Posição</th><th>Pedido normalmente possível</th></tr>
       <tr><td>−2 Hostil</td><td>pausa, retirada, resposta curta ou acordo contra ameaça maior</td></tr>
       <tr><td>−1 Fechada</td><td>informação pública, pequena tolerância ou negociação formal</td></tr>
       <tr><td>0 Neutra</td><td>favor razoável mediante troca ou argumento</td></tr>
       <tr><td>+1 Aberta</td><td>ajuda custosa, informação reservada ou risco moderado</td></tr>
       <tr><td>+2 Aliada</td><td>sacrifício importante coerente com o vínculo</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Um único teste move a Posição no máximo um grau — sucesso extremo cria oportunidade ou remove uma Objeção, não transforma inimigo em aliado. Trair um valor central ou mudar de lado exige mudança de ficção, não uma dificuldade alta. Negociações com várias partes usam a mesma Cena de Desafio acima (Progresso = Objeções resolvidas, Pressão = impaciência/suspeita/prazo). Dívidas e Promessas viram frase registrada ("Devo proteção à diretora Iara"), não uma barra numérica nova.</p>
   </div>
 
@@ -227,10 +228,10 @@ label{display:block; font-size:11px; letter-spacing:.14em; text-transform:upperc
       <button type="button" id="oe-add-elite">+ Elite (2)</button>
       <button type="button" id="oe-add-chefe">+ Fase de Chefe (2)</button>
     </div>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Porte</th><th>Quantidade</th><th>Pontos</th><th></th></tr>
       <tbody id="oe-composicao"></tbody>
-    </table>
+    </table></div>
     <div class="derivado" style="margin-top:14px">
       <div class="rot">Total gasto</div>
       <div class="val" id="oe-total">0</div>

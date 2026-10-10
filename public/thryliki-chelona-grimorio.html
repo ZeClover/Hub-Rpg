@@ -98,6 +98,7 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade>*,.grade2>*,.grade3>*{min-width:0}code{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -214,7 +215,7 @@ li{margin-bottom:5px}
   <section id="atributos">
     <h2>🎲 3. Atributos e Perícias</h2>
     <h3>Cinco Atributos, Grau 0–5</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Grau</th><th>Leitura</th></tr>
       <tr><td class="num">0</td><td>Debilitado ou incapaz</td></tr>
       <tr><td class="num">1</td><td>Comum</td></tr>
@@ -222,24 +223,24 @@ li{margin-bottom:5px}
       <tr><td class="num">3</td><td>Excepcional</td></tr>
       <tr><td class="num">4</td><td>Mestre</td></tr>
       <tr><td class="num">5</td><td>Ápice de controle</td></tr>
-    </table>
+    </table></div>
     <p>Os cinco Atributos: <strong>Força, Agilidade, Constituição, Inteligência, Presença.</strong></p>
     <div class="dica"><strong>Criação de personagem:</strong> todos começam em Grau 1; distribua 5 pontos adicionais entre eles, sem passar de Grau 3 na criação (ex.: 3-2-2-2-1). Grau nunca ultrapassa 5, mesmo com progresso.</div>
 
     <h3>Treinamento (perícia)</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Treinamento</th><th class="num">Bônus no d20</th></tr>
       <tr><td>Nada</td><td class="num">+0</td></tr>
       <tr><td>Treinado</td><td class="num">+5</td></tr>
       <tr><td>Perito</td><td class="num">+10</td></tr>
       <tr><td>Expert</td><td class="num">+15</td></tr>
-    </table>
+    </table></div>
     <p class="mini">A ficção pode trocar qual Atributo é usado numa Perícia (ex.: Intimidar com Força em vez de Presença), mas o Treinamento continua o mesmo.</p>
 
     <h3>As 24 Perícias</h3>
     <details>
       <summary>Ver as 24 Perícias e o Atributo principal de cada uma</summary>
-      <table>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
         <tr><th>Perícia</th><th>Atributo</th></tr>
         <tr><td>Fortitude</td><td>Constituição</td></tr>
         <tr><td>Acrobacia</td><td>Agilidade</td></tr>
@@ -265,16 +266,16 @@ li{margin-bottom:5px}
         <tr><td>Sobrevivência</td><td>Inteligência</td></tr>
         <tr><td>Tática</td><td>Inteligência</td></tr>
         <tr><td>Tecnologia</td><td>Inteligência</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <h3>Derivados</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Estatística</th><th>Fórmula</th></tr>
       <tr><td>Vida</td><td><code>35 + Constituição×5 + piso(Nível/2)</code></td></tr>
       <tr><td>Deslocamento</td><td><code>9 + 2×Agilidade</code></td></tr>
       <tr><td>Carga Pronta</td><td><code>6 + Força</code></td></tr>
-    </table>
+    </table></div>
     <p class="mini">Nível e Categoria nunca entram no teste de d20 — só definem potência e escala.</p>
   </section>
 
@@ -288,14 +289,14 @@ li{margin-bottom:5px}
     <p>A dificuldade (ou Defesa) é <code>8 + Grau esperado + Treinamento esperado</code>. Referências de mesa: comum 9, treinada 15, especializada 21, magistral 27.</p>
 
     <h3>Graus de resultado</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Margem (teste − dificuldade)</th><th>Grau</th></tr>
       <tr><td class="num">−10 ou menos</td><td>Falha extrema</td></tr>
       <tr><td class="num">−9 a −1</td><td>Falha</td></tr>
       <tr><td class="num">0 a 4</td><td>Sucesso parcial</td></tr>
       <tr><td class="num">5 a 9</td><td>Sucesso</td></tr>
       <tr><td class="num">10 ou mais</td><td>Sucesso extremo</td></tr>
-    </table>
+    </table></div>
     <p class="mini"><code>1</code> natural = Falha extrema. <code>20</code> natural = Sucesso extremo. Empate em teste oposto vira impasse ou consequência mútua.</p>
 
     <div class="exemplo">
@@ -309,25 +310,25 @@ li{margin-bottom:5px}
     <p>Cada personagem tem, por rodada: <strong>1 Ação Principal, 1 Ação de Movimento, 1 Ação Parcial e 1 Reação.</strong> Armas, Cultivos, companheiros e Obras usam as ações do próprio personagem — nada tem turno independente.</p>
 
     <h3>Impacto — a régua universal de efeito</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Impacto</th><th>Uso típico</th></tr>
       <tr><td class="num">0,5</td><td>Pequeno / preparação</td></tr>
       <tr><td class="num">1</td><td>Ação básica</td></tr>
       <tr><td class="num">1,5</td><td>Técnica forte</td></tr>
       <tr><td class="num">2,5</td><td>Ápice preparado</td></tr>
-    </table>
+    </table></div>
     <p><strong>1 Impacto ≈ 22% da Vida máxima</strong> do alvo, quando o efeito é dano ou cura.</p>
 
     <h3>Patamares</h3>
     <p>Diferença de Categoria entre atacante e alvo multiplica o Impacto:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Diferença de Categoria</th><th class="num">Multiplicador</th></tr>
       <tr><td>−2</td><td class="num">×0,25</td></tr>
       <tr><td>−1</td><td class="num">×0,5</td></tr>
       <tr><td>0</td><td class="num">×1</td></tr>
       <tr><td>+1</td><td class="num">×1,5</td></tr>
       <tr><td>+2 ou mais</td><td class="num">×2</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Diferença de −3 ou menor não alcança o alvo diretamente sem uma permissão específica de ficção.</p>
 
     <div class="exemplo">
@@ -339,13 +340,13 @@ li{margin-bottom:5px}
 
     <h3>Condições</h3>
     <p>No máximo uma condição por eixo — reaplicar a mesma renova, uma mais forte substitui, uma mais fraca não acumula.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Eixo</th><th>Condição</th><th>Efeito</th></tr>
       <tr><td>Defesa</td><td>Exposto</td><td>próximo ataque direto recebe +5, depois termina</td></tr>
       <tr><td>Movimento</td><td>Preso</td><td>não usa a Ação de Movimento pra sair da Âncora</td></tr>
       <tr><td>Resposta</td><td>Abalado</td><td>perde a próxima Reação</td></tr>
       <tr><td>Sustentação</td><td>Interrompido</td><td>uma sustentação/postura/fórmula/obra é suspensa</td></tr>
-    </table>
+    </table></div>
     <p>Condições graves (fora do sistema de eixos): <strong>Atordoado</strong> (perde a Ação Principal, ou age normal mas fica Exposto+Abalado), <strong>Incapacitado</strong> (sem ações significativas até o próximo turno), <strong>Brecha</strong> (Exposto+Abalado e perde uma sustentação — é a "incapacitação" que criaturas de chefe recebem no lugar de ficarem fora de jogo).</p>
 
     <h3>Consequências persistentes</h3>
@@ -357,7 +358,7 @@ li{margin-bottom:5px}
     <p>26 Origens. Cada uma dá <strong>2 Treinamentos fixos</strong> (algumas deixam a escolha com o Mestre) e uma <strong>Permissão narrativa</strong> — algo que o personagem sabe fazer fora do combate, sem gastar recurso.</p>
     <details>
       <summary>Ver as 26 Origens completas</summary>
-      <table>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
         <tr><th>Origem</th><th>Treinamentos</th><th>Permissão</th></tr>
         <tr><td>Estudante</td><td>Conhecimentos, Diplomacia</td><td>"Eu lembro disso" (1×/sessão): ao encontrar um assunto estudável, ganha uma informação verdadeira útil ou +5 pra recordá-la.</td></tr>
         <tr><td>Especializado em Saúde</td><td>Medicina, Percepção</td><td>"Eu já cuidei de muitos" (1×/cena): +5 ao estabilizar, diagnosticar ou tratar alguém.</td></tr>
@@ -385,14 +386,14 @@ li{margin-bottom:5px}
         <tr><td>Herdeiro</td><td>2 escolhidos com o Mestre</td><td>"Eu mereço": começa com item adicional de Faixa de Custo 2, ou acesso familiar a um recurso de Faixa 3.</td></tr>
         <tr><td>Marinheiro</td><td>Fortitude, Iniciativa</td><td>"Terra à vista" (1×/cena): ignora um modificador desfavorável causado por água, enjoo, tempestade ou superfície instável.</td></tr>
         <tr><td>Caçador</td><td>Sobrevivência + Pontaria ou Luta</td><td>"Eu já vi essa criatura": +5 (1×/cena) ao explorar um comportamento observado de uma família de criaturas conhecida.</td></tr>
-      </table>
+      </table></div>
     </details>
   </section>
 
   <section id="areas">
     <h2>📚 6. Áreas de Estudo e Ramos</h2>
     <p>16 Áreas de Estudo — o antigo "Caminho" ou classe. Cada verbo-guia (ex.: Tensionar → Encadear → Romper) resume a lógica de jogo daquela Área.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Área</th><th>Verbos-guia</th><th>Recurso / painel</th></tr>
       <tr><td>Corpo e Cinética</td><td>Tensionar → Encadear → Romper</td><td>Esforço 0–5 e Rastro</td></tr>
       <tr><td>Simbologia Arcana</td><td>Compor → Inscrever → Manifestar</td><td>Mana, Fórmula, Matriz de Tomo</td></tr>
@@ -410,7 +411,7 @@ li{margin-bottom:5px}
       <tr><td>Tanatologia</td><td>Escutar → Vincular → Despedir</td><td>Ecos, Âncoras, Diretrizes</td></tr>
       <tr><td>Direito e Contratologia</td><td>Declarar → Pactuar → Executar</td><td>Cláusulas e Garantia</td></tr>
       <tr><td>Filosofia e Metafísica</td><td>Questionar → Definir → Sustentar</td><td>Premissas e Coerência</td></tr>
-    </table>
+    </table></div>
     <p class="mini">As seis primeiras são as Áreas originais; as dez últimas são as Áreas novas — todas jogáveis, com combate detalhado nas seções 7 e 8.</p>
 
     <h3>Ramos: 117 subclasses</h3>
@@ -439,12 +440,12 @@ li{margin-bottom:5px}
 
     <h3>Corpo e Cinética — Esforço 0–5 e Rastro</h3>
     <p><strong>Esforço</strong> começa em 2 ao entrar num conflito relevante e sobe 1 por ação física sob risco (ou +1 extra usando "Forçar o Corpo", que também aplica Exposto). <strong>Rastro</strong>: até duas marcas visíveis acumuladas — Impulso, Guarda, Golpe, Controle, Alteração — antes de <strong>Romper</strong>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Romper</th><th class="num">Custo</th><th>Efeito</th></tr>
       <tr><td>Manobra</td><td class="num">1 Esforço</td><td>uma manobra ou propriedade adicional</td></tr>
       <tr><td>Técnica forte</td><td class="num">2 Esforços</td><td>normalmente até 1,5 Impacto</td></tr>
       <tr><td>Ápice telegrafado</td><td class="num">3 Esforços e Rastro cheio</td><td>até 2,5 Impactos, exige preparação legível</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">🎲 exemplo jogado</div>
       <p><strong>Kaito começa uma luta com 2 Esforços</strong> (o inicial). Rodada 1: ele avança e golpeia — ação física sob risco, ganha +1 Esforço (agora 3) e registra "Impulso" no Rastro. Rodada 2: golpeia de novo, +1 Esforço (4), registra "Golpe" — o Rastro já tem 2 marcas, o máximo.</p>
@@ -460,22 +461,22 @@ li{margin-bottom:5px}
     </div>
 
     <h3>Robótica e Engenharia — três recursos que não se misturam</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Recurso</th><th>Fórmula / regra</th></tr>
       <tr><td>Pontos de Comando</td><td>1 (1º/2º Ano), 2 (3º/4º), 3 (5º) — renova todo turno</td></tr>
       <tr><td>Carga</td><td>base 4, Melhorias 0–4 até teto 8; Recarga +2 uma vez por cena</td></tr>
       <tr><td>Vitalícia</td><td>mesma fórmula estrutural da Mana, mas lendo Treinamento em Conhecimentos — sem Concentrar equivalente</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Descanso completo recupera as três de uma vez.</p>
 
     <h3>Botânica e Biomancia — Seiva e Cultivos</h3>
     <p><strong>Seiva 0–5</strong> (mesmo formato do Esforço) mais até <strong>3 Cultivos</strong>, cada um passando por três estágios antes de ser Colhido:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Estágio</th><th class="num">Teto de Impacto ao Colher</th></tr>
       <tr><td>1 · Broto</td><td class="num">até 1</td></tr>
       <tr><td>2 · Floração</td><td class="num">até 1,5</td></tr>
       <tr><td>3 · Maturação</td><td class="num">até 2,5</td></tr>
-    </table>
+    </table></div>
     <p>Gastos de Seiva: 1 (Crescimento adicional / Trocar propriedade preparada), 2 (Sustentar ou transplantar).</p>
 
     <h3>Zoologia e Etologia — Dados de Campo</h3>
@@ -500,102 +501,102 @@ li{margin-bottom:5px}
     <details>
       <summary>Alquimia e Química — Instabilidade</summary>
       <p><strong>Geração:</strong> Reação Volátil gera 3; outras técnicas só geram o valor declarado. <strong>Limite:</strong> com Instabilidade 3, não pode usar outra reação volátil. <strong>Recuperação:</strong> Respiro reduz a 0 se o kit estiver acessível; Intervalo também recompõe reagentes. <strong>Contrajogo:</strong> diluir/contaminar reagentes, romper recipientes, separar componentes, provocar reação prematura, retirar o kit.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Fórmula Estável</td><td class="num">1</td><td>Resolva uma Fórmula preparada com Pressão, Sobrevivência ou Tática.</td></tr>
         <tr><td>Reação Volátil</td><td class="num">1,5</td><td>Amplie uma Fórmula preparada; exige recipiente e contrajogo visíveis.</td></tr>
         <tr><td>Estabilização de Emergência</td><td class="num">0,5</td><td>Reduza Instabilidade em 2 e produza só preparação, proteção pequena ou limpeza de risco.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Astronomia e Cosmologia — Alinhamento</summary>
       <p><strong>Geração:</strong> +1 quando uma Janela anunciada é cumprida (máx. 1×/rodada). <strong>Limite:</strong> Janelas precisam ser públicas, possíveis e contrariáveis. <strong>Recuperação:</strong> Respiro zera Alinhamento e encerra Janelas. <strong>Contrajogo:</strong> mudar orientação, romper a linha entre Pontos, criar referência falsa, agir fora da Janela, remover o astrolábio.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Mapear Ponto</td><td class="num">0</td><td>Marque ou mova um dos três Pontos e anuncie uma Janela.</td></tr>
         <tr><td>Efeito Orbital</td><td class="num">1</td><td>Produza luz, gravidade, proteção ou movimento entre Pontos.</td></tr>
         <tr><td>Convergência</td><td class="num">1,5</td><td>Concentre o Efeito Orbital numa intervenção forte.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Matemática e Probabilidade — Evidência</summary>
       <p><strong>Geração:</strong> +1 quando um fato confirma a Hipótese ativa (máx. 1×/rodada). <strong>Limite:</strong> mantenha uma Hipótese ativa; premissa falsa ou irrelevante a encerra. <strong>Recuperação:</strong> Respiro zera Evidência e encerra a Hipótese. <strong>Contrajogo:</strong> falsificar a premissa, introduzir variável desconhecida, tornar a Hipótese irrelevante, agir antes da demonstração.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Declarar Hipótese</td><td class="num">0</td><td>Escolha uma premissa verificável ligada a um Modelo preparado.</td></tr>
         <tr><td>Aplicar Modelo</td><td class="num">1</td><td>Converta o Modelo em Pressão, Sobrevivência ou Tática.</td></tr>
         <tr><td>Resolver</td><td class="num">1,5</td><td>Produza a solução forte prevista pela Hipótese.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Psicologia e Noética — Insight</summary>
       <p><strong>Geração:</strong> +1 quando um Estado enquadrado orienta uma decisão visível (máx. 1×/rodada). <strong>Limite:</strong> até um Enquadramento por alvo, no máximo três ativos; toda intervenção hostil admite resistência. <strong>Recuperação:</strong> Respiro zera Insight e encerra Enquadramentos de cena. <strong>Contrajogo:</strong> mudar honestamente de objetivo, romper contato, agir de forma ambígua, contestar o Enquadramento, usar proteção mental.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Enquadrar Estado</td><td class="num">0</td><td>Nomeie medo, foco, dúvida, vínculo ou outro Estado visível.</td></tr>
         <tr><td>Intervenção Breve</td><td class="num">1</td><td>Fortaleça, redirecione ou interrompa o Estado sem controlar a personagem.</td></tr>
         <tr><td>Intervenção Profunda</td><td class="num">1,5</td><td>Produza mudança intensa e resistível no Estado enquadrado.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Medicina e Anatomia — Foco Clínico</summary>
       <p><strong>Geração:</strong> +1 ao confirmar ou acompanhar um Diagnóstico relevante (máx. 1×/rodada). <strong>Limite:</strong> até três Diagnósticos; mudança corporal ou evidência contrária pode invalidá-los. <strong>Recuperação:</strong> Respiro zera Foco Clínico. <strong>Contrajogo:</strong> mascarar sintomas, mudar anatomia, remover acesso ao paciente, acelerar o quadro, invalidar o Diagnóstico.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Diagnóstico de Campo</td><td class="num">0</td><td>Registre um quadro, vulnerabilidade ou função corporal observável.</td></tr>
         <tr><td>Intervenção Clínica</td><td class="num">1</td><td>Cure, proteja, contenha ou explore precisamente um Diagnóstico.</td></tr>
         <tr><td>Procedimento Preciso</td><td class="num">1,5</td><td>Realize uma intervenção forte ligada a um Diagnóstico válido.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Geologia e Cristalografia — Tensão</summary>
       <p><strong>Geração:</strong> +1 numa Estrutura afetada por Pressurizar (máx. 1×/rodada). <strong>Limite:</strong> Tensão fica presa à Âncora; remover a Estrutura perde os pontos. <strong>Recuperação:</strong> Respiro dissipa Tensão; Intervalo repõe cristais-semente perdidos, se houver material. <strong>Contrajogo:</strong> remover a Âncora, trocar o material, dissipar Tensão, interromper contato, provocar Fratura prematura.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Prospectar Estrutura</td><td class="num">0</td><td>Identifique matéria útil ou plante um cristal-semente.</td></tr>
         <tr><td>Pressurizar</td><td class="num">1</td><td>Produza dano, suporte ou terreno e gere Tensão na Âncora.</td></tr>
         <tr><td>Fraturar</td><td class="num">1,5</td><td>Libere uma ruptura forte a partir da Estrutura.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>História e Arqueologia — Precedente</summary>
       <p><strong>Geração:</strong> +1 quando uma fonte ou ação confirma o contexto declarado (máx. 1×/rodada). <strong>Limite:</strong> cada ponto registra origem e função; contexto falsificado ou irrelevante o invalida. <strong>Recuperação:</strong> Respiro remove Precedentes de cena. <strong>Contrajogo:</strong> contestar evidência, mudar contexto, destruir/falsificar a fonte, tornar a função histórica inadequada.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Contextualizar Fonte</td><td class="num">0</td><td>Ligue evidência, objeto ou fonte a uma função histórica.</td></tr>
         <tr><td>Reencenação</td><td class="num">1</td><td>Reproduza uma função de técnica, formação, proteção, rota ou falha.</td></tr>
         <tr><td>Legado Desperto</td><td class="num">1,5</td><td>Reencene fortemente a função comprovada.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Tanatologia — Ecos</summary>
       <p><strong>Geração:</strong> +1 ao Escutar uma ausência relevante ou cumprir a Diretriz de um Eco (máx. 1×/rodada). <strong>Limite:</strong> até três Ecos vinculados; todos usam as ações do Tanatólogo. <strong>Recuperação:</strong> Respiro encerra Ecos de cena. <strong>Contrajogo:</strong> romper vínculo, profanar/consagrar Âncora, concluir a despedida, negar a Diretriz, proteger identidade.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Escutar e Vincular</td><td class="num">0</td><td>Crie uma Âncora e uma Diretriz para um Eco disponível ou preparado.</td></tr>
         <tr><td>Diretriz do Eco</td><td class="num">1</td><td>O Eco informa, protege, assombra ou move energia usando sua Âncora.</td></tr>
         <tr><td>Despedida Potente</td><td class="num">1,5</td><td>Consuma vínculos numa intervenção espiritual forte.</td></tr>
-      </table>
+      </table></div>
       <p class="aviso">Reviver alguém exige Pacto com a Realidade — Tanatologia <strong>não</strong> restaura vida plena nem canal corporal sacrificado.</p>
     </details>
 
     <details>
       <summary>Direito e Contratologia — Garantia</summary>
       <p><strong>Geração:</strong> +1 quando uma parte aceita, cumpre ou viola Cláusula válida (máx. 1×/rodada). <strong>Limite:</strong> até três Cláusulas, vinculando também o autor; imposição hostil é resistível. <strong>Recuperação:</strong> Respiro zera Garantia e encerra Cláusulas de cena. <strong>Contrajogo:</strong> recusar o pacto, cumprir literalmente, explorar brecha, invalidar testemunho, provar contradição, fazer o autor violar a própria Cláusula.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Declarar Cláusula</td><td class="num">0</td><td>Defina beneficiário, obrigação e consequência pública.</td></tr>
         <tr><td>Execução Menor</td><td class="num">1</td><td>Proteja direito, cobre violação ou imponha Cláusula resistível.</td></tr>
         <tr><td>Executar Garantia</td><td class="num">1,5</td><td>Aplique fortemente a consequência já anunciada.</td></tr>
-      </table>
+      </table></div>
     </details>
 
     <details>
       <summary>Filosofia e Metafísica — Coerência</summary>
       <p><strong>Geração:</strong> +1 ao aceitar a limitação e agir conforme a Premissa (máx. 1×/rodada). <strong>Limite:</strong> mantenha uma Premissa ativa; formulações vagas não geram recurso, e contradição a encerra. <strong>Recuperação:</strong> Respiro zera Coerência e encerra Premissas de cena. <strong>Contrajogo:</strong> expor contradição, recusar definição, mudar contexto, aceitar a consequência, explorar o limite assumido pelo Filósofo.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Efeito</th></tr>
         <tr><td>Definir Premissa</td><td class="num">0</td><td>Declare o que será sustentado e como pode ser contestado.</td></tr>
         <tr><td>Sustentar Consequência</td><td class="num">1</td><td>Aplique Pressão, Sobrevivência ou Tática compatível com a Premissa.</td></tr>
         <tr><td>Derivação Necessária</td><td class="num">1,5</td><td>Produza consequência forte sem ultrapassar a definição aceita.</td></tr>
-      </table>
+      </table></div>
     </details>
   </section>
 
@@ -607,16 +608,16 @@ li{margin-bottom:5px}
     <p>Ferir, Proteger, Mover, Restaurar, Alterar, Criar, Perceber, Vincular, Selar.</p>
 
     <h3>Potência</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Potência</th><th class="num">Impacto</th><th class="num">Mana</th><th>Ação</th></tr>
       <tr><td>Menor</td><td class="num">0,5</td><td class="num">1</td><td>utilidade ou efeito secundário</td></tr>
       <tr><td>Básica</td><td class="num">1</td><td class="num">2</td><td>Principal</td></tr>
       <tr><td>Potente</td><td class="num">1,5</td><td class="num">4</td><td>Parcial + Principal</td></tr>
       <tr><td>Ápice</td><td class="num">2,5</td><td class="num">7</td><td>preparação anterior + Principal</td></tr>
-    </table>
+    </table></div>
 
     <h3>Moldura e Essência</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Componente</th><th>Opção</th><th class="num">Tomos</th><th class="num">Mana</th></tr>
       <tr><td rowspan="4">Alcance</td><td>Próprio/toque/curto</td><td class="num">1</td><td class="num">0</td></tr>
       <tr><td>Médio</td><td class="num">2</td><td class="num">1</td></tr>
@@ -635,10 +636,10 @@ li{margin-bottom:5px}
       <tr><td>Três rodadas</td><td class="num">2</td><td class="num">2</td></tr>
       <tr><td>Cena</td><td class="num">3</td><td class="num">3</td></tr>
       <tr><td>Persistente</td><td class="num">5</td><td class="num">5</td></tr>
-    </table>
+    </table></div>
 
     <h3>Cláusulas (opcionais)</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Cláusula</th><th class="num">Tomos</th><th class="num">Mana</th></tr>
       <tr><td>Seguir</td><td class="num">2</td><td class="num">1</td></tr>
       <tr><td>Observar</td><td class="num">2</td><td class="num">1</td></tr>
@@ -646,17 +647,17 @@ li{margin-bottom:5px}
       <tr><td>Persistência</td><td class="num">2</td><td class="num">1</td></tr>
       <tr><td>Criação</td><td class="num">3</td><td class="num">2</td></tr>
       <tr><td>Selar</td><td class="num">3</td><td class="num">2</td></tr>
-    </table>
+    </table></div>
 
     <h3>Matriz de Tomo (teto por Ano)</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Ano</th><th class="num">Tomos</th><th class="num">Fórmulas preparadas</th></tr>
       <tr><td>1º</td><td class="num">4</td><td class="num">4</td></tr>
       <tr><td>2º</td><td class="num">8</td><td class="num">4</td></tr>
       <tr><td>3º</td><td class="num">14</td><td class="num">5</td></tr>
       <tr><td>4º</td><td class="num">20</td><td class="num">5</td></tr>
       <tr><td>5º</td><td class="num">20 + 1 Metassímbolo (à parte)</td><td class="num">6</td></tr>
-    </table>
+    </table></div>
     <p>Some tudo (Potência + Alcance + Alvo + Essência + Duração + Cláusulas) — se os Tomos passarem da Matriz, a Fórmula não salva. Cada Fórmula salva tem nome editável e um botão "Manifestar" que desconta a Mana do pool.</p>
 
     <div class="exemplo">
@@ -672,30 +673,30 @@ li{margin-bottom:5px}
     <h2>💥 10. Construtor Livre de Poder</h2>
     <p class="resumo">Em resumo: escolha uma <strong>Potência</strong> (isso define um orçamento de Impacto), "gaste" esse orçamento em <strong>resultados</strong> (dano, cura, marca, controle...), descreva o poder em palavras, e veja quanto ele custa na sua Área. Nada de fórmula matemática complicada — é preencher um cartão.</p>
     <p>A gramática genérica pras <strong>quinze Áreas sem gramática própria</strong> (todas menos Simbologia Arcana, que usa a Fórmula da seção 9). O Ano libera o que você pode fazer:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Ano</th><th>Modo</th><th class="num">Alterações</th><th>Observação</th></tr>
       <tr><td>1º</td><td>Poderes Prontos</td><td class="num">0</td><td>só o kit/técnicas de Ramo</td></tr>
       <tr><td>2º</td><td>Modificação Guiada</td><td class="num">1</td><td>altera 1 campo de uma técnica pronta</td></tr>
       <tr><td>3º</td><td>Criação Livre</td><td class="num">2</td><td>poder novo de verdade</td></tr>
       <tr><td>4º</td><td>Criação Avançada</td><td class="num">3</td><td>libera Vínculo Persistente</td></tr>
       <tr><td>5º</td><td>Ruptura</td><td class="num">4</td><td>conceitual</td></tr>
-    </table>
+    </table></div>
 
     <h3>Cartão universal (14 campos)</h3>
     <p>Nome, Intenção, Acesso, Âncora, Forma, Potência, Ação (derivada), Resultados (Impacto), Custo (derivado da Área), Teste ou Resistência, Contrajogo, Resíduo.</p>
 
     <h3>Potência → orçamento de Impacto</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Potência</th><th class="num">Impacto</th></tr>
       <tr><td>Menor</td><td class="num">0,5</td></tr>
       <tr><td>Básica</td><td class="num">1</td></tr>
       <tr><td>Forte</td><td class="num">1,5</td></tr>
       <tr><td>Ápice</td><td class="num">2,5</td></tr>
-    </table>
+    </table></div>
 
     <h3>Átomos de Impacto</h3>
     <p>Um poder com vários resultados <strong>divide</strong> o Impacto entre eles — a soma não pode passar do orçamento da Potência escolhida.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Resultado</th><th class="num">Valor</th></tr>
       <tr><td>Dano ou Cura de referência</td><td class="num">1</td></tr>
       <tr><td>Proteção por Impacto evitado</td><td class="num">1</td></tr>
@@ -705,7 +706,7 @@ li{margin-bottom:5px}
       <tr><td>Interromper Sustentação</td><td class="num">0,5</td></tr>
       <tr><td>Retirar Principal (com escolha)</td><td class="num">1</td></tr>
       <tr><td>Incapacitar por uma rodada</td><td class="num">2</td></tr>
-    </table>
+    </table></div>
 
     <div class="exemplo">
       <div class="rotulo">🎲 exemplo jogado — criando "Investida da Alcateia"</div>
@@ -720,7 +721,7 @@ li{margin-bottom:5px}
     <p class="mini">Sem botão de "Manifestar" único — o custo aqui é texto, não um número fixo; o poder salvo é registro de referência, e você gasta o recurso de verdade no painel da própria Área.</p>
     <details>
       <summary>Ver o custo de Menor/Básica/Forte/Ápice e a regra própria de cada uma das 15 Áreas</summary>
-      <table>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
         <tr><th>Área</th><th>Menor</th><th>Básica</th><th>Forte</th><th>Ápice</th></tr>
         <tr><td>Corpo e Cinética</td><td colspan="2">0 ou 1 Esforço, conforme a propriedade</td><td>2 Esforços</td><td>3 Esforços e Rastro legível</td></tr>
         <tr><td>Robótica e Engenharia</td><td>1 Carga</td><td>1 Carga</td><td>2 Cargas</td><td>3 Cargas ou Projeto declarado</td></tr>
@@ -737,7 +738,7 @@ li{margin-bottom:5px}
         <tr><td>Tanatologia</td><td colspan="2">0 ou 1 Eco</td><td>2 Ecos e Despedida ou Transformação</td><td>3 Ecos, Memorial e Rito preparados</td></tr>
         <tr><td>Direito e Contratologia</td><td colspan="2">0 ou 1 Garantia</td><td>2 Garantias</td><td>3 Garantias, Instrumento e Jurisdição preparados</td></tr>
         <tr><td>Filosofia e Metafísica</td><td colspan="2">0 ou 1 Coerência</td><td>2 Coerências</td><td>3 Coerências, Premissa e Âncora preparadas</td></tr>
-      </table>
+      </table></div>
       <p class="mini">Regras próprias (uma frase por Área): Corpo — "sequências usam ações normais e ataques dividem o Impacto entre os alvos"; Robótica — "+1 Ponto de Comando quando a ação é delegada a um Sistema"; Botânica — "Seiva altera crescimento e propriedades, mas não compra Impacto diretamente"; Zoologia — "observar informação nova rende no máximo uma vez por rodada"; Arte — "ganho máximo de uma Ressonância por rodada"; Alquimia — "uma Fórmula tem uma reação principal; propriedades incompatíveis exigem recipiente e vulnerabilidade novos"; Astronomia — "Alinhamento só nasce quando a Janela verificável acontece, no máximo uma vez por rodada"; Matemática — "a mesma observação não gera Evidência repetida; toda Hipótese precisa poder falhar"; Psicologia — "agência permanece com o alvo; controle hostil é resistível e sempre oferece saída comportamental"; Medicina — "Diagnóstico precisa de sinais e pode ser invalidado por mudança anatômica ou evidência contrária"; Geologia — "Tensão pertence à Âncora material e se perde quando ela é removida ou transformada"; História — "Fonte falsificada, contexto inadequado ou evidência contraditória reduz ou invalida o Precedente"; Tanatologia — "reviver exige Pacto com a Realidade; não restaura vida plena nem canal corporal sacrificado"; Direito — "Pacto hostil é resistível, a aceitação precisa ser real, e a mesma Cláusula vincula seu autor"; Filosofia — "apenas uma Premissa fica ativa; contradição demonstrada a encerra, e conceitos exigem exemplo concreto".</p>
     </details>
   </section>
@@ -753,77 +754,77 @@ li{margin-bottom:5px}
     <details>
       <summary>Corpo e Cinética — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> corpo, respiração e técnica fundamental. Começa um conflito relevante com 2 Esforços.</p>
-      <table><tr><th>Ação</th><th>Ação de turno</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th>Ação de turno</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Golpe Fundamental</td><td>Principal</td><td class="num">1</td><td>Ataque corporal ou com arma; registra "Golpe" no Rastro.</td></tr>
         <tr><td>Guarda Enraizada</td><td>Parcial/Reação</td><td class="num">0,5</td><td>Registra "Guarda" e reduz ou redireciona um efeito.</td></tr>
         <tr><td>Passo de Choque</td><td>Movimento + Principal</td><td class="num">1</td><td>Aproxima, atravessa posição perigosa ou desloca o alvo; registra "Impulso".</td></tr>
         <tr><td>Rompimento Didático</td><td>Principal (2 Esforços, 2 marcas)</td><td class="num">1,5</td><td>Converte a sequência em dano, quebra de postura ou os dois, e apaga o Rastro.</td></tr>
-      </table>
+      </table></div>
     </details>
     <details>
       <summary>Simbologia Arcana — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> quatro Fórmulas preparadas numa Matriz de Tomo 4, já compostas.</p>
-      <table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Projétil Elemental</td><td class="num">2 Mana</td><td class="num">1</td><td>Fere um alvo a alcance curto com Fogo, Água, Vento ou Terra.</td></tr>
         <tr><td>Selo de Guarda</td><td class="num">2 Mana</td><td class="num">0,5</td><td>Reduz um efeito contra uma criatura próxima.</td></tr>
         <tr><td>Impulso Vetorial</td><td class="num">2 Mana</td><td class="num">1</td><td>Move alvo/objeto, cria abertura ou causa dano.</td></tr>
         <tr><td>Restauração Simples</td><td class="num">2 Mana</td><td class="num">1</td><td>Recupera Vida ou reduz uma condição compatível.</td></tr>
-      </table>
+      </table></div>
     </details>
     <details>
       <summary>Robótica e Engenharia — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> Sistema Principal configurado, 4 Cargas, 1 PC por rodada e dois Módulos ativos.</p>
-      <table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Ferramenta Ofensiva</td><td class="num">1 Carga (+1 PC se delegada)</td><td class="num">1</td><td>Disparo, lâmina, pulso, drone ou ferramenta convertida em ataque.</td></tr>
         <tr><td>Escudo Interceptor</td><td class="num">1 Carga (+1 PC se delegada)</td><td class="num">0,5</td><td>Intercepta, cria cobertura breve ou reduz dano.</td></tr>
         <tr><td>Varredura Tática</td><td class="num">1 Carga</td><td class="num">0,5</td><td>Revela informação acionável.</td></tr>
         <tr><td>Propulsor Configurado</td><td class="num">1 Carga</td><td class="num">1</td><td>Reposiciona personagem, aliado ou Sistema.</td></tr>
-      </table>
+      </table></div>
     </details>
     <details>
       <summary>Botânica e Biomancia — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> três Sementes Preparadas, substrato portátil e 2 Seivas.</p>
-      <table><tr><th>Ação</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Semente de Estalo</td><td class="num">1</td><td>Rompe uma Semente Preparada pra atacar, proteger ou espalhar raízes na hora — ferramenta de emergência, não cria Cultivo.</td></tr>
         <tr><td>Mandíbula Solar</td><td class="num">0,5 / 1 / 1,5 / 2,5</td><td>Broto marca ou fere; Floração ataca; Maturação produz mordida telegrafada.</td></tr>
         <tr><td>Cipó de Guarda</td><td class="num">0,5 / 1 / 1,5 / 2,5</td><td>Prende, cria cobertura ou protege uma zona.</td></tr>
         <tr><td>Flor Hemática</td><td class="num">0,5 / 1 / 1,5 / 2,5</td><td>Estabiliza no Broto, cura ou restaura mais ao amadurecer.</td></tr>
         <tr><td>Estoura-Esporos</td><td class="num">0,5 / 1 / 1,5 / 2,5</td><td>Marca área, oculta, enfraquece ou causa dano disperso.</td></tr>
-      </table>
+      </table></div>
     </details>
     <details>
       <summary>Zoologia e Etologia — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> três Perfis preparados e um Perfil Ativo. Ataque básico funciona mesmo com zero Dados de Campo.</p>
-      <table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Instinto Predador</td><td class="num">—</td><td class="num">1</td><td>Ataque, perseguição ou marca.</td></tr>
         <tr><td>Carapaça Reativa</td><td class="num">1 Dado</td><td class="num">0,5</td><td>Reduz dano, ancora posição ou protege uma parte vulnerável.</td></tr>
         <tr><td>Rapina de Campo</td><td class="num">1 Dado</td><td class="num">1</td><td>Reposiciona, alcança ponto difícil ou ataca em passagem.</td></tr>
         <tr><td>Resposta Catalogada</td><td class="num">2 Dados</td><td class="num">1</td><td>Contramedida contra comportamento observado.</td></tr>
-      </table>
+      </table></div>
     </details>
     <details>
       <summary>Arte e Expressão — Kit do 1º Ano</summary>
       <p><strong>Entrada:</strong> três Motivos e uma Obra Principal preparada com Âncora simples (voz, gesto, instrumento, imagem, objeto, texto, vestimenta).</p>
-      <table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
+      <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table><tr><th>Ação</th><th class="num">Custo</th><th class="num">Impacto</th><th>Uso</th></tr>
         <tr><td>Manifestação Incisiva</td><td class="num">—</td><td class="num">1</td><td>Som, imagem, matéria, movimento ou palavra produz pressão ofensiva.</td></tr>
         <tr><td>Refrão Guardião</td><td class="num">—</td><td class="num">1</td><td>Converte a Obra em proteção, coragem, distração ou cobertura.</td></tr>
         <tr><td>Cenário em Movimento</td><td class="num">—</td><td class="num">1</td><td>Altera posição, percepção, terreno ou papel.</td></tr>
         <tr><td>Clímax Preparado</td><td class="num">3 Ressonâncias</td><td class="num">2,5</td><td>Resolve um auge; zera a Ressonância.</td></tr>
-      </table>
+      </table></div>
     </details>
   </section>
 
   <section id="social">
     <h2>💬 12. Interação Social</h2>
     <p>Cada figura social tem um painel simples: <strong>Desejo</strong> (o que quer agora), <strong>Objeção</strong> (o que impede o acordo), <strong>Limite</strong> (o que não aceita sem transformação real — precisa aparecer por sinais antes de ser testado), <strong>Posição</strong> (−2 a +2) e uma ou duas resistências fixas.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th class="num">Posição</th><th>Nome</th><th>O que dá pra pedir</th></tr>
       <tr><td class="num">−2</td><td>Hostil</td><td>pausa, retirada, resposta curta, acordo só contra ameaça maior</td></tr>
       <tr><td class="num">−1</td><td>Fechada</td><td>informação pública, pequena tolerância, negociação formal</td></tr>
       <tr><td class="num">0</td><td>Neutra</td><td>favor razoável mediante troca</td></tr>
       <tr><td class="num">+1</td><td>Aberta</td><td>ajuda custosa, informação reservada, risco moderado</td></tr>
       <tr><td class="num">+2</td><td>Aliada</td><td>sacrifício importante coerente com o vínculo</td></tr>
-    </table>
+    </table></div>
     <p>Um único teste move a Posição no máximo um grau; sucesso extremo cria oportunidade ou remove uma Objeção — não vira inimigo em aliado de uma vez. Trair um valor central exige mudança de ficção, não uma dificuldade alta.</p>
     <p>Negociações com várias partes reaproveitam a <strong>Cena de Desafio</strong> (Progresso = Objeções resolvidas, Pressão = impaciência/suspeita/prazo), a mesma usada em Projetos (seção 14). <strong>Dívidas e Promessas</strong> viram frase registrada ("Devo proteção à diretora Iara"), não uma barra numérica.</p>
   </section>
@@ -832,7 +833,7 @@ li{margin-bottom:5px}
     <h2>🎒 13. Inventário</h2>
     <p><strong>Carga Pronta = 6 + Grau de Força.</strong> Só itens marcados <strong>Pronto</strong> contam nessa carga; item guardado fora exige Ação Principal + acesso ao recipiente pra recuperar.</p>
     <h3>Cartão de item (8 campos)</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Campo</th><th>O que define</th></tr>
       <tr><td>Categoria (I–V)</td><td>escala do item</td></tr>
       <tr><td>Tipo</td><td>arma / proteção / ferramenta / foco / consumível / veículo / criação</td></tr>
@@ -842,7 +843,7 @@ li{margin-bottom:5px}
       <tr><td>Âncora e fonte</td><td>de onde vem, o que sustenta</td></tr>
       <tr><td>Estado</td><td>Íntegro / Danificado / Quebrado</td></tr>
       <tr><td>Acesso</td><td>Comum / Controlado / Raro / Único</td></tr>
-    </table>
+    </table></div>
     <p><strong>Munição</strong> (Cheia/Baixa/Vazia) só existe em itens tipo Arma. <strong>Guarda por cena</strong> (com teto editável) só existe em itens tipo Proteção — cada ponto de Guarda reduz 0,25 Impacto de um golpe antes dele chegar na Vida, e volta no Respiro se a Proteção não estiver Danificada. O jogador desconta a Guarda manualmente: com várias Proteções, só a mesa sabe qual gastar.</p>
   </section>
 
@@ -867,7 +868,7 @@ li{margin-bottom:5px}
     <p class="resumo">Em resumo: <strong>PE é a moeda</strong> que compra Atributo, Treinamento, Talento e magia extra — 1 por Nível, guardada até você decidir gastar. <strong>Marcos</strong> e <strong>Ascensões</strong> são presentes automáticos que chegam sozinhos em certos Níveis, sem custar PE — você só escolhe o que fazer com eles.</p>
     <p><strong>Ponto de Evolução (PE): 1 por Nível, acumula se não gasto.</strong> A filosofia do sistema é "mostrar a origem de cada bônus" — todo PE gasto vem de um livro-razão de compras.</p>
     <h3>Custo de compra</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Compra</th><th class="num">Custo</th><th>Trava</th></tr>
       <tr><td>Grau de Atributo (próximo degrau: 2/3/4/5)</td><td class="num">2–5 PE</td><td>teto de Categoria: I até Grau 3, II até 4, III–V até 5</td></tr>
       <tr><td>Treinado</td><td class="num">2 PE</td><td>exige Categoria I</td></tr>
@@ -885,7 +886,7 @@ li{margin-bottom:5px}
       <tr><td>Recuperação situacional</td><td class="num">3 PE</td><td>—</td></tr>
       <tr><td>Componente persistente/contingência</td><td class="num">3 PE</td><td>exige 4º Ano</td></tr>
       <tr><td>Eletiva de outra Área</td><td class="num">4 PE</td><td>não concede o motor completo da outra Área</td></tr>
-    </table>
+    </table></div>
     <p>Cada Par de Doença além dos 2 primeiros gratuitos custa <strong>2 PE</strong> (seção 16).</p>
 
     <div class="exemplo">
@@ -899,48 +900,48 @@ li{margin-bottom:5px}
 
     <h3>Marcos da Área</h3>
     <p>Recebidos nas posições <strong>1, 5, 9, 13, 17</strong> de cada ciclo de 20 Níveis — 5 por ciclo completo. <strong>Não gastam PE</strong>, só registram uma escolha entre 5 opções:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Opção</th><th>Efeito</th></tr>
       <tr><td>Repertório</td><td>aprenda uma técnica ou poder Básico da própria Área</td></tr>
       <tr><td>Reserva</td><td>aumenta em 1 o recurso principal (máx. 2 escolhas por ciclo)</td></tr>
       <tr><td>Preparação</td><td>prepare uma opção adicional, respeitando o limite da Área</td></tr>
       <tr><td>Refinamento</td><td>dois refinamentos estreitos em opções já conhecidas — nenhum aumenta Impacto</td></tr>
       <tr><td>Talento</td><td>receba um Talento Padrão ligado ao motor da Área</td></tr>
-    </table>
+    </table></div>
 
     <h3>Ascensões</h3>
     <p>Uma a cada 20 Níveis. Cada Ascensão escolhe um eixo entre 5 — <strong>não</strong> dá bônus no d20, Impacto gratuito, ação extra nem Categoria VI, é 4 degraus de escala num único eixo:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Eixo</th><th>Escala</th></tr>
       <tr><td>Massa e Volume</td><td>tamanho, peso ou capacidade física</td></tr>
       <tr><td>Alcance e Área</td><td>distância ou espaço coberto</td></tr>
       <tr><td>Quantidade</td><td>número/escala coletiva dos alvos — sem multiplicar ações ou Impacto</td></tr>
       <tr><td>Duração e Resistência</td><td>permanência e dificuldade ficcional de desfazer</td></tr>
       <tr><td>Profundidade Conceitual</td><td>abstração ou camada de realidade — exige 5º Ano</td></tr>
-    </table>
+    </table></div>
 
     <h3>Categoria e Ciclo</h3>
     <p><code>Ciclo = piso((Nível−1)/20) + 1</code>. Dentro do primeiro ciclo, a Categoria segue a tabela abaixo; ciclos seguintes já começam e continuam em V (a partir daí, quem faz o personagem crescer são as Ascensões, não uma Categoria nova).</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Categoria</th><th>Nível dentro do ciclo</th></tr>
       <tr><td>I</td><td>até 4</td></tr>
       <tr><td>II</td><td>até 8</td></tr>
       <tr><td>III</td><td>até 12</td></tr>
       <tr><td>IV</td><td>até 16</td></tr>
       <tr><td>V</td><td>dali em diante</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="doencas">
     <h2>🧬 16. Doenças, Demi-humanos e Místicos</h2>
     <p class="dica">Sistema <strong>opcional</strong> — a mesa decide se ele entra na campanha. Nenhum jogador precisa aceitar uma manifestação corporal que não queira interpretar.</p>
     <p>Catálogo de 23 combinações <strong>Pró / Contra / Âncora</strong>, cobrindo 9 criaturas em três classificações:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Classificação</th><th>Criaturas (nº de Pares)</th></tr>
       <tr><td>Comuns</td><td>Lobo (3), Raposa (4), Coelho (2)</td></tr>
       <tr><td>Demi-humanos</td><td>Vampiro (2), Demônio (3), Orc (3)</td></tr>
       <tr><td>Místicos</td><td>Dragão Negro (3), Wendigo (2), Medusa (1)</td></tr>
-    </table>
+    </table></div>
     <p>Até <strong>6 Pares ativos</strong> — os dois primeiros são gratuitos, do terceiro em diante cada um custa 2 PE. Trocar de Classificação filtra os Pares disponíveis.</p>
     <details>
       <summary>Dois exemplos completos de Par</summary>
@@ -952,12 +953,12 @@ li{margin-bottom:5px}
   <section id="nivel">
     <h2>🎓 17. Nível, Portfólio e Recesso</h2>
     <h3>Ritmo de Nível (escolhido na sessão zero)</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Ritmo</th><th>Regra</th></tr>
       <tr><td>Acelerado</td><td>1 Nível por sessão concluída</td></tr>
       <tr><td>Padrão</td><td>1 Nível a cada 2 sessões — usa uma trilha de 2 caixas</td></tr>
       <tr><td>Contemplativo</td><td>1 Nível por Semestre</td></tr>
-    </table>
+    </table></div>
     <p class="dica">Não se ganha progresso por matar criaturas individualmente — resolver, contornar, convencer ou compreender uma ameaça vale tanto quanto derrotá-la.</p>
 
     <h3>Portfólio de Prova de Passagem</h3>
@@ -966,7 +967,7 @@ li{margin-bottom:5px}
 
     <h3>Recesso</h3>
     <p>Até <strong>2 Atividades</strong> por Recesso, com anotações livres — a terceira trava:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atividade</th><th>O que faz</th></tr>
       <tr><td>Estudar</td><td>aprender Lição, pesquisar pista ou preparar Prova</td></tr>
       <tr><td>Treinar</td><td>reorganizar uma escolha permitida ou preparar nova técnica</td></tr>
@@ -974,7 +975,7 @@ li{margin-bottom:5px}
       <tr><td>Recuperar</td><td>tratar Consequência ou reconstruir recurso duradouro</td></tr>
       <tr><td>Relacionar</td><td>criar, reparar ou aprofundar vínculo</td></tr>
       <tr><td>Servir</td><td>trabalhar pra escola, facção ou comunidade e ganhar acesso</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Só exige teste quando há risco, oposição ou prazo. "Novo Recesso" limpa a trilha.</p>
   </section>
 
@@ -992,13 +993,13 @@ li{margin-bottom:5px}
     </div>
 
     <h3>Quatro escalas de Recuperação</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Escala</th><th>Duração aproximada</th><th>Efeito</th></tr>
       <tr><td>Respiro</td><td>~1 min</td><td>não recupera Vida — encerra condições de Janela/Cena</td></tr>
       <tr><td>Intervalo</td><td>~10 min</td><td>+25% da Vida máxima; até 2 por Descanso completo</td></tr>
       <tr><td>Repouso</td><td>~1 h</td><td>+50% da Vida máxima</td></tr>
       <tr><td>Descanso completo</td><td>~8 h</td><td>Vida cheia, zera os 2 Intervalos, reduz cada Consequência em 1</td></tr>
-    </table>
+    </table></div>
     <p class="mini">As porcentagens de Recuperação arredondam pra cima; a conversão de dano usa arredondamento comum.</p>
   </section>
 
@@ -1006,7 +1007,7 @@ li{margin-bottom:5px}
     <h2>🤖 19. Chassi, Núcleo de Consciência e Módulos</h2>
     <p>Peça de Robótica e Engenharia pra construir <strong>equipamento robótico complexo</strong> — armadura, drone, veículo, arma, autômato. Não é um sistema de "personagem robô" à parte.</p>
     <h3>8 tipos de Chassi</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Chassi</th><th>Descrição</th></tr>
       <tr><td>Drone/Formação</td><td>unidades Micro–Pessoal condensadas numa ficha, Integridade compartilhada</td></tr>
       <tr><td>Autômato Humanoide</td><td>corpo Pessoal integrado, natural pra IA, Eco ou Alma</td></tr>
@@ -1016,28 +1017,28 @@ li{margin-bottom:5px}
       <tr><td>Animal Robótico</td><td>transporte, auxílio, furtividade e combate; almas só em indivíduo nomeado e consentido</td></tr>
       <tr><td>Arma</td><td>formas portáteis, pesadas ou instaladas; formato muda propriedades, não orçamento</td></tr>
       <tr><td>Veículo/Estrutura</td><td>mobilidade ou domínio de terreno, da escala Pessoal à Monumental</td></tr>
-    </table>
+    </table></div>
     <p>Categoria (I–V) define a escala: I=Pessoal, II=Pesado, III=Colossal, IV=Monumental, V=escala absurda (com Ascensões).</p>
     <h3>Núcleo de Consciência</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Núcleo</th><th>Descrição</th></tr>
       <tr><td>Sem Núcleo</td><td>controle direto ou remoto, Diretriz literal</td></tr>
       <tr><td>Programa</td><td>rotinas preparadas, sem personalidade</td></tr>
       <tr><td>IA</td><td>personalidade construída, interpretação contextual</td></tr>
       <tr><td>Eco Mnêmico</td><td>cópia parcial de lembranças — não é a pessoa morta</td></tr>
       <tr><td>Alma Vinculada</td><td>espírito real, consciente, consentido, capaz de recusar</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Nenhum Núcleo concede turno próprio ao Chassi.</p>
     <h3>Sistemas e Módulos</h3>
     <p>Um Sistema Principal em texto, mais Sistemas de Apoio (limite 1 no 1º Ano, até 2 do 2º em diante). Módulos vêm em 9 Famílias — Locomoção, Sensor, Ferramenta, Proteção, Armamento, Suporte, Núcleo, Interface, Estrutural — cada um com Categoria, Ação, Custo, Impacto (escala da seção 10), Âncora e Contrajogo.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Ano</th><th class="num">Teto de Módulos ativos</th></tr>
       <tr><td>1º</td><td class="num">2</td></tr>
       <tr><td>2º</td><td class="num">3</td></tr>
       <tr><td>3º</td><td class="num">4</td></tr>
       <tr><td>4º</td><td class="num">6</td></tr>
       <tr><td>5º</td><td class="num">8</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="bestiario">
@@ -1056,22 +1057,22 @@ li{margin-bottom:5px}
     <h3>Ficha de Inimigo</h3>
     <p>Modela só o "cartão de mesa": nome, Categoria, função, Defesa por canal, Vida, deslocamento, ação característica, Reação, condição atual, comportamento. <strong>Inimigo não tem Ramo nem Treinamento por Perícia</strong> — é número direto e texto livre.</p>
     <p><code>Defesa por canal = 8 + Grau + Treinamento</code>. Referência de Defesa-base por Categoria:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th class="num">Categoria</th><th class="num">Defesa-base</th></tr>
       <tr><td class="num">I</td><td class="num">15</td></tr>
       <tr><td class="num">II</td><td class="num">16</td></tr>
       <tr><td class="num">III</td><td class="num">22</td></tr>
       <tr><td class="num">IV</td><td class="num">23</td></tr>
       <tr><td class="num">V</td><td class="num">28</td></tr>
-    </table>
+    </table></div>
     <h4>Porte</h4>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Porte</th><th class="num">Canais Fortes/Fracos</th><th>Uso</th><th class="num">Impacto de referência</th></tr>
       <tr><td>Capanga</td><td class="num">0 / 1</td><td>massa, cenário, demonstração de poder</td><td class="num">0,5</td></tr>
       <tr><td>Padrão</td><td class="num">1 / 1</td><td>unidade básica de encontro</td><td class="num">2,5</td></tr>
       <tr><td>Elite</td><td class="num">2 / 1</td><td>minichefe ou ameaça especializada</td><td class="num">5</td></tr>
       <tr><td>Fase de Chefe</td><td class="num">2 / 0</td><td>o canal fraco vira Vulnerabilidade descoberta em jogo</td><td class="num">7</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Vida do inimigo é digitada à mão — não há fórmula fixa. "Recalcular pela fórmula" preenche os 5 canais de uma vez; digitar por cima sempre sobrepõe.</p>
 
     <h3>Fases de Chefe</h3>
@@ -1080,24 +1081,24 @@ li{margin-bottom:5px}
 
     <h3>Orçamento de Encontro</h3>
     <p><code>Orçamento = Força do Grupo × multiplicador de Dificuldade</code>:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Dificuldade</th><th class="num">Multiplicador</th><th>Duração (rodadas)</th></tr>
       <tr><td>Fácil</td><td class="num">×0,6</td><td>1–3</td></tr>
       <tr><td>Comum</td><td class="num">×1</td><td>3–5</td></tr>
       <tr><td>Difícil</td><td class="num">×1,4</td><td>4–6</td></tr>
       <tr><td>Clímax</td><td class="num">×1,8</td><td>6–10, com fases</td></tr>
-    </table>
+    </table></div>
     <p>Pontos de Ameaça por Porte: Capanga 0,25, Padrão 1, Elite 2, Fase de Chefe 2.</p>
 
     <h3>Dificuldade de tarefa de criatura</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Nível</th><th class="num">% da Vida média</th></tr>
       <tr><td>Muito Fácil</td><td class="num">10%</td></tr>
       <tr><td>Fácil</td><td class="num">15%</td></tr>
       <tr><td>Mediana</td><td class="num">22%</td></tr>
       <tr><td>Difícil</td><td class="num">30%</td></tr>
       <tr><td>Impossível</td><td class="num">40%</td></tr>
-    </table>
+    </table></div>
 
     <h3>Lembretes de mesa do Escudo do Mestre</h3>
     <ul>

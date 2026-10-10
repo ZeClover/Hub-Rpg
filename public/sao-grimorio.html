@@ -94,6 +94,7 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade>*,.grade2>*,.grade3>*{min-width:0}code{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -168,7 +169,7 @@ li{margin-bottom:5px}
     percorre isto em 4 passos: quem é o jogador + Perfil de Atributos, Atributos finos + primeira Classe,
     primeiro Poder (subindo essa classe pro Nível 1), e um resumo final. Fora do guiado, a ordem das
     abas já ajuda:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Aba</th><th>O que decidir ali</th></tr>
       <tr><td>Status</td><td>Nome, XP, PV/PM atuais e os números derivados — a "tela inicial" do personagem.</td></tr>
       <tr><td>Mundo</td><td>Cursor, Zona, Corpo Real, Guilda, Títulos, Duelo — o lado "personagem sabe que está num jogo" (seção 9).</td></tr>
@@ -181,7 +182,7 @@ li{margin-bottom:5px}
       <tr><td>Golpes e Magias</td><td>Sword Skills e magias registradas (seção 13).</td></tr>
       <tr><td>Skills</td><td>Habilidades que evoluem com o uso, fora do sistema de Classes (seção 14).</td></tr>
       <tr><td>Notas</td><td>Texto livre — o que não cabe em nenhuma aba fechada.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="atributos">
@@ -189,21 +190,21 @@ li{margin-bottom:5px}
     <p>Quatro Atributos, cada um é <strong>ao mesmo tempo um dado e um número</strong>: o valor guardado
     (6, 8, 10 ou 12) é o tamanho do dado rolado nos Testes (seção 4) <em>e</em> o número usado direto nas
     fórmulas de PV/PM/Defesa (seção 7) — não existe conversão entre os dois.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atributo</th><th>Abrev.</th><th>Pra que serve</th></tr>
       <tr><td>Força</td><td class="num">FOR</td><td>dano corpo a corpo, capacidade de carga</td></tr>
       <tr><td>Agilidade</td><td class="num">AGI</td><td>iniciativa, evasão, ataque à distância</td></tr>
       <tr><td>Mente</td><td class="num">MEN</td><td>magia, PM, percepção do sistema</td></tr>
       <tr><td>Vontade</td><td class="num">VON</td><td>resistência mental, foco, negociação</td></tr>
-    </table>
+    </table></div>
     <p>Na criação, escolha um dos três Perfis abaixo — ele já preenche os quatro Atributos na ordem
     Força/Agilidade/Mente/Vontade (dá pra ajustar depois manualmente):</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Perfil</th><th>Dados</th><th>Estilo</th></tr>
       <tr><td>Especializado</td><td class="num">d10, d10, d6, d6</td><td>ótimo em duas coisas, fraco em duas</td></tr>
       <tr><td>Mediano</td><td class="num">d10, d8, d8, d6</td><td>um destaque, o resto equilibrado</td></tr>
       <tr><td>Pau pra toda obra</td><td class="num">d8, d8, d8, d8</td><td>sem pico, sem buraco</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="teste">
@@ -232,12 +233,12 @@ li{margin-bottom:5px}
     <p>Personagem novo começa com uma linha de classe vazia em <strong>Nível 0</strong> — legítimo,
     "só logado" e sem nenhum Poder ainda. O primeiro Poder só aparece ao subir alguma classe pro Nível 1
     (seção 15). Não há cálculo automático de XP: quando e quanto subir de nível é decisão do mestre.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Categoria</th><th>Classes</th></tr>
       <tr><td>Combate <span class="mini">(skills de ataque e defesa — sobe fácil brigando)</span></td><td>Espadachim, Arcanista, Batedor, Lanceiro, Arqueiro</td></tr>
       <tr><td>Produção <span class="mini">(fabricar, refinar e vender itens)</span></td><td>Ferreiro, Alquimista, Encantador, Cozinheiro</td></tr>
       <tr><td>Outras <span class="mini">(utilidade fora de combate — fraca em briga, sem ofício)</span></td><td>Mercador, Domador, Curandeiro</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo jogado — Nível Geral com multiclasse</div>
       <p>Um personagem tem Espadachim Nível 2 e Ferreiro Nível 1 — <span class="conta">Nível Geral = 2 + 1 = 3</span>
@@ -271,7 +272,7 @@ li{margin-bottom:5px}
     <h2>❤️ 7. PV, PM, Defesa e Iniciativa</h2>
     <p>Todos calculados sozinhos a partir do Nível Geral (seção 5), dos Atributos (seção 3) e dos bônus
     de equipamento equipado (seção 10):</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Derivado</th><th>Fórmula</th></tr>
       <tr><td>PV máximos</td><td class="num">10 + Nível Geral × 3 + Força + bônus de equipamento</td></tr>
       <tr><td>PM máximos</td><td class="num">5 + Nível Geral × 2 + Mente + bônus de equipamento</td></tr>
@@ -279,7 +280,7 @@ li{margin-bottom:5px}
       <tr><td>Defesa Mágica</td><td class="num">8 + piso(Vontade ÷ 2) + bônus manual + bônus de equipamento</td></tr>
       <tr><td>Iniciativa</td><td class="num">piso(Agilidade ÷ 2) + bônus manual + bônus de equipamento</td></tr>
       <tr><td>PV de risco</td><td class="num">piso(PV máximos ÷ 2)</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo jogado — as contas de um personagem novo</div>
       <p>Personagem padrão (Nível Geral 1, Força 8, Agilidade 8, Mente 8, Vontade 6, sem equipamento):</p>
@@ -314,7 +315,7 @@ li{margin-bottom:5px}
     <h2>🎮 9. Mundo: Cursor, Zona, Guilda e Corpo Real</h2>
     <p>A aba Mundo junta tudo que faz este sistema parecer um MMO de verdade, não só uma folha de
     números:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Campo</th><th>Opções / ideia</th></tr>
       <tr><td>Cursor</td><td>Verde (nunca atacou outro jogador), Laranja (atacou PvP mas não matou), Vermelho (matou outro jogador no jogo)</td></tr>
       <tr><td>Zona</td><td>Segura (cidade/base — sem combate real, sem Penalidade de Morte) ou Perigo (masmorra)</td></tr>
@@ -322,7 +323,7 @@ li{margin-bottom:5px}
       <tr><td>Títulos</td><td>Cada um com "como conseguiu" e uma Visão social: Admirado, Neutro ou Malvisto (referência ao "Beater" do SAO original)</td></tr>
       <tr><td>Duelo</td><td>Desafio formal combinado antes, com testemunha — Pendente, Venceu, Perdeu ou Empate. Não muda a cor do Cursor.</td></tr>
       <tr><td>Corpo Real</td><td>Onde está, quem cuida, se está em risco — "o que separa este sistema de um RPG comum: tem alguém de carne e osso plugado, em algum lugar, o tempo todo"</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="equipamento">
@@ -331,14 +332,14 @@ li{margin-bottom:5px}
     <strong>Efeito automático</strong>: Nenhum (só descritivo), Defesa, Defesa Mágica, Iniciativa, PV
     máximo ou PM máximo. O valor desse efeito soma direto na fórmula certa (seção 7), mas só enquanto o
     item estiver <strong>equipado</strong> e <strong>não quebrado</strong>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Mecânica</th><th>Fórmula / regra</th></tr>
       <tr><td>Peso máximo</td><td class="num">10 + Força × 2</td></tr>
       <tr><td>Peso atual</td><td class="num">soma de TODO item do inventário, equipado ou não</td></tr>
       <tr><td>Durabilidade</td><td>Máxima 0 = nunca quebra. Máxima &gt;0: quebra ao chegar a 0 (perde o Efeito automático) — botões "Usar" (−1) e "Reparar" (volta ao máximo)</td></tr>
-    </table>
+    </table></div>
     <h3>Raridades</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Raridade</th><th>Sugestão de bônus</th><th class="num">Preço de venda (Prata)</th></tr>
       <tr><td>Comum</td><td>+0 a +1</td><td class="num">5</td></tr>
       <tr><td>Incomum</td><td>+1 a +2</td><td class="num">15</td></tr>
@@ -346,7 +347,7 @@ li{margin-bottom:5px}
       <tr><td>Épico</td><td>+3 a +5</td><td class="num">100</td></tr>
       <tr><td>Lendário</td><td>+5 a +7</td><td class="num">300</td></tr>
       <tr><td>Único</td><td>sem tabela — negocia com o mestre</td><td class="num">—</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="crafting">
@@ -386,11 +387,11 @@ li{margin-bottom:5px}
     <p>Seis tipos de arma aceitam Golpe (espada uma mão, espada duas mãos, lança, arco, adaga, cajado).
     Um ataque sem Golpe registrado ("ataque livre") usa só o Atributo puro — sem o dano extra do Golpe,
     mas também sem a Vulnerabilidade depois.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Golpe</th><th>Dano</th><th>Pós-motion</th></tr>
       <tr><td>Corte Vertical</td><td class="num">1d8+FOR</td><td>rígido 1 turno, Defesa −2</td></tr>
       <tr><td>Talho Pesado</td><td class="num">2d8+FOR</td><td>rígido 2 turnos, Defesa −4</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Golpes catalogados existem pros 6 tipos de arma (13 ao todo); dá pra registrar um
     golpe "Original" também, em branco. O Poder "Golpe Original" do Espadachim é a única forma de manter
     o efeito de um Golpe <strong>sem</strong> a Vulnerabilidade de pós-motion.</p>

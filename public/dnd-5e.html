@@ -120,6 +120,8 @@ main{max-width:960px; margin:0 auto; padding:20px 16px 80px}
 
 @keyframes fadeSlideIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
 #app.entra{animation:fadeSlideIn .32s ease-out}
+/* Tabelas continuam completas; no celular, a rolagem fica dentro da tabela. */
+@media(max-width:639px){.cartao{min-width:0}.tabela{display:block;max-width:100%;overflow-x:auto}.linha{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -12324,10 +12326,16 @@ function carregar(){
 }
 
 let debounceHub = null;
+// Uma gravação por vez: uma resposta antiga não pode apagar a última edição.
+let salvamentoHubEmCurso = false;
+let salvamentoHubPendente = false;
 function salvarNoHub(){
   clearTimeout(debounceHub);
   debounceHub = setTimeout(async () => {
+    debounceHub = null;
+    if(salvamentoHubEmCurso){ salvamentoHubPendente = true; return; }
     const p = atual(); if(!p) return;
+    salvamentoHubEmCurso = true;
     // Resumo genérico pro Hub de Mestre ler sem saber a fórmula deste
     // sistema (decisão #46) — espelhado a cada salvamento.
     p.resumoVida = {atual: pvAtual(p), maxima: pvMaximo(p), rotulo: 'PV'};
@@ -12342,6 +12350,9 @@ function salvarNoHub(){
     }catch(e){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
+    }finally{
+      salvamentoHubEmCurso = false;
+      if(salvamentoHubPendente){ salvamentoHubPendente = false; salvarNoHub(); }
     }
   }, 500);
 }

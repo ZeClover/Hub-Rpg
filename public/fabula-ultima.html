@@ -173,6 +173,8 @@ body.compacto .abas{margin-bottom:14px}
 .vazio{color:var(--suave); text-align:center; padding:50px 20px}
 .mini{font-size:12px; color:var(--suave)}
 .classe-linha{display:grid; grid-template-columns:1fr 90px auto auto; gap:10px; align-items:end; margin-bottom:10px}
+/* Tabelas continuam completas; no celular, a rolagem fica dentro da tabela. */
+@media(max-width:639px){.linha{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -2036,11 +2038,18 @@ function carregarLayout(){
 const CHAVE_ABAS = 'hub_abas_fabula-ultima';
 function carregarPreferenciaAbas(){
   let salvas = [];
-  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ salvas = []; }
-  const porId = new Map(salvas.map(s => [s.id, s]));
-  const lista = salvas.filter(s => ABAS.some(a => a.id === s.id));
-  ABAS.forEach(a => { if(!porId.has(a.id)) lista.push({id:a.id, oculta:false}); });
-  return lista.length ? lista : ABAS.map(a => ({id:a.id, oculta:false}));
+  try{ salvas = JSON.parse(localStorage.getItem(CHAVE_ABAS) || '[]'); }catch(e){ /* Preferência inválida: recuperar a navegação padrão. */ }
+  if(!Array.isArray(salvas)) salvas = [];
+  const vistos = new Set();
+  const lista = [];
+  for(const entrada of salvas){
+    if(!entrada || typeof entrada !== 'object' || vistos.has(entrada.id) || !ABAS.some(a => a.id === entrada.id)) continue;
+    vistos.add(entrada.id);
+    lista.push({id:entrada.id, oculta:entrada.oculta === true});
+  }
+  ABAS.forEach(a => { if(!vistos.has(a.id)) lista.push({id:a.id, oculta:false}); });
+  if(lista.length && lista.every(a => a.oculta)) lista[0].oculta = false;
+  return lista;
 }
 function salvarPreferenciaAbas(lista){
   try{ localStorage.setItem(CHAVE_ABAS, JSON.stringify(lista)); }catch(e){ /* aba anônima etc. */ }
@@ -2216,6 +2225,9 @@ function carregar(){
 }
 
 let debounceHub = null;
+// Uma gravação por vez: uma resposta antiga não pode apagar a última edição.
+let salvamentoHubEmCurso = false;
+let salvamentoHubPendente = false;
 
 // No Hub, cada campo salva sozinho na conta (decisão #44) — sem lista local,
 // sem botão de salvar. O debounce evita uma requisição por tecla digitada.
@@ -2223,7 +2235,10 @@ function salvarNoHub(){
   clearTimeout(debounceHub);
   mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
+    debounceHub = null;
+    if(salvamentoHubEmCurso){ salvamentoHubPendente = true; return; }
     const p = atual(); if(!p) return;
+    salvamentoHubEmCurso = true;
     // Resumo genérico pro Hub de Mestre ler sem saber a fórmula de PV
     // deste sistema (decisão #46) — espelhado a cada salvamento.
     p.resumoVida = {atual: Math.max(0, Math.min(pvMaximo(p), p.atual.pv ?? pvMaximo(p))), maxima: pvMaximo(p), rotulo: 'PV'};
@@ -2240,6 +2255,9 @@ function salvarNoHub(){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar = true; render(); }
       mostrarStatusSalvo('Erro ao salvar', 'erro');
+    }finally{
+      salvamentoHubEmCurso = false;
+      if(salvamentoHubPendente){ salvamentoHubPendente = false; salvarNoHub(); }
     }
   }, 500);
 }

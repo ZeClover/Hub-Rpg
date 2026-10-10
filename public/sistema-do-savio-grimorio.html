@@ -104,6 +104,7 @@ li{margin-bottom:5px}
   h2,h3,h4{break-after:avoid} table,.cartao,.dica,.aviso,.exemplo,ul,ol{break-inside:avoid}
   tr{break-inside:avoid} a{color:inherit;text-decoration:none}
 }
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade>*,.grade2>*,.grade3>*{min-width:0}code{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -172,7 +173,7 @@ li{margin-bottom:5px}
     <h2>🧭 2. Como montar um personagem</h2>
     <p>A ficha tem treze abas. O <strong>Modo Guiado</strong> (botão "🧭 Modo Guiado", ligado sozinho num
     personagem novo) percorre a criação em 7 passos, na ordem que faz mais sentido pra decidir cada coisa:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Passo</th><th>O que decidir</th></tr>
       <tr><td>1. Quem é seu personagem?</td><td>Nome, Idade, Gênero, Altura — descrição pura, sem regra por trás.</td></tr>
       <tr><td>2. Atributos e Especialização</td><td>Distribuir os seis Atributos (seção 3) e escolher uma das quatro Especializações (seção 5) — ela já define PV/PE de partida.</td></tr>
@@ -181,10 +182,10 @@ li{margin-bottom:5px}
       <tr><td>5. Passivas iniciais</td><td>Desenhar as 2 Passivas iniciais (seção 7).</td></tr>
       <tr><td>6. Invocação (opcional)</td><td>Só se o conceito já nascer com uma — não é obrigatório (seção 10).</td></tr>
       <tr><td>7. Pronto pra jogar!</td><td>Resumo final com todos os números derivados.</td></tr>
-    </table>
+    </table></div>
     <p>Fora do Modo Guiado ("📋 Ver ficha completa"), as treze abas ficam disponíveis a qualquer momento, em
     qualquer ordem:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Aba</th><th>O que ela guarda</th></tr>
       <tr><td>Perfil</td><td>Nome, Nível (o número que move quase tudo), ganchos de mesa e a cor de tema da ficha.</td></tr>
       <tr><td>Atributos</td><td>Os seis Atributos e os Limiares que eles ligam (seção 3).</td></tr>
@@ -199,7 +200,7 @@ li{margin-bottom:5px}
       <tr><td>Ascensão</td><td>Primeira e Segunda Ascensão, Arquétipos, Embate de Fluxo, Imersão Espiritual (seção 12).</td></tr>
       <tr><td>Regras</td><td>A mesma referência de Habilidades e regras gerais deste Grimório, direto na ficha.</td></tr>
       <tr><td>Notas</td><td>Texto livre — o que não cabe em nenhuma aba fechada.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="atributos">
@@ -208,7 +209,7 @@ li{margin-bottom:5px}
     Segunda Ascensão — seção 12). Diferente de sistemas com fórmula contínua, aqui cada Atributo liga um
     bônus fixo sozinho ao bater exatamente <strong>5</strong> ou <strong>10</strong> — sem precisar calcular
     nada, o bônus aparece na tela quando o número certo é atingido.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atributo</th><th>Pra que serve</th><th>Limiar 5</th><th>Limiar 10</th></tr>
       <tr><td>Força (FOR)</td><td>dano corpo a corpo, capacidade física</td><td>+4d4 de dano em qualquer ataque</td><td>+4d8 de dano em qualquer ataque</td></tr>
       <tr><td>Destreza (DEX)</td><td>iniciativa, esquiva, ações extras</td><td>+1 Ação Bônus por turno</td><td>+1 Ação Principal extra por turno</td></tr>
@@ -216,7 +217,7 @@ li{margin-bottom:5px}
       <tr><td>Inteligência (INT)</td><td>Pontos de Energia, perícias treinadas</td><td>+25 PE máximo</td><td>+50 PE máximo</td></tr>
       <tr><td>Sabedoria (SAB)</td><td>percepção, Passivas extras</td><td>+1 Passiva extra</td><td>+3 Passivas extras</td></tr>
       <tr><td>Carisma (CAR)</td><td>Sanidade, presença social</td><td>+30 Sanidade máxima</td><td>+60 Sanidade máxima</td></tr>
-    </table>
+    </table></div>
     <div class="dica">O limiar de Força é o único em <strong>dado</strong> — a ficha nunca simula rolagem, então
     ele aparece como um lembrete de texto (inclusive no novo card "⚔️ Dano Padrão de Ataques", seção 8), e é
     você quem rola o dado extra na hora certa. Todos os outros limiares somam um número puro, direto no PV,
@@ -250,7 +251,7 @@ li{margin-bottom:5px}
     <p>Luta é a única Perícia que troca livremente entre Força e Destreza, à escolha do jogador (desarmado ou
     com arma leve/marcial). Três vagas de <strong>Ofício</strong> ficam em branco pra você nomear o que
     quiser (Culinária, Alquimia, Cavalgar...). A lista completa de Perícias e o Atributo que cada uma usa:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Atributo</th><th>Perícias</th></tr>
       <tr><td>Força</td><td>Atletismo, Luta (ou Destreza)</td></tr>
       <tr><td>Destreza</td><td>Acrobacia, Furtividade, Pontaria, Prestidigitação, Reflexos</td></tr>
@@ -258,7 +259,7 @@ li{margin-bottom:5px}
       <tr><td>Sabedoria</td><td>Intuição, Medicina, Percepção, Vontade</td></tr>
       <tr><td>Inteligência</td><td>Astúcia, Fluxo, Investigação, História, Ofício (×3), Religião, Tecnologia</td></tr>
       <tr><td>Carisma</td><td>Persuasão, Enganação, Intimidação, Performance</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="especializacoes">
@@ -266,13 +267,13 @@ li{margin-bottom:5px}
     <p>A Especialização é escolhida <strong>uma vez</strong>, na criação — muda depois só se a mesa combinar
     diferente. Ela define PV/PE de partida (e o crescimento por Nível) e traz um pacote fixo de Traços que
     valem pra sempre, sem precisar "comprar" de novo.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Especialização</th><th>PV inicial</th><th>PV por Nível</th><th>PE inicial</th><th>PE por Nível</th><th>Resumo</th></tr>
       <tr><td>Suporte</td><td>20</td><td>5 + CON</td><td>20</td><td>10</td><td>Cura e apoio — mantém o grupo de pé.</td></tr>
       <tr><td>Combatente</td><td>40</td><td>10 + CON</td><td>10</td><td>5</td><td>Luta corpo a corpo pura — golpe, resistência e adrenalina.</td></tr>
       <tr><td>Mestre das Armas</td><td>20</td><td>5 + CON</td><td>15</td><td>8</td><td>Vive de equipamento — arma, engenhoca e Gadgets.</td></tr>
       <tr><td>Guerreiro Mágico</td><td>25</td><td>5 + CON</td><td>20</td><td>10</td><td>Equilíbrio entre Fluxo e Habilidades — versátil.</td></tr>
-    </table>
+    </table></div>
 
     <h3>Suporte</h3>
     <ul>
@@ -316,17 +317,17 @@ li{margin-bottom:5px}
     e ganha <strong>+1 a cada Nível</strong>.</p>
 
     <h3>Tipo da Habilidade</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Tipo</th><th>Como funciona</th></tr>
       <tr><td>Sustentada</td><td>Custa metade do PE normal a cada turno seguinte, até desativar ou faltar PE. Começa <strong>2 Níveis acima</strong> (já nasce com 2 desvantagens embutidas: precisa de concentração, e só buffa você mesmo — nunca causa Dano nem dá Cura). Golpe mental, ficar inconsciente ou dano massivo desativa na hora. Custa Ação Bônus.</td></tr>
       <tr><td>Duradoura</td><td>Dura um número fixo de rounds (coluna Duração da tabela, no Nível efetivo) — mais barata que Sustentada, mas mais fraca. Desliga sozinha ao zerar a duração. Custa Ação Bônus, exceto armadilhas de dano contínuo (ex.: sangramento).</td></tr>
       <tr><td>Imediata</td><td>Instantânea, um único efeito — não fica "Ativa". Se for um Buff de uso único, conta como desvantagem embutida (não vale pra Dano/debuff). Custa Ação Comum, exceto se for buff em você mesmo.</td></tr>
-    </table>
+    </table></div>
 
     <h3>Tabela de bônus por Nível</h3>
     <p>Alcance e Duração são padrão de toda Habilidade nesse Nível — aparecem sozinhos, não competem com o
     resto. O que você escolhe de verdade é <strong>o que ela faz</strong>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Nível</th><th>Dano/Cura/Movimento/RD</th><th>Alcance</th><th>Duração</th><th>Vantagem/Desvantagem</th></tr>
       <tr><td>1</td><td>+1d12 ou +6</td><td>+6m</td><td>+2 rounds</td><td>+1d12 ou +6</td></tr>
       <tr><td>2</td><td>+2d12 ou +12</td><td>+12m</td><td>+3 rounds</td><td>+2d12 ou +12</td></tr>
@@ -335,7 +336,7 @@ li{margin-bottom:5px}
       <tr><td>5</td><td>+6d12 ou +36</td><td>+36m</td><td>+6 rounds</td><td>+6d12 ou +36</td></tr>
       <tr><td>6</td><td>+7d12 ou +42</td><td>+42m</td><td>+7 rounds</td><td>+7d12 ou +42</td></tr>
       <tr><td>7</td><td>+10d12 ou +60</td><td>+60m</td><td>+10 rounds</td><td>+10d12 ou +60</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Ninguém <em>escolhe</em> Nível 6 ou 7 ao criar uma Habilidade (o campo Nível continua
     travado em 1 a 5) — eles só aparecem no <strong>Nível efetivo</strong>, abaixo.</p>
 
@@ -373,10 +374,10 @@ li{margin-bottom:5px}
     não somar nada.</p>
 
     <h3>Ativar, desativar, custo de PE</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Nível</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
       <tr><td>Custo de PE</td><td>2</td><td>5</td><td>8</td><td>12</td><td>20</td></tr>
-    </table>
+    </table></div>
     <ul>
       <li><strong>Imediata:</strong> usa e acabou, desconta o custo na hora.</li>
       <li><strong>Sustentada:</strong> desconta o custo ao ativar, e metade do custo a cada round seguinte ("⏭ Passar Round", aba Combate) — desliga sozinha se faltar PE.</li>
@@ -385,10 +386,10 @@ li{margin-bottom:5px}
     </ul>
 
     <h3>Quando cada Nível de Habilidade libera</h3>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Nível de Habilidade</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
       <tr><td>Nível do personagem</td><td>1</td><td>5</td><td>10</td><td>14</td><td>18</td></tr>
-    </table>
+    </table></div>
 
     <h3>Reação</h3>
     <p>Uma Habilidade marcada "de Reação" só ativa como reação (nunca como ação comum) — alimenta o
@@ -440,11 +441,11 @@ li{margin-bottom:5px}
     Dano de Habilidade específica (Suporte e Guerreiro Mágico, seção 5) não aparecem aqui: eles só valem
     quando aquela Habilidade está sendo usada, então continuam no resumo de cada Habilidade (aba Combate,
     card "Habilidades").</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Base</th><th>Quando</th></tr>
       <tr><td>Dado do tamanho da arma</td><td>Arma nomeada na seção Arma (Pequena 1d6, Média 2d6, Grande 4d6, Especial combinado com o mestre)</td></tr>
       <tr><td>Arma Pequena + Nível÷4 d4</td><td>Sem arma nomeada e Especialização Combatente</td></tr>
-    </table>
+    </table></div>
 
     <h3>Rodada e Reações</h3>
     <p>"⏭ Passar Round" avança o tempo pras Habilidades ativas de uma vez: Duradouras perdem 1 round de
@@ -474,13 +475,13 @@ li{margin-bottom:5px}
     <strong>ficha própria pequena</strong> (Nome, Categoria, Nível, Especialização, Perícias), quase um
     segundo personagem — mas o teto de Nível dele (<strong>10</strong>) não sobe com a Ascensão do dono, e
     ele <strong>não tem PE próprio</strong>: toda Habilidade dele gasta do PE do hospedeiro.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Categoria</th><th>O que é</th></tr>
       <tr><td>Primordial</td><td>Um dos elementos clássicos — fogo, vento, água, terra, relâmpago.</td></tr>
       <tr><td>Inato</td><td>Nasce dentro de um hospedeiro humano — corruptivo ou benigno, nunca mítico. Pode tomar o corpo do hospedeiro ou só fortalecê-lo.</td></tr>
       <tr><td>Comum</td><td>Qualquer coisa que não se encaixa nas outras três categorias.</td></tr>
       <tr><td>Mítico</td><td>Ser humanoide lendário — "filho de Celestial". Pode superar o Nível 20; é sempre uma grande ameaça, em qualquer situação.</td></tr>
-    </table>
+    </table></div>
     <p>O Elemental usa Atributos (teto 10, um pool de pontos por Nível) e Perícias com a mesma fórmula do
     personagem principal, só usando o próprio Nível e Atributo dele.</p>
     <h3>Como funciona na mesa</h3>
@@ -503,7 +504,7 @@ li{margin-bottom:5px}
     quantas Passivas/Habilidades próprias ela pode ter). Agir com a invocação gasta sua ação bônus ou
     completa; reagir com ela usa a <strong>reação dela</strong>, não a sua. Invocações não têm PE — só
     ataques padrão com o dano do Nível.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Nível</th><th>Pool de Atributo</th><th>PV</th><th>Dano/Cura</th><th>Bônus</th><th>Passivas/Habilidades</th></tr>
       <tr><td>1</td><td>6</td><td>2×CON + 10</td><td>1d4</td><td>+1d6 ou +3</td><td>1/3</td></tr>
       <tr><td>2</td><td>10</td><td>3×CON + 20</td><td>1d8</td><td>+2d6 ou +6</td><td>2/6</td></tr>
@@ -512,7 +513,7 @@ li{margin-bottom:5px}
       <tr><td>5</td><td>22</td><td>6×CON + 200</td><td>4d8</td><td>+6d6 ou +18</td><td>5/15</td></tr>
       <tr><td>6</td><td>26</td><td>7×CON + 200</td><td>6d8</td><td>+7d6 ou +21</td><td>6/18</td></tr>
       <tr><td>7</td><td>30</td><td>8×CON + 200</td><td>7d8</td><td>+10d6 ou +30</td><td>7/21</td></tr>
-    </table>
+    </table></div>
     <p class="mini">O bônus de Perícia da invocação é +5 nos níveis 1–2 e +8 nos níveis 3–7.</p>
     <p>Múltiplas invocações do mesmo Nível ativas ao mesmo tempo formam um <strong>Enxame</strong>: soma a
     rolagem de todas, mas custa bem mais PE pra invocar. Um Enxame resiste a ataques de alvo único (perde só
@@ -539,13 +540,13 @@ li{margin-bottom:5px}
     <h3>Primeira Ascensão</h3>
     <p>Um marco narrativo — combine com o Mestre quando seu personagem alcança. Libera a escolha de um
     <strong>Arquétipo</strong> e os <strong>Embates de Fluxo</strong>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Arquétipo</th><th>Bônus</th><th>Passiva de uso único por sessão</th></tr>
       <tr><td>Esforçado</td><td>+2 num Atributo físico (Força/Destreza/Constituição) e +1 em outro, fora do teto normal.</td><td><em>Ainda não fui derrotado!</em> — ao chegar a 0 PV, gasta metade do PE atual pra se reerguer com PV igual ao PE gasto.</td></tr>
       <tr><td>Prodígio</td><td>Multiplicador de PE máximo ×1,5.</td><td><em>Hora de ir com tudo!</em> — declare antes de um ataque de Bênção: acerto garantido, ou dano vira crítico caso acerte.</td></tr>
       <tr><td>Estudioso</td><td>+2 num Atributo mental (Carisma/Sabedoria/Inteligência) e +1 em outro, fora do teto normal.</td><td><em>Verá do que sou capaz!</em> — declare antes de uma rolagem de Carisma/Inteligência/Sabedoria: efeito maximizado, ou acerto garantido.</td></tr>
       <tr><td>Inato</td><td>Pode criar 2 Passivas além do máximo normal.</td><td><em>Acho que era assim!</em> — use, sem gastar PE, uma Habilidade de outro jogador/NPC que já viu antes, adaptada pra sua Bênção.</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo jogado — Embate de Fluxo</div>
       <p>Em vez de rolar uma Perícia comum, dois personagens ascendidos entram num Embate de Fluxo: cada um
@@ -573,14 +574,14 @@ li{margin-bottom:5px}
     <h3>Imersão Espiritual</h3>
     <p>Uma transformação narrativa, só disponível depois da Segunda Ascensão — escolha um tipo, um bônus
     contínuo, e um grau de "fortalecer/enfraquecer" de −3 a +3:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Tipo</th><th>Exemplo</th></tr>
       <tr><td>Imersão de Efeito</td><td>Imersão de Natura — acelera os Ciclos constantemente.</td></tr>
       <tr><td>Imersão de Condição*</td><td>Imersão de Aizen — um duelo justo, sem poderes, só armas, ao meio-dia.</td></tr>
       <tr><td>Imersão de Fortalecimento</td><td>Imersão de Akira — aumenta a extensão de percepção e manipulação atômica.</td></tr>
       <tr><td>Imersão Fatal</td><td>Imersão de Hoshigake — cria uma zona morta onde pode atacar com o toque da morte em qualquer lugar.</td></tr>
       <tr><td>Imersão de Manipulação*</td><td>Imersão de Takashi — ganha manipulação de Sangue como uma segunda Bênção.</td></tr>
-    </table>
+    </table></div>
     <p class="mini">* Imersões de Condição e de Manipulação precisam ser criadas junto com o Mestre.</p>
     <p>PV da Imersão = Nível × Sabedoria; ela gasta PE do hospedeiro a cada round enquanto ativa, e acaba
     quando o PE se esgota ou ela é destruída.</p>
@@ -603,13 +604,13 @@ li{margin-bottom:5px}
     <p>O mestre tem uma ficha irmã pra NPCs e monstros, com as mesmas Especializações, Habilidades e Passivas
     — mas cada monstro carrega uma <strong>Dificuldade</strong> que multiplica dano, PV, PE e vantagens de
     uma vez só (o bônus fixo de Habilidade/item/traço), sem precisar recalcular a mão:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Dificuldade</th><th>Multiplicador</th></tr>
       <tr><td>Capanga</td><td>×0,5 — Movimento −3 e nenhuma Passiva.</td></tr>
       <tr><td>Inimigo</td><td>×1 — ficha comum, sem ajuste.</td></tr>
       <tr><td>Boss</td><td>×2 — Movimento +6 e +1 Ação Bônus na base.</td></tr>
       <tr><td>Calamidade</td><td>×10 — Movimento dobra, +1 Ação Comum e +1 Ação Bônus na base.</td></tr>
-    </table>
+    </table></div>
     <p>A dificuldade multiplica dano, PV, PE, vantagens e a parte da Perícia que não vem do Atributo.
     Sanidade máxima, quantidade de Perícias treináveis, quantidade de Habilidades e o próprio bônus de
     Atributo da Perícia não são multiplicados.</p>

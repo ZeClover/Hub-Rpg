@@ -717,12 +717,14 @@ function statusSalvoOk(){
 }
 
 let debounceHub = null;
+let salvamentoHubPendente = false;
 let salvandoHub = false;
 function salvarNoHub(){
   clearTimeout(debounceHub);
   mostrarStatusSalvo('Salvando…', 'salvando');
   debounceHub = setTimeout(async () => {
     debounceHub = null;
+    if(salvandoHub){ salvamentoHubPendente = true; return; }
     const p = atual(); if(!p) return;
     salvandoHub = true;
     // Resumo genérico de vida pro Painel de Vida da Mesa ao Vivo (decisão #46).
@@ -740,7 +742,10 @@ function salvarNoHub(){
       console.error('Falha ao salvar no Hub', e);
       if(!falhouAoSalvar){ falhouAoSalvar=true; render(); }
       mostrarStatusSalvo(e.message||'Erro ao salvar', 'erro');
-    }finally{salvandoHub=false;}
+    }finally{
+      salvandoHub=false;
+      if(salvamentoHubPendente){ salvamentoHubPendente=false; salvarNoHub(); }
+    }
   }, 500);
 }
 

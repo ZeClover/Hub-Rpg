@@ -97,6 +97,8 @@ li{margin-bottom:5px}
 
 .top{position:fixed; right:18px; bottom:18px; background:var(--superficie); border:1px solid var(--borda);
   border-radius:999px; padding:8px 14px; font-size:12px; color:var(--suave); text-decoration:none}
+.tabela-rolavel{max-width:100%;overflow-x:auto}.grade2>*,.grade3>*{min-width:0}
+main{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -168,7 +170,7 @@ li{margin-bottom:5px}
     <h2>🧭 2. As abas da ficha, em ordem</h2>
     <p>Cabeçalho (Nome, XP, Nível) e quatro seções sempre visíveis logo abaixo, seguidas de uma barra de
     abas com dezoito seções de "mundo", e finalizando com Snapshots e Histórico:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Seção</th><th>O que guarda</th></tr>
       <tr><td>Cabeçalho</td><td>Nome do personagem, XP, Nível — os três números mais "gerais" da ficha.</td></tr>
       <tr><td>Recursos</td><td>Mapa livre de recursos com atual/máximo/mínimo (ex: mana, sanidade, fôlego) — nomeados pela própria campanha.</td></tr>
@@ -176,9 +178,9 @@ li{margin-bottom:5px}
       <tr><td>Moedas</td><td>Mapa livre de nomes → total (ex: ouro, berries) — só um número corrido, sem preço de catálogo embutido.</td></tr>
       <tr><td>Condições</td><td>Efeitos de status ativos, com duração opcional (seção 11).</td></tr>
       <tr><td>Inventário</td><td>Itens com quantidade, categoria, raridade, tags, e se está equipado (e em qual slot).</td></tr>
-    </table>
+    </table></div>
     <p>A partir daqui, uma barra de sub-abas ("mundo da campanha") junta 18 seções:</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Aba</th><th>O que guarda</th></tr>
       <tr><td>Missões</td><td>Nome, descrição, status e uma lista de objetivos com status próprio (seção 8).</td></tr>
       <tr><td>NPCs</td><td>Nome, descrição, conhecimento, casa/facção, relação — qualitativa e/ou numérica (seção 7).</td></tr>
@@ -198,7 +200,7 @@ li{margin-bottom:5px}
       <tr><td>Mural</td><td>Informação pública da campanha — só o que o personagem pode legitimamente saber (seção 14).</td></tr>
       <tr><td>Calendário</td><td>Grade semanal recorrente + exceções pontuais, e o "Agora" (dia/hora/local/atividade) (seção 14).</td></tr>
       <tr><td>Oportunidades</td><td>Memória de "coisas que dá pra fazer" — nunca um menu de ações (seção 15).</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Snapshots e Histórico ficam sempre visíveis no fim da página — não são abas de mundo, são ferramentas de segurança (seção 16).</p>
   </section>
 
@@ -279,13 +281,13 @@ relationships:
 
   <section id="progressao">
     <h2>📈 5. XP, Nível, Atributos e Recursos</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>xp</code></td><td><code>add</code> / <code>remove</code> / <code>set</code> (um só) + <code>reason?</code></td><td>Some, subtrai ou define o XP total. <code>set</code> gera um aviso sugerindo <code>add</code>/<code>remove</code> em vez disso.</td></tr>
       <tr><td><code>level</code></td><td><code>change</code> / <code>set</code> (um só) + <code>reason?</code></td><td>Sobe/desce o Nível manualmente. Sem checagem de mínimo/máximo — a ficha não impõe teto de nível.</td></tr>
       <tr><td><code>attributes</code></td><td>lista de <code>{attribute, change|set, reason?}</code></td><td>Ajusta um Atributo pelo nome — cria a entrada se ainda não existir.</td></tr>
       <tr><td><code>resources</code></td><td>mapa <code>&lt;nome&gt;: {change|set, reason?}</code></td><td>Ajusta um Recurso pelo nome. Respeita <code>mínimo</code>/<code>máximo</code> já configurados na ficha (avisa se passar do teto ou piso, sem bloquear).</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo — subindo XP e gastando mana</div>
       <pre>xp:
@@ -303,14 +305,14 @@ resources:
 
   <section id="itens">
     <h2>🎒 6. Itens, Equipamento e Moedas</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>items_add</code></td><td><code>name</code>, <code>quantity?</code>, <code>category?</code>, <code>description?</code>, <code>rarity?</code>, <code>origin?</code>, <code>tags?</code>, <code>generate_image?</code>, <code>image_prompt?</code></td><td>Adiciona um item ao inventário. <code>generate_image: true</code> só marca o item pra fila de imagem (seção 12) — nunca gera nada sozinho.</td></tr>
       <tr><td><code>items_remove</code></td><td><code>name</code> (ou <code>id</code>), <code>quantity?</code>, <code>reason?</code></td><td>Remove uma quantidade do item. Item inexistente é <strong>erro</strong>; pedir mais do que existe vira aviso e zera em vez de negativar.</td></tr>
       <tr><td><code>items_update</code></td><td><code>name</code> (ou <code>id</code>) + <code>changes</code> com ao menos um de <code>description/category/rarity/origin/notes/quantity/equipped</code></td><td>Edita campos de um item já existente. Item inexistente é erro.</td></tr>
       <tr><td><code>equipment</code></td><td><code>equip: [{item, slot?}]</code> e/ou <code>unequip: [{item}]</code></td><td>Marca um item como equipado (num slot, se informado) ou desequipa. Item precisa existir no inventário.</td></tr>
       <tr><td><code>currency</code></td><td>mapa <code>&lt;nome&gt;: {change|set, reason?}</code></td><td>Ajusta uma Moeda pelo nome (ex: <code>ouro</code>, <code>berries</code>). Ficar negativo vira aviso, não bloqueia.</td></tr>
-    </table>
+    </table></div>
     <div class="exemplo">
       <div class="rotulo">📖 Exemplo — item novo, equipar e gastar moeda</div>
       <pre>items_add:
@@ -331,12 +333,12 @@ currency:
 
   <section id="npcs">
     <h2>🧑‍🤝‍🧑 7. NPCs e Relações</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>npcs_add</code></td><td><code>name</code>, <code>description?</code>, <code>first_met?</code>, <code>tags?</code>, <code>house?</code></td><td>Cria um NPC novo. Nome duplicado é ignorado (não sobrescreve).</td></tr>
       <tr><td><code>npcs_update</code></td><td><code>name</code> + ao menos um de <code>known_information_add[]</code>, <code>relationship_state</code>, <code>house</code></td><td>Acrescenta conhecimento, define um <strong>estado</strong> de relação resumido (ex: "Mentor"), e/ou corrige a Casa. NPC precisa já existir.</td></tr>
       <tr><td><code>relationships</code></td><td>numérico: <code>{npc, stat, change, reason?}</code> — qualitativo: <code>{npc, delta}</code></td><td>Registra uma mudança de relação. Os dois formatos são mutuamente exclusivos (nunca <code>stat</code> e <code>delta</code> juntos).</td></tr>
-    </table>
+    </table></div>
     <p class="resumo">Em resumo: relação é <strong>texto</strong>, não pontuação de amizade. O único
     mecanismo numérico (<code>relationships[].stat</code>/<code>change</code>, ou os "atributos" livres em
     <code>npc.relacoes</code>) existe só pra campanhas que queiram algum contador próprio — <strong>não</strong>
@@ -369,7 +371,7 @@ relationships:
 
   <section id="mundo">
     <h2>🗺️ 8. Missões, Descobertas, Locais, Bestiário e Codex</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>missions_add</code></td><td><code>name</code>, <code>description?</code>, <code>status?</code> (disponível/ativa/concluída/falhou/abandonada/oculta — padrão "ativa"), <code>objectives?[{text, status?}]</code></td><td>Cria uma missão com sua lista de objetivos.</td></tr>
       <tr><td><code>missions_update</code></td><td><code>name</code>, <code>action</code> (<code>add_objective</code>/<code>complete_objective</code>/<code>fail_objective</code>/<code>reopen_objective</code>/<code>set_status</code>/<code>append_note</code>/<code>add_reward</code>/<code>reveal_reward</code>), + o campo correspondente à ação</td><td>Avança uma missão já existente. Ação de objetivo exige que o texto do objetivo já exista na missão.</td></tr>
@@ -379,73 +381,73 @@ relationships:
       <tr><td><code>locations_update</code></td><td><code>name</code> + ao menos um de <code>known_information_add[]</code>, <code>connections_add[]</code>, <code>discovery_state</code></td><td>Acrescenta conhecimento/conexões ou avança o estado de descoberta. Local precisa já existir.</td></tr>
       <tr><td><code>bestiary_add</code></td><td><code>name</code>, <code>category?</code>, <code>description?</code>, <code>known_traits?[]</code></td><td>Registra uma criatura no bestiário.</td></tr>
       <tr><td><code>codex_add</code></td><td><code>title</code>, <code>category?</code>, <code>text</code></td><td>Adiciona uma entrada de lore/enciclopédia — texto de referência, sem status de progresso.</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Todas as operações <code>_add</code> desta seção ignoram silenciosamente uma entrada
     com nome/título já existente (não sobrescreve, não duplica).</p>
   </section>
 
   <section id="notas-diario">
     <h2>📓 9. Colinhas (Notas) e Diário</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>notes_add</code></td><td><code>title</code>, <code>category?</code>, <code>text</code>, <code>tags?</code></td><td>Cria uma colinha nova.</td></tr>
       <tr><td><code>notes_update</code></td><td><code>title</code> + <code>append</code></td><td>Acrescenta texto a uma colinha existente — nunca substitui, sempre concatena numa linha nova.</td></tr>
       <tr><td><code>notes_remove</code></td><td><code>title</code> (ou <code>id</code>) + <code>reason?</code></td><td>Remove uma colinha. Fica sempre <strong>desmarcada por padrão</strong> na prévia — é destrutivo, você decide ativamente.</td></tr>
       <tr><td><code>journal.add</code></td><td><code>title</code>, <code>summary?</code>, <code>events?[]</code></td><td>Cria uma entrada de diário/resumo de sessão. Só existe <code>add</code> — o diário é histórico, não é editado depois.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="magias">
     <h2>🔮 10. Magias e Pesquisas</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>spells_add</code></td><td><code>name</code>, <code>description?</code>, <code>affinity?</code>, <code>cost?</code> (mapa livre, ex: <code>{mana: 15}</code>), <code>knowledge.status?</code>, <code>knowledge.progress?</code>, <code>tags?</code></td><td>Registra uma magia conhecida ou em aprendizado.</td></tr>
       <tr><td><code>spells_update</code></td><td><code>name</code> + <code>discoveries_add[]</code> e/ou <code>knowledge.change</code></td><td>Acrescenta descobertas "simples" (texto solto) e/ou avança o progresso de conhecimento. Magia precisa existir.</td></tr>
       <tr><td><code>spell_discoveries</code></td><td><code>spell</code>, <code>title</code>, <code>description?</code>, <code>status?</code> (teoria/testando/parcial/confirmada — padrão "teoria")</td><td>Descoberta "com status" ligada a uma magia específica — diferente das descobertas simples acima. A magia referenciada precisa existir.</td></tr>
       <tr><td><code>research_add</code></td><td><code>title</code>, <code>status?</code> (texto livre, padrão "ativa"), <code>progress?</code> (padrão 0), <code>objectives?[]</code></td><td>Cria uma linha de pesquisa com progresso numérico.</td></tr>
       <tr><td><code>research_update</code></td><td><code>title</code> + ao menos um de <code>status</code>, <code>progress_change</code>, <code>evidence_add[]</code>, <code>objectives_add[]</code>, <code>notes_add[]</code></td><td>Avança uma pesquisa existente.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="condicoes">
     <h2>⏳ 11. Condições e Modificadores Temporários</h2>
     <p>Duração compartilhada pelos dois: <code>{type, value?, description?}</code>, onde <code>type</code>
     é um de <code>rounds/turns/scenes/sessions/until_rest/until_removed/custom</code>.</p>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>temporary_modifiers.add</code></td><td><code>name</code>, <code>target</code>, <code>value</code>, <code>duration</code> (obrigatória aqui)</td><td>Bônus/penalidade numérica temporária a um alvo nomeado (atributo, recurso — o que a campanha usar).</td></tr>
       <tr><td><code>temporary_modifiers.remove</code></td><td><code>name</code></td><td>Remove um modificador ativo pelo nome.</td></tr>
       <tr><td><code>conditions.add</code></td><td><code>name</code>, <code>description?</code>, <code>duration?</code> (opcional aqui)</td><td>Efeito de status ativo (ex: "Envenenado"), com ou sem prazo.</td></tr>
       <tr><td><code>conditions.update</code></td><td><code>name</code> + <code>description?</code> e/ou <code>duration?</code></td><td>Substitui a descrição/duração de uma condição existente.</td></tr>
       <tr><td><code>conditions.remove</code></td><td><code>name</code></td><td>Remove uma condição ativa.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="conquistas">
     <h2>🏆 12. Conquistas, Reputação e Imagens</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>achievements_add</code></td><td><code>name</code>, <code>description?</code></td><td>Registra um marco desbloqueado. Só existe <code>add</code> — conquista não se remove.</td></tr>
       <tr><td><code>reputation</code></td><td><code>target</code>, <code>change</code>/<code>set</code> (um só), <code>reason?</code></td><td>Ajusta a reputação com um alvo nomeado (facção, cidade, NPC — mapa livre). Ficar negativa vira aviso.</td></tr>
       <tr><td><code>image_requests</code></td><td><code>entity_type</code>, <code>entity_name</code>, <code>prompt_hint?</code>, <code>priority?</code></td><td>Enfileira um pedido de geração de imagem — <strong>nunca gera a imagem de verdade</strong>, só marca a fila pra alguém atender depois. Um pedido pendente repetido (mesmo tipo+nome) é ignorado.</td></tr>
-    </table>
+    </table></div>
     <p class="mini"><code>items_add.generate_image: true</code> (mais <code>image_prompt</code>) faz a
     mesma coisa embutido num item, em vez de uma entrada separada de <code>image_requests</code>.</p>
   </section>
 
   <section id="escola">
     <h2>🏫 13. Escola (Caderno Escolar)</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>school.lessons_add</code></td><td><code>subject</code> + opcionais <code>topic</code>, <code>notes[]</code>, <code>concepts[]</code>, <code>examples[]</code>, <code>important_mistakes[]</code>, <code>exercises_done[]</code>, <code>open_questions[]</code></td><td>Registra uma aula — cada campo só aparece na ficha se tiver conteúdo, nenhuma seção vazia é mostrada.</td></tr>
-    </table>
+    </table></div>
     <p>A tela agrupa as aulas por matéria automaticamente ("Matérias do Zé") — nunca revela o que ainda
     vai ser estudado, só o que já foi registrado.</p>
   </section>
 
   <section id="agenda">
     <h2>📅 14. Agora, Calendário, Compromissos e Mural</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>now</code></td><td>ao menos um de <code>day</code>, <code>time</code>, <code>location</code>, <code>activity</code></td><td>Avança o "agora" da campanha — o dia/hora/local/atividade atuais.</td></tr>
       <tr><td><code>schedule.blocks_add</code></td><td><code>weekday</code>, <code>start</code>, <code>end</code>, <code>label</code>, <code>location?</code></td><td>Adiciona um bloco recorrente à grade semanal (ex: aula toda segunda 08h-09h45).</td></tr>
@@ -453,16 +455,16 @@ relationships:
       <tr><td><code>commitments_add</code></td><td><code>description</code>, <code>npc?</code>, <code>origin?</code> (prometeu/combinou/convite/lembrete), <code>date?</code></td><td>Registra uma promessa/combinado — "coisa pra lembrar".</td></tr>
       <tr><td><code>commitments_update</code></td><td><code>description</code>, <code>status</code> (pendente/cumprido/cancelado/atrasado)</td><td>Muda o status de um compromisso existente — nunca fecha sozinho só porque o tempo passou.</td></tr>
       <tr><td><code>bulletin_add</code></td><td><code>title</code>, <code>category?</code> (anúncio/evento/resultado/comunicado/outro), <code>summary?</code>, <code>source?</code>, <code>date?</code>, <code>expires?</code></td><td>Informação pública da campanha — só o que o personagem pode legitimamente saber, nunca plano de mestre.</td></tr>
-    </table>
+    </table></div>
   </section>
 
   <section id="oportunidades">
     <h2>🔭 15. Oportunidades</h2>
-    <table>
+    <div class="tabela-rolavel" tabindex="0" aria-label="Tabela com rolagem horizontal"><table>
       <tr><th>Operação</th><th>Campos</th><th>Pra que serve</th></tr>
       <tr><td><code>opportunities_add</code></td><td><code>description</code>, <code>npc?</code>, <code>location?</code>, <code>source?</code></td><td>Registra "algo que dá pra fazer" — memória de possibilidade, não compromisso nem menu de ações.</td></tr>
       <tr><td><code>opportunities_update</code></td><td><code>description</code>, <code>archived: boolean</code></td><td>Arquiva (ou reabre) uma oportunidade — arquivar não significa "cumprida" nem "recusada", só que deixou de ser relevante lembrar.</td></tr>
-    </table>
+    </table></div>
     <p class="mini">Diferente de Compromissos: uma Oportunidade nunca foi prometida por ninguém — é só
     algo que o personagem sabe que <em>pode</em> fazer.</p>
   </section>
