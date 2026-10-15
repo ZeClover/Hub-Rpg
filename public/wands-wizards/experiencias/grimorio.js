@@ -7,19 +7,19 @@ export function detalhesMagia(magia,{fonte}={}){
   const p=criar('article',undefined,'pagina-feitico');p.dataset.magia=magia.id;
   const ornamento=criar('div','✧','pagina-ornamento');ornamento.setAttribute('aria-hidden','true');
   p.append(ornamento,criar('small',(magia.nivel===0?'Truque':magia.nivel+'º círculo')+' · '+(ESCOLAS[magia.escola]||magia.escola),'pagina-rubrica'),criar('h3',magia.nome));
-  const dl=criar('dl');const meta=metadados(magia);
+  const dl=criar('dl');const meta=metadados(magia);if(magia.fonte==='newt-trunk'){meta.tempo=magia.conjuracao;meta.alcance=magia.alcance;meta.duracao=magia.duracao;}
   const componentes=magia.componentes??magia.original.match(/Components:\s*([^\n]+)/)?.[1];
   if(componentes)meta.componentes=componentes;
   for(const[k,v]of Object.entries(meta))if(v)dl.append(criar('dt',({tempo:'Conjuração',alcance:'Alcance',duracao:'Duração',escola:'Escola',componentes:'Componentes'})[k]),criar('dd',v));
   p.append(dl);
   if(/\(ritual\)/i.test(magia.original))p.append(criar('p','Pode ser conjurada como ritual, conforme as regras do estilo.','pagina-rubrica'));
   const descricao=criar('div',undefined,'pagina-descricao');
-  for(const texto of (traducoes[magia.id]||'Tradução deste efeito ainda em preparação. Consulte a fonte original.').split('\n'))descricao.append(criar('p',texto));
+  for(const texto of ((magia.fonte==='newt-trunk'?magia.texto:traducoes[magia.id])||'Tradução deste efeito ainda em preparação. Consulte a fonte original.').split('\n'))descricao.append(criar('p',texto));
   p.append(descricao);
   const rodape=criar('footer',undefined,'pagina-fonte');
-  rodape.append(criar('p',(fonte?.nome||'Livro de regras — Wands & Wizards v1.4')+' · p. '+magia.pagina,'pagina-referencia'));
-  if(fonte?.arquivo?.startsWith('/wands-wizards/')){const link=criar('a','Consultar página do livro');link.href=fonte.arquivo+'#page='+magia.pagina;link.target='_blank';link.rel='noopener';rodape.append(link);}
-  const original=criar('details',undefined,'fonte-original');original.append(criar('summary','Fonte original · livro principal, p. '+magia.pagina),criar('p',magia.original));
+  rodape.append(criar('p',(magia.fonteRotulo||(fonte?.nome||'Livro de regras — Wands & Wizards v1.4')+' · p. '+magia.pagina),'pagina-referencia'));
+  if(!magia.fonteRotulo&&fonte?.arquivo?.startsWith('/wands-wizards/')){const link=criar('a','Consultar página do livro');link.href=fonte.arquivo+'#page='+magia.pagina;link.target='_blank';link.rel='noopener';rodape.append(link);}
+  const original=criar('details',undefined,'fonte-original');original.append(criar('summary',magia.fonteRotulo||'Fonte original · livro principal, p. '+magia.pagina),criar('p',magia.original));
   rodape.append(original);p.append(rodape);return p;
 }
 

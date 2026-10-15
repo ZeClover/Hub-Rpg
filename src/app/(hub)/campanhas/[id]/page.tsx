@@ -35,6 +35,7 @@ import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
 import { MestreAuxiliar } from "./mestre-auxiliar";
 import { GabineteMestre } from "./gabinete-mestre";
+import { ExpansoesWandsWizards } from "./expansoes-wands-wizards";
 import { PainelHogwarts } from "./painel-hogwarts";
 import { QrCode } from "../../qr-code";
 import { RemoverJogador } from "./remover-jogador";
@@ -399,6 +400,7 @@ export default async function PaginaCampanha({
       )}
 
       {souMestre && campanha.sistema.chave === "wands-wizards" && <GabineteMestre campanhaId={campanha.id} />}
+      {souMestre && campanha.sistema.chave === "wands-wizards" && <ExpansoesWandsWizards campanhaId={campanha.id} />}
       {souMestre ? (
         <VisaoDoMestre
           campanhaId={campanha.id}

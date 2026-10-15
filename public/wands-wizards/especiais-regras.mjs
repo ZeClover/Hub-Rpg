@@ -1,7 +1,7 @@
 import CRIACAO from './criacao-pt-br.json' with {type:'json'};
 const ATTRS=['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
 export function receitasDaFicha(d,c){
- const selecoes=d.receitasIniciais??{},limites={auror:c.beneficiosAtivos.includes('auror')?['comum']:[],pocionista:d.antecedente==='pocionista'?['comum','incomum']:[]};
+ const selecoes={...(d.receitasIniciais??{})};if(c.marcosExpansao?.includes(1))delete selecoes.auror;const limites={auror:c.beneficiosAtivos.includes('auror')?['comum']:[],pocionista:d.antecedente==='pocionista'?['comum','incomum']:[]};
  if(!selecoes||typeof selecoes!=='object'||Array.isArray(selecoes)||Object.keys(selecoes).some(k=>!Object.hasOwn(limites,k)))throw Error('Escolhas de receitas inválidas.');
  const conhecidos=[];for(const [origem,ids]of Object.entries(selecoes)){if(!Array.isArray(ids)||ids.length>limites[origem].length||ids.some((id,i)=>id&&(!CRIACAO.receitas[id]||CRIACAO.receitas[id].raridade!==limites[origem][i])))throw Error('A receita deve respeitar a raridade concedida pelo antecedente ou pela escola.');conhecidos.push(...ids.filter(Boolean));}
  if(c.beneficiosAtivos.includes('remedios'))conhecidos.push('star-grass-salve');return [...new Set(conhecidos)];

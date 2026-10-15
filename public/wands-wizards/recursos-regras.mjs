@@ -1,3 +1,4 @@
+import {OPCOES_SEGURAS} from './expansoes/regras.mjs';
 import {companheiroDaFicha} from "./especiais-regras.mjs";
 import CRIACAO from './criacao-pt-br.json' with {type:'json'};
 import CATALOGO from './catalogo-origem.json' with {type:'json'};
@@ -38,7 +39,7 @@ export function recursosDaFicha(d,c){
   const sig=d.assinaturas??[];if(!Array.isArray(sig)||sig.length>2||new Set(sig).size!==sig.length||sig.length&&(d.nivel!==20||d.estilo!=='vontade'))throw Error('Seleção de magias de assinatura inválida.');
   const sigUses=d.usosAssinaturas??{};if(!sigUses||typeof sigUses!=='object'||Array.isArray(sigUses)||Object.entries(sigUses).some(([id,n])=>!sig.includes(id)||!Number.isInteger(n)||n<0||n>1))throw Error('Usos de magias de assinatura inválidos.');
   const omens=d.pressagios??[];if(!Array.isArray(omens)||omens.length>(c.beneficiosAtivos.includes('pressagios')?(d.nivel>=10?3:2):0)||omens.some(n=>!Number.isInteger(n)||n<1||n>20))throw Error('Registre resultados de presságios entre 1 e 20, obtidos fora do Hub.');
-  const focus=d.concentracoes??[];if(!Array.isArray(focus)||new Set(focus).size!==focus.length||focus.length>(c.beneficiosAtivos.includes('varinha-escudo')?2:1)||focus.some(id=>!d.magias.includes(id)&&!c.magiasConcedidas.includes(id)||!/Duration: (Concentration|Dedication)/.test(CATALOGO.magias.find(m=>m.id===id)?.original??''))||focus.length===2&&!focus.some(id=>['protego','protego-maxima'].includes(id)))throw Error('Registro de concentração ou dedicação inválido.');
+  if(!Array.isArray(d.concentracoes??[]))throw Error('Registro de concentração ou dedicação inválido.');const focus=(d.concentracoes??[]).filter(id=>!(!c.magiasExpansao?.includes(id)&&d.extensoesWW?.magias?.includes(id)&&!d.magias.includes(id)&&!c.magiasConcedidas.includes(id)));if(!Array.isArray(focus)||new Set(focus).size!==focus.length||focus.length>(c.beneficiosAtivos.includes('varinha-escudo')?2:1)||focus.some(id=>!d.magias.includes(id)&&!c.magiasConcedidas.includes(id)&&!c.magiasExpansao?.includes(id)||!/Duration: (Concentration|Dedication)/.test(magiaDaFicha(c,id)?.original??''))||focus.length===2&&!focus.some(id=>['protego','protego-maxima'].includes(id)))throw Error('Registro de concentração ou dedicação inválido.');
   return{espacos:slots,dadosVida:{total:d.nivel,usados:lifeUsed,disponiveis:d.nivel-lifeUsed},habilidades:features.map(f=>({...f,usados:charges[f.id]??0,disponiveis:f.max-(charges[f.id]??0)})),moedas:moedas(d.dinheiroKnuts)};
 }
 function mudarEspaco(d,circle,delta){if(circle===1)d.espacosUsados+=delta;else{d.espacosUsadosPorCirculo??={};d.espacosUsadosPorCirculo[circle]=(d.espacosUsadosPorCirculo[circle]??0)+delta;}}
@@ -55,8 +56,8 @@ export function registrarDescanso(d,c,tipo,{dadosVida=0,cura=0}={}){const n=stru
 export function recuperarArcana(d,c,escolhas){if(d.nivel!==20||d.estilo!=='intelecto')throw Error('Recuperação Arcana exige Intelecto no nível 20.');const n=structuredClone(d),resources=recursosDaFicha(d,c);let total=0;for(const [key,value]of Object.entries(escolhas)){const circle=Number(key);if(!Number.isInteger(circle)||circle<1||circle>5||!Number.isInteger(value)||value<0||value>(resources.espacos.find(s=>s.circulo===circle)?.usados??0))throw Error('Espaços para Recuperação Arcana inválidos.');total+=circle*value;mudarEspaco(n,circle,-value);}if(total>10)throw Error('A soma dos círculos recuperados não pode ultrapassar dez.');return n;}
 
 export function registrarMagia(d,c,id,circle,{metamagia='',incremento=1,ritual=false,assinatura=false}={}){
-  const n=structuredClone(d),m=CATALOGO.magias.find(m=>m.id===id),r=recursosDaFicha(d,c);if(d.animagoEstado)throw Error('Não pode conjurar enquanto estiver na forma animaga.');
-  if(!m||!d.magias.includes(id)&&!c.magiasConcedidas.includes(id))throw Error('Escolha uma magia conhecida.');
+  const n=structuredClone(d),m=magiaDaFicha(c,id),r=recursosDaFicha(d,c);if(d.animagoEstado)throw Error('Não pode conjurar enquanto estiver na forma animaga.');
+  if(!m||!d.magias.includes(id)&&!c.magiasConcedidas.includes(id)&&!c.magiasExpansao?.includes(id))throw Error('Escolha uma magia conhecida.');
   if(!Number.isInteger(circle)||circle<m.nivel||m.nivel===0&&circle!==0&&!/At Higher Levels\./.test(m.original)||circle>9)throw Error('Círculo de conjuração inválido.');
   if(ritual&&(d.estilo!=='intelecto'||!/\(ritual\)/i.test(m.original)||circle!==m.nivel))throw Error('Esta conjuração não pode ser registrada como ritual.');
   if(assinatura&&(!(d.assinaturas??[]).includes(id)||circle!==3||(d.usosAssinaturas?.[id]??0)>0))throw Error('Uso gratuito de assinatura indisponível.');
@@ -68,6 +69,8 @@ export function registrarMagia(d,c,id,circle,{metamagia='',incremento=1,ritual=f
 }
 
 export function registrarDeflexao(d,c,id){
- const m=CATALOGO.magias.find(m=>m.id===id);if(d.estilo!=='tecnica'||d.nivel<3||!m||!d.magias.includes(id)&&!c.magiasConcedidas.includes(id))throw Error('Deflexão exige Técnica no nível 3 e uma magia conhecida.');
+ const m=magiaDaFicha(c,id);if(d.estilo!=='tecnica'||d.nivel<3||!m||!d.magias.includes(id)&&!c.magiasConcedidas.includes(id)&&!c.magiasExpansao?.includes(id))throw Error('Deflexão exige Técnica no nível 3 e uma magia conhecida.');
  const custo=2*m.nivel;if(c.pontosFeiticaria-(d.pontosUsados??0)<custo)throw Error('Pontos de feitiçaria insuficientes para deflexão.');return {...d,pontosUsados:(d.pontosUsados??0)+custo};
 }
+
+function magiaDaFicha(c,id){return CATALOGO.magias.find(m=>m.id===id)??(c.magiasExpansao?.includes(id)?OPCOES_SEGURAS.find(m=>m.tipo==='magia'&&m.id===id):undefined);}
