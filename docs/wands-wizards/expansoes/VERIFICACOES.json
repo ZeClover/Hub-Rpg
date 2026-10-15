@@ -1,0 +1,89 @@
+{
+  "data": "2026-10-15",
+  "baseCommit": "d86abb232524d1ffc11f245f59f50b0c3f59823c",
+  "branch": "feat/ww-expansoes-seguras-1890",
+  "unitarios": {
+    "passaram": 623,
+    "falharam": 0,
+    "combinacoesBaseCongeladas": 1440
+  },
+  "scripts": [
+    {
+      "script": "testar-wands-wizards-formacao.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-varinha.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-grimorio.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-paletas.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-acervo-browser.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-iniciativa-fichas.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-iniciativa-declarada.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-expansoes.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-expansoes-api.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-hub-autenticacao.cjs",
+      "exitCode": 0
+    },
+    {
+      "script": "testar-wands-wizards-expansoes-mestre.cjs",
+      "exitCode": 0
+    }
+  ],
+  "lint": "passou",
+  "tipos": "passou",
+  "build": "passou",
+  "bancoLocal": {
+    "banco": "PostgreSQL 17 local descartável",
+    "prisma": "cliente real e schema completo",
+    "migracao0034": "SQL aplicado sobre campanha existente, default null",
+    "autenticacao": "sessão isolada; papéis e participações reais no banco",
+    "configConcorrente": "200/409; sem perda de revisão",
+    "concessaoConcorrente": "idempotente ou 409; uma formação, zero itens",
+    "persistencia": "confirmada por outro cliente Prisma",
+    "desativacao": "dados preservados",
+    "producao": "nenhum acesso de escrita"
+  },
+  "producao": "nenhuma migração, merge ou deploy executado",
+  "opcoes": {
+    "beneficios": 8,
+    "formacoes": 10,
+    "magias": 5
+  },
+  "matriz": {
+    "A": 44,
+    "B": 105,
+    "C": 46,
+    "propostasDetalhadasB": 29
+  },
+  "fontesAdicionais": {
+    "pocoes": 69,
+    "pocoesNovasCandidatas": 19,
+    "magiasEquivalentes": 144,
+    "blocosReferencia": 167,
+    "cartasNaoFornecidas": 101
+  }
+}

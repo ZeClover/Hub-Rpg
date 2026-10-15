@@ -161,6 +161,9 @@ model Campanha {
   /// ordem em modo leitura. Formato livre (`{combatentes, vezDe, rodada}`),
   /// null enquanto o mestre nunca abriu a Mesa ao Vivo desta campanha.
   iniciativaAtual Json?
+  /// Expansões W&W opt-in. Null mantém somente as regras-base.
+  /// Somente Mestre/auxiliar pode alterar; não contém escolhas de personagens.
+  expansoesWandsWizards Json?
 
   sistema                  Sistema                   @relation(fields: [sistemaId], references: [id], onDelete: Restrict)
   participacoes            Participacao[]

@@ -19,18 +19,19 @@ export function validarTalentos(d){
   }
 }
 export function bonusTalento(escolha){const t=CRIACAO.talentos[escolha.id];return{...(t.bonus??{}),...(t.atributoEscolha?.includes(escolha.atributo)?{[escolha.atributo]:1}:{})};}
-export function beneficiosAtivos(d){
-  const ativos=[];
+export function beneficiosAtivos(d,removerIniciais=[]){
+  const ativos=[];const excluido=removerIniciais.length?(removerIniciais[0]??Object.entries(CRIACAO.beneficios).find(([,b])=>b.escola===d.escola&&b.nivel===1)?.[0]):null;
   if(!d.beneficiosEscola||typeof d.beneficiosEscola!=='object'||Array.isArray(d.beneficiosEscola))throw Error('Escolhas de escola inválidas.');
   for(const [nivel,id] of Object.entries(d.beneficiosEscola).sort(([a],[b])=>Number(a)-Number(b))){
     const b=CRIACAO.beneficios[id];
     if(!NIVEIS_ESCOLA.includes(Number(nivel))||!b||b.escola!==d.escola||b.nivel!==Number(nivel)||b.nivel>d.nivel)throw Error('Benefício não pertence à escola ou ao nível disponível.');
     if(b.requisito&&!ativos.includes(b.requisito))throw Error(b.nome+' exige '+CRIACAO.beneficios[b.requisito].nome+'.');
     ativos.push(id);
-    if(Number(nivel)===1&&d.estilo==='intelecto'&&d.nivel>=3)for(const [key,value] of Object.entries(CRIACAO.beneficios))if(value.escola===d.escola&&value.nivel===1&&!ativos.includes(key))ativos.push(key);
+    if(Number(nivel)===1&&d.estilo==='intelecto'&&d.nivel>=3)for(const [key,value] of Object.entries(CRIACAO.beneficios))if(value.escola===d.escola&&value.nivel===1&&!ativos.includes(key)&&key!==excluido)ativos.push(key);
   }
   // Diverse Studies also applies to an older draft without its first choice yet.
-  if(d.estilo==='intelecto'&&d.nivel>=3)for(const [key,value] of Object.entries(CRIACAO.beneficios))if(value.escola===d.escola&&value.nivel===1&&!ativos.includes(key))ativos.push(key);
+  if(d.estilo==='intelecto'&&d.nivel>=3)for(const [key,value] of Object.entries(CRIACAO.beneficios))if(value.escola===d.escola&&value.nivel===1&&!ativos.includes(key)&&key!==excluido)ativos.push(key);
+  if(removerIniciais.length){const iniciais=Object.entries(CRIACAO.beneficios).filter(([,b])=>b.escola===d.escola&&b.nivel===1).map(([id])=>id);const remover=removerIniciais[0]??iniciais[0];return ativos.filter(id=>id!==remover);}
   return ativos;
 }
 export function magiasConcedidas(d,ativos,circulo){

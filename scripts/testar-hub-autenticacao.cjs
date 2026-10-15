@@ -31,7 +31,7 @@ async function arquivos(dir){const es=await fs.readdir(dir,{withFileTypes:true})
  const papeis=[];
  for(const sistema of sistemas){
   const personagem={id:'p',nome:'Original',dados:{perfil:{nome:'Original'},_mestre:{segredo:'segredo protegido'}},donoId:'dono',campanhaId:'campanha',compartilhado:false,sistema:{chave:sistema},atualizadoEm:new Date()};
-  globalThis.__auditDb={personagem:{findUnique:async()=>personagem},participacao:{findMany:async()=>globalThis.__auditUser?.id==='mestre'?[{campanhaId:'campanha'}]:[]}};
+  globalThis.__auditDb={campanha:{findUnique:async()=>({expansoesWandsWizards:null})},personagem:{findUnique:async()=>personagem},participacao:{findMany:async()=>globalThis.__auditUser?.id==='mestre'?[{campanhaId:'campanha'}]:[]}};
   const ctx={params:Promise.resolve({id:'p'})},req=new Request('https://teste.local/api');
   globalThis.__auditUser=null;assert.equal((await ficha.GET(req,ctx)).status,404);
   personagem.compartilhado=true;let response=await ficha.GET(req,ctx),body=await response.json();assert.equal(response.status,200);assert.equal(body.personagem.podeEditar,false);assert.equal(body.personagem.dados._mestre,undefined);

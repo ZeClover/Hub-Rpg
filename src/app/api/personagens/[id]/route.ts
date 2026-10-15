@@ -1,4 +1,5 @@
 import { prepararFichaWandsWizards } from "../../../../../public/wands-wizards/ficha-regras.mjs";
+import { expansoesDaCampanha } from "@/lib/wands-wizards/expansoes-campanha";
 import { prepararFichaPathfinder, progressaoPermitidaPathfinder } from "@/lib/pathfinder/validar-ficha";
 import { preservarEstadoAutoritativoHogwarts, type DadosCriacaoHogwarts } from "@/lib/hogwarts/criacao";
 import { imagemHubValida } from "@/lib/imagem-hub";
@@ -118,6 +119,7 @@ export async function GET(_requisicao: NextRequest, { params }: Contexto) {
         nome: personagem.nome,
         atualizadoEm: personagem.atualizadoEm,
         sistema,
+        ...(sistema?.chave === "wands-wizards" ? {expansoesWandsWizards:await expansoesDaCampanha(personagem.campanhaId)} : {}),
         ehMonstro: personagem.ehMonstro,
         ...(sistema?.chave === "pathfinder-2e-remaster" ? { progressaoPermitida: progressaoPermitidaPathfinder(personagem.dados, !!personagem.campanhaId, ehMestre) } : {}),
         dados: ehMestre ? personagem.dados : semSegredosDeMestre(personagem.dados),
@@ -288,7 +290,7 @@ export async function PATCH(requisicao: NextRequest, { params }: Contexto) {
     }
   }
   if (temDados && ehWandsWizards) {
-    const preparado = prepararFichaWandsWizards(existente.dados, dadosParaSalvar, { emCampanha: !!existente.campanhaId, ehMestre });
+    const preparado = prepararFichaWandsWizards(existente.dados, dadosParaSalvar, { emCampanha: !!existente.campanhaId, ehMestre, expansoesWandsWizards:await expansoesDaCampanha(existente.campanhaId) });
     if (preparado.erro) return NextResponse.json({ erro: preparado.erro }, { status: 400 });
     dadosParaSalvar = preparado.dados;
   }

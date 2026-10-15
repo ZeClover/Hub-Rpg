@@ -1,9 +1,13 @@
 export interface Talento { id: string; atributo?: string; pericia?: string; treinamentos?: string[]; idiomas?: string[] }
+export interface FormacaoExpansao {id:string;pericias?:string[];posicao?:string}
+export interface ContextoWands {emCampanha?:boolean;ehMestre?:boolean;expansoesWandsWizards?:unknown}
 export interface FichaWands extends Record<string, unknown> {
  tipo: string; nome: string; nivel: number; base: Record<string, number>; casa: string; bonusCasa: string; estilo: string; escola: string;
  antecedente: string; periciasClasse: string[]; periciasEscola: string[]; substituicoesPericias: string[]; beneficiosEscola: Record<string, string>;
  talentoCasa: Talento | null; aumentos: {nivel: number; atributos?: Record<string, number>; talento?: Talento}[];
  magias: string[]; metamagias: string[]; pacoteInicial: string; capa: string; varinha: Record<string, string>; vida: {atual: number | null};
+ espacosUsados:number;pontosUsados:number;
+ extensoesWW?: {beneficiosEscola?:Record<string,string>;magias?:string[];formacoes?:FormacaoExpansao[];substituicoesPericias?:string[]};
 }
 export interface CalculoWands extends Record<string, unknown> {
  atributos: Record<string, number>; modificadores: Record<string, number>; beneficiosAtivos: string[]; magiasConcedidas: string[]; metamagiasConcedidas: string[];
@@ -11,11 +15,12 @@ export interface CalculoWands extends Record<string, unknown> {
  ca: number; pvMaximos: number; percepcaoPassiva: number; ataqueMagico: number; espacosPorCirculo: number[];
 }
 export interface FichaSalva extends FichaWands { inventario: {id: string; nome: string; quantidade: number}[] }
-export function prepararFichaWandsWizards(anterior: unknown, recebido: unknown, contexto?: { emCampanha: boolean; ehMestre: boolean }): { erro?: string; dados?: FichaSalva; calculo?: CalculoWands };
-export function calcularFicha(dados: unknown): CalculoWands;
+export function prepararFichaWandsWizards(anterior: unknown, recebido: unknown, contexto?: ContextoWands): { erro?: string; dados?: FichaSalva; calculo?: CalculoWands };
+export function calcularFicha(dados: unknown, contexto?:ContextoWands): CalculoWands;
 export function novaFicha(): FichaWands;
 export const CASAS: Record<string, unknown>;
 export const ESTILOS: Record<string, unknown>;
+export const ESCOLAS: Record<string, string>;
 export const ATRIBUTOS: Record<string, string>;
 
 export function ganhosDoNivel(dados: unknown): string[];
@@ -24,4 +29,4 @@ export const METAMAGIAS: Record<string, { nome: string; texto: string }>;
 
 export const CRIACAO: Record<string, unknown>;
 
-export function pendenciasFicha(dados: unknown, calculo?: CalculoWands): string[];
+export function pendenciasFicha(dados: unknown, calculo?: CalculoWands, contexto?:ContextoWands): string[];

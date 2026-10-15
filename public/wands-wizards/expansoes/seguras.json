@@ -1,0 +1,395 @@
+{
+  "versao": 1,
+  "fonte": {
+    "id": "newt-trunk",
+    "nome": "Newt’s Trunk of Everything",
+    "tipo": "homebrew",
+    "ambientacao": 1890,
+    "ativoPorPadrao": false,
+    "creditosCitadosNoOriginal": [
+      {
+        "nome": "Murphen44",
+        "contribuicao": "Regras de Wands & Wizards citadas no suplemento"
+      },
+      {
+        "nome": "ConfettiColored",
+        "contribuicao": "School of Magic Additional Features, citado no suplemento"
+      },
+      {
+        "nome": "DCixen",
+        "contribuicao": "Lumos Solem, em revisão e não habilitado"
+      }
+    ]
+  },
+  "opcoes": [
+    {
+      "id": "newt-bewitching-studies",
+      "tipo": "beneficio",
+      "nome": "Estudos de encantamento",
+      "nomeOriginal": "Bewitching Studies",
+      "escola": "encantamentos",
+      "nivel": 1,
+      "efeitos": {
+        "magias": [
+          "accio"
+        ]
+      },
+      "texto": "Aprende Accio como magia concedida, sem ocupar a cota de truques e sem duplicar o feitiço.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-specialized-skills",
+      "tipo": "beneficio",
+      "nome": "Habilidades de intimidação",
+      "nomeOriginal": "Specialized Skills",
+      "escola": "maldicoes",
+      "nivel": 1,
+      "efeitos": {
+        "periciaEspecializavel": "intimidacao"
+      },
+      "texto": "Ganha proficiência em Intimidação; se já for proficiente por outra fonte, dobra a proficiência. Não concede proficiência tripla.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-scientific-studies",
+      "tipo": "beneficio",
+      "nome": "Estudos científicos",
+      "nomeOriginal": "Scientific Studies",
+      "escola": "transfiguracao",
+      "nivel": 1,
+      "efeitos": {
+        "magias": [
+          "vera-verto"
+        ]
+      },
+      "texto": "Aprende Vera Verto como magia concedida, sem ocupar a cota regular de truques.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-dedicated-protector",
+      "tipo": "beneficio",
+      "nome": "Protetor dedicado",
+      "nomeOriginal": "Dedicated Protector",
+      "escola": "cura",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Como ação bônus, move até metade de seu deslocamento e termina mais perto de um aliado. Não é teletransporte e não evita ataques de oportunidade.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-revealed-intentions",
+      "tipo": "beneficio",
+      "nome": "Intenções reveladas",
+      "nomeOriginal": "Revealed Intentions",
+      "escola": "adivinhacao",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Vantagem em Intuição para perceber ocultação intencional de informação. Não lê pensamentos nem revela segredos automaticamente; o Mestre resolve o teste na mesa.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-biological-studies",
+      "tipo": "beneficio",
+      "nome": "Estudos biológicos",
+      "nomeOriginal": "Biological Studies",
+      "escola": "magizoologia",
+      "nivel": 1,
+      "efeitos": {
+        "pericias": [
+          "criaturas"
+        ]
+      },
+      "texto": "Ganha proficiência em Criaturas Mágicas. Proficiências repetidas seguem as substituições normais da ficha.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-way-of-the-wild",
+      "tipo": "beneficio",
+      "nome": "Caminho selvagem",
+      "nomeOriginal": "Way of the Wild",
+      "escola": "magizoologia",
+      "nivel": 6,
+      "efeitos": {},
+      "texto": "Seu deslocamento de natação e escalada é igual ao terrestre. O movimento é resolvido na mesa, sem mover peças automaticamente.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": false,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-outdoorswizard",
+      "tipo": "beneficio",
+      "nome": "Bruxo explorador",
+      "nomeOriginal": "Outdoorswizard",
+      "escola": "magizoologia",
+      "nivel": 10,
+      "efeitos": {},
+      "texto": "Pode solicitar ao Mestre uma tenda com Capacious Extremis: montagem em 10 minutos, terreno estável, exterior de 10 pés cúbicos. O Mestre concede e descreve o objeto; escolher o benefício não cria itens nem estoque.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "alternativa-escola"
+    },
+    {
+      "id": "newt-wandmakers-gift",
+      "tipo": "formacao",
+      "nome": "Formação em Varinhalogia",
+      "nomeOriginal": "Wandmaker’s Gift",
+      "nivel": 1,
+      "efeitos": {
+        "ferramentas": [
+          "Ferramentas de fabricante de varinhas"
+        ]
+      },
+      "texto": "Proficiência nas ferramentas de fabricante e memória das varinhas estudadas. O kit é concedido separadamente pelo Mestre. Não altera lealdade, poder, núcleo ou aparência de varinhas.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-beast-speech",
+      "tipo": "formacao",
+      "nome": "Linguagem dos animais",
+      "nomeOriginal": "Beast Speech",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Pode conversar com animais; o Mestre determina o que sabem e conseguem comunicar. Não concede controle nem informações secretas.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-beguiling-influence",
+      "tipo": "formacao",
+      "nome": "Influência cativante",
+      "nomeOriginal": "Beguiling Influence",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Escolha duas entre Enganação, Intimidação, Atuação e Persuasão. Ganha proficiência; repetições seguem as substituições normais.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-aqua-research",
+      "tipo": "formacao",
+      "nome": "Estudos aquáticos",
+      "nomeOriginal": "Aqua Research",
+      "nivel": 5,
+      "efeitos": {},
+      "texto": "Deslocamento de natação igual ao terrestre e capacidade de respirar debaixo da água. Não concede ataques, imunidades ou uma escola adicional.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-eyes-of-the-rune-writer",
+      "tipo": "formacao",
+      "nome": "Olhos do escriba rúnico",
+      "nomeOriginal": "Eyes of the Rune Writer",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Pode ler idiomas escritos. Não decifra códigos, runas protegidas ou segredos mágicos automaticamente.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-mystical-leap",
+      "tipo": "formacao",
+      "nome": "Salto místico",
+      "nomeOriginal": "Mystical Leap",
+      "nivel": 9,
+      "efeitos": {},
+      "texto": "Triplica a distância de salto; não concede voo e continua sujeito ao deslocamento disponível na mesa.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-tongue-of-the-forest",
+      "tipo": "formacao",
+      "nome": "Língua da floresta",
+      "nomeOriginal": "Tongue of the Forest",
+      "nivel": 10,
+      "efeitos": {},
+      "texto": "Pode conversar com plantas; conteúdo e limites das respostas são definidos pelo Mestre.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-ghost-savant",
+      "tipo": "formacao",
+      "nome": "Estudos de fantasmas",
+      "nomeOriginal": "Book of Ghoul Studies: Ghost Savant",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Formação narrativa sobre fantasmas e espíritos do mundo bruxo. Não adiciona seres demoníacos, idioma não canônico, controle ou revelação de segredos.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-quadribol",
+      "tipo": "formacao",
+      "nome": "Clube de Quadribol",
+      "nomeOriginal": "Quidditch",
+      "nivel": 1,
+      "efeitos": {},
+      "texto": "Especialização esportiva narrativa por posição: artilheiro, batedor, goleiro ou apanhador. Não concede vassoura, CA, salvaguardas, ataque ou deslocamento extras.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    },
+    {
+      "id": "newt-inevitam",
+      "tipo": "magia",
+      "nome": "Inevitam",
+      "nomeOriginal": "Inevitam",
+      "nivel": 0,
+      "escola": "adivinhacao",
+      "texto": "Ao tocar uma criatura ou objeto com a varinha, percebe se o alvo está vivo. Não revela identidade, pensamentos, localização de outros alvos ou segredos do Mestre.",
+      "traducao": "Ao tocar uma criatura ou objeto com a varinha, percebe se o alvo está vivo. Não revela identidade, pensamentos, localização de outros alvos ou segredos do Mestre.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "pagina": null,
+      "fonteRotulo": "Newt’s Trunk of Everything · Inevitam",
+      "conjuracao": "1 ação",
+      "alcance": "Toque",
+      "duracao": "Instantânea",
+      "componentes": "V, S",
+      "original": "Casting Time: 1 action\nRange: Touch\nComponents: V, S\nDuration: Instantânea\n*Life-detecting spell - divination cantrip*\n___\n- **Casting Time:** 1 action\n- **Range:** Touch\n- **Components:** V,S\n- **Duration:** Instantaneous\n\nYou touch a creature or object with your magical wand. You can magically sense, if the target creature or object is alive.",
+      "restrita": false,
+      "modo": "conhecimento-regular"
+    },
+    {
+      "id": "newt-veentoosa",
+      "tipo": "magia",
+      "nome": "Veentoosa",
+      "nomeOriginal": "Veentoosa",
+      "nivel": 0,
+      "escola": "encantamentos",
+      "texto": "Emite ar morno pela varinha, suficiente para secar roupas ou derreter neve. Não causa dano e não incendeia objetos.",
+      "traducao": "Emite ar morno pela varinha, suficiente para secar roupas ou derreter neve. Não causa dano e não incendeia objetos.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "pagina": null,
+      "fonteRotulo": "Newt’s Trunk of Everything · Veentoosa",
+      "conjuracao": "1 ação",
+      "alcance": "20 pés",
+      "duracao": "Concentração, até 1 minuto",
+      "componentes": "V, S",
+      "original": "Casting Time: 1 action\nRange: 20 feet\nComponents: V, S\nDuration: Concentration, up to 1 minute\n*hot air spell - charm cantrip*\n___\n- **Casting Time:** 1 action\n- **Range:** 20 feet\n- **Components:** S, V\n- **Duration:** concentration, Up to 1 minute\n\nYou emit a stream of warm air from the tip of your wand,\nhot enough to dry clothing or melt snow, but not to cause\nany damage or light anything on fire.",
+      "restrita": false,
+      "modo": "conhecimento-regular"
+    },
+    {
+      "id": "newt-siccaroube",
+      "tipo": "magia",
+      "nome": "Siccaroube",
+      "nomeOriginal": "Siccaroube",
+      "nivel": 1,
+      "escola": "encantamentos",
+      "texto": "Destrói até 10 galões de água em um recipiente aberto ou dispersa neblina em um cubo de 30 pés no alcance. Não remove água de criaturas. Ao usar um espaço acima do 1º círculo, destrói mais 10 galões ou aumenta a aresta do cubo em 5 pés por círculo adicional.",
+      "traducao": "Destrói até 10 galões de água em um recipiente aberto ou dispersa neblina em um cubo de 30 pés no alcance. Não remove água de criaturas. Ao usar um espaço acima do 1º círculo, destrói mais 10 galões ou aumenta a aresta do cubo em 5 pés por círculo adicional.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "pagina": null,
+      "fonteRotulo": "Newt’s Trunk of Everything · Siccaroube",
+      "conjuracao": "1 ação",
+      "alcance": "30 pés",
+      "duracao": "Instantânea",
+      "componentes": "V, S",
+      "original": "Casting Time: 1 action\nRange: 30 feet\nComponents: V, S\nDuration: Instantânea\n*Drought spell- 1st-level charm*\n___\n- **Casting Time:** 1 action\n- **Range:** 30 feet\n- **Components:** V,S\n- **Duration:** Instantaneous\n\nYou destroy up to 10 gallons of water in an open\ncontainer within range. Alternatively, you destroy fog in\na 30-foot cube within range.<br>\n**At Higher Levels.** When you cast this spell using a spell\nslot of 2nd level or higher, you destroy 10 additional\ngallons of water, or the size of the cube increases by 5\nfeet, for each slot level above 1st.",
+      "restrita": false,
+      "modo": "conhecimento-regular"
+    },
+    {
+      "id": "newt-beauty-spell",
+      "tipo": "magia",
+      "nome": "Feitiço de embelezamento",
+      "nomeOriginal": "Beauty Spell",
+      "nivel": 4,
+      "escola": "encantamentos",
+      "texto": "Realça temporariamente a aparência física de uma criatura voluntária tocada. Concede vantagem em testes de Carisma (Persuasão) pela duração; não muda sua disposição nem impõe obediência. A duração aumenta em uma hora por círculo de espaço acima do 4º.",
+      "traducao": "Realça temporariamente a aparência física de uma criatura voluntária tocada. Concede vantagem em testes de Carisma (Persuasão) pela duração; não muda sua disposição nem impõe obediência. A duração aumenta em uma hora por círculo de espaço acima do 4º.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "pagina": null,
+      "fonteRotulo": "Newt’s Trunk of Everything · Beauty Spell",
+      "conjuracao": "1 ação",
+      "alcance": "Toque",
+      "duracao": "Até 1 hora",
+      "componentes": "V, S",
+      "original": "Casting Time: 1 action\nRange: Touch\nComponents: V, S\nDuration: Até 1 hora\n*The Beautifying Charm - 4-level charm*\n___\n- **Casting time:** 1 action\n- **Range:** Touch\n- **Components:** V,S\n- **Duration:** Up to 1 hour\n\nYou temporarily enhance a willing creature's outward physical appearance. It gains advantage on Charisma: Persuasion checks for the duration.\n\n**At higher levels**  An additional hour of duration per additional spell level.",
+      "restrita": false,
+      "modo": "conhecimento-regular"
+    },
+    {
+      "id": "newt-ascendio",
+      "tipo": "magia",
+      "nome": "Ascendio",
+      "nomeOriginal": "Ascendio",
+      "nivel": 1,
+      "escola": "encantamentos",
+      "texto": "Escolha uma criatura voluntária e visível no alcance. Sua distância de salto é triplicada se usar o próximo movimento para saltar, sem conceder voo. Se estiver submersa em um líquido, é levada até a superfície a 60 pés por rodada. Com um espaço de 2º círculo ou superior, a velocidade de subida aumenta em 25 pés; o texto não autoriza acumular esse aumento várias vezes. Não concede proteção contra quedas.",
+      "traducao": "Escolha uma criatura voluntária e visível no alcance. Sua distância de salto é triplicada se usar o próximo movimento para saltar, sem conceder voo. Se estiver submersa em um líquido, é levada até a superfície a 60 pés por rodada. Com um espaço de 2º círculo ou superior, a velocidade de subida aumenta em 25 pés; o texto não autoriza acumular esse aumento várias vezes. Não concede proteção contra quedas.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "pagina": null,
+      "fonteRotulo": "Newt’s Trunk of Everything · Ascendio",
+      "conjuracao": "1 ação",
+      "alcance": "30 pés",
+      "duracao": "1 minuto",
+      "componentes": "V, S",
+      "original": "Casting Time: 1 action\nRange: 30 feet\nComponents: V, S\nDuration: 1 minuto\n*The Lifting Charm - 1st-level charm*\n___\n- **Casting Time:**  1 action\n- **Range:**  30 feet\n- **Components:**  V, S\n- **Duration:**  1 minute\n\nAscendio is the incantation of a charm which fling the caster high into the air.You target a creature you can see within range.  The target’s jump distance is tripled if it uses its next move action to jump.  If you target a creature submerged in a liquid, the spell carries the target to the surface of the liquid at a rate of 60 feet per round.\n\n**At Higher Levels** When you cast this spell using a spell slot of 2nd level or higher,the speed of rate is improve by 25 feet.",
+      "restrita": false,
+      "modo": "conhecimento-regular"
+    },
+    {
+      "id": "newt-always-ready",
+      "tipo": "formacao",
+      "nome": "Quadribol · Sempre preparado",
+      "nomeOriginal": "Useful Spells: Always Ready",
+      "nivel": 10,
+      "efeitos": {
+        "magias": [
+          "accio"
+        ]
+      },
+      "texto": "Aprende Accio como truque concedido, sem ocupar a cota. Pode convocar sua vassoura apenas dentro dos limites normais de peso e alcance da magia. O Mestre concede esta especialização esportiva; ela não cria vassouras nem usa marcas anacrônicas.",
+      "categoria": "A",
+      "fonte": "newt-trunk",
+      "requerMestre": true,
+      "modo": "concessao-mestre"
+    }
+  ]
+}
