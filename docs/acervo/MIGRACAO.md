@@ -29,3 +29,5 @@ Não há garantia de restauração das contas externas ou dos serviços de auten
 Para reativar os handlers no **projeto de destino**, copie cada `src/app/api/**/colecionaveis/**/legado.ts` sobre seu `route.ts` correspondente; reponha somente as integrações necessárias de `arquivo/acervo-integracoes`. Não faça isso no Hub já separado. O novo site precisa manter autenticação e autorização antes de servir os dados do snapshot.
 
 O CSV protege textos que planilhas poderiam executar como fórmulas com um apóstrofo. Use JSON para uma reimportação sem transformação de strings.
+
+Durante a separação, o Hub recusa exclusões definitivas de fichas/campanhas Wands & Wizards que possuam Acervo ou histórico legado, para impedir a cascata dos FKs atuais. Após validar a migração completa, retirar essa proteção de forma explícita no Hub. Arquivar uma ficha permanece disponível. Coleções cosméticas antigas de personagens avulsos continuam no JSON da ficha e podem ser guardadas pelo dono com o botão de exportação já existente; não são agregadas automaticamente ao pacote de uma campanha à qual não pertencem.

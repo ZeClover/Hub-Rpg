@@ -50,6 +50,7 @@ import {
 } from "@/lib/campanha-livre/tipos.ts";
 
 import { ImportarDoChat } from "./importar-do-chat";
+import { InventarioLivre } from "./inventario-livre";
 import { DeclararIniciativa } from "./declarar-iniciativa";
 
 /** Filtro de busca usado em cada aba — case-insensitive, ignora campos vazios. */
@@ -233,6 +234,7 @@ export function FichaCampanhaLivre() {
       )}
 
       <Agora dados={dados} />
+      <InventarioLivre id={estado.id}/>
 
       <Cabecalho key={estado.id} dados={dados} somenteLeitura={somenteLeitura} onSalvar={salvar} onNomePendente={valor => { nomePendente.current = valor; }} />
 

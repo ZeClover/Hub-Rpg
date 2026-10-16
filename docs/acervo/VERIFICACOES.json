@@ -1,0 +1,95 @@
+{
+  "regras": {
+    "resultado": "passou",
+    "testes": 610,
+    "falhas": 0,
+    "testesNovosRetencao": 2
+  },
+  "autenticacao": {
+    "resultado": "passou",
+    "handlers": 97,
+    "rotas": 71,
+    "sistemas": 10
+  },
+  "inventario": {
+    "resultado": "passou",
+    "cenarios": [
+      "campos e limites",
+      "imagem HTTPS e persistência",
+      "criar/editar/duplicar/ordenar/remover",
+      "filtros",
+      "desktop e celular",
+      "salvar/reabrir/descarte WW",
+      "leitura",
+      "consumo de Sapo sem figurinha",
+      "Campanha Livre no build real"
+    ]
+  },
+  "postgresql_local": {
+    "resultado": "passou",
+    "host": "127.0.0.1:55439",
+    "banco": "hub_inventario",
+    "eventosExportados": 125,
+    "cenarios": [
+      "migração 0035 sobre ficha anterior",
+      "CAS 200/409",
+      "versão da ficha preservada",
+      "cópia/sandbox",
+      "reabertura por conexão nova",
+      "isolamento entre campanhas",
+      "cinco perfis",
+      "restauração do JSON/PNG do ZIP",
+      "exclusão de ficha/campanha com Acervo recusada 409, histórico intacto"
+    ]
+  },
+  "desativacao": {
+    "resultado": "passou",
+    "metodos": 8,
+    "rotas": 7,
+    "consultasAoAcervoPelaFicha": 0
+  },
+  "reconstrucao_isolada": {
+    "resultado": "passou",
+    "testesRegras": 6,
+    "verificacoesNavegador": 84,
+    "origem": "código extraído do ZIP com integrações legadas restauradas somente na cópia temporária"
+  },
+  "regressoes": {
+    "resultado": "passou",
+    "areas": [
+      "criação e evolução WW",
+      "Grimório 144 textos",
+      "varinha e animações",
+      "paletas de Casas",
+      "iniciativa declarada nos dez sistemas"
+    ]
+  },
+  "build_tipos_lint": {
+    "resultado": "passou"
+  },
+  "http_build_real": {
+    "ficha": 200,
+    "moduloInventario": 200,
+    "inventarioIdInvalido": 404,
+    "rotaAcervoDesativada": 410,
+    "exportacaoSemSessao": 404,
+    "arquivosPrivadosNoEmpacotamento": 2
+  },
+  "producao": {
+    "publicada": false,
+    "dadosExportados": false,
+    "migracaoAplicada": false,
+    "observacao": "ZIPs de teste usam dados sintéticos. O ZIP com dados reais é gerado no download administrativo da campanha; implantação requer migração 0035 em staging antes de produção."
+  },
+  "cache_offline": {
+    "resultado": "passou",
+    "cacheProtegido": [
+      "acervo-exportacao",
+      "colecionaveis",
+      "inventario-livre",
+      "acervo-administracao"
+    ],
+    "semFallbackPrivado": true,
+    "cachesDosOutrosSistemasPreservados": true
+  }
+}

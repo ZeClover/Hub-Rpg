@@ -296,6 +296,8 @@ model Personagem {
   campanhaId    String?          @db.Uuid
   nome          String
   dados         Json             @default("{}")
+  inventarioLivre Json?
+  versaoInventario Int @default(0)
   /// Versão do formato de `dados`, para migrar fichas antigas quando o
   /// módulo do sistema mudar de estrutura.
   versaoFicha   Int              @default(1)

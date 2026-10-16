@@ -37,6 +37,11 @@ self.addEventListener("activate", (evento) => {
       ),
     ),
   );
+  // Remove somente caches relacionados à separação; o offline das outras fichas permanece.
+  evento.waitUntil(Promise.all([CACHE_API,CACHE_NAVEGACAO].map(async nome=>{
+    const cache=await caches.open(nome);
+    await Promise.all((await cache.keys()).filter(req=>semCacheAcervo(new URL(req.url))).map(req=>cache.delete(req)));
+  })));
   self.clients.claim();
 });
 
@@ -76,11 +81,17 @@ async function networkFirst(requisicao, nomeCache) {
   }
 }
 
+function semCacheAcervo(url){
+  return /\/(?:colecionaveis|acervo-exportacao|inventario-livre)(?:\/|$)/.test(url.pathname)||url.pathname==='/acervo-administracao';
+}
 self.addEventListener("fetch", (evento) => {
   const requisicao = evento.request;
   if (requisicao.method !== "GET") return; // nunca intercepta escrita
   const url = new URL(requisicao.url);
   if (url.origin !== self.location.origin) return;
+
+  // Cache API ignora Cache-Control: no-store; estes dados exigem autorização fresca.
+  if(semCacheAcervo(url)){evento.respondWith(fetch(requisicao,{cache:'no-store'}));return;}
 
   if (ehEstaticoImutavel(url)) {
     evento.respondWith(cacheFirst(requisicao, CACHE_ESTATICO));

@@ -22,7 +22,7 @@ async function arquivos(dir){const es=await fs.readdir(dir,{withFileTypes:true})
    if(file.endsWith('/api/personagens/[id]/route.ts')&&method==='GET')continue;
    const request=new Request('https://teste.local/api',{method,headers:{'Content-Type':'application/json'},...(method==='GET'?{}:{body:'{}'})});
    const response=await handler(request,{params:Promise.resolve({id:'auditoria',personagemId:'p',itemId:'i',sessaoId:'s',jogadorId:'u',colecionavelId:'c'})});
-   assert.ok(response.status===401||response.status===404,path.relative(root,file)+' '+method+' deve recusar acesso sem sessão');
+   assert.ok(response.status===401||response.status===404||(file.includes('/colecionaveis/')&&response.status===410),path.relative(root,file)+' '+method+' deve recusar acesso sem sessão');
    assert.deepEqual(Object.keys(await response.json()),['erro'],'a recusa não pode retornar dados privados');
    resultados.push({rota:path.relative(root,file),metodo:method,status:response.status});
   }

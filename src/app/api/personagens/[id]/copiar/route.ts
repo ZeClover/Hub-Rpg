@@ -94,6 +94,7 @@ export async function POST(requisicao: NextRequest, { params }: Contexto) {
           campanhaId,
           nome: nomeCopia(indice + 1),
           dados: original.dados as Prisma.InputJsonValue,
+          ...(original.inventarioLivre != null ? { inventarioLivre: original.inventarioLivre as Prisma.InputJsonValue } : {}),
           ehMonstro: original.ehMonstro,
           avatarUrl: original.avatarUrl,
           bannerUrl: original.bannerUrl,
