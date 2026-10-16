@@ -9,6 +9,8 @@ import {removerSslDoEndereco} from '../src/lib/endereco-banco.ts';
 // A conexão de produção serve apenas para comparação; nunca é aberta por este comando.
 export function alvoBanco(endereco){
  const u=new URL(endereco);if(!['postgres:','postgresql:'].includes(u.protocol))throw Error('Protocolo de banco inválido.');
+ if(!u.hostname||!u.pathname||u.pathname==='/')throw Error('Informe explicitamente host e nome do banco.');
+ if([...u.searchParams.keys()].some(k=>['host','hostaddr','port','dbname','database','user','password','service','connectionstring'].includes(k.toLowerCase())))throw Error('A conexão não pode sobrescrever seu alvo por parâmetros adicionais.');
  const host=u.hostname.toLowerCase(),direto=host.match(/^db\.([a-z0-9-]+)\.supabase\.co$/),pooler=host.endsWith('.pooler.supabase.com')?decodeURIComponent(u.username).match(/^postgres\.([a-z0-9-]+)$/):null;
  return [direto||pooler?'supabase:'+(direto||pooler)[1]:host+':'+(u.port||'5432'),decodeURIComponent(u.pathname)].join('/');
 }
