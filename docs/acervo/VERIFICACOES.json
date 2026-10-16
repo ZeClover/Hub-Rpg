@@ -91,5 +91,23 @@
     ],
     "semFallbackPrivado": true,
     "cachesDosOutrosSistemasPreservados": true
+  },
+  "preparacao_staging": {
+    "resultadoLocal": "passou",
+    "verificacaoPadraoSomenteLeitura": true,
+    "producaoSemFallback": true,
+    "recusaAliasSupabaseMesmoProjeto": true,
+    "repeticaoEEstadoParcial": "passou",
+    "tiposENulabilidadeIncompativeis": "recusados",
+    "dadosPreservados": true,
+    "variavelNecessaria": "STAGING_DATABASE_URL",
+    "variavelDisponivelNoAmbiente": false,
+    "migracaoRemotaExecutada": false
+  },
+  "previaVercel": {
+    "build": "SUCCESS",
+    "acessoAnonimo": 302,
+    "protecaoDeLogin": true,
+    "sessaoRealTestada": false
   }
 }

@@ -31,3 +31,19 @@ Para reativar os handlers no **projeto de destino**, copie cada `src/app/api/**/
 O CSV protege textos que planilhas poderiam executar como fórmulas com um apóstrofo. Use JSON para uma reimportação sem transformação de strings.
 
 Durante a separação, o Hub recusa exclusões definitivas de fichas/campanhas Wands & Wizards que possuam Acervo ou histórico legado, para impedir a cascata dos FKs atuais. Após validar a migração completa, retirar essa proteção de forma explícita no Hub. Arquivar uma ficha permanece disponível. Coleções cosméticas antigas de personagens avulsos continuam no JSON da ficha e podem ser guardadas pelo dono com o botão de exportação já existente; não são agregadas automaticamente ao pacote de uma campanha à qual não pertencem.
+
+## Execução assistida da migração 0035 em staging
+
+Configure `STAGING_DATABASE_URL` nas variáveis secretas do ambiente, apontando para um PostgreSQL **isolado**, com a estrutura anterior do Hub. Não envie o endereço com senha por chat. O comando não usa `POSTGRES_PRISMA_URL` como alternativa: essa variável é lida somente para recusar o mesmo alvo de produção, inclusive aliases diretos/pooler conhecidos do Supabase.
+
+```bash
+node scripts/preparar-inventario-staging.mjs --verificar
+node scripts/preparar-inventario-staging.mjs --aplicar
+node scripts/preparar-inventario-staging.mjs --verificar
+```
+
+`--verificar` é o padrão e abre uma transação somente leitura. Retorna código 2 quando faltam colunas, código 0 quando a migração está pronta e código 1 para erro/configuração incompatível. Não imprime conexão, credenciais ou conteúdo das fichas.
+
+`--aplicar` usa uma transação com lock de migração, aplica a SQL 0035 quando nenhuma das duas colunas existe, completa um estado parcial compatível e aceita repetição. Não converte tipos incompatíveis nem apaga dados. Confere contagens de personagens e das três tabelas históricas. Bancos remotos usam TLS com validação de certificado; a conexão sem TLS fica restrita ao teste local em loopback.
+
+O operador continua responsável por apontar para um banco isolado: o comando reconhece alvos iguais e aliases conhecidos, mas não descobre todos os possíveis roteamentos externos. A aplicação de staging deve usar esse mesmo banco já preparado. Este comando não configura serviços remotos nem publica ou faz merge do PR.

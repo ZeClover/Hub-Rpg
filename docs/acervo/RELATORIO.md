@@ -62,9 +62,15 @@ Os testes de banco usam somente `postgresql://hub_test@127.0.0.1:55439/hub_inven
 ## Implantação e migração futura
 
 1. Revisar o PR e validar a prévia em staging, usando uma cópia autorizada do banco.
-2. Aplicar a migração **0035_inventario_livre** antes de executar a aplicação nova: são duas colunas aditivas em `personagens`, sem transformação dos itens anteriores. A numeração deixa a migração 0034 reservada ao PR separado de expansões. Não aplicar schema de desenvolvimento sobre produção.
+2. Configurar `STAGING_DATABASE_URL` para um banco isolado e usar `node scripts/preparar-inventario-staging.mjs --verificar` / `--aplicar`, conforme MIGRACAO.md. Aplicar a migração **0035_inventario_livre** antes de executar a aplicação nova: são duas colunas aditivas em `personagens`, sem transformação dos itens anteriores. A numeração deixa a migração 0034 reservada ao PR separado de expansões. Não aplicar schema de desenvolvimento sobre produção.
 3. O prebuild prepara o ZIP privado de código automaticamente. Se executar diretamente fora do build, usar `node scripts/preparar-exportacao-acervo.mjs`.
 4. O Mestre titular baixa um pacote por campanha e guarda duas cópias privadas. Conferir com `python scripts/validar-exportacao-acervo.py caminho/do/Acervo_Magico_Exportacao_Completa.zip`.
 5. Seguir [MIGRACAO.md](MIGRACAO.md) para o projeto futuro. Este PR não cria site/repositório novo nem desativa ou apaga as tabelas históricas.
 
 A prévia não foi testada com sessão real de produção. O download administrativo foi exercitado pelo handler real com sessão sintética e PostgreSQL isolado. Mídias remotas e autenticação externa não são reproduzidas automaticamente pelo pacote.
+
+## Continuação da preparação de staging
+
+A prévia Vercel compilou com sucesso e o PR está sem conflitos. Os quatro acessos anônimos verificados na prévia retornaram HTTP 302 para a proteção de acesso da Vercel; isto não valida uma sessão de usuário nem os dados da aplicação.
+
+O ambiente atual oferece `POSTGRES_PRISMA_URL`, mas não `STAGING_DATABASE_URL`. Nenhuma migração foi aplicada a um banco remoto. Foi acrescentado o executor descrito em MIGRACAO.md e testado em PostgreSQL local separado: somente leitura, recusa da conexão de produção e aliases conhecidos, migração exata, repetição, estado parcial compatível, recusa de tipo/nulabilidade incompatível e preservação do inventário/histórico. A variável secreta de staging é o requisito restante para executar a preparação real.
