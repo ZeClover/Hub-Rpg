@@ -1,3 +1,4 @@
+import {reterCampanha} from '@/lib/acervo-exportacao/retencao';
 import { imagemHubValida } from "@/lib/imagem-hub";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -28,6 +29,8 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
+  const campanha=await banco.campanha.findUnique({where:{id:campanhaId},select:{sistema:{select:{chave:true}}}});
+  if(campanha?.sistema.chave==='wands-wizards'&&await reterCampanha(banco,campanhaId))return NextResponse.json({erro:'Esta campanha possui um Acervo preservado para migração. A exclusão definitiva ficará disponível após a migração ser concluída.'},{status:409});
   await banco.campanha.delete({ where: { id: campanhaId } });
   return NextResponse.json({ ok: true });
 }

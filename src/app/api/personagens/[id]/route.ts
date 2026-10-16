@@ -1,3 +1,4 @@
+import {reterPersonagem} from '@/lib/acervo-exportacao/retencao';
 import { prepararFichaWandsWizards } from "../../../../../public/wands-wizards/ficha-regras.mjs";
 import { prepararFichaPathfinder, progressaoPermitidaPathfinder } from "@/lib/pathfinder/validar-ficha";
 import { preservarEstadoAutoritativoHogwarts, type DadosCriacaoHogwarts } from "@/lib/hogwarts/criacao";
@@ -340,6 +341,8 @@ export async function DELETE(_requisicao: NextRequest, { params }: Contexto) {
     return NextResponse.json({ erro: "não encontrado" }, { status: 404 });
   }
 
+  const sistema=await banco.sistema.findUnique({where:{id:existente.sistemaId},select:{chave:true}});
+  if(sistema?.chave==='wands-wizards'&&await reterPersonagem(banco,id,existente.dados))return NextResponse.json({erro:'Esta ficha possui histórico do Acervo preservado para migração. A exclusão definitiva ficará disponível após a migração ser concluída; você pode arquivar a ficha.'},{status:409});
   await banco.personagem.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

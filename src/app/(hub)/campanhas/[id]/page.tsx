@@ -34,7 +34,6 @@ import { IdentidadeCampanha } from "./identidade-campanha";
 import { type GrupoView } from "./grupos";
 import { ManualDoMestre } from "./manual-mestre";
 import { MestreAuxiliar } from "./mestre-auxiliar";
-import { GabineteMestre } from "./gabinete-mestre";
 import { PainelHogwarts } from "./painel-hogwarts";
 import { QrCode } from "../../qr-code";
 import { RemoverJogador } from "./remover-jogador";
@@ -398,7 +397,7 @@ export default async function PaginaCampanha({
         )
       )}
 
-      {souMestre && campanha.sistema.chave === "wands-wizards" && <GabineteMestre campanhaId={campanha.id} />}
+      {souMestreTitular && campanha.sistema.chave === "wands-wizards" && <details className="my-4 rounded-lg border border-borda p-3 text-sm"><summary>Backup privado do Acervo</summary><p className="my-2">Exportação da campanha para futura migração. Inclui segredos narrativos e dados dos personagens; guarde em local privado.</p><a className="underline" href={`/api/campanhas/${campanha.id}/acervo-exportacao`}>Baixar Acervo_Magico_Exportacao_Completa.zip</a></details>}
       {souMestre ? (
         <VisaoDoMestre
           campanhaId={campanha.id}

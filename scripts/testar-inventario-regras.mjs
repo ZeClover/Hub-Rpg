@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {validarItens} from '../public/inventario/regras.mjs';
+import {prepararFichaWandsWizards,novaFicha,calcularFicha} from '../public/wands-wizards/ficha-regras.mjs';
+const item={id:'varinha-memoria',nome:'Lembrança da família',categoria:'Memórias',quantidade:1,peso:0.5,imagem:'https://example.com/item.webp',descricao:'a'.repeat(15000),propriedades:'Texto, não bônus',raridade:'Único',historia:'Origem pessoal',efeitos:'+1000 Força (somente descrição)',anotacoes:'Não automatizar'};
+assert.doesNotThrow(()=>validarItens([item]));
+for(const erro of [{quantidade:-1},{quantidade:1.2},{peso:Infinity},{imagem:'javascript:alert(1)'},{imagem:'http://example.com/img'},{nome:''},{descricao:'a'.repeat(20001)}])assert.throws(()=>validarItens([{...item,...erro}]));
+assert.throws(()=>validarItens([item,item]));assert.throws(()=>validarItens(Array(201).fill(item)));
+const base=novaFicha();const p=prepararFichaWandsWizards(base,{...base,inventario:[item]},{});assert.ok(!p.erro,p.erro);assert.deepEqual(p.dados.inventario,[item]);
+assert.deepEqual(calcularFicha({...base,inventario:[item]}),calcularFicha(base),'Efeitos livres não alteram cálculos da ficha');
+assert.doesNotThrow(()=>validarItens([{...item,categoria:'a'.repeat(10000)}]));
+console.log('Inventário: limites, imagens, extensibilidade e salvamento WW validados.');
