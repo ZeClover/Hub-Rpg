@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     arquivos ficam de fora — o site publica, mas quebra na primeira consulta
     ao banco.
   */
+  outputFileTracingIncludes: {"/api/campanhas/*/acervo-exportacao": ["./private/acervo/Codigo_Acervo_Preservado.zip", "./private/acervo/manifesto-codigo.json"]},
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
 
   async headers() {
